@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.tracking;
 
-import com.pipwerks.Scorm;
 import nme.events.Event;
 import nme.utils.Timer;
 
