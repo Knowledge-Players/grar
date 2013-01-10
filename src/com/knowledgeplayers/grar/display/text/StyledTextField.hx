@@ -1,0 +1,53 @@
+package com.knowledgeplayers.grar.display.text;
+
+import com.knowledgeplayers.grar.display.style.Style;
+import com.knowledgeplayers.grar.display.style.StyleParser;
+import nme.events.MouseEvent;
+
+import nme.text.TextFormat;
+import nme.text.TextField;
+
+class StyledTextField extends TextField 
+{
+	public var style(default, setStyle): Style;
+
+	public function new(?style: Style)
+	{
+		super();
+
+		if(style != null)
+			setStyle(style);
+		else
+			setStyle(StyleParser.getInstance().getStyle("text"));
+
+		//Default Values
+		autoSize = nme.text.TextFieldAutoSize.LEFT;
+		embedFonts = true;
+		selectable = mouseEnabled = false;
+	}
+
+	public function setStyle(style : Style) : Style
+	{
+		this.style = style;
+		if(style != null)
+			applyStyle(style);
+
+		return style;
+	}
+
+	public function setPartialStyle(style : Style, startIndex: Int, endIndex: Int) : Void
+	{
+		applyStyle(style, startIndex, endIndex);
+	}
+
+	private function applyStyle(style: Style, startIndex: Int = -1, endIndex: Int = -1) : Void
+	{
+		var textFormat : TextFormat = new TextFormat(style.getFont().fontName, style.getSize(), style.getColor(), style.getBold(), style.getItalic(), style.getUnderline());
+
+		if(startIndex == -1 || endIndex == -1)
+			defaultTextFormat = textFormat;
+		else{
+			setTextFormat(textFormat, startIndex, endIndex);
+		}
+	}
+}
