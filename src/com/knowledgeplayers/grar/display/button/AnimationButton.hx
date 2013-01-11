@@ -1,9 +1,10 @@
 package com.knowledgeplayers.grar.display.button;
 
-import nme.events.Event;
-import aze.display.TileGroup;
 import aze.display.TileClip;
+import aze.display.TileGroup;
+import aze.display.TilesheetEx;
 import aze.display.TileSprite;
+import nme.events.Event;
 import nme.events.MouseEvent;
 
 /**
@@ -17,7 +18,7 @@ import nme.events.MouseEvent;
 	public var fondIcon:TileSprite;
 	public var arrowIcon:TileClip;
 
-	public function new(layerPath: String, tile: String, ?eventName: String) 
+	public function new(tilesheet: TilesheetEx, tile: String, ?eventName: String) 
 	{
 		if (eventName == null) {
 			this.eventType = "next";
@@ -26,7 +27,7 @@ import nme.events.MouseEvent;
 		else
 			this.eventType = eventName;
 		
-		super(eventType, layerPath,tile);
+		super(eventType, tilesheet,tile);
 		addIcon();
 	}
 	

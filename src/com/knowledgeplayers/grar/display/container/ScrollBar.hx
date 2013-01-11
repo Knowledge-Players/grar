@@ -1,18 +1,12 @@
 package com.knowledgeplayers.grar.display.container;
 
-import aze.display.SparrowTilesheet;
 import aze.display.TileGroup;
 import aze.display.TileLayer;
+import aze.display.TilesheetEx;
 import aze.display.TileSprite;
-import nme.Assets;
-import nme.display.Bitmap;
-import nme.display.BitmapData;
-import nme.events.MouseEvent;
-import nme.display.InteractiveObject;
 import nme.display.Sprite;
-import nme.display.DisplayObject;
+import nme.events.MouseEvent;
 import nme.geom.Rectangle;
-import nme.Lib;
 
 /**
  * ...
@@ -29,29 +23,27 @@ class ScrollBar extends Sprite
 	private var layer: TileLayer;
 	private var maxHeight: Float;
 
-    public function new(width:Float, height:Float, ratio:Float)
+    public function new(width:Float, height:Float, ratio:Float, tilesheet: TilesheetEx,  tileBackground: String, tileCursor: String )
     {
 		super();
 		
 		this.ratio = ratio;
-		
-		var tilesheet = new SparrowTilesheet(Assets.getBitmapData("items/ui.png"), Assets.getText("items/ui.xml"));
-		layer = new TileLayer(tilesheet);
+		this.layer = new TileLayer(tilesheet);
 		
 		var background = new TileGroup();
-		background.addChild(new TileSprite("scrollbar_endup.png"));
-		background.addChild(new TileSprite("scrollbar_middle.png"));
-		background.addChild(new TileSprite("scrollbar_enddown.png"));
+		background.addChild(new TileSprite(tileBackground+"_end.png"));
+		background.addChild(new TileSprite(tileBackground+"_middle.png"));
+		background.addChild(new TileSprite(tileBackground+"_end.png"));
 		layer.addChild(background);
 
 		cursorHeight = height * ratio;
 		
-		cursor = new TileLayer(tilesheet);
+		cursor = new TileLayer(layer.tilesheet);
 		cursorSprite = new Sprite();
 		var cursorGroup = new TileGroup();
-		cursorGroup.addChild(new TileSprite("cursor_endup.png"));
-		cursorGroup.addChild(new TileSprite("cursor_middle.png"));
-		cursorGroup.addChild(new TileSprite("cursor_enddown.png"));
+		cursorGroup.addChild(new TileSprite(tileCursor+"_end.png"));
+		cursorGroup.addChild(new TileSprite(tileCursor+"_middle.png"));
+		cursorGroup.addChild(new TileSprite(tileCursor+"_end.png"));
 		cursor.addChild(cursorGroup);
 		cursorSprite.addChild(cursor.view);
 		

@@ -4,6 +4,7 @@ import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.event.TokenEvent;
 import com.knowledgeplayers.grar.factory.PartFactory;
+import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.tracking.Connection;
@@ -58,12 +59,16 @@ class KpGame extends EventDispatcher, implements Game
 			initLangs(xml);
 		#end
 
-		for (activity in structureXml.node.Grar.nodes.Activity) {
+		var displayNode: Fast = structureXml.node.Grar.node.Display;
+		if (displayNode.hasNode.Ui)
+			UiFactory.setSpriteSheet(displayNode.node.Ui.att.Display);
+		for (activity in displayNode.nodes.Activity) {
 			var activityXml = XmlLoader.load(activity.att.Display, onActivityComplete);
 			#if !flash
 				initActivities(activityXml);
 			#end
 		}
+		
 		var structureNode: Fast = structureXml.node.Grar.node.Structure;
 		for (part in structureNode.nodes.Part) {
 			addPartFromXml(Std.parseInt(part.att.Id), part);

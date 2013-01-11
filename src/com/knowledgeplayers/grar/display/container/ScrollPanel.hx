@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.container;
 
+import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.Assets;
 import nme.display.DisplayObject;
 import nme.display.DisplayObjectContainer;
@@ -49,7 +50,7 @@ class ScrollPanel extends Sprite
 		addChild(mask);
 		
 		if(maskHeight < content.height && !scrollLock){
-			scrollBar = new ScrollBar(18, maskHeight, maskHeight/content.height);
+			scrollBar = UiFactory.createScrollBar(18, maskHeight, maskHeight/content.height, "scrollbar", "cursor");
 			scrollBar.x = maskWidth - scrollBar.width;
 			addChild(scrollBar);
 			scrollBar.scrolled = scrollToRatio;

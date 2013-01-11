@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.display.button;
+import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import nme.display.DisplayObject;
 import nme.events.MouseEvent;
 
 /**
@@ -13,9 +13,9 @@ class CustomEventButton extends DefaultButton
 	public var eventType (default, default): String;
 	public var propagateNativeEvent (default, default): Bool = false;
 
-	public function new(eventName: String, layerPath: String, tile: String) 
+	public function new(eventName: String, tilesheet: TilesheetEx, tile: String) 
 	{
-		super(layerPath, tile);
+		super(tilesheet, tile);
 		this.eventType = eventName;
 	}
 	

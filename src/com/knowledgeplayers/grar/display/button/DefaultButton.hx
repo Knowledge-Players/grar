@@ -1,8 +1,7 @@
 package com.knowledgeplayers.grar.display.button;
-import aze.display.SparrowTilesheet;
 import aze.display.TileLayer;
+import aze.display.TilesheetEx;
 import aze.display.TileSprite;
-import nme.Assets;
 import nme.display.Sprite;
 import nme.events.MouseEvent;
 
@@ -20,11 +19,10 @@ class DefaultButton extends Sprite
 	public var layer: TileLayer;
 	public var enabled (default, enable): Bool;
 
-	public function new(layerPath: String, tile: String)
+	public function new(tilesheet: TilesheetEx, tile: String)
 	{
 		super();
 		
-		var tilesheet = new SparrowTilesheet(Assets.getBitmapData(layerPath+".png"), Assets.getText(layerPath+".xml"));
 		this.layer = new TileLayer(tilesheet);
 		this.upState = new TileSprite(tile);
 		this.downState = new TileSprite(tile+"_pressed");

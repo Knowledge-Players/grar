@@ -1,11 +1,7 @@
 package com.knowledgeplayers.grar.display.button;
+import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
-import nme.display.DisplayObject;
-import nme.display.SimpleButton;
-import nme.display.Sprite;
-import nme.Lib;
-import nme.text.TextFormatAlign;
 
 /**
  * ...
@@ -16,9 +12,9 @@ class TextButton extends CustomEventButton
 {	
 	private var textField: StyledTextField;
 	
-	public function new(layerPath: String, tile: String, ?eventName: String, text: String = "", ?tag: String) 
+	public function new(tilesheet: TilesheetEx, tile: String, ?eventName: String, text: String = "", ?tag: String) 
 	{
-		super((eventName==null?"next":eventName), layerPath, tile);
+		super((eventName==null?"next":eventName), tilesheet, tile);
 		if (eventName == null)
 			propagateNativeEvent = true;
 		
