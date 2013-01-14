@@ -1,12 +1,10 @@
-package com.knowledgeplayers.grar.components.containers;
-
-import nme.text.TextField;
-
-import com.knowledgeplayers.grar.dialog.style.StyleParser;
-import com.knowledgeplayers.grar.dialog.style.Style;
-import com.knowledgeplayers.grar.dialog.text.StyledTextField;
+package com.knowledgeplayers.grar.display.containers;
 
 import com.eclecticdesignstudio.motion.Actuate;
+import com.knowledgeplayers.grar.display.style.StyleParser;
+import com.knowledgeplayers.grar.display.text.StyledTextField;
+
+
 
 
 /**
