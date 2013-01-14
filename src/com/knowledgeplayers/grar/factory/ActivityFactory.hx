@@ -6,7 +6,7 @@ import nme.display.BitmapData;
 import nme.Lib;
 
 import com.knowledgeplayers.grar.structure.activity.quizz.Quizz;
-
+import com.knowledgeplayers.grar.structure.activity.animagic.Animagic;
 class ActivityFactory 
 {
 	private function new()
@@ -19,7 +19,8 @@ class ActivityFactory
 		var creation: Activity = null;
 		switch (activityName.toLowerCase()) {
 			case "quizz": creation = new Quizz(content);
-			default: Lib.trace(activityName+" : Unsupported activity");
+			case "animagic":creation =new Animagic(content);
+			default: Lib.trace("Factory - "+activityName+" :  Unsupported activity");
 		}
 
 		return creation;

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity;
 import com.knowledgeplayers.grar.display.activity.quizz.QuizzDisplay;
+import com.knowledgeplayers.grar.display.activity.animagic.AnimagicDisplay;
 import nme.Lib;
 
 /**
@@ -22,10 +23,12 @@ class ActivityManager
 	
 	public function getActivity(name: String) : Null<ActivityDisplay>
 	{
+		Lib.trace("getAct : "+name);
 		var activity: ActivityDisplay = activities.get(name.toLowerCase());
 		if (activity == null) {
 			switch(name.toLowerCase()) {
 				case "quizz": activity = QuizzDisplay.instance;
+				case "animagic":activity = AnimagicDisplay.instance;
 				default: Lib.trace(name + ": Unsupported activity type");
 			}
 			if (activity != null)
