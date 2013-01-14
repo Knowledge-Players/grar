@@ -67,7 +67,8 @@ class Quizz extends Activity
 		for (round in quizz.nodes.Round) {
 			questions.push(round.node.Question.att.Content);
 			var group = new QuizzGroup();
-			for (answer in round.nodes.Answer) {
+			for (answer in round.nodes.Answer) 
+			{
 				group.addXmlItem(answer);
 			}
 			answers.push(group);
