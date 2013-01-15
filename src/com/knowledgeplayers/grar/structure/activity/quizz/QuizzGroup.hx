@@ -25,6 +25,15 @@ class QuizzGroup
 	{
 		items.add(item);
 	}
+	
+	public function isFullyCorrect() : Bool 
+	{
+		for (item in items) {
+			if (!item.isRightAnswered())
+				return false;
+		}
+		return true;
+	}
 
 	/**
 	 * Add an XML-described item to the group

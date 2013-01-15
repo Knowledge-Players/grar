@@ -39,6 +39,14 @@ class QuizzItem
 		this.isAnswer = isAnswer;
 		this.isChecked = isChecked;
 	}
+	
+	/**
+	 * @return true if the item has been checked and is a correct answer
+	 */
+	public function isRightAnswered() : Bool 
+	{
+		return isAnswer == isChecked;
+	}
 
 	/**
 	 * @return a string-based representation of the item

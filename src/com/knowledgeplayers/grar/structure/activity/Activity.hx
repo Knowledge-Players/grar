@@ -13,19 +13,23 @@ import nme.events.EventDispatcher;
 class Activity extends EventDispatcher
 {
 	/**
+	 * Score for this activity
+	 */
+	public var score (default, default): Int = 0;
+	/**
 	 * Path to the content file
 	 */
-	public var content: String;
+	public var content (default, default): String;
 	
 	/**
 	 * Path to the previous content file
 	 */
-	private var previousContent: String;
+	private var previousContent (default, default): String;
 	
 	/**
 	 * True if the activity has been done
 	 */
-	private var isEnded: Bool;
+	private var isEnded (default, default): Bool;
 
 	
 	/**

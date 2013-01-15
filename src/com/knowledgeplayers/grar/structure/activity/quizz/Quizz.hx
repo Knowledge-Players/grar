@@ -76,6 +76,8 @@ class Quizz extends Activity
 	public function validate() : Bool
 	{
 		// Count points
+		if (getCurrentAnswers().isFullyCorrect())
+			score++;
 		
 		// Next round
 		roundIndex++;

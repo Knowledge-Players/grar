@@ -3,6 +3,7 @@ package com.knowledgeplayers.grar.factory;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.activity.animagic.Animagic;
 import com.knowledgeplayers.grar.structure.activity.quizz.Quizz;
+import com.knowledgeplayers.grar.structure.score.ScoreChart;
 import haxe.xml.Fast;
 import nme.Lib;
 
@@ -23,7 +24,7 @@ class ActivityFactory
 	 * @param	content : Path to a content file for the creation
 	 * @return an newly created activity, or null if the given name doesn't correspond to a valid type
 	 */
-	public static function createActivity(activityName: String, ?content:String) : Null<Activity>
+	public static function createActivity(activityName: String, ?content: String, ?perk: String) : Null<Activity>
 	{
 		var creation: Activity = null;
 		switch (activityName.toLowerCase()) {
@@ -31,6 +32,9 @@ class ActivityFactory
 			case "animagic":creation =new Animagic(content);
 			default: Lib.trace("Factory - "+activityName+" :  Unsupported activity");
 		}
+		
+		if(creation != null)
+			ScoreChart.instance.subscribe(perk, creation);
 
 		return creation;
 	}
@@ -42,6 +46,6 @@ class ActivityFactory
 	 */
 	public static function createActivityFromXml(xml: Fast) : Null<Activity>
 	{
-		return createActivity(xml.att.Type, xml.att.Content);
+		return createActivity(xml.att.Type, xml.att.Content, xml.att.Perk);
 	}
 }
