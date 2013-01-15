@@ -18,7 +18,7 @@ We, [Knowledge-Players](http://www.knowledge-players.com), are waiting for your 
 * Integrate video
 
 ### API & Documentation
-You can find the API documentation on the [project page](http://http://knowledge-players.github.com/grar/)
+You can find the API documentation on the [project page](http://knowledge-players.github.com/grar/)
 
 ### License 
 GRAR is distributed using the open-source MIT license. For further information, read license.txt in this directory. 
