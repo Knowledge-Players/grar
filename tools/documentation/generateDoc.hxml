@@ -1,0 +1,33 @@
+-cmd mkdir bin
+
+--next
+
+-xml ../../haxedoc.xml
+-cp src
+-swf obj/grar.swf
+grar.ImportAll
+-lib grar
+-lib actuate
+-lib tilelayer
+--no-output
+--remap flash:nme
+
+--next
+
+-xml bin/grar.xml
+-cp src
+-cpp obj/grar
+grar.ImportAll
+-lib grar
+-lib actuate
+-lib tilelayer
+--no-output
+--remap flash:nme
+
+--next
+
+-cmd chxdoc -o output -f bin/grar.xml --deny=aze.*,nme.*,com.eclecticdesignstudio.*,cpp.*,flash.*,format.*,sys.*,/, --title="GRAR API" --subtitle="Digital Learning Framework" --footerText="MIT license - Copyright (c) 2013 <a href='http://www.knowledge-players.com' target='new'>Knowledge-Players</a>"
+-cmd rm -rf output/packages/haxe output/packages/native
+-cmd sed -i".bak" '/haxe/d;/native/d' output/all_packages.html
+-cmd sed -i".bak" 's/com\.knowledgeplayers\.//g' output/all_packages.html
+-cmd rm -rf output/all_packages.html.bak __chxdoctmp bin
