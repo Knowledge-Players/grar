@@ -184,9 +184,9 @@ class KpTextDownParser
 		
 		tf.text = substring;
 		if(hasBold)
-			tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName+ "bold"), regexBold.matchedPos().pos, regexBold.matchedPos().pos + regexBold.matchedPos().len - 1);
+			tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName+ "bold"), regexBold.matchedPos().pos, regexBold.matchedPos().pos + regexBold.matchedPos().len - 2);
 		if(hasItalic)
-			tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName + "italic"), regexIta.matchedPos().pos, regexIta.matchedPos().pos + regexIta.matchedPos().len - 1);
+			tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName + "italic"), regexIta.matchedPos().pos, regexIta.matchedPos().pos + regexIta.matchedPos().len - 2);
 			
 		return tf;
 	}

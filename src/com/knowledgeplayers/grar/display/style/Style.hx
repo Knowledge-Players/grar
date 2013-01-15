@@ -40,6 +40,18 @@ class Style extends Hash<String>
 	{
 		set(name, value);
 	}
+	
+	/**
+	 * Make this style inherit from the parent style
+	 * @param	parentName : Name of the parent style
+	 */
+	public function inherit(parentName) : Void 
+	{
+		var parent = StyleParser.instance.getStyle(parentName);
+		for(rule in parent.keys()){
+			set(rule, parent.get(rule));
+		}
+	}
 
 	/**
 	 * @return the font of the style

@@ -39,27 +39,29 @@ class StyleParser
 	 */
 	public function parse(xmlContent : String) : Void
 	{
-		var xml: Xml = Xml.parse(xmlContent);
-		for (styleNode in xml.elements()) {
+		var xml: Fast = new Fast(Xml.parse(xmlContent));
+		for (styleNode in xml.nodes.style) {
 			var style: Style = new Style();
-			style.name = styleNode.get("name");
-			for (child in styleNode.elements()) {
-				if (child.nodeName.toLowerCase() == "icon"){
-					style.icon = Assets.getBitmapData("items/" + child.get("value"));
-					style.iconPosition = child.get("position").toLowerCase();
+			style.name = styleNode.att.name;
+			if (styleNode.has.inherit)
+				style.inherit(styleNode.att.inherit);
+			for (child in styleNode.elements) {
+				if (child.name.toLowerCase() == "icon"){
+					style.icon = Assets.getBitmapData("items/" + child.att.value);
+					style.iconPosition = child.att.position.toLowerCase();
 				}
-				else if (child.nodeName.toLowerCase() == "background") {
-					if (Std.parseInt(child.get("value")) != null){
+				else if (child.name.toLowerCase() == "background") {
+					if (Std.parseInt(child.att.value) != null){
 						style.background = new Bitmap();
-						style.background.opaqueBackground = Std.parseInt(child.get("value"));
+						style.background.opaqueBackground = Std.parseInt(child.att.value);
 					}
 					else
-						style.background = new Bitmap(Assets.getBitmapData("items/" + child.get("value")));
+						style.background = new Bitmap(Assets.getBitmapData("items/" + child.att.value));
 				}
-				else if(child.get("value") != null)
-					style.addRule(child.nodeName, child.get("value"));
+				else
+					style.addRule(child.name, child.att.value);
 			}
-			styles.set(styleNode.get("name"), style);
+			styles.set(styleNode.att.name, style);
 		}
 	}
 
