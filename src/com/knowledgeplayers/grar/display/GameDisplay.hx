@@ -15,16 +15,30 @@ import nme.events.EventDispatcher;
 import nme.Lib;
 
 /**
- * ...
- * @author jbrichardet
+ * Display of a game
  */
 
 class GameDisplay extends Sprite
 {
+	/**
+	 * Part currently displayed
+	 */
 	private var currentPart: PartDisplay;
+	
+	/**
+	 * Menu of the game
+	 */
 	private var menu: MenuDisplay;
+	
+	/**
+	 * The game model
+	 */
 	private var game: Game;
 	
+	/**
+	 * Constructor
+	 * @param	game : the model to display
+	 */
 	public function new(game: Game)
 	{
 		super();

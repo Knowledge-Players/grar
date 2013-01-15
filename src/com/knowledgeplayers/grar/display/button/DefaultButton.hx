@@ -12,13 +12,37 @@ import nme.events.MouseEvent;
 
 class DefaultButton extends Sprite
 {
+	/**
+	 * Sprite containing the upstate
+	 */
 	public var upState: TileSprite;
+	
+	/**
+	 * Sprite containing the overstater
+	 */
 	public var overState: TileSprite;
+	
+	/**
+	 * Sprite containing the downstate
+	 */
 	public var downState: TileSprite;
-
+	
+	/**
+	 * Layer of the button
+	 */
 	public var layer: TileLayer;
+	
+	/**
+	 * Switch to enable the button
+	 */
 	public var enabled (default, enable): Bool;
 
+	/**
+	 * Constructor. Downstate and overstate are automatically set if their tile are
+	 * name upstateName+"_pressed" and upstateName+"_over"
+	 * @param	tilesheet : UI Sheet
+	 * @param	tile : Tile containing the upstate
+	 */
 	public function new(tilesheet: TilesheetEx, tile: String)
 	{
 		super();
@@ -32,21 +56,12 @@ class DefaultButton extends Sprite
 		
 		init();
 	}
-
 	
-	public function setAllListeners(listener: MouseEvent -> Void): Void 
-	{
-		removeAllEventsListeners(listener);
-		addEventListener(MouseEvent.MOUSE_OUT, listener);
-		addEventListener(MouseEvent.MOUSE_OVER, listener);
-		addEventListener(MouseEvent.ROLL_OVER, listener);
-		addEventListener(MouseEvent.ROLL_OUT, listener);
-		addEventListener(MouseEvent.CLICK, listener);
-		addEventListener(MouseEvent.DOUBLE_CLICK, listener);
-		addEventListener(MouseEvent.MOUSE_DOWN, listener);
-		addEventListener(MouseEvent.MOUSE_UP, listener);
-	}
-	
+	/**
+	 * Enable or disable the button
+	 * @param	activate : True to activate the button
+	 * @return true if the button is now activated
+	 */
 	public function enable(activate: Bool) : Bool
 	{
 		enabled = buttonMode = mouseEnabled = activate;
@@ -70,6 +85,19 @@ class DefaultButton extends Sprite
 	private function close(event: MouseEvent) : Void {}
 
 	// Private
+
+	private function setAllListeners(listener: MouseEvent -> Void): Void 
+	{
+		removeAllEventsListeners(listener);
+		addEventListener(MouseEvent.MOUSE_OUT, listener);
+		addEventListener(MouseEvent.MOUSE_OVER, listener);
+		addEventListener(MouseEvent.ROLL_OVER, listener);
+		addEventListener(MouseEvent.ROLL_OUT, listener);
+		addEventListener(MouseEvent.CLICK, listener);
+		addEventListener(MouseEvent.DOUBLE_CLICK, listener);
+		addEventListener(MouseEvent.MOUSE_DOWN, listener);
+		addEventListener(MouseEvent.MOUSE_UP, listener);
+	}
 
 	private function onOver(event: MouseEvent) : Void 
 	{

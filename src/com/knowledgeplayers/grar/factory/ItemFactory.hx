@@ -6,7 +6,7 @@ import haxe.xml.Fast;
 import nme.Lib;
 
 /**
- * ...
+ * Factory to create dialog items
  * @author jbrichardet
  */
 
@@ -18,6 +18,12 @@ class ItemFactory
 		
 	}
 	
+	/**
+	 * Create an item
+	 * @param	itemType : Type of the item
+	 * @param	xml : Fast xml node with infos
+	 * @return an item, or null if the type is not supported
+	 */
 	public static function createItem(itemType: String, ?xml: Fast) : Null<Item> 
 	{
 		var creation: Item = null;
@@ -31,6 +37,11 @@ class ItemFactory
 		return creation;
 	}
 	
+	/**
+	 * Create an item from XML infos
+	 * @param	xml : Fast xml node with infos
+	 * @return an item, or null if the type is not supported
+	 */
 	public static function createItemFromXml(xml: Fast) : Null<Item> 
 	{
 		return createItem(xml.att.Type, xml);

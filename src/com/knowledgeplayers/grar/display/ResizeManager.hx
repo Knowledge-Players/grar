@@ -3,18 +3,18 @@ package com.knowledgeplayers.grar.display;
 import haxe.xml.Fast;
 import nme.display.DisplayObject;
 import nme.display.Sprite;
-import nme.geom.Point;
-import nme.Lib;
 import nme.events.Event;
-import com.knowledgeplayers.grar.display.button.DefaultButton;
+import nme.Lib;
 
 /**
- * ...
- * @author kguilloteaux
+ * Manager of resize events
  */
 
 class ResizeManager extends Sprite
 {
+	/**
+	 * Instance of the manaager
+	 */
 	static var instance (getInstance, null): ResizeManager;
 	
 	private var resizedObjects:List<Dynamic>;
@@ -35,6 +35,9 @@ class ResizeManager extends Sprite
 		replacedObjects = new List<Dynamic>();
 	}
 	
+	/**
+	 * @return the instance of the manager
+	 */
 	public static function getInstance() : ResizeManager
 	{
 		if (instance == null)
@@ -43,6 +46,10 @@ class ResizeManager extends Sprite
 			return instance;
 	}
 	
+	/**
+	 * Listener of resize events
+	 * @param	e : the event
+	 */
 	public function onResize(?e: Event) : Void
 	{		
 		ratioW =  Lib.current.stage.stageWidth/originW;
@@ -61,7 +68,12 @@ class ResizeManager extends Sprite
 		}	
 	}
 	
-	public function addDisplayObjects(dp: DisplayObject, ?node:Fast) : Void
+	/**
+	 * Add a display object to be managed
+	 * @param	dp : object to manage
+	 * @param	node : fast xml node with infos
+	 */
+	public function addDisplayObjects(dp: DisplayObject, ?node: Fast) : Void
 	{		
 		var obj:Dynamic={};
 		obj.dp = dp;

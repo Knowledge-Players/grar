@@ -25,9 +25,14 @@ import nme.events.Event;
 import nme.geom.Point;
 import nme.Lib;
 
-
+/**
+ * Display of a part
+ */
 class PartDisplay extends Sprite
 {
+	/**
+	 * Part model to display
+	 */
 	public var part: Part;
 	
 	private var text: ScrollPanel;
@@ -39,6 +44,10 @@ class PartDisplay extends Sprite
 	private var resiz:String;
 	private var resizeD:ResizeManager;
 
+	/**
+	 * Constructor
+	 * @param	part : Part to display
+	 */
 	public function new(part: Part)
 	{
 		super();
@@ -55,7 +64,18 @@ class PartDisplay extends Sprite
 		addEventListener(TokenEvent.ADD,onTokenAdded);
 	}
 	
-	public function onTokenAdded(e: TokenEvent) : Void
+	/**
+	 * Unload the display from the scene
+	 */
+	public function unLoad() : Void 
+	{
+		while (numChildren > 0)
+			removeChildAt(numChildren - 1);
+	}
+
+	// Private
+	
+	private function onTokenAdded(e: TokenEvent) : Void
 	{		
 		for ( p in 1...Lambda.count ( displayObjects ) + 1) {
 			if (displayObjects.get(Std.string(p)) != null)
@@ -64,14 +84,6 @@ class PartDisplay extends Sprite
 			}
 		}
 	}
-	
-	public function unLoad() : Void 
-	{
-		while (numChildren > 0)
-			removeChildAt(numChildren - 1);
-	}
-
-	// Private
 	
 	private function parseContent(content: Xml) : Void
 	{

@@ -8,10 +8,9 @@ import nme.Lib;
 import haxe.xml.Fast;
 
 /**
- * ...
+ * Factory to create dialog pattern
  * @author jbrichardet
  */
-
 class PatternFactory 
 {
 	
@@ -20,6 +19,12 @@ class PatternFactory
 		
 	}
 	
+	/**
+	 * Create a pattern
+	 * @param	patternType : Type of the pattern
+	 * @param	patternName : Name of the pattern
+	 * @return the pattern or null if the type is not supported
+	 */
 	public static function createPattern(patternType: String, patternName: String) : Null<Pattern> 
 	{
 		var creation: Pattern = null;
@@ -33,6 +38,12 @@ class PatternFactory
 		return creation;
 	}
 	
+	/**
+	 * Create a pattern from XML infos
+	 * @param	xml : fast XML node with infos
+	 * @param	patternName : Name of the pattern
+	 * @return the pattern or null if the type is not supported
+	 */
 	public static function createPatternFromXml(xml: Fast, patternName: String) : Null<Pattern> 
 	{
 		return createPattern(xml.att.Type, patternName);

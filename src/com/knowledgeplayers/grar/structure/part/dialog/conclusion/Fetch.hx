@@ -1,6 +1,6 @@
-package com.knowledgeplayers.grar.dialog.dialogmodel.conclusion;
+package com.knowledgeplayers.grar.structure.part.dialog.conclusion;
 
-import com.knowledgeplayers.grar.dialog.dialogmodel.conclusion.ConclusionActivity;
+import com.knowledgeplayers.grar.structure.part.dialog.conclusion.ConclusionActivity;
 
 class Fetch extends ConclusionActivity 
 {

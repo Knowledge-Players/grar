@@ -16,12 +16,29 @@ import nme.events.EventDispatcher;
 import nme.Lib;
 import nme.net.URLLoader;
 
-
+/**
+ * KP inmplentation of a game
+ */
 class KpGame extends EventDispatcher, implements Game
 {	
+	/**
+	 * Connection mode
+	 */
 	public var mode (default, default): Mode;
+	
+	/**
+	 * Game title
+	 */
 	public var title (default, default): String;
+	
+	/**
+	 * State of the game
+	 */
 	public var state (default, default): String;
+	
+	/**
+	 * Global inventory
+	 */
 	public var inventory (default, null): Array<String>;
 
 	private var structureXml: Fast;
@@ -43,6 +60,10 @@ class KpGame extends EventDispatcher, implements Game
 		Lib.current.stage.addEventListener(Event.DEACTIVATE, onExit);
 	}
 
+	/**
+	 * Initialize the game with a xml structure
+	 * @param	xml : the structure
+	 */
 	public function init(xml: Xml) : Void
 	{
 		structureXml = new Fast(xml);
@@ -76,7 +97,11 @@ class KpGame extends EventDispatcher, implements Game
 		
 		checkIntegrity();
 	}
-
+	/**
+	 * Start the game
+	 * @param	partId : the ID of the part to start.
+	 * @return 	the part with id partId or null if this part doesn't exist
+	 */
 	public function start(partId: Int = 0) : Null<Part>
 	{
 		if(partId == 0)
@@ -89,7 +114,11 @@ class KpGame extends EventDispatcher, implements Game
 			return null;
 		}
 	}
-	
+		
+	/**
+	 * Return the next part of the game
+	 * @return the next part or null if the game is over
+	 */
 	public function next() : Null<Part>
 	{
 		if (partIndex == Lambda.count(parts)) {
@@ -104,6 +133,11 @@ class KpGame extends EventDispatcher, implements Game
 			return nextPart;
 	}
 	
+	/**
+	 * Add a part to the game at partIndex
+	 * @param	partIndex : position of the part in the game
+	 * @param	part : the part to add
+	 */
 	public function addPart(partIndex: Int, part: Part) : Void
 	{
 		part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
@@ -112,24 +146,31 @@ class KpGame extends EventDispatcher, implements Game
 		parts.set(partIndex, part);
 	}
 
-	private function addPartFromXml(partIndex: Int, partXml: Fast) : Void
-	{
-		var part: Part = PartFactory.createPartFromXml(partXml);
-		addPart(partIndex, part);
-		part.init(partXml);
-	}
 
+	/**
+	 * Add a language to the game
+	 * @param	value : name of the language
+	 * @param	path : path to the localisation folder
+	 * @param	flagIconPath : path to the flag for this language
+	 */
 	public function addLanguage(value: String, path: String, flagIconPath: String) : Void
 	{
 		Localiser.getInstance().localisations.set(value, path);
 		flags.set(value, flagIconPath);
 	}
 
+	/**
+	 * @return a string-based representation of the game
+	 */
 	override public function toString() : String
 	{
 		return title+" - "+mode+" - "+state+". Parts: \n\t"+parts.toString();
 	}
 
+	/**
+	 * Start the tracking
+	 * @param	mode : tracking mode (SCORM/AICC)
+	 */
 	public function initTracking(?mode: Mode) : Void
 	{
 		connection = new Connection();
@@ -141,19 +182,20 @@ class KpGame extends EventDispatcher, implements Game
 			stateInfos.loadStateInfos(state);
 		}
 	}
-	
-	private function checkIntegrity() : Void 
-	{
-		if(stateInfos.checksum != getAllParts().length){
-			throw "Invalid checksum ("+getAllParts().length+" must be "+stateInfos.checksum+"). The structure file must be corrupt";
-		}		
-	}
 
+	/**
+	 * Get the state of loading of the game
+	 * @return a float between 0 (nothing loaded) and 1 (everything's loaded)
+	 */
 	public function getLoadingCompletion() : Float
 	{
 		return nbPartsLoaded/Lambda.count(parts);
 	}
 	
+	/**
+	 * Return all the parts of the game
+	 * @return an array of parts
+	 */
 	public function getAllParts() : Array<Part> 
 	{
 		var array = new Array<Part>();
@@ -165,6 +207,20 @@ class KpGame extends EventDispatcher, implements Game
 	}
 	
 	// Privates
+	
+	private function checkIntegrity() : Void 
+	{
+		if(stateInfos.checksum != getAllParts().length){
+			throw "Invalid checksum ("+getAllParts().length+" must be "+stateInfos.checksum+"). The structure file must be corrupt";
+		}		
+	}
+	
+	private function addPartFromXml(partIndex: Int, partXml: Fast) : Void
+	{
+		var part: Part = PartFactory.createPartFromXml(partXml);
+		addPart(partIndex, part);
+		part.init(partXml);
+	}
 	
 	private function initLangs(xml: Xml) : Void 
 	{
@@ -215,10 +271,6 @@ class KpGame extends EventDispatcher, implements Game
 		inventory.push(e.tokenId);
 	}
 	
-	/**
-	 * Handler for minimization on mobile
-	 * @param	e: Event	Desactivation event
-	 */
 	private function onExit(e: Event) : Void 
 	{
 		Lib.exit();

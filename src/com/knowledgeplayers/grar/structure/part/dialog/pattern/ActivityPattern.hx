@@ -9,6 +9,9 @@ import haxe.xml.Fast;
 
 class ActivityPattern extends Pattern 
 {
+	/**
+	 * Item that will triger an activity
+	 */
 	public var event: RemarkableEvent;
 	
 	public function new(name: String)

@@ -5,24 +5,34 @@ import haxe.xml.Fast;
 import nme.display.Sprite;
 
 /**
- * ...
- * @author jbrichardet
+ * Display for a group of answer in a quizz
  */
-
 class QuizzGroupDisplay extends Sprite
 {
+	/**
+	 * Model to display
+	 */
 	public var model (default, setModel): QuizzGroup;
 	
 	private var items: Array<QuizzItemDisplay>;
 
+	/**
+	 * Constructor
+	 * @param	group : Model to display
+	 */
 	public function new(group: QuizzGroup) 
 	{
 		super();
 		items = new Array<QuizzItemDisplay>();
 		initDisplay();
-		setModel(group);
+		model = group;
 	}
 	
+	/**
+	 * Setter of the model
+	 * @param	model : Model to set
+	 * @return the model
+	 */
 	public function setModel(model: QuizzGroup) : QuizzGroup 
 	{
 		this.model = model;
@@ -30,13 +40,10 @@ class QuizzGroupDisplay extends Sprite
 		
 		return model;
 	}
-
-	public function initDisplay() : Void
-	{
-		x = QuizzDisplay.instance.groupX;
-		y = QuizzDisplay.instance.groupY;
-	}
 	
+	/**
+	 * Validate the answers
+	 */
 	public function validate(): Void
 	{
 		for (item in items) {
@@ -44,11 +51,22 @@ class QuizzGroupDisplay extends Sprite
 		}
 	}
 	
+	/**
+	 * Point out the good answers
+	 */
 	public function correct() : Void 
 	{
 		for (item in items) {
 			item.displayCorrection();
 		}
+	}
+
+	// Private
+	
+	private function initDisplay() : Void
+	{
+		x = QuizzDisplay.instance.groupX;
+		y = QuizzDisplay.instance.groupY;
 	}
 	
 	private function updateItems() : Void 

@@ -6,6 +6,7 @@ GRAR is a powerful framework to design training applications. Since it has been 
 We, [Knowledge-Players](http://www.knowledge-players.com), are waiting for your feedback!
 
 ### Features 
+* Application Generation with just XML files! (We'll write tutorials on that soon) 
 * Tracking which supports the main communication protocols with LMS (SCORM/SCORM2004/AICC).
 * Content localization.
 * UI management by spritesheet (based on [nme-tilelayer](https://github.com/elsassph/nme-tilelayer)). 
@@ -15,6 +16,9 @@ We, [Knowledge-Players](http://www.knowledge-players.com), are waiting for your 
 
 ### TODO
 * Integrate video
+
+### API & Documentation
+You can find the API documentation on the [project page](http://http://knowledge-players.github.com/grar/)
 
 ### License 
 GRAR is distributed using the open-source MIT license. For further information, read license.txt in this directory. 

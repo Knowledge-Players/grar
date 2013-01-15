@@ -3,12 +3,14 @@ import nme.display.Sprite;
 import nme.geom.Point;
 
 /**
- * ...
- * @author jbrichardet
+ * Graphic representation of a character of the game
  */
 
 class Character extends Sprite
 {
+	/**
+	 * Starting point of the character
+	 */
 	public var origin: Point;
 	
 	public function new() 

@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.dialog.dialogmodel;
+package com.knowledgeplayers.grar.structure.part.dialog;
 
 /**
  * Introduction to the dialog

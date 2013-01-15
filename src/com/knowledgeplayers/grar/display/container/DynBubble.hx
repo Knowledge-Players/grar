@@ -1,17 +1,18 @@
-package com.knowledgeplayers.grar.display.containers;
+package com.knowledgeplayers.grar.display.container;
 
 import com.eclecticdesignstudio.motion.Actuate;
 import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
 
-
-
-
 /**
- * @author jbrichardet
+ * Container that display text one character at a time
+ * @deprecated
  */
 class DynBubble
 {	
+	/**
+	 * Instance of the DynBubble
+	 */
 	public static var instance (getInstance, null): DynBubble;
 
 	private static var isActive: Bool;
@@ -20,11 +21,21 @@ class DynBubble
 	{
 	}
 
+	/**
+	 * @return the instance of the bubble
+	 */
 	public static function getInstance() : DynBubble
 	{
 		instance == null ? return new DynBubble() : return instance;
 	}
 
+	/**
+	 * 
+	 * @param	textField
+	 * @param	timeNextLetter
+	 * @param	timeSpace
+	 * @param	timeLine
+	 */
 	public function convert(textField: StyledTextField, timeNextLetter: Float = 0.05, timeSpace: Float = 0.1, timeLine: Float = 0.5) : Void 
 	{
 		if (textField == null)
@@ -44,6 +55,9 @@ class DynBubble
 		}
 	}
 
+	/**
+	 * Stop the bubble
+	 */
 	public function stop() 
 	{
 		isActive = false;
@@ -71,7 +85,6 @@ class DynBubble
 				return;
 			}
 
-			//nme.Lib.trace("style: "+tag+" for "+message.charAt(currentLetter));
 			textField.appendText(message.charAt(currentLetter));
 			#if flash
 				var length: Int = textField.length;
@@ -79,7 +92,7 @@ class DynBubble
 				var length: Int = textField.text.length;
 			#end
 			if(tag != "")
-				textField.setPartialStyle(StyleParser.getStyle(tag), length-1, length);
+				textField.setPartialStyle(StyleParser.instance.getStyle(tag), length-1, length);
 			else{
 				textField.setPartialStyle(textField.style, length-1, length);
 			}

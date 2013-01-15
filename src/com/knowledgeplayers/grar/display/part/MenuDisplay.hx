@@ -8,14 +8,17 @@ import nme.events.MouseEvent;
 import nme.Lib;
 
 /**
- * ...
- * @author jbrichardet
+ * Display of a menu
  */
 
 class MenuDisplay extends Sprite
 {
 	private var parts: Array<Part>;
 	
+	/**
+	 * Constructor
+	 * @param	game : Game moddel linked to the menu
+	 */
 	public function new(game: Game) 
 	{
 		super();
@@ -35,8 +38,15 @@ class MenuDisplay extends Sprite
 			sprite.addChild(status);
 			addChild(sprite);
 		}
-		
 	}
+	
+	/**
+	 * Abstract function which launch the given part
+	 * @param	part : Part to start
+	 */
+	dynamic public function launchPart(part: Part){}
+	
+	// Private
 	
 	private function onPartClick(e: MouseEvent) : Void 
 	{
@@ -49,7 +59,5 @@ class MenuDisplay extends Sprite
 			}
 		}
 	}
-	
-	dynamic public function launchPart(part: Part){}
 	
 }

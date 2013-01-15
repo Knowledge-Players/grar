@@ -9,14 +9,17 @@ import nme.display.Sprite;
 import nme.Lib;
 
 /**
- * ...
- * @author jbrichardet
+ * Parser for the KP MarkUp language
  */
-
 class KpTextDownParser 
 {
 	private static var specialRegEx: EReg = ~/[#*_>.!@+-]+/g;
 	
+	/**
+	 * Parse the string for MarkUp
+	 * @param	text : text to parse
+	 * @return a sprite with well-formed text
+	 */
 	public static function parse(text: String) : Sprite 
 	{
 		var sprite = new Sprite();

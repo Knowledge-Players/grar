@@ -1,21 +1,23 @@
 package com.knowledgeplayers.grar.display.container;
 
 import com.knowledgeplayers.grar.factory.UiFactory;
-import nme.Assets;
-import nme.display.DisplayObject;
-import nme.display.DisplayObjectContainer;
 import nme.display.Sprite;
 import nme.events.MouseEvent;
-import nme.Lib;
 
 /**
- * ...
- * @author jbrichardet
+ * ScrollPanel to manage text overflow, with auto scrollbar
  */
 
 class ScrollPanel extends Sprite
 {
+	/**
+	 * Text in the panel
+	 */
 	public var content (default, setContent): Sprite;
+	
+	/**
+	 * ScrollBar of the panel. Null if the content is smaller than the panel
+	 */
 	public var scrollBar: ScrollBar;
 	
 	private var maskWidth: Float;
@@ -23,6 +25,12 @@ class ScrollPanel extends Sprite
 	private var scrollLock: Bool;
 	private var scrollable: Bool;
 
+	/**
+	 * Constructor
+	 * @param	width : Width of the displayed content
+	 * @param	height : Height of the displayed content
+	 * @param	scrollLock : Disable scroll. False by default
+	 */
 	public function new(width: Float, height: Float, scrollLock: Bool = false ) 
 	{
 		super();
@@ -32,11 +40,11 @@ class ScrollPanel extends Sprite
 		addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
 	}
 	
-	private function scrollToRatio(position: Float) 
-	{
-		content.y = -position * content.height;
-	}
-	
+	/**
+	 * Set the text to the panel
+	 * @param	content : Text to set
+	 * @return the text
+	 */
 	public function setContent(content: Sprite) : Sprite 
 	{
 		clear();
@@ -61,6 +69,13 @@ class ScrollPanel extends Sprite
 		}
 		
 		return content;
+	}
+	
+	// Private
+	
+	private function scrollToRatio(position: Float) 
+	{
+		content.y = -position * content.height;
 	}
 	
 	private function clear() 

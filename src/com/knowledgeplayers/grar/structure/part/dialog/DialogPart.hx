@@ -20,6 +20,9 @@ import com.knowledgeplayers.grar.factory.PatternFactory;
 
 class DialogPart extends StructurePart
 {
+	/**
+	 * Array of the patterns composing the dialog
+	 */
 	public var patterns: Array<Pattern>;
 
 	public function new() 
@@ -52,6 +55,9 @@ class DialogPart extends StructurePart
 	
 	}
 	
+	/**
+	 * @return the next item in a vertical flow, or null if the flow reach its end
+	 */
 	public function getNextVerticalIndex() : Null<ChoiceItem> 
 	{
 		var item: ChoiceItem = null;

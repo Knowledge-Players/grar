@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.dialog.dialogmodel.conclusion;
+package com.knowledgeplayers.grar.structure.part.dialog.conclusion;
 
 class Shake extends ConclusionActivity 
 {

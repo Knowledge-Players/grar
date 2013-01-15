@@ -5,15 +5,27 @@ import nme.Assets;
 import nme.display.Bitmap;
 import nme.Lib;
 
+/**
+ * Parser and manager of the styles
+ */
 class StyleParser 
 {
+	/**
+	 * Hash of the styles parsed
+	 */
 	public static var styles = new Hash<Style>();
 	
+	/**
+	 * Instance of the parser
+	 */
 	public static var instance (getInstance, null): StyleParser;
 	
 	private function new() { }
 
-	public static function getInstance()
+	/**
+	 * @return the instance of the parser
+	 */
+	public static function getInstance() : StyleParser
 	{
 		if (instance == null)
 			return new StyleParser();
@@ -21,6 +33,10 @@ class StyleParser
 			return instance;
 	}
 
+	/**
+	 * Parse the style file
+	 * @param	xmlContent : content of the style file
+	 */
 	public function parse(xmlContent : String) : Void
 	{
 		var xml: Xml = Xml.parse(xmlContent);
@@ -47,6 +63,11 @@ class StyleParser
 		}
 	}
 
+	/**
+	 * Get a style by its name. The style file must have been parsed first!
+	 * @param	name : Name of the style
+	 * @return the style, or null if it doesn't exist
+	 */
 	public function getStyle(name: String) : Null<Style>
 	{
 		if(Lambda.count(styles) == 0)

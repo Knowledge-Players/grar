@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <project name="grar" url="https://github.com/Knowledge-Players/grar.git" license="MIT">
     <user name="knowledge-players"/>
     <tag v="flash"/>
     <tag v="nme"/>
     <tag v="cpp"/>
     <description>GRAR is a powerful framework designed for training applications</description>
-    <version name="0.1">Initial release, basics functions are OK</version>
+    <version name="0.2">Minors Fixes and new API doc</version>
 	<depends name="nme"/>
+	<depends name="actuate"/>
+	<depends name="tilelayer"/>
 </project>

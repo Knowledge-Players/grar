@@ -23,13 +23,23 @@ import nme.Lib;
 
 class QuizzItemDisplay extends Sprite
 {
+	/**
+	 * Icon for the item
+	 */
 	public var icon: Bitmap;
+	
+	/**
+	 * Icon to show good answers
+	 */
 	public var correction: Bitmap;
 	
 	private var textS:ScrollPanel;
 	private var model: QuizzItem;
 
-	
+	/**
+	 * Construcor
+	 * @param	item : Model to display
+	 */
 	public function new(item: QuizzItem) 
 	{
 		super();
@@ -62,19 +72,22 @@ class QuizzItemDisplay extends Sprite
 		addChild(correction);
 	}
 	
-	public function validate() : Int 
+	/**
+	 * Change the icon to iconCheckRight if the answer is correct
+	 */
+	public function validate() : Void 
 	{
-		var checkedNumber = 0;
 		if(model.isChecked){
 			if(model.isAnswer)
 				icon.bitmapData = QuizzDisplay.instance.iconCheckRight;
 			else
-				icon.bitmapData = QuizzDisplay.instance.iconCheckFalse;
+				icon.bitmapData = QuizzDisplay.instance.iconCheckWrong;
 		}
-		
-		return checkedNumber;
 	}
 
+	/**
+	 * Display the correction icon if the item is a right answer
+	 */
 	public function displayCorrection() : Void 
 	{
 		if(model.isAnswer)

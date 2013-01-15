@@ -7,6 +7,9 @@ import haxe.xml.Fast;
 
 class CollectPattern extends Pattern
 {
+	/**
+	 * Vertical flow of the pattern
+	 */
 	public var verticalFlow: Array<ChoiceItem>;
 	
 	private var firstChoiceItem: Bool = true;
@@ -35,6 +38,9 @@ class CollectPattern extends Pattern
 		}
 	}
 
+	/**
+	 * @return the next item in the vertical flow, or null if the flow reachs its end
+	 */
 	public function progressVertically() : Null<ChoiceItem>
 	{
 		var choice: ChoiceItem = null;

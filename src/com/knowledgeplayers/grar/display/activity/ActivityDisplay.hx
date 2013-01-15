@@ -6,13 +6,42 @@ import nme.display.DisplayObject;
 import nme.display.Sprite;
 
 /**
- * ...
- * @author jbrichardet
+ * Abstract display for an activity
  */
 
 class ActivityDisplay extends Sprite
 {	
+	/**
+	 * Model to display
+	 */
 	public var model(default, setModel): Activity;
+	
+	/**
+	 * Setter for the model
+	 * @param	model : the model to set
+	 * @return the model
+	 */
+	public function setModel(model: Activity) : Activity 
+	{
+		return null;
+	}
+	
+	/**
+	 * Set the display with XML infos
+	 * @param	display : fast XML node with display infos
+	 */
+	public function setDisplay(display: Fast) : Void { }	
+	
+	/**
+	 * Start the activity
+	 */
+	public function startActivity() : Void {}
+	
+	private function unLoad():Void 
+	{
+		while (numChildren > 0)
+			removeChildAt(numChildren - 1);
+	}
 	
 	private function new() 
 	{
@@ -32,19 +61,4 @@ class ActivityDisplay extends Sprite
 		else
 			display.scaleY = Std.parseFloat(node.att.ScaleY);
 	}
-	
-	public function setModel(model: Activity) : Activity 
-	{
-		return null;
-	}	
-	
-	private function unLoad():Void 
-	{
-		while (numChildren > 0)
-			removeChildAt(numChildren - 1);
-	}
-	
-	public function setDisplay(display: Fast) : Void { }	
-	
-	public function startActivity() : Void {}
 }

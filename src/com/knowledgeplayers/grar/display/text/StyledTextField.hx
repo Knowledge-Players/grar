@@ -7,10 +7,20 @@ import nme.events.MouseEvent;
 import nme.text.TextFormat;
 import nme.text.TextField;
 
+/**
+ * Textfield with embedded style
+ */
 class StyledTextField extends TextField 
 {
+	/**
+	 * Style of the text
+	 */
 	public var style(default, setStyle): Style;
 
+	/**
+	 * Constructor
+	 * @param	style : Style of the text
+	 */
 	public function new(?style: Style)
 	{
 		super();
@@ -26,6 +36,11 @@ class StyledTextField extends TextField
 		selectable = mouseEnabled = false;
 	}
 
+	/**
+	 * Set the style of the text
+	 * @param	style : Style to set
+	 * @return  the style
+	 */
 	public function setStyle(style : Style) : Style
 	{
 		this.style = style;
@@ -35,11 +50,19 @@ class StyledTextField extends TextField
 		return style;
 	}
 
+	/**
+	 * Set a style between bounds
+	 * @param	style : Style to set
+	 * @param	startIndex : First affected char
+	 * @param	endIndex : Last affected char
+	 */
 	public function setPartialStyle(style : Style, startIndex: Int, endIndex: Int) : Void
 	{
 		applyStyle(style, startIndex, endIndex);
 	}
 
+	// Private
+	
 	private function applyStyle(style: Style, startIndex: Int = -1, endIndex: Int = -1) : Void
 	{
 		var textFormat : TextFormat = new TextFormat(style.getFont().fontName, style.getSize(), style.getColor(), style.getBold(), style.getItalic(), style.getUnderline());

@@ -9,7 +9,7 @@ import com.knowledgeplayers.grar.structure.part.Part;
 import nme.Lib;
 
 /**
- * ...
+ * Factory to create displays
  * @author jbrichardet
  */
 
@@ -20,6 +20,11 @@ class DisplayFactory
 	{
 	}
 	
+	/**
+	 * Create a display for a part
+	 * @param	part : Part to display
+	 * @return the corresponding PartDisplay
+	 */
 	public static function createPartDisplay(part: Part) : Null<PartDisplay>
 	{
 		if (part == null)

@@ -1,21 +1,27 @@
 package com.knowledgeplayers.grar.localisation;
 
 import com.knowledgeplayers.grar.event.LocaleEvent;
-import nme.events.EventDispatcher;
-import nme.net.URLLoader;
-import nme.net.URLRequest;
-import nme.net.URLLoaderDataFormat;
-import nme.events.IOErrorEvent;
-import nme.events.Event;
-
 import com.knowledgeplayers.grar.util.XmlLoader;
+import nme.events.Event;
+import nme.events.EventDispatcher;
 
+
+/**
+ * Localisation
+ */
 class Localisation extends EventDispatcher
 {
+	/**
+	 * Name of the localisation
+	 */
 	public var name(default, null): String;
 
 	private var tradHash: Hash<String>;
 
+	/**
+	 * Constructor
+	 * @param	name : Name of the localisation (aka language)
+	 */
 	public function new(name: String)
 	{
 		super();
@@ -23,15 +29,29 @@ class Localisation extends EventDispatcher
 		this.name = name;
 	}
 	
+	/**
+	 * Set the path to the file for this locale
+	 * @param	path : path to the locale folder
+	 */
 	public function setLocaleFile(path: String) {
 		var xml = XmlLoader.load(path, onLoadComplete);
 		#if !flash
 			parseContent(xml);
 		#end
 	}
+	
+	/**
+	 * Get the localised text for an item
+	 * @param	key : key of the item
+	 * @return the localised text
+	 */
+	public function getItem(key : String) : String
+	{
+		return tradHash.get(key);
+	}
 
 	// Can't use haxe.xml.Fast because Excel XML isn't reconized
-	function parseContent(content: Xml) : Void
+	private function parseContent(content: Xml) : Void
 	{
 		var table: Xml = null;
 		for(element in content.firstElement().elements()){
@@ -63,11 +83,6 @@ class Localisation extends EventDispatcher
 			}
 		}
 		dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));
-	}
-
-	public function getItem(key : String) : String
-	{
-		return tradHash.get(key);
 	}
 	
 	// Handlers

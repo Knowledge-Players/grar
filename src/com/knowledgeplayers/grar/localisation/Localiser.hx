@@ -7,15 +7,29 @@ import nme.events.EventDispatcher;
 
 import haxe.xml.Fast;
 
-/*
- * Singleton manager of the locale
+/**
+ * Singleton manager of the localisation
  */
 class Localiser extends EventDispatcher
 {	
+	/**
+	 * Instance of the singleton
+	 */
 	public static var instance (getInstance, null): Localiser;
 	
+	/**
+	 * Current locale
+	 */
 	public var currentLocale (default, setCurrentLocale): String;
+	
+	/**
+	 * Hash of all the localisations registred in the localiser
+	 */
 	public var localisations (default, null): Hash<String>;
+	
+	/**
+	 * Path of the structure file that describes the layout
+	 */
 	public var layoutPath (default, setLayoutFile): String;
 	
 	private var introId: String;
@@ -28,6 +42,9 @@ class Localiser extends EventDispatcher
 		localisations = new Hash<String>();
 	}
 	
+	/**
+	 * @return the instance of the singleton
+	 */
 	public static function getInstance() : Localiser
 	{
 		if (instance == null){
@@ -36,6 +53,11 @@ class Localiser extends EventDispatcher
 		return instance;
 	}
 
+	/**
+	 * Setter of the layout file
+	 * @param	path : Path to the file
+	 * @return the path
+	 */
 	public function setLayoutFile(path: String) : String
 	{
 		layoutPath = path;
@@ -43,12 +65,22 @@ class Localiser extends EventDispatcher
 		return layoutPath;
 	}
 
+	/**
+	 * Setter of the current locale
+	 * @param	locale : name of the current locale
+	 * @return the name of the current locale
+	 */
 	public function setCurrentLocale(locale: String) : String
 	{
 		currentLocale = locale;
 		return currentLocale;
 	}
 
+	/**
+	 * Get the localised text for the specified item
+	 * @param	key : key of the item
+	 * @return the localised text
+	 */
 	public function getItemContent(key: String) : Null<String>
 	{
 		if(localisation != null)

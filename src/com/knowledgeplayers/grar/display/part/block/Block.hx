@@ -1,7 +1,7 @@
-package com.knowledgeplayers.grar.structure.part.block;
+package com.knowledgeplayers.grar.display.part.block;
 
 import haxe.xml.Fast;
-import nme.Lib;
+import nme.display.Sprite;
 
 // A voir un peu d'optimisation
 
@@ -159,7 +159,7 @@ class Block
 			if(xml.hasNode.Sprite){
 				sprites = new Array<Sprite>();
 				for(sprite in xml.nodes.Sprite){
-					sprites.push(new Sprite(sprite));
+					sprites.push(new Sprite());
 				}
 			}
 		}

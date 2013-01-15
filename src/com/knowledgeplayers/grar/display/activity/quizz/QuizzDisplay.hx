@@ -22,40 +22,105 @@ import nme.Lib;
 import nme.display.DisplayObject;
 
 /**
- * Display for quizz activity
+ * Display for quizz activity. Since all quizz in a game must look alike,
+ * this is a singleton.
  * @author jbrichardet
  */
 
 class QuizzDisplay extends ActivityDisplay
 {
+	/**
+	 * Instance
+	 */
 	public static var instance (getInstance, null): QuizzDisplay;
 	
+	/**
+	 * Question field
+	 */
 	public var question: StyledTextField;
+	
+	/**
+	 * Validate button
+	 */
 	public var validationButton: DefaultButton;
+	
+	/**
+	 * Group of answers
+	 */
 	public var quizzGroup: QuizzGroupDisplay;
+	
+	/**
+	 * Lock state of the quizz. If true, the answers can't be changed
+	 */
 	public var locked: Bool;
+	
 	// Icons
+	/**
+	 * Icon to display when an answer is checked
+	 */
 	public var iconCheck (default, default): BitmapData;
+	
+	/**
+	 * Icon to display when an answer is unchecked
+	 */
 	public var iconUncheck (default, default): BitmapData;
+	
+	/**
+	 * Icon to display when an answer is right
+	 */
 	public var iconCheckRight (default, default): BitmapData;
-	public var iconCheckFalse (default, default): BitmapData;
+	
+	/**
+	 * Icon to display when an answer is wrong
+	 */
+	public var iconCheckWrong (default, default): BitmapData;
+	
+	/**
+	 * Icon to display near the goods answers
+	 */
 	public var correction: BitmapData;
+	
 	// Layouts
+	/**
+	 * X postion of the items in a group
+	 */
 	public var itemXOffset: Float;
+	
+	/**
+	 * X position of the correction icon
+	 */
 	public var correctionXOffset: Float;
+	
+	/**
+	 * X offset in the answer group
+	 */
 	public var groupXOffset: Float;
+	
+	/**
+	 * Y offset in the answer group
+	 */
 	public var groupYOffset: Float;
+	
+	/**
+	 * X position of the answer group
+	 */
 	public var groupX: Float;
+	
+	/**
+	 * Y position of the answer group
+	 */
 	public var groupY: Float;
 	
 	private var quizz: Quizz;
 	private var validateContent: String;
 	private var validateTag: String;
-
 	private var displayObjects:Hash<DisplayObject>;
 	private var resizeD:ResizeManager;
 	public var content:Fast; 
 		
+	/**
+	 * @return the instance
+	 */
 	public static function getInstance() : QuizzDisplay
 	{
 		if (instance == null)
@@ -74,6 +139,8 @@ class QuizzDisplay extends ActivityDisplay
 		
 		return model;
 	}
+	
+	// Private
 	
 	private function onEndActivity(e:Event):Void 
 	{
@@ -197,7 +264,7 @@ class QuizzDisplay extends ActivityDisplay
 				case "check": iconCheck = iconData;
 				case "uncheck": iconUncheck = iconData;
 				case "checkright": iconCheckRight = iconData;
-				case "checkfalse": iconCheckFalse = iconData;
+				case "checkfalse": iconCheckWrong = iconData;
 				default: Lib.trace(icon.att.Type + ": Unsupported icon type");
 			}
 		}

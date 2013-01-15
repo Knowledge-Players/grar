@@ -1,7 +1,6 @@
-package com.knowledgeplayers.grar.structure.part.block;
+package com.knowledgeplayers.grar.display.part.block;
 
 import haxe.xml.Fast;
-import nme.Lib;
 
 class Item 
 {

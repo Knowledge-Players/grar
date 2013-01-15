@@ -20,18 +20,61 @@ import com.knowledgeplayers.grar.util.XmlLoader;
 
 class StructurePart extends EventDispatcher, implements Part
 {
+	/**
+	 * Name of the part
+	 */
 	public var name (default, default): String;
+	
+	/**
+	 * ID of the part
+	 */
 	public var id (default, default): Int;
+	
+	/**
+	 * Path to the XML structure file 
+	 */
 	public var file (default, null): String;
+	
+	/**
+	 * Path to the XML display file
+	 */
 	public var display (default, default): String;
+	
+	/**
+	 * True if the part is done
+	 */
 	public var isDone (default, default): Bool;
 
+	/**
+	 * Misc options for the part
+	 * @todo Do something with the options
+	 */
 	public var options (default, null): Hash<String>;
+	
+	/**
+	 * Array of all the activities in the part
+	 */
 	public var activities (default, null): IntHash<Activity>;
+	
+	/**
+	 * Hash of the sub-parts
+	 */
 	public var parts (default, null): IntHash<Part>;
-	public var items (default, null): Array<Item>;
+	
+	/**
+	 * Inventory specific to the part
+	 */
 	public var inventory (default, null): Array<String>;
+	
+	/**
+	 * Sound playing during the part
+	 */
 	public var soundLoop (default, default): Sound;
+	
+	/**
+	 * Text items of the part
+	 */
+	public var items (default, null): Array<Item>;
 
 	private var nbSubPartLoaded: Int = 0;
 	private var nbSubPartTotal: Int = 0;
@@ -45,11 +88,16 @@ class StructurePart extends EventDispatcher, implements Part
 		parts = new IntHash<Part>();
 		activities = new IntHash<Activity>();
 		options = new Hash<String>();
-		items = new Array<Item>();
 		inventory = new Array<String>();
+		items = new Array<Item>();
 		addEventListener(TokenEvent.ADD, onAddToken);
 	}
 
+	/**
+	 * Initialise the part with an XML node
+	 * @param	xml : fast node with structure infos
+	 * @param	filePath : path to an XML structure file (set the file variable)
+	 */
 	public function init(xml: Fast, filePath: String = "") : Void
 	{
 		file = filePath;
@@ -68,7 +116,12 @@ class StructurePart extends EventDispatcher, implements Part
 			fireLoaded();
 	}
 
-	public function start(forced: Bool = false) : Part
+	/**
+	 * Start the part if it hasn't been done
+	 * @param	forced : true to start the part even if it has already been done
+	 * @return this part, or null if it can't be start
+	 */
+	public function start(forced: Bool = false) : Null<Part>
 	{
 		if(!isDone || forced){
 			enterPart();
@@ -78,6 +131,9 @@ class StructurePart extends EventDispatcher, implements Part
 			return null;
 	}
 
+	/**
+	 * @return the next item in the part or null if the part is over
+	 */
 	public function getNextItem() : Null<Item>
 	{
 		if(itemIndex < items.length){
@@ -90,6 +146,9 @@ class StructurePart extends EventDispatcher, implements Part
 		}
 	}
 
+	/**
+	 * @return the next undone part
+	 */
 	public function next() : Null<Part>
 	{
 		var part: Part = null;
@@ -110,21 +169,34 @@ class StructurePart extends EventDispatcher, implements Part
 			return part;
 	}
 
+	/**
+	 * Tell if this part has sub-part or not
+	 * @return true if it has sub-part
+	 */
 	public function hasParts() : Bool
 	{
 		return partsCount() != 0;
 	}
 
+	/**
+	 * @return the number of sub-part
+	 */
 	public function partsCount() : Int
 	{
 		return Lambda.count(parts);
 	}
 
+	/**
+	 * @return the number of activities in the part
+	 */
 	public function activitiesCount() : Int
 	{
 		return Lambda.count(activities);
 	}
 
+	/**
+	 * @return all the sub-part of this part
+	 */
 	public function getAllParts() : Array<Part>
 	{
 		var array = new Array<Part>();
@@ -137,6 +209,27 @@ class StructurePart extends EventDispatcher, implements Part
 			array.push(this);
 		return array;
 	}
+
+	/**
+	 * @return a string-based representation of the part
+	 */
+	override public function toString() : String
+	{
+		return "Part " + name + " " + file + " has " +
+		(hasParts()?"parts: \n" + parts.toString():"no part") +
+		" and " + (activitiesCount() != 0?"activities: " + activities.toString():"no activity") +
+		(items.length==0 ? ". It has no items":". It's composed by "+items.toString());
+	}
+		
+	/**
+	 * Tell if this part is a dialog
+	 * @return true if this part is a dialog
+	 */
+	public function isDialog() : Bool
+	{
+		return false;
+	}
+	
 	// Private
 	 
 	private function parseContent(content: Xml) : Void
@@ -184,19 +277,6 @@ class StructurePart extends EventDispatcher, implements Part
 				}
 			}
 		}
-	}
-
-	override public function toString() : String
-	{
-		return "Part " + name + " " + file + " has " +
-		(hasParts()?"parts: \n" + parts.toString():"no part") +
-		" and " + (activitiesCount() != 0?"activities: " + activities.toString():"no activity") +
-		(items.length==0 ? ". It has no items":". It's composed by "+items.toString());
-	}
-	
-	public function isDialog() : Bool
-	{
-		return false;
 	}
 
 	// Handlers

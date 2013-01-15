@@ -6,15 +6,23 @@ import nme.Lib;
 import nme.net.URLRequest;
 
 /**
- * ...
- * @author jbrichardet
+ * Url Filed
  */
 
 class UrlField extends Sprite
 {
+	/**
+	 * Url targeted by the field
+	 */
 	public var url: String;
+	
 	private var textField: StyledTextField;
 
+	/**
+	 * Constructor
+	 * @param	url : URL to target
+	 * @param	text : text to display instead of the URL
+	 */
 	public function new(url: String, ?text: String) 
 	{
 		super();

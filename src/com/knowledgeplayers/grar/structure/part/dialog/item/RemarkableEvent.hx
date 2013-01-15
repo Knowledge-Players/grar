@@ -7,8 +7,15 @@ import nme.Lib;
 
 class RemarkableEvent extends Item 
 {
+	/**
+	 * Activity to start when this item is reached
+	 */
 	public var activity (default, default): Activity;
 	
+	/**
+	 * Constructor
+	 * @param	xml : fast xml node with structure infos
+	 */
 	public function new(?xml: Fast)
 	{
 		super();

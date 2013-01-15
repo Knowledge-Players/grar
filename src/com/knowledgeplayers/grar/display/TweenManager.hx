@@ -7,24 +7,40 @@ import nme.geom.Point;
 import nme.Lib;
 
 /**
- * ...
- * @author jbrichardet
+ * Manage the most frequently used tweens
  */
 
 class TweenManager 
 {
+	/**
+	 * Get a fade in effect for the object
+	 * @param	display : target of the tween
+	 * @return the actuator
+	 */
 	public static function fadeIn(display: DisplayObject) : IGenericActuator
 	{
 		display.alpha = 0;
 		return Actuate.tween (display, 1, { alpha: 1 }).ease(Cubic.easeOut);
 	}
 	
+	/**
+	 * Get a fade out effect for the object
+	 * @param	display : target of the tween
+	 * @return the actuator
+	 */
 	public static function fadeOut(display: DisplayObject) : IGenericActuator
 	{
 		display.alpha = 1;
 		return Actuate.tween (display, 1, { alpha: 0 }).ease(Cubic.easeOut);
 	}
 	
+	/**
+	 * Translate the object
+	 * @param	display : target of the tween
+	 * @param	origin : starting point of the object
+	 * @param	destination : ending point of the object
+	 * @return the actuator
+	 */
 	public static function translate(display: DisplayObject, origin: Point, destination: Point) : IGenericActuator
 	{
 		display.x = origin.x;
@@ -32,6 +48,13 @@ class TweenManager
 		return Actuate.tween (display, 1, { x: destination.x, y: destination.y }).ease(Cubic.easeOut);
 	}
 	
+	/**
+	 * Translate the object horizontaly only
+	 * @param	display : target of the tween
+	 * @param	origin : starting direction of the object
+	 * @param	destination : ending point of the object
+	 * @return the actuator
+	 */
 	public static function translateHorizontaly(display: DisplayObject, origin: Direction, destination: Point) : IGenericActuator
 	{
 		var originPoint: Point = new Point();
@@ -53,6 +76,9 @@ class TweenManager
 	}
 }
 
+/**
+ * Possible direction for tweens
+ */
 enum Direction 
 {
 	RIGHT;

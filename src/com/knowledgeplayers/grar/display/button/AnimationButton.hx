@@ -8,16 +8,31 @@ import nme.events.Event;
 import nme.events.MouseEvent;
 
 /**
- * ...
- * @author kguilloteaux
+ * Button with an animation
  */
-
  class AnimationButton extends CustomEventButton
 {
+	/**
+	 * TileGroup for the button
+	 */
 	public var iconGroup:TileGroup;
+	
+	/**
+	 * Tile for the background
+	 */
 	public var fondIcon:TileSprite;
+	
+	/**
+	 * Tile for the animation
+	 */
 	public var arrowIcon:TileClip;
 
+	/**
+	 * Constructor
+	 * @param	tilesheet : UI sheet
+	 * @param	tile : Tile containing the button
+	 * @param	eventName : Custom event to dispatch
+	 */
 	public function new(tilesheet: TilesheetEx, tile: String, ?eventName: String) 
 	{
 		if (eventName == null) {
@@ -30,6 +45,8 @@ import nme.events.MouseEvent;
 		super(eventType, tilesheet,tile);
 		addIcon();
 	}
+	
+	// P¨rivates
 	
 	private function addIcon():Void
 	{

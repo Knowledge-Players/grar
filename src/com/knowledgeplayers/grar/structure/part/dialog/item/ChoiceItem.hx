@@ -7,7 +7,14 @@ class ChoiceItem extends Item
 	public var tokenId (default, default): String;
 	public var target (default, default): String;
 	public var tokenType (default, default): String;
-
+	
+	/**
+	 * Constructor
+	 * @param	xml : fast xml node with structure infos
+	 * @param	tokenId : ID of the token
+	 * @param	target : Inventory to store the token (activity/global)
+	 * @param	tokenType : type of the token (info/physic)
+	 */
 	public function new(?xml: Fast, ?tokenId: String, ?target: String, ?tokenType: String)
 	{
 		super(xml);
@@ -23,6 +30,9 @@ class ChoiceItem extends Item
 		}
 	}
 	
+	/**
+	 * @return true if the item has a token
+	 */
 	public function hasToken() : Bool
 	{
 		return tokenId != null;

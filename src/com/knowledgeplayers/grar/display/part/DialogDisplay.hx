@@ -19,8 +19,7 @@ import nme.events.Event;
 import nme.Lib;
 
 /**
- * ...
- * @author jbrichardet
+ * Display of a dialog
  */
 
 class DialogDisplay extends PartDisplay
@@ -30,7 +29,10 @@ class DialogDisplay extends PartDisplay
 	private var displayedToken: Bitmap;
 	private var activityDisplay: ActivityDisplay;
 	
-
+	/**
+	 * Constructor
+	 * @param	part : DialogPart to display
+	 */
 	public function new(part: DialogPart) 
 	{
 		tokens = new Hash<Bitmap>();
@@ -38,7 +40,9 @@ class DialogDisplay extends PartDisplay
 		super(part);
 	}
 	
-	public function vertical(event: ButtonActionEvent) : Void
+	// Private
+	
+	private function vertical(event: ButtonActionEvent) : Void
 	{
 		var item: Item = cast(part, DialogPart).getNextVerticalIndex();
 		if (item != null)

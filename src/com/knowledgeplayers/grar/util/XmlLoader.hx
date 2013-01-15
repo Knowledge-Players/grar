@@ -8,9 +8,18 @@ import nme.events.IOErrorEvent;
 import nme.events.Event;
 import nme.events.EventDispatcher;
 
+/**
+ * Utility class for XML loading
+ */
 class XmlLoader extends EventDispatcher
 {
-	public static function load(path: String, listener: Event -> Void) : Null<Xml>
+	/**
+	 * Load an XML file
+	 * @param	path : path to the file
+	 * @param	listener : Function to call when the file is loaded (flash only)
+	 * @return the content of the file (except in flash)
+	 */
+	public static function load(path: String, ?listener: Event -> Void) : Null<Xml>
 	{
 		#if flash
 			var fileLoader: URLLoader = new URLLoader();
@@ -24,6 +33,11 @@ class XmlLoader extends EventDispatcher
 		#end
 	}
 	
+	/**
+	 * Extract an XML object from a Event.COMPLETE
+	 * @param	event : Event dispatched by an URLloader
+	 * @return the loaded XML
+	 */
 	public static function getXml(event: Event) : Xml 
 	{
 		var loader: URLLoader = cast(event.currentTarget, URLLoader);

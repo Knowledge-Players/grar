@@ -9,8 +9,7 @@ import nme.events.MouseEvent;
 import nme.geom.Rectangle;
 
 /**
- * ...
- * @author jgranick
+ * Scrollbar for text overflow
  */
 
 class ScrollBar extends Sprite
@@ -23,6 +22,16 @@ class ScrollBar extends Sprite
 	private var layer: TileLayer;
 	private var maxHeight: Float;
 
+	/**
+	 * Constructor
+	 * @param	width : Width of the scrollbar
+	 * @param	height : Height of the scrollbar
+	 * @param	ratio : Ratio of the cursor 
+	 * @param	tileBackground : Tile containing background image
+	 * @param	tileCursor : Tile containing cursor image
+	 * 
+	 * @see UiFactory
+	 */
     public function new(width:Float, height:Float, ratio:Float, tilesheet: TilesheetEx,  tileBackground: String, tileCursor: String )
     {
 		super();
@@ -59,6 +68,10 @@ class ScrollBar extends Sprite
 		cursorSprite.addEventListener( MouseEvent.MOUSE_DOWN, cursorStart );
     }
 	
+	/**
+	 * Move the cursor. Can't go out of bound
+	 * @param	delta : distance to move the cursor
+	 */
 	public function moveCursor(delta: Float)
 	{
 		if (cursorSprite.y - delta < 0){
@@ -73,7 +86,13 @@ class ScrollBar extends Sprite
 		cursor.render();
 	}
 	
-    dynamic public function scrolled(destination:Float){}
+	/**
+	 * Abstract function to scroll the text
+	 * @param	destination : where to scroll
+	 */
+    dynamic public function scrolled(destination:Float) { }
+	
+	// Private
 
     private function onScroll(e:MouseEvent)
     {
