@@ -10,15 +10,13 @@ import nme.Lib;
  */
 class StyleParser 
 {
-	/**
-	 * Hash of the styles parsed
-	 */
-	public static var styles = new Hash<Style>();
 	
 	/**
 	 * Instance of the parser
 	 */
 	public static var instance (getInstance, null): StyleParser;
+	
+	private static var styles = new Hash<Style>();
 	
 	private function new() { }
 

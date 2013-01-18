@@ -1,0 +1,99 @@
+package com.knowledgeplayers.grar.structure.contextual;
+import com.knowledgeplayers.grar.util.XmlLoader;
+import haxe.xml.Fast;
+import nme.events.Event;
+
+/**
+ * Glossary will be accessible in all your game to provide word definition
+ */
+class Glossary 
+{
+	/**
+	 * Instance
+	 */
+	public static var instance (getInstance, null): Glossary;
+	
+	/**
+	 * Array of all the words in the glossary, alphabetically sorted
+	 */
+	public var words (getWords, null): Array<String>;
+	
+	private var definitions: Hash<String>;
+	
+	/**
+	 * @return the instance
+	 */
+	static public function getInstance() : Glossary
+	{
+		if (instance == null)
+			instance = new Glossary();
+		return instance;
+	}
+	
+	public function fillWithXml(filePath: String) : Void 
+	{
+		var content = XmlLoader.load(filePath, onLoadComplete);
+		#if !flash
+			parseContent(content);
+		#end
+	}
+	
+	public function getDefinition(word: String) : String 
+	{
+		return definitions.get(word);
+	}
+	
+	public function addEntry(word: String, definition: String) : Void 
+	{
+		definitions.set(word, definition);
+		words.push(word);
+	}
+	
+	public function getWords() : Array<String> 
+	{
+		words.sort(sortWords);
+		return words;
+	}
+	
+	public function toString() : String 
+	{
+		var strbuf: StringBuf = new StringBuf();
+		for (key in definitions.keys()) {
+			strbuf.add(key + ";");
+		}
+		return strbuf.toString();
+	}
+	
+	// Private 
+	
+	private function parseContent(content: Xml) : Void
+	{
+		var fast: Fast = new Fast(content).node.Glossary;
+		for (def in fast.nodes.Definition) {
+			addEntry(def.att.Word, def.innerData);
+		}
+	}
+	
+	private function sortWords(x: String, y: String) : Int
+	{
+		x = x.toLowerCase();
+		y = y.toLowerCase();
+		if (x < y) return -1;
+		if (x > y) return 1;
+		return 0;
+	}
+	
+	private function onLoadComplete(event: Event) : Void 
+	{
+		parseContent(XmlLoader.getXml(event));
+	}
+	
+	private function new() 
+	{
+		definitions = new Hash<String>();
+		words = new Array<String>();
+	}
+	
+	
+	
+}
