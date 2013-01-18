@@ -75,8 +75,10 @@ class KpTextDownParser
 			case ">":	styleName += "quote";
 						substring = substring.substr(1);
 			// Lists Style
-			case "*":	styleName += "list"+level;
-						substring = substring.substr(1);
+			case "*":	if (substring.charAt(1) == " " || substring.substr(1).indexOf("*") == -1){
+							styleName += "list"+level;
+							substring = substring.substr(1);
+						}
 			// Default Style
 			default:	substring = line;
 		}
