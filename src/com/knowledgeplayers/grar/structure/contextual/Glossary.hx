@@ -30,6 +30,10 @@ class Glossary
 		return instance;
 	}
 	
+	/**
+	 * Fill the glossary using an XMl file
+	 * @param	filePath : Path to the XML
+	 */
 	public function fillWithXml(filePath: String) : Void 
 	{
 		var content = XmlLoader.load(filePath, onLoadComplete);
@@ -38,23 +42,39 @@ class Glossary
 		#end
 	}
 	
+	/**
+	 * Return the definition of a given word
+	 * @param	word : Word to define
+	 * @return the definition
+	 */
 	public function getDefinition(word: String) : String 
 	{
 		return definitions.get(word);
 	}
 	
+	/**
+	 * Add an entry to the glossary
+	 * @param	word : Word to define
+	 * @param	definition : Definition of the word
+	 */
 	public function addEntry(word: String, definition: String) : Void 
 	{
 		definitions.set(word, definition);
 		words.push(word);
 	}
 	
+	/**
+	 * @return all the words in the glossary
+	 */
 	public function getWords() : Array<String> 
 	{
 		words.sort(sortWords);
 		return words;
 	}
 	
+	/**
+	 * @return a string-based representation of the glossary
+	 */
 	public function toString() : String 
 	{
 		var strbuf: StringBuf = new StringBuf();
@@ -74,6 +94,11 @@ class Glossary
 		}
 	}
 	
+	private function onLoadComplete(event: Event) : Void 
+	{
+		parseContent(XmlLoader.getXml(event));
+	}
+	
 	private function sortWords(x: String, y: String) : Int
 	{
 		x = x.toLowerCase();
@@ -81,11 +106,6 @@ class Glossary
 		if (x < y) return -1;
 		if (x > y) return 1;
 		return 0;
-	}
-	
-	private function onLoadComplete(event: Event) : Void 
-	{
-		parseContent(XmlLoader.getXml(event));
 	}
 	
 	private function new() 

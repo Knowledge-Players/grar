@@ -21,6 +21,8 @@ class GlossaryDisplay extends Sprite
 		displayGlossary();
 	}
 	
+	// Private
+	
 	private function displayGlossary() : Void
 	{
 		var lastLetter: String = " ";
