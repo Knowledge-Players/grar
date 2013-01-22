@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.display.contextual;
+import com.knowledgeplayers.grar.display.component.DropdownMenu;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.style.Style;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
@@ -7,7 +8,6 @@ import haxe.FastList;
 import nme.display.DisplayObject;
 import nme.display.Sprite;
 import nme.events.Event;
-import nme.Lib;
 import nme.text.TextField;
 import nme.text.TextFieldType;
 
@@ -18,8 +18,9 @@ class BibliographyDisplay extends Sprite
 {
 	private var style: Style;
 	private var xOffset: Float = 10;
-	private var filter: TextField;
 	private var displayed: FastList<DisplayObject>;
+	private var filter: TextField;
+	private var drop: DropdownMenu;
 	
 	public function new(?wordStyle: Style) 
 	{
@@ -36,7 +37,8 @@ class BibliographyDisplay extends Sprite
 	{
 		while(!displayed.isEmpty())
 			removeChild(displayed.pop());
-		displayBibliography(Bibliography.instance.getEntries(cast(e.currentTarget, TextField).text));
+		
+		displayBibliography(Bibliography.instance.getEntries(getFilters()));
 	}
 	
 	private function displayBibliography(entries: Array<Entry>) : Void
@@ -72,7 +74,16 @@ class BibliographyDisplay extends Sprite
 			displayed.add(entrySprite);
 			yOffset += entrySprite.height;
 		}
-	}	
+	}
+	
+	private function getFilters() : FastList<String> 
+	{
+		var filters = new FastList<String>();
+		if(filter.text != "Filtrer...")
+			filters.add(filter.text.toLowerCase());
+		filters.add(drop.currentLabel.toLowerCase());
+		return filters;
+	}
 	
 	private function createFiltersBar():Void 
 	{
@@ -85,6 +96,10 @@ class BibliographyDisplay extends Sprite
 		filter.border = true;
 		addChild(filter);
 		
-		
+		drop = new DropdownMenu(true);
+		drop.addEventListener(Event.CHANGE, onFilter);
+		drop.items = Bibliography.instance.getAllPrograms();
+		drop.x = filter.x + filter.width + 10;
+		addChild(drop);
 	}
 }

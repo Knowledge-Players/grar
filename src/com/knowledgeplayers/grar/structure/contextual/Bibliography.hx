@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.contextual;
 import com.knowledgeplayers.grar.util.XmlLoader;
+import haxe.FastList;
 import haxe.xml.Fast;
 import nme.events.Event;
 import nme.Lib;
@@ -44,34 +45,14 @@ class Bibliography
 	 * @param	filter : Filter the entries by any field except year and sumup
 	 * @return the entries matching the filter or all of them if no filter was given
 	 */
-	public function getEntries(?filter: String) : Array<Entry> 
+	public function getEntries(?filters: FastList<String>) : Array<Entry> 
 	{
 		if(newEntry){
 			entries.sort(sort);
 			newEntry = false;
 		}
-		if (filter != null) {
-			var ereg = new EReg(filter, "");
-			var filteredEntries = new Array<Entry>();
-			for (entry in entries) {
-				if (ereg.match(entry.author.toLowerCase()) || ereg.match(entry.title.toLowerCase()) || ereg.match(entry.editor.toLowerCase()))
-					filteredEntries.push(entry);
-				else {
-					for (program in entry.programs) {
-						if (ereg.match(program.toLowerCase())) {
-							filteredEntries.push(entry);
-							break;
-						}
-					}
-					for (theme in entry.themes) {
-						if (ereg.match(theme.toLowerCase())) {
-							filteredEntries.push(entry);
-							break;
-						}
-					}
-				}
-			}
-			return filteredEntries;
+		if (filters != null) {
+			return applyFilter(filters, entries);
 		}
 		else
 			return entries;
@@ -85,6 +66,21 @@ class Bibliography
 	{
 		entries.push(entry);
 		newEntry = true;
+	}
+	
+	/**
+	 * @return all the programs mentionned in the bibliography
+	 */
+	public function getAllPrograms() : FastList<String>
+	{
+		var list = new FastList<String>();
+		for (entry in entries) {
+			for (prgm in entry.programs) {
+				if (!contains(list, prgm))
+					list.add(prgm);
+			}
+		}
+		return  list;
 	}
 	
 	// Private
@@ -140,6 +136,43 @@ class Bibliography
 	private function new() 
 	{
 		entries = new Array<Entry>();
+	}
+	
+	private function contains(list: Iterable<String>, value: String) : Bool 
+	{
+		for (item in list) {
+			if (item == value)
+				return true;
+		}
+		return false;
+	}
+	
+	private function applyFilter(filters: FastList<String>, entries : Iterable<Entry>) : Array<Entry> 
+	{
+		var result = new Array<Entry>();
+		var ereg = new EReg(filters.pop(), "");
+		for (entry in entries) {
+			if (ereg.match(entry.author.toLowerCase()) || ereg.match(entry.title.toLowerCase()) || ereg.match(entry.editor.toLowerCase()))
+				result.push(entry);
+			else {
+				for (program in entry.programs) {
+					if (ereg.match(program.toLowerCase())) {
+						result.push(entry);
+						break;
+					}
+				}
+				for (theme in entry.themes) {
+					if (ereg.match(theme.toLowerCase())) {
+						result.push(entry);
+						break;
+					}
+				}
+			}
+		}
+		if (!filters.isEmpty())
+			return applyFilter(filters, result);
+		else
+			return result;
 	}
 }
 
