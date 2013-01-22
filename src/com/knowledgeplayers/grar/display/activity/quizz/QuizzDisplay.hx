@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.quizz;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
-import com.knowledgeplayers.grar.display.button.DefaultButton;
-import com.knowledgeplayers.grar.display.button.TextButton;
+import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.event.LocaleEvent;

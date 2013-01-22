@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.display.button;
+package com.knowledgeplayers.grar.display.component.button;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.display.text.StyledTextField;

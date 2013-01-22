@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.display.container;
+package com.knowledgeplayers.grar.display.component;
 
 import aze.display.TileGroup;
 import aze.display.TileLayer;

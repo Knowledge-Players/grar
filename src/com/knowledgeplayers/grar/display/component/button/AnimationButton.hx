@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.display.button;
+package com.knowledgeplayers.grar.display.component.button;
 
 import aze.display.TileClip;
 import aze.display.TileGroup;

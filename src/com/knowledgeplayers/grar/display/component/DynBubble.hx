@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.display.container;
+package com.knowledgeplayers.grar.display.component;
 
 import com.eclecticdesignstudio.motion.Actuate;
 import com.knowledgeplayers.grar.display.style.StyleParser;

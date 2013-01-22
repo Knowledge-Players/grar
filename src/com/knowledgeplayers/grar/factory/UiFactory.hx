@@ -2,11 +2,11 @@ package com.knowledgeplayers.grar.factory;
 
 import aze.display.SparrowTilesheet;
 import aze.display.TilesheetEx;
-import com.knowledgeplayers.grar.display.button.AnimationButton;
-import com.knowledgeplayers.grar.display.button.CustomEventButton;
-import com.knowledgeplayers.grar.display.button.DefaultButton;
-import com.knowledgeplayers.grar.display.button.TextButton;
-import com.knowledgeplayers.grar.display.container.ScrollBar;
+import com.knowledgeplayers.grar.display.component.button.AnimationButton;
+import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
+import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.button.TextButton;
+import com.knowledgeplayers.grar.display.component.ScrollBar;
 import haxe.xml.Fast;
 import nme.Assets;
 

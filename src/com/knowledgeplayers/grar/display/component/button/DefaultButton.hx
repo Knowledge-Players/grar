@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.display.button;
+package com.knowledgeplayers.grar.display.component.button;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import aze.display.TileSprite;

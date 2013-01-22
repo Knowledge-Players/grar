@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.display.container;
+package com.knowledgeplayers.grar.display.component;
 
 import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.display.Sprite;

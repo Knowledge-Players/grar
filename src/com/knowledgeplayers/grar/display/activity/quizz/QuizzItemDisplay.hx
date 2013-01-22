@@ -4,7 +4,7 @@ import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.quizz.QuizzItem;
 import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
-import com.knowledgeplayers.grar.display.container.ScrollPanel;
+import com.knowledgeplayers.grar.display.component.ScrollPanel;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;

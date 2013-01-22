@@ -1,9 +1,9 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.display.button.CustomEventButton;
-import com.knowledgeplayers.grar.display.button.DefaultButton;
-import com.knowledgeplayers.grar.display.button.TextButton;
-import com.knowledgeplayers.grar.display.container.ScrollPanel;
+import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
+import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.button.TextButton;
+import com.knowledgeplayers.grar.display.component.ScrollPanel;
 import com.knowledgeplayers.grar.display.element.Character;
 import com.knowledgeplayers.grar.display.ResizeManager;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
