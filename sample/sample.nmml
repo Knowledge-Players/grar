@@ -17,7 +17,14 @@
     <classpath name="src"/>
 
     <haxelib name="nme"/>
+    <haxelib name="tilelayer"/>
+    <haxelib name="actuate"/>
+    <include path=".."/>
 
+    <assets path="assets/img" rename="img"/>
+    <assets path="assets/ui" rename="ui"/>
+    <assets path="assets/xml" rename="xml"/>
+    <assets path="assets/font" rename="font"/>
 
     <ndll name="std"/>
     <ndll name="regexp"/>

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<Part>
+    <Pattern Type="Link" Id="step0">
+        <Item Type="" Content="step0_0" Tag="text" Author="enzo" Direction="Left"/>
+        <Item Type="" Content="step0_2" Tag="text" Author="enzo" Direction="Left"/>
+    </Pattern>
+    <Character Ref="enzo"/>
+</Part>

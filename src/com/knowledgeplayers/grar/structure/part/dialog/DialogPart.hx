@@ -18,74 +18,78 @@ import com.knowledgeplayers.grar.factory.PatternFactory;
  * @author jbrichardet
  */
 
-class DialogPart extends StructurePart
-{
-	/**
-	 * Array of the patterns composing the dialog
-	 */
-	public var patterns: Array<Pattern>;
+class DialogPart extends StructurePart {
+/**
+ * Array of the patterns composing the dialog
+ */
+    public var patterns: Array<Pattern>;
 
-	public function new() 
-	{
-		super();
-		
-		patterns = new Array<Pattern>();
-	}
-	
-	override public function getNextItem() : Null<Item> 
-	{
-		var item:Item = null;
-		if(itemIndex < patterns.length){
-			item = patterns[itemIndex].getNextItem();
-			if (item == null) {
-				itemIndex++;
-				return getNextItem();
-			}
-		}
-		if(item == null){
-			isDone = true;
-		}
-		
-		return item;
-	}
-	
-	override public function isDialog() : Bool 
-	{
-		return true;
-	
-	}
-	
-	/**
-	 * @return the next item in a vertical flow, or null if the flow reach its end
-	 */
-	public function getNextVerticalIndex() : Null<ChoiceItem> 
-	{
-		var item: ChoiceItem = null;
-		if (Std.is(patterns[itemIndex], CollectPattern)) {
-			var collect: CollectPattern = cast(patterns[itemIndex], CollectPattern);
-			item = collect.progressVertically();
-			
-			if (item != null && item.hasToken()) {
-				var event = new TokenEvent(TokenEvent.ADD, item.tokenId, item.tokenType, item.target);
-				dispatchEvent(event);
-			}
-		}
-		
-		return item;
-	}
+    public var characters: Hash<Character>;
 
-	// Private
-	 
-	override private function parseContent(content: Xml) : Void
-	{
-		var partFast: Fast = new Fast(content).node.Part;
-		for (patternNode in partFast.nodes.Pattern) 
-		{
-			var pattern: Pattern = PatternFactory.createPatternFromXml(patternNode, patternNode.att.Id);
-			pattern.init(patternNode);
-			patterns.push(pattern);
-		}
-		fireLoaded();
-	}
-	
+    public function new()
+    {
+        super();
+        characters = new Hash<Character>();
+        patterns = new Array<Pattern>();
+    }
+
+    override public function getNextItem(): Null<Item>
+    {
+        var item: Item = null;
+        if(itemIndex < patterns.length){
+            item = patterns[itemIndex].getNextItem();
+            if(item == null){
+                itemIndex++;
+                return getNextItem();
+            }
+        }
+        if(item == null){
+            isDone = true;
+        }
+
+        return item;
+    }
+
+    override public function isDialog(): Bool
+    {
+        return true;
+
+    }
+
+/**
+ * @return the next item in a vertical flow, or null if the flow reach its end
+ */
+
+    public function getNextVerticalIndex(): Null<ChoiceItem>
+    {
+        var item: ChoiceItem = null;
+        if(Std.is(patterns[itemIndex], CollectPattern)){
+            var collect: CollectPattern = cast(patterns[itemIndex], CollectPattern);
+            item = collect.progressVertically();
+
+            if(item != null && item.hasToken()){
+                var event = new TokenEvent(TokenEvent.ADD, item.tokenId, item.tokenType, item.target);
+                dispatchEvent(event);
+            }
+        }
+
+        return item;
+    }
+
+// Private
+
+    override private function parseContent(content: Xml): Void
+    {
+        var partFast: Fast = new Fast(content).node.Part;
+        for(patternNode in partFast.nodes.Pattern){
+            var pattern: Pattern = PatternFactory.createPatternFromXml(patternNode, patternNode.att.Id);
+            pattern.init(patternNode);
+            patterns.push(pattern);
+        }
+        for(char in partFast.nodes.Character){
+            characters.set(char.att.Ref, new Character(char.att.Ref));
+        }
+        fireLoaded();
+    }
+
 }

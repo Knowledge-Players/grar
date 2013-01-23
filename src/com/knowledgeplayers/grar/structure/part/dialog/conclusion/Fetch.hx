@@ -2,24 +2,23 @@ package com.knowledgeplayers.grar.structure.part.dialog.conclusion;
 
 import com.knowledgeplayers.grar.structure.part.dialog.conclusion.ConclusionActivity;
 
-class Fetch extends ConclusionActivity 
-{
-	public var content (default, default): String;
-	
-	public function new(content: String)
-	{
-		super();
+class Fetch extends ConclusionActivity {
+    public var content (default, default): String;
 
-		this.content = content;
-	}
+    public function new(content: String)
+    {
+        super();
 
-	override function finishWithFetch() : Bool
-	{
-		return false;
-	}
+        this.content = content;
+    }
 
-	override function getType() : ConclusionType 
-	{
-		return ConclusionType.FETCH;
-	}
+    override function finishWithFetch(): Bool
+    {
+        return false;
+    }
+
+    override function getType(): ConclusionType
+    {
+        return ConclusionType.FETCH;
+    }
 }

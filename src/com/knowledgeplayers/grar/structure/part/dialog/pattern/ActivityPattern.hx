@@ -7,27 +7,26 @@ import nme.Lib;
 
 import haxe.xml.Fast;
 
-class ActivityPattern extends Pattern 
-{
-	/**
-	 * Item that will triger an activity
-	 */
-	public var event: RemarkableEvent;
-	
-	public function new(name: String)
-	{
-		super(name);
-	}
-	
-	override public function init(xml:Fast) : Void 
-	{
-		for (itemNode in xml.nodes.Item) {
-			var item: Item = ItemFactory.createItemFromXml(itemNode);
-			if (Std.is(item, RemarkableEvent))
-				event = cast(item, RemarkableEvent);
-			else
-				item.content = itemNode.att.Content;
-			patternContent.push(item);
-		}
-	}
+class ActivityPattern extends Pattern {
+/**
+ * Item that will triger an activity
+ */
+    public var event: RemarkableEvent;
+
+    public function new(name: String)
+    {
+        super(name);
+    }
+
+    override public function init(xml: Fast): Void
+    {
+        for(itemNode in xml.nodes.Item){
+            var item: Item = ItemFactory.createItemFromXml(itemNode);
+            if(Std.is(item, RemarkableEvent))
+                event = cast(item, RemarkableEvent);
+            else
+                item.content = itemNode.att.Content;
+            patternContent.push(item);
+        }
+    }
 }

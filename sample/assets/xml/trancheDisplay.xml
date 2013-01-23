@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Display>
+    <Background Id="img/background.jpg" z="1"/>
+    <Button Id="continueButton" Type="text" Content="nextButton" Tag="text" Action="next" X="600" Y="650" ScaleX="1"
+            ScaleY="1" z="2"/>
+    <Text X="10" Y="300" Width="400" Height="80" z="5"/>
+    <Character Id="img/enzo_office_dl_happy.png" Ref="enzo" Width="661" Height="660" X="100" Y="150" z="6"/>
+</Display>

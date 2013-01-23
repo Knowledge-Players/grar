@@ -1,27 +1,25 @@
 package com.knowledgeplayers.grar.structure.part.dialog.conclusion;
 
-class ConclusionActivity 
-{
-	private function new()
-	{
-		
-	}
+class ConclusionActivity {
+    private function new()
+    {
 
-	public function finishWithFetch() : Bool
-	{
-		return true;
-	}
+    }
 
-	public function getType() : ConclusionType 
-	{
-		return null;
-	}
+    public function finishWithFetch(): Bool
+    {
+        return true;
+    }
+
+    public function getType(): ConclusionType
+    {
+        return null;
+    }
 }
 
-enum ConclusionType 
-{
-	FETCH;
-	SKETCH;
-	CHECK;
-	SHAKE;
+enum ConclusionType {
+    FETCH;
+    SKETCH;
+    CHECK;
+    SHAKE;
 }
