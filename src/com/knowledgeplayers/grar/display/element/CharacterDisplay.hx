@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.display.element;
+import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import nme.display.Sprite;
 import nme.geom.Point;
 
@@ -7,14 +8,20 @@ import nme.geom.Point;
  */
 
 class CharacterDisplay extends Sprite {
-/**
- * Starting point of the character
- */
+    /**
+     * Starting point of the character
+     */
     public var origin: Point;
 
-    public function new()
+    /**
+    * Model of the character
+    **/
+    public var model: Character;
+
+    public function new(?model: Character)
     {
         super();
+        this.model = model;
     }
 
 }

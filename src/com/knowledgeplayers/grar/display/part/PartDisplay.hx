@@ -29,9 +29,9 @@ import nme.Lib;
  * Display of a part
  */
 class PartDisplay extends Sprite {
-/**
- * Part model to display
- */
+    /**
+     * Part model to display
+     */
     public var part: Part;
 
     private var text: ScrollPanel;
@@ -43,10 +43,10 @@ class PartDisplay extends Sprite {
     private var resiz: String;
     private var resizeD: ResizeManager;
 
-/**
- * Constructor
- * @param	part : Part to display
- */
+    /**
+     * Constructor
+     * @param	part : Part to display
+     */
 
     public function new(part: Part)
     {
@@ -57,16 +57,16 @@ class PartDisplay extends Sprite {
         resizeD = ResizeManager.getInstance();
 
         var display = XmlLoader.load(part.display, onLoadComplete);
-#if !flash
+        #if !flash
 			parseContent(display);
-#end
+        #end
 
         addEventListener(TokenEvent.ADD, onTokenAdded);
     }
 
-/**
- * Unload the display from the scene
- */
+    /**
+     * Unload the display from the scene
+     */
 
     public function unLoad(): Void
     {
@@ -74,7 +74,7 @@ class PartDisplay extends Sprite {
             removeChildAt(numChildren - 1);
     }
 
-// Private
+    // Private
 
     private function onTokenAdded(e: TokenEvent): Void
     {
@@ -89,27 +89,27 @@ class PartDisplay extends Sprite {
     {
         var displayFast: Fast = new Fast(content).node.Display;
 
-// Background
+        // Background
         if(displayFast.hasNode.Background){
             createBackground(displayFast.node.Background);
         }
 
-// Items
+        // Items
         for(item in displayFast.nodes.Item){
             createItem(item);
         }
 
-// Characters
+        // Characters
         for(char in displayFast.nodes.Character){
             createCharacter(char);
         }
 
-// Button
+        // Button
         for(button in displayFast.nodes.Button){
             createButton(button);
         }
 
-// Texts
+        // Texts
         for(text in displayFast.nodes.Text){
             createText(text);
         }
@@ -131,7 +131,6 @@ class PartDisplay extends Sprite {
     private function nextItem(): Null<Item>
     {
         var item: Item = part.getNextItem();
-        setText(item);
         if(item != null && characters.exists(item.author)){
 
             var char = characters.get(item.author);
@@ -139,7 +138,7 @@ class PartDisplay extends Sprite {
             if(char != currentSpeaker){
 
                 if(currentSpeaker != null){
-//		TweenManager.fadeOut(currentSpeaker);
+                    //		TweenManager.fadeOut(currentSpeaker);
                     currentSpeaker.visible = false;
                 }
                 if(!contains(char))
@@ -154,6 +153,7 @@ class PartDisplay extends Sprite {
                 char.visible = true;
             }
         }
+        setText(item);
 
         return item;
     }
@@ -209,7 +209,7 @@ class PartDisplay extends Sprite {
         initDisplayObject(button, buttonNode);
 
         if(buttonNode.has.Content)
-            cast(button, TextButton).setText(Localiser.instance.getItemContent(buttonNode.att.Content), buttonNode.att.Tag);
+            cast(button, TextButton).setText(Localiser.instance.getItemContent(buttonNode.att.Content));
         if(buttonNode.has.Action)
             setButtonAction(cast(button, CustomEventButton), buttonNode.att.Action);
         else
@@ -224,9 +224,7 @@ class PartDisplay extends Sprite {
     {
         var text = new ScrollPanel(Std.parseFloat(textNode.att.Width), Std.parseFloat(textNode.att.Height));
         this.text = text;
-
-//text.x = Std.parseFloat(textNode.att.X);
-//text.y = Std.parseFloat(textNode.att.Y);
+        this.text.background = textNode.att.Background;
 
         initDisplayObject(text, textNode);
         nextItem();
@@ -238,7 +236,7 @@ class PartDisplay extends Sprite {
     private function createCharacter(character: Fast)
     {
         var img = character.att.Id;
-        var char: CharacterDisplay = new CharacterDisplay();
+        var char: CharacterDisplay = new CharacterDisplay(part.characters.get(character.att.Ref));
         var bitmap = new Bitmap(Assets.getBitmapData(img));
         char.addChild(bitmap);
         char.visible = false;
@@ -271,11 +269,11 @@ class PartDisplay extends Sprite {
             dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
         else{
             var content = Localiser.getInstance().getItemContent(item.content);
-            text.content = KpTextDownParser.parse(content);
+            text.content = KpTextDownParser.parse("*" + currentSpeaker.model.getName() + "*\n" + content);
         }
     }
 
-// Handlers
+    // Handlers
 
     private function onLoadComplete(event: Event): Void
     {

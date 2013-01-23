@@ -19,12 +19,10 @@ import com.knowledgeplayers.grar.factory.PatternFactory;
  */
 
 class DialogPart extends StructurePart {
-/**
- * Array of the patterns composing the dialog
- */
+    /**
+     * Array of the patterns composing the dialog
+     */
     public var patterns: Array<Pattern>;
-
-    public var characters: Hash<Character>;
 
     public function new()
     {
@@ -56,9 +54,9 @@ class DialogPart extends StructurePart {
 
     }
 
-/**
- * @return the next item in a vertical flow, or null if the flow reach its end
- */
+    /**
+     * @return the next item in a vertical flow, or null if the flow reach its end
+     */
 
     public function getNextVerticalIndex(): Null<ChoiceItem>
     {
@@ -76,7 +74,7 @@ class DialogPart extends StructurePart {
         return item;
     }
 
-// Private
+    // Private
 
     override private function parseContent(content: Xml): Void
     {
@@ -86,10 +84,7 @@ class DialogPart extends StructurePart {
             pattern.init(patternNode);
             patterns.push(pattern);
         }
-        for(char in partFast.nodes.Character){
-            characters.set(char.att.Ref, new Character(char.att.Ref));
-        }
-        fireLoaded();
+        super.parseContent(content);
     }
 
 }

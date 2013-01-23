@@ -107,6 +107,14 @@
             </Row>
             <Row ss:AutoFitHeight="0" ss:Height="26">
                 <Cell>
+                    <Data ss:Type="String">step0_2</Data>
+                </Cell>
+                <Cell ss:StyleID="s65">
+                    <Data ss:Type="String">That's very nice</Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
                     <Data ss:Type="String">nextButton</Data>
                 </Cell>
                 <Cell ss:StyleID="s65">
@@ -119,6 +127,14 @@
                 </Cell>
                 <Cell ss:StyleID="s65">
                     <Data ss:Type="String">Nice Guy</Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">francoise</Data>
+                </Cell>
+                <Cell ss:StyleID="s65">
+                    <Data ss:Type="String">Smart Girl</Data>
                 </Cell>
             </Row>
         </Table>

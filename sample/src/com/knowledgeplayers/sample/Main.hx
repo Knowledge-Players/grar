@@ -1,5 +1,6 @@
 package com.knowledgeplayers.sample;
 
+import com.knowledgeplayers.grar.factory.UiFactory;
 import flash.display.IDrawCommand;
 import com.knowledgeplayers.grar.event.GameEvent;
 import com.knowledgeplayers.grar.display.GameDisplay;
@@ -16,10 +17,11 @@ class Main {
 
     public function new()
     {
-// Load styles
+        // Load styles
         StyleParser.instance.parse(Assets.getText("xml/style.xml"));
+        //Load Ui elements
 
-// Create a new game
+        // Create a new game
         game = new KpGame();
         game.addEventListener(PartEvent.PART_LOADED, onLoadingComplete);
         game.init(Xml.parse(Assets.getText("xml/sample_structure.xml")));

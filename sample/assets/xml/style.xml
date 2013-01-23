@@ -26,6 +26,7 @@
 <size value="12"/>
 </style>
 <style name="bold" inherit="text">
+<font value="font/origin/Origin-Bold.ttf"/>
 <bold value="true"/>
 </style>
 <style name="big-bold" inherit="bold">
