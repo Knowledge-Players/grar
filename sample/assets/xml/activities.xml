@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<Part>
+    <Activity Type="Scanner" Content="scanner.xml" Perk="Agility"/>
+</Part>

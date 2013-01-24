@@ -31,14 +31,14 @@ class DialogPart extends StructurePart {
         patterns = new Array<Pattern>();
     }
 
-    override public function getNextItem(): Null<Item>
+    override public function getNextElement(): Null<Dynamic>
     {
         var item: Item = null;
         if(itemIndex < patterns.length){
             item = patterns[itemIndex].getNextItem();
             if(item == null){
                 itemIndex++;
-                return getNextItem();
+                return getNextElement();
             }
         }
         if(item == null){

@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
+import com.knowledgeplayers.grar.display.activity.ActivityManager;
+import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
@@ -42,6 +45,7 @@ class PartDisplay extends Sprite {
     private var displayObjects: Hash<DisplayObject>;
     private var resiz: String;
     private var resizeD: ResizeManager;
+    private var activityDisplay: ActivityDisplay;
 
     /**
      * Constructor
@@ -120,6 +124,7 @@ class PartDisplay extends Sprite {
             }
         }
 
+        nextItem();
         resizeD.onResize();
     }
 
@@ -130,32 +135,65 @@ class PartDisplay extends Sprite {
 
     private function nextItem(): Null<Item>
     {
-        var item: Item = part.getNextItem();
-        if(item != null && characters.exists(item.author)){
+        var element = part.getNextElement();
+        if(Std.is(element, Item)){
+            var item: Item = cast(element, Item);
+            if(item != null && characters.exists(item.author)){
 
-            var char = characters.get(item.author);
+                var char = characters.get(item.author);
 
-            if(char != currentSpeaker){
+                if(char != currentSpeaker){
 
-                if(currentSpeaker != null){
-                    //		TweenManager.fadeOut(currentSpeaker);
-                    currentSpeaker.visible = false;
-                }
-                if(!contains(char))
-                    addChild(char);
+                    if(currentSpeaker != null){
+                        //		TweenManager.fadeOut(currentSpeaker);
+                        currentSpeaker.visible = false;
+                    }
+                    if(!contains(char))
+                        addChild(char);
 
-                else{
-                    char.alpha = 1;
+                    else{
+                        char.alpha = 1;
+                        char.visible = true;
+                    }
+                    currentSpeaker = char;
+
                     char.visible = true;
                 }
-                currentSpeaker = char;
-
-                char.visible = true;
             }
+            setText(item);
+            return item;
         }
-        setText(item);
+        else if(Std.is(element, Activity)){
+            launchActivity(cast(element, Activity));
+            return null;
+        }
+        return null;
+    }
 
-        return item;
+    private function launchActivity(activity: Activity)
+    {
+        visible = false;
+
+        activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
+        var activityName: String = Type.getClassName(Type.getClass(activity));
+        activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
+        activityDisplay = ActivityManager.instance.getActivity(activityName);
+        activityDisplay.addEventListener(Event.COMPLETE, onActivityReady);
+        activityDisplay.model = activity;
+
+        parent.addChild(activityDisplay);
+    }
+
+    private function onActivityEnd(e: PartEvent): Void
+    {
+        cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
+        nextItem();
+        visible = true;
+    }
+
+    private function onActivityReady(e: Event): Void
+    {
+        activityDisplay.startActivity();
     }
 
     private function initDisplayObject(display: DisplayObject, node: Fast, anime: Bool = false): Void
@@ -227,7 +265,6 @@ class PartDisplay extends Sprite {
         this.text.background = textNode.att.Background;
 
         initDisplayObject(text, textNode);
-        nextItem();
 
         displayObjects.set(textNode.att.z, text);
         resizeD.addDisplayObjects(text, textNode);

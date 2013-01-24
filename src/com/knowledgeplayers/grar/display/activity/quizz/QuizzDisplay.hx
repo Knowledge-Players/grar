@@ -114,7 +114,7 @@ class QuizzDisplay extends ActivityDisplay {
     private var validateContent: String;
     private var displayObjects: Hash<DisplayObject>;
     private var resizeD: ResizeManager;
-    public var content: Fast;
+    private var content: Fast;
 
     /**
      * @return the instance
@@ -139,6 +139,20 @@ class QuizzDisplay extends ActivityDisplay {
         return model;
     }
 
+    override public function setDisplay(display: Fast): Void
+    {
+        parseContent(display.x);
+    }
+
+    override public function startActivity(): Void
+    {
+        model.startActivity();
+
+        addDisplayObjects();
+
+        updateButtonText();
+    }
+
     // Private
 
     private function onEndActivity(e: Event): Void
@@ -152,20 +166,6 @@ class QuizzDisplay extends ActivityDisplay {
     {
         updateRound();
         dispatchEvent(new Event(Event.COMPLETE));
-    }
-
-    override public function setDisplay(display: Fast): Void
-    {
-        parseContent(display.x);
-    }
-
-    override public function startActivity(): Void
-    {
-        model.startActivity();
-
-        addDisplayObjects();
-
-        updateButtonText();
     }
 
     private function addDisplayObjects(): Void

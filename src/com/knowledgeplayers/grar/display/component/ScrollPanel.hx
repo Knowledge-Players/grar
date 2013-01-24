@@ -43,6 +43,7 @@ class ScrollPanel extends Sprite {
         super();
         maskWidth = width;
         maskHeight = height;
+        content = new Sprite();
         this.scrollLock = scrollLock;
         addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
     }

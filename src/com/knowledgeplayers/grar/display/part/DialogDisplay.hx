@@ -26,12 +26,11 @@ class DialogDisplay extends PartDisplay {
     private var verticalButton: CustomEventButton;
     private var tokens: Hash<Bitmap>;
     private var displayedToken: Bitmap;
-    private var activityDisplay: ActivityDisplay;
 
-/**
- * Constructor
- * @param	part : DialogPart to display
- */
+    /**
+     * Constructor
+     * @param	part : DialogPart to display
+     */
 
     public function new(part: DialogPart)
     {
@@ -40,7 +39,7 @@ class DialogDisplay extends PartDisplay {
         super(part);
     }
 
-// Private
+    // Private
 
     private function vertical(event: ButtonActionEvent): Void
     {
@@ -98,32 +97,6 @@ class DialogDisplay extends PartDisplay {
         }
 
         return item;
-    }
-
-    private function launchActivity(activity: Activity)
-    {
-        visible = false;
-
-        activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
-        var activityName: String = Type.getClassName(Type.getClass(activity));
-        activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
-        activityDisplay = ActivityManager.instance.getActivity(activityName);
-        activityDisplay.addEventListener(Event.COMPLETE, onActivityReady);
-        activityDisplay.model = activity;
-
-        parent.addChild(activityDisplay);
-    }
-
-    private function onActivityEnd(e: PartEvent): Void
-    {
-        cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
-        nextItem();
-        visible = true;
-    }
-
-    private function onActivityReady(e: Event): Void
-    {
-        activityDisplay.startActivity();
     }
 
     override private function parseContent(content: Xml): Void

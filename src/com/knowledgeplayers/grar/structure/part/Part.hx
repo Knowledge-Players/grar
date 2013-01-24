@@ -26,9 +26,9 @@ interface Part implements IEventDispatcher {
 
     public function start(forced: Bool = false): Null<Part>;
 
-    public function next(): Null<Part>;
+    public function getNextPart(): Null<Part>;
 
-    public function getNextItem(): Null<Item>;
+    public function getNextElement(): Null<Dynamic>;
 
     public function getAllParts(): Array<Part>;
 

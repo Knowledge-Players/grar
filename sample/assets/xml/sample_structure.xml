@@ -6,16 +6,18 @@
         <!-- Module title -->
         <Title>SAMPLE ACTIVITY</Title>
         <!-- State of the local save -->
-        <State>fr@1@0@1</State>
+        <State>fr@1@0-0@2</State>
         <!-- Paths to the langages files -->
         <Languages File="lang.xml"/>
     </Parameters>
     <!-- List of static displays -->
     <Display>
+        <Activity Display="scannerDisplay.xml"/>
         <Ui Display="ui/ui.xml"/>
     </Display>
     <!-- Structure of the application -->
     <Structure IdObjective="">
         <Part Id="0" Name="trancheDeVie" Type="dialog" File="tranche.xml" Display="trancheDisplay.xml"/>
+        <Part Id="1" Name="activities" Type="" File="activities.xml" Display="activitiesDisplay.xml"/>
     </Structure>
 </Grar>

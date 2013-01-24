@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import haxe.unit.TestCase;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import com.knowledgeplayers.grar.event.TokenEvent;
 import com.knowledgeplayers.grar.factory.PartFactory;
@@ -142,8 +143,11 @@ class StructurePart extends EventDispatcher, implements Part {
      * @return the next item in the part or null if the part is over
      */
 
-    public function getNextItem(): Null<Item>
+    public function getNextElement(): Null<Dynamic>
     {
+        if(activities.exists(itemIndex)){
+            return activities.get(itemIndex);
+        }
         if(itemIndex < items.length){
             itemIndex++;
             return items[itemIndex - 1];
@@ -158,7 +162,7 @@ class StructurePart extends EventDispatcher, implements Part {
      * @return the next undone part
      */
 
-    public function next(): Null<Part>
+    public function getNextPart(): Null<Part>
     {
         var part: Part = null;
         if(hasParts()){
@@ -166,10 +170,10 @@ class StructurePart extends EventDispatcher, implements Part {
                 exitPart();
                 return null;
             }
-            part = parts.get(partIndex).next();
+            part = parts.get(partIndex).getNextPart();
             if(part == null){
                 partIndex++;
-                part = next();
+                part = getNextPart();
             }
         }
         if(part != null)
@@ -250,8 +254,19 @@ class StructurePart extends EventDispatcher, implements Part {
     private function parseContent(content: Xml): Void
     {
         var partFast: Fast = new Fast(content).node.Part;
-        for(item in partFast.nodes.Item){
+        /*for(item in partFast.nodes.Item){
             items.push(new Item(item));
+        }
+        for(activity in partFast.nodes.Activity){
+            activities.set(ActivityFactory.createActivityFromXml(activity));
+        }*/
+        var position: Int = 0;
+        for(child in partFast.elements){
+            switch(child.name){
+                case "Item": items.push(new Item(child));
+                case "Activity": activities.set(position, ActivityFactory.createActivityFromXml(child));
+            }
+            position++;
         }
         for(char in partFast.nodes.Character){
             characters.set(char.att.Ref, new Character(char.att.Ref));
@@ -279,11 +294,6 @@ class StructurePart extends EventDispatcher, implements Part {
                 part.addEventListener(TokenEvent.ADD, onAddToken);
                 part.init(partNode);
                 parts.set(Std.parseInt(partNode.att.Id), part);
-            }
-        }
-        else if(xml.hasNode.Activity){
-            for(activity in xml.nodes.Activity){
-                activities.set(Std.parseInt(activity.att.Id), ActivityFactory.createActivityFromXml(activity));
             }
         }
         if(xml.has.Options){
