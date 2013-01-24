@@ -21,15 +21,15 @@ class AnimagicDisplay extends ActivityDisplay
 	private var resizeD:ResizeManager;
 	private var animagic: Animagic;
 	private var boxesD: Array<BoxDisplay>;
+	private var content: Fast;
+
+
 
 	private function new() 
 	{
 		super();
 		boxesD = new Array<BoxDisplay>();
 		resizeD = ResizeManager.getInstance();
-
-
-
 	}
 
 	public static function getInstance() : AnimagicDisplay
@@ -61,17 +61,27 @@ class AnimagicDisplay extends ActivityDisplay
 
 	 override public function setDisplay(display: Fast): Void
 	 {
-	        Lib.trace(display.x);
+	        parseContent(display.x);
 	 }
+
+	  private function parseContent(displayAnim: Xml): Void
+	{
+
+		content = new Fast(displayAnim);
+		
+
+	}
 
 	private function addDisplayObjects(): Void
 	{
 		for (box in animagic.boxes)
 		{
 
-			var boxD = new BoxDisplay(box);
+			var boxD = new BoxDisplay(box,content);
 			boxesD.push(boxD);
+			addChild(boxD);
 		};
+
 	}
 
 	private function onModelComplete(e:LocaleEvent):Void 
@@ -86,6 +96,8 @@ class AnimagicDisplay extends ActivityDisplay
 		unLoad();
 		animagic.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
 	}
+
+	
 
 
 }

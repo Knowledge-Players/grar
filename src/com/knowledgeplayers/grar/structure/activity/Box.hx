@@ -9,21 +9,23 @@ class Box extends EventDispatcher
 {
 
 
+	public var ref:String;
 
+    	public var items: List<Fast>;
 
-    public var items (default, null): List<Dynamic>;
-
-	public function new():Void
+	public function new(?ref:String):Void
 	{
 		super();
-		items = new List<Dynamic>();
+		items = new List<Fast>();
+
+		this.ref = ref;
 		
 
 	}
 
 	public function addXmlItem(item: Fast) : Void
 	{
-		Lib.trace(item.att.Ref);
+		
 		items.add(item);
 	}
 
