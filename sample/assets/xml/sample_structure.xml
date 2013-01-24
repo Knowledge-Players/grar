@@ -13,6 +13,7 @@
     <!-- List of static displays -->
     <Display>
         <Activity Display="scannerDisplay.xml"/>
+        <Activity Display="folderDisplay.xml"/>
         <Ui Display="ui/ui.xml"/>
     </Display>
     <!-- Structure of the application -->

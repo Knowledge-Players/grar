@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.structure.activity;
+import haxe.xml.Fast;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
@@ -77,5 +78,15 @@ class Activity extends EventDispatcher {
             dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
         else
             dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));
+    }
+
+    private function parseContent(content: Xml): Void
+    {}
+
+    // Handlers
+
+    private function onLoadComplete(event: Event): Void
+    {
+        parseContent(XmlLoader.getXml(event));
     }
 }

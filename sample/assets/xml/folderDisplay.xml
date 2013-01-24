@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Folder>
+    <Background Id="img/background2.jpg" Z="1"/>
+    <Text Ref="postit1" Width="100" Height="100" X="660" Y="40" Z="3" Background="img/postit.png"/>
+    <Text Ref="postit2" Width="100" Height="100" X="760" Y="40" Z="4" Background="img/postit.png"/>
+    <Target Width="390" Height="485" X="10" Y="10" Z="2" Background="img/folder.png"/>
+</Folder>

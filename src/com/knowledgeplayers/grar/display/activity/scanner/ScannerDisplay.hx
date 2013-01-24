@@ -1,17 +1,9 @@
 package com.knowledgeplayers.grar.display.activity.scanner;
 
-import Std;
 import IntHash;
-import Std;
-import Std;
-import Std;
-import Std;
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
 import Lambda;
-import Std;
-import Std;
 import nme.display.DisplayObject;
-import Std;
 import nme.Lib;
 import nme.display.Sprite;
 import nme.display.Bitmap;
@@ -22,6 +14,7 @@ import nme.events.Event;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.activity.scanner.Scanner;
+
 class ScannerDisplay extends ActivityDisplay {
 
     /**
@@ -68,16 +61,6 @@ class ScannerDisplay extends ActivityDisplay {
         return scanner;
     }
 
-    override public function setDisplay(display: Fast): Void
-    {
-        parseContent(display);
-    }
-
-    override public function startActivity(): Void
-    {
-        model.startActivity();
-    }
-
     // Private
 
     private function onEndActivity(e: Event): Void
@@ -112,7 +95,7 @@ class ScannerDisplay extends ActivityDisplay {
         dispatchEvent(new Event(Event.COMPLETE));
     }
 
-    private function parseContent(content: Fast): Void
+    override private function parseContent(content: Fast): Void
     {
         var background = new Bitmap(Assets.getBitmapData(content.node.Background.att.Id));
         depths.set(Std.parseInt(content.node.Background.att.Z), background);

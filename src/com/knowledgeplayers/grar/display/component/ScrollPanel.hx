@@ -103,7 +103,8 @@ class ScrollPanel extends Sprite {
 
     private function clear()
     {
-        while(numChildren > 0)
+        var max = Std.parseInt(background) != null ? 0 : 1;
+        while(numChildren > max)
             removeChildAt(numChildren - 1);
     }
 
