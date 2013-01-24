@@ -45,7 +45,7 @@ class Animagic extends Activity
 	{
 		var anim = new Fast(content).node.Animagic;
 		for (round in anim.nodes.Round) {
-			var box = new Box();
+			var box = new Box(round.att.Ref);
 
 			
 			for (element in round.elements) 
