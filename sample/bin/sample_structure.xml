@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Grar>
+    <Parameters>
+        <!-- LMS mode : AICC/SCORM -->
+        <Mode>AICC</Mode>
+        <!-- Module title -->
+        <Title>SAMPLE ACTIVITY</Title>
+        <!-- State of the local save -->
+        <State>fr@1@0@1</State>
+        <!-- Paths to the langages files -->
+        <Languages File="lang.xml"/>
+    </Parameters>
+    <!-- List of static displays -->
+    <Display>
+        <Ui Display="ui/ui.xml"/>
+    </Display>
+    <!-- Structure of the application -->
+    <Structure IdObjective="">
+        <Part Id="0" Name="trancheDeVie" Type="dialog" File="tranche.xml" Display="trancheDisplay.xml"/>
+    </Structure>
+</Grar>

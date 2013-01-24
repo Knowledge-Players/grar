@@ -8,6 +8,7 @@ import com.knowledgeplayers.grar.event.PartEvent;
 import nme.events.Event;
 import nme.Lib;
 import nme.display.DisplayObject;
+import haxe.xml.Fast;
 
 /**
  * ...
@@ -19,12 +20,15 @@ class AnimagicDisplay extends ActivityDisplay
 	private var displayObjects:Hash<DisplayObject>;
 	private var resizeD:ResizeManager;
 	private var animagic: Animagic;
+	private var boxesD: Array<BoxDisplay>;
 
 	private function new() 
 	{
 		super();
-		
+		boxesD = new Array<BoxDisplay>();
 		resizeD = ResizeManager.getInstance();
+
+
 
 	}
 
@@ -55,8 +59,19 @@ class AnimagicDisplay extends ActivityDisplay
 		
 	}
 
-	private function addDisplayObjects(): Void{
+	 override public function setDisplay(display: Fast): Void
+	 {
+	        Lib.trace(display.x);
+	 }
 
+	private function addDisplayObjects(): Void
+	{
+		for (box in animagic.boxes)
+		{
+
+			var boxD = new BoxDisplay(box);
+			boxesD.push(boxD);
+		};
 	}
 
 	private function onModelComplete(e:LocaleEvent):Void 

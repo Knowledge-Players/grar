@@ -262,6 +262,7 @@ class PartDisplay extends Sprite {
     {
         var text = new ScrollPanel(Std.parseFloat(textNode.att.Width), Std.parseFloat(textNode.att.Height));
         this.text = text;
+
         this.text.background = textNode.att.Background;
 
         initDisplayObject(text, textNode);
@@ -306,7 +307,10 @@ class PartDisplay extends Sprite {
             dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
         else{
             var content = Localiser.getInstance().getItemContent(item.content);
+            if (currentSpeaker != null)
             text.content = KpTextDownParser.parse("*" + currentSpeaker.model.getName() + "*\n" + content);
+            else 
+            text.content  = KpTextDownParser.parse(content);
         }
     }
 

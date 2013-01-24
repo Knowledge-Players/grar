@@ -1,13 +1,13 @@
 package com.knowledgeplayers.grar.display.activity;
 
 import nme.display.Sprite;
+import com.knowledgeplayers.grar.structure.activity.Box;
 
-
-class CaseDisplay extends Sprite
+class BoxDisplay extends Sprite
 {
     private var resizeD:ResizeManager;
 
-    private function new()
+    public function new(box:Box):Void
     {
         super();
 
@@ -18,7 +18,7 @@ class CaseDisplay extends Sprite
     /**
     * Construct a case
     */
-    public function constructCase():Void
+    public function constructBox():Void
     {
 
     }
