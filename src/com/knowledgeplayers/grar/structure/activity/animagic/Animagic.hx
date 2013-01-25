@@ -28,6 +28,9 @@ class Animagic extends Activity {
     {
         return boxes[roundIndex];
     }
+    public function nextBox():Void{
+        roundIndex++;
+    }
 
     override public function startActivity(): Void
     {
