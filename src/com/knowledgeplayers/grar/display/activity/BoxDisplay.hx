@@ -43,13 +43,13 @@ class BoxDisplay extends Sprite
 
         for (element in box.items){
            if(element.name =="Background"){
-              //  backgroundOfTheBox(element.att.Ref);
+                backgroundOfTheBox(element.att.Ref);
            } 
            if(element.name =="Image"){
-              //  imageOfTheBox(element.att.Ref);
+                imageOfTheBox(element.att.Ref);
            } 
            if(element.name =="Texte"){
-              //  textOfTheBox(element.att.Content,element.att.Ref);
+                textOfTheBox(element.att.Content,element.att.Ref);
            }       
         }
 
@@ -66,8 +66,7 @@ class BoxDisplay extends Sprite
       
         for (node in contentDisplay.elements)
         {
-           Lib.trace("ref : "+ref);
-            Lib.trace(node.att.Ref);
+          
             if (node.att.Ref == ref)
             {
                 var back = new Sprite();
@@ -128,7 +127,7 @@ class BoxDisplay extends Sprite
 
     }
 
- /*   private function imageOfTheBox(?ref:String):Void{
+   private function imageOfTheBox(?ref:String):Void{
 
          for (node in contentDisplay.elements)
         {
@@ -190,7 +189,5 @@ class BoxDisplay extends Sprite
         }
 
     }
-
-*/
 
 }
