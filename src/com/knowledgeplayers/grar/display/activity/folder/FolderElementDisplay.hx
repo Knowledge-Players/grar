@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import nme.filters.DropShadowFilter;
 import nme.geom.Point;
 import nme.Lib;
 import nme.events.MouseEvent;
@@ -41,6 +42,7 @@ class FolderElementDisplay extends Sprite {
         text = new ScrollPanel(width, height);
         origin = new Point();
         buttonMode = true;
+        filters.push(new DropShadowFilter());
         addEventListener(MouseEvent.MOUSE_DOWN, onDown);
         addEventListener(MouseEvent.MOUSE_UP, onUp);
     }
