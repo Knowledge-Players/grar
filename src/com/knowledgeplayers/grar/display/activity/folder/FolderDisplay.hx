@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import Std;
+import nme.events.MouseEvent;
+import nme.display.SimpleButton;
+import nme.display.Sprite;
 import nme.Lib;
 import nme.geom.Point;
 import com.knowledgeplayers.grar.event.PartEvent;
@@ -36,12 +40,17 @@ class FolderDisplay extends ActivityDisplay {
     public var target (default, default): DisplayObject;
 
     /**
+    * PopUp where additional text will be displayed
+**/
+    public var popUp (default, default): Sprite;
+
+    /**
     * Grid to organize drag & drop display
 **/
     public var grids (default, null): Hash<Grid>;
 
     private var depths: IntHash<DisplayObject>;
-    private var elements: FastList<FolderElementDisplay>;
+    private var elementTemplate: {background: String, buttonIcon: String, buttonPos: Point};
 
     /**
     * @return the instance
@@ -93,10 +102,10 @@ class FolderDisplay extends ActivityDisplay {
             if(depths.get(i) != null)
                 addChild(depths.get(i));
         }
-        for(elem in elements){
-            elem.init();
-            grids.get("drag").add(elem, false);
-            addChild(elem);
+        for(elem in folder.elements){
+            var elementDisplay = new FolderElementDisplay(elem.content, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
+            grids.get("drag").add(elementDisplay, false);
+            addChild(elementDisplay);
         }
 
         dispatchEvent(new Event(Event.COMPLETE));
@@ -113,25 +122,42 @@ class FolderDisplay extends ActivityDisplay {
         depths.set(Std.parseInt(content.node.Target.att.Z), target);
         ResizeManager.instance.addDisplayObjects(target, content.node.Target);
 
+        popUp.addChild(new Bitmap(Assets.getBitmapData(content.node.PopUp.att.Background)));
+        var icon = new Bitmap(Assets.getBitmapData(content.node.PopUp.att.ButtonIcon));
+        var button = new SimpleButton(icon, icon, icon, icon);
+        button.x = Std.parseFloat(content.node.PopUp.att.ButtonX);
+        button.y = Std.parseFloat(content.node.PopUp.att.ButtonY);
+        button.addEventListener(MouseEvent.CLICK, onClosePopUp);
+        popUp.addChild(button);
+        initDisplayObject(popUp, content.node.PopUp);
+        popUp.visible = false;
+        popUp.alpha = 0;
+        depths.set(Std.parseInt(content.node.PopUp.att.Z), popUp);
+        ResizeManager.instance.addDisplayObjects(popUp, content.node.PopUp);
+
         for(grid in content.nodes.Grid){
             var g = new Grid(Std.parseInt(grid.att.numRow), Std.parseInt(grid.att.numCol), Std.parseFloat(grid.att.CellWidth), Std.parseFloat(grid.att.CellHeight));
             g.x = Std.parseFloat(grid.att.X);
             g.y = Std.parseFloat(grid.att.Y);
             grids.set(grid.att.Ref, g);
         }
-        for(text in content.nodes.Text){
-            var element = new FolderElementDisplay(text.att.Ref, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height);
-            element.text.setBackground(text.att.Background);
-            elements.add(element);
-        }
 
+        var elemNode = content.node.Element;
+        elementTemplate = {background: elemNode.att.Background, buttonIcon: elemNode.att.ButtonIcon, buttonPos: new Point(Std.parseFloat(elemNode.att.ButtonX), Std.parseFloat(elemNode.att.ButtonY))};
+
+    }
+
+    private function onClosePopUp(ev: MouseEvent): Void
+    {
+        popUp.removeChildAt(popUp.numChildren - 1);
+        popUp.visible = false;
     }
 
     private function new()
     {
         super();
         depths = new IntHash<DisplayObject>();
-        elements = new FastList<FolderElementDisplay>();
         grids = new Hash<Grid>();
+        popUp = new Sprite();
     }
 }
