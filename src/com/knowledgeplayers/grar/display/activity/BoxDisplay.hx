@@ -33,32 +33,32 @@ class BoxDisplay extends Sprite
         this.box = box;
         resizeD = ResizeManager.getInstance();
 
-        constructBox();
+        parseBox();
     }
 
 
     private function parseBox():Void
     {
-       
-
-      
-    }
-
-      private function constructBox():Void
-    {
-        backOfTheBox(box.ref);
+       backOfTheBox(box.ref);
 
         for (element in box.items){
            if(element.name =="Background"){
                 backgroundOfTheBox(element.att.Ref);
            } 
            if(element.name =="Image"){
-                imageOfTheBox(element.att.Ref);
+              //  imageOfTheBox(element.att.Ref);
            } 
            if(element.name =="Texte"){
-                textOfTheBox(element.att.Content,element.att.Ref);
+              //  textOfTheBox(element.att.Content,element.att.Ref);
            }       
         }
+
+      
+    }
+
+      private function constructBox():Void
+    {
+        
     }
 
     private function backOfTheBox(?ref:String):Void
@@ -177,7 +177,7 @@ class BoxDisplay extends Sprite
                 text.y = y;
                 var textContainer = new Sprite();
                 textContainer.addChild(text);
-               // textContainer.mask = maskText;
+                textContainer.mask = maskText;
 
                 addChild(textContainer);
             }
