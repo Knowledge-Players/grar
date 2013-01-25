@@ -139,14 +139,9 @@ class QuizzDisplay extends ActivityDisplay {
         return model;
     }
 
-    override public function setDisplay(display: Fast): Void
-    {
-        parseContent(display.x);
-    }
-
     override public function startActivity(): Void
     {
-        model.startActivity();
+        super.startActivity();
 
         addDisplayObjects();
 
@@ -195,9 +190,8 @@ class QuizzDisplay extends ActivityDisplay {
 
     }
 
-    private function parseContent(quizz: Xml): Void
+    override private function parseContent(content: Fast): Void
     {
-        content = new Fast(quizz);
         setLayout(content);
         setIcons(content);
 
