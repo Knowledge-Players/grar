@@ -19,7 +19,9 @@ class Animagic extends Activity {
         boxes = new Array<Box>();
         var xml = XmlLoader.load(content, onLoadComplete);
         #if !flash
-			parseContent(xml);
+	parseContent(xml);
+        #end
+
     }
 
     public function getCurrentBox(): Box
