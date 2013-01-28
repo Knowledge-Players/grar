@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Folder>
+    <Background Id="img/background2.jpg" Z="1"/>
+    <Element ButtonIcon="img/PlusButton.png" ButtonX="351" ButtonY="228" Background="img/postit.png"/>
+    <Target Width="390" Height="485" X="10" Y="10" Z="2" Background="img/folder.png"/>
+    <Grid Ref="drag" X="400" Y="40" numCol="1" numRow="2" CellWidth="396" CellHeight="273"/>
+    <Grid Ref="drop" X="15" Y="15" numCol="2" numRow="1" CellWidth="198" CellHeight="187"/>
+    <PopUp X="200" Y="200" Width="200" Height="200" Z="3" ButtonIcon="img/CloseButton.png" ButtonX="300" ButtonY="110"
+           Background="img/postit.png"/>
+</Folder>

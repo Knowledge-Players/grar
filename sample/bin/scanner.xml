@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Scanner PointVisible="false">
+    <Point X="10" Y="10" Content="point1"/>
+    <Point X="50" Y="50" Content="point2"/>
+    <Point X="130" Y="110" Content="point3"/>
+</Scanner>
