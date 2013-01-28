@@ -1,7 +1,6 @@
 package com.knowledgeplayers.sample;
 
 import com.knowledgeplayers.grar.factory.UiFactory;
-import flash.display.IDrawCommand;
 import com.knowledgeplayers.grar.event.GameEvent;
 import com.knowledgeplayers.grar.display.GameDisplay;
 import com.knowledgeplayers.grar.display.style.StyleParser;
