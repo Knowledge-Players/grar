@@ -130,13 +130,7 @@ class QuizzDisplay extends ActivityDisplay {
 
     override public function setModel(model: Activity): Activity
     {
-        quizz = cast(model, Quizz);
-        quizz.addEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
-        quizz.addEventListener(Event.COMPLETE, onEndActivity);
-        this.model = quizz;
-        quizz.loadActivity();
-
-        return model;
+        return quizz = cast(super.setModel(model), Quizz);
     }
 
     override public function startActivity(): Void
@@ -150,17 +144,17 @@ class QuizzDisplay extends ActivityDisplay {
 
     // Private
 
-    private function onEndActivity(e: Event): Void
+    /*private function onEndActivity(e: Event): Void
     {
-        model.endActivity();
+        /*model.endActivity();
         unLoad();
         quizz.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
-    }
+    }*/
 
-    private function onModelComplete(e: LocaleEvent): Void
+    override private function onModelComplete(e: LocaleEvent): Void
     {
         updateRound();
-        dispatchEvent(new Event(Event.COMPLETE));
+        super.onModelComplete(e);
     }
 
     private function addDisplayObjects(): Void

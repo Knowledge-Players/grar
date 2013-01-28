@@ -30,11 +30,6 @@ class FolderDisplay extends ActivityDisplay {
     public static var instance (getInstance, null): FolderDisplay;
 
     /**
-    * Model for this display
-**/
-    public var folder (default, setModel): Folder;
-
-    /**
     * DisplayObject where to drag the elements
 **/
     public var target (default, default): DisplayObject;
@@ -63,20 +58,9 @@ class FolderDisplay extends ActivityDisplay {
         return instance;
     }
 
-    override public function setModel(model: Activity): Folder
-    {
-        folder = cast(model, Folder);
-        folder.addEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
-        folder.addEventListener(Event.COMPLETE, onEndActivity);
-        this.model = folder;
-        folder.loadActivity();
-
-        return folder;
-    }
-
     public function drop(elem: FolderElementDisplay): Void
     {
-        if(folder.elements.get(elem.content).isAnswer){
+        if(cast(model, Folder).elements.get(elem.content).isAnswer){
             grids.get("drop").add(elem);
             elem.stopDrag();
             elem.blockElement();
@@ -89,26 +73,26 @@ class FolderDisplay extends ActivityDisplay {
 
     // Private
 
-    private function onEndActivity(e: Event): Void
+    /*private function onEndActivity(e: Event): Void
     {
         model.endActivity();
         unLoad();
         folder.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
-    }
+    }*/
 
-    private function onModelComplete(e: LocaleEvent): Void
+    override private function onModelComplete(e: LocaleEvent): Void
     {
         for(i in 1...Lambda.count(depths) + 1){
             if(depths.get(i) != null)
                 addChild(depths.get(i));
         }
-        for(elem in folder.elements){
+        for(elem in cast(model, Folder).elements){
             var elementDisplay = new FolderElementDisplay(elem.content, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
             grids.get("drag").add(elementDisplay, false);
             addChild(elementDisplay);
         }
 
-        dispatchEvent(new Event(Event.COMPLETE));
+        super.onModelComplete(e);
     }
 
     override private function parseContent(content: Fast): Void

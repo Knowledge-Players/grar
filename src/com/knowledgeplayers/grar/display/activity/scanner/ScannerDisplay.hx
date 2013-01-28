@@ -23,11 +23,6 @@ class ScannerDisplay extends ActivityDisplay {
     public static var instance (getInstance, null): ScannerDisplay;
 
     /**
-    * Model for this display
-**/
-    public var scanner (default, setModel): Scanner;
-
-    /**
     * The scanner text area
 **/
     public var textAreas (default, null): Hash<ScrollPanel>;
@@ -50,27 +45,16 @@ class ScannerDisplay extends ActivityDisplay {
         return instance;
     }
 
-    override public function setModel(model: Activity): Scanner
-    {
-        scanner = cast(model, Scanner);
-        scanner.addEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
-        scanner.addEventListener(Event.COMPLETE, onEndActivity);
-        this.model = scanner;
-        scanner.loadActivity();
-
-        return scanner;
-    }
-
     // Private
 
-    private function onEndActivity(e: Event): Void
+    /*private function onEndActivity(e: Event): Void
     {
         model.endActivity();
         unLoad();
         scanner.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
-    }
+    }*/
 
-    private function onModelComplete(e: LocaleEvent): Void
+    override private function onModelComplete(e: LocaleEvent): Void
     {
         //TODO +2 temporaire, en attendant la transformation de depths
         for(i in 1...Lambda.count(depths) + 2){
@@ -79,7 +63,7 @@ class ScannerDisplay extends ActivityDisplay {
         }
         var yOffset: Float = 0;
         var textSprite = new Sprite();
-        for(point in scanner.pointsMap){
+        for(point in cast(model, Scanner).pointsMap){
             var text = new ScrollPanel(textZone.width, lineHeight);
             text.y = yOffset;
             yOffset += lineHeight;
@@ -88,11 +72,12 @@ class ScannerDisplay extends ActivityDisplay {
             var pointDisplay = new PointDisplay(pointGraphics, pointRadius, point);
             pointDisplay.x = point.x;
             pointDisplay.y = point.y;
-            pointDisplay.alpha = scanner.pointVisible ? 1 : 0;
+            pointDisplay.alpha = cast(model, Scanner).pointVisible ? 1 : 0;
             addChild(pointDisplay);
         }
         textZone.content = textSprite;
-        dispatchEvent(new Event(Event.COMPLETE));
+
+        super.onModelComplete(e);
     }
 
     override private function parseContent(content: Fast): Void

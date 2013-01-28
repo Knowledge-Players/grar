@@ -41,13 +41,7 @@ class AnimagicDisplay extends ActivityDisplay {
     override public function setModel(model: Activity): Activity
     {
         Lib.trace(model);
-        animagic = cast(model, Animagic);
-        animagic.addEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
-        animagic.addEventListener(Event.COMPLETE, onEndActivity);
-        this.model = animagic;
-        animagic.loadActivity();
-
-        return model;
+        return animagic = cast(super.setModel(model), Animagic);
     }
 
     override public function startActivity(): Void
@@ -65,26 +59,25 @@ class AnimagicDisplay extends ActivityDisplay {
 
     private function addDisplayObjects(): Void
     {
-      //  for(box in animagic.boxes){
+        //  for(box in animagic.boxes){
 
-            var boxD = new BoxDisplay(animagic.getCurrentBox(), content);
-            boxD.addEventListener(ButtonActionEvent.NEXT,showNextBox);
-            addChild(boxD);
-         
-            //boxesD.push(boxD);
-            
-       // };
+        var boxD = new BoxDisplay(animagic.getCurrentBox(), content);
+        boxD.addEventListener(ButtonActionEvent.NEXT, showNextBox);
+        addChild(boxD);
 
-     
+        //boxesD.push(boxD);
+
+        // };
 
     }
 
-    private function showNextBox(e:ButtonActionEvent):Void{
+    private function showNextBox(e: ButtonActionEvent): Void
+    {
 
-    	   animagic.nextBox();
-    	   var boxD = new BoxDisplay(animagic.getCurrentBox(), content);
-    	    boxD.addEventListener(ButtonActionEvent.NEXT,showNextBox);
-    	    addChild(boxD);
+        animagic.nextBox();
+        var boxD = new BoxDisplay(animagic.getCurrentBox(), content);
+        boxD.addEventListener(ButtonActionEvent.NEXT, showNextBox);
+        addChild(boxD);
     }
 
     /*private function initBoxes():Void{
@@ -93,20 +86,14 @@ class AnimagicDisplay extends ActivityDisplay {
 
     	  	addChild(box);
     	  }
-    	
+
     }*/
 
-    private function onModelComplete(e: LocaleEvent): Void
-    {
-
-        dispatchEvent(new Event(Event.COMPLETE));
-    }
-
-    private function onEndActivity(e: Event): Void
+    /*private function onEndActivity(e: Event): Void
     {
         model.endActivity();
         unLoad();
         animagic.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
-    }
+    }*/
 
 }

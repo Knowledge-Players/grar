@@ -1,4 +1,7 @@
 package com.knowledgeplayers.grar.display.activity;
+import com.knowledgeplayers.grar.event.PartEvent;
+import com.knowledgeplayers.grar.event.LocaleEvent;
+import nme.events.Event;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import haxe.FastList;
 import haxe.xml.Fast;
@@ -23,7 +26,12 @@ class ActivityDisplay extends Sprite {
 
     public function setModel(model: Activity): Activity
     {
-        return null;
+        this.model = model;
+        this.model.addEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
+        this.model.addEventListener(Event.COMPLETE, onEndActivity);
+        this.model.loadActivity();
+
+        return model;
     }
 
     /**
@@ -50,6 +58,11 @@ class ActivityDisplay extends Sprite {
     private function parseContent(display: Fast): Void
     {}
 
+    private function onModelComplete(e: LocaleEvent): Void
+    {
+        dispatchEvent(new Event(Event.COMPLETE));
+    }
+
     private function unLoad(): Void
     {
         while(numChildren > 0)
@@ -73,5 +86,12 @@ class ActivityDisplay extends Sprite {
             display.height = Std.parseFloat(node.att.Height);
         else
             display.scaleY = Std.parseFloat(node.att.ScaleY);
+    }
+
+    private function onEndActivity(e: Event): Void
+    {
+        model.endActivity();
+        unLoad();
+        model.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
     }
 }
