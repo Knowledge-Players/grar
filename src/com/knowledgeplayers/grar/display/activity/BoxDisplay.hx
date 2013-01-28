@@ -30,7 +30,6 @@ class BoxDisplay extends Sprite
     private var maskH:Float;
     private var maskX:Float;
     private var maskY:Float;
-    private var bgContainer:Sprite;
     private var displayObjects: Hash<DisplayObject>;
 
 
@@ -124,7 +123,7 @@ class BoxDisplay extends Sprite
     }
 
     private function backgroundOfTheBox(?ref:String):Void{
-        bgContainer = new Sprite();
+       
        
         for (node in contentDisplay.elements)
         {
@@ -148,9 +147,8 @@ class BoxDisplay extends Sprite
                 bg.y = y;
                 bg.width = w;
                 bg.height = h;
-             
-                bgContainer.addChild(bg);
-                addChild(bgContainer);
+
+                addChild(bg);
             }
         }
        // displayObjects.set(z, bgContainer);
