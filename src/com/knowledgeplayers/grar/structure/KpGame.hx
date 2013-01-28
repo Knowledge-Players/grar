@@ -75,19 +75,13 @@ class KpGame extends EventDispatcher, implements Game {
 
         initTracking();
 
-        var xml = XmlLoader.load(paramatersNode.node.Languages.att.File, onLanguagesComplete);
-        #if !flash
-			initLangs(xml);
-        #end
+        XmlLoader.load(paramatersNode.node.Languages.att.File, onLanguagesComplete, initLangs);
 
         var displayNode: Fast = structureXml.node.Grar.node.Display;
         if(displayNode.hasNode.Ui)
             UiFactory.setSpriteSheet(displayNode.node.Ui.att.Display);
         for(activity in displayNode.nodes.Activity){
-            var activityXml = XmlLoader.load(activity.att.Display, onActivityComplete);
-            #if !flash
-				initActivities(activityXml);
-            #end
+            var activityXml = XmlLoader.load(activity.att.Display, onActivityComplete, initActivities);
         }
 
         var structureNode: Fast = structureXml.node.Grar.node.Structure;

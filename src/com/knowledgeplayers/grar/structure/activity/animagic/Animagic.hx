@@ -17,18 +17,16 @@ class Animagic extends Activity {
     {
         super(content);
         boxes = new Array<Box>();
-        var xml = XmlLoader.load(content, onLoadComplete);
-        #if !flash
-	parseContent(xml);
-        #end
-
+        XmlLoader.load(content, onLoadComplete, parseContent);
     }
 
     public function getCurrentBox(): Box
     {
         return boxes[roundIndex];
     }
-    public function nextBox():Void{
+
+    public function nextBox(): Void
+    {
         roundIndex++;
     }
 

@@ -16,10 +16,7 @@ class Scanner extends Activity {
         super(content);
         pointsMap = new FastList<ScannerPoint>();
 
-        var xml = XmlLoader.load(content, onLoadComplete);
-        #if !flash
-			parseContent(xml);
-        #end
+        XmlLoader.load(content, onLoadComplete, parseContent);
     }
 
     public override function toString(): String

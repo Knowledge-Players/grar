@@ -60,10 +60,7 @@ class PartDisplay extends Sprite {
         displayObjects = new Hash<DisplayObject>();
         resizeD = ResizeManager.getInstance();
 
-        var display = XmlLoader.load(part.display, onLoadComplete);
-        #if !flash
-			parseContent(display);
-        #end
+        XmlLoader.load(part.display, onLoadComplete, parseContent);
 
         addEventListener(TokenEvent.ADD, onTokenAdded);
     }
@@ -307,10 +304,10 @@ class PartDisplay extends Sprite {
             dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
         else{
             var content = Localiser.getInstance().getItemContent(item.content);
-            if (currentSpeaker != null)
-            text.content = KpTextDownParser.parse("*" + currentSpeaker.model.getName() + "*\n" + content);
-            else 
-            text.content  = KpTextDownParser.parse(content);
+            if(currentSpeaker != null)
+                text.content = KpTextDownParser.parse("*" + currentSpeaker.model.getName() + "*\n" + content);
+            else
+                text.content = KpTextDownParser.parse(content);
         }
     }
 

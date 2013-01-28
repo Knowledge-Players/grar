@@ -99,7 +99,11 @@ class FolderElementDisplay extends Sprite {
     private function onUp(e: MouseEvent): Void
     {
         var folder = cast(parent, FolderDisplay);
-        if(dropTarget == folder.target)
+        #if flash
+            if(dropTarget == folder.target)
+        #else
+        if(hitTestObject(folder.target))
+            #end
             folder.drop(this);
         else{
             stopDrag();

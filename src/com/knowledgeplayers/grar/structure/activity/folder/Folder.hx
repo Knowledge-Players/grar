@@ -22,10 +22,7 @@ class Folder extends Activity {
     {
         super(content);
         elements = new Hash<FolderElement>();
-        var xml = XmlLoader.load(content, onLoadComplete);
-        #if !flash
-			parseContent(xml);
-        #end
+        XmlLoader.load(content, onLoadComplete, parseContent);
     }
 
     // Private

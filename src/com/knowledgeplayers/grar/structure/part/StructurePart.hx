@@ -114,10 +114,7 @@ class StructurePart extends EventDispatcher, implements Part {
         }
 
         if(file != ""){
-            var content = XmlLoader.load(file, onLoadComplete);
-            #if !flash
-				parseContent(content);
-            #end
+            XmlLoader.load(file, onLoadComplete, parseContent);
         }
         else
             fireLoaded();

@@ -41,10 +41,7 @@ class Quizz extends Activity {
         answers = new Array<QuizzGroup>();
         questions = new Array<String>();
 
-        var xml = XmlLoader.load(content, onLoadComplete);
-        #if !flash
-			parseContent(xml);
-        #end
+        XmlLoader.load(content, onLoadComplete, parseContent);
     }
 
     override public function startActivity(): Void

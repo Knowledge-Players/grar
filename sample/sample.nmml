@@ -5,7 +5,7 @@
           company="Knowledge-Players"/>
     <app file="Main" main="com.knowledgeplayers.sample.Main" path="bin" swf-version="11"/>
 
-    <window borderless="true" vsync="true" antialiasing="4"/>
+    <window borderless="false" vsync="true" antialiasing="4"/>
     <window width="0" height="0" fps="60" orientation="landscape" if="mobile"/>
     <window width="960" height="580" background="0xFFFFFF" fps="60" fullscreen="false" resizable="true"
             unless="mobile"/>
