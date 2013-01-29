@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.structure.part.strip.box.Box;
 import com.knowledgeplayers.grar.structure.part.strip.StripPart;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
@@ -21,8 +22,8 @@ class StripDisplay extends PartDisplay {
     /*
 
     */
- //   private var displayObjects: Hash<DisplayObject>;
-  //  private var resizeD: ResizeManager;
+    //   private var displayObjects: Hash<DisplayObject>;
+    //  private var resizeD: ResizeManager;
     private var stripPart: StripPart;
     private var content: Fast;
     private var boxesD: Array<BoxDisplay>;
@@ -30,11 +31,10 @@ class StripDisplay extends PartDisplay {
     public function new(part: StripPart)
     {
         boxesD = new Array<BoxDisplay>();
-       // resizeD = ResizeManager.getInstance();
+        // resizeD = ResizeManager.getInstance();
         super(part);
 
-      //  addDisplayObjects();
-
+        //  addDisplayObjects();
 
     }
     /*private function new()
@@ -53,23 +53,17 @@ class StripDisplay extends PartDisplay {
     }
     */
 
-
-
-
-
     override private function parseContent(content: Xml): Void
     {
-        super.parseContent(content);
-        Lib.trace("content : "+content);
-        Lib.trace("part : "+part);
+        //Lib.trace("content : "+content);
+        //Lib.trace("part : "+part);
         for(box in part.patterns){
-            var boxD = new BoxDisplay(cast(part,StripPart).getCurrentBox(), content);
-            boxD.addEventListener(ButtonActionEvent.NEXT,showNextBox);
+            var boxD = new BoxDisplay(cast(part, StripPart).getCurrentBox(), content);
+            boxD.addEventListener(ButtonActionEvent.NEXT, showNextBox);
             addChild(boxD);
             boxesD.push(boxD);
         }
-
-
+        super.parseContent(content);
     }
 
     /*private function addDisplayObjects(): Void
@@ -83,20 +77,21 @@ class StripDisplay extends PartDisplay {
                 boxesD.push(boxD);
             }
 
-            
+
         }
 
-     
+
 
     }  */
 
-    private function showNextBox(e:ButtonActionEvent):Void{
+    private function showNextBox(e: ButtonActionEvent): Void
+    {
 
-          /*  cast(part,StripPart).nextBox();
-    	    var boxD = new BoxDisplay(cast(part,StripPart).getCurrentBox(), content);
-    	    boxD.addEventListener(ButtonActionEvent.NEXT,showNextBox);
-    	    addChild(boxD);
-    	    */
+        /*  cast(part,StripPart).nextBox();
+          var boxD = new BoxDisplay(cast(part,StripPart).getCurrentBox(), content);
+          boxD.addEventListener(ButtonActionEvent.NEXT,showNextBox);
+          addChild(boxD);
+          */
 
     }
 

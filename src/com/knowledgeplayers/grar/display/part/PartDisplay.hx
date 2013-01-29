@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import haxe.unit.TestCase;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
@@ -43,7 +44,6 @@ class PartDisplay extends Sprite {
     private var charactersDepth: Hash<Int>;
     private var currentSpeaker: CharacterDisplay;
     private var depth: Int;
-    private var displayObjects: Hash<DisplayObject>;
     private var resiz: String;
     private var resizeD: ResizeManager;
     private var activityDisplay: ActivityDisplay;
@@ -58,9 +58,7 @@ class PartDisplay extends Sprite {
         super();
         this.part = part;
         characters = new Hash<CharacterDisplay>();
-        displayObjects = new Hash<DisplayObject>();
         resizeD = ResizeManager.getInstance();
-
 
         XmlLoader.load(part.display, onLoadComplete, parseContent);
 
@@ -81,18 +79,27 @@ class PartDisplay extends Sprite {
 
     private function onTokenAdded(e: TokenEvent): Void
     {
-        for(p in 1...Lambda.count(displayObjects) + 1){
+        /*for(p in 1...Lambda.count(displayObjects) + 1){
             if(displayObjects.get(Std.string(p)) != null){
                 addChild(displayObjects.get(Std.string(p)));
             }
-        }
+        }*/
     }
 
     private function parseContent(content: Xml): Void
     {
         var displayFast: Fast = new Fast(content).node.Display;
+        for(child in displayFast.elements){
+            switch(child.name){
+                case "Background": createBackground(child);
+                case "Item": createItem(child);
+                case "Character": createCharacter(child);
+                case "Button": createButton(child);
+                case "Text": createText(child);
+            }
+        }
 
-        // Background
+        /*// Background
         if(displayFast.hasNode.Background){
             createBackground(displayFast.node.Background);
         }
@@ -121,7 +128,7 @@ class PartDisplay extends Sprite {
             if(displayObjects.get(Std.string(p)) != null){
                 addChild(displayObjects.get(Std.string(p)));
             }
-        }
+        }*/
 
         nextItem();
         resizeD.onResize();
@@ -222,7 +229,7 @@ class PartDisplay extends Sprite {
     {
         var bkgData: Bitmap = new Bitmap(Assets.getBitmapData(bkgNode.att.Id));
 
-        displayObjects.set(bkgNode.att.z, bkgData);
+        addChildAt(bkgData, 0);
 
         resizeD.addDisplayObjects(bkgData, bkgNode);
     }
@@ -236,7 +243,7 @@ class PartDisplay extends Sprite {
 
         initDisplayObject(itemBmp, itemNode);
 
-        displayObjects.set(itemNode.att.z, itemSprite);
+        addChild(itemSprite);
 
         resizeD.addDisplayObjects(itemSprite, itemNode);
     }
@@ -254,7 +261,7 @@ class PartDisplay extends Sprite {
         else
             button.addEventListener("next", next);
 
-        displayObjects.set(buttonNode.att.z, button);
+        addChild(button);
 
         resizeD.addDisplayObjects(button, buttonNode);
     }
@@ -268,7 +275,7 @@ class PartDisplay extends Sprite {
 
         initDisplayObject(text, textNode);
 
-        displayObjects.set(textNode.att.z, text);
+        addChild(text);
         resizeD.addDisplayObjects(text, textNode);
     }
 
@@ -287,7 +294,7 @@ class PartDisplay extends Sprite {
 
         characters.set(character.att.Ref, char);
 
-        displayObjects.set(character.att.z, char);
+        addChild(char);
 
         resizeD.addDisplayObjects(char, character);
     }

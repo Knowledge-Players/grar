@@ -4,7 +4,7 @@
         <Background Ref="bck1"/>
         <Image Ref="perso1"/>
         <Image Ref="bulle1"/>
-        <Texte Ref="text1"/>
+        <Text Ref="text1"/>
         <Button Ref="next1"/>
     </Pattern>
 
@@ -16,7 +16,7 @@
         <Texte Ref="text2"/>
         <Button Ref="next2"/>
     </Round>
-  
+
     <Round Ref="case3">
         <Background Ref="bck1"/>
         <Image Ref="perso3"/>

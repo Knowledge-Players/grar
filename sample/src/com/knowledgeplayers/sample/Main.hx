@@ -27,7 +27,7 @@ class Main {
         game = new KpGame();
         game.addEventListener(PartEvent.PART_LOADED, onLoadingComplete);
         game.init(Xml.parse(Assets.getText("xml/sample_structure.xml")));
-        //
+
         #if cpp
         new DebugSocket("127.0.0.1", 65333,true);
         #end

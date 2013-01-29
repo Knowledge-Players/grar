@@ -24,7 +24,6 @@ import com.knowledgeplayers.grar.factory.PatternFactory;
 
 class StructurePart extends EventDispatcher, implements Part {
 
-
     /**
     * Array of the patterns composing the dialog
     */
@@ -105,6 +104,7 @@ class StructurePart extends EventDispatcher, implements Part {
         options = new Hash<String>();
         inventory = new Array<String>();
         items = new Array<TextItem>();
+        patterns = new Array<Pattern>();
         addEventListener(TokenEvent.ADD, onAddToken);
     }
 
@@ -264,12 +264,7 @@ class StructurePart extends EventDispatcher, implements Part {
     private function parseContent(content: Xml): Void
     {
         var partFast: Fast = new Fast(content).node.Part;
-        /*for(item in partFast.nodes.Item){
-            items.push(new Item(item));
-        }
-        for(activity in partFast.nodes.Activity){
-            activities.set(ActivityFactory.createActivityFromXml(activity));
-        }*/
+
         var position: Int = 0;
         for(child in partFast.elements){
             switch(child.name){

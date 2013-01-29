@@ -51,11 +51,11 @@ class DialogDisplay extends PartDisplay {
                 var token: Bitmap = tokens.get(cast(item, ChoiceItem).tokenId);
                 if(token != null){
                     displayedToken = token;
-                    for(p in 1...Lambda.count(displayObjects) + 1){
+                    /*for(p in 1...Lambda.count(displayObjects) + 1){
                         if(displayObjects.get(Std.string(p)) != null){
                             displayObjects.get(Std.string(p)).visible = true;
                         }
-                    }
+                    }*/
                 }
             }
             else{
@@ -110,7 +110,7 @@ class DialogDisplay extends PartDisplay {
             initDisplayObject(token, tokenNode);
 
             resizeD.addDisplayObjects(token, tokenNode);
-            displayObjects.set(tokenNode.att.z, token);
+            addChild(token);
             tokens.set(tokenNode.att.Name, token);
 
             dispatchEvent(new TokenEvent(TokenEvent.ADD, true));
