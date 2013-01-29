@@ -3,26 +3,22 @@
     <Pattern Type="Box" Id="case1">
         <Background Ref="bck1"/>
         <Image Ref="perso1"/>
-        <Image Ref="bulle1"/>
+        <!--<Image Ref="bulle1"/>-->
         <Text Ref="text1"/>
         <Button Ref="next1"/>
     </Pattern>
-
-    <!--
-    <Round Ref="case2">
+    <Pattern Type="Box" Id="case2">
         <Background Ref="bck1"/>
         <Image Ref="perso2"/>
-        <Image Ref="bulle2"/>
-        <Texte Ref="text2"/>
+        <!--<Image Ref="bulle1"/>-->
+        <Text Ref="text2"/>
         <Button Ref="next2"/>
-    </Round>
-
-    <Round Ref="case3">
+    </Pattern>
+    <Pattern Type="Box" Id="case3">
         <Background Ref="bck1"/>
         <Image Ref="perso3"/>
-        <Image Ref="bulle3"/>
-        <Texte Ref="text3"/>
+        <!--<Image Ref="bulle1"/>-->
+        <Text Ref="text3"/>
         <Button Ref="next3"/>
-    </Round>
-    -->
+    </Pattern>
 </Part>

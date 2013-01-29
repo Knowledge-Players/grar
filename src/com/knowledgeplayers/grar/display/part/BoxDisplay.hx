@@ -179,7 +179,7 @@ class BoxDisplay extends Sprite {
                 var txt = Localiser.getInstance().getItemContent(node.att.Content);
 
                 text.content = KpTextDownParser.parse(txt);
-                //text.background = node.att.Background;
+                text.background = node.att.Background;
 
                 var textContainer = new Sprite();
                 textContainer.x = x;
@@ -197,7 +197,7 @@ class BoxDisplay extends Sprite {
 
         for(node in contentDisplay.elements){
             if(node.att.Ref == ref){
-                Lib.trace("----------- : " + node.att.Type);
+                //Lib.trace("----------- : " + node.att.Type);
 
                 var button: DefaultButton = UiFactory.createButtonFromXml(node);
 

@@ -4,7 +4,6 @@ import com.knowledgeplayers.grar.structure.activity.folder.Folder;
 import com.knowledgeplayers.grar.structure.activity.scanner.Scanner;
 import haxe.unit.TestCase;
 import com.knowledgeplayers.grar.structure.activity.Activity;
-import com.knowledgeplayers.grar.structure.activity.animagic.Animagic;
 import com.knowledgeplayers.grar.structure.activity.quizz.Quizz;
 import com.knowledgeplayers.grar.structure.score.ScoreChart;
 import haxe.xml.Fast;
@@ -31,7 +30,6 @@ class ActivityFactory {
         var creation: Activity = null;
         switch (activityName.toLowerCase()) {
             case "quizz": creation = new Quizz(content);
-            case "animagic":creation = new Animagic(content);
             case "scanner": creation = new Scanner(content);
             case "folder": creation = new Folder(content);
             default: Lib.trace("Factory - " + activityName + " :  Unsupported activity");
