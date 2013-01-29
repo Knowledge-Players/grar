@@ -5,16 +5,16 @@ import com.knowledgeplayers.grar.structure.activity.Activity;
 import haxe.xml.Fast;
 import nme.Lib;
 
-class RemarkableEvent extends Item {
-/**
- * Activity to start when this item is reached
- */
+class RemarkableEvent extends TextItem {
+    /**
+     * Activity to start when this item is reached
+     */
     public var activity (default, default): Activity;
 
-/**
- * Constructor
- * @param	xml : fast xml node with structure infos
- */
+    /**
+     * Constructor
+     * @param	xml : fast xml node with structure infos
+     */
 
     public function new(?xml: Fast)
     {

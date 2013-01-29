@@ -1,14 +1,14 @@
 package com.knowledgeplayers.grar.structure.part.dialog.pattern;
 
 import com.knowledgeplayers.grar.structure.part.dialog.item.ChoiceItem;
-import com.knowledgeplayers.grar.structure.part.dialog.item.Item;
+import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.factory.ItemFactory;
 import haxe.xml.Fast;
 
 class CollectPattern extends Pattern {
-/**
- * Vertical flow of the pattern
- */
+    /**
+     * Vertical flow of the pattern
+     */
     public var verticalFlow: Array<ChoiceItem>;
 
     private var firstChoiceItem: Bool = true;
@@ -22,8 +22,8 @@ class CollectPattern extends Pattern {
 
     override public function init(xml: Fast): Void
     {
-        for(itemNode in xml.nodes.Item){
-            var item: Item = ItemFactory.createItemFromXml(itemNode);
+        for(itemNode in xml.nodes.TextItem){
+            var item: TextItem = ItemFactory.createItemFromXml(itemNode);
             item.content = itemNode.att.Content;
             if(item.hasVerticalFlow())
             if(firstChoiceItem){
@@ -37,9 +37,9 @@ class CollectPattern extends Pattern {
         }
     }
 
-/**
- * @return the next item in the vertical flow, or null if the flow reachs its end
- */
+    /**
+     * @return the next item in the vertical flow, or null if the flow reachs its end
+     */
 
     public function progressVertically(): Null<ChoiceItem>
     {

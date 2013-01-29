@@ -2,7 +2,7 @@ package com.knowledgeplayers.grar.structure.part;
 
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import com.knowledgeplayers.grar.structure.activity.Activity;
-import com.knowledgeplayers.grar.structure.part.dialog.item.Item;
+import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
 import nme.events.IEventDispatcher;
 import nme.media.Sound;
@@ -18,7 +18,7 @@ interface Part implements IEventDispatcher {
     public var options (default, null): Hash<String>;
     public var activities (default, null): IntHash<Activity>;
     public var parts (default, null): IntHash<Part>;
-    public var items (default, null): Array<Item>;
+    public var items (default, null): Array<TextItem>;
     public var inventory (default, null): Array<String>;
     public var soundLoop (default, default): Sound;
 
@@ -28,7 +28,7 @@ interface Part implements IEventDispatcher {
 
     public function getNextPart(): Null<Part>;
 
-    public function getNextElement(): Null<Dynamic>;
+    public function getNextElement(): Null<PartElement>;
 
     public function getAllParts(): Array<Part>;
 

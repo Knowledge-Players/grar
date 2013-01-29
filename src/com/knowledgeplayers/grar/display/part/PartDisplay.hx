@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.structure.activity.Activity;
@@ -16,7 +17,7 @@ import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.event.TokenEvent;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.structure.part.dialog.item.Item;
+import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;
@@ -96,7 +97,7 @@ class PartDisplay extends Sprite {
         }
 
         // Items
-        for(item in displayFast.nodes.Item){
+        for(item in displayFast.nodes.TextItem){
             createItem(item);
         }
 
@@ -130,11 +131,13 @@ class PartDisplay extends Sprite {
         nextItem();
     }
 
-    private function nextItem(): Null<Item>
+    private function nextItem(): Null<TextItem>
     {
-        var element = part.getNextElement();
-        if(Std.is(element, Item)){
-            var item: Item = cast(element, Item);
+        var element: PartElement = part.getNextElement();
+        if(element == null)
+            return null;
+        if(element.isText()){
+            var item: TextItem = cast(element, TextItem);
             if(item != null && characters.exists(item.author)){
 
                 var char = characters.get(item.author);
@@ -160,7 +163,7 @@ class PartDisplay extends Sprite {
             setText(item);
             return item;
         }
-        else if(Std.is(element, Activity)){
+        else if(element.isActivity()){
             launchActivity(cast(element, Activity));
             return null;
         }
@@ -298,7 +301,7 @@ class PartDisplay extends Sprite {
         }
     }
 
-    private function setText(item: Item): Void
+    private function setText(item: TextItem): Void
     {
         if(item == null)
             dispatchEvent(new PartEvent(PartEvent.EXIT_PART));

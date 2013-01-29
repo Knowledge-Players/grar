@@ -10,7 +10,7 @@ import com.knowledgeplayers.grar.event.TokenEvent;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
 import com.knowledgeplayers.grar.structure.part.dialog.item.ChoiceItem;
-import com.knowledgeplayers.grar.structure.part.dialog.item.Item;
+import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import haxe.xml.Fast;
 import nme.Assets;
@@ -43,7 +43,7 @@ class DialogDisplay extends PartDisplay {
 
     private function vertical(event: ButtonActionEvent): Void
     {
-        var item: Item = cast(part, DialogPart).getNextVerticalIndex();
+        var item: TextItem = cast(part, DialogPart).getNextVerticalIndex();
         if(item != null){
             setText(item);
 
@@ -78,7 +78,7 @@ class DialogDisplay extends PartDisplay {
         button.addEventListener(action.toLowerCase(), listener);
     }
 
-    override private function nextItem(): Null<Item>
+    override private function nextItem(): Null<TextItem>
     {
         if(displayedToken != null){
             removeChild(displayedToken);

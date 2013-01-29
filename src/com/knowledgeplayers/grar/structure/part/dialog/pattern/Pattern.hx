@@ -1,18 +1,18 @@
 package com.knowledgeplayers.grar.structure.part.dialog.pattern;
 
 import com.knowledgeplayers.grar.factory.ItemFactory;
-import com.knowledgeplayers.grar.structure.part.dialog.item.Item;
+import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
 
 class Pattern {
-/**
- * Array of item composing the pattern
- */
-    public var patternContent (default, default): Array<Item>;
+    /**
+     * Array of item composing the pattern
+     */
+    public var patternContent (default, default): Array<TextItem>;
 
-/**
- * Name of the pattern
- */
+    /**
+     * Name of the pattern
+     */
     public var name (default, default): String;
 
     private var itemIndex: Int = 0;
@@ -20,27 +20,27 @@ class Pattern {
     public function new(name: String)
     {
         this.name = name;
-        patternContent = new Array<Item>();
+        patternContent = new Array<TextItem>();
     }
 
-/**
- * Init the pattern with an XML node
- * @param	xml : fast xml node with structure infos
- */
+    /**
+     * Init the pattern with an XML node
+     * @param	xml : fast xml node with structure infos
+     */
 
     public function init(xml: Fast): Void
     {
-        for(itemNode in xml.nodes.Item){
-            var item: Item = ItemFactory.createItemFromXml(itemNode);
+        for(itemNode in xml.nodes.Text){
+            var item: TextItem = ItemFactory.createItemFromXml(itemNode);
             patternContent.push(item);
         }
     }
 
-/**
- * @return the next item in the pattern, or null if the pattern reachs its end
- */
+    /**
+     * @return the next item in the pattern, or null if the pattern reachs its end
+     */
 
-    public function getNextItem(): Null<Item>
+    public function getNextItem(): Null<TextItem>
     {
         if(itemIndex < patternContent.length){
             itemIndex++;

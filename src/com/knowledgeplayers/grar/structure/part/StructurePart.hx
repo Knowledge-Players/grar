@@ -15,7 +15,7 @@ import nme.events.Event;
 
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.structure.activity.Activity;
-import com.knowledgeplayers.grar.structure.part.dialog.item.Item;
+import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.factory.ActivityFactory;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.util.XmlLoader;
@@ -75,7 +75,7 @@ class StructurePart extends EventDispatcher, implements Part {
     /**
      * Text items of the part
      */
-    public var items (default, null): Array<Item>;
+    public var items (default, null): Array<TextItem>;
 
     /**
     * Characters of the part
@@ -95,7 +95,7 @@ class StructurePart extends EventDispatcher, implements Part {
         activities = new IntHash<Activity>();
         options = new Hash<String>();
         inventory = new Array<String>();
-        items = new Array<Item>();
+        items = new Array<TextItem>();
         addEventListener(TokenEvent.ADD, onAddToken);
     }
 
@@ -260,7 +260,7 @@ class StructurePart extends EventDispatcher, implements Part {
         var position: Int = 0;
         for(child in partFast.elements){
             switch(child.name){
-                case "Item": items.push(new Item(child));
+                case "Item": items.push(new TextItem(child));
                 case "Activity": activities.set(position, ActivityFactory.createActivityFromXml(child));
             }
             position++;

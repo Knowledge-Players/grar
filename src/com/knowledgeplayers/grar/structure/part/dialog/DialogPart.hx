@@ -4,7 +4,7 @@ import com.knowledgeplayers.grar.event.TokenEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.Game;
 import com.knowledgeplayers.grar.structure.part.dialog.item.ChoiceItem;
-import com.knowledgeplayers.grar.structure.part.dialog.item.Item;
+import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.structure.part.dialog.pattern.CollectPattern;
 import haxe.xml.Fast;
 import nme.Lib;
@@ -33,7 +33,7 @@ class DialogPart extends StructurePart {
 
     override public function getNextElement(): Null<Dynamic>
     {
-        var item: Item = null;
+        var item: TextItem = null;
         if(itemIndex < patterns.length){
             item = patterns[itemIndex].getNextItem();
             if(item == null){

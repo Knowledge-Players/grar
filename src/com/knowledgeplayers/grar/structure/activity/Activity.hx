@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.structure.activity;
+import com.knowledgeplayers.grar.structure.part.PartElement;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
@@ -10,7 +11,7 @@ import nme.events.EventDispatcher;
 /**
  * Abstract activity
  */
-class Activity extends EventDispatcher {
+class Activity extends EventDispatcher, implements PartElement {
     /**
      * Score for this activity
      */
@@ -68,6 +69,24 @@ class Activity extends EventDispatcher {
     {
         isEnded = true;
         Localiser.instance.setLayoutFile(previousContent);
+    }
+
+    /**
+    * @return false
+**/
+
+    public function isText(): Bool
+    {
+        return false;
+    }
+
+    /**
+    * @return true
+**/
+
+    public function isActivity(): Bool
+    {
+        return true;
     }
 
     // Privates
