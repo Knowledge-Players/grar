@@ -20,8 +20,8 @@ class StripDisplay extends PartDisplay {
     /*
 
     */
-    private var displayObjects: Hash<DisplayObject>;
-    private var resizeD: ResizeManager;
+ //   private var displayObjects: Hash<DisplayObject>;
+  //  private var resizeD: ResizeManager;
     private var stripPart: StripPart;
     private var content: Fast;
     private var boxesD: Array<BoxDisplay>;
@@ -29,7 +29,7 @@ class StripDisplay extends PartDisplay {
     public function new(part: StripPart)
     {
         boxesD = new Array<BoxDisplay>();
-        resizeD = ResizeManager.getInstance();
+       // resizeD = ResizeManager.getInstance();
         super(part);
         Lib.trace("content : "+content);
 
@@ -53,9 +53,11 @@ class StripDisplay extends PartDisplay {
 
 
 
-    override private function parseContent(displayAnim: Fast): Void
+
+    override private function parseContent(content: Xml): Void
     {
-        content = displayAnim;
+        super.parseContent(content);
+
 
     }
 
@@ -63,9 +65,9 @@ class StripDisplay extends PartDisplay {
     {
       //  for(box in animagic.boxes){
 
-            var boxD = new BoxDisplay(animagic.getCurrentBox(), content);
+           /* var boxD = new BoxDisplay(animagic.getCurrentBox(), content);
             boxD.addEventListener(ButtonActionEvent.NEXT,showNextBox);
-            addChild(boxD);
+            addChild(boxD); */
          
             //boxesD.push(boxD);
             
@@ -77,10 +79,11 @@ class StripDisplay extends PartDisplay {
 
     private function showNextBox(e:ButtonActionEvent):Void{
 
-    	   animagic.nextBox();
-    	   var boxD = new BoxDisplay(animagic.getCurrentBox(), content);
+    	    //animagic.nextBox();
+    	   /* var boxD = new BoxDisplay(animagic.getCurrentBox(), content);
     	    boxD.addEventListener(ButtonActionEvent.NEXT,showNextBox);
     	    addChild(boxD);
+    	    */
     }
 
 
@@ -93,9 +96,9 @@ class StripDisplay extends PartDisplay {
 
     private function onEndActivity(e: Event): Void
     {
-        model.endActivity();
+        //model.endActivity();
         unLoad();
-        animagic.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
+        //animagic.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
     }
 
 
