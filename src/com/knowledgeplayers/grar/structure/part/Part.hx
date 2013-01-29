@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import com.knowledgeplayers.grar.structure.part.dialog.pattern.Pattern;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.part.TextItem;
@@ -21,6 +22,7 @@ interface Part implements IEventDispatcher {
     public var items (default, null): Array<TextItem>;
     public var inventory (default, null): Array<String>;
     public var soundLoop (default, default): Sound;
+    public var patterns (default, null): Array<Pattern>;
 
     public function init(xml: Fast, filePath: String = ""): Void;
 

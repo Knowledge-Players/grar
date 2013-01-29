@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.structure.part.strip.box.Box;
 import com.knowledgeplayers.grar.structure.part.strip.StripPart;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.structure.activity.Activity;
@@ -31,7 +32,8 @@ class StripDisplay extends PartDisplay {
         boxesD = new Array<BoxDisplay>();
        // resizeD = ResizeManager.getInstance();
         super(part);
-        addDisplayObjects();
+
+      //  addDisplayObjects();
 
 
     }
@@ -59,33 +61,42 @@ class StripDisplay extends PartDisplay {
     {
         super.parseContent(content);
         Lib.trace("content : "+content);
-
+        Lib.trace("part : "+part);
+        for(box in part.patterns){
+            var boxD = new BoxDisplay(cast(part,StripPart).getCurrentBox(), content);
+            boxD.addEventListener(ButtonActionEvent.NEXT,showNextBox);
+            addChild(boxD);
+            boxesD.push(boxD);
+        }
 
 
     }
 
-    private function addDisplayObjects(): Void
+    /*private function addDisplayObjects(): Void
     {
-        for(box in stripPart.boxes){
+        for(box in part.patterns){
+            if(part.isStrip()){
+                var boxD = new BoxDisplay(cast(part,StripPart).getCurrentBox(), content);
+                boxD.addEventListener(ButtonActionEvent.NEXT,showNextBox);
+                addChild(boxD);
 
-            var boxD = new BoxDisplay(stripPart.getCurrentBox(), content);
-            boxD.addEventListener(ButtonActionEvent.NEXT,showNextBox);
-            addChild(boxD);
-         
-            boxesD.push(boxD);
+                boxesD.push(boxD);
+            }
+
             
-        };
+        }
 
      
 
-    }
+    }  */
 
     private function showNextBox(e:ButtonActionEvent):Void{
 
-    	    stripPart.nextBox();
-    	    var boxD = new BoxDisplay(stripPart.getCurrentBox(), content);
+          /*  cast(part,StripPart).nextBox();
+    	    var boxD = new BoxDisplay(cast(part,StripPart).getCurrentBox(), content);
     	    boxD.addEventListener(ButtonActionEvent.NEXT,showNextBox);
     	    addChild(boxD);
+    	    */
 
     }
 

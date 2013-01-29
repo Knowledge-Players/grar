@@ -13,19 +13,18 @@ class StripPart  extends StructurePart {
 /**
  * Group of cases
  */
-    public var boxes: Array<Box>;
 
     private var roundIndex: Int = 0;
 
     public function new()
     {
         super();
-        boxes = new Array<Box>();
+
     }
 
-    public function getCurrentBox(): Box
+    public function getCurrentBox():Box
     {
-        return boxes[roundIndex];
+        return cast(patterns[roundIndex],Box);
     }
     public function nextBox():Void{
         roundIndex++;
@@ -42,18 +41,6 @@ class StripPart  extends StructurePart {
     override private function parseContent(content: Xml): Void
     {
         super.parseContent(content);
-
-       /* var anim = new Fast(content).node.Part;
-        for(round in anim.nodes.Pattern){
-            var box = new Box(round.att.Ref);
-
-            for(element in round.elements){
-                box.addXmlItem(element);
-
-            }
-            boxes.push(box);
-
-        }  */
 
     }
 

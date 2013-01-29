@@ -32,6 +32,7 @@ class PartFactory
 		switch(partType.toLowerCase()) {
 			case "dialog": creation = new DialogPart();
             case "strip" : creation = new StripPart();
+
 			// TODO : creer une partie map
 			case "map": creation = new StructurePart();
 

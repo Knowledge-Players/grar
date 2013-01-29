@@ -32,10 +32,10 @@ class BoxDisplay extends Sprite
     private var displayObjects: Hash<DisplayObject>;
 
 
-    public function new(box:Box,contentDisplay:Fast):Void
+    public function new(box:Box,content:Xml):Void
     {
         super();
-        this.contentDisplay = contentDisplay;
+        this.contentDisplay = new Fast(content);
         this.box = box;
        
         resizeD = ResizeManager.getInstance();

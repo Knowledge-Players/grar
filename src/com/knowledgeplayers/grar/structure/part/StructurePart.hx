@@ -28,7 +28,7 @@ class StructurePart extends EventDispatcher, implements Part {
     /**
     * Array of the patterns composing the dialog
     */
-        public var patterns: Array<Pattern>;
+    public var patterns (default, null): Array<Pattern>;
 
     /**
      * Name of the part
