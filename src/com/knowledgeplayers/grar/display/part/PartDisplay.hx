@@ -61,6 +61,7 @@ class PartDisplay extends Sprite {
         displayObjects = new Hash<DisplayObject>();
         resizeD = ResizeManager.getInstance();
 
+
         XmlLoader.load(part.display, onLoadComplete, parseContent);
 
         addEventListener(TokenEvent.ADD, onTokenAdded);

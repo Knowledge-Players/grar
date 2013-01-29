@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import com.knowledgeplayers.grar.structure.part.strip.box.Box;
 import com.knowledgeplayers.grar.structure.part.dialog.pattern.Pattern;
 import com.knowledgeplayers.grar.structure.part.dialog.pattern.CollectPattern;
 import com.knowledgeplayers.grar.structure.part.dialog.pattern.ActivityPattern;
@@ -30,6 +31,7 @@ class PatternFactory
 		var creation: Pattern = null;
 		switch(patternType.toLowerCase()) {
 			case "link": creation = new Pattern(patternName);
+            case "box": creation  = new Box(patternName);
 			case "collect": creation = new CollectPattern(patternName);
 			case "activity": creation = new ActivityPattern(patternName);
 			default: Lib.trace(patternType + ": Unsupported pattern type");

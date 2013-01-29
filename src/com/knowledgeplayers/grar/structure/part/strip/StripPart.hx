@@ -1,8 +1,8 @@
 package com.knowledgeplayers.grar.structure.part.strip;
 
+import com.knowledgeplayers.grar.structure.part.strip.box.Box;
 import com.knowledgeplayers.grar.structure.part.StructurePart;
 import nme.events.EventDispatcher;
-import com.knowledgeplayers.grar.structure.activity.Box;
 import com.knowledgeplayers.grar.structure.part.Part;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.structure.activity.Activity;
@@ -41,7 +41,9 @@ class StripPart  extends StructurePart {
 
     override private function parseContent(content: Xml): Void
     {
-        var anim = new Fast(content).node.Part;
+        super.parseContent(content);
+
+       /* var anim = new Fast(content).node.Part;
         for(round in anim.nodes.Pattern){
             var box = new Box(round.att.Ref);
 
@@ -51,8 +53,8 @@ class StripPart  extends StructurePart {
             }
             boxes.push(box);
 
-        }
-        super.parseContent(content);
+        }  */
+
     }
 
 }

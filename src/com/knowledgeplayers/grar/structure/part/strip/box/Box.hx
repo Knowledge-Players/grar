@@ -1,25 +1,26 @@
-package com.knowledgeplayers.grar.structure.activity;
+package com.knowledgeplayers.grar.structure.part.strip.box;
 
+import com.knowledgeplayers.grar.structure.part.dialog.pattern.Pattern;
 import nme.events.EventDispatcher;
 import haxe.xml.Fast;
 import nme.Lib;
 
 
-class Box extends EventDispatcher
+class Box extends Pattern
 {
 
 
 	public var ref:String;
 
-    	public var items: List<Fast>;
+    public var items: List<Fast>;
 
-	public function new(?ref:String):Void
+	public function new(?name:String):Void
 	{
-		super();
+		super(name);
 		items = new List<Fast>();
 
-		this.ref = ref;
-		
+		this.ref = name;
+
 
 	}
 

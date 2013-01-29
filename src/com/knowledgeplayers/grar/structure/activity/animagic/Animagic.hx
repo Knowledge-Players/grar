@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.activity.animagic;
 
+import com.knowledgeplayers.grar.structure.part.strip.box.Box;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.util.XmlLoader;

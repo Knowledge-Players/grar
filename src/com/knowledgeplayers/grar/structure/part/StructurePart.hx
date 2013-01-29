@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import com.knowledgeplayers.grar.structure.part.dialog.pattern.Pattern;
 import haxe.unit.TestCase;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import com.knowledgeplayers.grar.event.TokenEvent;
@@ -19,8 +20,16 @@ import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.factory.ActivityFactory;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.util.XmlLoader;
+import com.knowledgeplayers.grar.factory.PatternFactory;
 
 class StructurePart extends EventDispatcher, implements Part {
+
+
+    /**
+    * Array of the patterns composing the dialog
+    */
+        public var patterns: Array<Pattern>;
+
     /**
      * Name of the part
      */
@@ -271,6 +280,12 @@ class StructurePart extends EventDispatcher, implements Part {
         }
         for(char in partFast.nodes.Character){
             characters.set(char.att.Ref, new Character(char.att.Ref));
+        }
+
+        for(patternNode in partFast.nodes.Pattern){
+            var pattern: Pattern = PatternFactory.createPatternFromXml(patternNode, patternNode.att.Id);
+            pattern.init(patternNode);
+            patterns.push(pattern);
         }
         fireLoaded();
     }

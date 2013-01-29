@@ -1,10 +1,9 @@
 package com.knowledgeplayers.grar.display.activity;
 
+import com.knowledgeplayers.grar.structure.part.strip.box.Box;
 import nme.display.DisplayObject;
 import nme.display.Sprite;
 import nme.display.Bitmap;
-
-import com.knowledgeplayers.grar.structure.activity.Box;
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.localisation.Localiser;

@@ -31,7 +31,8 @@ class StripDisplay extends PartDisplay {
         boxesD = new Array<BoxDisplay>();
        // resizeD = ResizeManager.getInstance();
         super(part);
-        Lib.trace("content : "+content);
+        addDisplayObjects();
+
 
     }
     /*private function new()
@@ -57,21 +58,23 @@ class StripDisplay extends PartDisplay {
     override private function parseContent(content: Xml): Void
     {
         super.parseContent(content);
+        Lib.trace("content : "+content);
+
 
 
     }
 
     private function addDisplayObjects(): Void
     {
-      //  for(box in animagic.boxes){
+        for(box in stripPart.boxes){
 
-           /* var boxD = new BoxDisplay(animagic.getCurrentBox(), content);
+            var boxD = new BoxDisplay(stripPart.getCurrentBox(), content);
             boxD.addEventListener(ButtonActionEvent.NEXT,showNextBox);
-            addChild(boxD); */
+            addChild(boxD);
          
-            //boxesD.push(boxD);
+            boxesD.push(boxD);
             
-       // };
+        };
 
      
 
@@ -79,27 +82,11 @@ class StripDisplay extends PartDisplay {
 
     private function showNextBox(e:ButtonActionEvent):Void{
 
-    	    //animagic.nextBox();
-    	   /* var boxD = new BoxDisplay(animagic.getCurrentBox(), content);
+    	    stripPart.nextBox();
+    	    var boxD = new BoxDisplay(stripPart.getCurrentBox(), content);
     	    boxD.addEventListener(ButtonActionEvent.NEXT,showNextBox);
     	    addChild(boxD);
-    	    */
+
     }
-
-
-
-    private function onModelComplete(e: LocaleEvent): Void
-    {
-
-        dispatchEvent(new Event(Event.COMPLETE));
-    }
-
-    private function onEndActivity(e: Event): Void
-    {
-        //model.endActivity();
-        unLoad();
-        //animagic.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
-    }
-
 
 }

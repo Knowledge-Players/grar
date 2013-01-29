@@ -19,10 +19,6 @@ import com.knowledgeplayers.grar.factory.PatternFactory;
  */
 
 class DialogPart extends StructurePart {
-    /**
-     * Array of the patterns composing the dialog
-     */
-    public var patterns: Array<Pattern>;
 
     public function new()
     {
@@ -78,12 +74,7 @@ class DialogPart extends StructurePart {
 
     override private function parseContent(content: Xml): Void
     {
-        var partFast: Fast = new Fast(content).node.Part;
-        for(patternNode in partFast.nodes.Pattern){
-            var pattern: Pattern = PatternFactory.createPatternFromXml(patternNode, patternNode.att.Id);
-            pattern.init(patternNode);
-            patterns.push(pattern);
-        }
+
         super.parseContent(content);
     }
 
