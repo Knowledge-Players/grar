@@ -61,11 +61,6 @@ class StructurePart extends EventDispatcher, implements Part {
     public var options (default, null): Hash<String>;
 
     /**
-     * Array of all the activities in the part
-     */
-    public var activities (default, null): IntHash<Activity>;
-
-    /**
      * Hash of the sub-parts
      */
     public var parts (default, null): IntHash<Part>;
@@ -81,9 +76,9 @@ class StructurePart extends EventDispatcher, implements Part {
     public var soundLoop (default, default): Sound;
 
     /**
-     * Text items of the part
-     */
-    public var items (default, null): Array<TextItem>;
+    * Elements of the part
+**/
+    public var elements (default, null): Array<PartElement>;
 
     /**
     * Characters of the part
@@ -92,7 +87,7 @@ class StructurePart extends EventDispatcher, implements Part {
 
     private var nbSubPartLoaded: Int = 0;
     private var nbSubPartTotal: Int = 0;
-    private var itemIndex: Int = 0;
+    private var elemIndex: Int = 0;
     private var partIndex: Int = 0;
     private var soundLoopChannel: SoundChannel;
 
@@ -100,10 +95,9 @@ class StructurePart extends EventDispatcher, implements Part {
     {
         super();
         parts = new IntHash<Part>();
-        activities = new IntHash<Activity>();
         options = new Hash<String>();
         inventory = new Array<String>();
-        items = new Array<TextItem>();
+        elements = new Array<PartElement>();
         patterns = new Array<Pattern>();
         addEventListener(TokenEvent.ADD, onAddToken);
     }
@@ -146,17 +140,14 @@ class StructurePart extends EventDispatcher, implements Part {
     }
 
     /**
-     * @return the next item in the part or null if the part is over
+     * @return the next element in the part or null if the part is over
      */
 
-    public function getNextElement(): Null<Dynamic>
+    public function getNextElement(): Null<PartElement>
     {
-        if(activities.exists(itemIndex)){
-            return activities.get(itemIndex);
-        }
-        if(itemIndex < items.length){
-            itemIndex++;
-            return items[itemIndex - 1];
+        if(elemIndex < elements.length){
+            elemIndex++;
+            return elements[elemIndex - 1];
         }
         else{
             exitPart();
@@ -213,7 +204,12 @@ class StructurePart extends EventDispatcher, implements Part {
 
     public function activitiesCount(): Int
     {
-        return Lambda.count(activities);
+        var nbAct = 0;
+        for(elem in elements){
+            if(elem.isActivity())
+                nbAct++;
+        }
+        return nbAct;
     }
 
     /**
@@ -240,9 +236,7 @@ class StructurePart extends EventDispatcher, implements Part {
     override public function toString(): String
     {
         return "Part " + name + " " + file + " has " +
-        (hasParts() ? "parts: \n" + parts.toString() : "no part") +
-        " and " + (activitiesCount() != 0 ? "activities: " + activities.toString() : "no activity") +
-        (items.length == 0 ? ". It has no items" : ". It's composed by " + items.toString());
+        (hasParts() ? "parts: \n" + parts.toString() : "no part");
     }
 
     /**
@@ -265,13 +259,11 @@ class StructurePart extends EventDispatcher, implements Part {
     {
         var partFast: Fast = new Fast(content).node.Part;
 
-        var position: Int = 0;
         for(child in partFast.elements){
-            switch(child.name){
-                case "Item": items.push(new TextItem(child));
-                case "Activity": activities.set(position, ActivityFactory.createActivityFromXml(child));
+            switch(child.name.toLowerCase()){
+                case "item": elements.push(new TextItem(child));
+                case "activity": elements.push(ActivityFactory.createActivityFromXml(child));
             }
-            position++;
         }
         for(char in partFast.nodes.Character){
             characters.set(char.att.Ref, new Character(char.att.Ref));

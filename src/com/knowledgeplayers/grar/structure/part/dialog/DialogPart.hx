@@ -30,10 +30,10 @@ class DialogPart extends StructurePart {
     override public function getNextElement(): Null<Dynamic>
     {
         var item: TextItem = null;
-        if(itemIndex < patterns.length){
-            item = patterns[itemIndex].getNextItem();
+        if(elemIndex < patterns.length){
+            item = patterns[elemIndex].getNextItem();
             if(item == null){
-                itemIndex++;
+                elemIndex++;
                 return getNextElement();
             }
         }
@@ -57,8 +57,8 @@ class DialogPart extends StructurePart {
     public function getNextVerticalIndex(): Null<ChoiceItem>
     {
         var item: ChoiceItem = null;
-        if(Std.is(patterns[itemIndex], CollectPattern)){
-            var collect: CollectPattern = cast(patterns[itemIndex], CollectPattern);
+        if(Std.is(patterns[elemIndex], CollectPattern)){
+            var collect: CollectPattern = cast(patterns[elemIndex], CollectPattern);
             item = collect.progressVertically();
 
             if(item != null && item.hasToken()){

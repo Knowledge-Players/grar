@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
+import nme.Lib;
 import nme.Assets;
 import nme.display.Bitmap;
 import com.knowledgeplayers.grar.factory.UiFactory;
@@ -89,7 +90,10 @@ class ScrollPanel extends Sprite {
             graphics.endFill();
         }
         else{
-            addChildAt(new Bitmap(Assets.getBitmapData(bkg)), 0);
+            var bitmap = new Bitmap(Assets.getBitmapData(bkg));
+            bitmap.width = maskWidth;
+            bitmap.height = maskHeight;
+            addChildAt(bitmap, 0);
         }
         return bkg;
     }
