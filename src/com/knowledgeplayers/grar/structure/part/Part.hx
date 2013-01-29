@@ -41,4 +41,6 @@ interface Part implements IEventDispatcher {
     public function toString(): String;
 
     public function isDialog(): Bool;
+
+    public function isStrip(): Bool;
 }

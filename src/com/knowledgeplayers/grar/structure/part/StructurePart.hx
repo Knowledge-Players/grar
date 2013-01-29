@@ -246,6 +246,10 @@ class StructurePart extends EventDispatcher, implements Part {
         return false;
     }
 
+    public function isStrip(): Bool
+    {
+        return false;
+    }
     // Private
 
     private function parseContent(content: Xml): Void
