@@ -20,6 +20,6 @@
     <Structure IdObjective="">
         <Part Id="0" Name="trancheDeVie" Type="dialog" File="tranche.xml" Display="trancheDisplay.xml"/>
         <Part Id="1" Name="activities" Type="" File="activities.xml" Display="activitiesDisplay.xml"/>
-        <Part Id="2" Name="bild" Type="" File="strip.xml" Display="stripDisplay.xml"/>
+        <Part Id="2" Name="bild" Type="strip" File="strip.xml" Display="stripDisplay.xml"/>
     </Structure>
 </Grar>

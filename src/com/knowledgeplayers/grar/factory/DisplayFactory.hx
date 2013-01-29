@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.factory;
 
+import com.knowledgeplayers.grar.structure.part.strip.StripPart;
+import com.knowledgeplayers.grar.display.part.StripDisplay;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.activity.quizz.QuizzDisplay;
 import com.knowledgeplayers.grar.display.part.DialogDisplay;
@@ -33,6 +35,9 @@ class DisplayFactory
 		if (part.isDialog()) {
 			creation = new DialogDisplay(cast(part, DialogPart));
 		}
+        else if (part.isStrip()){
+            creation = new StripDisplay(cast(part,StripPart));
+        }
 		else {
 			creation = new PartDisplay(part);
 		}

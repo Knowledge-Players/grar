@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import com.knowledgeplayers.grar.structure.part.strip.StripPart;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
 import com.knowledgeplayers.grar.structure.part.StructurePart;
@@ -30,8 +31,10 @@ class PartFactory
 		var creation: Part = null;
 		switch(partType.toLowerCase()) {
 			case "dialog": creation = new DialogPart();
+            case "strip" : creation = new StripPart();
 			// TODO : creer une partie map
 			case "map": creation = new StructurePart();
+
 			case "": creation = new StructurePart();
 			default: Lib.trace(partType + ": Unsupported part type");
 		}
