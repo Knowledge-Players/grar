@@ -29,6 +29,8 @@ class ActivityDisplay extends Sprite {
         this.model = model;
         this.model.addEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
         this.model.addEventListener(Event.COMPLETE, onEndActivity);
+
+        addEventListener(Event.REMOVED_FROM_STAGE, onUnload);
         this.model.loadActivity();
 
         return model;
@@ -58,11 +60,6 @@ class ActivityDisplay extends Sprite {
     private function parseContent(display: Fast): Void
     {}
 
-    private function onModelComplete(e: LocaleEvent): Void
-    {
-        dispatchEvent(new Event(Event.COMPLETE));
-    }
-
     private function unLoad(): Void
     {
         while(numChildren > 0)
@@ -88,10 +85,23 @@ class ActivityDisplay extends Sprite {
             display.scaleY = Std.parseFloat(node.att.ScaleY);
     }
 
+    // Handlers
+
+    private function onUnload(ev: Event): Void
+    {
+        onEndActivity(null);
+    }
+
     private function onEndActivity(e: Event): Void
     {
         model.endActivity();
         unLoad();
         model.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
+        model.removeEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
+    }
+
+    private function onModelComplete(e: LocaleEvent): Void
+    {
+        dispatchEvent(new Event(Event.COMPLETE));
     }
 }

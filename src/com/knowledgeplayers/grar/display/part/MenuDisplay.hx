@@ -54,7 +54,6 @@ class MenuDisplay extends Sprite {
     {
         var target = cast(e.target, Sprite).parent;
         for(part in parts){
-            Lib.trace("target name: " + target.name + " part name: " + part.name);
             if(part.name == target.name){
                 launchPart(part);
                 break;

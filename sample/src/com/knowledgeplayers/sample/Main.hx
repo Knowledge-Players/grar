@@ -3,6 +3,7 @@ package com.knowledgeplayers.sample;
 #if cpp
 import hxcpp.DebugSocket;
 #end
+import com.knowledgeplayers.grar.util.KeyboardManager;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.event.GameEvent;
 import com.knowledgeplayers.grar.display.GameDisplay;
@@ -21,10 +22,12 @@ class Main {
     {
         // Load styles
         StyleParser.instance.parse(Assets.getText("xml/style.xml"));
+
         //Load Ui elements
 
         // Create a new game
         game = new KpGame();
+
         game.addEventListener(PartEvent.PART_LOADED, onLoadingComplete);
         game.init(Xml.parse(Assets.getText("xml/sample_structure.xml")));
 
@@ -36,7 +39,19 @@ class Main {
     private function onLoadingComplete(e: PartEvent): Void
     {
         var gameDisplay = new GameDisplay(game);
+        gameDisplay.addEventListener(GameEvent.GAME_OVER, onGameOver);
+
         Lib.current.addChild(gameDisplay);
 
+        // Set Keyboard Manager
+        KeyboardManager.instance.game = gameDisplay;
+
+    }
+
+    private function onGameOver(ev: GameEvent): Void
+    {
+        for(part in game.getAllParts()){
+            Lib.trace("Fini: " + part.isDone);
+        }
     }
 }

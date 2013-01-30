@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.event.PartEvent;
 import haxe.unit.TestCase;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
@@ -75,78 +76,16 @@ class PartDisplay extends Sprite {
             removeChildAt(numChildren - 1);
     }
 
-    // Private
-
-    private function onTokenAdded(e: TokenEvent): Void
-    {
-        /*for(p in 1...Lambda.count(displayObjects) + 1){
-            if(displayObjects.get(Std.string(p)) != null){
-                addChild(displayObjects.get(Std.string(p)));
-            }
-        }*/
-    }
-
-    private function parseContent(content: Xml): Void
-    {
-        var displayFast: Fast = new Fast(content).node.Display;
-        for(child in displayFast.elements){
-            switch(child.name){
-                case "Background": createBackground(child);
-                case "Item": createItem(child);
-                case "Character": createCharacter(child);
-                case "Button": createButton(child);
-                case "Text": createText(child);
-            }
-        }
-
-        /*// Background
-        if(displayFast.hasNode.Background){
-            createBackground(displayFast.node.Background);
-        }
-
-        // Items
-        for(item in displayFast.nodes.TextItem){
-            createItem(item);
-        }
-
-        // Characters
-        for(char in displayFast.nodes.Character){
-            createCharacter(char);
-        }
-
-        // Button
-        for(button in displayFast.nodes.Button){
-            createButton(button);
-        }
-
-        // Texts
-        for(text in displayFast.nodes.Text){
-            createText(text);
-        }
-
-        for(p in 1...Lambda.count(displayObjects) + 1){
-            if(displayObjects.get(Std.string(p)) != null){
-                addChild(displayObjects.get(Std.string(p)));
-            }
-        }*/
-
-        nextItem();
-        resizeD.onResize();
-    }
-
-    private function next(event: ButtonActionEvent): Void
-    {
-        nextItem();
-    }
-
-    private function nextItem(): Null<TextItem>
+    public function nextItem(): Null<TextItem>
     {
         var element: PartElement = part.getNextElement();
-        if(element == null)
+        if(element == null){
+            dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
             return null;
+        }
         if(element.isText()){
             var item: TextItem = cast(element, TextItem);
-            if(item != null && characters.exists(item.author)){
+            if(characters.exists(item.author)){
 
                 var char = characters.get(item.author);
 
@@ -178,29 +117,64 @@ class PartDisplay extends Sprite {
         return null;
     }
 
+    // Private
+
+    private function onTokenAdded(e: TokenEvent): Void
+    {
+        /*for(p in 1...Lambda.count(displayObjects) + 1){
+            if(displayObjects.get(Std.string(p)) != null){
+                addChild(displayObjects.get(Std.string(p)));
+            }
+        }*/
+    }
+
+    private function parseContent(content: Xml): Void
+    {
+        var displayFast: Fast = new Fast(content).node.Display;
+        for(child in displayFast.elements){
+            switch(child.name){
+                case "Background": createBackground(child);
+                case "Item": createItem(child);
+                case "Character": createCharacter(child);
+                case "Button": createButton(child);
+                case "Text": createText(child);
+            }
+        }
+
+        nextItem();
+        resizeD.onResize();
+    }
+
+    private function next(event: ButtonActionEvent): Void
+    {
+        nextItem();
+    }
+
     private function launchActivity(activity: Activity)
     {
-        visible = false;
+        //visible = false;
 
         activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
         var activityName: String = Type.getClassName(Type.getClass(activity));
         activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
+        if(activityDisplay != null)
+            removeChild(activityDisplay);
         activityDisplay = ActivityManager.instance.getActivity(activityName);
         activityDisplay.addEventListener(Event.COMPLETE, onActivityReady);
         activityDisplay.model = activity;
 
-        parent.addChild(activityDisplay);
     }
 
     private function onActivityEnd(e: PartEvent): Void
     {
         cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
-        nextItem();
-        visible = true;
+        //nextItem();
+        //visible = true;
     }
 
     private function onActivityReady(e: Event): Void
     {
+        addChild(activityDisplay);
         activityDisplay.startActivity();
     }
 
@@ -311,15 +285,11 @@ class PartDisplay extends Sprite {
 
     private function setText(item: TextItem): Void
     {
-        if(item == null)
-            dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
-        else{
-            var content = Localiser.getInstance().getItemContent(item.content);
-            if(currentSpeaker != null)
-                text.content = KpTextDownParser.parse("*" + currentSpeaker.model.getName() + "*\n" + content);
-            else
-                text.content = KpTextDownParser.parse(content);
-        }
+        var content = Localiser.getInstance().getItemContent(item.content);
+        if(currentSpeaker != null)
+            text.content = KpTextDownParser.parse("*" + currentSpeaker.model.getName() + "*\n" + content);
+        else
+            text.content = KpTextDownParser.parse(content);
     }
 
     // Handlers
