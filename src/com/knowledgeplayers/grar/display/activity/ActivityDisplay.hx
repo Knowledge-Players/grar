@@ -1,4 +1,7 @@
 package com.knowledgeplayers.grar.display.activity;
+import com.knowledgeplayers.grar.event.PartEvent;
+import com.knowledgeplayers.grar.event.LocaleEvent;
+import nme.events.Event;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import haxe.FastList;
 import haxe.xml.Fast;
@@ -6,30 +9,35 @@ import nme.display.DisplayObject;
 import nme.display.Sprite;
 
 /**
- * Abstract display for an activity
- */
+* Abstract display for an activity
+*/
 
 class ActivityDisplay extends Sprite {
     /**
-     * Model to display
-     */
+* Model to display
+*/
     public var model(default, setModel): Activity;
 
     /**
-     * Setter for the model
-     * @param	model : the model to set
-     * @return the model
-     */
+* Setter for the model
+* @param model : the model to set
+* @return the model
+*/
 
     public function setModel(model: Activity): Activity
     {
-        return null;
+        this.model = model;
+        this.model.addEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
+        this.model.addEventListener(Event.COMPLETE, onEndActivity);
+        this.model.loadActivity();
+
+        return model;
     }
 
     /**
-     * Set the display with XML infos
-     * @param	display : fast XML node with display infos
-     */
+* Set the display with XML infos
+* @param display : fast XML node with display infos
+*/
 
     public function setDisplay(display: Fast): Void
     {
@@ -37,8 +45,8 @@ class ActivityDisplay extends Sprite {
     }
 
     /**
-     * Start the activity
-     */
+* Start the activity
+*/
 
     public function startActivity(): Void
     {
@@ -49,6 +57,11 @@ class ActivityDisplay extends Sprite {
 
     private function parseContent(display: Fast): Void
     {}
+
+    private function onModelComplete(e: LocaleEvent): Void
+    {
+        dispatchEvent(new Event(Event.COMPLETE));
+    }
 
     private function unLoad(): Void
     {
@@ -73,5 +86,12 @@ class ActivityDisplay extends Sprite {
             display.height = Std.parseFloat(node.att.Height);
         else
             display.scaleY = Std.parseFloat(node.att.ScaleY);
+    }
+
+    private function onEndActivity(e: Event): Void
+    {
+        model.endActivity();
+        unLoad();
+        model.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
     }
 }

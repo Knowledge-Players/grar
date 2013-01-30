@@ -22,92 +22,92 @@ import nme.Lib;
 import nme.display.DisplayObject;
 
 /**
- * Display for quizz activity. Since all quizz in a game must look alike,
- * this is a singleton.
- * @author jbrichardet
- */
+* Display for quizz activity. Since all quizz in a game must look alike,
+* this is a singleton.
+* @author jbrichardet
+*/
 
 class QuizzDisplay extends ActivityDisplay {
     /**
-     * Instance
-     */
+* Instance
+*/
     public static var instance (getInstance, null): QuizzDisplay;
 
     /**
-     * Question field
-     */
+* Question field
+*/
     public var question: StyledTextField;
 
     /**
-     * Validate button
-     */
+* Validate button
+*/
     public var validationButton: DefaultButton;
 
     /**
-     * Group of answers
-     */
+* Group of answers
+*/
     public var quizzGroup: QuizzGroupDisplay;
 
     /**
-     * Lock state of the quizz. If true, the answers can't be changed
-     */
+* Lock state of the quizz. If true, the answers can't be changed
+*/
     public var locked: Bool;
 
     // Icons
     /**
-     * Icon to display when an answer is checked
-     */
+* Icon to display when an answer is checked
+*/
     public var iconCheck (default, default): BitmapData;
 
     /**
-     * Icon to display when an answer is unchecked
-     */
+* Icon to display when an answer is unchecked
+*/
     public var iconUncheck (default, default): BitmapData;
 
     /**
-     * Icon to display when an answer is right
-     */
+* Icon to display when an answer is right
+*/
     public var iconCheckRight (default, default): BitmapData;
 
     /**
-     * Icon to display when an answer is wrong
-     */
+* Icon to display when an answer is wrong
+*/
     public var iconCheckWrong (default, default): BitmapData;
 
     /**
-     * Icon to display near the goods answers
-     */
+* Icon to display near the goods answers
+*/
     public var correction: BitmapData;
 
     // Layouts
     /**
-     * X postion of the items in a group
-     */
+* X postion of the items in a group
+*/
     public var itemXOffset: Float;
 
     /**
-     * X position of the correction icon
-     */
+* X position of the correction icon
+*/
     public var correctionXOffset: Float;
 
     /**
-     * X offset in the answer group
-     */
+* X offset in the answer group
+*/
     public var groupXOffset: Float;
 
     /**
-     * Y offset in the answer group
-     */
+* Y offset in the answer group
+*/
     public var groupYOffset: Float;
 
     /**
-     * X position of the answer group
-     */
+* X position of the answer group
+*/
     public var groupX: Float;
 
     /**
-     * Y position of the answer group
-     */
+* Y position of the answer group
+*/
     public var groupY: Float;
 
     private var quizz: Quizz;
@@ -117,8 +117,8 @@ class QuizzDisplay extends ActivityDisplay {
     private var content: Fast;
 
     /**
-     * @return the instance
-     */
+* @return the instance
+*/
 
     public static function getInstance(): QuizzDisplay
     {
@@ -130,13 +130,7 @@ class QuizzDisplay extends ActivityDisplay {
 
     override public function setModel(model: Activity): Activity
     {
-        quizz = cast(model, Quizz);
-        quizz.addEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
-        quizz.addEventListener(Event.COMPLETE, onEndActivity);
-        this.model = quizz;
-        quizz.loadActivity();
-
-        return model;
+        return quizz = cast(super.setModel(model), Quizz);
     }
 
     override public function startActivity(): Void
@@ -150,17 +144,17 @@ class QuizzDisplay extends ActivityDisplay {
 
     // Private
 
-    private function onEndActivity(e: Event): Void
-    {
-        model.endActivity();
-        unLoad();
-        quizz.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
-    }
+    /*private function onEndActivity(e: Event): Void
+{
+/*model.endActivity();
+unLoad();
+quizz.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
+}*/
 
-    private function onModelComplete(e: LocaleEvent): Void
+    override private function onModelComplete(e: LocaleEvent): Void
     {
         updateRound();
-        dispatchEvent(new Event(Event.COMPLETE));
+        super.onModelComplete(e);
     }
 
     private function addDisplayObjects(): Void
