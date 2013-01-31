@@ -16,7 +16,7 @@ import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.component.DynBubble;
 import com.knowledgeplayers.grar.display.component.ScrollBar;
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
-import com.knowledgeplayers.grar.display.part.TextItemDisplay;
+import com.knowledgeplayers.grar.display.part.pattern.TextItemDisplay;
 import com.knowledgeplayers.grar.display.part.DialogDisplay;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import com.knowledgeplayers.grar.display.part.PartDisplay;

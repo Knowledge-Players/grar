@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import com.knowledgeplayers.grar.factory.ItemFactory;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import haxe.unit.TestCase;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
@@ -23,12 +24,6 @@ import com.knowledgeplayers.grar.util.XmlLoader;
 import com.knowledgeplayers.grar.factory.PatternFactory;
 
 class StructurePart extends EventDispatcher, implements Part {
-
-    /**
-    * Array of the patterns composing the dialog
-    */
-    public var patterns (default, null): Array<Pattern>;
-
     /**
      * Name of the part
      */
@@ -98,7 +93,7 @@ class StructurePart extends EventDispatcher, implements Part {
         options = new Hash<String>();
         inventory = new Array<String>();
         elements = new Array<PartElement>();
-        patterns = new Array<Pattern>();
+        characters = new Hash<Character>();
         addEventListener(TokenEvent.ADD, onAddToken);
     }
 
@@ -186,30 +181,7 @@ class StructurePart extends EventDispatcher, implements Part {
 
     public function hasParts(): Bool
     {
-        return partsCount() != 0;
-    }
-
-    /**
-     * @return the number of sub-part
-     */
-
-    public function partsCount(): Int
-    {
-        return Lambda.count(parts);
-    }
-
-    /**
-     * @return the number of activities in the part
-     */
-
-    public function activitiesCount(): Int
-    {
-        var nbAct = 0;
-        for(elem in elements){
-            if(elem.isActivity())
-                nbAct++;
-        }
-        return nbAct;
+        return Lambda.count(parts) != 0;
     }
 
     /**
@@ -254,6 +226,11 @@ class StructurePart extends EventDispatcher, implements Part {
         return false;
     }
 
+    /**
+     * Tell if this part is a strip
+     * @return true if this part is a strip
+     */
+
     public function isStrip(): Bool
     {
         return false;
@@ -265,19 +242,11 @@ class StructurePart extends EventDispatcher, implements Part {
         var partFast: Fast = new Fast(content).node.Part;
 
         for(child in partFast.elements){
+            Lib.trace(child.name);
             switch(child.name.toLowerCase()){
-                case "item": elements.push(new TextItem(child));
+                case "item": elements.push(ItemFactory.createItemFromXml(child));
                 case "activity": elements.push(ActivityFactory.createActivityFromXml(child));
             }
-        }
-        for(char in partFast.nodes.Character){
-            characters.set(char.att.Ref, new Character(char.att.Ref));
-        }
-
-        for(patternNode in partFast.nodes.Pattern){
-            var pattern: Pattern = PatternFactory.createPatternFromXml(patternNode, patternNode.att.Id);
-            pattern.init(patternNode);
-            patterns.push(pattern);
         }
         fireLoaded();
     }

@@ -21,7 +21,6 @@ interface Part implements IEventDispatcher {
     public var elements (default, null): Array<PartElement>;
     public var inventory (default, null): Array<String>;
     public var soundLoop (default, default): Sound;
-    public var patterns (default, null): Array<Pattern>;
 
     public function init(xml: Fast, filePath: String = ""): Void;
 
@@ -36,10 +35,6 @@ interface Part implements IEventDispatcher {
     public function getAllParts(): Array<Part>;
 
     public function hasParts(): Bool;
-
-    public function partsCount(): Int;
-
-    public function activitiesCount(): Int;
 
     public function toString(): String;
 

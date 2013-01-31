@@ -47,8 +47,8 @@ class PatternFactory {
      * @return the pattern or null if the type is not supported
      */
 
-    public static function createPatternFromXml(xml: Fast, patternName: String): Null<Pattern>
+    public static function createPatternFromXml(xml: Fast): Null<Pattern>
     {
-        return createPattern(xml.att.Type, patternName);
+        return createPattern(xml.att.Type, xml.att.Id);
     }
 }

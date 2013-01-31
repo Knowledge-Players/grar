@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.display.part;
+package com.knowledgeplayers.grar.display.part.pattern;
 
 import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
 import nme.display.DisplayObject;
@@ -19,7 +19,8 @@ import nme.Assets;
 import nme.display.Graphics;
 import nme.display.BitmapData;
 
-class BoxDisplay extends Sprite {
+class BoxDisplay extends PatternDisplay {
+
     private var resizeD: ResizeManager;
     private var contentDisplay: Fast;
     private var boxBack: Sprite;

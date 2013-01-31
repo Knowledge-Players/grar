@@ -10,11 +10,6 @@ import com.knowledgeplayers.grar.util.XmlLoader;
 import nme.events.Event;
 
 class StripPart extends StructurePart {
-    /**
-     * Group of cases
-     */
-
-    private var roundIndex: Int = 0;
 
     public function new()
     {
@@ -24,13 +19,13 @@ class StripPart extends StructurePart {
 
     public function getCurrentBox(): BoxPattern
     {
-        return cast(patterns[roundIndex], BoxPattern);
+        return cast(elements[elemIndex], BoxPattern);
     }
 
-    public function nextBox(): Void
+    /*public function nextBox(): Void
     {
         roundIndex++;
-    }
+    }*/
 
     override public function isStrip(): Bool
     {
@@ -40,10 +35,10 @@ class StripPart extends StructurePart {
 
     // Private
 
-    override private function parseContent(content: Xml): Void
+    /*override private function parseContent(content: Xml): Void
     {
         super.parseContent(content);
 
-    }
+    }*/
 
 }

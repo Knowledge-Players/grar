@@ -1,7 +1,10 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.util.DisplayUtils;
+import com.knowledgeplayers.grar.structure.part.dialog.Character;
+import com.knowledgeplayers.grar.structure.part.Pattern;
+import com.knowledgeplayers.grar.display.part.pattern.PatternDisplay;
 import com.knowledgeplayers.grar.event.PartEvent;
-import haxe.unit.TestCase;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
@@ -41,13 +44,13 @@ class PartDisplay extends Sprite {
     public var part: Part;
 
     private var text: ScrollPanel;
-    private var characters: Hash<CharacterDisplay>;
-    private var charactersDepth: Hash<Int>;
     private var currentSpeaker: CharacterDisplay;
     private var depth: Int;
-    private var resiz: String;
     private var resizeD: ResizeManager;
     private var activityDisplay: ActivityDisplay;
+    private var characters: Hash<CharacterDisplay>;
+    private var backgrounds: Hash<Fast>;
+    private var previousBackground: {ref: String, bmp: Bitmap};
 
     /**
      * Constructor
@@ -59,6 +62,7 @@ class PartDisplay extends Sprite {
         super();
         this.part = part;
         characters = new Hash<CharacterDisplay>();
+        backgrounds = new Hash<Fast>();
         resizeD = ResizeManager.getInstance();
 
         XmlLoader.load(part.display, onLoadComplete, parseContent);
@@ -80,7 +84,7 @@ class PartDisplay extends Sprite {
     * @return the TextItem in the part or null if there is an activity or the part is over
 **/
 
-    public function nextItem(): Null<TextItem>
+    public function nextItem(): Void
     {
         var element: PartElement = part.getNextElement();
         if(element == null){
@@ -88,35 +92,13 @@ class PartDisplay extends Sprite {
             return null;
         }
         if(element.isText()){
-            var item: TextItem = cast(element, TextItem);
-            if(characters.exists(item.author)){
-
-                var char = characters.get(item.author);
-
-                if(char != currentSpeaker){
-
-                    if(currentSpeaker != null){
-                        //		TweenManager.fadeOut(currentSpeaker);
-                        currentSpeaker.visible = false;
-                    }
-                    if(!contains(char))
-                        addChild(char);
-
-                    else{
-                        char.alpha = 1;
-                        char.visible = true;
-                    }
-                    currentSpeaker = char;
-
-                    char.visible = true;
-                }
-            }
-            setText(item);
-            return item;
+            setText(cast(element, TextItem));
         }
         else if(element.isActivity()){
             launchActivity(cast(element, Activity));
-            return null;
+        }
+        else if(element.isPattern()){
+            startPattern(cast(element, Pattern));
         }
         return null;
     }
@@ -125,11 +107,6 @@ class PartDisplay extends Sprite {
 
     private function onTokenAdded(e: TokenEvent): Void
     {
-        /*for(p in 1...Lambda.count(displayObjects) + 1){
-            if(displayObjects.get(Std.string(p)) != null){
-                addChild(displayObjects.get(Std.string(p)));
-            }
-        }*/
     }
 
     private function parseContent(content: Xml): Void
@@ -152,6 +129,11 @@ class PartDisplay extends Sprite {
     private function next(event: ButtonActionEvent): Void
     {
         nextItem();
+    }
+
+    private function startPattern(pattern: Pattern): Void
+    {
+
     }
 
     private function launchActivity(activity: Activity)
@@ -205,11 +187,7 @@ class PartDisplay extends Sprite {
 
     private function createBackground(bkgNode: Fast): Void
     {
-        var bkgData: Bitmap = new Bitmap(Assets.getBitmapData(bkgNode.att.Id));
-
-        addChildAt(bkgData, 0);
-
-        resizeD.addDisplayObjects(bkgData, bkgNode);
+        backgrounds.set(bkgNode.att.Ref, bkgNode);
     }
 
     private function createItem(itemNode: Fast): Void
@@ -260,7 +238,7 @@ class PartDisplay extends Sprite {
     private function createCharacter(character: Fast)
     {
         var img = character.att.Id;
-        var char: CharacterDisplay = new CharacterDisplay(part.characters.get(character.att.Ref));
+        var char: CharacterDisplay = new CharacterDisplay(new Character(character.att.Ref));
         var bitmap = new Bitmap(Assets.getBitmapData(img));
         char.addChild(bitmap);
         char.visible = false;
@@ -289,9 +267,40 @@ class PartDisplay extends Sprite {
 
     private function setText(item: TextItem): Void
     {
+        if(previousBackground != null && previousBackground.ref != item.background){
+            if(previousBackground.bmp != null)
+                removeChild(previousBackground.bmp);
+        }
+        if(item.background != null){
+            var bkg = DisplayUtils.setBackground(backgrounds.get(item.background).att.Id, this);
+            previousBackground = {ref: item.background, bmp: bkg};
+            if(bkg != null)
+                resizeD.addDisplayObjects(bkg, backgrounds.get(item.background));
+        }
+
         var content = Localiser.getInstance().getItemContent(item.content);
-        if(currentSpeaker != null)
+        if(characters.exists(item.author)){
+
+            var char = characters.get(item.author);
+
+            if(char != currentSpeaker){
+
+                if(currentSpeaker != null){
+                    currentSpeaker.visible = false;
+                }
+                if(!contains(char))
+                    addChild(char);
+
+                else{
+                    char.alpha = 1;
+                    char.visible = true;
+                }
+                currentSpeaker = char;
+
+                char.visible = true;
+            }
             text.content = KpTextDownParser.parse("*" + currentSpeaker.model.getName() + "*\n" + content);
+        }
         else
             text.content = KpTextDownParser.parse(content);
     }

@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.display.part;
+package com.knowledgeplayers.grar.display.part.pattern;
 
 import haxe.xml.Fast;
 

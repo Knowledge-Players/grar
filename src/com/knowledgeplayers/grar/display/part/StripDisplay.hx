@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.part.pattern.BoxDisplay;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.structure.part.strip.StripPart;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
@@ -34,13 +35,13 @@ class StripDisplay extends PartDisplay {
         //Lib.trace("content : "+content);
         //Lib.trace("part : "+part);
         this.content = content;
-        for(box in part.patterns){
+        /*for(box in part.patterns){
             var boxD = new BoxDisplay(cast(part, StripPart).getCurrentBox(), content);
 
             boxD.addEventListener(ButtonActionEvent.NEXT, showNextBox);
             addChild(boxD);
             boxesD.push(boxD);
-        }
+        }*/
         //super.parseContent(content);
         //super.nextItem();
 
@@ -50,7 +51,7 @@ class StripDisplay extends PartDisplay {
     {
 
         //Lib.trace("showNextBox");
-        cast(part, StripPart).nextBox();
+        //cast(part, StripPart).nextBox();
 
         var boxD = new BoxDisplay(cast(part, StripPart).getCurrentBox(), content);
         boxD.addEventListener(ButtonActionEvent.NEXT, showNextBox);

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
@@ -23,9 +24,11 @@ import nme.Lib;
  */
 
 class DialogDisplay extends PartDisplay {
+
     private var verticalButton: CustomEventButton;
     private var tokens: Hash<Bitmap>;
     private var displayedToken: Bitmap;
+    private var currentPattern: Pattern;
 
     /**
      * Constructor
@@ -39,7 +42,7 @@ class DialogDisplay extends PartDisplay {
         super(part);
     }
 
-    override public function nextItem(): Null<TextItem>
+    /*override public function nextItem(): Null<TextItem>
     {
         if(displayedToken != null){
             removeChild(displayedToken);
@@ -58,9 +61,40 @@ class DialogDisplay extends PartDisplay {
         }
 
         return item;
-    }
+    }*/
 
     // Private
+
+    override private function next(event: ButtonActionEvent): Void
+    {
+        startPattern(currentPattern);
+    }
+
+    override private function startPattern(pattern: Pattern): Void
+    {
+        if(currentPattern == null)
+            currentPattern = pattern;
+
+        if(displayedToken != null){
+            removeChild(displayedToken);
+            displayedToken = null;
+        }
+
+        var nextItem = pattern.getNextItem();
+        if(nextItem != null){
+            setText(nextItem);
+
+            if(nextItem.hasVerticalFlow())
+                verticalButton.enabled = true;
+            else if(verticalButton != null)
+                verticalButton.enabled = false;
+            if(nextItem.hasActivity()){
+                launchActivity(cast(nextItem, RemarkableEvent).activity);
+            }
+        }
+        else
+            this.nextItem();
+    }
 
     private function vertical(event: ButtonActionEvent): Void
     {
@@ -72,11 +106,7 @@ class DialogDisplay extends PartDisplay {
                 var token: Bitmap = tokens.get(cast(item, ChoiceItem).tokenId);
                 if(token != null){
                     displayedToken = token;
-                    /*for(p in 1...Lambda.count(displayObjects) + 1){
-                        if(displayObjects.get(Std.string(p)) != null){
-                            displayObjects.get(Std.string(p)).visible = true;
-                        }
-                    }*/
+                    addChild(displayedToken);
                 }
             }
             else{

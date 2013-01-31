@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part.dialog;
 
+import Std;
 import com.knowledgeplayers.grar.event.TokenEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.Game;
@@ -23,25 +24,6 @@ class DialogPart extends StructurePart {
     public function new()
     {
         super();
-        characters = new Hash<Character>();
-        patterns = new Array<Pattern>();
-    }
-
-    override public function getNextElement(): Null<Dynamic>
-    {
-        var item: TextItem = null;
-        if(elemIndex < patterns.length){
-            item = patterns[elemIndex].getNextItem();
-            if(item == null){
-                elemIndex++;
-                return getNextElement();
-            }
-        }
-        if(item == null){
-            isDone = true;
-        }
-
-        return item;
     }
 
     override public function isDialog(): Bool
@@ -56,15 +38,18 @@ class DialogPart extends StructurePart {
 
     public function getNextVerticalIndex(): Null<ChoiceItem>
     {
-        var item: ChoiceItem = null;
-        if(Std.is(patterns[elemIndex], CollectPattern)){
-            var collect: CollectPattern = cast(patterns[elemIndex], CollectPattern);
-            item = collect.progressVertically();
+        var collect: CollectPattern = null;
+        if(Std.is(elements[elemIndex], CollectPattern))
+            collect = cast(elements[elemIndex], CollectPattern);
+        else
+            return null;
 
-            if(item != null && item.hasToken()){
-                var event = new TokenEvent(TokenEvent.ADD, item.tokenId, item.tokenType, item.target);
-                dispatchEvent(event);
-            }
+        var item: ChoiceItem = null;
+        item = collect.progressVertically();
+
+        if(item != null && item.hasToken()){
+            var event = new TokenEvent(TokenEvent.ADD, item.tokenId, item.tokenType, item.target);
+            dispatchEvent(event);
         }
 
         return item;
@@ -73,15 +58,23 @@ class DialogPart extends StructurePart {
     override public function restart(): Void
     {
         super.restart();
-        patterns[elemIndex].itemIndex = 0;
+        if(elements[elemIndex].isPattern())
+            cast(elements[elemIndex], Pattern).restart();
     }
 
     // Private
 
     override private function parseContent(content: Xml): Void
     {
-
         super.parseContent(content);
+
+        var partFast: Fast = new Fast(content).node.Part;
+
+        for(patternNode in partFast.nodes.Pattern){
+            var pattern: Pattern = PatternFactory.createPatternFromXml(patternNode);
+            pattern.init(patternNode);
+            elements.push(pattern);
+        }
     }
 
 }

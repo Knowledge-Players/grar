@@ -20,6 +20,10 @@ class TextItem implements PartElement {
     public var direction (default, default): String;
 
     /**
+    * Background when the item is displayed
+**/
+    public var background (default, default): String;
+    /**
      * Constructor
      * @param	xml : fast xml node with structure info
      * @param	content : text of the item
@@ -33,6 +37,8 @@ class TextItem implements PartElement {
                 author = xml.att.Author;
                 direction = xml.att.Direction;
             }
+            if(xml.has.Background)
+                background = xml.att.Background;
         }
         else{
             this.content = content;
@@ -74,4 +80,14 @@ class TextItem implements PartElement {
     {
         return false;
     }
+
+    /**
+    * @return false
+**/
+
+    public function isPattern(): Bool
+    {
+        return false;
+    }
+
 }

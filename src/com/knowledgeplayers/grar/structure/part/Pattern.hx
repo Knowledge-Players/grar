@@ -4,7 +4,7 @@ import com.knowledgeplayers.grar.factory.ItemFactory;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
 
-class Pattern {
+class Pattern implements PartElement {
     /**
      * Array of item composing the pattern
      */
@@ -18,12 +18,13 @@ class Pattern {
     /**
     * Current item index
 **/
-    public var itemIndex (default, default): Int = 0;
+    public var itemIndex (default, default): Int;
 
     public function new(name: String)
     {
         this.name = name;
         patternContent = new Array<TextItem>();
+        restart();
     }
 
     /**
@@ -51,6 +52,42 @@ class Pattern {
         }
         else
             return null;
+    }
+
+    /**
+    * Restart a pattern
+**/
+
+    public function restart(): Void
+    {
+        itemIndex = 0;
+    }
+
+    /**
+    * @return false
+**/
+
+    public function isActivity(): Bool
+    {
+        return false;
+    }
+
+    /**
+    * @return false
+**/
+
+    public function isText(): Bool
+    {
+        return false;
+    }
+
+    /**
+    * @return true
+**/
+
+    public function isPattern(): Bool
+    {
+        return true;
     }
 
 }
