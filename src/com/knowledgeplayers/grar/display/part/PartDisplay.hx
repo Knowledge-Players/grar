@@ -76,6 +76,10 @@ class PartDisplay extends Sprite {
             removeChildAt(numChildren - 1);
     }
 
+    /**
+    * @return the TextItem in the part or null if there is an activity or the part is over
+**/
+
     public function nextItem(): Null<TextItem>
     {
         var element: PartElement = part.getNextElement();

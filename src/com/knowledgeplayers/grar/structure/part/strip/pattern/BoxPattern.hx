@@ -1,11 +1,11 @@
-package com.knowledgeplayers.grar.structure.part.strip.box;
+package com.knowledgeplayers.grar.structure.part.strip.pattern;
 
-import com.knowledgeplayers.grar.structure.part.dialog.pattern.Pattern;
+import com.knowledgeplayers.grar.structure.part.Pattern;
 import nme.events.EventDispatcher;
 import haxe.xml.Fast;
 import nme.Lib;
 
-class Box extends Pattern {
+class BoxPattern extends Pattern {
 
     public var ref: String;
 

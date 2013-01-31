@@ -93,10 +93,8 @@ class Activity extends EventDispatcher, implements PartElement {
 
     private function onLocaleComplete(e: Event): Void
     {
-        if(isEnded)
-            dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
-        else
-            dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));
+        removeEventListener(LocaleEvent.LOCALE_LOADED, onLocaleComplete);
+        dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));
     }
 
     private function parseContent(content: Xml): Void

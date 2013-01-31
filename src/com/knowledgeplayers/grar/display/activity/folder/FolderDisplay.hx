@@ -131,6 +131,14 @@ class FolderDisplay extends ActivityDisplay {
         popUp.visible = false;
     }
 
+    override private function unLoad(keepLayer: Int = 0): Void
+    {
+        super.unLoad(2);
+        for(grid in grids){
+            grid.empty();
+        }
+    }
+
     private function new()
     {
         super();

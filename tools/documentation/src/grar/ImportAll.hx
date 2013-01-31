@@ -58,7 +58,7 @@ import com.knowledgeplayers.grar.structure.part.dialog.item.ChoiceItem;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import com.knowledgeplayers.grar.structure.part.dialog.pattern.ActivityPattern;
 import com.knowledgeplayers.grar.structure.part.dialog.pattern.CollectPattern;
-import com.knowledgeplayers.grar.structure.part.dialog.pattern.Pattern;
+import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.tracking.AiccTracking;
 import com.knowledgeplayers.grar.tracking.AutoTracking;
 import com.knowledgeplayers.grar.tracking.Connection;

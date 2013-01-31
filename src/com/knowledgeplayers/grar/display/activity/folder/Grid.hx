@@ -18,7 +18,7 @@ class Grid {
         this.numRow = numRow;
         this.numCol = numCol;
         cellSize = {width: cellWidth, height: cellHeight};
-        nextCell = new Point(0, 0);
+        empty();
     }
 
     public function add(object: DisplayObject, withTween: Bool = true): Void
@@ -41,5 +41,10 @@ class Grid {
         }
         else
             throw "This grid is already full!";
+    }
+
+    public function empty(): Void
+    {
+        nextCell = new Point(0, 0);
     }
 }

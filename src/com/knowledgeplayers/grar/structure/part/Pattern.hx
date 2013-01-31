@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.structure.part.dialog.pattern;
+package com.knowledgeplayers.grar.structure.part;
 
 import com.knowledgeplayers.grar.factory.ItemFactory;
 import com.knowledgeplayers.grar.structure.part.TextItem;
@@ -15,7 +15,10 @@ class Pattern {
      */
     public var name (default, default): String;
 
-    private var itemIndex: Int = 0;
+    /**
+    * Current item index
+**/
+    public var itemIndex (default, default): Int = 0;
 
     public function new(name: String)
     {

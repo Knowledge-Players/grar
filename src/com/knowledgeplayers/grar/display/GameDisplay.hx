@@ -27,7 +27,7 @@ class GameDisplay extends Sprite {
     /**
      * Part currently displayed
      */
-    public var currentPart: PartDisplay;
+    public var currentPart (default, null): PartDisplay;
 
     /**
      * Menu of the game
@@ -47,30 +47,21 @@ class GameDisplay extends Sprite {
     }
 
     /**
-    * Display the next part in the game
+    * Display a graphic representation of the given part
+    * @param part : The part to display
 **/
 
-    public function displayNextPart(): Void
+    public function displayPart(part: Part): Void
     {
-        currentPart.unLoad();
-        displayPart(game.start(currentPart.part.id + 1));
-    }
+        // Cleanup
+        if(currentPart != null){
+            currentPart.unLoad();
+            removeChild(currentPart);
+        }
+        if(contains(menu))
+            removeChild(menu);
 
-    private function displayMenu()
-    {
-        menu = new MenuDisplay(game);
-        menu.launchPart = launchPart;
-        addChild(menu);
-    }
-
-    private function launchPart(part: Part): Void
-    {
-        removeChild(menu);
-        displayPart(part.start(true));
-    }
-
-    private function displayPart(part: Part): Void
-    {
+        // Display the new part
         currentPart = DisplayFactory.createPartDisplay(part);
         if(currentPart == null)
             dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
@@ -81,11 +72,35 @@ class GameDisplay extends Sprite {
         }
     }
 
+    /**
+    * Display a graphic representation of the part with the given ID
+    * @param id : The ID of the part to display
+**/
+
+    public function displayPartById(id: Int): Void
+    {
+        displayPart(game.start(id));
+    }
+
+    // Private
+
+    private function displayMenu()
+    {
+        menu = new MenuDisplay(game);
+        menu.launchPart = launchPart;
+        addChild(menu);
+    }
+
+    private function launchPart(part: Part): Void
+    {
+        displayPart(part.start(true));
+    }
+
     // Handlers
 
     private function onExitPart(event: Event): Void
     {
-        displayNextPart();
+        displayPartById(currentPart.part.id + 1);
     }
 
 }

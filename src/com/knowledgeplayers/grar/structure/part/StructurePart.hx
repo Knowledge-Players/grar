@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
-import com.knowledgeplayers.grar.structure.part.dialog.pattern.Pattern;
+import com.knowledgeplayers.grar.structure.part.Pattern;
 import haxe.unit.TestCase;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import com.knowledgeplayers.grar.event.TokenEvent;
@@ -87,8 +87,8 @@ class StructurePart extends EventDispatcher, implements Part {
 
     private var nbSubPartLoaded: Int = 0;
     private var nbSubPartTotal: Int = 0;
-    private var elemIndex: Int = 0;
     private var partIndex: Int = 0;
+    private var elemIndex: Int = 0;
     private var soundLoopChannel: SoundChannel;
 
     public function new()
@@ -237,6 +237,11 @@ class StructurePart extends EventDispatcher, implements Part {
     {
         return "Part " + name + " " + file + " has " +
         (hasParts() ? "parts: \n" + parts.toString() : "no part");
+    }
+
+    public function restart(): Void
+    {
+        elemIndex = 0;
     }
 
     /**

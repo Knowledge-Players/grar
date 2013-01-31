@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.structure.part.strip.box.Box;
+import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
 import nme.display.DisplayObject;
 import nme.display.Sprite;
 import nme.display.Bitmap;
@@ -23,14 +23,14 @@ class BoxDisplay extends Sprite {
     private var resizeD: ResizeManager;
     private var contentDisplay: Fast;
     private var boxBack: Sprite;
-    private var box: Box;
+    private var box: BoxPattern;
     private var maskW: Float;
     private var maskH: Float;
     private var maskX: Float;
     private var maskY: Float;
     private var displayObjects: Hash<DisplayObject>;
 
-    public function new(box: Box, content: Xml): Void
+    public function new(box: BoxPattern, content: Xml): Void
     {
         super();
         this.contentDisplay = new Fast(content).node.Display;

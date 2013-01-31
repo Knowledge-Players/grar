@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.structure.part.strip;
 
-import com.knowledgeplayers.grar.structure.part.strip.box.Box;
+import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
 import com.knowledgeplayers.grar.structure.part.StructurePart;
 import nme.events.EventDispatcher;
 import com.knowledgeplayers.grar.structure.part.Part;
@@ -9,10 +9,10 @@ import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import nme.events.Event;
 
-class StripPart  extends StructurePart {
-/**
- * Group of cases
- */
+class StripPart extends StructurePart {
+    /**
+     * Group of cases
+     */
 
     private var roundIndex: Int = 0;
 
@@ -22,21 +22,23 @@ class StripPart  extends StructurePart {
 
     }
 
-    public function getCurrentBox():Box
+    public function getCurrentBox(): BoxPattern
     {
-        return cast(patterns[roundIndex],Box);
+        return cast(patterns[roundIndex], BoxPattern);
     }
-    public function nextBox():Void{
+
+    public function nextBox(): Void
+    {
         roundIndex++;
     }
+
     override public function isStrip(): Bool
     {
         return true;
 
     }
 
-
-// Private
+    // Private
 
     override private function parseContent(content: Xml): Void
     {

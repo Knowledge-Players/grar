@@ -60,9 +60,9 @@ class ActivityDisplay extends Sprite {
     private function parseContent(display: Fast): Void
     {}
 
-    private function unLoad(): Void
+    private function unLoad(keepLayer: Int = 0): Void
     {
-        while(numChildren > 0)
+        while(numChildren > keepLayer)
             removeChildAt(numChildren - 1);
     }
 

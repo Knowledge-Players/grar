@@ -12,36 +12,35 @@ import nme.Lib;
 
 /**
  * Factory to create displays
- * @author jbrichardet
  */
+class DisplayFactory {
 
-class DisplayFactory 
-{
+    private function new()
+    {
+    }
 
-	private function new() 
-	{
-	}
-	
-	/**
-	 * Create a display for a part
-	 * @param	part : Part to display
-	 * @return the corresponding PartDisplay
-	 */
-	public static function createPartDisplay(part: Part) : Null<PartDisplay>
-	{
-		if (part == null)
-			return null;
-		var creation: PartDisplay = null;
-		if (part.isDialog()) {
-			creation = new DialogDisplay(cast(part, DialogPart));
-		}
-        else if (part.isStrip()){
-            creation = new StripDisplay(cast(part,StripPart));
+    /**
+     * Create a display for a part
+     * @param	part : Part to display
+     * @return the corresponding PartDisplay
+     */
+
+    public static function createPartDisplay(part: Part): Null<PartDisplay>
+    {
+        if(part == null)
+            return null;
+        part.restart();
+        var creation: PartDisplay = null;
+        if(part.isDialog()){
+            creation = new DialogDisplay(cast(part, DialogPart));
         }
-		else {
-			creation = new PartDisplay(part);
-		}
-		
-		return creation;
-	}
+        else if(part.isStrip()){
+            creation = new StripDisplay(cast(part, StripPart));
+        }
+        else{
+            creation = new PartDisplay(part);
+        }
+
+        return creation;
+    }
 }

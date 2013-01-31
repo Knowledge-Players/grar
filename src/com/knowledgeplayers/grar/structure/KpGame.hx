@@ -99,15 +99,11 @@ class KpGame extends EventDispatcher, implements Game {
 
     public function start(partId: Int = 0): Null<Part>
     {
-        if(partId == 0)
-            return parts.get(0).getNextPart();
-        else{
-            for(part in getAllParts()){
-                if(part.id == partId)
-                    return part.start(true);
-            }
-            return null;
+        for(part in getAllParts()){
+            if(part.id == partId)
+                return part.start(true);
         }
+        return null;
     }
 
     /**

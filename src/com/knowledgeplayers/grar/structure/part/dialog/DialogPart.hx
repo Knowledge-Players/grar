@@ -10,7 +10,7 @@ import haxe.xml.Fast;
 import nme.Lib;
 
 import com.knowledgeplayers.grar.structure.part.StructurePart;
-import com.knowledgeplayers.grar.structure.part.dialog.pattern.Pattern;
+import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.factory.PatternFactory;
 
 /**
@@ -68,6 +68,12 @@ class DialogPart extends StructurePart {
         }
 
         return item;
+    }
+
+    override public function restart(): Void
+    {
+        super.restart();
+        patterns[elemIndex].itemIndex = 0;
     }
 
     // Private
