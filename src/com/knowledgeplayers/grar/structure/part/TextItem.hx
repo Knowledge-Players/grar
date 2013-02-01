@@ -23,6 +23,11 @@ class TextItem implements PartElement {
     * Background when the item is displayed
 **/
     public var background (default, default): String;
+
+    /**
+    * Unique ref that will match the display
+**/
+    public var ref (default, default): String;
     /**
      * Constructor
      * @param	xml : fast xml node with structure info
@@ -36,6 +41,7 @@ class TextItem implements PartElement {
             if(xml.has.Author){
                 author = xml.att.Author;
                 direction = xml.att.Direction;
+                ref = xml.att.Ref;
             }
             if(xml.has.Background)
                 background = xml.att.Background;

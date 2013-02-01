@@ -67,8 +67,7 @@ class GameDisplay extends Sprite {
             dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
         else{
             currentPart.addEventListener(PartEvent.EXIT_PART, onExitPart);
-            TweenManager.fadeIn(currentPart);
-            addChild(currentPart);
+            currentPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
         }
     }
 
@@ -101,6 +100,13 @@ class GameDisplay extends Sprite {
     private function onExitPart(event: Event): Void
     {
         displayPartById(currentPart.part.id + 1);
+    }
+
+    private function onPartLoaded(event: PartEvent): Void
+    {
+        currentPart.startPart();
+        TweenManager.fadeIn(currentPart);
+        addChild(currentPart);
     }
 
 }

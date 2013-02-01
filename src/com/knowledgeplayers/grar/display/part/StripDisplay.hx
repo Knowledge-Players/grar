@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.part;
 
+import nme.display.Sprite;
+import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
+import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.display.part.pattern.BoxDisplay;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.structure.part.strip.StripPart;
@@ -19,44 +22,54 @@ import haxe.xml.Fast;
  */
 class StripDisplay extends PartDisplay {
 
-    private var stripPart: StripPart;
-    private var content: Xml;
-    private var boxesD: Array<BoxDisplay>;
+    private var boxes: Hash<Sprite>;
+    private var currentBox: String;
 
     public function new(part: StripPart)
     {
-        boxesD = new Array<BoxDisplay>();
         super(part);
+        boxes = new Hash<Sprite>();
+        currentBox = part.getCurrentBox().ref;
+    }
 
+    // Private
+
+    override private function next(event: ButtonActionEvent): Void
+    {
+        showNextBox();
     }
 
     override private function parseContent(content: Xml): Void
     {
-        //Lib.trace("content : "+content);
-        //Lib.trace("part : "+part);
-        this.content = content;
-        /*for(box in part.patterns){
-            var boxD = new BoxDisplay(cast(part, StripPart).getCurrentBox(), content);
+        var displayFast: Fast = new Fast(content).node.Display;
+        for(boxNode in displayFast.nodes.Box){
+            var box = new Sprite();
+            initDisplayObject(box, boxNode);
+            boxes.set(boxNode.att.Ref, box);
+        }
 
-            boxD.addEventListener(ButtonActionEvent.NEXT, showNextBox);
-            addChild(boxD);
-            boxesD.push(boxD);
-        }*/
-        //super.parseContent(content);
-        //super.nextItem();
+        super.parseContent(content);
+    }
+
+    override private function startPattern(pattern: Pattern): Void
+    {
+        var box: BoxPattern;
+        if(Std.is(pattern, BoxPattern))
+            box = cast(pattern, BoxPattern);
+        else
+            return;
+
+        box.getNextItem();
+    }
+
+    private function showNextBox(): Void
+    {
 
     }
 
-    private function showNextBox(e: ButtonActionEvent): Void
+    override private function addElement(elem: DisplayObject, node: Fast): Void
     {
-
-        //Lib.trace("showNextBox");
-        //cast(part, StripPart).nextBox();
-
-        var boxD = new BoxDisplay(cast(part, StripPart).getCurrentBox(), content);
-        boxD.addEventListener(ButtonActionEvent.NEXT, showNextBox);
-        addChild(boxD);
-
+        boxes.get(currentBox).addChild(elem);
     }
 
 }

@@ -43,14 +43,12 @@ class PartDisplay extends Sprite {
      */
     public var part: Part;
 
-    private var text: ScrollPanel;
-    private var currentSpeaker: CharacterDisplay;
-    private var depth: Int;
     private var resizeD: ResizeManager;
     private var activityDisplay: ActivityDisplay;
-    private var characters: Hash<CharacterDisplay>;
-    private var backgrounds: Hash<Fast>;
+    private var currentSpeaker: CharacterDisplay;
     private var previousBackground: {ref: String, bmp: Bitmap};
+    private var displays: Hash<DisplayObject>;
+    private var displaysFast: Hash<Fast>;
 
     /**
      * Constructor
@@ -61,8 +59,8 @@ class PartDisplay extends Sprite {
     {
         super();
         this.part = part;
-        characters = new Hash<CharacterDisplay>();
-        backgrounds = new Hash<Fast>();
+        displaysFast = new Hash<Fast>();
+        displays = new Hash<DisplayObject>();
         resizeD = ResizeManager.getInstance();
 
         XmlLoader.load(part.display, onLoadComplete, parseContent);
@@ -84,7 +82,7 @@ class PartDisplay extends Sprite {
     * @return the TextItem in the part or null if there is an activity or the part is over
 **/
 
-    public function nextItem(): Void
+    public function nextElement(): Void
     {
         var element: PartElement = part.getNextElement();
         if(element == null){
@@ -103,11 +101,19 @@ class PartDisplay extends Sprite {
         return null;
     }
 
+    /**
+    * Start the part
+**/
+
+    public function startPart(): Void
+    {
+        nextElement();
+    }
+
     // Private
 
     private function onTokenAdded(e: TokenEvent): Void
-    {
-    }
+    {}
 
     private function parseContent(content: Xml): Void
     {
@@ -121,25 +127,20 @@ class PartDisplay extends Sprite {
                 case "Text": createText(child);
             }
         }
-
-        nextItem();
+        dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
         resizeD.onResize();
     }
 
     private function next(event: ButtonActionEvent): Void
     {
-        nextItem();
+        nextElement();
     }
 
     private function startPattern(pattern: Pattern): Void
-    {
-
-    }
+    {}
 
     private function launchActivity(activity: Activity)
     {
-        //visible = false;
-
         activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
         var activityName: String = Type.getClassName(Type.getClass(activity));
         activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
@@ -154,8 +155,6 @@ class PartDisplay extends Sprite {
     private function onActivityEnd(e: PartEvent): Void
     {
         cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
-        //nextItem();
-        //visible = true;
     }
 
     private function onActivityReady(e: Event): Void
@@ -187,28 +186,19 @@ class PartDisplay extends Sprite {
 
     private function createBackground(bkgNode: Fast): Void
     {
-        backgrounds.set(bkgNode.att.Ref, bkgNode);
+        displaysFast.set(bkgNode.att.Ref, bkgNode);
     }
 
     private function createItem(itemNode: Fast): Void
     {
         var itemBmp: Bitmap = new Bitmap(Assets.getBitmapData(itemNode.att.Id));
-        var itemSprite: Sprite = new Sprite();
 
-        itemSprite.addChild(itemBmp);
-
-        initDisplayObject(itemBmp, itemNode);
-
-        addChild(itemSprite);
-
-        resizeD.addDisplayObjects(itemSprite, itemNode);
+        addElement(itemBmp, itemNode);
     }
 
     private function createButton(buttonNode: Fast): Void
     {
         var button: DefaultButton = UiFactory.createButtonFromXml(buttonNode);
-
-        initDisplayObject(button, buttonNode);
 
         if(buttonNode.has.Content)
             cast(button, TextButton).setText(Localiser.instance.getItemContent(buttonNode.att.Content));
@@ -217,42 +207,25 @@ class PartDisplay extends Sprite {
         else
             button.addEventListener("next", next);
 
-        addChild(button);
-
-        resizeD.addDisplayObjects(button, buttonNode);
+        addElement(button, buttonNode);
     }
 
     private function createText(textNode: Fast): Void
     {
         var text = new ScrollPanel(Std.parseFloat(textNode.att.Width), Std.parseFloat(textNode.att.Height));
-        this.text = text;
+        text.background = textNode.att.Background;
 
-        this.text.background = textNode.att.Background;
-
-        initDisplayObject(text, textNode);
-
-        addChild(text);
-        resizeD.addDisplayObjects(text, textNode);
+        addElement(text, textNode);
     }
 
     private function createCharacter(character: Fast)
     {
-        var img = character.att.Id;
-        var char: CharacterDisplay = new CharacterDisplay(new Character(character.att.Ref));
-        var bitmap = new Bitmap(Assets.getBitmapData(img));
-        char.addChild(bitmap);
+        var bitmap = new Bitmap(Assets.getBitmapData(character.att.Id));
+        var char: CharacterDisplay = new CharacterDisplay(bitmap, new Character(character.att.Ref));
         char.visible = false;
         char.origin = new Point(Std.parseFloat(character.att.X), Std.parseFloat(character.att.Y));
-        bitmap.x = Std.parseFloat(character.att.X);
-        bitmap.y = Std.parseFloat(character.att.Y);
-        bitmap.width = Std.parseFloat(character.att.Width);
-        bitmap.height = Std.parseFloat(character.att.Height);
 
-        characters.set(character.att.Ref, char);
-
-        addChild(char);
-
-        resizeD.addDisplayObjects(char, character);
+        addElement(char, character);
     }
 
     private function setButtonAction(button: CustomEventButton, action: String): Void
@@ -272,16 +245,16 @@ class PartDisplay extends Sprite {
                 removeChild(previousBackground.bmp);
         }
         if(item.background != null){
-            var bkg = DisplayUtils.setBackground(backgrounds.get(item.background).att.Id, this);
+            var bkg = DisplayUtils.setBackground(displaysFast.get(item.background).att.Id, this);
             previousBackground = {ref: item.background, bmp: bkg};
             if(bkg != null)
-                resizeD.addDisplayObjects(bkg, backgrounds.get(item.background));
+                resizeD.addDisplayObjects(bkg, displaysFast.get(item.background));
         }
 
         var content = Localiser.getInstance().getItemContent(item.content);
-        if(characters.exists(item.author)){
+        if(displays.exists(item.author)){
 
-            var char = characters.get(item.author);
+            var char = cast(displays.get(item.author), CharacterDisplay);
 
             if(char != currentSpeaker){
 
@@ -299,10 +272,19 @@ class PartDisplay extends Sprite {
 
                 char.visible = true;
             }
-            text.content = KpTextDownParser.parse("*" + currentSpeaker.model.getName() + "*\n" + content);
+            cast(displays.get(item.ref), ScrollPanel).content = KpTextDownParser.parse("*" + currentSpeaker.model.getName() + "*\n" + content);
         }
         else
-            text.content = KpTextDownParser.parse(content);
+            cast(displays.get(item.ref), ScrollPanel).content = KpTextDownParser.parse(content);
+    }
+
+    private function addElement(elem: DisplayObject, node: Fast): Void
+    {
+        initDisplayObject(elem, node);
+        displays.set(node.att.Ref, elem);
+        displaysFast.set(node.att.Ref, node);
+        resizeD.addDisplayObjects(elem, node);
+        //addChild(elem);
     }
 
     // Handlers

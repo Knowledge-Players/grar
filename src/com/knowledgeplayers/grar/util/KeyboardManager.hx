@@ -41,7 +41,7 @@ class KeyboardManager {
             case Keyboard.SPACE:
             case Keyboard.TAB: // Défiler DynBubble;
             case Keyboard.RIGHT: if(game.currentPart != null)
-                game.currentPart.nextItem();
+                game.currentPart.nextElement();
             case Keyboard.D: for(part in game.game.getAllParts()){
                 part.isDone = true;
             }

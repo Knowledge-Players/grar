@@ -42,27 +42,6 @@ class DialogDisplay extends PartDisplay {
         super(part);
     }
 
-    /*override public function nextItem(): Null<TextItem>
-    {
-        if(displayedToken != null){
-            removeChild(displayedToken);
-            displayedToken = null;
-        }
-        var item = super.nextItem();
-        if(item == null)
-            return null;
-
-        if(item.hasVerticalFlow())
-            verticalButton.enabled = true;
-        else if(verticalButton != null)
-            verticalButton.enabled = false;
-        if(item.hasActivity()){
-            launchActivity(cast(item, RemarkableEvent).activity);
-        }
-
-        return item;
-    }*/
-
     // Private
 
     override private function next(event: ButtonActionEvent): Void
@@ -93,7 +72,7 @@ class DialogDisplay extends PartDisplay {
             }
         }
         else
-            this.nextItem();
+            this.nextElement();
     }
 
     private function vertical(event: ButtonActionEvent): Void
