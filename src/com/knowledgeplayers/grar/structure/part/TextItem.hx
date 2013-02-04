@@ -37,7 +37,8 @@ class TextItem implements PartElement {
     public function new(?xml: Fast, content: String = "")
     {
         if(xml != null){
-            this.content = xml.att.Content;
+            if(xml.has.Content)
+                this.content = xml.att.Content;
             if(xml.has.Author){
                 author = xml.att.Author;
                 direction = xml.att.Direction;

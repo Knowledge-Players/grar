@@ -38,10 +38,10 @@ class DisplayUtils {
 
     public static function setBackground(bkg: String, container: Sprite, width: Float = 0, height: Float = 0): Null<Bitmap>
     {
-        if(width == 0)
+        /*if(width == 0)
             width = container.width;
         if(height == 0)
-            height = container.height;
+            height = container.height;*/
         if(Std.parseInt(bkg) != null){
             container.graphics.beginFill(Std.parseInt(bkg));
             container.graphics.drawRect(0, 0, width, height);
@@ -50,8 +50,10 @@ class DisplayUtils {
         }
         else{
             var bitmap = new Bitmap(Assets.getBitmapData(bkg));
-            bitmap.width = width;
-            bitmap.height = height;
+            if(width != 0)
+                bitmap.width = width;
+            if(height != 0)
+                bitmap.height = height;
             container.addChildAt(bitmap, 0);
             return bitmap;
         }

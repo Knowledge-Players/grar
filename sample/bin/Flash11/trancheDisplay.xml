@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Display>
-    <Background Id="img/background.jpg"/>
+    <Background Id="img/background.jpg" Ref="labo"/>
+    <Background Id="img/background2.jpg" Ref="empty"/>
     <Character Id="img/enzo_office_dl_happy.png" Ref="enzo" Width="661" Height="660" X="00" Y="00"/>
     <Character Id="img/francoise_happy_office_dl.png" Ref="francoise" Width="662" Height="660" X="100" Y="00"/>
-    <Text X="0" Y="480" Width="960" Height="100" Background="0xFFFFFF"/>
-    <Button Id="continueButton" Type="text" Content="nextButton" Action="next" X="791" Y="530" ScaleX="1" ScaleY="1"/>
+    <Text X="0" Y="480" Width="960" Height="100" Background="0xFFFFFF" Ref="dialog"/>
+    <Button Id="continueButton" Type="text" Content="nextButton" Action="next" X="791" Y="530" ScaleX="1" ScaleY="1"
+            Ref="next"/>
 </Display>

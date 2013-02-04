@@ -29,7 +29,7 @@ class StripDisplay extends PartDisplay {
     {
         super(part);
         boxes = new Hash<Sprite>();
-        currentBox = part.getCurrentBox().ref;
+        //currentBox = part.getCurrentBox().ref;
     }
 
     // Private
@@ -69,7 +69,7 @@ class StripDisplay extends PartDisplay {
 
     override private function addElement(elem: DisplayObject, node: Fast): Void
     {
-        boxes.get(currentBox).addChild(elem);
+        //boxes.get(currentBox).addChild(elem);
     }
 
 }

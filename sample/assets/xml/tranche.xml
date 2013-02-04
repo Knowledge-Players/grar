@@ -1,10 +1,8 @@
 <?xml version="1.0"?>
 <Part>
     <Pattern Type="Link" Id="step0">
-        <Text Type="" Content="step0_0" Author="enzo" Direction="Left"/>
-        <Text Type="" Content="step0_1" Author="enzo" Direction="Left"/>
-        <Text Type="" Content="step0_2" Author="francoise" Direction="Right"/>
+        <Text Type="" Content="step0_0" Author="enzo" Direction="Left" Background="labo" Ref="dialog"/>
+        <Text Type="" Background="empty"/>
+        <Text Type="" Content="step0_2" Author="francoise" Direction="Right" Background="labo" Ref="dialog"/>
     </Pattern>
-    <Character Ref="enzo"/>
-    <Character Ref="francoise"/>
 </Part>
