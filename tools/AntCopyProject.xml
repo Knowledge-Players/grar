@@ -1,0 +1,10 @@
+<project name="copyProject" default="before" basedir="../">
+    <target name="before">
+        <delete dir="sample/bin/flash/bin"/>
+        <copydir src="../sample/assets/xml" dest="sample/bin/flash/bin"/>
+    </target>
+    <target name="after">
+        <delete dir="sample/bin/Flash11"/>
+        <copydir src="sample/bin/flash/bin" dest="sample/bin/Flash11"/>
+    </target>
+</project>
