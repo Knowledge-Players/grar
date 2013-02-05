@@ -1,11 +1,11 @@
 package com.knowledgeplayers.grar.structure.activity;
+
+import nme.events.Event;
 import com.knowledgeplayers.grar.structure.part.PartElement;
-import haxe.xml.Fast;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.util.XmlLoader;
-import flash.events.Event;
 import nme.events.EventDispatcher;
 
 /**

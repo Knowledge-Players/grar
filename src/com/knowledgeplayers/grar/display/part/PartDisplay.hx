@@ -101,9 +101,6 @@ class PartDisplay extends Sprite {
         else if(element.isPattern()){
             startPattern(cast(element, Pattern));
         }
-        for(i in 0...numChildren){
-            Lib.trace(getChildAt(i));
-        }
         return null;
     }
 
@@ -114,10 +111,6 @@ class PartDisplay extends Sprite {
     public function startPart(): Void
     {
         nextElement();
-        /* for(key in displays.keys()){
-             if(Std.is(displays.get(key), DefaultButton))
-                 addChild(displays.get(key));
-         }*/
     }
 
     // Private
