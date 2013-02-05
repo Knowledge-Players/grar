@@ -58,18 +58,11 @@ class StripDisplay extends PartDisplay {
             box = cast(pattern, BoxPattern);
         else
             return;
-
-        box.getNextItem();
     }
 
     private function showNextBox(): Void
     {
 
-    }
-
-    override private function addElement(elem: DisplayObject, node: Fast): Void
-    {
-        //boxes.get(currentBox).addChild(elem);
     }
 
 }

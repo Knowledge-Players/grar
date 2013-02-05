@@ -1,6 +1,5 @@
 package grar;
 
-import flash.display.IDrawCommand;
 import com.knowledgeplayers.grar.display.GameDisplay;
 import com.knowledgeplayers.grar.display.ResizeManager;
 import com.knowledgeplayers.grar.display.TweenManager;
@@ -16,7 +15,6 @@ import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.component.DynBubble;
 import com.knowledgeplayers.grar.display.component.ScrollBar;
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
-import com.knowledgeplayers.grar.display.part.pattern.TextItemDisplay;
 import com.knowledgeplayers.grar.display.part.DialogDisplay;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
@@ -47,7 +45,6 @@ import com.knowledgeplayers.grar.structure.activity.quizz.QuizzItem;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.StructurePart;
 import com.knowledgeplayers.grar.structure.part.TextItem;
-import com.knowledgeplayers.grar.structure.part.dialog.Intro;
 import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
 import com.knowledgeplayers.grar.structure.part.dialog.conclusion.Check;
 import com.knowledgeplayers.grar.structure.part.dialog.conclusion.ConclusionActivity;
