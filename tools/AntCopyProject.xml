@@ -3,6 +3,7 @@
         <delete dir="sample/bin/flash/bin"/>
         <copy todir="sample/bin/flash/bin">
             <fileset dir="sample/assets/xml">
+                <include name="**/fr/"/>
                 <include name="*.xml"/>
                 <exclude name="sample_structure.xml"/>
                 <exclude name="style.xml"/>
