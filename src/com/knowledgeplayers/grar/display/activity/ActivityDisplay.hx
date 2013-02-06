@@ -1,4 +1,6 @@
 package com.knowledgeplayers.grar.display.activity;
+
+import nme.Lib;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import nme.events.Event;
@@ -53,6 +55,11 @@ class ActivityDisplay extends Sprite {
     public function startActivity(): Void
     {
         model.startActivity();
+    }
+
+    public function showDebrief(): Void
+    {
+        Lib.trace("Debrief!");
     }
 
     // Private

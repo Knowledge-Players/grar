@@ -45,8 +45,12 @@ class PartDisplay extends Sprite {
      */
     public var part: Part;
 
+    /**
+    * Current activity displayed. Null if there is not
+**/
+    public var activityDisplay (default, null): ActivityDisplay;
+
     private var resizeD: ResizeManager;
-    private var activityDisplay: ActivityDisplay;
     private var currentSpeaker: CharacterDisplay;
     private var previousBackground: {ref: String, bmp: Bitmap};
     private var displays: Hash<{obj: DisplayObject, z: Int}>;
@@ -98,6 +102,7 @@ class PartDisplay extends Sprite {
             setText(cast(element, TextItem));
         }
         else if(element.isActivity()){
+            onActivityEnd(null);
             launchActivity(cast(element, Activity));
         }
         else if(element.isPattern()){
@@ -149,8 +154,6 @@ class PartDisplay extends Sprite {
         activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
         var activityName: String = Type.getClassName(Type.getClass(activity));
         activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
-        if(activityDisplay != null)
-            removeChild(activityDisplay);
         activityDisplay = ActivityManager.instance.getActivity(activityName);
         activityDisplay.addEventListener(Event.COMPLETE, onActivityReady);
         activityDisplay.model = activity;
@@ -159,7 +162,11 @@ class PartDisplay extends Sprite {
 
     private function onActivityEnd(e: PartEvent): Void
     {
-        cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
+        if(e != null)
+            cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
+        if(activityDisplay != null && contains(activityDisplay))
+            removeChild(activityDisplay);
+        activityDisplay = null;
     }
 
     private function onActivityReady(e: Event): Void
