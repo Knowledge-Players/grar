@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Display ItemXOffset="30" CorrectionXOffset="50">
-
+<Display>
     <Box X="0" Y="0" Width="600" Height="400" Ref="case1"/>
     <Box X="600" Y="0" Width="360" Height="400" Ref="case2"/>
     <Box X="0" Y="400" Width="960" Height="180" Ref="case3"/>
@@ -18,5 +17,4 @@
     <Button Id="continueButton" Type="text" Action="next" X="480" Y="350" ScaleX="1" ScaleY="1" Ref="next1"/>
     <Button Id="continueButton" Type="text" Action="next" X="250" Y="350" ScaleX="1" ScaleY="1" Ref="next2"/>
     <Button Id="continueButton" Type="text" Action="next" X="150" Y="100" ScaleX="1" ScaleY="1" Ref="next3"/>
-
 </Display>

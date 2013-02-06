@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Scanner>
-    <Background Id="img/background.jpg" Z="1"/>
+    <Background Id="img/background.jpg"/>
     <!--<Point Radius="10" Color="0x00FF00"/>-->
-    <Point Img="img/ScannerSpot.png" State="unseen" Z="2"/>
+    <Point Img="img/ScannerSpot.png" State="unseen"/>
     <Point Img="img/ScannerSpot_seen.png" State="over"/>
-    <Text Width="300" Height="500" LineHeight="50" X="660" Y="40" Z="3" Background="0xFFFFFF"/>
+    <Text Width="300" Height="500" LineHeight="50" X="660" Y="40" Background="0xFFFFFF"/>
 </Scanner>
