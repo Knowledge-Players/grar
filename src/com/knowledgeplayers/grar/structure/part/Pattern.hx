@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.factory.ItemFactory;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
@@ -20,10 +22,16 @@ class Pattern implements PartElement {
 **/
     public var itemIndex (default, default): Int;
 
+    /**
+    * Buttons for this pattern
+**/
+    public var buttons (default, null): Hash<String>;
+
     public function new(name: String)
     {
         this.name = name;
         patternContent = new Array<TextItem>();
+        buttons = new Hash<String>();
         restart();
     }
 
@@ -37,6 +45,9 @@ class Pattern implements PartElement {
         for(itemNode in xml.nodes.Text){
             var item: TextItem = ItemFactory.createItemFromXml(itemNode);
             patternContent.push(item);
+        }
+        for(button in xml.nodes.Button){
+            buttons.set(button.att.Ref, null);
         }
     }
 

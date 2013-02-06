@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part.strip;
 
+import com.knowledgeplayers.grar.factory.PatternFactory;
 import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
 import com.knowledgeplayers.grar.structure.part.StructurePart;
 import nme.events.EventDispatcher;
@@ -22,11 +23,6 @@ class StripPart extends StructurePart {
         return cast(elements[elemIndex], BoxPattern);
     }
 
-    /*public function nextBox(): Void
-    {
-        roundIndex++;
-    }*/
-
     override public function isStrip(): Bool
     {
         return true;
@@ -35,10 +31,17 @@ class StripPart extends StructurePart {
 
     // Private
 
-    /*override private function parseContent(content: Xml): Void
+    override private function parseContent(content: Xml): Void
     {
         super.parseContent(content);
 
-    }*/
+        var partFast: Fast = new Fast(content).node.Part;
+
+        for(patternNode in partFast.nodes.Pattern){
+            var pattern: Pattern = PatternFactory.createPatternFromXml(patternNode);
+            pattern.init(patternNode);
+            elements.push(pattern);
+        }
+    }
 
 }

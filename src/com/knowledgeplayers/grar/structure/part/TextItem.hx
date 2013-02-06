@@ -25,6 +25,11 @@ class TextItem implements PartElement {
     public var background (default, default): String;
 
     /**
+    * ID of the button that will appear with this item
+**/
+    public var button (default, default): String;
+
+    /**
     * Unique ref that will match the display
 **/
     public var ref (default, default): String;
@@ -39,11 +44,12 @@ class TextItem implements PartElement {
         if(xml != null){
             if(xml.has.Content)
                 this.content = xml.att.Content;
-            if(xml.has.Author){
+            if(xml.has.Author)
                 author = xml.att.Author;
+            if(xml.has.Direction)
                 direction = xml.att.Direction;
+            if(xml.has.Ref)
                 ref = xml.att.Ref;
-            }
             if(xml.has.Background)
                 background = xml.att.Background;
         }

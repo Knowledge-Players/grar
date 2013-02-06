@@ -1,24 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Part>
     <Pattern Type="Box" Id="case1">
-        <Background Ref="bck1"/>
-        <Image Ref="perso1"/>
-        <!--<Image Ref="bulle1"/>-->
-        <Text Ref="text1"/>
+        <Text Type="" Content="text1" Author="perso1" Background="bck1" Ref="text1"/>
         <Button Ref="next1"/>
     </Pattern>
     <Pattern Type="Box" Id="case2">
-        <Background Ref="bck1"/>
-        <Image Ref="perso2"/>
-        <!--<Image Ref="bulle1"/>-->
-        <Text Ref="text2"/>
+        <Text Type="" Content="text2" Author="perso2" Background="bck1" Ref="text2"/>
         <Button Ref="next2"/>
     </Pattern>
     <Pattern Type="Box" Id="case3">
-        <Background Ref="bck1"/>
-        <Image Ref="perso3"/>
-        <!--<Image Ref="bulle1"/>-->
-        <Text Ref="text3"/>
+        <Text Type="" Content="text3" Author="perso3" Background="bck1" Ref="text3"/>
         <Button Ref="next3"/>
     </Pattern>
 </Part>

@@ -20,6 +20,9 @@ class CharacterDisplay extends Sprite {
     **/
     public var model: Character;
 
+    /**
+    * Image of the character
+**/
     public var image (default, setImage): Bitmap;
 
     public function new(image: Bitmap, ?model: Character)

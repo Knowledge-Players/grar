@@ -10,7 +10,6 @@
     <window width="960" height="580" background="0xFFFFFF" fps="60" fullscreen="false" resizable="true"
             unless="mobile"/>
 
-
     <set name="BUILD_DIR" value="bin"/>
     <set name="SWF_VERSION" value="11"/>
 
@@ -22,9 +21,6 @@
 
     <haxelib name="hxcpp" if="cpp"/>
     <haxedef name="HXCPP_DEBUGGER" if="cpp"/>
-
-
-
 
     <include path=".."/>
 

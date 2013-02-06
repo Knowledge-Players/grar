@@ -52,6 +52,7 @@ class PartDisplay extends Sprite {
     private var displays: Hash<{obj: DisplayObject, z: Int}>;
     private var displaysFast: Hash<Fast>;
     private var zIndex: Int = 0;
+    private var displayArea: Sprite;
 
     /**
      * Constructor
@@ -65,6 +66,7 @@ class PartDisplay extends Sprite {
         displaysFast = new Hash<Fast>();
         displays = new Hash<{obj: DisplayObject, z: Int}>();
         resizeD = ResizeManager.getInstance();
+        displayArea = this;
 
         XmlLoader.load(part.display, onLoadComplete, parseContent);
 
@@ -247,11 +249,11 @@ class PartDisplay extends Sprite {
         // Clean previous background
         if(previousBackground != null && previousBackground.ref != item.background){
             if(previousBackground.bmp != null)
-                removeChild(previousBackground.bmp);
+                displayArea.removeChild(previousBackground.bmp);
         }
         // Add new background
         if(item.background != null){
-            var bkg = DisplayUtils.setBackground(displaysFast.get(item.background).att.Id, this);
+            var bkg = DisplayUtils.setBackground(displaysFast.get(item.background).att.Id, displayArea);
             previousBackground = {ref: item.background, bmp: bkg};
             if(bkg != null)
                 resizeD.addDisplayObjects(bkg, displaysFast.get(item.background));
@@ -275,7 +277,7 @@ class PartDisplay extends Sprite {
 
                 if(char != currentSpeaker){
 
-                    if(currentSpeaker != null){
+                    if(currentSpeaker != null && !Std.is(this, StripDisplay)){
                         currentSpeaker.visible = false;
                     }
                     else{
@@ -286,8 +288,13 @@ class PartDisplay extends Sprite {
 
                     char.visible = true;
                 }
-                if(item.ref != null)
-                    cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse("*" + currentSpeaker.model.getName() + "*\n" + content);
+                if(item.ref != null){
+                    var name = currentSpeaker.model.getName();
+                    if(name != null)
+                        cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse("*" + name + "*\n" + content);
+                    else
+                        cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
+                }
             }
             else if(item.ref != null)
                 cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);

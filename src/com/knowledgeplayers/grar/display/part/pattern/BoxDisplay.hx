@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.display.part.pattern;
+/*package com.knowledgeplayers.grar.display.part.pattern;
 
 import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
 import nme.display.DisplayObject;
@@ -221,7 +221,7 @@ class BoxDisplay extends PatternDisplay {
                 //initDisplayObject(button, buttonNode);
                 /* displayObjects.set(buttonNode.att.z, button);
 
-                resizeD.addDisplayObjects(button, buttonNode);*/
+                resizeD.addDisplayObjects(button, buttonNode);
             }
         }
 
@@ -243,4 +243,4 @@ class BoxDisplay extends PatternDisplay {
         dispatchEvent(new ButtonActionEvent(ButtonActionEvent.NEXT, true));
     }
 
-}
+}*/

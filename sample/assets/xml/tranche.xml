@@ -4,5 +4,6 @@
         <Text Type="" Content="step0_0" Author="enzo" Direction="Left" Background="labo" Ref="dialog"/>
         <Text Type="" Background="empty"/>
         <Text Type="" Content="step0_2" Author="francoise" Direction="Right" Background="labo" Ref="dialog"/>
+        <Button Ref="next"/>
     </Pattern>
 </Part>
