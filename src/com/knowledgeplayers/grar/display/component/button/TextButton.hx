@@ -36,7 +36,6 @@ class TextButton extends CustomEventButton {
     /**
      * Setter of the text
      * @param	text : Text to set
-     * @param	tag : Tag of the text
      */
 
     public function setText(text: String): Void

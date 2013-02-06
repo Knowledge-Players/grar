@@ -51,6 +51,8 @@ class DialogDisplay extends PartDisplay {
 
     override private function startPattern(pattern: Pattern): Void
     {
+        super.startPattern(pattern);
+
         if(currentPattern == null)
             currentPattern = pattern;
 

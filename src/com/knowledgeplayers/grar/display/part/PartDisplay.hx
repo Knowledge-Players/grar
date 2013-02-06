@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.part;
 
+import Std;
+import com.knowledgeplayers.grar.localisation.Localiser;
+import com.knowledgeplayers.grar.event.LocaleEvent;
 import haxe.FastList;
 import Math;
 import com.knowledgeplayers.grar.util.DisplayUtils;
@@ -57,6 +60,7 @@ class PartDisplay extends Sprite {
     private var displaysFast: Hash<Fast>;
     private var zIndex: Int = 0;
     private var displayArea: Sprite;
+    private var currentElement: PartElement;
 
     /**
      * Constructor
@@ -93,20 +97,26 @@ class PartDisplay extends Sprite {
 
     public function nextElement(): Void
     {
-        var element: PartElement = part.getNextElement();
-        if(element == null){
+        Lib.trace(Localiser.instance.layoutPath);
+        currentElement = part.getNextElement();
+        if(currentElement == null){
             dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
             return null;
         }
-        if(element.isText()){
-            setText(cast(element, TextItem));
+        if(currentElement.isText()){
+            setText(cast(currentElement, TextItem));
         }
-        else if(element.isActivity()){
+        else if(currentElement.isActivity()){
             onActivityEnd(null);
-            launchActivity(cast(element, Activity));
+            launchActivity(cast(currentElement, Activity));
         }
-        else if(element.isPattern()){
-            startPattern(cast(element, Pattern));
+        else if(currentElement.isPattern()){
+            if(Localiser.instance.layoutPath != part.file){
+                Localiser.instance.addEventListener(LocaleEvent.LOCALE_LOADED, onLocaleLoaded);
+                Localiser.instance.setLayoutFile(part.file);
+            }
+            else
+                startPattern(cast(currentElement, Pattern));
         }
         return null;
     }
@@ -147,7 +157,19 @@ class PartDisplay extends Sprite {
     }
 
     private function startPattern(pattern: Pattern): Void
-    {}
+    {
+        for(key in displays.keys()){
+            if(Std.is(displays.get(key).obj, TextButton)){
+                var pattern = cast(currentElement, Pattern);
+                for(keyB in pattern.buttons.keys()){
+                    if(keyB == key){
+                        cast(displays.get(key).obj, TextButton).setText(Localiser.instance.getItemContent(pattern.buttons.get(keyB)));
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
     private function launchActivity(activity: Activity)
     {
@@ -157,7 +179,6 @@ class PartDisplay extends Sprite {
         activityDisplay = ActivityManager.instance.getActivity(activityName);
         activityDisplay.addEventListener(Event.COMPLETE, onActivityReady);
         activityDisplay.model = activity;
-
     }
 
     private function onActivityEnd(e: PartEvent): Void
@@ -213,8 +234,6 @@ class PartDisplay extends Sprite {
     {
         var button: DefaultButton = UiFactory.createButtonFromXml(buttonNode);
 
-        if(buttonNode.has.Content)
-            cast(button, TextButton).setText(Localiser.instance.getItemContent(buttonNode.att.Content));
         if(buttonNode.has.Action)
             setButtonAction(cast(button, CustomEventButton), buttonNode.att.Action);
         else
@@ -348,5 +367,10 @@ class PartDisplay extends Sprite {
     private function onLoadComplete(event: Event): Void
     {
         parseContent(XmlLoader.getXml(event));
+    }
+
+    private function onLocaleLoaded(ev: LocaleEvent): Void
+    {
+        startPattern(cast(currentElement, Pattern));
     }
 }

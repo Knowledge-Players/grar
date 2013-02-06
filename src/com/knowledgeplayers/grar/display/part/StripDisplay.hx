@@ -51,6 +51,8 @@ class StripDisplay extends PartDisplay {
 
     override private function startPattern(pattern: Pattern): Void
     {
+        super.startPattern(pattern);
+
         currentBox = cast(pattern, BoxPattern);
 
         var nextItem = pattern.getNextItem();
@@ -76,7 +78,6 @@ class StripDisplay extends PartDisplay {
         }
 
         var node = displaysFast.get(boxesRef[boxIndex]);
-        Lib.trace(node.x.toString());
         displayArea.x = Std.parseFloat(node.att.X);
         displayArea.y = Std.parseFloat(node.att.Y);
         var mask = new Sprite();

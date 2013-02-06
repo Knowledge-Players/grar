@@ -15,11 +15,8 @@
     <Text X="100" Y="50" Width="400" Height="80" Ref="text2" Background="img/bulle.png"/>
     <Text X="500" Y="50" Width="400" Height="80" Ref="text3" Background="img/bulle.png"/>
 
-    <Button Id="continueButton" Spritesheet="buttons/button" Type="text" Content="nextButton" Tag="text" Action="next"
-            X="480" Y="350" ScaleX="1" ScaleY="1" Ref="next1"/>
-    <Button Id="continueButton" Spritesheet="buttons/button" Type="text" Content="nextButton" Tag="text" Action="next"
-            X="250" Y="350" ScaleX="1" ScaleY="1" Ref="next2"/>
-    <Button Id="continueButton" Spritesheet="buttons/button" Type="text" Content="nextButton" Tag="text" Action="next"
-            X="150" Y="100" ScaleX="1" ScaleY="1" Ref="next3"/>
+    <Button Id="continueButton" Type="text" Action="next" X="480" Y="350" ScaleX="1" ScaleY="1" Ref="next1"/>
+    <Button Id="continueButton" Type="text" Action="next" X="250" Y="350" ScaleX="1" ScaleY="1" Ref="next2"/>
+    <Button Id="continueButton" Type="text" Action="next" X="150" Y="100" ScaleX="1" ScaleY="1" Ref="next3"/>
 
 </Display>
