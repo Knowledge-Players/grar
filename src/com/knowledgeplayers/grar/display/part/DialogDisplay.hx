@@ -116,13 +116,13 @@ class DialogDisplay extends PartDisplay {
 
         var displayFast: Fast = new Fast(content).node.Display;
         for(tokenNode in displayFast.nodes.Token){
-            var token: Bitmap = new Bitmap(Assets.getBitmapData(tokenNode.att.Id));
+            var token: Bitmap = new Bitmap(Assets.getBitmapData(tokenNode.att.id));
             token.visible = false;
             initDisplayObject(token, tokenNode);
 
             resizeD.addDisplayObjects(token, tokenNode);
             addChild(token);
-            tokens.set(tokenNode.att.Name, token);
+            tokens.set(tokenNode.att.name, token);
 
             dispatchEvent(new TokenEvent(TokenEvent.ADD, true));
         }

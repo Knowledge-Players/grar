@@ -29,9 +29,9 @@ class Scanner extends Activity {
     override private function parseContent(content: Xml): Void
     {
         var fast = new Fast(content).node.Scanner;
-        pointVisible = fast.att.PointVisible == "true";
+        pointVisible = fast.att.pointVisible == "true";
         for(point in fast.nodes.Point){
-            pointsMap.add(new ScannerPoint(Std.parseFloat(point.att.X), Std.parseFloat(point.att.Y), point.att.Content));
+            pointsMap.add(new ScannerPoint(Std.parseFloat(point.att.x), Std.parseFloat(point.att.y), point.att.content));
         }
     }
 }

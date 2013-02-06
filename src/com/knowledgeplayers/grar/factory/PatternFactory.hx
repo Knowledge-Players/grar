@@ -49,6 +49,6 @@ class PatternFactory {
 
     public static function createPatternFromXml(xml: Fast): Null<Pattern>
     {
-        return createPattern(xml.att.Type, xml.att.Id);
+        return createPattern(xml.att.type, xml.att.id);
     }
 }

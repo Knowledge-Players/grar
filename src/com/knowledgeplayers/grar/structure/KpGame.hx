@@ -68,25 +68,25 @@ class KpGame extends EventDispatcher, implements Game {
     {
         structureXml = new Fast(xml);
 
-        var paramatersNode: Fast = structureXml.node.Grar.node.Parameters;
-        mode = Type.createEnum(Mode, paramatersNode.node.Mode.innerData);
-        title = paramatersNode.node.Title.innerData;
-        state = paramatersNode.node.State.innerData;
+        var parametersNode: Fast = structureXml.node.Grar.node.Parameters;
+        mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
+        title = parametersNode.node.Title.innerData;
+        state = parametersNode.node.State.innerData;
 
         initTracking();
 
-        XmlLoader.load(paramatersNode.node.Languages.att.File, onLanguagesComplete, initLangs);
+        XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
 
         var displayNode: Fast = structureXml.node.Grar.node.Display;
         if(displayNode.hasNode.Ui)
-            UiFactory.setSpriteSheet(displayNode.node.Ui.att.Display);
+            UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
         for(activity in displayNode.nodes.Activity){
-            var activityXml = XmlLoader.load(activity.att.Display, onActivityComplete, initActivities);
+            var activityXml = XmlLoader.load(activity.att.display, onActivityComplete, initActivities);
         }
 
         var structureNode: Fast = structureXml.node.Grar.node.Structure;
         for(part in structureNode.nodes.Part){
-            addPartFromXml(Std.parseInt(part.att.Id), part);
+            addPartFromXml(Std.parseInt(part.att.id), part);
         }
 
         checkIntegrity();
@@ -223,7 +223,7 @@ class KpGame extends EventDispatcher, implements Game {
     {
         var languagesXml: Fast = new Fast(xml);
         for(lang in languagesXml.node.Langs.nodes.Lang){
-            addLanguage(lang.att.Value, lang.att.Folder, lang.att.Pic);
+            addLanguage(lang.att.value, lang.att.folder, lang.att.pic);
         }
         Localiser.instance.setCurrentLocale(stateInfos.currentLanguage);
     }

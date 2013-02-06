@@ -8,18 +8,18 @@
         <!-- State of the local save -->
         <State>fr@1@0-0-0@3</State>
         <!-- Paths to the langages files -->
-        <Languages File="lang.xml"/>
+        <Languages file="lang.xml"/>
     </Parameters>
     <!-- List of static displays -->
     <Display>
-        <Activity Display="scannerDisplay.xml"/>
-        <Activity Display="folderDisplay.xml"/>
-        <Ui Display="ui/ui.xml"/>
+        <Activity display="scannerdisplay.xml"/>
+        <Activity display="folderdisplay.xml"/>
+        <Ui display="ui/ui.xml"/>
     </Display>
     <!-- Structure of the application -->
-    <Structure IdObjective="">
-        <Part Id="0" Name="trancheDeVie" Type="dialog" File="tranche.xml" Display="trancheDisplay.xml"/>
-        <Part Id="1" Name="activities" Type="" File="activities.xml" Display="activitiesDisplay.xml"/>
-        <Part Id="2" Name="bild" Type="strip" File="strip.xml" Display="stripDisplay.xml"/>
+    <Structure idObjective="">
+        <Part id="0" name="trancheDeVie" type="dialog" file="tranche.xml" display="tranchedisplay.xml"/>
+        <Part id="1" name="activities" type="" file="activities.xml" display="activitiesdisplay.xml"/>
+        <Part id="2" name="bild" type="strip" file="strip.xml" display="stripdisplay.xml"/>
     </Structure>
 </Grar>

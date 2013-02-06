@@ -26,7 +26,7 @@ class ActivityPattern extends Pattern {
             if(Std.is(item, RemarkableEvent))
                 event = cast(item, RemarkableEvent);
             else
-                item.content = itemNode.att.Content;
+                item.content = itemNode.att.content;
             patternContent.push(item);
         }
     }

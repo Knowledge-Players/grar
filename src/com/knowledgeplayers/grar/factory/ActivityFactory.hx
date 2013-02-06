@@ -49,6 +49,6 @@ class ActivityFactory {
 
     public static function createActivityFromXml(xml: Fast): Null<Activity>
     {
-        return createActivity(xml.att.Type, xml.att.Content, xml.att.Perk);
+        return createActivity(xml.att.type, xml.att.content, xml.att.perk);
     }
 }

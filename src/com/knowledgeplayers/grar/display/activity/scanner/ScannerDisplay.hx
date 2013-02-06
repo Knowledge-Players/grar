@@ -29,10 +29,8 @@ class ScannerDisplay extends ActivityDisplay {
 
     private var pointRadius: Float = 0;
     private var pointGraphics: Hash<String>;
-    private var pointZ: Int;
     private var textZone: ScrollPanel;
     private var lineHeight: Float;
-    private var depths: IntHash<DisplayObject>;
 
     /**
 * @return the instance
@@ -47,20 +45,8 @@ class ScannerDisplay extends ActivityDisplay {
 
     // Private
 
-    /*private function onEndActivity(e: Event): Void
-{
-model.endActivity();
-unLoad();
-scanner.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
-}*/
-
     override private function onModelComplete(e: LocaleEvent): Void
     {
-        //TODO +2 temporaire, en attendant la transformation de depths
-        for(i in 1...Lambda.count(depths) + 2){
-            if(depths.get(i) != null)
-                addChild(depths.get(i));
-        }
         var yOffset: Float = 0;
         var textSprite = new Sprite();
         for(point in cast(model, Scanner).pointsMap){
@@ -82,35 +68,36 @@ scanner.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
 
     override private function parseContent(content: Fast): Void
     {
-        var background = new Bitmap(Assets.getBitmapData(content.node.Background.att.Id));
-        depths.set(Std.parseInt(content.node.Background.att.Z), background);
-        ResizeManager.instance.addDisplayObjects(background, content.node.Background);
+        for(child in content.elements){
+            if(child.name.toLowerCase() == "background"){
+                var background = new Bitmap(Assets.getBitmapData(child.att.id));
+                ResizeManager.instance.addDisplayObjects(background, child);
+                addChild(background);
+            }
+            if(child.name.toLowerCase() == "text"){
+                textZone = new ScrollPanel(Std.parseFloat(child.att.width), Std.parseFloat(child.att.height));
+                textZone.x = Std.parseFloat(child.att.x);
+                textZone.y = Std.parseFloat(child.att.y);
+                textZone.setBackground(child.att.background);
+                lineHeight = Std.parseFloat(child.att.lineHeight);
+                addChild(textZone);
+            }
+        }
 
         pointGraphics = new Hash<String>();
         for(point in content.nodes.Point){
-            if(point.has.Z)
-                pointZ = Std.parseInt(point.att.Z);
-            if(point.has.Color){
-                pointRadius = Std.parseInt(point.att.Radius);
-                pointGraphics.set(point.att.State, point.att.Color);
+            if(point.has.color){
+                pointRadius = Std.parseInt(point.att.radius);
+                pointGraphics.set(point.att.state, point.att.color);
             }
             else
-                pointGraphics.set(point.att.State, point.att.Img);
+                pointGraphics.set(point.att.state, point.att.img);
         }
-
-        var text = content.node.Text;
-        textZone = new ScrollPanel(Std.parseFloat(text.att.Width), Std.parseFloat(text.att.Height));
-        textZone.x = Std.parseFloat(text.att.X);
-        textZone.y = Std.parseFloat(text.att.Y);
-        textZone.setBackground(text.att.Background);
-        lineHeight = Std.parseFloat(text.att.LineHeight);
-        depths.set(Std.parseInt(text.att.Z), textZone);
     }
 
     private function new()
     {
         super();
-        depths = new IntHash<DisplayObject>();
         textAreas = new Hash<ScrollPanel>();
     }
 }

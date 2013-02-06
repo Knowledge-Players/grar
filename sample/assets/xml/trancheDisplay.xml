@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Display>
-    <Background Id="img/background.jpg" Ref="labo"/>
-    <Background Id="img/background2.jpg" Ref="empty"/>
-    <Character Id="img/enzo_office_dl_happy.png" Ref="enzo" Width="661" Height="660" X="00" Y="00"/>
-    <Character Id="img/francoise_happy_office_dl.png" Ref="francoise" Width="662" Height="660" X="100" Y="00"/>
-    <Text X="0" Y="480" Width="960" Height="100" Background="0xFFFFFF" Ref="dialog"/>
-    <Button Id="continueButton" Type="text" Action="next" X="791" Y="530" ScaleX="1" ScaleY="1" Ref="next"/>
+    <Background id="img/background.jpg" ref="labo"/>
+    <Background id="img/background2.jpg" ref="empty"/>
+    <Character id="img/enzo_office_dl_happy.png" ref="enzo" width="661" height="660" x="00" y="00"/>
+    <Character id="img/francoise_happy_office_dl.png" ref="francoise" width="662" height="660" x="100" y="00"/>
+    <Text x="0" y="480" width="960" height="100" background="0xFFFFFF" ref="dialog"/>
+    <Button id="continueButton" type="text" action="next" x="791" y="530" scaleX="1" scaleY="1" ref="next"/>
 </Display>

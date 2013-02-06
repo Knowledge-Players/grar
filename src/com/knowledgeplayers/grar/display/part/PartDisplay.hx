@@ -200,32 +200,32 @@ class PartDisplay extends Sprite {
     {
 
         if(anime){
-            TweenManager.translate(display, new Point(0, 0), new Point(Std.parseFloat(node.att.X), Std.parseFloat(node.att.Y)));
+            TweenManager.translate(display, new Point(0, 0), new Point(Std.parseFloat(node.att.x), Std.parseFloat(node.att.y)));
         }
         else{
-            display.x = Std.parseFloat(node.att.X);
-            display.y = Std.parseFloat(node.att.Y);
+            display.x = Std.parseFloat(node.att.x);
+            display.y = Std.parseFloat(node.att.y);
         }
 
-        if(node.has.Width)
-            display.width = Std.parseFloat(node.att.Width);
+        if(node.has.width)
+            display.width = Std.parseFloat(node.att.width);
         else
-            display.scaleX = Std.parseFloat(node.att.ScaleX);
-        if(node.has.Height)
-            display.height = Std.parseFloat(node.att.Height);
+            display.scaleX = Std.parseFloat(node.att.scaleX);
+        if(node.has.height)
+            display.height = Std.parseFloat(node.att.height);
         else
-            display.scaleY = Std.parseFloat(node.att.ScaleY);
+            display.scaleY = Std.parseFloat(node.att.scaleY);
     }
 
     private function createBackground(bkgNode: Fast): Void
     {
-        displaysFast.set(bkgNode.att.Ref, bkgNode);
+        displaysFast.set(bkgNode.att.ref, bkgNode);
         zIndex++;
     }
 
     private function createItem(itemNode: Fast): Void
     {
-        var itemBmp: Bitmap = new Bitmap(Assets.getBitmapData(itemNode.att.Id));
+        var itemBmp: Bitmap = new Bitmap(Assets.getBitmapData(itemNode.att.id));
 
         addElement(itemBmp, itemNode);
     }
@@ -234,8 +234,8 @@ class PartDisplay extends Sprite {
     {
         var button: DefaultButton = UiFactory.createButtonFromXml(buttonNode);
 
-        if(buttonNode.has.Action)
-            setButtonAction(cast(button, CustomEventButton), buttonNode.att.Action);
+        if(buttonNode.has.action)
+            setButtonAction(cast(button, CustomEventButton), buttonNode.att.action);
         else
             button.addEventListener("next", next);
 
@@ -244,18 +244,18 @@ class PartDisplay extends Sprite {
 
     private function createText(textNode: Fast): Void
     {
-        var text = new ScrollPanel(Std.parseFloat(textNode.att.Width), Std.parseFloat(textNode.att.Height));
-        text.background = textNode.att.Background;
+        var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height));
+        text.background = textNode.att.background;
 
         addElement(text, textNode);
     }
 
     private function createCharacter(character: Fast)
     {
-        var bitmap = new Bitmap(Assets.getBitmapData(character.att.Id));
-        var char: CharacterDisplay = new CharacterDisplay(bitmap, new Character(character.att.Ref));
+        var bitmap = new Bitmap(Assets.getBitmapData(character.att.id));
+        var char: CharacterDisplay = new CharacterDisplay(bitmap, new Character(character.att.ref));
         char.visible = false;
-        char.origin = new Point(Std.parseFloat(character.att.X), Std.parseFloat(character.att.Y));
+        char.origin = new Point(Std.parseFloat(character.att.x), Std.parseFloat(character.att.y));
 
         addElement(char, character);
     }
@@ -279,7 +279,7 @@ class PartDisplay extends Sprite {
         }
         // Add new background
         if(item.background != null){
-            var bkg = DisplayUtils.setBackground(displaysFast.get(item.background).att.Id, displayArea);
+            var bkg = DisplayUtils.setBackground(displaysFast.get(item.background).att.id, displayArea);
             previousBackground = {ref: item.background, bmp: bkg};
             if(bkg != null)
                 resizeD.addDisplayObjects(bkg, displaysFast.get(item.background));
@@ -346,8 +346,8 @@ class PartDisplay extends Sprite {
     private function addElement(elem: DisplayObject, node: Fast): Void
     {
         initDisplayObject(elem, node);
-        displays.set(node.att.Ref, {obj: elem, z: zIndex});
-        displaysFast.set(node.att.Ref, node);
+        displays.set(node.att.ref, {obj: elem, z: zIndex});
+        displaysFast.set(node.att.ref, node);
         resizeD.addDisplayObjects(elem, node);
         zIndex++;
     }

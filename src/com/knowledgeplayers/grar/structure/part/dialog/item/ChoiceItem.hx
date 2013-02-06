@@ -19,9 +19,9 @@ class ChoiceItem extends TextItem {
     {
         super(xml);
         if(xml.hasNode.Token){
-            this.tokenId = xml.node.Token.att.Id;
-            this.target = xml.node.Token.att.Target.toLowerCase();
-            this.tokenType = xml.node.Token.att.Type.toLowerCase();
+            this.tokenId = xml.node.Token.att.id;
+            this.target = xml.node.Token.att.target.toLowerCase();
+            this.tokenType = xml.node.Token.att.type.toLowerCase();
         }
         else{
             this.tokenId = tokenId;

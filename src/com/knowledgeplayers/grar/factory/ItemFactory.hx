@@ -45,6 +45,6 @@ class ItemFactory {
 
     public static function createItemFromXml(xml: Fast): Null<TextItem>
     {
-        return createItem(xml.att.Type, xml);
+        return createItem(xml.att.type, xml);
     }
 }

@@ -31,7 +31,7 @@ class Folder extends Activity {
     {
         var fast = new Fast(content).node.Folder;
         for(element in fast.nodes.Element){
-            var elem = new FolderElement(element.att.Ref);
+            var elem = new FolderElement(element.att.ref);
             if(element.has.isAnswer && element.att.isAnswer == "true")
                 elem.isAnswer = true;
             elements.set(elem.content, elem);

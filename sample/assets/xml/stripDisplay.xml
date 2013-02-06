@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Display>
-    <Box X="0" Y="0" Width="600" Height="400" Ref="case1"/>
-    <Box X="600" Y="0" Width="360" Height="400" Ref="case2"/>
-    <Box X="0" Y="400" Width="960" Height="180" Ref="case3"/>
+    <Box x="0" y="0" width="600" height="400" ref="case1"/>
+    <Box x="600" y="0" width="360" height="400" ref="case2"/>
+    <Box x="0" y="400" width="960" height="180" ref="case3"/>
 
-    <Background Id="img/background.jpg" Ref="bck1" Width="1000" Height="1000" X="0" Y="0"/>
+    <Background id="img/background.jpg" ref="bck1" width="1000" height="1000" x="0" y="0"/>
 
-    <Character Id="img/enzo_office_dl_happy.png" Width="500" Height="500" X="0" Y="150" Ref="perso1"/>
-    <Character Id="img/enzo_office_dl_happy.png" Width="300" Height="300" X="0" Y="150" Ref="perso2"/>
-    <Character Id="img/enzo_office_dl_happy.png" Width="900" Height="900" X="0" Y="-50" Ref="perso3"/>
+    <Character id="img/enzo_office_dl_happy.png" width="500" height="500" x="0" y="150" ref="perso1"/>
+    <Character id="img/enzo_office_dl_happy.png" width="300" height="300" x="0" y="150" ref="perso2"/>
+    <Character id="img/enzo_office_dl_happy.png" width="900" height="900" x="0" y="-50" ref="perso3"/>
 
-    <Text X="300" Y="80" Width="400" Height="80" Ref="text1" Background="img/bulle.png"/>
-    <Text X="100" Y="50" Width="400" Height="80" Ref="text2" Background="img/bulle.png"/>
-    <Text X="500" Y="50" Width="400" Height="80" Ref="text3" Background="img/bulle.png"/>
+    <Text x="300" y="80" width="400" height="80" ref="text1" background="img/bulle.png"/>
+    <Text x="100" y="50" width="400" height="80" ref="text2" background="img/bulle.png"/>
+    <Text x="500" y="50" width="400" height="80" ref="text3" background="img/bulle.png"/>
 
-    <Button Id="continueButton" Type="text" Action="next" X="480" Y="350" ScaleX="1" ScaleY="1" Ref="next1"/>
-    <Button Id="continueButton" Type="text" Action="next" X="250" Y="350" ScaleX="1" ScaleY="1" Ref="next2"/>
-    <Button Id="continueButton" Type="text" Action="next" X="150" Y="100" ScaleX="1" ScaleY="1" Ref="next3"/>
+    <Button id="continueButton" type="text" action="next" x="480" y="350" scaleX="1" scaleY="1" ref="next1"/>
+    <Button id="continueButton" type="text" action="next" x="250" y="350" scaleX="1" scaleY="1" ref="next2"/>
+    <Button id="continueButton" type="text" action="next" x="150" y="100" scaleX="1" scaleY="1" ref="next3"/>
 </Display>

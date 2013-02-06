@@ -193,11 +193,10 @@ quizz.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
         initDisplayObject(validationButton, content.node.Button);
 
         validationButton.addEventListener(MouseEvent.CLICK, onValidation);
-        validateContent = content.node.Button.att.Content;
+        validateContent = content.node.Button.att.content;
 
-        question.style = StyleParser.instance.getStyle(content.node.Question.att.Tag);
-        question.x = Std.parseFloat(content.node.Question.att.X);
-        question.y = Std.parseFloat(content.node.Question.att.Y);
+        question.x = Std.parseFloat(content.node.Question.att.x);
+        question.y = Std.parseFloat(content.node.Question.att.y);
 
         displayObjects.set(content.node.Button.att.z, validationButton);
         displayObjects.set(content.node.Question.att.z, question);
@@ -241,26 +240,26 @@ quizz.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
     private function setIcons(display: Fast): Void
     {
         for(icon in display.nodes.Icon){
-            var iconData: BitmapData = Assets.getBitmapData(icon.att.Content);
-            switch(icon.att.Type.toLowerCase()) {
+            var iconData: BitmapData = Assets.getBitmapData(icon.att.content);
+            switch(icon.att.type.toLowerCase()) {
                 case "good": correction = iconData;
                 case "check": iconCheck = iconData;
                 case "uncheck": iconUncheck = iconData;
                 case "checkright": iconCheckRight = iconData;
                 case "checkfalse": iconCheckWrong = iconData;
-                default: Lib.trace(icon.att.Type + ": Unsupported icon type");
+                default: Lib.trace(icon.att.type + ": Unsupported icon type");
             }
         }
     }
 
     private function setLayout(layout: Fast): Void
     {
-        itemXOffset = Std.parseFloat(layout.att.ItemXOffset);
-        correctionXOffset = Std.parseFloat(layout.att.CorrectionXOffset);
-        groupXOffset = Std.parseFloat(layout.node.Group.att.XOffset);
-        groupYOffset = Std.parseFloat(layout.node.Group.att.YOffset);
-        groupX = Std.parseFloat(layout.node.Group.att.X);
-        groupY = Std.parseFloat(layout.node.Group.att.Y);
+        itemXOffset = Std.parseFloat(layout.att.itemXOffset);
+        correctionXOffset = Std.parseFloat(layout.att.correctionXOffset);
+        groupXOffset = Std.parseFloat(layout.node.Group.att.xOffset);
+        groupYOffset = Std.parseFloat(layout.node.Group.att.yOffset);
+        groupX = Std.parseFloat(layout.node.Group.att.x);
+        groupY = Std.parseFloat(layout.node.Group.att.y);
     }
 
     private function updateRound(): Void

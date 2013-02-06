@@ -87,22 +87,22 @@ class FolderDisplay extends ActivityDisplay {
     {
         for(child in content.elements){
             if(child.name.toLowerCase() == "background"){
-                var background = new Bitmap(Assets.getBitmapData(child.att.Id));
+                var background = new Bitmap(Assets.getBitmapData(child.att.id));
                 ResizeManager.instance.addDisplayObjects(background, child);
                 addChild(background);
             }
             else if(child.name.toLowerCase() == "target"){
-                target = new Bitmap(Assets.getBitmapData(child.att.Background));
+                target = new Bitmap(Assets.getBitmapData(child.att.background));
                 initDisplayObject(target, child);
                 ResizeManager.instance.addDisplayObjects(target, child);
                 addChild(target);
             }
             else if(child.name.toLowerCase() == "popup"){
-                popUp.addChild(new Bitmap(Assets.getBitmapData(content.node.PopUp.att.Background)));
-                var icon = new Bitmap(Assets.getBitmapData(content.node.PopUp.att.ButtonIcon));
+                popUp.addChild(new Bitmap(Assets.getBitmapData(content.node.PopUp.att.background)));
+                var icon = new Bitmap(Assets.getBitmapData(content.node.PopUp.att.buttonIcon));
                 var button = new SimpleButton(icon, icon, icon, icon);
-                button.x = Std.parseFloat(content.node.PopUp.att.ButtonX);
-                button.y = Std.parseFloat(content.node.PopUp.att.ButtonY);
+                button.x = Std.parseFloat(content.node.PopUp.att.buttonX);
+                button.y = Std.parseFloat(content.node.PopUp.att.buttonY);
                 button.addEventListener(MouseEvent.CLICK, onClosePopUp);
                 popUp.addChild(button);
                 initDisplayObject(popUp, content.node.PopUp);
@@ -114,14 +114,14 @@ class FolderDisplay extends ActivityDisplay {
         }
 
         for(grid in content.nodes.Grid){
-            var g = new Grid(Std.parseInt(grid.att.numRow), Std.parseInt(grid.att.numCol), Std.parseFloat(grid.att.CellWidth), Std.parseFloat(grid.att.CellHeight));
-            g.x = Std.parseFloat(grid.att.X);
-            g.y = Std.parseFloat(grid.att.Y);
-            grids.set(grid.att.Ref, g);
+            var g = new Grid(Std.parseInt(grid.att.numRow), Std.parseInt(grid.att.numCol), Std.parseFloat(grid.att.cellWidth), Std.parseFloat(grid.att.cellHeight));
+            g.x = Std.parseFloat(grid.att.x);
+            g.y = Std.parseFloat(grid.att.y);
+            grids.set(grid.att.ref, g);
         }
 
         var elemNode = content.node.Element;
-        elementTemplate = {background: elemNode.att.Background, buttonIcon: elemNode.att.ButtonIcon, buttonPos: new Point(Std.parseFloat(elemNode.att.ButtonX), Std.parseFloat(elemNode.att.ButtonY))};
+        elementTemplate = {background: elemNode.att.background, buttonIcon: elemNode.att.buttonIcon, buttonPos: new Point(Std.parseFloat(elemNode.att.buttonX), Std.parseFloat(elemNode.att.buttonY))};
 
     }
 

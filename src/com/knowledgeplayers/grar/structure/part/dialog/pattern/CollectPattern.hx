@@ -25,7 +25,7 @@ class CollectPattern extends Pattern {
     {
         for(itemNode in xml.nodes.TextItem){
             var item: TextItem = ItemFactory.createItemFromXml(itemNode);
-            item.content = itemNode.att.Content;
+            item.content = itemNode.att.content;
             if(item.hasVerticalFlow())
             if(firstChoiceItem){
                 patternContent.push(item);

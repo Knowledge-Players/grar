@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Part>
-    <Pattern Type="Box" Id="case1">
-        <Text Type="" Content="text1" Author="perso1" Background="bck1" Ref="text1"/>
-        <Button Ref="next1" Content="nextButton"/>
+    <Pattern type="Box" id="case1">
+        <Text type="" content="text1" author="perso1" background="bck1" ref="text1"/>
+        <Button ref="next1" content="nextButton"/>
     </Pattern>
-    <Pattern Type="Box" Id="case2">
-        <Text Type="" Content="text2" Author="perso2" Background="bck1" Ref="text2"/>
-        <Button Ref="next2" Content="nextButton"/>
+    <Pattern type="Box" id="case2">
+        <Text type="" content="text2" author="perso2" background="bck1" ref="text2"/>
+        <Button ref="next2" content="nextButton"/>
     </Pattern>
-    <Pattern Type="Box" Id="case3">
-        <Text Type="" Content="text3" Author="perso3" Background="bck1" Ref="text3"/>
-        <Button Ref="next3" Content="nextButton"/>
+    <Pattern type="Box" id="case3">
+        <Text type="" content="text3" author="perso3" background="bck1" ref="text3"/>
+        <Button ref="next3" content="nextButton"/>
     </Pattern>
 </Part>

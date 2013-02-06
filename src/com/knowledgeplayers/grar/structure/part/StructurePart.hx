@@ -253,13 +253,13 @@ class StructurePart extends EventDispatcher, implements Part {
 
     private function parseXml(xml: Fast): Void
     {
-        id = Std.parseInt(xml.att.Id);
-        if(xml.has.Name) name = xml.att.Name;
-        if(xml.has.File) file = xml.att.File;
-        if(xml.has.Display) display = xml.att.Display;
+        id = Std.parseInt(xml.att.id);
+        if(xml.has.name) name = xml.att.name;
+        if(xml.has.file) file = xml.att.file;
+        if(xml.has.display) display = xml.att.display;
 
         if(xml.hasNode.Sound)
-            soundLoop = Assets.getSound(xml.node.Sound.att.Content);
+            soundLoop = Assets.getSound(xml.node.Sound.att.content);
 
         if(xml.hasNode.Part){
             for(partNode in xml.nodes.Part){
@@ -270,11 +270,11 @@ class StructurePart extends EventDispatcher, implements Part {
                 part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
                 part.addEventListener(TokenEvent.ADD, onAddToken);
                 part.init(partNode);
-                parts.set(Std.parseInt(partNode.att.Id), part);
+                parts.set(Std.parseInt(partNode.att.id), part);
             }
         }
         if(xml.has.Options){
-            for(option in xml.att.Options.split(";")){
+            for(option in xml.att.options.split(";")){
                 if(option != ""){
                     var key: String = StringTools.trim(option.split(":")[0]);
                     var value: String = StringTools.trim(option.split(":")[1]);

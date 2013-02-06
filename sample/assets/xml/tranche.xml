@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <Part>
-    <Pattern Type="Link" Id="step0">
-        <Text Type="" Content="step0_0" Author="enzo" Direction="Left" Background="labo" Ref="dialog"/>
-        <Text Type="" Background="empty"/>
-        <Text Type="" Content="step0_2" Author="francoise" Direction="Right" Background="labo" Ref="dialog"/>
-        <Button Ref="next" Content="nextButton"/>
+    <Pattern type="Link" id="step0">
+        <Text type="" content="step0_0" author="enzo" direction="Left" background="labo" ref="dialog"/>
+        <Text type="" background="empty"/>
+        <Text type="" content="step0_2" author="francoise" direction="Right" background="labo" ref="dialog"/>
+        <Button ref="next" content="nextButton"/>
     </Pattern>
 </Part>

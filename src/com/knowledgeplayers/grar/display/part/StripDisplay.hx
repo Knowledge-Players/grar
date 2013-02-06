@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import Xml;
 import nme.display.Sprite;
 import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
 import com.knowledgeplayers.grar.structure.part.Pattern;
@@ -20,7 +21,7 @@ import haxe.xml.Fast;
  */
 class StripDisplay extends PartDisplay {
 
-    private var boxesRef: Array<String>;
+    private var boxesref: Array<String>;
     private var currentBox: BoxPattern;
     private var currentItem: TextItem;
     private var boxIndex: Int = 0;
@@ -28,7 +29,7 @@ class StripDisplay extends PartDisplay {
     public function new(part: StripPart)
     {
         super(part);
-        boxesRef = new Array<String>();
+        boxesref = new Array<String>();
     }
 
     // Private
@@ -42,8 +43,8 @@ class StripDisplay extends PartDisplay {
     {
         var displayFast: Fast = new Fast(content).node.Display;
         for(boxNode in displayFast.nodes.Box){
-            boxesRef.push(boxNode.att.Ref);
-            displaysFast.set(boxNode.att.Ref, boxNode);
+            boxesref.push(boxNode.att.ref);
+            displaysFast.set(boxNode.att.ref, boxNode);
         }
 
         super.parseContent(content);
@@ -77,12 +78,12 @@ class StripDisplay extends PartDisplay {
             displayArea.addChild(obj.obj);
         }
 
-        var node = displaysFast.get(boxesRef[boxIndex]);
-        displayArea.x = Std.parseFloat(node.att.X);
-        displayArea.y = Std.parseFloat(node.att.Y);
+        var node = displaysFast.get(boxesref[boxIndex]);
+        displayArea.x = Std.parseFloat(node.att.x);
+        displayArea.y = Std.parseFloat(node.att.y);
         var mask = new Sprite();
         mask.graphics.beginFill(0);
-        mask.graphics.drawRect(displayArea.x, displayArea.y, Std.parseFloat(node.att.Width), Std.parseFloat(node.att.Height));
+        mask.graphics.drawRect(displayArea.x, displayArea.y, Std.parseFloat(node.att.width), Std.parseFloat(node.att.height));
         displayArea.mask = mask;
 
         boxIndex++;

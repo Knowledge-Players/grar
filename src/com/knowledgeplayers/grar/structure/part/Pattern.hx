@@ -47,7 +47,7 @@ class Pattern implements PartElement {
             patternContent.push(item);
         }
         for(button in xml.nodes.Button){
-            buttons.set(button.att.Ref, button.att.Content);
+            buttons.set(button.att.ref, button.att.content);
         }
     }
 

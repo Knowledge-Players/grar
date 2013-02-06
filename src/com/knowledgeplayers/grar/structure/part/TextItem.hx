@@ -42,16 +42,16 @@ class TextItem implements PartElement {
     public function new(?xml: Fast, content: String = "")
     {
         if(xml != null){
-            if(xml.has.Content)
-                this.content = xml.att.Content;
-            if(xml.has.Author)
-                author = xml.att.Author;
-            if(xml.has.Direction)
-                direction = xml.att.Direction;
-            if(xml.has.Ref)
-                ref = xml.att.Ref;
-            if(xml.has.Background)
-                background = xml.att.Background;
+            if(xml.has.content)
+                this.content = xml.att.content;
+            if(xml.has.author)
+                author = xml.att.author;
+            if(xml.has.direction)
+                direction = xml.att.direction;
+            if(xml.has.ref)
+                ref = xml.att.ref;
+            if(xml.has.background)
+                background = xml.att.background;
         }
         else{
             this.content = content;

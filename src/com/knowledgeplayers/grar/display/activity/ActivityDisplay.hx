@@ -80,16 +80,16 @@ class ActivityDisplay extends Sprite {
 
     private function initDisplayObject(display: DisplayObject, node: Fast): Void
     {
-        display.x = Std.parseFloat(node.att.X);
-        display.y = Std.parseFloat(node.att.Y);
-        if(node.has.Width)
-            display.width = Std.parseFloat(node.att.Width);
+        display.x = Std.parseFloat(node.att.x);
+        display.y = Std.parseFloat(node.att.y);
+        if(node.has.width)
+            display.width = Std.parseFloat(node.att.width);
         else
-            display.scaleX = Std.parseFloat(node.att.ScaleX);
-        if(node.has.Height)
-            display.height = Std.parseFloat(node.att.Height);
+            display.scaleX = Std.parseFloat(node.att.scaleX);
+        if(node.has.height)
+            display.height = Std.parseFloat(node.att.height);
         else
-            display.scaleY = Std.parseFloat(node.att.ScaleY);
+            display.scaleY = Std.parseFloat(node.att.scaleY);
     }
 
     // Handlers

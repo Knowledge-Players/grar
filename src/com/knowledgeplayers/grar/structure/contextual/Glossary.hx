@@ -92,7 +92,7 @@ class Glossary {
     {
         var fast: Fast = new Fast(content).node.Glossary;
         for(def in fast.nodes.Definition){
-            addEntry(def.att.Word, def.innerData);
+            addEntry(def.att.word, def.innerData);
         }
     }
 
