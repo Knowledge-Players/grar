@@ -7,13 +7,13 @@ import nme.Lib;
 
 class BoxPattern extends Pattern {
 
-    public var ref: String;
-
-    public function new(?name: String): Void
+    /**
+    * Constructor
+    * @param name : Name of the pattern
+**/
+    public function new(name: String)
     {
         super(name);
-
-        this.ref = name;
 
     }
 

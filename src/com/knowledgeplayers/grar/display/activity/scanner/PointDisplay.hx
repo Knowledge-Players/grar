@@ -7,10 +7,19 @@ import nme.events.MouseEvent;
 import nme.Assets;
 import nme.display.Bitmap;
 import nme.display.Sprite;
+
 class PointDisplay extends Sprite {
+
     private var graphic: Hash<String>;
     private var bitmap: Bitmap;
     private var point: ScannerPoint;
+
+    /**
+    * Constructor
+    * @param graphic : Set of the graphics for the different states of the point
+    * @param radius : Radius of the point in pixel
+    * @param point : Model of the display
+**/
 
     public function new(graphic: Hash<String>, radius: Float = 0, point: ScannerPoint)
     {
@@ -29,11 +38,6 @@ class PointDisplay extends Sprite {
 
         addEventListener(MouseEvent.MOUSE_OVER, onOver);
         addEventListener(MouseEvent.MOUSE_OUT, onOut);
-    }
-
-    public function init(): Void
-    {
-
     }
 
     // Handler

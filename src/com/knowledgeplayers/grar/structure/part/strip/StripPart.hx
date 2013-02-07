@@ -18,10 +18,9 @@ class StripPart extends StructurePart {
 
     }
 
-    public function getCurrentBox(): BoxPattern
-    {
-        return cast(elements[elemIndex], BoxPattern);
-    }
+    /**
+    * @return true
+**/
 
     override public function isStrip(): Bool
     {

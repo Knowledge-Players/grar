@@ -27,6 +27,11 @@ class Pattern implements PartElement {
 **/
     public var buttons (default, null): Hash<String>;
 
+    /**
+    * Constructor
+    * @param name : Name of the pattern
+**/
+
     public function new(name: String)
     {
         this.name = name;
