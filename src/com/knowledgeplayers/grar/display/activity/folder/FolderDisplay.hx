@@ -32,7 +32,7 @@ class FolderDisplay extends ActivityDisplay {
     /**
 * DisplayObject where to drag the elements
 **/
-    public var target (default, default): DisplayObject;
+    public var target (default, default): {obj: DisplayObject, ref: String};
 
     /**
 * PopUp where additional text will be displayed
@@ -59,7 +59,7 @@ class FolderDisplay extends ActivityDisplay {
 
     public function drop(elem: FolderElementDisplay): Void
     {
-        if(cast(model, Folder).elements.get(elem.content).isAnswer){
+        if(cast(model, Folder).elements.get(elem.content).target == target.ref){
             grids.get("drop").add(elem);
             elem.stopDrag();
             elem.blockElement();
@@ -92,10 +92,10 @@ class FolderDisplay extends ActivityDisplay {
                 addChild(background);
             }
             else if(child.name.toLowerCase() == "target"){
-                target = new Bitmap(Assets.getBitmapData(child.att.background));
-                initDisplayObject(target, child);
-                ResizeManager.instance.addDisplayObjects(target, child);
-                addChild(target);
+                target = {obj: new Bitmap(Assets.getBitmapData(child.att.background)), ref: child.att.ref};
+                initDisplayObject(target.obj, child);
+                ResizeManager.instance.addDisplayObjects(target.obj, child);
+                addChild(target.obj);
             }
             else if(child.name.toLowerCase() == "popup"){
                 popUp.addChild(new Bitmap(Assets.getBitmapData(content.node.PopUp.att.background)));

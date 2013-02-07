@@ -4,11 +4,11 @@
     <Box x="600" y="0" width="360" height="400" ref="case2"/>
     <Box x="0" y="400" width="960" height="180" ref="case3"/>
 
-    <Background id="img/background.jpg" ref="bck1" width="1000" height="1000" x="0" y="0"/>
+    <Background src="img/background.jpg" ref="bck1" width="1000" height="1000" x="0" y="0"/>
 
-    <Character id="img/enzo_office_dl_happy.png" width="500" height="500" x="0" y="150" ref="perso1"/>
-    <Character id="img/enzo_office_dl_happy.png" width="300" height="300" x="0" y="150" ref="perso2"/>
-    <Character id="img/enzo_office_dl_happy.png" width="900" height="900" x="0" y="-50" ref="perso3"/>
+    <Character src="img/enzo_office_dl_happy.png" width="500" height="500" x="0" y="150" ref="perso1"/>
+    <Character src="img/enzo_office_dl_happy.png" width="300" height="300" x="0" y="150" ref="perso2"/>
+    <Character src="img/enzo_office_dl_happy.png" width="900" height="900" x="0" y="-50" ref="perso3"/>
 
     <Text x="300" y="80" width="400" height="80" ref="text1" background="img/bulle.png"/>
     <Text x="100" y="50" width="400" height="80" ref="text2" background="img/bulle.png"/>

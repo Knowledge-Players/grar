@@ -10,88 +10,84 @@ import nme.events.MouseEvent;
 /**
  * Button with an animation
  */
- class AnimationButton extends CustomEventButton
-{
-	/**
-	 * TileGroup for the button
-	 */
-	public var iconGroup:TileGroup;
-	
-	/**
-	 * Tile for the background
-	 */
-	public var fondIcon:TileSprite;
-	
-	/**
-	 * Tile for the animation
-	 */
-	public var arrowIcon:TileClip;
+class AnimationButton extends CustomEventButton {
+    /**
+     * TileGroup for the button
+     */
+    public var iconGroup: TileGroup;
 
-	/**
-	 * Constructor
-	 * @param	tilesheet : UI sheet
-	 * @param	tile : Tile containing the button
-	 * @param	eventName : Custom event to dispatch
-	 */
-	public function new(tilesheet: TilesheetEx, tile: String, ?eventName: String) 
-	{
-		if (eventName == null) {
-			this.eventType = "next";
-			propagateNativeEvent = true;
-		}
-		else
-			this.eventType = eventName;
-		
-		super(eventType, tilesheet,tile);
-		addIcon();
-	}
-	
-	// P¨rivates
-	
-	private function addIcon():Void
-	{
-		this.iconGroup = new TileGroup();
-		this.fondIcon = new TileSprite("btCircle");
-		this.arrowIcon = new TileClip("fleche_mc");
-		this.arrowIcon.animated = true;
-		iconGroup.addChild(this.fondIcon);
-		iconGroup.addChild(this.arrowIcon);
-		layer.addChild(iconGroup);
-		iconGroup.x= 100;
+    /**
+     * Tile for the background
+     */
+    public var fondIcon: TileSprite;
 
-		layer.render();
-	}
-	
-	override private function onOver(event:MouseEvent):Void 
-	{
-		super.onOver(event);
-		startAnimIcon();
-	}
-	
-	override private function onOut(event:MouseEvent):Void 
-	{
-		super.onOut(event);
-		endAnimIcon();
-	}
+    /**
+     * Tile for the animation
+     */
+    public var arrowIcon: TileClip;
 
-	private function animRender(e:Event=null):Void
-	{
-		layer.render();
-	}
+    /**
+     * Constructor
+     * @param	tilesheet : UI sheet
+     * @param	tile : Tile containing the button
+     * @param	eventName : Custom event to dispatch
+     */
 
-	private function endAnimIcon():Void
-	{
-		this.removeEventListener(Event.ENTER_FRAME, animRender);
-		arrowIcon.currentFrame = 0;
-		layer.render();
-	}
+    public function new(tilesheet: TilesheetEx, tile: String, ?eventName: String)
+    {
+        if(eventName == null){
+            this.eventType = "next";
+            propagateNativeEvent = true;
+        }
+        else
+            this.eventType = eventName;
 
-	private function startAnimIcon():Void
-	{
-		this.addEventListener(Event.ENTER_FRAME,animRender);
-	}
+        super(eventType, tilesheet, tile);
+        addIcon();
+    }
 
+    // P¨rivates
 
+    private function addIcon(): Void
+    {
+        this.iconGroup = new TileGroup();
+        this.fondIcon = new TileSprite("btCircle");
+        this.arrowIcon = new TileClip("fleche_mc");
+        iconGroup.addChild(this.fondIcon);
+        iconGroup.addChild(this.arrowIcon);
+        layer.addChild(iconGroup);
+        iconGroup.x = 100;
 
-	
+        layer.render();
+    }
+
+    override private function onOver(event: MouseEvent): Void
+    {
+        super.onOver(event);
+        startAnimIcon();
+    }
+
+    override private function onOut(event: MouseEvent): Void
+    {
+        super.onOut(event);
+        endAnimIcon();
+    }
+
+    private function animRender(e: Event = null): Void
+    {
+        layer.render();
+    }
+
+    private function endAnimIcon(): Void
+    {
+        this.removeEventListener(Event.ENTER_FRAME, animRender);
+        arrowIcon.currentFrame = 0;
+        layer.render();
+    }
+
+    private function startAnimIcon(): Void
+    {
+        this.addEventListener(Event.ENTER_FRAME, animRender);
+    }
+
 }

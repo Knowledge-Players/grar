@@ -1,12 +1,27 @@
 package com.knowledgeplayers.grar.structure.activity.folder;
 
-class FolderElement {
-    public var content (default, default): String;
-    public var isAnswer (default, default): Bool;
+import String;
 
-    public function new(content: String, isAnswer: Bool = false)
+class FolderElement {
+    /**
+    * Content of the element
+**/
+    public var content (default, default): String;
+
+    /**
+    * Target of the element
+**/
+    public var target (default, default): String;
+
+    /**
+    * Reference of the element
+**/
+    public var ref (default, default): String;
+
+    public function new(content: String, ref: String, target: String = "")
     {
         this.content = content;
-        this.isAnswer = isAnswer;
+        this.ref = ref;
+        this.target = target;
     }
 }

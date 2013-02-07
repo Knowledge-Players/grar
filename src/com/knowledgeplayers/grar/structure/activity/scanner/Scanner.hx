@@ -31,7 +31,7 @@ class Scanner extends Activity {
         var fast = new Fast(content).node.Scanner;
         pointVisible = fast.att.pointVisible == "true";
         for(point in fast.nodes.Point){
-            pointsMap.add(new ScannerPoint(Std.parseFloat(point.att.x), Std.parseFloat(point.att.y), point.att.content));
+            pointsMap.add(new ScannerPoint(Std.parseFloat(point.att.x), Std.parseFloat(point.att.y), point.att.ref, point.att.text, point.att.content));
         }
     }
 }

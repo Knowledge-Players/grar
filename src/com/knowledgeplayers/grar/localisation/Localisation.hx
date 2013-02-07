@@ -49,7 +49,7 @@ class Localisation extends EventDispatcher {
         return tradHash.get(key);
     }
 
-    // Can't use haxe.xml.Fast because Excel XML isn't reconized
+    // Can't use haxe.xml.Fast because Excel XML isn't supported
 
     private function parseContent(content: Xml): Void
     {

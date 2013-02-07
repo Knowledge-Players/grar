@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.activity;
 
+import nme.Lib;
 import nme.events.Event;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.event.LocaleEvent;
@@ -100,9 +101,9 @@ class Activity extends EventDispatcher, implements PartElement {
 
     // Privates
 
-    private function onLocaleComplete(e: Event): Void
+    private function onLocaleComplete(e: LocaleEvent): Void
     {
-        removeEventListener(LocaleEvent.LOCALE_LOADED, onLocaleComplete);
+        Localiser.instance.removeEventListener(LocaleEvent.LOCALE_LOADED, onLocaleComplete);
         dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));
     }
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Folder>
-    <Element ref="postit1" isAnswer="true"/>
-    <Element ref="postit2"/>
+    <Element content="postit1" ref="postit1" target="target1"/>
+    <Element content="postit2" ref="postit2"/>
 </Folder>

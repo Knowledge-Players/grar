@@ -97,7 +97,6 @@ class PartDisplay extends Sprite {
 
     public function nextElement(): Void
     {
-        Lib.trace(Localiser.instance.layoutPath);
         currentElement = part.getNextElement();
         if(currentElement == null){
             dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
@@ -225,7 +224,7 @@ class PartDisplay extends Sprite {
 
     private function createItem(itemNode: Fast): Void
     {
-        var itemBmp: Bitmap = new Bitmap(Assets.getBitmapData(itemNode.att.id));
+        var itemBmp: Bitmap = new Bitmap(Assets.getBitmapData(itemNode.att.src));
 
         addElement(itemBmp, itemNode);
     }
@@ -252,7 +251,7 @@ class PartDisplay extends Sprite {
 
     private function createCharacter(character: Fast)
     {
-        var bitmap = new Bitmap(Assets.getBitmapData(character.att.id));
+        var bitmap = new Bitmap(Assets.getBitmapData(character.att.src));
         var char: CharacterDisplay = new CharacterDisplay(bitmap, new Character(character.att.ref));
         char.visible = false;
         char.origin = new Point(Std.parseFloat(character.att.x), Std.parseFloat(character.att.y));
@@ -279,7 +278,7 @@ class PartDisplay extends Sprite {
         }
         // Add new background
         if(item.background != null){
-            var bkg = DisplayUtils.setBackground(displaysFast.get(item.background).att.id, displayArea);
+            var bkg = DisplayUtils.setBackground(displaysFast.get(item.background).att.src, displayArea);
             previousBackground = {ref: item.background, bmp: bkg};
             if(bkg != null)
                 resizeD.addDisplayObjects(bkg, displaysFast.get(item.background));

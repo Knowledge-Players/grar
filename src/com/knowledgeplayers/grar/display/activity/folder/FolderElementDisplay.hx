@@ -100,9 +100,9 @@ class FolderElementDisplay extends Sprite {
     {
         var folder = cast(parent, FolderDisplay);
         #if flash
-            if(dropTarget == folder.target)
+            if(dropTarget == folder.target.obj)
         #else
-        if(hitTestObject(folder.target))
+        if(hitTestObject(folder.target.obj))
             #end
             folder.drop(this);
         else{

@@ -1,8 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.scanner;
 
-import IntHash;
+import com.knowledgeplayers.grar.display.activity.scanner.PointDisplay.PointStyle;
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
-import Lambda;
 import nme.display.DisplayObject;
 import nme.Lib;
 import nme.display.Sprite;
@@ -22,14 +21,8 @@ class ScannerDisplay extends ActivityDisplay {
 **/
     public static var instance (getInstance, null): ScannerDisplay;
 
-    /**
-* The scanner text area
-**/
-    public var textAreas (default, null): Hash<ScrollPanel>;
-
-    private var pointRadius: Float = 0;
-    private var pointGraphics: Hash<String>;
-    private var textZone: ScrollPanel;
+    private var textAreas: Hash<ScrollPanel>;
+    private var pointStyles: Hash<PointStyle>;
     private var lineHeight: Float;
 
     /**
@@ -43,26 +36,23 @@ class ScannerDisplay extends ActivityDisplay {
         return instance;
     }
 
+    public function setText(textId: String, content: Sprite): Void
+    {
+        textAreas.get(textId).content = content;
+        addChild(textAreas.get(textId));
+    }
+
     // Private
 
     override private function onModelComplete(e: LocaleEvent): Void
     {
-        var yOffset: Float = 0;
-        var textSprite = new Sprite();
         for(point in cast(model, Scanner).pointsMap){
-            var text = new ScrollPanel(textZone.width, lineHeight);
-            text.y = yOffset;
-            yOffset += lineHeight;
-            textAreas.set(point.content, text);
-            textSprite.addChild(text);
-            var pointDisplay = new PointDisplay(pointGraphics, pointRadius, point);
+            var pointDisplay = new PointDisplay(pointStyles.get(point.ref), point);
             pointDisplay.x = point.x;
             pointDisplay.y = point.y;
             pointDisplay.alpha = cast(model, Scanner).pointVisible ? 1 : 0;
             addChild(pointDisplay);
         }
-        textZone.content = textSprite;
-
         super.onModelComplete(e);
     }
 
@@ -70,28 +60,26 @@ class ScannerDisplay extends ActivityDisplay {
     {
         for(child in content.elements){
             if(child.name.toLowerCase() == "background"){
-                var background = new Bitmap(Assets.getBitmapData(child.att.id));
+                var background = new Bitmap(Assets.getBitmapData(child.att.src));
                 ResizeManager.instance.addDisplayObjects(background, child);
                 addChild(background);
             }
             if(child.name.toLowerCase() == "text"){
-                textZone = new ScrollPanel(Std.parseFloat(child.att.width), Std.parseFloat(child.att.height));
+                var textZone = new ScrollPanel(Std.parseFloat(child.att.width), Std.parseFloat(child.att.height));
                 textZone.x = Std.parseFloat(child.att.x);
                 textZone.y = Std.parseFloat(child.att.y);
                 textZone.setBackground(child.att.background);
-                lineHeight = Std.parseFloat(child.att.lineHeight);
-                addChild(textZone);
+                textAreas.set(child.att.ref, textZone);
             }
         }
 
-        pointGraphics = new Hash<String>();
         for(point in content.nodes.Point){
-            if(point.has.color){
-                pointRadius = Std.parseInt(point.att.radius);
-                pointGraphics.set(point.att.state, point.att.color);
+            if(!pointStyles.exists(point.att.ref)){
+                pointStyles.set(point.att.ref, new PointStyle());
             }
-            else
-                pointGraphics.set(point.att.state, point.att.img);
+            if(point.has.radius)
+                pointStyles.get(point.att.ref).radius = Std.parseInt(point.att.radius);
+            pointStyles.get(point.att.ref).addGraphic(point.att.state, point.att.src);
         }
     }
 
@@ -99,5 +87,6 @@ class ScannerDisplay extends ActivityDisplay {
     {
         super();
         textAreas = new Hash<ScrollPanel>();
+        pointStyles = new Hash<PointStyle>();
     }
 }
