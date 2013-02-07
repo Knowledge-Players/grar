@@ -12,6 +12,7 @@
     </Parameters>
     <!-- List of static displays -->
     <Display>
+        <Activity display="cardsdisplay.xml"/>
         <Activity display="scannerdisplay.xml"/>
         <Activity display="folderdisplay.xml"/>
         <Ui display="ui/ui.xml"/>

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import com.knowledgeplayers.grar.structure.activity.cards.Cards;
 import com.knowledgeplayers.grar.structure.activity.folder.Folder;
 import com.knowledgeplayers.grar.structure.activity.scanner.Scanner;
 import haxe.unit.TestCase;
@@ -32,6 +33,7 @@ class ActivityFactory {
             case "quizz": creation = new Quizz(content);
             case "scanner": creation = new Scanner(content);
             case "folder": creation = new Folder(content);
+            case "cards": creation = new Cards(content);
             default: Lib.trace("Factory - " + activityName + " :  Unsupported activity");
         }
 

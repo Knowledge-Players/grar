@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity;
 import com.knowledgeplayers.grar.display.activity.folder.FolderDisplay;
+import com.knowledgeplayers.grar.display.activity.cards.CardsDisplay;
 import com.knowledgeplayers.grar.display.activity.scanner.ScannerDisplay;
 import com.knowledgeplayers.grar.display.activity.quizz.QuizzDisplay;
 import nme.Lib;
@@ -45,6 +46,7 @@ class ActivityManager {
 
                 case "scanner": activity = ScannerDisplay.instance;
                 case "folder": activity = FolderDisplay.instance;
+                case "cards": activity = CardsDisplay.instance;
                 default: Lib.trace(name + ": Unsupported activity type");
             }
             if(activity != null)

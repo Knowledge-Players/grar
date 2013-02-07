@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <Part>
+    <Activity type="Cards" content="cards.xml" perk="Reading"/>
     <Activity type="Folder" content="folder.xml" perk="Reading"/>
     <Activity type="Scanner" content="scanner.xml" perk="Agility"/>
 </Part>

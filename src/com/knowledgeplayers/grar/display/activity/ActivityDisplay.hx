@@ -1,6 +1,8 @@
 package com.knowledgeplayers.grar.display.activity;
-
 import nme.Lib;
+import aze.display.SparrowTilesheet;
+import com.knowledgeplayers.grar.util.XmlLoader;
+import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import nme.events.Event;
@@ -9,6 +11,7 @@ import haxe.FastList;
 import haxe.xml.Fast;
 import nme.display.DisplayObject;
 import nme.display.Sprite;
+import nme.Assets;
 
 /**
 * Abstract display for an activity
@@ -20,6 +23,11 @@ class ActivityDisplay extends Sprite {
 */
     public var model(default, setModel): Activity;
 
+
+    private var spriteSheets:Hash<TilesheetEx>;
+    private var countSpriteSheets:Int;
+    private var totalSpriteSheets:Int;
+    private var displayXml:Fast;
     /**
 * Setter for the model
 * @param model : the model to set
@@ -45,7 +53,34 @@ class ActivityDisplay extends Sprite {
 
     public function setDisplay(display: Fast): Void
     {
-        parseContent(display);
+        //parseContent(display);
+        displayXml = display;
+        spriteSheets = new Hash<TilesheetEx>();
+        countSpriteSheets = 0;
+        totalSpriteSheets = Lambda.count(display.nodes.SpriteSheet);
+        testPreload ();
+        for (spr in display.nodes.SpriteSheet) {
+            XmlLoader.load(spr.att.src, onXmlSpriteSheetLoaded, parseXmlSprite);
+    }
+    }
+
+    private function onXmlSpriteSheetLoaded (e:Event):Void
+    {
+        parseXmlSprite(XmlLoader.getXml(e));
+    }
+
+    private function parseXmlSprite (xmlSprite:Xml): Void
+    {
+        var fast = new Fast(xmlSprite).node.TextureAtlas;
+        spriteSheets.set("global",new SparrowTilesheet(Assets.getBitmapData(fast.att.imagePath), xmlSprite.toString()));
+        countSpriteSheets ++;
+        testPreload ();
+    }
+
+    private function testPreload () {
+        if (countSpriteSheets == totalSpriteSheets) {
+            parseContent(displayXml);
+        }
     }
 
     /**
@@ -63,6 +98,8 @@ class ActivityDisplay extends Sprite {
     }
 
     // Private
+
+
 
     private function parseContent(display: Fast): Void
     {}
