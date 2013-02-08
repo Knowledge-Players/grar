@@ -45,17 +45,13 @@ class CardsDisplay extends ActivityDisplay {
 **/
     public var grids (default, null): Hash<Grid>;
 
-/**
-* Animation for flip card
-**/
+
     private var flipLayer: TileLayer;
     private var flipClip:TileClip;
     private var flipDirection:Int;
     private var cardInProgress:CardsElementDisplay;
     private var nextCard:CardsElementDisplay;
     private var nextText:String;
-
-
     private var elementTemplate: {background: String};
 
     /**
@@ -67,6 +63,20 @@ class CardsDisplay extends ActivityDisplay {
         if(instance == null)
             instance = new CardsDisplay();
         return instance;
+    }
+
+/**
+*
+**/
+    public function clickCard(pCard:CardsElementDisplay, pText:String)
+    {
+        nextCard = pCard;
+        nextText = pText;
+        if (popUp.visible){
+            closePopUp();
+        } else {
+            launchCard();
+        }
     }
 
     // Private
@@ -141,18 +151,7 @@ class CardsDisplay extends ActivityDisplay {
         Actuate.tween(flipLayer.view, 0.8, {x: cardInProgress.x+cardInProgress.width/2, y:cardInProgress.y+cardInProgress.height/2}).onComplete(launchCard);
     }
 
-    public function clickCard(pCard:CardsElementDisplay, pText:String)
-    {
-        nextCard = pCard;
-        nextText = pText;
-        if (popUp.visible){
-            closePopUp();
-        } else {
-            launchCard();
-        }
-    }
-
-    public function launchCard() {
+    private function launchCard() {
         flipLayer.view.visible = false;
         for (i in 0...numChildren) {
             if (Std.is(getChildAt(i), CardsElementDisplay)) {
@@ -172,7 +171,7 @@ class CardsDisplay extends ActivityDisplay {
         }
     }
 
-    public function showPopUp (pText:String) {
+    private function showPopUp (pText:String) {
         popUp.addChild(KpTextDownParser.parse(pText));
         setChildIndex(popUp, numChildren - 1);
         popUp.visible = true;

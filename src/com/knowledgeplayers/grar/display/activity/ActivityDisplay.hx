@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.display.activity;
+import com.knowledgeplayers.grar.util.SpriteSheetLoader;
 import nme.Lib;
 import aze.display.SparrowTilesheet;
 import com.knowledgeplayers.grar.util.XmlLoader;
@@ -53,27 +54,22 @@ class ActivityDisplay extends Sprite {
 
     public function setDisplay(display: Fast): Void
     {
-        //parseContent(display);
         displayXml = display;
         spriteSheets = new Hash<TilesheetEx>();
         countSpriteSheets = 0;
         totalSpriteSheets = Lambda.count(display.nodes.SpriteSheet);
         testPreload ();
         for (spr in display.nodes.SpriteSheet) {
-            XmlLoader.load(spr.att.src, onXmlSpriteSheetLoaded, parseXmlSprite);
-    }
-    }
-
-    private function onXmlSpriteSheetLoaded (e:Event):Void
-    {
-        parseXmlSprite(XmlLoader.getXml(e));
+            var n = new SpriteSheetLoader();
+            n.addEventListener("loaded",onSpriteSheetLoaded);
+            n.init(spr.att.id, spr.att.src);
+        }
     }
 
-    private function parseXmlSprite (xmlSprite:Xml): Void
-    {
-        var fast = new Fast(xmlSprite).node.TextureAtlas;
-        spriteSheets.set("global",new SparrowTilesheet(Assets.getBitmapData(fast.att.imagePath), xmlSprite.toString()));
+    private function onSpriteSheetLoaded(e:Event) {
         countSpriteSheets ++;
+        e.target.removeEventListener("loaded",onSpriteSheetLoaded);
+        spriteSheets.set(e.target.name, e.target.spriteSheet);
         testPreload ();
     }
 

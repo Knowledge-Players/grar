@@ -28,10 +28,6 @@ class CardsElementDisplay extends Sprite {
 **/
     public var content (default, null): String;
 
-    /**
-    * Origin before the drag
-**/
-    public var origin (default, default): Point;
 
     /**
     * Constructor
@@ -53,20 +49,12 @@ class CardsElementDisplay extends Sprite {
         addChild(text);
 
         addEventListener(MouseEvent.CLICK, onClick);
-        addEventListener(Event.ADDED_TO_STAGE, onAdd);
     }
 
     public function blockElement(): Void
     {
         removeEventListener(MouseEvent.CLICK, onClick);
         buttonMode = false;
-    }
-
-    // Handler
-
-    private function onAdd(ev: Event): Void
-    {
-        origin = new Point(x, y);
     }
 
     private function onClick(e: MouseEvent): Void
