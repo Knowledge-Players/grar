@@ -1,0 +1,14 @@
+## Flash
+- main TestMain
+- lib munit
+- lib hamcrest
+- lib nme
+- lib actuate
+- lib tilelayer
+- lib mockatoo
+- cp .. / src
+
+-cp test
+- swf - version 11
+- swf build / flash.swf
+- D utest

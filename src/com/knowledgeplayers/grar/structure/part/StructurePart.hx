@@ -242,7 +242,6 @@ class StructurePart extends EventDispatcher, implements Part {
         var partFast: Fast = new Fast(content).node.Part;
 
         for(child in partFast.elements){
-            Lib.trace(child.name);
             switch(child.name.toLowerCase()){
                 case "item": elements.push(ItemFactory.createItemFromXml(child));
                 case "activity": elements.push(ActivityFactory.createActivityFromXml(child));

@@ -8,7 +8,6 @@ import Math;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import com.knowledgeplayers.grar.structure.part.Pattern;
-import com.knowledgeplayers.grar.display.part.pattern.PatternDisplay;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;

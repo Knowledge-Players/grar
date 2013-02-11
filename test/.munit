@@ -1,0 +1,7 @@
+version=0.9.6
+src=test
+bin=build
+report=report
+hxml=test.hxml
+classPaths=../src
+resources=../assets
