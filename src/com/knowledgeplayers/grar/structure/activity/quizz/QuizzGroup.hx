@@ -43,8 +43,8 @@ class QuizzGroup {
     public function addXmlItem(item: Fast): Void
     {
         var isAnswer = false;
-        if(item.has.IsAnswer)
+        if(item.has.isAnswer)
             isAnswer = item.att.isAnswer == "true";
-        items.add(new QuizzItem(item.att.content, isAnswer));
+        items.add(new QuizzItem(item.att.content, item.att.ref, isAnswer));
     }
 }

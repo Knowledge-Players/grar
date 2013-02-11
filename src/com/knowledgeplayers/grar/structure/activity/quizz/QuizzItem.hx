@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.activity.quizz;
 
+import String;
 import nme.text.TextField;
 import nme.display.Bitmap;
 import nme.display.BitmapData;
@@ -26,15 +27,21 @@ class QuizzItem {
     public var content (default, default): String;
 
     /**
+    * Ref of the item
+**/
+    public var ref (default, default): String;
+
+    /**
      * Constructor
      * @param	content : Text of the item
      * @param	isAnswer : True if the item is the answer. False by default
      * @param	isChecked : True if the item is checked. False by default
      */
 
-    public function new(content: String, isAnswer: Bool = false, isChecked: Bool = false)
+    public function new(content: String, ref: String, isAnswer: Bool = false, isChecked: Bool = false)
     {
         this.content = content;
+        this.ref = ref;
         this.isAnswer = isAnswer;
         this.isChecked = isChecked;
     }

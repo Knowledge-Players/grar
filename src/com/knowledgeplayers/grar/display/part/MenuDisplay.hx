@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.structure.Game;
 import com.knowledgeplayers.grar.structure.part.Part;
@@ -16,26 +18,30 @@ class MenuDisplay extends Sprite {
 
     /**
      * Constructor
-     * @param	game : Game moddel linked to the menu
+     * @param	game : Game model linked to the menu
      */
 
     public function new(game: Game)
     {
         super();
-        addChild(KpTextDownParser.parse("Bienvenu dans le menu"));
-
+        addChild(KpTextDownParser.parse("Bienvenue dans le menu"));
         var yOffset: Float = getChildAt(0).height;
         parts = game.getAllParts();
         for(part in parts){
             var sprite = KpTextDownParser.parse(part.name);
             sprite.name = part.name;
-            sprite.buttonMode = true;
             sprite.y = yOffset;
             yOffset += sprite.height;
             sprite.addEventListener(MouseEvent.CLICK, onPartClick);
-            var status = KpTextDownParser.parse(": " + (part.isDone ? "fini" : "pas fini"));
-            status.x = 100;
+            var status = KpTextDownParser.parse(": " + (part.isDone ? "fini" : "pas fini"));//UiFactory.createButton("Text", "continueButton");
+            //status.addEventListener(MouseEvent.CLICK, onPartClick);
+            status.x = sprite.width;
             sprite.addChild(status);
+            sprite.buttonMode = true;
+            sprite.graphics.beginFill(0, 0.01);
+            sprite.graphics.drawRect(0, 0, sprite.width, sprite.height);
+            sprite.graphics.endFill();
+            sprite.mouseChildren = false;
             addChild(sprite);
         }
     }
@@ -52,7 +58,7 @@ class MenuDisplay extends Sprite {
 
     private function onPartClick(e: MouseEvent): Void
     {
-        var target = cast(e.target, Sprite).parent;
+        var target = cast(e.target, Sprite);//.parent;
         for(part in parts){
             if(part.name == target.name){
                 launchPart(part);

@@ -24,11 +24,10 @@ class ActivityDisplay extends Sprite {
 */
     public var model(default, setModel): Activity;
 
-
-    private var spriteSheets:Hash<TilesheetEx>;
-    private var countSpriteSheets:Int;
-    private var totalSpriteSheets:Int;
-    private var displayXml:Fast;
+    private var spriteSheets: Hash<TilesheetEx>;
+    private var countSpriteSheets: Int;
+    private var totalSpriteSheets: Int;
+    private var displayXml: Fast;
     /**
 * Setter for the model
 * @param model : the model to set
@@ -39,9 +38,8 @@ class ActivityDisplay extends Sprite {
     {
         this.model = model;
         this.model.addEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
-        this.model.addEventListener(Event.COMPLETE, onEndActivity);
 
-        addEventListener(Event.REMOVED_FROM_STAGE, onUnload);
+        //addEventListener(Event.REMOVED_FROM_STAGE, onUnload);
         this.model.loadActivity();
 
         return model;
@@ -58,23 +56,25 @@ class ActivityDisplay extends Sprite {
         spriteSheets = new Hash<TilesheetEx>();
         countSpriteSheets = 0;
         totalSpriteSheets = Lambda.count(display.nodes.SpriteSheet);
-        testPreload ();
-        for (spr in display.nodes.SpriteSheet) {
+        testPreload();
+        for(spr in display.nodes.SpriteSheet){
             var n = new SpriteSheetLoader();
-            n.addEventListener("loaded",onSpriteSheetLoaded);
+            n.addEventListener("loaded", onSpriteSheetLoaded);
             n.init(spr.att.id, spr.att.src);
         }
     }
 
-    private function onSpriteSheetLoaded(e:Event) {
+    private function onSpriteSheetLoaded(e: Event)
+    {
         countSpriteSheets ++;
-        e.target.removeEventListener("loaded",onSpriteSheetLoaded);
+        e.target.removeEventListener("loaded", onSpriteSheetLoaded);
         spriteSheets.set(e.target.name, e.target.spriteSheet);
-        testPreload ();
+        testPreload();
     }
 
-    private function testPreload () {
-        if (countSpriteSheets == totalSpriteSheets) {
+    private function testPreload()
+    {
+        if(countSpriteSheets == totalSpriteSheets){
             parseContent(displayXml);
         }
     }
@@ -94,8 +94,6 @@ class ActivityDisplay extends Sprite {
     }
 
     // Private
-
-
 
     private function parseContent(display: Fast): Void
     {}
@@ -129,14 +127,13 @@ class ActivityDisplay extends Sprite {
 
     private function onUnload(ev: Event): Void
     {
-        onEndActivity(null);
+        //onEndActivity(null);
     }
 
-    private function onEndActivity(e: Event): Void
+    private function endActivity(e: Event): Void
     {
         model.endActivity();
         unLoad();
-        model.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
         model.removeEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
     }
 

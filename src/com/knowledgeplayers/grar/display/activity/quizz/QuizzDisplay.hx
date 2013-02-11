@@ -1,4 +1,8 @@
 package com.knowledgeplayers.grar.display.activity.quizz;
+
+import com.knowledgeplayers.grar.event.PartEvent;
+import com.knowledgeplayers.grar.display.style.KpTextDownParser;
+import com.knowledgeplayers.grar.display.component.ScrollPanel;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
@@ -34,87 +38,37 @@ class QuizzDisplay extends ActivityDisplay {
     public static var instance (getInstance, null): QuizzDisplay;
 
     /**
-* Question field
+* Questions field
 */
-    public var question: StyledTextField;
+    public var questions (default, null): Hash<ScrollPanel>;
 
     /**
-* Validate button
+* Buttons for the quizz
 */
-    public var validationButton: DefaultButton;
+    public var buttons (default, null): Hash<DefaultButton>;
 
     /**
-* Group of answers
+    * Graphical item for the quizz (checkboxes, checks, ...)
+**/
+    public var items (default, null): Hash<BitmapData>;
+
+    /**
+* Template for groups of answers
 */
-    public var quizzGroup: QuizzGroupDisplay;
+    public var quizzGroups (default, null): Hash<QuizzGroupDisplay>;
+
+    /**
+    * Backgrounds for the quizz
+**/
+    public var backgrounds (default, null): Hash<DisplayObject>;
 
     /**
 * Lock state of the quizz. If true, the answers can't be changed
 */
     public var locked: Bool;
 
-    // Icons
-    /**
-* Icon to display when an answer is checked
-*/
-    public var iconCheck (default, default): BitmapData;
-
-    /**
-* Icon to display when an answer is unchecked
-*/
-    public var iconUncheck (default, default): BitmapData;
-
-    /**
-* Icon to display when an answer is right
-*/
-    public var iconCheckRight (default, default): BitmapData;
-
-    /**
-* Icon to display when an answer is wrong
-*/
-    public var iconCheckWrong (default, default): BitmapData;
-
-    /**
-* Icon to display near the goods answers
-*/
-    public var correction: BitmapData;
-
-    // Layouts
-    /**
-* X postion of the items in a group
-*/
-    public var itemXOffset: Float;
-
-    /**
-* X position of the correction icon
-*/
-    public var correctionXOffset: Float;
-
-    /**
-* X offset in the answer group
-*/
-    public var groupXOffset: Float;
-
-    /**
-* Y offset in the answer group
-*/
-    public var groupYOffset: Float;
-
-    /**
-* X position of the answer group
-*/
-    public var groupX: Float;
-
-    /**
-* Y position of the answer group
-*/
-    public var groupY: Float;
-
     private var quizz: Quizz;
-    private var validateContent: String;
-    private var displayObjects: Hash<DisplayObject>;
     private var resizeD: ResizeManager;
-    private var content: Fast;
 
     /**
 * @return the instance
@@ -137,19 +91,12 @@ class QuizzDisplay extends ActivityDisplay {
     {
         super.startActivity();
 
-        addDisplayObjects();
+        displayRound();
 
         updateButtonText();
     }
 
     // Private
-
-    /*private function onEndActivity(e: Event): Void
-{
-/*model.endActivity();
-unLoad();
-quizz.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
-}*/
 
     override private function onModelComplete(e: LocaleEvent): Void
     {
@@ -157,58 +104,77 @@ quizz.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
         super.onModelComplete(e);
     }
 
-    private function addDisplayObjects(): Void
+    private function displayRound(): Void
     {
+        addChild(questions.get(quizz.getCurrentQuestion().ref));
+        addChild(quizzGroups.get(quizz.getCurrentGroup()));
+        addChild(buttons.get(quizz.getCurrentButton().ref));
 
-        displayObjects.set(content.node.Group.att.z, quizzGroup);
-        resizeD.addDisplayObjects(quizzGroup, content.node.Group);
-
-        for(p in 1...Lambda.count(displayObjects) + 1){
-            //trace("p : "+p);
-            if(displayObjects.get(Std.string(p)) != null){
-                addChild(displayObjects.get(Std.string(p)));
-
-            }
-        }
-
-        //addChild(quizzGroup);
         resizeD.onResize();
     }
 
     private function new()
     {
         super();
-        question = new StyledTextField();
-        displayObjects = new Hash<DisplayObject>();
-        resizeD = ResizeManager.getInstance();
+        questions = new Hash<ScrollPanel>();
+        buttons = new Hash<DefaultButton>();
+        items = new Hash<BitmapData>();
+        backgrounds = new Hash<DisplayObject>();
+        quizzGroups = new Hash<QuizzGroupDisplay>();
 
+        resizeD = ResizeManager.getInstance();
     }
 
     override private function parseContent(content: Fast): Void
     {
-        setLayout(content);
-        setIcons(content);
+        for(child in content.elements){
+            switch(child.name.toLowerCase()){
+                case "background": backgrounds.set(child.att.ref, new Bitmap(Assets.getBitmapData(child.att.src)));
+                case "text": createQuestion(child);
+                case "button": createButton(child);
+                case "item": createItem(child);
+                case "group": createGroup(child);
+            }
+        }
+    }
 
-        validationButton = UiFactory.createButtonFromXml(content.node.Button);
-        initDisplayObject(validationButton, content.node.Button);
+    private function createGroup(groupNode: Fast): Void
+    {
+        var group = new QuizzGroupDisplay(groupNode);
+        //initDisplayObject(group, groupNode);
+        quizzGroups.set(groupNode.att.ref, group);
+        resizeD.addDisplayObjects(group, groupNode);
+    }
 
-        validationButton.addEventListener(MouseEvent.CLICK, onValidation);
-        validateContent = content.node.Button.att.content;
+    private function createItem(itemNode: Fast): Void
+    {
+        items.set(itemNode.att.ref.toLowerCase(), Assets.getBitmapData(itemNode.att.src));
+    }
 
-        question.x = Std.parseFloat(content.node.Question.att.x);
-        question.y = Std.parseFloat(content.node.Question.att.y);
+    private function createButton(buttonNode: Fast): Void
+    {
+        var button = UiFactory.createButtonFromXml(buttonNode);
+        button.addEventListener(MouseEvent.CLICK, onValidation);
+        initDisplayObject(button, buttonNode);
+        buttons.set(buttonNode.att.ref, button);
+        resizeD.addDisplayObjects(button, buttonNode);
+    }
 
-        displayObjects.set(content.node.Button.att.z, validationButton);
-        displayObjects.set(content.node.Question.att.z, question);
+    private function createQuestion(questionNode: Fast): Void
+    {
+        var question = new ScrollPanel(Std.parseFloat(questionNode.att.width), Std.parseFloat(questionNode.att.height));
+        if(questionNode.has.scrollable)
+            question.scrollLock = questionNode.att.scrollable == "false";
 
-        resizeD.addDisplayObjects(question, content.node.Question);
-        resizeD.addDisplayObjects(validationButton, content.node.Button);
-
+        question.x = Std.parseFloat(questionNode.att.x);
+        question.y = Std.parseFloat(questionNode.att.y);
+        questions.set(questionNode.att.ref, question);
+        resizeD.addDisplayObjects(question, questionNode);
     }
 
     private function updateButtonText(): Void
     {
-        if(Std.is(validationButton, TextButton)){
+        if(Std.is(buttons.get(quizz.getCurrentButton().ref), TextButton)){
             var stateId: String = null;
             switch(quizz.state){
                 case EMPTY: stateId = "";
@@ -216,60 +182,35 @@ quizz.removeEventListener(PartEvent.EXIT_PART, onEndActivity);
                 case CORRECTED: stateId = "_next";
             }
 
-            cast(validationButton, TextButton).setText(Localiser.instance.getItemContent(validateContent + stateId));
+            cast(buttons.get(quizz.getCurrentButton().ref), TextButton).setText(Localiser.instance.getItemContent(quizz.getCurrentButton().content + stateId));
         }
     }
 
     private function onValidation(e: MouseEvent): Void
     {
         switch(quizz.state) {
-            case EMPTY: quizzGroup.validate();
+            case EMPTY: quizzGroups.get(quizz.getCurrentGroup()).validate();
                 setState(QuizzState.VALIDATED);
                 locked = true;
                 updateButtonText();
-            case VALIDATED: quizzGroup.correct();
+            case VALIDATED: quizzGroups.get(quizz.getCurrentGroup()).correct();
                 setState(QuizzState.CORRECTED);
                 updateButtonText();
             case CORRECTED: var isEnded = quizz.validate();
-                if(!isEnded)
+                if(!isEnded){
                     updateRound();
-                updateButtonText();
+                    updateButtonText();
+                }
         }
-    }
-
-    private function setIcons(display: Fast): Void
-    {
-        for(icon in display.nodes.Icon){
-            var iconData: BitmapData = Assets.getBitmapData(icon.att.content);
-            switch(icon.att.type.toLowerCase()) {
-                case "good": correction = iconData;
-                case "check": iconCheck = iconData;
-                case "uncheck": iconUncheck = iconData;
-                case "checkright": iconCheckRight = iconData;
-                case "checkfalse": iconCheckWrong = iconData;
-                default: Lib.trace(icon.att.type + ": Unsupported icon type");
-            }
-        }
-    }
-
-    private function setLayout(layout: Fast): Void
-    {
-        itemXOffset = Std.parseFloat(layout.att.itemXOffset);
-        correctionXOffset = Std.parseFloat(layout.att.correctionXOffset);
-        groupXOffset = Std.parseFloat(layout.node.Group.att.xOffset);
-        groupYOffset = Std.parseFloat(layout.node.Group.att.yOffset);
-        groupX = Std.parseFloat(layout.node.Group.att.x);
-        groupY = Std.parseFloat(layout.node.Group.att.y);
     }
 
     private function updateRound(): Void
     {
-        if(quizzGroup == null)
-            quizzGroup = new QuizzGroupDisplay(quizz.getCurrentAnswers());
-        else
-            quizzGroup.model = quizz.getCurrentAnswers();
-        question.text = Localiser.getInstance().getItemContent(quizz.getCurrentQuestion());
+        quizzGroups.get(quizz.getCurrentGroup()).model = quizz.getCurrentAnswers();
+        var content = Localiser.getInstance().getItemContent(quizz.getCurrentQuestion().content);
+        questions.get(quizz.getCurrentQuestion().ref).content = KpTextDownParser.parse(content);
         setState(QuizzState.EMPTY);
+        displayRound();
     }
 
     private function setState(state: QuizzState): Void

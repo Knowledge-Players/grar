@@ -106,7 +106,7 @@ class PartDisplay extends Sprite {
             setText(cast(currentElement, TextItem));
         }
         else if(currentElement.isActivity()){
-            onActivityEnd(null);
+            cleanActivity();
             launchActivity(cast(currentElement, Activity));
         }
         else if(currentElement.isPattern()){
@@ -138,12 +138,12 @@ class PartDisplay extends Sprite {
     {
         var displayFast: Fast = new Fast(content).node.Display;
         for(child in displayFast.elements){
-            switch(child.name){
-                case "Background": createBackground(child);
-                case "Item": createItem(child);
-                case "Character": createCharacter(child);
-                case "Button": createButton(child);
-                case "Text": createText(child);
+            switch(child.name.toLowerCase()){
+                case "background": createBackground(child);
+                case "item": createItem(child);
+                case "character": createCharacter(child);
+                case "button": createButton(child);
+                case "text": createText(child);
             }
         }
         dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
@@ -182,8 +182,13 @@ class PartDisplay extends Sprite {
 
     private function onActivityEnd(e: PartEvent): Void
     {
-        if(e != null)
-            cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
+        cleanActivity();
+        cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
+        nextElement();
+    }
+
+    private function cleanActivity(): Void
+    {
         if(activityDisplay != null && contains(activityDisplay))
             removeChild(activityDisplay);
         activityDisplay = null;

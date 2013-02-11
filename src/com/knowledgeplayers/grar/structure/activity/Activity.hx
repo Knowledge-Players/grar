@@ -70,6 +70,7 @@ class Activity extends EventDispatcher, implements PartElement {
     {
         isEnded = true;
         Localiser.instance.setLayoutFile(previousContent);
+        dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
     }
 
     /**

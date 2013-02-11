@@ -16,18 +16,20 @@ class Quizz extends Activity {
     /**
      * Group of answers for each rounds
      */
-    public var answers: Array<QuizzGroup>;
+    public var answers (default, null): Array<QuizzGroup>;
 
     /**
      * Questions for each rounds
      */
-    public var questions: Array<String>;
+    public var questions (default, null): Array<{ref: String, content: String}>;
 
     /**
      * State of correction of the quizz
      */
-    public var state: QuizzState;
+    public var state (default, default): QuizzState;
 
+    private var buttonRefs: Array<{ref: String, content: String}>;
+    private var groupRefs: Array<String>;
     private var roundIndex: Int = 0;
 
     /**
@@ -39,7 +41,9 @@ class Quizz extends Activity {
     {
         super(content);
         answers = new Array<QuizzGroup>();
-        questions = new Array<String>();
+        questions = new Array<{ref: String, content: String}>();
+        buttonRefs = new Array<{ref: String, content: String}>();
+        groupRefs = new Array<String>();
 
         XmlLoader.load(content, onLoadComplete, parseContent);
     }
@@ -53,7 +57,7 @@ class Quizz extends Activity {
      * @return the question being asked
      */
 
-    public function getCurrentQuestion(): String
+    public function getCurrentQuestion(): {ref: String, content: String}
     {
         return questions[roundIndex];
     }
@@ -65,6 +69,24 @@ class Quizz extends Activity {
     public function getCurrentAnswers(): QuizzGroup
     {
         return answers[roundIndex];
+    }
+
+    /**
+    * @return the current button to display
+**/
+
+    public function getCurrentButton(): {ref: String, content: String}
+    {
+        return buttonRefs[roundIndex];
+    }
+
+    /**
+    * @return the current group template
+**/
+
+    public function getCurrentGroup(): String
+    {
+        return groupRefs[roundIndex];
     }
 
     /**
@@ -81,7 +103,7 @@ class Quizz extends Activity {
         // Next round
         roundIndex++;
         if(roundIndex == questions.length){
-            dispatchEvent(new Event(Event.COMPLETE));
+            endActivity();
             return true;
         }
         else
@@ -94,7 +116,9 @@ class Quizz extends Activity {
     {
         var quizz = new Fast(content).node.Quizz;
         for(round in quizz.nodes.Round){
-            questions.push(round.node.Question.att.content);
+            buttonRefs.push({ref: round.att.buttonRef, content: round.att.buttonContent});
+            groupRefs.push(round.att.groupRef);
+            questions.push({ref: round.node.Question.att.ref, content: round.node.Question.att.content});
             var group = new QuizzGroup();
             for(answer in round.nodes.Answer){
                 group.addXmlItem(answer);

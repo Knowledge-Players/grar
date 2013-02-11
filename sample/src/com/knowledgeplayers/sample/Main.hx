@@ -1,8 +1,5 @@
 package com.knowledgeplayers.sample;
 
-#if cpp
-import hxcpp.DebugSocket;
-#end
 import com.knowledgeplayers.grar.util.KeyboardManager;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.event.GameEvent;
@@ -20,20 +17,17 @@ class Main {
 
     public function new()
     {
+        #if cpp
+            new hxcpp.DebugSocket("127.0.0.1", 65333, true);
+        #end
         // Load styles
         StyleParser.instance.parse(Assets.getText("xml/style.xml"));
-
-        //Load Ui elements
 
         // Create a new game
         game = new KpGame();
 
         game.addEventListener(PartEvent.PART_LOADED, onLoadingComplete);
         game.init(Xml.parse(Assets.getText("xml/sample_structure.xml")));
-
-        #if cpp
-        new DebugSocket("127.0.0.1", 65333,true);
-        #end
     }
 
     private function onLoadingComplete(e: PartEvent): Void

@@ -12,15 +12,16 @@
     </Parameters>
     <!-- List of static displays -->
     <Display>
-        <Activity display="cardsdisplay.xml"/>
-        <Activity display="scannerdisplay.xml"/>
-        <Activity display="folderdisplay.xml"/>
+        <Activity display="quizzDisplay.xml"/>
+        <Activity display="cardsDisplay.xml"/>
+        <Activity display="scannerDisplay.xml"/>
+        <Activity display="folderDisplay.xml"/>
         <Ui display="ui/ui.xml"/>
     </Display>
     <!-- Structure of the application -->
     <Structure idObjective="">
-        <Part id="0" name="trancheDeVie" type="dialog" file="tranche.xml" display="tranchedisplay.xml"/>
-        <Part id="1" name="activities" type="" file="activities.xml" display="activitiesdisplay.xml"/>
-        <Part id="2" name="bild" type="strip" file="strip.xml" display="stripdisplay.xml"/>
+        <Part id="0" name="trancheDeVie" type="dialog" file="tranche.xml" display="trancheDisplay.xml"/>
+        <Part id="1" name="activities" type="" file="activities.xml" display="activitiesDisplay.xml"/>
+        <Part id="2" name="bild" type="strip" file="strip.xml" display="stripDisplay.xml"/>
     </Structure>
 </Grar>

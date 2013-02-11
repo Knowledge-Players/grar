@@ -24,13 +24,13 @@ class ScrollPanel extends Sprite {
     public var background (default, setBackground): String;
 
     /**
-     * ScrollBar of the panel. Null if the content is smaller than the panel
-     */
-    private var scrollBar: ScrollBar;
+    * If true, the text won't scroll even if it's bigger than the panel
+    **/
+    public var scrollLock (default, default): Bool;
 
+    private var scrollBar: ScrollBar;
     private var maskWidth: Float;
     private var maskHeight: Float;
-    private var scrollLock: Bool;
     private var scrollable: Bool;
 
     /**
