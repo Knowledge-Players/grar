@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.util.LoadData;
 import nme.events.Event;
 import nme.Assets;
 import nme.display.Bitmap;
@@ -35,6 +36,8 @@ class FolderElementDisplay extends Sprite {
 
     private var shadows: Hash<DropShadowFilter>;
 
+    private var btIcon:String;
+    private var btPos:Point;
     /**
     * Constructor
     * @param content : Text of the element
@@ -48,6 +51,8 @@ class FolderElementDisplay extends Sprite {
         this.content = content;
         text = new ScrollPanel(width, height);
         buttonMode = true;
+        btIcon = buttonIcon;
+        btPos = buttonPos;
 
         shadows = new Hash<DropShadowFilter>();
         shadows.set("down", new DropShadowFilter(10, 45, 0x000000, 0.3, 10, 10));
@@ -55,20 +60,25 @@ class FolderElementDisplay extends Sprite {
 
         var localizedText = Localiser.instance.getItemContent(content + "_title");
         text.setContent(KpTextDownParser.parse(localizedText));
+        Lib.trace("-------------");
         text.setBackground(background);
         filters = [shadows.get("down")];
         addChild(text);
 
-        var icon = new Bitmap(Assets.getBitmapData(buttonIcon));
+        var icon = cast(LoadData.getInstance().getElementDisplayInCache(btIcon),Bitmap);
+
         var button = new SimpleButton(icon, icon, icon, icon);
         button.addEventListener(MouseEvent.CLICK, onPlusClick);
-        button.x = buttonPos.x;
-        button.y = buttonPos.y;
+        button.x = btPos.x;
+        button.y = btPos.y;
         addChild(button);
 
         addEventListener(MouseEvent.MOUSE_DOWN, onDown);
         addEventListener(MouseEvent.MOUSE_UP, onUp);
         addEventListener(Event.ADDED_TO_STAGE, onAdd);
+
+
+
     }
 
     public function blockElement(): Void

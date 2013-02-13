@@ -24,9 +24,9 @@
 
     <include path=".."/>
 
-    <assets path="assets/img" rename="img"/>
-    <assets path="assets/ui" rename="ui"/>
-    <assets path="assets/xml" rename="xml"/>
+    <assets path="assets/img" rename="img" exclude="flash"/>
+    <assets path="assets/ui" rename="ui" exclude="flash"/>
+    <assets path="assets/xml" rename="xml" exclude="flash"/>
     <assets path="assets/font" rename="font"/>
 
     <!-- optimize JS output -->

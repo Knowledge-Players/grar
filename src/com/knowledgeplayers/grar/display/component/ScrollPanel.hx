@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.component;
 
+import nme.events.Event;
+import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import nme.Lib;
 import nme.Assets;
@@ -85,11 +87,35 @@ class ScrollPanel extends Sprite {
     public function setBackground(bkg: String): String
     {
         background = bkg;
-        DisplayUtils.setBackground(background, this, maskWidth, maskHeight);
+
+        if(Std.parseInt(bkg) != null)
+        {
+            this.graphics.beginFill(Std.parseInt(bkg));
+            this.graphics.drawRect(0, 0, maskWidth, maskHeight);
+            this.graphics.endFill();
+        }
+        else
+        {
+            if(LoadData.getInstance().getElementDisplayInCache(background) != null)
+            {
+                LoadData.getInstance().getElementDisplayInCache(background).width = maskWidth;
+                LoadData.getInstance().getElementDisplayInCache(background).height = maskHeight;
+
+                var bkg:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(background),Bitmap).bitmapData);
+
+                this.addChild(bkg);
+            }
+
+        }
+       // DisplayUtils.setBackground(background, this, maskWidth, maskHeight);
         return bkg;
     }
 
+
+
     // Private
+
+
 
     private function scrollToRatio(position: Float)
     {

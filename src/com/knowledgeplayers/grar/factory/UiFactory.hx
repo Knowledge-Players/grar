@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.factory;
 
+import nme.display.Bitmap;
+import com.knowledgeplayers.grar.util.XmlLoader;
+import nme.events.Event;
+import com.knowledgeplayers.grar.util.LoadData;
 import aze.display.SparrowTilesheet;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.display.component.button.AnimationButton;
@@ -9,6 +13,7 @@ import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.component.ScrollBar;
 import haxe.xml.Fast;
 import nme.Assets;
+import nme.Lib;
 
 /**
  * Factory to create UI components
@@ -16,6 +21,7 @@ import nme.Assets;
 
 class UiFactory {
     private static var tilesheet: TilesheetEx;
+    private static var layerPath:String;
 
     private function new()
     {
@@ -76,7 +82,22 @@ class UiFactory {
 
     public static function setSpriteSheet(pathToXml: String): Void
     {
-        var layerPath = pathToXml.substr(0, pathToXml.indexOf("."));
-        tilesheet = new SparrowTilesheet(Assets.getBitmapData(layerPath + ".png"), Assets.getText(layerPath + ".xml"));
+        layerPath = pathToXml.substr(0, pathToXml.indexOf("."));
+
+        XmlLoader.load(layerPath+".xml",onXmlLoaded,parseContent);
+    }
+
+
+    private static function parseContent(content: Xml): Void
+    {
+        onXmlLoaded();
+    }
+
+
+    public static function onXmlLoaded(e:Event=null):Void{
+
+        Lib.trace("---------- on xml loaded : "+LoadData.getInstance().getElementDisplayInCache(layerPath+".png"));
+        tilesheet = new SparrowTilesheet(cast(LoadData.getInstance().getElementDisplayInCache(layerPath+".png"),Bitmap).bitmapData, XmlLoader.getXml(e).toString());
+
     }
 }

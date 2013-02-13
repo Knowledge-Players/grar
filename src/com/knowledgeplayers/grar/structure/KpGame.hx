@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.event.TokenEvent;
@@ -67,7 +68,23 @@ class KpGame extends EventDispatcher, implements Game {
     public function init(xml: Xml): Void
     {
         structureXml = new Fast(xml);
+        Lib.trace("init game");
 
+
+        #if flash
+        LoadData.getInstance().addEventListener("DATA_LOADED",onDisplayLoaded);
+        LoadData.getInstance().loadDisplayXml(structureXml);
+        #else
+        onDisplayLoaded();
+        #end
+    }
+
+
+
+
+    private function onDisplayLoaded(e:Event=null):Void
+    {
+        Lib.trace("data display loaded");
         var parametersNode: Fast = structureXml.node.Grar.node.Parameters;
         mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
         title = parametersNode.node.Title.innerData;
@@ -80,6 +97,7 @@ class KpGame extends EventDispatcher, implements Game {
         var displayNode: Fast = structureXml.node.Grar.node.Display;
         if(displayNode.hasNode.Ui)
             UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
+
         for(activity in displayNode.nodes.Activity){
             var activityXml = XmlLoader.load(activity.att.display, onActivityComplete, initActivities);
         }
@@ -91,6 +109,7 @@ class KpGame extends EventDispatcher, implements Game {
 
         checkIntegrity();
     }
+
     /**
      * Start the game
      * @param	partId : the ID of the part to start.

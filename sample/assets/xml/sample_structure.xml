@@ -17,6 +17,7 @@
         <Activity display="scannerDisplay.xml"/>
         <Activity display="folderDisplay.xml"/>
         <Ui display="ui/ui.xml"/>
+
     </Display>
     <!-- Structure of the application -->
     <Structure idObjective="">

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import nme.display.Bitmap;
 import Xml;
 import nme.display.Sprite;
 import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
@@ -25,6 +26,7 @@ class StripDisplay extends PartDisplay {
     private var currentBox: BoxPattern;
     private var currentItem: TextItem;
     private var boxIndex: Int = 0;
+
 
     public function new(part: StripPart)
     {
@@ -75,6 +77,7 @@ class StripDisplay extends PartDisplay {
         }
         array.sort(sortDisplayObjects);
         for(obj in array){
+
             displayArea.addChild(obj.obj);
         }
 

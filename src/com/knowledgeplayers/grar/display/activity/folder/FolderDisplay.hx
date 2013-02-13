@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.util.LoadData;
 import Std;
 import nme.events.MouseEvent;
 import nme.display.SimpleButton;
@@ -46,6 +47,8 @@ class FolderDisplay extends ActivityDisplay {
 
     private var elementTemplate: {background: String, buttonIcon: String, buttonPos: Point};
 
+    private var content:Fast;
+
     /**
 * @return the instance
 **/
@@ -80,26 +83,35 @@ class FolderDisplay extends ActivityDisplay {
             addChild(elementDisplay);
         }
 
+
         super.onModelComplete(e);
     }
 
+
+
     override private function parseContent(content: Fast): Void
     {
-        for(child in content.elements){
+        this.content = content;
+        for (child in content.elements){
             if(child.name.toLowerCase() == "background"){
-                var background = new Bitmap(Assets.getBitmapData(child.att.id));
+
+                var background=  cast(LoadData.getInstance().getElementDisplayInCache(child.att.src),Bitmap);
                 ResizeManager.instance.addDisplayObjects(background, child);
                 addChild(background);
             }
             else if(child.name.toLowerCase() == "target"){
-                target = {obj: new Bitmap(Assets.getBitmapData(child.att.background)), ref: child.att.ref};
+                target = {obj: cast(LoadData.getInstance().getElementDisplayInCache(child.att.src),Bitmap), ref: child.att.ref};
                 initDisplayObject(target.obj, child);
                 ResizeManager.instance.addDisplayObjects(target.obj, child);
                 addChild(target.obj);
             }
             else if(child.name.toLowerCase() == "popup"){
-                popUp.addChild(new Bitmap(Assets.getBitmapData(content.node.PopUp.att.background)));
-                var icon = new Bitmap(Assets.getBitmapData(content.node.PopUp.att.buttonIcon));
+
+
+
+                popUp.addChild(cast(LoadData.getInstance().getElementDisplayInCache(content.node.PopUp.att.src),Bitmap));
+                var icon = cast(LoadData.getInstance().getElementDisplayInCache(content.node.PopUp.att.buttonIcon),Bitmap);
+
                 var button = new SimpleButton(icon, icon, icon, icon);
                 button.x = Std.parseFloat(content.node.PopUp.att.buttonX);
                 button.y = Std.parseFloat(content.node.PopUp.att.buttonY);
@@ -112,18 +124,19 @@ class FolderDisplay extends ActivityDisplay {
                 addChild(popUp);
             }
         }
-
         for(grid in content.nodes.Grid){
-            var g = new Grid(Std.parseInt(grid.att.numRow), Std.parseInt(grid.att.numCol), Std.parseFloat(grid.att.cellWidth), Std.parseFloat(grid.att.cellHeight));
-            g.x = Std.parseFloat(grid.att.x);
-            g.y = Std.parseFloat(grid.att.y);
-            grids.set(grid.att.ref, g);
-        }
+        var g = new Grid(Std.parseInt(grid.att.numRow), Std.parseInt(grid.att.numCol), Std.parseFloat(grid.att.cellWidth), Std.parseFloat(grid.att.cellHeight));
+        g.x = Std.parseFloat(grid.att.x);
+        g.y = Std.parseFloat(grid.att.y);
+        grids.set(grid.att.ref, g);
+    }
 
         var elemNode = content.node.Element;
-        elementTemplate = {background: elemNode.att.background, buttonIcon: elemNode.att.buttonIcon, buttonPos: new Point(Std.parseFloat(elemNode.att.buttonX), Std.parseFloat(elemNode.att.buttonY))};
+        elementTemplate = {background:elemNode.att.src, buttonIcon: elemNode.att.buttonIcon, buttonPos: new Point(Std.parseFloat(elemNode.att.buttonX), Std.parseFloat(elemNode.att.buttonY))};
 
     }
+
+
 
     private function onClosePopUp(ev: MouseEvent): Void
     {

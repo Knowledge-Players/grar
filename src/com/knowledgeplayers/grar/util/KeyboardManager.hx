@@ -38,7 +38,7 @@ class KeyboardManager {
         }
 
         switch(ev.keyCode){
-            case Keyboard.SPACE: game.currentPart.activityDisplay.showDebrief();
+            //case Keyboard.SPACE: game.currentPart.activityDisplay.showDebrief();
             case Keyboard.TAB: // Défiler DynBubble;
             case Keyboard.RIGHT: if(game.currentPart != null)
                 game.currentPart.nextElement();
