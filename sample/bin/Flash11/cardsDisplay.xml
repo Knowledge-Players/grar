@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Cards>
+    <SpriteSheet id="global" src="img/AnimCard.png"/>
+    <Background src="img/background.jpg"/>
+    <Element src="img/postit.png"/>
+    <Grid ref="dispatch" x="40" y="40" numCol="2" numRow="1" cellWidth="220" cellHeight="260"/>
+    <AnimationElement id="AnimCard" ref="global"/>
+    <PopUp x="200" y="200" width="328" height="448" buttonIcon="img/CloseButton.png" buttonX="310" buttonY="10" background="img/Carte.png"/>
+</Cards>

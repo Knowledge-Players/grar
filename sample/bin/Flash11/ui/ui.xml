@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="ui.png">
+    <SubTexture name="btCircle.png" x="169" y="0" width="40" height="40"/>
+    <SubTexture name="continueButton.jpg" x="0" y="0" width="169" height="50"/>
+    <SubTexture name="continueButton_over.jpg" x="0" y="50" width="169" height="50"/>
+    <SubTexture name="continueButton_pressed.jpg" x="0" y="100" width="169" height="50"/>
+    <SubTexture name="cursor_end.png" x="227" y="45" width="18" height="9"/>
+    <SubTexture name="cursor_middle.png" x="227" y="0" width="18" height="45"/>
+    <SubTexture name="fleche_mc0001.png" x="200" y="68" width="31" height="13"/>
+    <SubTexture name="fleche_mc0002.png" x="169" y="40" width="31" height="13"/>
+    <SubTexture name="fleche_mc0003.png" x="169" y="118" width="31" height="13"/>
+    <SubTexture name="fleche_mc0004.png" x="200" y="107" width="31" height="13"/>
+    <SubTexture name="fleche_mc0005.png" x="169" y="105" width="31" height="13"/>
+    <SubTexture name="fleche_mc0006.png" x="169" y="79" width="31" height="13"/>
+    <SubTexture name="fleche_mc0007.png" x="169" y="131" width="31" height="13"/>
+    <SubTexture name="fleche_mc0008.png" x="200" y="120" width="31" height="13"/>
+    <SubTexture name="fleche_mc0009.png" x="200" y="81" width="31" height="13"/>
+    <SubTexture name="fleche_mc0010.png" x="200" y="94" width="31" height="13"/>
+    <SubTexture name="fleche_mc0011.png" x="200" y="55" width="31" height="13"/>
+    <SubTexture name="fleche_mc0012.png" x="169" y="66" width="31" height="13"/>
+    <SubTexture name="fleche_mc0013.png" x="169" y="53" width="31" height="13"/>
+    <SubTexture name="fleche_mc0014.png" x="169" y="92" width="31" height="13"/>
+    <SubTexture name="scrollbar_end.png" x="231" y="54" width="18" height="8"/>
+    <SubTexture name="scrollbar_middle.png" x="209" y="0" width="18" height="55"/>
+</TextureAtlas>
