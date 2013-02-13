@@ -1,6 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.cards;
 
 
+import com.knowledgeplayers.grar.util.LoadData;
 import aze.display.TileClip;
 import aze.display.TileLayer;
 import com.knowledgeplayers.grar.display.activity.folder.Grid;
@@ -29,18 +30,18 @@ import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 **/
 class CardsDisplay extends ActivityDisplay {
 
-    /**
+/**
 * Instance
 **/
     public static var instance (getInstance, null): CardsDisplay;
 
 
-    /**
+/**
 * PopUp where additional text will be displayed
 **/
     public var popUp (default, default): Sprite;
 
-    /**
+/**
 * Grid to dispatch cards
 **/
     public var grids (default, null): Hash<Grid>;
@@ -52,9 +53,12 @@ class CardsDisplay extends ActivityDisplay {
     private var cardInProgress:CardsElementDisplay;
     private var nextCard:CardsElementDisplay;
     private var nextText:String;
+
+    private var content:Fast;
+
     private var elementTemplate: {background: String};
 
-    /**
+/**
 * @return the instance
 **/
 
@@ -79,7 +83,7 @@ class CardsDisplay extends ActivityDisplay {
         }
     }
 
-    // Private
+// Private
 
     override private function onModelComplete(e: LocaleEvent): Void
     {
@@ -93,24 +97,32 @@ class CardsDisplay extends ActivityDisplay {
 
     override private function parseContent(content: Fast): Void
     {
-
+        this.content = content;
+        Lib.trace("content.node.AnimationElement.att.id : "+content.node.AnimationElement.att.id);
         for(child in content.elements){
             if(child.name.toLowerCase() == "background"){
-                var background = new Bitmap(Assets.getBitmapData(child.att.id));
+
+                var background = cast(LoadData.getInstance().getElementDisplayInCache(child.att.src),Bitmap);
                 ResizeManager.instance.addDisplayObjects(background, child);
                 addChild(background);
+
             } else if(child.name.toLowerCase() == "animationelement"){
                 var tilesheet = spriteSheets.get(content.node.AnimationElement.att.ref);
                 flipLayer = new TileLayer(tilesheet);
+
                 flipClip = new TileClip(content.node.AnimationElement.att.id);
                 flipClip.loop = false;
                 flipLayer.addChild(flipClip);
                 addChild (flipLayer.view);
 
             } else if(child.name.toLowerCase() == "popup"){
-                popUp.addChild(new Bitmap(Assets.getBitmapData(content.node.PopUp.att.background)));
+//popUp.addChild(new Bitmap(Assets.getBitmapData(content.node.PopUp.att.background)));
+                var pop:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(content.node.PopUp.att.background),Bitmap).bitmapData);
+                popUp.addChild(pop);
 
-                var icon = new Bitmap(Assets.getBitmapData(content.node.PopUp.att.buttonIcon));
+//var icon = new Bitmap(Assets.getBitmapData(content.node.PopUp.att.buttonIcon));
+                var icon:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(content.node.PopUp.att.buttonIcon),Bitmap).bitmapData);
+                popUp.addChild(icon);
                 popUp.addEventListener(MouseEvent.CLICK, onClosePopUp);
                 initDisplayObject(popUp, content.node.PopUp);
                 popUp.visible = false;
@@ -128,7 +140,8 @@ class CardsDisplay extends ActivityDisplay {
         }
 
         var elemNode = content.node.Element;
-        elementTemplate = {background: elemNode.att.background};
+        elementTemplate = {background: elemNode.att.src};
+
 
     }
 

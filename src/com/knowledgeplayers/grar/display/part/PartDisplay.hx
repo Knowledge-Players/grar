@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import nme.display.Bitmap;
+import com.knowledgeplayers.grar.util.LoadData;
 import Std;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.event.LocaleEvent;
@@ -42,13 +44,13 @@ import nme.Lib;
  * Display of a part
  */
 class PartDisplay extends Sprite {
-    /**
-     * Part model to display
-     */
+/**
+ * Part model to display
+ */
     public var part: Part;
 
-    /**
-    * Current activity displayed. Null if there is not
+/**
+* Current activity displayed. Null if there is not
 **/
     public var activityDisplay (default, null): ActivityDisplay;
 
@@ -60,11 +62,12 @@ class PartDisplay extends Sprite {
     private var zIndex: Int = 0;
     private var displayArea: Sprite;
     private var currentElement: PartElement;
+    private var displayFast: Fast;
 
-    /**
-     * Constructor
-     * @param	part : Part to display
-     */
+/**
+ * Constructor
+ * @param	part : Part to display
+ */
 
     public function new(part: Part)
     {
@@ -80,9 +83,9 @@ class PartDisplay extends Sprite {
         addEventListener(TokenEvent.ADD, onTokenAdded);
     }
 
-    /**
-     * Unload the display from the scene
-     */
+/**
+ * Unload the display from the scene
+ */
 
     public function unLoad(): Void
     {
@@ -90,8 +93,8 @@ class PartDisplay extends Sprite {
             removeChildAt(numChildren - 1);
     }
 
-    /**
-    * @return the TextItem in the part or null if there is an activity or the part is over
+/**
+* @return the TextItem in the part or null if there is an activity or the part is over
 **/
 
     public function nextElement(): Void
@@ -105,7 +108,9 @@ class PartDisplay extends Sprite {
             setText(cast(currentElement, TextItem));
         }
         else if(currentElement.isActivity()){
+
             cleanActivity();
+            onActivityEnd(null);
             launchActivity(cast(currentElement, Activity));
         }
         else if(currentElement.isPattern()){
@@ -119,8 +124,8 @@ class PartDisplay extends Sprite {
         return null;
     }
 
-    /**
-    * Start the part
+/**
+* Start the part
 **/
 
     public function startPart(): Void
@@ -128,25 +133,30 @@ class PartDisplay extends Sprite {
         nextElement();
     }
 
-    // Private
+// Private
 
     private function onTokenAdded(e: TokenEvent): Void
     {}
 
     private function parseContent(content: Xml): Void
     {
-        var displayFast: Fast = new Fast(content).node.Display;
+        displayFast = new Fast(content).node.Display;
+
         for(child in displayFast.elements){
+
             switch(child.name.toLowerCase()){
                 case "background": createBackground(child);
                 case "item": createItem(child);
                 case "character": createCharacter(child);
                 case "button": createButton(child);
                 case "text": createText(child);
+
             }
         }
+
         dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
         resizeD.onResize();
+
     }
 
     private function next(event: ButtonActionEvent): Void
@@ -171,6 +181,7 @@ class PartDisplay extends Sprite {
 
     private function launchActivity(activity: Activity)
     {
+        Lib.trace("act");
         activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
         var activityName: String = Type.getClassName(Type.getClass(activity));
         activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
@@ -179,11 +190,24 @@ class PartDisplay extends Sprite {
         activityDisplay.model = activity;
     }
 
+/*private function onActivityEnd(e: PartEvent): Void
+{
+
+    if(e != null)
+    {
+     cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
+     cleanActivity();
+    }
+    nextElement();
+}*/
+
     private function onActivityEnd(e: PartEvent): Void
     {
-        cleanActivity();
-        cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
-        nextElement();
+        if(e != null)
+            cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
+        if(activityDisplay != null && contains(activityDisplay))
+            removeChild(activityDisplay);
+        activityDisplay = null;
     }
 
     private function cleanActivity(): Void
@@ -195,6 +219,7 @@ class PartDisplay extends Sprite {
 
     private function onActivityReady(e: Event): Void
     {
+
         addChild(activityDisplay);
         activityDisplay.startActivity();
     }
@@ -228,7 +253,10 @@ class PartDisplay extends Sprite {
 
     private function createItem(itemNode: Fast): Void
     {
-        var itemBmp: Bitmap = new Bitmap(Assets.getBitmapData(itemNode.att.src));
+
+//var itemBmp: Bitmap = new Bitmap(Assets.getBitmapData(itemNode.att.src));
+
+        var itemBmp: Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src),Bitmap).bitmapData);
 
         addElement(itemBmp, itemNode);
     }
@@ -236,7 +264,8 @@ class PartDisplay extends Sprite {
     private function createButton(buttonNode: Fast): Void
     {
         var button: DefaultButton = UiFactory.createButtonFromXml(buttonNode);
-
+        if(buttonNode.has.Content)
+            cast(button, TextButton).setText(Localiser.instance.getItemContent(buttonNode.att.Content));
         if(buttonNode.has.action)
             setButtonAction(cast(button, CustomEventButton), buttonNode.att.action);
         else
@@ -255,12 +284,16 @@ class PartDisplay extends Sprite {
 
     private function createCharacter(character: Fast)
     {
-        var bitmap = new Bitmap(Assets.getBitmapData(character.att.src));
+//var bitmap = new Bitmap(Assets.getBitmapData(character.att.src));
+
+
+        var bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(character.att.src),Bitmap).bitmapData);
+
         var char: CharacterDisplay = new CharacterDisplay(bitmap, new Character(character.att.ref));
         char.visible = false;
         char.origin = new Point(Std.parseFloat(character.att.x), Std.parseFloat(character.att.y));
-
         addElement(char, character);
+
     }
 
     private function setButtonAction(button: CustomEventButton, action: String): Void
@@ -275,19 +308,25 @@ class PartDisplay extends Sprite {
 
     private function setText(item: TextItem): Void
     {
-        // Clean previous background
+// Clean previous background
         if(previousBackground != null && previousBackground.ref != item.background){
             if(previousBackground.bmp != null)
                 displayArea.removeChild(previousBackground.bmp);
         }
-        // Add new background
-        if(item.background != null){
-            var bkg = DisplayUtils.setBackground(displaysFast.get(item.background).att.src, displayArea);
+// Add new background
+        if(item.background != null)
+        {
+            var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(item.background).att.src),Bitmap).bitmapData);
+            if(bkg != null)
+            {
+                displayArea.addChildAt(bkg,0);
+            }
+
             previousBackground = {ref: item.background, bmp: bkg};
             if(bkg != null)
                 resizeD.addDisplayObjects(bkg, displaysFast.get(item.background));
         }
-        // Remove text area if there is no text
+// Remove text area if there is no text
         if(item.content == null){
             var toRemove = new FastList<DisplayObject>();
             for(i in 0...numChildren){
@@ -298,7 +337,7 @@ class PartDisplay extends Sprite {
                 removeChild(obj);
         }
         else{
-            // Set text and display author
+// Set text and display author
             var content = Localiser.getInstance().getItemContent(item.content);
             if(item.author != null && displays.exists(item.author)){
 
@@ -365,7 +404,7 @@ class PartDisplay extends Sprite {
             return 0;
     }
 
-    // Handlers
+// Handlers
 
     private function onLoadComplete(event: Event): Void
     {

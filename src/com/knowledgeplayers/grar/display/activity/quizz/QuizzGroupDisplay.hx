@@ -1,9 +1,12 @@
 package com.knowledgeplayers.grar.display.activity.quizz;
+import nme.display.Bitmap;
+import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.structure.activity.quizz.QuizzGroup;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;
 import nme.display.Sprite;
+import nme.Lib;
 
 /**
  * Display for a group of answer in a quizz
@@ -105,7 +108,22 @@ class QuizzGroupDisplay extends Sprite {
             itemDisplay.text.x = Std.parseFloat(itemTemplate.att.contentX);
             itemDisplay.correction.x = Std.parseFloat(itemTemplate.att.correctionX);
             itemDisplay.checkIcon.x = Std.parseFloat(itemTemplate.att.checkX);
-            DisplayUtils.setBackground(itemTemplate.att.background, itemDisplay);
+            Lib.trace("itemTemplate.att.background : "+itemTemplate.att.background);
+
+            if(Std.parseInt(itemTemplate.att.background) != null)
+            {
+                itemDisplay.graphics.beginFill(Std.parseInt(itemTemplate.att.background));
+                itemDisplay.graphics.drawRect(0, 0, Std.parseFloat(itemTemplate.att.width), Std.parseFloat(itemTemplate.att.height));
+                itemDisplay.graphics.endFill();
+            }
+            else
+            {
+                var bmp = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemTemplate.att.background),Bitmap).bitmapData);
+
+                    itemDisplay.addChild(bmp);
+            }
+
+            //DisplayUtils.setBackground(itemTemplate.att.background, itemDisplay);
 
             totalYOffset += yOffset;
             items.push(itemDisplay);

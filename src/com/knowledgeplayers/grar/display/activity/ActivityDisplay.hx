@@ -1,5 +1,11 @@
 package com.knowledgeplayers.grar.display.activity;
+
 import com.knowledgeplayers.grar.util.SpriteSheetLoader;
+
+import Std;
+import com.knowledgeplayers.grar.util.LoadData;
+import nme.display.Bitmap;
+
 import nme.Lib;
 import aze.display.SparrowTilesheet;
 import com.knowledgeplayers.grar.util.XmlLoader;
@@ -19,16 +25,20 @@ import nme.Assets;
 */
 
 class ActivityDisplay extends Sprite {
-    /**
+/**
 * Model to display
 */
     public var model(default, setModel): Activity;
 
-    private var spriteSheets: Hash<TilesheetEx>;
-    private var countSpriteSheets: Int;
-    private var totalSpriteSheets: Int;
-    private var displayXml: Fast;
-    /**
+
+    private var spriteSheets:Hash<TilesheetEx>;
+    private var countSpriteSheets:Int;
+    private var totalSpriteSheets:Int;
+    private var displayXml:Fast;
+    private var xmlSprite:Xml;
+    private var fastXml:Fast;
+
+/**
 * Setter for the model
 * @param model : the model to set
 * @return the model
@@ -39,13 +49,13 @@ class ActivityDisplay extends Sprite {
         this.model = model;
         this.model.addEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
 
-        //addEventListener(Event.REMOVED_FROM_STAGE, onUnload);
+//addEventListener(Event.REMOVED_FROM_STAGE, onUnload);
         this.model.loadActivity();
 
         return model;
     }
 
-    /**
+/**
 * Set the display with XML infos
 * @param display : fast XML node with display infos
 */
@@ -56,21 +66,41 @@ class ActivityDisplay extends Sprite {
         spriteSheets = new Hash<TilesheetEx>();
         countSpriteSheets = 0;
         totalSpriteSheets = Lambda.count(display.nodes.SpriteSheet);
+
         testPreload();
         for(spr in display.nodes.SpriteSheet){
             var n = new SpriteSheetLoader();
+            var nom = Std.string(spr.att.src).split("/")[1];
+            var url = nom.split(".")[0]+".xml";
             n.addEventListener("loaded", onSpriteSheetLoaded);
-            n.init(spr.att.id, spr.att.src);
+            n.init(spr.att.id, url);
         }
+
     }
+
+
 
     private function onSpriteSheetLoaded(e: Event)
     {
+
         countSpriteSheets ++;
         e.target.removeEventListener("loaded", onSpriteSheetLoaded);
         spriteSheets.set(e.target.name, e.target.spriteSheet);
         testPreload();
+
+
+// fastXml = new Fast(xmlSprite).node.TextureAtlas;
+
+//Lib.trace("fastXml.att.imagePath : "+fastXml.att.imagePath);
+//Lib.trace("xmlSprite : "+xmlSprite);
+// spriteSheets.set("global",new SparrowTilesheet(cast(LoadData.getInstance().getElementDisplayInCache(fastXml.att.imagePath),Bitmap).bitmapData, xmlSprite.toString()));
+
+        countSpriteSheets ++;
+
+
+
     }
+
 
     private function testPreload()
     {
@@ -79,7 +109,7 @@ class ActivityDisplay extends Sprite {
         }
     }
 
-    /**
+/**
 * Start the activity
 */
 
@@ -93,7 +123,7 @@ class ActivityDisplay extends Sprite {
         Lib.trace("Debrief!");
     }
 
-    // Private
+// Private
 
     private function parseContent(display: Fast): Void
     {}
@@ -123,11 +153,11 @@ class ActivityDisplay extends Sprite {
             display.scaleY = Std.parseFloat(node.att.scaleY);
     }
 
-    // Handlers
+// Handlers
 
     private function onUnload(ev: Event): Void
     {
-        //onEndActivity(null);
+//onEndActivity(null);
     }
 
     private function endActivity(e: Event): Void

@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.scanner;
 
+import com.knowledgeplayers.grar.util.LoadData;
+import nme.display.Bitmap;
 import com.knowledgeplayers.grar.display.activity.scanner.PointDisplay.PointStyle;
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
 import nme.display.DisplayObject;
@@ -60,7 +62,9 @@ class ScannerDisplay extends ActivityDisplay {
     {
         for(child in content.elements){
             if(child.name.toLowerCase() == "background"){
-                var background = new Bitmap(Assets.getBitmapData(child.att.src));
+
+                var bmp = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(child.att.src),Bitmap).bitmapData);
+                var background = bmp;
                 ResizeManager.instance.addDisplayObjects(background, child);
                 addChild(background);
             }

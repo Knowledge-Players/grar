@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.util;
+import nme.display.Bitmap;
 import nme.events.Event;
 import aze.display.TilesheetEx;
 import haxe.xml.Fast;
@@ -29,7 +30,7 @@ class SpriteSheetLoader extends EventDispatcher {
     private function parseXmlSprite (xmlSprite:Xml): Void
     {
         var fast = new Fast(xmlSprite).node.TextureAtlas;
-        spriteSheet =  new SparrowTilesheet(Assets.getBitmapData(fast.att.imagePath), xmlSprite.toString());
+        spriteSheet =  new SparrowTilesheet( cast(LoadData.getInstance().getElementDisplayInCache(fast.att.imagePath),Bitmap).bitmapData, xmlSprite.toString());
         dispatchEvent(new Event("loaded"));
     }
 

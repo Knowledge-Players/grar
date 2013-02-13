@@ -4,10 +4,17 @@
         <copy todir="sample/bin/flash/bin">
             <fileset dir="sample/assets/xml">
                 <include name="**/fr/"/>
+                <include name="**/ui/"/>
                 <include name="*.xml"/>
                 <exclude name="sample_structure.xml"/>
                 <exclude name="style.xml"/>
             </fileset>
+        </copy>
+        <copy todir="sample/bin/flash/bin/assets/img">
+            <fileset dir="sample/assets/img"/>
+        </copy>
+        <copy todir="sample/bin/flash/bin/assets/ui">
+            <fileset dir="sample/assets/ui"/>
         </copy>
     </target>
     <target name="after">

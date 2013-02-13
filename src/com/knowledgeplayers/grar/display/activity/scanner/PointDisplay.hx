@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.scanner;
 
+import nme.display.Bitmap;
+import com.knowledgeplayers.grar.util.LoadData;
 import String;
 import nme.Lib;
 import com.knowledgeplayers.grar.structure.activity.scanner.ScannerPoint;
@@ -49,7 +51,8 @@ class PointDisplay extends Sprite {
             graphics.endFill();
         }
         else{
-            bitmap.bitmapData = Assets.getBitmapData(style.graphics.get(state));
+            var bmp = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(style.graphics.get(state)),Bitmap).bitmapData);
+            bitmap.bitmapData = bmp.bitmapData;
         }
     }
 

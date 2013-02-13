@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.display.activity.quizz;
 
+import nme.display.Bitmap;
+import Std;
+import nme.display.Bitmap;
+import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
@@ -129,7 +133,7 @@ class QuizzDisplay extends ActivityDisplay {
     {
         for(child in content.elements){
             switch(child.name.toLowerCase()){
-                case "background": backgrounds.set(child.att.ref, new Bitmap(Assets.getBitmapData(child.att.src)));
+                case "background":backgrounds.set(child.att.ref,LoadData.getInstance().getElementDisplayInCache(Std.string(child.att.src)));
                 case "text": createQuestion(child);
                 case "button": createButton(child);
                 case "item": createItem(child);
@@ -148,7 +152,8 @@ class QuizzDisplay extends ActivityDisplay {
 
     private function createItem(itemNode: Fast): Void
     {
-        items.set(itemNode.att.ref.toLowerCase(), Assets.getBitmapData(itemNode.att.src));
+        var bmp = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src),Bitmap).bitmapData);
+        items.set(itemNode.att.ref.toLowerCase(), bmp.bitmapData);
     }
 
     private function createButton(buttonNode: Fast): Void
