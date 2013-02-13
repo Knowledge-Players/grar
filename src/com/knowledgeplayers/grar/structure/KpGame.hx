@@ -48,7 +48,7 @@ class KpGame extends EventDispatcher, implements Game {
     private var parts: IntHash<Part>;
     private var connection: Connection;
     private var nbPartsLoaded: Int = 0;
-    private var partIndex: Int = 0;
+    public var partIndex: Int = 0;
 
     public function new()
     {
@@ -70,7 +70,6 @@ class KpGame extends EventDispatcher, implements Game {
         structureXml = new Fast(xml);
         Lib.trace("init game");
 
-
         #if flash
         LoadData.getInstance().addEventListener("DATA_LOADED",onDisplayLoaded);
         LoadData.getInstance().loadDisplayXml(structureXml);
@@ -79,10 +78,7 @@ class KpGame extends EventDispatcher, implements Game {
         #end
     }
 
-
-
-
-    private function onDisplayLoaded(e:Event=null):Void
+    private function onDisplayLoaded(e: Event = null): Void
     {
         Lib.trace("data display loaded");
         var parametersNode: Fast = structureXml.node.Grar.node.Parameters;

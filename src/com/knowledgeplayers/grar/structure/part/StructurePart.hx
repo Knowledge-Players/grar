@@ -168,6 +168,7 @@ class StructurePart extends EventDispatcher, implements Part {
                 part = getNextPart();
             }
         }
+
         if(part != null)
             return part.start();
         else
