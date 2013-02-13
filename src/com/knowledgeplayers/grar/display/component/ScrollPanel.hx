@@ -90,24 +90,25 @@ class ScrollPanel extends Sprite {
 
         if(Std.parseInt(bkg) != null)
         {
+
             this.graphics.beginFill(Std.parseInt(bkg));
             this.graphics.drawRect(0, 0, maskWidth, maskHeight);
             this.graphics.endFill();
         }
         else
         {
+
             if(LoadData.getInstance().getElementDisplayInCache(background) != null)
             {
-                LoadData.getInstance().getElementDisplayInCache(background).width = maskWidth;
-                LoadData.getInstance().getElementDisplayInCache(background).height = maskHeight;
 
                 var bkg:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(background),Bitmap).bitmapData);
-
-                this.addChild(bkg);
+                bkg.width = maskWidth;
+                bkg.height = maskHeight;
+                this.addChildAt(bkg,0);
             }
 
         }
-       // DisplayUtils.setBackground(background, this, maskWidth, maskHeight);
+
         return bkg;
     }
 
