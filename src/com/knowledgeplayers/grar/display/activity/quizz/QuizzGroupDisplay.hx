@@ -108,7 +108,7 @@ class QuizzGroupDisplay extends Sprite {
             itemDisplay.text.x = Std.parseFloat(itemTemplate.att.contentX);
             itemDisplay.correction.x = Std.parseFloat(itemTemplate.att.correctionX);
             itemDisplay.checkIcon.x = Std.parseFloat(itemTemplate.att.checkX);
-            Lib.trace("itemTemplate.att.background : "+itemTemplate.att.background);
+            //Lib.trace("itemTemplate.att.background : "+itemTemplate.att.background);
 
             if(Std.parseInt(itemTemplate.att.background) != null)
             {

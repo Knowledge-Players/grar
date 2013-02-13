@@ -88,13 +88,6 @@ class ActivityDisplay extends Sprite {
         spriteSheets.set(e.target.name, e.target.spriteSheet);
         testPreload();
 
-
-// fastXml = new Fast(xmlSprite).node.TextureAtlas;
-
-//Lib.trace("fastXml.att.imagePath : "+fastXml.att.imagePath);
-//Lib.trace("xmlSprite : "+xmlSprite);
-// spriteSheets.set("global",new SparrowTilesheet(cast(LoadData.getInstance().getElementDisplayInCache(fastXml.att.imagePath),Bitmap).bitmapData, xmlSprite.toString()));
-
         countSpriteSheets ++;
 
 

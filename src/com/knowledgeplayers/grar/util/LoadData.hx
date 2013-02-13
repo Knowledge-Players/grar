@@ -22,10 +22,9 @@ class LoadData extends EventDispatcher {
 
 
     public static var instance (getInstance, null): LoadData;
-    public var cacheElementsDisplay:Hash<DisplayObject>;
-    private var elementDisplay:DisplayObject;
-    public var arrayOfUrlImgs:Array<String>;
 
+    private var cacheElementsDisplay:Hash<DisplayObject>;
+    private var arrayOfUrlImgs:Array<String>;
     private var elementBitmap:Bitmap;
     private var mloader:Loader;
     private var z:Float;
@@ -56,6 +55,9 @@ class LoadData extends EventDispatcher {
             return instance;
     }
 
+/**
+* Load all the displays
+**/
 
     public function loadDisplayXml(?structureXml:Fast=null):Void
     {
@@ -76,14 +78,17 @@ class LoadData extends EventDispatcher {
         var lgArray:Int = arrayDisplayXml.length;
         nbXml = lgArray;
         for( i in 0...lgArray ) {
-            Lib.trace("xml load : "+arrayDisplayXml[i]);
-        //if (arrayDisplayXml[i] != "ui/ui.xml")
+            //Lib.trace("xml load : "+arrayDisplayXml[i]);
+            //if (arrayDisplayXml[i] != "ui/ui.xml")
             XmlLoader.load(arrayDisplayXml[i],onXmlDisplayLoaded,parseContent);
 
         }
 
 
+
     }
+
+
 
     private function onXmlDisplayLoaded(e:Event=null):Void{
 
@@ -129,16 +134,17 @@ class LoadData extends EventDispatcher {
 
 
        }
+
         //Lib.trace(numXml +" -- "+nbXml);
         if(numXml == nbXml)
         {
-
+            arrayOfUrlImgs = removeDuplicates(arrayOfUrlImgs);
             var lgImgsArray:Int = arrayOfUrlImgs.length;
             nbDatas =lgImgsArray;
 
             for( i in 0...lgImgsArray ) {
 
-                Lib.trace("-------------- image load "+arrayOfUrlImgs[i]);
+                //Lib.trace("-------------- image load "+arrayOfUrlImgs[i]);
 
                 loadData(arrayOfUrlImgs[i]);
 
@@ -147,9 +153,37 @@ class LoadData extends EventDispatcher {
 
 
     }
+/**
+* Remove duplicates from an Array<String>
+**/
+
+    public function removeDuplicates(ar:Array<String>):Array<String>
+    {
+        var result:Array<String> = ar.slice(0,ar.length);
 
 
-    public function loadData(?path:String=""):Void
+        var t;
+
+        for (a1 in 0...result.length)
+        {
+            t = ar[a1];
+
+            for (a2 in 0...result.length)
+            {
+                if (result[a2] == result[a1])
+                {
+                    if (a2 != a1)
+                    {
+                        result.splice(a2, 1);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+
+    private function loadData(?path:String=""):Void
     {
 
 
@@ -168,7 +202,7 @@ class LoadData extends EventDispatcher {
 
                 #else
 
-                    elementDisplay = new Bitmap(Assets.getBitmapData(path));
+                    var elementDisplay = new Bitmap(Assets.getBitmapData(path));
                     cacheElementsDisplay.set(path,elementDisplay);
 
 
@@ -179,12 +213,12 @@ class LoadData extends EventDispatcher {
 
 
 
-    public function onIOError(error: IOErrorEvent): Void
+    private function onIOError(error: IOErrorEvent): Void
     {
         Lib.trace("File requested doesn't exist: " + error.toString().substr(error.toString().indexOf("/")));
     }
 
-    public function onCompleteLoading(event: Event): Void
+    private function onCompleteLoading(event: Event): Void
     {
         numData++;
         var arrayName = Std.string(event.currentTarget.url).split("/");
@@ -200,7 +234,7 @@ class LoadData extends EventDispatcher {
             }
     }
 
-    public function checkElementsDisplayInCache(_name:String):Bool
+    private function checkElementsDisplayInCache(_name:String):Bool
     {
         var existInCache = false;
 
@@ -220,6 +254,10 @@ class LoadData extends EventDispatcher {
 
         return existInCache;
     }
+
+/**
+* Get the display loaded
+**/
 
     public function getElementDisplayInCache(_name:String):DisplayObject
     {
