@@ -123,10 +123,34 @@
             </Row>
             <Row>
                 <Cell>
-                    <Data ss:Type="String">point3</Data>
+                    <Data ss:Type="String">card3</Data>
                 </Cell>
                 <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">You found Point #3</Data>
+                    <Data ss:Type="String">Card 3</Data>
+                </Cell>
+            </Row>
+            <Row>
+                <Cell>
+                    <Data ss:Type="String">card3_title</Data>
+                </Cell>
+                <Cell ss:StyleID="s65">
+                    <Data ss:Type="String">Post-it #3</Data>
+                </Cell>
+            </Row>
+            <Row>
+                <Cell>
+                    <Data ss:Type="String">card4</Data>
+                </Cell>
+                <Cell ss:StyleID="s65">
+                    <Data ss:Type="String">Card 4</Data>
+                </Cell>
+            </Row>
+            <Row>
+                <Cell>
+                    <Data ss:Type="String">card4_title</Data>
+                </Cell>
+                <Cell ss:StyleID="s65">
+                    <Data ss:Type="String">Post-it #4</Data>
                 </Cell>
             </Row>
         </Table>

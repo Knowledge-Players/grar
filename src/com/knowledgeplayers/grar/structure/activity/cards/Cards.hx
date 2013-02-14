@@ -3,6 +3,7 @@ package com.knowledgeplayers.grar.structure.activity.cards;
 import nme.events.Event;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.util.XmlLoader;
+import nme.Lib;
 
 /**
 * Folder activity
@@ -11,7 +12,7 @@ class Cards extends Activity {
     /**
     * Elements of the activity
 **/
-    public var elements (default, null): Hash<CardsElement>;
+    public var elements (default, null): Array<CardsElement>;
 
     /**
     * Constructor
@@ -21,7 +22,7 @@ class Cards extends Activity {
     public function new(content: String)
     {
         super(content);
-        elements = new Hash<CardsElement>();
+        elements = new Array<CardsElement>();
         XmlLoader.load(content, onLoadComplete, parseContent);
     }
 
@@ -31,8 +32,12 @@ class Cards extends Activity {
     {
         var fast = new Fast(content).node.Cards;
         for(element in fast.nodes.Element){
+
+
             var elem = new CardsElement(element.att.Ref);
-            elements.set(elem.content, elem);
+            elements.push(elem);
+            //Lib.trace(elem.content);
         }
+
     }
 }

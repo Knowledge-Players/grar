@@ -59,7 +59,7 @@ class CardsElementDisplay extends Sprite {
 
     private function onClick(e: MouseEvent): Void
     {
-        var cd = cast(parent, CardsDisplay);
+        var cd = cast(parent.parent, CardsDisplay);
         var localizedText = Localiser.instance.getItemContent(content);
         cd.clickCard(this, localizedText);
     }

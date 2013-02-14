@@ -60,7 +60,7 @@ class FolderElementDisplay extends Sprite {
 
         var localizedText = Localiser.instance.getItemContent(content + "_title");
         text.setContent(KpTextDownParser.parse(localizedText));
-        Lib.trace("-------------");
+
         text.setBackground(background);
         filters = [shadows.get("down")];
         addChild(text);
@@ -108,7 +108,7 @@ class FolderElementDisplay extends Sprite {
 
     private function onUp(e: MouseEvent): Void
     {
-        var folder = cast(parent, FolderDisplay);
+        var folder = cast(parent.parent, FolderDisplay);
         #if flash
             if(dropTarget == folder.target.obj)
         #else

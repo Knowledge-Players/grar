@@ -2,4 +2,6 @@
 <Cards>
     <Element Ref="card1"/>
     <Element Ref="card2"/>
+    <Element Ref="card3"/>
+    <Element Ref="card4"/>
 </Cards>

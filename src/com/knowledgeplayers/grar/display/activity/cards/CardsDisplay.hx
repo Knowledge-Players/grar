@@ -53,10 +53,13 @@ class CardsDisplay extends ActivityDisplay {
     private var cardInProgress:CardsElementDisplay;
     private var nextCard:CardsElementDisplay;
     private var nextText:String;
+    private var elementsContainer:Sprite;
+    private  var background:Bitmap;
 
     private var content:Fast;
 
     private var elementTemplate: {background: String};
+    private var elementsArray:Array<CardsElementDisplay>;
 
 /**
 * @return the instance
@@ -67,6 +70,15 @@ class CardsDisplay extends ActivityDisplay {
         if(instance == null)
             instance = new CardsDisplay();
         return instance;
+    }
+
+    private function new()
+    {
+        super();
+        grids = new Hash<Grid>();
+        popUp = new Sprite();
+        elementsArray = new Array<CardsElementDisplay>();
+
     }
 
 /**
@@ -87,24 +99,40 @@ class CardsDisplay extends ActivityDisplay {
 
     override private function onModelComplete(e: LocaleEvent): Void
     {
-        for(elem in cast(model, Cards).elements){
-            var elementDisplay = new CardsElementDisplay(elem.content, grids.get("dispatch").cellSize.width, grids.get("dispatch").cellSize.height, elementTemplate.background);
+
+
+        addChild(grids.get("dispatch").container);
+
+        for(i in 0...cast(model, Cards).elements.length){
+
+           // Lib.trace("-------- : "+elem.content);
+
+            var elementDisplay = new CardsElementDisplay(cast(model, Cards).elements[i].content, grids.get("dispatch").cellSize.width, grids.get("dispatch").cellSize.height, elementTemplate.background);
+            elementsArray.push(elementDisplay);
             grids.get("dispatch").add(elementDisplay, false);
-            addChild(elementDisplay);
+            grids.get("dispatch").container.addChild(elementDisplay);
+
+
         }
+
+        grids.get("dispatch").alignContainer(grids.get("dispatch").container,background);
+
+
         super.onModelComplete(e);
     }
 
     override private function parseContent(content: Fast): Void
     {
         this.content = content;
-        Lib.trace("content.node.AnimationElement.att.id : "+content.node.AnimationElement.att.id);
+
         for(child in content.elements){
             if(child.name.toLowerCase() == "background"){
 
-                var background = cast(LoadData.getInstance().getElementDisplayInCache(child.att.src),Bitmap);
+               background = cast(LoadData.getInstance().getElementDisplayInCache(child.att.src),Bitmap);
+
                 ResizeManager.instance.addDisplayObjects(background, child);
                 addChild(background);
+
 
             } else if(child.name.toLowerCase() == "animationelement"){
                 var tilesheet = spriteSheets.get(content.node.AnimationElement.att.ref);
@@ -113,7 +141,9 @@ class CardsDisplay extends ActivityDisplay {
                 flipClip = new TileClip(content.node.AnimationElement.att.id);
                 flipClip.loop = false;
                 flipLayer.addChild(flipClip);
+
                 addChild (flipLayer.view);
+
 
             } else if(child.name.toLowerCase() == "popup"){
 //popUp.addChild(new Bitmap(Assets.getBitmapData(content.node.PopUp.att.background)));
@@ -125,22 +155,32 @@ class CardsDisplay extends ActivityDisplay {
                 popUp.addChild(icon);
                 popUp.addEventListener(MouseEvent.CLICK, onClosePopUp);
                 initDisplayObject(popUp, content.node.PopUp);
+
                 popUp.visible = false;
                 popUp.alpha = 0;
                 ResizeManager.instance.addDisplayObjects(popUp, content.node.PopUp);
                 addChild(popUp);
+
             }
         }
 
-        for(grid in content.nodes.Grid){
-            var g = new Grid(Std.parseInt(grid.att.numRow), Std.parseInt(grid.att.numCol), Std.parseFloat(grid.att.cellWidth), Std.parseFloat(grid.att.cellHeight));
-            g.x = Std.parseFloat(grid.att.y);
-            g.y = Std.parseFloat(grid.att.x);
-            grids.set(grid.att.ref, g);
-        }
+
 
         var elemNode = content.node.Element;
         elementTemplate = {background: elemNode.att.src};
+
+
+        for(grid in content.nodes.Grid){
+            var g = new Grid(Std.parseInt(grid.att.numRow), Std.parseInt(grid.att.numCol), grid.att.cellWidth, grid.att.cellHeight, Std.parseFloat(grid.att.gapCol), Std.parseFloat(grid.att.gapRow), Std.string(grid.att.alignX), Std.string(grid.att.alignY),elemNode.att.src);
+            g.x = Std.parseFloat(grid.att.x);
+            g.y = Std.parseFloat(grid.att.y);
+
+
+            grids.set(grid.att.ref, g);
+
+
+        }
+
 
 
     }
@@ -161,27 +201,28 @@ class CardsDisplay extends ActivityDisplay {
         setChildIndex(flipLayer.view, numChildren - 1);
         flipDirection = -1;
         addEventListener(Event.ENTER_FRAME,onEnterFrameClip);
-        Actuate.tween(flipLayer.view, 0.8, {x: cardInProgress.x+cardInProgress.width/2, y:cardInProgress.y+cardInProgress.height/2}).onComplete(launchCard);
+        Actuate.tween(flipLayer.view, 0.8, {x: grids.get("dispatch").container.x+cardInProgress.x+cardInProgress.width/2, y:grids.get("dispatch").container.y+cardInProgress.y+cardInProgress.height/2}).onComplete(launchCard);
     }
 
     private function launchCard() {
         flipLayer.view.visible = false;
-        for (i in 0...numChildren) {
-            if (Std.is(getChildAt(i), CardsElementDisplay)) {
-                getChildAt(i).visible = true;
-            }
+        for (i in 0...elementsArray.length) {
+
+            elementsArray[i].visible = true;
+
         }
         if (nextCard != null) {
             nextCard.visible = false;
             cardInProgress = nextCard;
-            flipLayer.view.x = cardInProgress.x + cardInProgress.width/2;
-            flipLayer.view.y = cardInProgress.y+ cardInProgress.height/2;
+            flipLayer.view.x = grids.get("dispatch").container.x+cardInProgress.x+cardInProgress.width/2;
+            flipLayer.view.y = grids.get("dispatch").container.y+cardInProgress.y+cardInProgress.height/2;
             setChildIndex(flipLayer.view, numChildren - 1);
             flipLayer.view.visible = true;
             flipDirection = 1;
             addEventListener(Event.ENTER_FRAME,onEnterFrameClip);
             Actuate.tween(flipLayer.view, 0.8, {x: popUp.x+popUp.width/2, y:popUp.y+popUp.height/2}).onComplete(showPopUp, [nextText]);
         }
+
     }
 
     private function showPopUp (pText:String) {
@@ -206,12 +247,5 @@ class CardsDisplay extends ActivityDisplay {
         for(grid in grids){
             grid.empty();
         }
-    }
-
-    private function new()
-    {
-        super();
-        grids = new Hash<Grid>();
-        popUp = new Sprite();
     }
 }

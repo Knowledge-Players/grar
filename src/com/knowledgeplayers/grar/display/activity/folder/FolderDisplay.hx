@@ -49,9 +49,20 @@ class FolderDisplay extends ActivityDisplay {
 
     private var content:Fast;
 
+    private var elementsArray:Array<FolderElementDisplay>;
+
+    private var background:Bitmap;
     /**
 * @return the instance
 **/
+
+    private function new()
+    {
+        super();
+        grids = new Hash<Grid>();
+        popUp = new Sprite();
+        elementsArray= new Array<FolderElementDisplay>();
+    }
 
     public static function getInstance(): FolderDisplay
     {
@@ -62,8 +73,11 @@ class FolderDisplay extends ActivityDisplay {
 
     public function drop(elem: FolderElementDisplay): Void
     {
+
+        addChild(grids.get("drop").container);
+
         if(cast(model, Folder).elements.get(elem.content).target == target.ref){
-            grids.get("drop").add(elem);
+            grids.get("drop").add(elem,false);
             elem.stopDrag();
             elem.blockElement();
         }
@@ -71,17 +85,27 @@ class FolderDisplay extends ActivityDisplay {
             elem.stopDrag();
             Actuate.tween(elem, 0.5, {x: elem.origin.x, y: elem.origin.y});
         }
+
+        grids.get("drop").alignContainer(grids.get("drop").container,background);
     }
 
     // Private
 
     override private function onModelComplete(e: LocaleEvent): Void
     {
+
+
+        addChild( grids.get("drag").container);
+
         for(elem in cast(model, Folder).elements){
             var elementDisplay = new FolderElementDisplay(elem.content, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
+            elementsArray.push(elementDisplay);
             grids.get("drag").add(elementDisplay, false);
-            addChild(elementDisplay);
+            grids.get("drag").container.addChild(elementDisplay);
+
         }
+
+        grids.get("drag").alignContainer(grids.get("drag").container,background);
 
 
         super.onModelComplete(e);
@@ -95,7 +119,7 @@ class FolderDisplay extends ActivityDisplay {
         for (child in content.elements){
             if(child.name.toLowerCase() == "background"){
 
-                var background=  cast(LoadData.getInstance().getElementDisplayInCache(child.att.src),Bitmap);
+                background=  cast(LoadData.getInstance().getElementDisplayInCache(child.att.src),Bitmap);
                 ResizeManager.instance.addDisplayObjects(background, child);
                 addChild(background);
             }
@@ -124,16 +148,22 @@ class FolderDisplay extends ActivityDisplay {
                 addChild(popUp);
             }
         }
-        for(grid in content.nodes.Grid){
-        var g = new Grid(Std.parseInt(grid.att.numRow), Std.parseInt(grid.att.numCol), Std.parseFloat(grid.att.cellWidth), Std.parseFloat(grid.att.cellHeight));
-        g.x = Std.parseFloat(grid.att.x);
-        g.y = Std.parseFloat(grid.att.y);
-        grids.set(grid.att.ref, g);
-    }
+
 
         var elemNode = content.node.Element;
         elementTemplate = {background:elemNode.att.src, buttonIcon: elemNode.att.buttonIcon, buttonPos: new Point(Std.parseFloat(elemNode.att.buttonX), Std.parseFloat(elemNode.att.buttonY))};
+        for(grid in content.nodes.Grid)
+        {
+            var g = new Grid(Std.parseInt(grid.att.numRow), Std.parseInt(grid.att.numCol), grid.att.cellWidth, grid.att.cellHeight, Std.parseFloat(grid.att.gapCol), Std.parseFloat(grid.att.gapRow), Std.string(grid.att.alignX), Std.string(grid.att.alignY),elemNode.att.src);
+            g.x = Std.parseFloat(grid.att.x);
+            g.y = Std.parseFloat(grid.att.y);
 
+
+
+            grids.set(grid.att.ref, g);
+
+        }
+        //
     }
 
 
@@ -150,12 +180,5 @@ class FolderDisplay extends ActivityDisplay {
         for(grid in grids){
             grid.empty();
         }
-    }
-
-    private function new()
-    {
-        super();
-        grids = new Hash<Grid>();
-        popUp = new Sprite();
     }
 }

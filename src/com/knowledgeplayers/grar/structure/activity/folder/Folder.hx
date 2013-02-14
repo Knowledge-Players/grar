@@ -34,7 +34,7 @@ class Folder extends Activity {
             var elem = new FolderElement(element.att.content, element.att.ref);
             if(element.has.target)
                 elem.target = element.att.target;
-            elements.set(elem.content, elem);
+                elements.set(elem.content, elem);
         }
     }
 }
