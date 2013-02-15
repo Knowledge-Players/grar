@@ -4,7 +4,7 @@ package com.knowledgeplayers.grar.display.activity.cards;
 import com.knowledgeplayers.grar.util.LoadData;
 import aze.display.TileClip;
 import aze.display.TileLayer;
-import com.knowledgeplayers.grar.display.activity.folder.Grid;
+import com.knowledgeplayers.grar.util.Grid;
 import Std;
 import nme.events.MouseEvent;
 import nme.display.SimpleButton;

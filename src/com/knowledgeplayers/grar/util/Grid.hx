@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.display.activity.folder;
+package com.knowledgeplayers.grar.util;
 
 import com.knowledgeplayers.grar.util.LoadData;
 import Std;

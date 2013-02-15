@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.util.Grid;
 import com.knowledgeplayers.grar.util.LoadData;
 import Std;
 import nme.events.MouseEvent;
