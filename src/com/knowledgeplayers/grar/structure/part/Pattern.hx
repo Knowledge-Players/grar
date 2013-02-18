@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import nme.Lib;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.factory.ItemFactory;
@@ -50,6 +51,7 @@ class Pattern implements PartElement {
         for(itemNode in xml.nodes.Text){
             var item: TextItem = ItemFactory.createItemFromXml(itemNode);
             patternContent.push(item);
+
         }
         for(button in xml.nodes.Button){
             buttons.set(button.att.ref, button.att.content);

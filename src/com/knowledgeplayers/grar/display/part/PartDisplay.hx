@@ -64,6 +64,7 @@ class PartDisplay extends Sprite {
     private var currentElement: PartElement;
     private var displayFast: Fast;
 
+
 /**
  * Constructor
  * @param	part : Part to display
@@ -76,11 +77,14 @@ class PartDisplay extends Sprite {
         displaysFast = new Hash<Fast>();
         displays = new Hash<{obj: DisplayObject, z: Int}>();
         resizeD = ResizeManager.getInstance();
+
         displayArea = this;
 
         XmlLoader.load(part.display, onLoadComplete, parseContent);
 
         addEventListener(TokenEvent.ADD, onTokenAdded);
+
+
     }
 
 /**
@@ -105,6 +109,7 @@ class PartDisplay extends Sprite {
             return null;
         }
         if(currentElement.isText()){
+
             setText(cast(currentElement, TextItem));
         }
         else if(currentElement.isActivity()){
@@ -150,6 +155,7 @@ class PartDisplay extends Sprite {
                 case "character": createCharacter(child);
                 case "button": createButton(child);
                 case "text": createText(child);
+                case "textgroup":createTextGroup(child);
 
             }
         }
@@ -282,6 +288,20 @@ class PartDisplay extends Sprite {
         addElement(text, textNode);
     }
 
+    private function createTextGroup(textNode:Fast):Void {
+       // Lib.trace("ref : "+textNode.att.ref);
+
+        for(child in textNode.elements)
+            {
+               // Lib.trace(child.att.ref);
+                switch(child.name.toLowerCase()){
+
+
+
+                }
+            }
+    }
+
     private function createCharacter(character: Fast)
     {
 //var bitmap = new Bitmap(Assets.getBitmapData(character.att.src));
@@ -308,12 +328,12 @@ class PartDisplay extends Sprite {
 
     private function setText(item: TextItem): Void
     {
-// Clean previous background
+        // Clean previous background
         if(previousBackground != null && previousBackground.ref != item.background){
             if(previousBackground.bmp != null)
                 displayArea.removeChild(previousBackground.bmp);
         }
-// Add new background
+        // Add new background
         if(item.background != null)
         {
             var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(item.background).att.src),Bitmap).bitmapData);

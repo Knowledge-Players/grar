@@ -137,6 +137,14 @@
                     <Data ss:Type="String">Smart Girl</Data>
                 </Cell>
             </Row>
+            <Row>
+                <Cell><Data ss:Type="String">text1</Data></Cell>
+                <Cell ss:StyleID="s65"><Data ss:Type="String">Contenu texte 1</Data></Cell>
+            </Row>
+            <Row>
+                <Cell><Data ss:Type="String">text2</Data></Cell>
+                <Cell ss:StyleID="s65"><Data ss:Type="String">Conclusion texte 2</Data></Cell>
+            </Row>
         </Table>
         <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
             <PageSetup>

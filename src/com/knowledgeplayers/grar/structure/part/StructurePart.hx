@@ -105,6 +105,7 @@ class StructurePart extends EventDispatcher, implements Part {
 
     public function init(xml: Fast, filePath: String = ""): Void
     {
+
         file = filePath;
 
         if(xml != null){

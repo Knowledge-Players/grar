@@ -6,4 +6,5 @@ interface PartElement {
     public function isText(): Bool;
 
     public function isPattern(): Bool;
+
 }

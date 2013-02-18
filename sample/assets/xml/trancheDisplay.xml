@@ -6,4 +6,10 @@
     <Character src="img/francoise_happy_office_dl.png" ref="francoise" width="662" height="660" x="100" y="00"/>
     <Text x="0" y="480" width="960" height="100" background="0xFFFFFF" ref="dialog"/>
     <Button id="continueButton" type="text" action="next" x="791" y="530" scaleX="1" scaleY="1" ref="next"/>
+    <TextGroup ref="group1">
+        <Text x="0" y="0" width="960" height="100" background="0xFFFFFF" ref="intro1" content="text1"/>
+    </TextGroup>
+    <TextGroup ref="group2">
+        <Text x="0" y="0" width="960" height="100" background="0xFFFFFF" ref="conclusion1" content="text2"/>
+    </TextGroup>
 </Display>

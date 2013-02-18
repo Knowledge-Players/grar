@@ -40,9 +40,20 @@ class DialogDisplay extends PartDisplay {
         tokens = new Hash<Bitmap>();
         resizeD = ResizeManager.getInstance();
         super(part);
+
+       var lg = part.arrayElements.length;
+
+        for ( i in 0...lg)
+        {
+            Lib.trace("---- "+cast(part.arrayElements[i],Fast).name);
+        }
     }
 
+
+
     // Private
+
+
 
     override private function next(event: ButtonActionEvent): Void
     {
@@ -51,6 +62,7 @@ class DialogDisplay extends PartDisplay {
 
     override private function startPattern(pattern: Pattern): Void
     {
+
         super.startPattern(pattern);
 
         if(currentPattern == null)
