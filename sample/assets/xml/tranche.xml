@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <Part>
-    <Text type="" content="intro" author="Thuynhan" direction="Right" background="labo" ref="persoCard"/>
-    <Text type="" content="objectives" author="Caroline" direction="Right" background="labo" ref="persoCard"/>
+    <Text type="" content="text1" author="" direction="" background="labo" ref="intro1"/>
+    <Text type="" content="text2" author="" direction="" background="labo" ref="intro2"/>
+
     <Part id="0" name="miniSims" type="dialog" file="wort.xml" display="wortDisplay.xml"/>
-    <Text type="" content="fetch" author="Thuynhan" direction="Right" background="labo" ref="fetch"/>
+
+    <Text type="" content="text2" author="" direction="" background="labo" ref="conclusion1"/>
     <Button ref="next" content="nextButton"/>
 </Part>

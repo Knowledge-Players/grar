@@ -114,8 +114,12 @@ class LoadData extends EventDispatcher {
                    {
                        if (nd.exists("src"))
                        {
-                           if (Std.string(nd.get("src")).charAt(0) !="0")
-                               arrayOfUrlImgs.push(nd.get("src"));
+                           if(Std.string(nd.get("src")).indexOf(".xml")==-1)
+                           {
+                               if (Std.string(nd.get("src")).charAt(0) !="0")
+                                   arrayOfUrlImgs.push(nd.get("src"));
+                           }
+
                        }
                        if (nd.exists("background"))
                        {
@@ -127,9 +131,7 @@ class LoadData extends EventDispatcher {
                            arrayOfUrlImgs.push(nd.get("buttonIcon"));
                        }
                    }
-
-
-           }
+                }
 
 
 
@@ -144,7 +146,7 @@ class LoadData extends EventDispatcher {
 
             for( i in 0...lgImgsArray ) {
 
-                //Lib.trace("-------------- image load "+arrayOfUrlImgs[i]);
+               // Lib.trace("-------------- image load "+arrayOfUrlImgs[i]);
 
                 loadData(arrayOfUrlImgs[i]);
 
@@ -262,7 +264,7 @@ class LoadData extends EventDispatcher {
     public function getElementDisplayInCache(_name:String):DisplayObject
     {
         var element: DisplayObject = null;
-
+        //Lib.trace("_name = "+_name);
         for (_key in cacheElementsDisplay.keys())
         {
            // Lib.trace("getElementDisplayInCache_key = "+_key);
@@ -270,7 +272,8 @@ class LoadData extends EventDispatcher {
             if(_key == _name)
             {
 
-                //Lib.trace("_name = "+_name);
+               // Lib.trace("_key = "+_key);
+
 
                  element = cacheElementsDisplay.get(_key);
 

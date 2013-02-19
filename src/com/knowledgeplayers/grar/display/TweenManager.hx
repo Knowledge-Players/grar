@@ -22,6 +22,7 @@ class TweenManager {
     public static function fadeIn(display: DisplayObject): IGenericActuator
     {
         display.alpha = 0;
+        display.visible = true;
         return Actuate.tween(display, 1, { alpha: 1 }).ease(Cubic.easeOut);
     }
 

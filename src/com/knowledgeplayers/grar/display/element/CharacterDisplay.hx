@@ -36,7 +36,7 @@ class CharacterDisplay extends Sprite {
     public function setImage(image: Bitmap): Bitmap
     {
 
-        Lib.trace("-----image : "+image);
+       // Lib.trace("-----image : "+image);
         if(this.image != null)
             removeChild(this.image);
         addChild(image);

@@ -8,9 +8,12 @@
     <Text x="0" y="0" width="960" height="100" background="0xFFFFFF" ref="persoCard"/>
     <Text x="210" y="480" width="560" height="100" background="0xFFFFFF" ref="fetch"/>
     <Button id="continueButton" type="text" action="next" x="791" y="530" scaleX="1" scaleY="1" ref="next"/>
+
     <TextGroup ref="group1">
         <Text x="0" y="0" width="960" height="100" background="0xFFFFFF" ref="intro1" content="text1"/>
+        <Text x="0" y="0" width="960" height="100" background="0xFFFFFF" ref="intro2" content="text2"/>
     </TextGroup>
+
     <TextGroup ref="group2">
         <Text x="0" y="0" width="960" height="100" background="0xFFFFFF" ref="conclusion1" content="text2"/>
     </TextGroup>

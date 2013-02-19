@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity;
 
+import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.util.SpriteSheetLoader;
 
 import Std;
@@ -70,10 +71,11 @@ class ActivityDisplay extends Sprite {
         testPreload();
         for(spr in display.nodes.SpriteSheet){
             var n = new SpriteSheetLoader();
-            var nom = Std.string(spr.att.src).split("/")[1];
-            var url = nom.split(".")[0]+".xml";
+            //var nom = Std.string(spr.att.src).split("/")[1];
+           // var url = nom.split(".")[0]+".xml";
             n.addEventListener("loaded", onSpriteSheetLoaded);
-            n.init(spr.att.id, url);
+
+            n.init(spr.att.id, spr.att.src);
         }
 
     }
