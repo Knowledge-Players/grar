@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Display>
+    <Background src="img/background.jpg" ref="labo"/>
+    <Background src="img/background2.jpg" ref="empty"/>
+    <Character src="img/characters/Thuynhan_happy.png" ref="Thuynhan_happy" width="661" height="660" x="00" y="00"/>
+    <Character src="img/characters/Caroline_happy.png" ref="Caroline_happy" width="662" height="660" x="100" y="00"/>
+    <Character src="img/characters/Thuynhan_thinking.png" ref="Thuynhan_thinking" width="661" height="660" x="00"
+               y="00"/>
+    <Character src="img/characters/Caroline_neutral.png" ref="Caroline_neutral" width="662" height="660" x="100"
+               y="00"/>
+    <Character src="img/characters/Thuynhan_neutral.png" ref="Thuynhan_neutral" width="661" height="660" x="00" y="00"/>
+    <Character src="img/characters/Caroline_worried.png" ref="Caroline_worried" width="662" height="660" x="100"
+               y="00"/>
+    <Character src="img/characters/Thuynhan_worried.png" ref="Thuynhan_worried" width="661" height="660" x="00" y="00"/>
+    <Text x="0" y="480" width="960" height="100" background="0xFFFFFF" ref="dialog"/>
+    <Button id="continueButton" type="text" action="next" x="791" y="530" scaleX="1" scaleY="1" ref="next"/>
+</Display>

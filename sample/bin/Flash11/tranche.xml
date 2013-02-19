@@ -1,11 +1,8 @@
 <?xml version="1.0"?>
 <Part>
-    <Text ref="intro1"/>
-    <Pattern type="Link" id="step0">
-        <Text type="" content="step0_0" author="enzo" direction="Left" background="labo" ref="dialog"/>
-        <Text type="" background="empty"/>
-        <Text type="" content="step0_2" author="francoise" direction="Right" background="labo" ref="dialog"/>
-        <Button ref="next" content="nextButton"/>
-    </Pattern>
-    <Text ref="conclusion1"/>
+    <Text type="" content="intro" author="Thuynhan" direction="Right" background="labo" ref="persoCard"/>
+    <Text type="" content="objectives" author="Caroline" direction="Right" background="labo" ref="persoCard"/>
+    <Part id="0" name="miniSims" type="dialog" file="wort.xml" display="wortDisplay.xml"/>
+    <Text type="" content="fetch" author="Thuynhan" direction="Right" background="labo" ref="fetch"/>
+    <Button ref="next" content="nextButton"/>
 </Part>

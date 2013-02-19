@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Part>
-    <Pattern type="Box" id="case1">
+    <Pattern type="Box" id="case1" next="case2">
         <Text type="" content="text1" author="perso1" background="bck1" ref="text1"/>
         <Button ref="next1" content="nextButton"/>
     </Pattern>
-    <Pattern type="Box" id="case2">
+    <Pattern type="Box" id="case2" next="case3">
         <Text type="" content="text2" author="perso2" background="bck1" ref="text2"/>
         <Button ref="next2" content="nextButton"/>
     </Pattern>
-    <Pattern type="Box" id="case3">
+    <Pattern type="Box" id="case3" next="">
         <Text type="" content="text3" author="perso3" background="bck1" ref="text3"/>
         <Button ref="next3" content="nextButton"/>
     </Pattern>

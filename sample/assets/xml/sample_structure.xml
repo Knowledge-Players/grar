@@ -20,7 +20,7 @@
     </Display>
     <!-- Structure of the application -->
     <Structure idObjective="">
-        <Part id="0" name="trancheDeVie" type="dialog" file="tranche.xml" display="trancheDisplay.xml"/>
+        <Part id="0" name="trancheDeVie" type="" file="tranche.xml" display="trancheDisplay.xml"/>
         <Part id="1" name="activities" type="" file="activities.xml" display="activitiesDisplay.xml"/>
         <Part id="2" name="bild" type="strip" file="strip.xml" display="stripDisplay.xml"/>
     </Structure>
