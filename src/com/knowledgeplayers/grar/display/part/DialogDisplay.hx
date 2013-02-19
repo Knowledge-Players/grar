@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import nme.events.MouseEvent;
+import com.knowledgeplayers.grar.structure.part.dialog.pattern.ChoicePattern;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
@@ -25,7 +28,6 @@ import nme.Lib;
 
 class DialogDisplay extends PartDisplay {
 
-    private var verticalButton: CustomEventButton;
     private var tokens: Hash<Bitmap>;
     private var displayedToken: Bitmap;
     private var currentPattern: Pattern;
@@ -41,19 +43,14 @@ class DialogDisplay extends PartDisplay {
         resizeD = ResizeManager.getInstance();
         super(part);
 
-       var lg = part.arrayElements.length;
+        var lg = part.arrayElements.length;
 
-        for ( i in 0...lg)
-        {
-            Lib.trace("---- "+cast(part.arrayElements[i],Fast).name);
+        for(i in 0...lg){
+            Lib.trace("---- " + cast(part.arrayElements[i], Fast).name);
         }
     }
 
-
-
     // Private
-
-
 
     override private function next(event: ButtonActionEvent): Void
     {
@@ -73,14 +70,14 @@ class DialogDisplay extends PartDisplay {
             displayedToken = null;
         }
 
+        if(currentPattern.hasChoices()){
+            displayChoices();
+        }
+
         var nextItem = pattern.getNextItem();
         if(nextItem != null){
             setText(nextItem);
 
-            if(nextItem.hasVerticalFlow())
-                verticalButton.enabled = true;
-            else if(verticalButton != null)
-                verticalButton.enabled = false;
             if(nextItem.hasActivity()){
                 launchActivity(cast(nextItem, RemarkableEvent).activity);
             }
@@ -89,38 +86,18 @@ class DialogDisplay extends PartDisplay {
             this.nextElement();
     }
 
-    private function vertical(event: ButtonActionEvent): Void
-    {
-        var item: TextItem = cast(part, DialogPart).getNextVerticalIndex();
-        if(item != null){
-            setText(item);
-
-            if(item.hasVerticalFlow() && cast(item, ChoiceItem).hasToken()){
-                var token: Bitmap = tokens.get(cast(item, ChoiceItem).tokenId);
-                if(token != null){
-                    displayedToken = token;
-                    addChild(displayedToken);
-                }
-            }
-            else{
-                Lib.trace("Token's ID is not referenced in the display");
-            }
-        }
-    }
-
-    override private function setButtonAction(button: CustomEventButton, action: String): Void
+    /*override private function setButtonAction(button: CustomEventButton, action: String): Void
     {
         var listener: ButtonActionEvent -> Void = null;
         switch(action.toLowerCase()) {
             case ButtonActionEvent.NEXT: listener = next;
-            case ButtonActionEvent.VERTICAL_FLOW: listener = vertical;
-                verticalButton = button;
-                verticalButton.enabled = false;
             default: Lib.trace(action + ": this action is not supported for this part");
         }
 
         button.addEventListener(action.toLowerCase(), listener);
-    }
+    }*/
+
+    // Privates
 
     override private function parseContent(content: Xml): Void
     {
@@ -137,6 +114,24 @@ class DialogDisplay extends PartDisplay {
             tokens.set(tokenNode.att.name, token);
 
             dispatchEvent(new TokenEvent(TokenEvent.ADD, true));
+        }
+    }
+
+    private function displayChoices(): Void
+    {
+        for(choice in cast(currentPattern, ChoicePattern).choices){
+            displays.get(choice.ref).obj.addEventListener(MouseEvent.CLICK, goToPattern);
+            addChildAt(displays.get(choice.ref).obj, displays.get(choice.ref).z);
+        }
+    }
+
+    private function goToPattern(ev: MouseEvent): Void
+    {
+        var choice = cast(ev.target, DefaultButton);
+        var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
+        for(elem in part.elements){
+            if(elem.isPattern() && cast(elem, Pattern).name == target)
+                startPattern(cast(elem, Pattern));
         }
     }
 }

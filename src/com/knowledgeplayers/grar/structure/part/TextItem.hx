@@ -103,4 +103,13 @@ class TextItem implements PartElement {
         return false;
     }
 
+    /**
+    * @return false
+**/
+
+    public function isPart(): Bool
+    {
+        return false;
+    }
+
 }

@@ -10,7 +10,7 @@ import haxe.xml.Fast;
 
 class ActivityPattern extends Pattern {
     /**
-     * Item that will triger an activity
+     * Item that will trigger an activity
      */
     public var event: RemarkableEvent;
 
@@ -21,13 +21,11 @@ class ActivityPattern extends Pattern {
 
     override public function init(xml: Fast): Void
     {
-        for(itemNode in xml.nodes.TextItem){
-            var item: TextItem = ItemFactory.createItemFromXml(itemNode);
+        super.init(xml);
+
+        for(item in patternContent){
             if(Std.is(item, RemarkableEvent))
                 event = cast(item, RemarkableEvent);
-            else
-                item.content = itemNode.att.content;
-            patternContent.push(item);
         }
     }
 }

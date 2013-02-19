@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import String;
 import nme.display.Bitmap;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import nme.events.Event;
@@ -21,7 +22,7 @@ import nme.Lib;
 
 class UiFactory {
     private static var tilesheet: TilesheetEx;
-    private static var layerPath:String;
+    private static var layerPath: String;
 
     private function new()
     {
@@ -36,15 +37,16 @@ class UiFactory {
      * @return the created button
      */
 
-    public static function createButton(buttonType: String, tile: String, ?action: String): DefaultButton
+    public static function createButton(buttonType: String, ref: String, tile: String, ?action: String): DefaultButton
     {
-        var creation: DefaultButton = null;
+        var creation: DefaultButton =
         switch(buttonType.toLowerCase()) {
-            case "text": creation = new TextButton(tilesheet, tile, action);
-            case "event": creation = new CustomEventButton(action, tilesheet, tile);
-            case "anim": creation = new AnimationButton(tilesheet, tile, action);
-            default: creation = new DefaultButton(tilesheet, tile);
+            case "text": new TextButton(tilesheet, tile, action);
+            case "event": new CustomEventButton(action, tilesheet, tile);
+            case "anim": new AnimationButton(tilesheet, tile, action);
+            default: new DefaultButton(tilesheet, tile);
         }
+        creation.ref = ref;
 
         return creation;
     }
@@ -72,7 +74,7 @@ class UiFactory {
 
     public static function createButtonFromXml(xml: Fast): DefaultButton
     {
-        return createButton(xml.att.type, xml.att.id, (xml.has.action ? xml.att.action : null));
+        return createButton(xml.att.type, xml.att.ref, xml.att.id, (xml.has.action ? xml.att.action : null));
     }
 
     /**
@@ -84,20 +86,18 @@ class UiFactory {
     {
         layerPath = pathToXml.substr(0, pathToXml.indexOf("."));
 
-        XmlLoader.load(layerPath+".xml",onXmlLoaded,parseContent);
+        XmlLoader.load(layerPath + ".xml", onXmlLoaded, parseContent);
     }
-
 
     private static function parseContent(content: Xml): Void
     {
         onXmlLoaded();
     }
 
+    public static function onXmlLoaded(e: Event = null): Void
+    {
 
-    public static function onXmlLoaded(e:Event=null):Void{
-
-        Lib.trace("---------- on xml loaded : "+LoadData.getInstance().getElementDisplayInCache(layerPath+".png"));
-        tilesheet = new SparrowTilesheet(cast(LoadData.getInstance().getElementDisplayInCache(layerPath+".png"),Bitmap).bitmapData, XmlLoader.getXml(e).toString());
+        tilesheet = new SparrowTilesheet(cast(LoadData.getInstance().getElementDisplayInCache(layerPath + ".png"), Bitmap).bitmapData, XmlLoader.getXml(e).toString());
 
     }
 }

@@ -100,6 +100,15 @@ class Activity extends EventDispatcher, implements PartElement {
         return false;
     }
 
+    /**
+    * @return false
+**/
+
+    public function isPart(): Bool
+    {
+        return false;
+    }
+
     // Privates
 
     private function onLocaleComplete(e: LocaleEvent): Void

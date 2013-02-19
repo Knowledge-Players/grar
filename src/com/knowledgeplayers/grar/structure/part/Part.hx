@@ -8,7 +8,7 @@ import haxe.xml.Fast;
 import nme.events.IEventDispatcher;
 import nme.media.Sound;
 
-interface Part implements IEventDispatcher {
+interface Part implements IEventDispatcher, implements PartElement {
     public var name (default, default): String;
     public var id (default, default): Int;
     public var file (default, null): String;
@@ -17,7 +17,6 @@ interface Part implements IEventDispatcher {
 
     public var characters (default, null): Hash<Character>;
     public var options (default, null): Hash<String>;
-    public var parts (default, null): IntHash<Part>;
     public var elements (default, null): Array<PartElement>;
     public var inventory (default, null): Array<String>;
     public var soundLoop (default, default): Sound;
@@ -27,8 +26,6 @@ interface Part implements IEventDispatcher {
     public function start(forced: Bool = false): Null<Part>;
 
     public function restart(): Void;
-
-    public function getNextPart(): Null<Part>;
 
     public function getNextElement(): Null<PartElement>;
 
@@ -41,4 +38,12 @@ interface Part implements IEventDispatcher {
     public function isDialog(): Bool;
 
     public function isStrip(): Bool;
+
+    public function isActivity(): Bool;
+
+    public function isText(): Bool;
+
+    public function isPattern(): Bool;
+
+    public function isPart(): Bool;
 }

@@ -102,8 +102,6 @@ class KpGame extends EventDispatcher, implements Game {
         for(part in structureNode.nodes.Part){
             addPartFromXml(Std.parseInt(part.att.id), part);
         }
-
-        checkIntegrity();
     }
 
     /**
@@ -126,7 +124,7 @@ class KpGame extends EventDispatcher, implements Game {
      * @return the next part or null if the game is over
      */
 
-    public function next(): Null<Part>
+    /*public function next(): Null<Part>
     {
         if(partIndex == Lambda.count(parts)){
             return null;
@@ -138,7 +136,7 @@ class KpGame extends EventDispatcher, implements Game {
         }
         else
             return nextPart;
-    }
+    }*/
 
     /**
      * Add a part to the game at partIndex
@@ -267,6 +265,7 @@ class KpGame extends EventDispatcher, implements Game {
     {
         nbPartsLoaded++;
         if(getLoadingCompletion() == 1){
+            checkIntegrity();
             for(part in getAllParts())
                 part.isDone = stateInfos.activityCompletion[part.id];
             dispatchEvent(new PartEvent(PartEvent.PART_LOADED));

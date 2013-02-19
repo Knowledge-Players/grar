@@ -68,6 +68,7 @@ class GameDisplay extends Sprite {
         else{
             currentPart.addEventListener(PartEvent.EXIT_PART, onExitPart);
             currentPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+            currentPart.addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
         }
     }
 
@@ -104,9 +105,25 @@ class GameDisplay extends Sprite {
 
     private function onPartLoaded(event: PartEvent): Void
     {
-        currentPart.startPart();
-        TweenManager.fadeIn(currentPart);
-        addChild(currentPart);
+        var partDisplay = cast(event.target, PartDisplay);
+        partDisplay.startPart();
+        TweenManager.fadeIn(partDisplay);
+        addChild(partDisplay);
     }
 
+    private function onExitSubPart(event: PartEvent): Void
+    {
+        var subPart = cast(event.target, PartDisplay);
+        subPart.unLoad();
+        removeChild(subPart);
+        currentPart.visible = true;
+    }
+
+    public function onEnterSubPart(event: PartEvent): Void
+    {
+        currentPart.visible = false;
+        var subPart: PartDisplay = DisplayFactory.createPartDisplay(event.part);
+        subPart.addEventListener(PartEvent.EXIT_PART, onExitSubPart);
+        subPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+    }
 }

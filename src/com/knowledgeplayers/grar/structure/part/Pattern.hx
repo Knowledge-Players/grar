@@ -24,6 +24,11 @@ class Pattern implements PartElement {
     public var itemIndex (default, default): Int;
 
     /**
+    * Id of the next pattern
+**/
+    public var nextPattern (default, default): String;
+
+    /**
     * Buttons for this pattern
 **/
     public var buttons (default, null): Hash<String>;
@@ -56,6 +61,7 @@ class Pattern implements PartElement {
         for(button in xml.nodes.Button){
             buttons.set(button.att.ref, button.att.content);
         }
+        nextPattern = xml.att.next;
     }
 
     /**
@@ -82,6 +88,17 @@ class Pattern implements PartElement {
     }
 
     /**
+    * @return whether this pattern has choice or not
+**/
+
+    public function hasChoices(): Bool
+    {
+        return false;
+    }
+
+    // PartElement implementation
+
+    /**
     * @return false
 **/
 
@@ -106,6 +123,15 @@ class Pattern implements PartElement {
     public function isPattern(): Bool
     {
         return true;
+    }
+
+    /**
+    * @return false
+**/
+
+    public function isPart(): Bool
+    {
+        return false;
     }
 
 }

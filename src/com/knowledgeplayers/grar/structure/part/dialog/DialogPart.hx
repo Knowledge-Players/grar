@@ -6,7 +6,6 @@ import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.Game;
 import com.knowledgeplayers.grar.structure.part.dialog.item.ChoiceItem;
 import com.knowledgeplayers.grar.structure.part.TextItem;
-import com.knowledgeplayers.grar.structure.part.dialog.pattern.CollectPattern;
 import haxe.xml.Fast;
 import nme.Lib;
 
@@ -19,12 +18,10 @@ import com.knowledgeplayers.grar.factory.PatternFactory;
  * @author jbrichardet
  */
 
-
-
 class DialogPart extends StructurePart {
 
-    public var arrayTexts:Array<Fast>;
-    public var arrayElements:Array<Fast>;
+    public var arrayTexts: Array<Fast>;
+    public var arrayElements: Array<Fast>;
 
     public function new()
     {
@@ -43,7 +40,7 @@ class DialogPart extends StructurePart {
      * @return the next item in a vertical flow, or null if the flow reach its end
      */
 
-    public function getNextVerticalIndex(): Null<ChoiceItem>
+    /*public function getNextVerticalIndex(): Null<ChoiceItem>
     {
         var collect: CollectPattern = null;
         if(Std.is(elements[elemIndex], CollectPattern))
@@ -60,7 +57,7 @@ class DialogPart extends StructurePart {
         }
 
         return item;
-    }
+    }*/
 
     override public function restart(): Void
     {
@@ -75,24 +72,21 @@ class DialogPart extends StructurePart {
     {
         super.parseContent(content);
 
-
         var partFast: Fast = new Fast(content).node.Part;
 
-        for (elment in partFast.elements)
-            {
-                arrayElements.push(elment);
+        for(elment in partFast.elements){
+            arrayElements.push(elment);
 
-                if (elment.name == "Pattern"){
-                    var pattern: Pattern = PatternFactory.createPatternFromXml(elment);
-                    pattern.init(elment);
-                    elements.push(pattern);
-                }
-                if (elment.name == "Text"){
-
-                    arrayTexts.push(elment);
-                    }
+            if(elment.name == "Pattern"){
+                var pattern: Pattern = PatternFactory.createPatternFromXml(elment);
+                pattern.init(elment);
+                elements.push(pattern);
             }
+            if(elment.name == "Text"){
 
+                arrayTexts.push(elment);
+            }
+        }
 
     }
 
