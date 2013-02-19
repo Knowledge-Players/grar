@@ -56,11 +56,6 @@ class StructurePart extends EventDispatcher, implements Part {
     public var options (default, null): Hash<String>;
 
     /**
-     * Hash of the sub-parts
-     */
-    public var parts (default, null): IntHash<Part>;
-
-    /**
      * Inventory specific to the part
      */
     public var inventory (default, null): Array<String>;
@@ -89,7 +84,6 @@ class StructurePart extends EventDispatcher, implements Part {
     public function new()
     {
         super();
-        parts = new IntHash<Part>();
         options = new Hash<String>();
         inventory = new Array<String>();
         elements = new Array<PartElement>();
@@ -155,7 +149,7 @@ class StructurePart extends EventDispatcher, implements Part {
      * @return the next undone part
      */
 
-    public function getNextPart(): Null<Part>
+    /*public function getNextPart(): Null<Part>
     {
         var part: Part = null;
         if(hasParts()){
@@ -174,7 +168,7 @@ class StructurePart extends EventDispatcher, implements Part {
             return part.start();
         else
             return part;
-    }
+    }*/
 
     /**
      * Tell if this part has sub-part or not
@@ -183,7 +177,11 @@ class StructurePart extends EventDispatcher, implements Part {
 
     public function hasParts(): Bool
     {
-        return Lambda.count(parts) != 0;
+        for(elem in elements){
+            if(elem.isPart())
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -194,11 +192,12 @@ class StructurePart extends EventDispatcher, implements Part {
     {
         var array = new Array<Part>();
         if(hasParts()){
-            for(part in parts){
-                array = array.concat(part.getAllParts());
+            for(elem in elements){
+                if(elem.isPart())
+                    array = array.concat(cast(elem, Part).getAllParts());
             }
         }
-        else
+        if(elements.length > 0)
             array.push(this);
         return array;
     }
@@ -209,8 +208,7 @@ class StructurePart extends EventDispatcher, implements Part {
 
     override public function toString(): String
     {
-        return "Part " + name + " " + file + " has " +
-        (hasParts() ? "parts: \n" + parts.toString() : "no part");
+        return "Part " + name + " " + file + " : " + elements.toString();
     }
 
     public function restart(): Void
@@ -237,6 +235,45 @@ class StructurePart extends EventDispatcher, implements Part {
     {
         return false;
     }
+
+    // Implements PartElement
+
+    /**
+    * @return false
+**/
+
+    public function isActivity(): Bool
+    {
+        return false;
+    }
+
+    /**
+    * @return false
+**/
+
+    public function isText(): Bool
+    {
+        return false;
+    }
+
+    /**
+    * @return false
+**/
+
+    public function isPattern(): Bool
+    {
+        return false;
+    }
+
+    /**
+    * @return true
+**/
+
+    public function isPart(): Bool
+    {
+        return true;
+    }
+
     // Private
 
     private function parseContent(content: Xml): Void
@@ -245,11 +282,14 @@ class StructurePart extends EventDispatcher, implements Part {
 
         for(child in partFast.elements){
             switch(child.name.toLowerCase()){
-                case "item": elements.push(ItemFactory.createItemFromXml(child));
+                case "text": elements.push(ItemFactory.createItemFromXml(child));
                 case "activity": elements.push(ActivityFactory.createActivityFromXml(child));
+                case "part": nbSubPartTotal++;
+                    createPart(child);
             }
         }
-        fireLoaded();
+        if(nbSubPartLoaded == nbSubPartTotal)
+            fireLoaded();
     }
 
     private function parseXml(xml: Fast): Void
@@ -267,11 +307,7 @@ class StructurePart extends EventDispatcher, implements Part {
                 nbSubPartTotal++;
             }
             for(partNode in xml.nodes.Part){
-                var part: Part = PartFactory.createPartFromXml(partNode);
-                part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-                part.addEventListener(TokenEvent.ADD, onAddToken);
-                part.init(partNode);
-                parts.set(Std.parseInt(partNode.att.id), part);
+                createPart(partNode);
             }
         }
         if(xml.has.Options){
@@ -283,6 +319,15 @@ class StructurePart extends EventDispatcher, implements Part {
                 }
             }
         }
+    }
+
+    private function createPart(partNode: Fast): Void
+    {
+        var part: Part = PartFactory.createPartFromXml(partNode);
+        part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+        part.addEventListener(TokenEvent.ADD, onAddToken);
+        part.init(partNode);
+        elements.push(part);
     }
 
     // Handlers

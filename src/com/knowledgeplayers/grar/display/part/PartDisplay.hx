@@ -2,7 +2,6 @@ package com.knowledgeplayers.grar.display.part;
 
 import nme.display.Bitmap;
 import com.knowledgeplayers.grar.util.LoadData;
-import Std;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import haxe.FastList;
@@ -44,14 +43,14 @@ import nme.Lib;
  * Display of a part
  */
 class PartDisplay extends Sprite {
-/**
- * Part model to display
- */
+    /**
+     * Part model to display
+     */
     public var part: Part;
 
-/**
-* Current activity displayed. Null if there is not
-**/
+    /**
+    * Current activity displayed. Null if there is not
+    **/
     public var activityDisplay (default, null): ActivityDisplay;
 
     private var resizeD: ResizeManager;
@@ -64,11 +63,10 @@ class PartDisplay extends Sprite {
     private var currentElement: PartElement;
     private var displayFast: Fast;
 
-
-/**
- * Constructor
- * @param	part : Part to display
- */
+    /**
+     * Constructor
+     * @param	part : Part to display
+     */
 
     public function new(part: Part)
     {
@@ -84,12 +82,11 @@ class PartDisplay extends Sprite {
 
         addEventListener(TokenEvent.ADD, onTokenAdded);
 
-
     }
 
-/**
- * Unload the display from the scene
- */
+    /**
+     * Unload the display from the scene
+     */
 
     public function unLoad(): Void
     {
@@ -97,16 +94,16 @@ class PartDisplay extends Sprite {
             removeChildAt(numChildren - 1);
     }
 
-/**
-* @return the TextItem in the part or null if there is an activity or the part is over
-**/
+    /**
+    * @return the TextItem in the part or null if there is an activity or the part is over
+    **/
 
     public function nextElement(): Void
     {
         currentElement = part.getNextElement();
         if(currentElement == null){
             dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
-            return null;
+            return;
         }
         if(currentElement.isText()){
 
@@ -126,19 +123,23 @@ class PartDisplay extends Sprite {
             else
                 startPattern(cast(currentElement, Pattern));
         }
-        return null;
+        else if(currentElement.isPart()){
+            var event = new PartEvent(PartEvent.ENTER_SUB_PART);
+            event.part = cast(currentElement, Part);
+            dispatchEvent(event);
+        }
     }
 
-/**
-* Start the part
-**/
+    /**
+    * Start the part
+    **/
 
     public function startPart(): Void
     {
         nextElement();
     }
 
-// Private
+    // Private
 
     private function onTokenAdded(e: TokenEvent): Void
     {}
@@ -187,7 +188,6 @@ class PartDisplay extends Sprite {
 
     private function launchActivity(activity: Activity)
     {
-        Lib.trace("act");
         activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
         var activityName: String = Type.getClassName(Type.getClass(activity));
         activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
@@ -196,16 +196,16 @@ class PartDisplay extends Sprite {
         activityDisplay.model = activity;
     }
 
-/*private function onActivityEnd(e: PartEvent): Void
-{
-
-    if(e != null)
+    /*private function onActivityEnd(e: PartEvent): Void
     {
-     cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
-     cleanActivity();
-    }
-    nextElement();
-}*/
+
+        if(e != null)
+        {
+         cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
+         cleanActivity();
+        }
+        nextElement();
+    }*/
 
     private function onActivityEnd(e: PartEvent): Void
     {
@@ -260,9 +260,9 @@ class PartDisplay extends Sprite {
     private function createItem(itemNode: Fast): Void
     {
 
-//var itemBmp: Bitmap = new Bitmap(Assets.getBitmapData(itemNode.att.src));
+        //var itemBmp: Bitmap = new Bitmap(Assets.getBitmapData(itemNode.att.src));
 
-        var itemBmp: Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src),Bitmap).bitmapData);
+        var itemBmp: Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src), Bitmap).bitmapData);
 
         addElement(itemBmp, itemNode);
     }
@@ -288,26 +288,21 @@ class PartDisplay extends Sprite {
         addElement(text, textNode);
     }
 
-    private function createTextGroup(textNode:Fast):Void {
-       // Lib.trace("ref : "+textNode.att.ref);
+    private function createTextGroup(textNode: Fast): Void
+    {
+        // Lib.trace("ref : "+textNode.att.ref);
 
-        for(child in textNode.elements)
-            {
-               // Lib.trace(child.att.ref);
-                switch(child.name.toLowerCase()){
+        for(child in textNode.elements){
+            // Lib.trace(child.att.ref);
+            switch(child.name.toLowerCase()){
 
-
-
-                }
             }
+        }
     }
 
     private function createCharacter(character: Fast)
     {
-//var bitmap = new Bitmap(Assets.getBitmapData(character.att.src));
-
-
-        var bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(character.att.src),Bitmap).bitmapData);
+        var bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(character.att.src), Bitmap).bitmapData);
 
         var char: CharacterDisplay = new CharacterDisplay(bitmap, new Character(character.att.ref));
         char.visible = false;
@@ -334,19 +329,17 @@ class PartDisplay extends Sprite {
                 displayArea.removeChild(previousBackground.bmp);
         }
         // Add new background
-        if(item.background != null)
-        {
-            var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(item.background).att.src),Bitmap).bitmapData);
-            if(bkg != null)
-            {
-                displayArea.addChildAt(bkg,0);
+        if(item.background != null){
+            var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(item.background).att.src), Bitmap).bitmapData);
+            if(bkg != null){
+                displayArea.addChildAt(bkg, 0);
             }
 
             previousBackground = {ref: item.background, bmp: bkg};
             if(bkg != null)
                 resizeD.addDisplayObjects(bkg, displaysFast.get(item.background));
         }
-// Remove text area if there is no text
+        // Remove text area if there is no text
         if(item.content == null){
             var toRemove = new FastList<DisplayObject>();
             for(i in 0...numChildren){
@@ -357,7 +350,7 @@ class PartDisplay extends Sprite {
                 removeChild(obj);
         }
         else{
-// Set text and display author
+            // Set text and display author
             var content = Localiser.getInstance().getItemContent(item.content);
             if(item.author != null && displays.exists(item.author)){
 
@@ -424,7 +417,7 @@ class PartDisplay extends Sprite {
             return 0;
     }
 
-// Handlers
+    // Handlers
 
     private function onLoadComplete(event: Event): Void
     {
