@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- WARNING: the size of the app is set in the NMML file -->
+<Layouts>
+    <Layout ref="default" rows="100,*,50">
+        <Row columns="50%,*">
+            <Column>
+                <Zone ref="header">
+                    <Button id="" type="text" x="400" y="400" scaleX="1" scaleY="1"/>
+                    <Image id="" x="400" y="400" width="" height=""/>
+                    <Background src=""/>
+                    <Text content="$MODULE_NAME$" x="400" y="400" width="" height=""/>
+                    <Menu type="part/activity/both" direction="horizontal/vertical" x="" y="" width="" height="">
+                        <Part>
+                            <Button id="partButton" type="text" x="400" y="400" scaleX="1" scaleY="1"/>
+                            <Image id="" x="400" y="400" width="" height=""/>
+                        </Part>
+                        <Activity>
+                            <Button id="activityButton" type="text" x="400" y="400" scaleX="1" scaleY="1"/>
+                        </Activity>
+                    </Menu>
+                </Zone>
+            </Column>
+            <Column>
+                <Zone ref="menu">
+                    <Button/>
+                    <Image/>
+                </Zone>
+            </Column>
+        </Row>
+        <Row>
+            <Zone ref="main"/>
+        </Row>
+        <Row>
+            <Zone ref="footer">
+
+            </Zone>
+        </Row>
+    </Layout>
+    <Layout ref="fullscreen">
+        <Zone ref="main">
+        </Zone>
+    </Layout>
+    <Layout ref="popUp" rows="100,*,50">
+        <Row columns="50%,*">
+            <Column>
+                <Zone ref="header">
+                    <Button/>
+                    <Image/>
+                </Zone>
+            </Column>
+            <Column>
+                <Zone ref="menu">
+                    <Button/>
+                    <Image/>
+                </Zone>
+            </Column>
+        </Row>
+        <Row columns="90%, *">
+            <Column>
+                <Zone ref="main">
+                </Zone>
+            </Column>
+            <Column>
+                <Zone ref="popUp">
+
+                </Zone>
+            </Column>
+        </Row>
+        <Row>
+            <Zone ref="footer">
+
+            </Zone>
+        </Row>
+    </Layout>
+</Layouts>

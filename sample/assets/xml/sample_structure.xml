@@ -7,6 +7,8 @@
         <Title>SAMPLE ACTIVITY</Title>
         <!-- State of the local save -->
         <State>fr@1@0-0-0@3</State>
+        <!-- Layout file for the app -->
+        <Layout file="layout.xml"/>
         <!-- Paths to the langages files -->
         <Languages file="lang.xml"/>
     </Parameters>
@@ -19,7 +21,7 @@
         <Ui display="ui/ui.xml"/>
     </Display>
     <!-- Structure of the application -->
-    <Structure idObjective="">
+    <Structure idObjective="" ref="main">
         <Part id="0" name="trancheDeVie" type="" file="tranche.xml" display="trancheDisplay.xml"/>
         <Part id="1" name="activities" type="" file="activities.xml" display="activitiesDisplay.xml"/>
         <Part id="2" name="bild" type="strip" file="strip.xml" display="stripDisplay.xml"/>
