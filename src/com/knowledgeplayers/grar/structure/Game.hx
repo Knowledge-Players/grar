@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.grar.display.LayoutDisplay;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.tracking.Connection;
 import haxe.xml.Fast;
@@ -10,6 +11,7 @@ interface Game implements IEventDispatcher {
     public var title (default, default): String;
     public var state (default, default): String;
     public var inventory (default, null): Array<String>;
+    public var layout(default,null):LayoutDisplay;
 
     public function start(partId: Int = 0): Null<Part>;
 
@@ -20,6 +22,7 @@ interface Game implements IEventDispatcher {
     public function getAllParts(): Array<Part>;
 
     public function addLanguage(value: String, path: String, flagIconPath: String): Void;
+
 
     public function initTracking(?mode: Mode): Void;
 
