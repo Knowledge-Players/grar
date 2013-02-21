@@ -2,7 +2,7 @@
 <!-- WARNING: the size of the app is set in the NMML file -->
 <Layouts>
     <Layout ref="default" rows="100,*,50">
-        <Row columns="50%,*" >
+        <Row columns="50%,*">
             <Column>
                 <Zone ref="header">
                     <Button id="" type="text" x="400" y="400" scaleX="1" scaleY="1"/>
@@ -16,6 +16,7 @@
                         </Part>
                         <Activity>
                             <Button id="activityButton" type="text" x="400" y="400" scaleX="1" scaleY="1"/>
+
                         </Activity>
                     </Menu>
                 </Zone>
