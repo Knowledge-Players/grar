@@ -93,7 +93,7 @@ class GameDisplay extends Sprite {
 
     private function displayMenu()
     {
-        game.layout.init();
+        game.layout.init(this);
 
         menu = new MenuDisplay(game);
         menu.launchPart = launchPart;

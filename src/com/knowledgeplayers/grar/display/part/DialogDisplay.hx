@@ -41,9 +41,14 @@ class DialogDisplay extends PartDisplay {
         tokens = new Hash<Bitmap>();
         resizeD = ResizeManager.getInstance();
         super(part);
+
     }
 
+
+
     // Private
+
+
 
     override private function next(event: ButtonActionEvent): Void
     {
