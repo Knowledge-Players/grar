@@ -1,4 +1,7 @@
 package com.knowledgeplayers.grar.display.component.button;
+
+import nme.display.Sprite;
+import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
@@ -8,7 +11,8 @@ import com.knowledgeplayers.grar.display.text.StyledTextField;
  */
 
 class TextButton extends CustomEventButton {
-    private var textField: StyledTextField;
+    private var text: String;
+    private var textSprite: Sprite;
 
     /**
      * Constructor
@@ -25,12 +29,7 @@ class TextButton extends CustomEventButton {
         if(eventName == null)
             propagateNativeEvent = true;
 
-        textField = new StyledTextField();
-        textField.selectable = false;
-        textField.mouseEnabled = false;
         setText(text);
-
-        addChild(textField);
     }
 
     /**
@@ -40,31 +39,22 @@ class TextButton extends CustomEventButton {
 
     public function setText(text: String): Void
     {
-        if(text != null)
-            textField.text = text;
-
+        textSprite = KpTextDownParser.parse(text);
         centerText();
-    }
-
-    /**
-     * @return the text of the button
-     */
-
-    public function getText(): String
-    {
-        return textField.text;
+        if(!contains(textSprite))
+            addChild(textSprite);
     }
 
     // Private
 
     private function centerText(): Void
     {
-        textField.x = -textField.width / 2;
-        textField.y = -(textField.height / 2);
+        textSprite.x = -textSprite.width / 2;
+        textSprite.y = -(textSprite.height / 2);
 
         #if flash
 			 // Remove 3px to match the center of the button
-			textField.y -= 3;
+			textSprite.y -= 3;
 		#end
     }
 

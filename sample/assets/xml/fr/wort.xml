@@ -7,14 +7,14 @@
         <Author>Vincent BLIN</Author>
         <LastAuthor>Jean-Baptiste Richardet</LastAuthor>
         <Created>2010-08-02T16:10:31Z</Created>
-        <LastSaved>2012-04-12T08:53:14Z</LastSaved>
+        <LastSaved>2013-02-20T16:10:02Z</LastSaved>
         <Version>14.0</Version>
     </DocumentProperties>
     <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
         <AllowPNG/>
     </OfficeDocumentSettings>
     <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
-        <WindowHeight>12040</WindowHeight>
+        <WindowHeight>12100</WindowHeight>
         <WindowWidth>28800</WindowWidth>
         <WindowTopX>0</WindowTopX>
         <WindowTopY>0</WindowTopY>
@@ -73,28 +73,38 @@
             </Borders>
             <Interior/>
         </Style>
-        <Style ss:ID="s66">
+        <Style ss:ID="s69">
             <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
             <Borders>
                 <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
                 <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
                 <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
             </Borders>
-            <Interior ss:Color="#FFFFFF" ss:Pattern="Solid"/>
+        </Style>
+        <Style ss:ID="s71">
+            <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+            <Font ss:FontName="Cambria" ss:Size="12"/>
+        </Style>
+        <Style ss:ID="s79">
+            <Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:Indent="2"
+                       ss:WrapText="1"/>
+            <Font ss:FontName="Cambria" ss:Size="12"/>
         </Style>
     </Styles>
     <Worksheet ss:Name="Feuil1">
-        <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="8" x:FullColumns="1"
+        <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="26" x:FullColumns="1"
                x:FullRows="1" ss:StyleID="s62" ss:DefaultColumnWidth="66">
             <Column ss:StyleID="s63" ss:AutoFitWidth="0" ss:Width="90"/>
             <Column ss:StyleID="s64" ss:AutoFitWidth="0" ss:Width="375"/>
-            <Row>
+            <Row ss:AutoFitHeight="0" ss:Height="39">
                 <Cell>
                     <Data ss:Type="String">step0_0</Data>
                 </Cell>
                 <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">Hello World!</Data>
+                    <Data ss:Type="String">Good evening, Mrs. Jones – my name is Thuynhan, and I’m the new manager of a
+                        Weber factory in China. I wanted to tell you how inspiring the workshops you have offered us
+                        today have been for me!
+                    </Data>
                 </Cell>
             </Row>
             <Row ss:AutoFitHeight="0" ss:Height="26">
@@ -102,7 +112,214 @@
                     <Data ss:Type="String">step0_1</Data>
                 </Cell>
                 <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">What a wonderful day</Data>
+                    <Data ss:Type="String">Well, thanks very much – but, in training as in anything, the main key to
+                        success is people involvement!
+                    </Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step1_0</Data>
+                </Cell>
+                <Cell ss:StyleID="s69">
+                    <Data ss:Type="String">You’re right: real success can only come if people are truly involved and
+                        engaged…
+                    </Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step1_1</Data>
+                </Cell>
+                <Cell ss:StyleID="s69">
+                    <Data ss:Type="String">And that’s why, at Saint-Gobain, we place a very strong emphasis on people –
+                        they are essential components of our WCM Temple model.&#13;Their daily involvement is
+                        instrumental in securing our ambition to become the world leader of Sustainable Habitat.&#13;But
+                        I’m quite in a rush, right now: was there anything you wanted to ask me about?&#13;</Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">choice1</Data>
+                </Cell>
+                <Cell ss:StyleID="s69">
+                    <Data ss:Type="String">-Ask about WCM</Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">choice2</Data>
+                </Cell>
+                <Cell ss:StyleID="s69">
+                    <Data ss:Type="String">-Talk about initial training</Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">choice3</Data>
+                </Cell>
+                <Cell ss:StyleID="s69">
+                    <Data ss:Type="String">-Invite for a private workshop</Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step3_0</Data>
+                </Cell>
+                <Cell ss:StyleID="s71">
+                    <Data ss:Type="String">Well, people are at the core of WCM: real change and success can only occur
+                        when they are involved and engaged.
+                    </Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step3_1</Data>
+                </Cell>
+                <Cell ss:StyleID="s71">
+                    <Data ss:Type="String">And what does that statement imply in the WCM model – I mean, concretely?
+                    </Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step3_2</Data>
+                </Cell>
+                <Cell ss:StyleID="s71">
+                    <Data ss:Type="String">We need to ensure that we are investing correctly in their development, to
+                        help them increase their skills and adopt better working habits, and also to show our commitment
+                        to them. These are the main objectives of our People Development pillar.
+                    </Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step3_3</Data>
+                </Cell>
+                <Cell ss:StyleID="s69">
+                    <Data ss:Type="String">I understand… But you must be using some tools and methods to put this in
+                        motion, right?
+                    </Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step3_4</Data>
+                </Cell>
+                <Cell ss:StyleID="s69">
+                    <Data ss:Type="String">Yes: if we want to archive our ambition to become the world leader for
+                        Sustainable Habitat, we need to secure our employees’ daily involvement. That’s what the Focus
+                        Improvement &amp; People Involvement foundation is about: providing the tools to make that
+                        involvement happen.
+                    </Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step4_0</Data>
+                </Cell>
+                <Cell ss:StyleID="s71">
+                    <Data ss:Type="String">Thanks for telling me more about the key part people play in WCM… But let’s
+                        move on to something else: could you give me one example of a success story about Training &amp;
+                        Development within the Group? Back in my factory in China, I’ve heard of a program called… MKT
+                        <Sup
+                                xmlns="http://www.w3.org/TR/REC-html40">2
+                        </Sup>
+                        <Font
+                                xmlns="http://www.w3.org/TR/REC-html40">, I think? But I don’t know much about it yet…
+                        </Font>
+                    </Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step4_1</Data>
+                </Cell>
+                <Cell ss:StyleID="s69">
+                    <Data ss:Type="String">Yes, MKT2 illustrates very well the benefits Training &amp; Development can
+                        bring!&#13;MKT2 means “Manufacturing Know-how Transfer and Training”. This program is basically
+                        targeted at technical training for operators in plants. It was launched in 2001 in Cuautla,
+                        Mexico, to address the very high turnover they were having with operators. They needed to
+                        improve the training to enable new hires to become operational faster.&#13;Basically, MKT2
+                        combines training on the computer with work in the field overseen by a tutor. Basic theory,
+                        concepts and simple daily tasks are explained to the operator on a computer, using eLearning.
+                        They are able to go at their pace, review sections if needed, and test their knowledge.&#13;After
+                        that, the more complex tasks are explained on the shop floor by the tutor.&#13;</Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step4_2</Data>
+                </Cell>
+                <Cell ss:StyleID="s79">
+                    <Data ss:Type="String">That’s a really interesting approach! And the results were positive?</Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step4_3</Data>
+                </Cell>
+                <Cell ss:StyleID="s71">
+                    <Data ss:Type="String">Sure! Look, I think I have a file somewhere that sums up all the main
+                        benefits MKT2 has shown… I hope
+                    </Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step4_4</Data>
+                </Cell>
+                <Cell ss:StyleID="s71">
+                    <Data ss:Type="String">Thank you very much for all the information you gave me, Caroline: I have a
+                        much better understanding of the way Training can lead the Group and the employees to
+                        excellence!
+                    </Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step4_5</Data>
+                </Cell>
+                <Cell ss:StyleID="s71">
+                    <Data ss:Type="String">You’re welcome – and now, it is your turn to implement these tools and good
+                        practices in your factory in China!
+                    </Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step5_0</Data>
+                </Cell>
+                <Cell ss:StyleID="s71">
+                    <Data ss:Type="String">Well, I’d be glad to hear about that – but once you are through your initial
+                        training, not right now: you’ll be able to fill a feedback form then…
+                    </Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step5_1</Data>
+                </Cell>
+                <Cell ss:StyleID="s71">
+                    <Data ss:Type="String">I’m sorry, I meant no disrespect…</Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step6_0</Data>
+                </Cell>
+                <Cell ss:StyleID="s71">
+                    <Data ss:Type="String">As you can guess, I unfortunately can’t just visit every factory across the
+                        world! Now will you excuse me? I really have to go…
+                    </Data>
+                </Cell>
+            </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">step6_1</Data>
+                </Cell>
+                <Cell ss:StyleID="s71">
+                    <Data ss:Type="String">I’m sorry, I didn’t mean to waste your time…</Data>
                 </Cell>
             </Row>
             <Row ss:AutoFitHeight="0" ss:Height="26">
@@ -126,15 +343,15 @@
                     <Data ss:Type="String">Thuyan</Data>
                 </Cell>
                 <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">Nice Guy</Data>
+                    <Data ss:Type="String">Thuynhan</Data>
                 </Cell>
             </Row>
-            <Row ss:AutoFitHeight="0" ss:Height="26">
+            <Row>
                 <Cell>
                     <Data ss:Type="String">Caroline</Data>
                 </Cell>
                 <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">Smart Girl</Data>
+                    <Data ss:Type="String">Caroline</Data>
                 </Cell>
             </Row>
         </Table>
@@ -153,10 +370,11 @@
             <ShowPageLayoutZoom/>
             <PageLayoutZoom>100</PageLayoutZoom>
             <Selected/>
+            <TopRowVisible>6</TopRowVisible>
             <Panes>
                 <Pane>
                     <Number>3</Number>
-                    <ActiveRow>2</ActiveRow>
+                    <ActiveRow>22</ActiveRow>
                     <ActiveCol>1</ActiveCol>
                 </Pane>
             </Panes>

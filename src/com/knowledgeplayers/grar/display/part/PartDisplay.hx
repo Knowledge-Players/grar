@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import aze.display.SparrowTilesheet;
+import com.knowledgeplayers.grar.util.SpriteSheetLoader;
 import nme.display.Bitmap;
 import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.localisation.Localiser;
@@ -58,10 +60,13 @@ class PartDisplay extends Sprite {
     private var previousBackground: {ref: String, bmp: Bitmap};
     private var displays: Hash<{obj: DisplayObject, z: Int}>;
     private var displaysFast: Hash<Fast>;
+    private var spritesheets: Hash<SparrowTilesheet>;
     private var zIndex: Int = 0;
     private var displayArea: Sprite;
     private var currentElement: PartElement;
     private var displayFast: Fast;
+    private var numSpriteSheetsLoaded: Int = 0;
+    private var totalSpriteSheets: Int = 0;
 
     /**
      * Constructor
@@ -75,6 +80,7 @@ class PartDisplay extends Sprite {
         displaysFast = new Hash<Fast>();
         displays = new Hash<{obj: DisplayObject, z: Int}>();
         resizeD = ResizeManager.getInstance();
+        spritesheets = new Hash<SparrowTilesheet>();
 
         displayArea = this;
 
@@ -106,11 +112,9 @@ class PartDisplay extends Sprite {
             return;
         }
         if(currentElement.isText()){
-
             setText(cast(currentElement, TextItem));
         }
         else if(currentElement.isActivity()){
-
             cleanActivity();
             onActivityEnd(null);
             launchActivity(cast(currentElement, Activity));
@@ -148,8 +152,26 @@ class PartDisplay extends Sprite {
     {
         displayFast = new Fast(content).node.Display;
 
-        for(child in displayFast.elements){
+        totalSpriteSheets = Lambda.count(displayFast.nodes.SpriteSheet);
 
+        if(totalSpriteSheets > 0){
+            for(child in displayFast.nodes.SpriteSheet){
+                var loader = new SpriteSheetLoader();
+                loader.addEventListener(Event.COMPLETE, onSpriteSheetLoaded);
+                var url = child.att.src.split(".")[0] + ".xml";
+                loader.init(child.att.id, url);
+            }
+        }
+        else{
+            createDisplay();
+        }
+
+        resizeD.onResize();
+    }
+
+    private function createDisplay(): Void
+    {
+        for(child in displayFast.elements){
             switch(child.name.toLowerCase()){
                 case "background": createBackground(child);
                 case "item": createItem(child);
@@ -162,8 +184,6 @@ class PartDisplay extends Sprite {
         }
 
         dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
-        resizeD.onResize();
-
     }
 
     private function next(event: ButtonActionEvent): Void
@@ -173,17 +193,7 @@ class PartDisplay extends Sprite {
 
     private function startPattern(pattern: Pattern): Void
     {
-        for(key in displays.keys()){
-            if(Std.is(displays.get(key).obj, TextButton)){
-                var pattern = cast(currentElement, Pattern);
-                for(keyB in pattern.buttons.keys()){
-                    if(keyB == key){
-                        cast(displays.get(key).obj, TextButton).setText(Localiser.instance.getItemContent(pattern.buttons.get(keyB)));
-                        break;
-                    }
-                }
-            }
-        }
+        currentElement = pattern;
     }
 
     private function launchActivity(activity: Activity)
@@ -196,38 +206,11 @@ class PartDisplay extends Sprite {
         activityDisplay.model = activity;
     }
 
-    /*private function onActivityEnd(e: PartEvent): Void
-    {
-
-        if(e != null)
-        {
-         cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
-         cleanActivity();
-        }
-        nextElement();
-    }*/
-
-    private function onActivityEnd(e: PartEvent): Void
-    {
-        if(e != null)
-            cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
-        if(activityDisplay != null && contains(activityDisplay))
-            removeChild(activityDisplay);
-        activityDisplay = null;
-    }
-
     private function cleanActivity(): Void
     {
         if(activityDisplay != null && contains(activityDisplay))
             removeChild(activityDisplay);
         activityDisplay = null;
-    }
-
-    private function onActivityReady(e: Event): Void
-    {
-
-        addChild(activityDisplay);
-        activityDisplay.startActivity();
     }
 
     private function initDisplayObject(display: DisplayObject, node: Fast, anime: Bool = false): Void
@@ -259,9 +242,6 @@ class PartDisplay extends Sprite {
 
     private function createItem(itemNode: Fast): Void
     {
-
-        //var itemBmp: Bitmap = new Bitmap(Assets.getBitmapData(itemNode.att.src));
-
         var itemBmp: Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src), Bitmap).bitmapData);
 
         addElement(itemBmp, itemNode);
@@ -290,10 +270,7 @@ class PartDisplay extends Sprite {
 
     private function createTextGroup(textNode: Fast): Void
     {
-        // Lib.trace("ref : "+textNode.att.ref);
-
         for(child in textNode.elements){
-            // Lib.trace(child.att.ref);
             switch(child.name.toLowerCase()){
 
             }
@@ -302,9 +279,7 @@ class PartDisplay extends Sprite {
 
     private function createCharacter(character: Fast)
     {
-        var bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(character.att.src), Bitmap).bitmapData);
-
-        var char: CharacterDisplay = new CharacterDisplay(bitmap, new Character(character.att.ref));
+        var char: CharacterDisplay = new CharacterDisplay(spritesheets.get(character.att.ref), character.att.id, new Character(character.att.ref));
         char.visible = false;
         char.origin = new Point(Std.parseFloat(character.att.x), Std.parseFloat(character.att.y));
         addElement(char, character);
@@ -315,9 +290,6 @@ class PartDisplay extends Sprite {
     {
         if(action.toLowerCase() == ButtonActionEvent.NEXT){
             button.addEventListener(action, next);
-        }
-        else{
-            Lib.trace(action + ": this action is not supported for this part");
         }
     }
 
@@ -390,12 +362,46 @@ class PartDisplay extends Sprite {
             removeChildAt(numChildren - 1);
         var array = new Array<{obj: DisplayObject, z: Int}>();
         for(key in displays.keys()){
-            array.push(displays.get(key));
+            if(mustBeDisplayed(key))
+                array.push(displays.get(key));
         }
         array.sort(sortDisplayObjects);
         for(obj in array){
             addChild(obj.obj);
         }
+
+    }
+
+    /*
+        TODO: refactoriser tout ça !
+     */
+
+    private function mustBeDisplayed(key: String): Bool
+    {
+        var object = displays.get(key);
+        var textItem: TextItem = null;
+        if(currentElement.isText())
+            textItem = cast(currentElement, TextItem);
+        else if(currentElement.isPattern() && Std.is(object.obj, DefaultButton)){
+            var pattern = cast(currentElement, Pattern);
+            if(Std.is(displays.get(key).obj, TextButton)){
+                if(pattern.buttons.exists(key)){
+                    cast(displays.get(key).obj, TextButton).setText(Localiser.instance.getItemContent(pattern.buttons.get(key)));
+                    return true;
+                }
+                else
+                    return false;
+            }
+            else if(pattern.buttons.exists(key))
+                return true;
+            else
+                return false;
+        }
+        if(Std.is(object.obj, ScrollPanel) && textItem != null && key != textItem.ref)
+            return false;
+        if(Std.is(object.obj, CharacterDisplay) && object.obj != currentSpeaker)
+            return false;
+        return true;
     }
 
     private function addElement(elem: DisplayObject, node: Fast): Void
@@ -427,5 +433,30 @@ class PartDisplay extends Sprite {
     private function onLocaleLoaded(ev: LocaleEvent): Void
     {
         startPattern(cast(currentElement, Pattern));
+    }
+
+    private function onActivityReady(e: Event): Void
+    {
+        addChild(activityDisplay);
+        activityDisplay.startActivity();
+    }
+
+    private function onActivityEnd(e: PartEvent): Void
+    {
+        if(e != null)
+            cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
+        if(activityDisplay != null && contains(activityDisplay))
+            removeChild(activityDisplay);
+        activityDisplay = null;
+    }
+
+    private function onSpriteSheetLoaded(ev: Event): Void
+    {
+        ev.target.removeEventListener(Event.COMPLETE, onSpriteSheetLoaded);
+        spritesheets.set(ev.target.name, ev.target.spriteSheet);
+        numSpriteSheetsLoaded++;
+        if(numSpriteSheetsLoaded == totalSpriteSheets){
+            createDisplay();
+        }
     }
 }

@@ -14,7 +14,7 @@
         <AllowPNG/>
     </OfficeDocumentSettings>
     <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
-        <WindowHeight>12040</WindowHeight>
+        <WindowHeight>12340</WindowHeight>
         <WindowWidth>28800</WindowWidth>
         <WindowTopX>0</WindowTopX>
         <WindowTopY>0</WindowTopY>
@@ -73,47 +73,13 @@
             </Borders>
             <Interior/>
         </Style>
-        <Style ss:ID="s66">
-            <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
-            <Borders>
-                <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
-            </Borders>
-            <Interior ss:Color="#FFFFFF" ss:Pattern="Solid"/>
-        </Style>
     </Styles>
     <Worksheet ss:Name="Feuil1">
-        <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="8" x:FullColumns="1"
+        <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="6" x:FullColumns="1"
                x:FullRows="1" ss:StyleID="s62" ss:DefaultColumnWidth="66">
             <Column ss:StyleID="s63" ss:AutoFitWidth="0" ss:Width="90"/>
             <Column ss:StyleID="s64" ss:AutoFitWidth="0" ss:Width="375"/>
             <Row>
-                <Cell>
-                    <Data ss:Type="String">step0_0</Data>
-                </Cell>
-                <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">Hello World!</Data>
-                </Cell>
-            </Row>
-            <Row ss:AutoFitHeight="0" ss:Height="26">
-                <Cell>
-                    <Data ss:Type="String">step0_1</Data>
-                </Cell>
-                <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">What a wonderful day</Data>
-                </Cell>
-            </Row>
-            <Row ss:AutoFitHeight="0" ss:Height="26">
-                <Cell>
-                    <Data ss:Type="String">step0_2</Data>
-                </Cell>
-                <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">That's very nice</Data>
-                </Cell>
-            </Row>
-            <Row ss:AutoFitHeight="0" ss:Height="26">
                 <Cell>
                     <Data ss:Type="String">nextButton</Data>
                 </Cell>
@@ -123,28 +89,44 @@
             </Row>
             <Row ss:AutoFitHeight="0" ss:Height="26">
                 <Cell>
-                    <Data ss:Type="String">enzo</Data>
+                    <Data ss:Type="String">Caroline</Data>
                 </Cell>
                 <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">Nice Guy</Data>
+                    <Data ss:Type="String">Caroline</Data>
                 </Cell>
             </Row>
             <Row ss:AutoFitHeight="0" ss:Height="26">
                 <Cell>
-                    <Data ss:Type="String">francoise</Data>
+                    <Data ss:Type="String">Thuynhan_happy</Data>
                 </Cell>
                 <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">Smart Girl</Data>
+                    <Data ss:Type="String">Thuynhan</Data>
                 </Cell>
             </Row>
-            <Row>
-                <Cell><Data ss:Type="String">text1</Data></Cell>
-                <Cell ss:StyleID="s65"><Data ss:Type="String">Contenu texte 1</Data></Cell>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">text1</Data>
+                </Cell>
+                <Cell ss:StyleID="s65">
+                    <Data ss:Type="String">You are Thuynhan, a newly appointed Weber factory manager in China.&#13;As a
+                        part of your initial training, you have been invited to Les Miroirs in Paris, in order to attend
+                        a series of conferences and workshops led by Caroline Jones, Saint-Gobain’s Training Manager and
+                        Leader for the People Development WCM pillar. At the end of the day, you have the opportunity to
+                        meet with her in person as she is packing her training material back.&#13;</Data>
+                </Cell>
             </Row>
-            <Row>
-                <Cell><Data ss:Type="String">text2</Data></Cell>
-                <Cell ss:StyleID="s65"><Data ss:Type="String">Conclusion texte 2</Data></Cell>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell>
+                    <Data ss:Type="String">text2</Data>
+                </Cell>
+                <Cell ss:StyleID="s65">
+                    <Data ss:Type="String">During the following conversation, you are going to ask Caroline to provide
+                        you with real-life examples illustrating the benefits of Training for the Group’s employees.&#13;You
+                        will have to:&#13;* Identify the Group’s WCM model’s main components for HR;&#13;* Collect
+                        information about the MKT2 program.&#13;</Data>
+                </Cell>
             </Row>
+            <Row ss:AutoFitHeight="0" ss:Height="26"/>
         </Table>
         <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
             <PageSetup>
@@ -166,6 +148,7 @@
                     <Number>3</Number>
                     <ActiveRow>2</ActiveRow>
                     <ActiveCol>1</ActiveCol>
+                    <RangeSelection>R1C1:R3C2</RangeSelection>
                 </Pane>
             </Panes>
             <ProtectObjects>False</ProtectObjects>

@@ -6,20 +6,19 @@ import nme.events.Event;
  * @author jbrichardet
  */
 
-class ButtonActionEvent extends Event
-{
-	/**
-	 * Move to the next item
-	 */
-	public static var NEXT (default, null): String = "next";
-	
-	/**
-	 * Start a vertical flow
-	 */
-	public static var VERTICAL_FLOW (default, null): String = "vertical_flow";
+class ButtonActionEvent extends Event {
+    /**
+     * Move to the next item
+     */
+    public static var NEXT (default, null): String = "next";
 
-	public function new(type : String, bubbles : Bool = false, cancelable : Bool = false)
-	{
-		super(type, bubbles, cancelable);
-	}
+    /**
+     * Move to a specific pattern
+     */
+    public static var GOTO (default, null): String = "goto";
+
+    public function new(type: String, bubbles: Bool = false, cancelable: Bool = false)
+    {
+        super(type, bubbles, cancelable);
+    }
 }

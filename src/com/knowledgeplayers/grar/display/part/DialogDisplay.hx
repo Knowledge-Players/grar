@@ -13,7 +13,6 @@ import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.event.TokenEvent;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
-import com.knowledgeplayers.grar.structure.part.dialog.item.ChoiceItem;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import haxe.xml.Fast;
@@ -42,12 +41,6 @@ class DialogDisplay extends PartDisplay {
         tokens = new Hash<Bitmap>();
         resizeD = ResizeManager.getInstance();
         super(part);
-
-        var lg = part.arrayElements.length;
-
-        for(i in 0...lg){
-            Lib.trace("---- " + cast(part.arrayElements[i], Fast).name);
-        }
     }
 
     // Private
@@ -59,10 +52,9 @@ class DialogDisplay extends PartDisplay {
 
     override private function startPattern(pattern: Pattern): Void
     {
-
         super.startPattern(pattern);
 
-        if(currentPattern == null)
+        if(currentPattern != pattern)
             currentPattern = pattern;
 
         if(displayedToken != null){
@@ -70,9 +62,9 @@ class DialogDisplay extends PartDisplay {
             displayedToken = null;
         }
 
-        if(currentPattern.hasChoices()){
+        /*if(currentPattern.hasChoices()){
             displayChoices();
-        }
+        }*/
 
         var nextItem = pattern.getNextItem();
         if(nextItem != null){
@@ -82,20 +74,11 @@ class DialogDisplay extends PartDisplay {
                 launchActivity(cast(nextItem, RemarkableEvent).activity);
             }
         }
+        else if(currentPattern.nextPattern != "")
+            goToPattern(currentPattern.nextPattern);
         else
             this.nextElement();
     }
-
-    /*override private function setButtonAction(button: CustomEventButton, action: String): Void
-    {
-        var listener: ButtonActionEvent -> Void = null;
-        switch(action.toLowerCase()) {
-            case ButtonActionEvent.NEXT: listener = next;
-            default: Lib.trace(action + ": this action is not supported for this part");
-        }
-
-        button.addEventListener(action.toLowerCase(), listener);
-    }*/
 
     // Privates
 
@@ -121,17 +104,31 @@ class DialogDisplay extends PartDisplay {
     {
         for(choice in cast(currentPattern, ChoicePattern).choices){
             displays.get(choice.ref).obj.addEventListener(MouseEvent.CLICK, goToPattern);
-            addChildAt(displays.get(choice.ref).obj, displays.get(choice.ref).z);
+            //addChildAt(displays.get(choice.ref).obj, cast(Math.min(displays.get(choice.ref).z, numChildren), Int));
         }
     }
 
-    private function goToPattern(ev: MouseEvent): Void
+    override private function setButtonAction(button: CustomEventButton, action: String): Void
+    {
+        super.setButtonAction(button, action);
+        if(action.toLowerCase() == ButtonActionEvent.GOTO){
+            button.addEventListener(action, onChoice);
+        }
+    }
+
+    private function onChoice(ev: ButtonActionEvent): Void
     {
         var choice = cast(ev.target, DefaultButton);
         var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
-        for(elem in part.elements){
-            if(elem.isPattern() && cast(elem, Pattern).name == target)
-                startPattern(cast(elem, Pattern));
+        goToPattern(target);
+    }
+
+    private function goToPattern(target: String): Void
+    {
+        var i = 0;
+        while(!(part.elements[i].isPattern() && cast(part.elements[i], Pattern).name == target)){
+            i++;
         }
+        startPattern(cast(part.elements[i], Pattern));
     }
 }

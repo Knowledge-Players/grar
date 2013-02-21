@@ -4,7 +4,6 @@ import Std;
 import com.knowledgeplayers.grar.event.TokenEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.Game;
-import com.knowledgeplayers.grar.structure.part.dialog.item.ChoiceItem;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
 import nme.Lib;

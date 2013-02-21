@@ -1,5 +1,4 @@
 package com.knowledgeplayers.grar.factory;
-import com.knowledgeplayers.grar.structure.part.dialog.item.ChoiceItem;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import haxe.xml.Fast;
@@ -29,9 +28,8 @@ class ItemFactory {
         var creation: TextItem = null;
         switch(itemType.toLowerCase()) {
             case "": creation = new TextItem(xml);
-            case "choice": creation = new ChoiceItem(xml);
-            case "event": creation = new RemarkableEvent(xml);
-            default: Lib.trace(itemType + ": Unsupported item type");
+            case "activity": creation = new RemarkableEvent(xml);
+            default: Lib.trace("[ItemFactory] " + itemType + ": Unsupported item type");
         }
 
         return creation;

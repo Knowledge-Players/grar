@@ -1,9 +1,7 @@
 package com.knowledgeplayers.grar.display.activity;
 
-import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.util.SpriteSheetLoader;
 
-import Std;
 import com.knowledgeplayers.grar.util.LoadData;
 import nme.display.Bitmap;
 
@@ -26,40 +24,39 @@ import nme.Assets;
 */
 
 class ActivityDisplay extends Sprite {
-/**
-* Model to display
-*/
+    /**
+    * Model to display
+    */
     public var model(default, setModel): Activity;
 
+    private var spriteSheets: Hash<TilesheetEx>;
+    private var countSpriteSheets: Int;
+    private var totalSpriteSheets: Int;
+    private var displayXml: Fast;
+    private var xmlSprite: Xml;
+    private var fastXml: Fast;
 
-    private var spriteSheets:Hash<TilesheetEx>;
-    private var countSpriteSheets:Int;
-    private var totalSpriteSheets:Int;
-    private var displayXml:Fast;
-    private var xmlSprite:Xml;
-    private var fastXml:Fast;
-
-/**
-* Setter for the model
-* @param model : the model to set
-* @return the model
-*/
+    /**
+    * Setter for the model
+    * @param model : the model to set
+    * @return the model
+    */
 
     public function setModel(model: Activity): Activity
     {
         this.model = model;
         this.model.addEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
 
-//addEventListener(Event.REMOVED_FROM_STAGE, onUnload);
+        //addEventListener(Event.REMOVED_FROM_STAGE, onUnload);
         this.model.loadActivity();
 
         return model;
     }
 
-/**
-* Set the display with XML infos
-* @param display : fast XML node with display infos
-*/
+    /**
+    * Set the display with XML infos
+    * @param display : fast XML node with display infos
+    */
 
     public function setDisplay(display: Fast): Void
     {
@@ -72,7 +69,7 @@ class ActivityDisplay extends Sprite {
         for(spr in display.nodes.SpriteSheet){
             var n = new SpriteSheetLoader();
             //var nom = Std.string(spr.att.src).split("/")[1];
-           // var url = nom.split(".")[0]+".xml";
+            // var url = nom.split(".")[0]+".xml";
             n.addEventListener("loaded", onSpriteSheetLoaded);
 
             n.init(spr.att.id, spr.att.src);
@@ -80,22 +77,17 @@ class ActivityDisplay extends Sprite {
 
     }
 
-
-
     private function onSpriteSheetLoaded(e: Event)
     {
 
         countSpriteSheets ++;
-        e.target.removeEventListener("loaded", onSpriteSheetLoaded);
+        e.target.removeEventListener(Event.COMPLETE, onSpriteSheetLoaded);
         spriteSheets.set(e.target.name, e.target.spriteSheet);
         testPreload();
 
         countSpriteSheets ++;
 
-
-
     }
-
 
     private function testPreload()
     {
@@ -104,9 +96,9 @@ class ActivityDisplay extends Sprite {
         }
     }
 
-/**
-* Start the activity
-*/
+    /**
+    * Start the activity
+    */
 
     public function startActivity(): Void
     {
@@ -118,7 +110,7 @@ class ActivityDisplay extends Sprite {
         Lib.trace("Debrief!");
     }
 
-// Private
+    // Private
 
     private function parseContent(display: Fast): Void
     {}
@@ -148,11 +140,11 @@ class ActivityDisplay extends Sprite {
             display.scaleY = Std.parseFloat(node.att.scaleY);
     }
 
-// Handlers
+    // Handlers
 
     private function onUnload(ev: Event): Void
     {
-//onEndActivity(null);
+        //onEndActivity(null);
     }
 
     private function endActivity(e: Event): Void

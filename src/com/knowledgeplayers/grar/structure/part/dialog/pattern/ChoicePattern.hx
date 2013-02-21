@@ -1,7 +1,6 @@
 package com.knowledgeplayers.grar.structure.part.dialog.pattern;
 
 import com.knowledgeplayers.grar.factory.ItemFactory;
-import com.knowledgeplayers.grar.structure.part.dialog.item.ChoiceItem;
 import haxe.xml.Fast;
 
 /**
@@ -34,6 +33,11 @@ class ChoicePattern extends Pattern {
             var choice = {ref: choiceNode.att.ref, content: choiceNode.att.content, toolTip: choiceNode.att.toolTip, goTo: choiceNode.att.goTo};
             choices.set(choiceNode.att.ref, choice);
         }
+    }
+
+    override public function getNextItem(): Null<TextItem>
+    {
+        return patternContent[0];
     }
 
     /**

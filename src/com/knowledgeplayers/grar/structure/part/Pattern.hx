@@ -58,8 +58,9 @@ class Pattern implements PartElement {
             patternContent.push(item);
 
         }
-        for(button in xml.nodes.Button){
-            buttons.set(button.att.ref, button.att.content);
+        for(child in xml.elements){
+            if(child.name.toLowerCase() == "button" || child.name.toLowerCase() == "choice")
+                buttons.set(child.att.ref, child.att.content);
         }
         nextPattern = xml.att.next;
     }

@@ -1,6 +1,7 @@
 package com.knowledgeplayers.grar.util;
-import nme.display.Loader;
+
 import nme.net.URLRequest;
+import nme.display.Loader;
 import nme.events.IOErrorEvent;
 import nme.display.DisplayObject;
 import nme.display.Bitmap;
@@ -16,37 +17,36 @@ import nme.Lib;
 class SpriteSheetLoader extends EventDispatcher {
     public var name: String;
     public var spriteSheet: TilesheetEx;
-    private var elementDisplay:DisplayObject;
-    private var xmlSprite:Xml;
+    private var elementDisplay: DisplayObject;
+    private var xmlSprite: Xml;
 
-    public function new() {
+    public function new()
+    {
         super();
     }
-    public function init (pName:String, src:String) {
-        //Lib.trace(src);
+
+    public function init(pName: String, src: String)
+    {
         name = pName;
 
         XmlLoader.load(src, onXmlSpriteSheetLoaded, parseXmlSprite);
-
     }
 
-    private function onXmlSpriteSheetLoaded (e:Event):Void
+    private function onXmlSpriteSheetLoaded(e: Event): Void
     {
-        xmlSprite = XmlLoader.getXml(e);
-        parseXmlSprite(xmlSprite);
-
+        parseXmlSprite(XmlLoader.getXml(e));
     }
-    private function parseXmlSprite (xmlSprite:Xml): Void
+
+    private function parseXmlSprite(xmlSprite: Xml): Void
     {
+        this.xmlSprite = xmlSprite;
         var fast = new Fast(xmlSprite).node.TextureAtlas;
-        Lib.trace("fast.att.imagePath :" +fast.att.imagePath);
         loadData(fast.att.imagePath);
     }
 
-    private function loadData(?path:String=""):Void
+    private function loadData(?path: String = ""): Void
     {
-            #if flash
-
+        #if flash
                     var urlR = new URLRequest("assets/"+path);
 
 
@@ -58,29 +58,26 @@ class SpriteSheetLoader extends EventDispatcher {
 
                 #else
 
-                elementDisplay = new Bitmap(Assets.getBitmapData(path));
-                spriteSheet =  new SparrowTilesheet(cast(elementDisplay,Bitmap).bitmapData, xmlSprite.toString());
-                dispatchEvent(new Event("loaded"));
+        elementDisplay = new Bitmap(Assets.getBitmapData(path));
+        spriteSheet = new SparrowTilesheet(cast(elementDisplay, Bitmap).bitmapData, xmlSprite.toString());
+        dispatchEvent(new Event(Event.COMPLETE));
 
-
-            #end
-
+        #end
 
     }
 
     private function onIOError(error: IOErrorEvent): Void
     {
-        Lib.trace("File requested doesn't exist: " + error.toString().substr(error.toString().indexOf("/")));
+        Lib.trace("[SpriteSheetLoader] File requested doesn't exist: " + error.toString().substr(error.toString().indexOf("/")));
     }
 
-    private function onCompleteLoading(event: Event): Void{
+    private function onCompleteLoading(event: Event): Void
+    {
 
-        elementDisplay =event.currentTarget.content;
-        spriteSheet =  new SparrowTilesheet(cast(elementDisplay,Bitmap).bitmapData, xmlSprite.toString());
-        dispatchEvent(new Event("loaded"));
+        elementDisplay = event.currentTarget.content;
+        spriteSheet = new SparrowTilesheet(cast(elementDisplay, Bitmap).bitmapData, xmlSprite.toString());
+        dispatchEvent(new Event(Event.COMPLETE));
 
     }
-
-
 
 }

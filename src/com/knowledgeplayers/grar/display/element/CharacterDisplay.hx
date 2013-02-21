@@ -1,10 +1,16 @@
 package com.knowledgeplayers.grar.display.element;
 
+import aze.display.TileSprite;
+import aze.display.SparrowTilesheet;
+import aze.display.TileLayer;
+import nme.events.Event;
+import com.knowledgeplayers.grar.util.SpriteSheetLoader;
 import nme.display.Bitmap;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import nme.display.Sprite;
 import nme.geom.Point;
 import nme.Lib;
+import aze.display.TilesheetEx;
 
 /**
  * Graphic representation of a character of the game
@@ -21,27 +27,18 @@ class CharacterDisplay extends Sprite {
     **/
     public var model: Character;
 
-    /**
-    * Image of the character
-**/
-    public var image (default, setImage): Bitmap;
+    private var tileId: String;
 
-    public function new(image: Bitmap, ?model: Character)
+    public function new(spritesheet: SparrowTilesheet, tileId: String, ?model: Character)
     {
         super();
         this.model = model;
-        this.image = image;
+        this.tileId = tileId;
+
+        var layer = new TileLayer(spritesheet);
+        var img = new TileSprite(tileId);
+        layer.addChild(img);
+        addChild(layer.view);
+        layer.render();
     }
-
-    public function setImage(image: Bitmap): Bitmap
-    {
-
-       // Lib.trace("-----image : "+image);
-        if(this.image != null)
-            removeChild(this.image);
-        addChild(image);
-        return this.image = image;
-    }
-
-
 }

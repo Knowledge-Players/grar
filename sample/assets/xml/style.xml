@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <style name="text">
     <font value="font/origin/Origin-Regular.ttf"/>
-    <size value="24"/>
+    <size value="16"/>
     <color value="0x000000"/>
     <border value="false"/>
 </style>

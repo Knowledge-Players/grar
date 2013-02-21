@@ -11,13 +11,14 @@
         <Button ref="next" content="nextButton"/>
     </Pattern>
     <Pattern type="Choice" id="choice" minChoice="1" next="">
-        <Text type="choice" content="step1_2" author="Thuynhan_thinking" direction="Left" background="labo"
+        <Text type="" content="step1_2" author="Thuynhan_thinking" direction="Left" background="labo"
               ref="dialog"/>
         <Choice ref="choice1" content="choice1" toolTip="tip1" goTo="pattern3"/>
         <Choice ref="choice2" content="choice2" toolTip="tip2" goTo="pattern5"/>
         <Choice ref="choice3" content="choice3" toolTip="tip3" goTo="pattern6"/>
     </Pattern>
     <Pattern type="Link" id="pattern3" next="pattern4">
+        <Text type="" content="step3_0" author="Caroline_happy" direction="Right" background="labo" ref="dialog"/>
         <Text type="" content="step3_1" author="Thuynhan_neutral" direction="Left" background="labo" ref="dialog"/>
         <Text type="" content="step3_2" author="Caroline_neutral" direction="Right" background="labo" ref="dialog"/>
         <Text type="" content="step3_3" author="Thuynhan_thinking" direction="Left" background="labo" ref="dialog"/>
