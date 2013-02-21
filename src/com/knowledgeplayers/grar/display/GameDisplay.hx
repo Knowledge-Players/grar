@@ -3,6 +3,7 @@ package com.knowledgeplayers.grar.display;
 import com.eclecticdesignstudio.motion.Actuate;
 import com.eclecticdesignstudio.motion.easing.Cubic;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;
+
 import com.knowledgeplayers.grar.event.GameEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.factory.DisplayFactory;
@@ -13,6 +14,7 @@ import nme.display.Sprite;
 import nme.events.Event;
 import nme.events.EventDispatcher;
 import nme.Lib;
+import com.knowledgeplayers.grar.display.LayoutDisplay;
 
 /**
  * Display of a game
@@ -34,6 +36,9 @@ class GameDisplay extends Sprite {
      */
     private var menu: MenuDisplay;
 
+    private var layout:LayoutDisplay;
+
+
     /**
      * Constructor
      * @param	game : the model to display
@@ -45,6 +50,8 @@ class GameDisplay extends Sprite {
         this.game = game;
         displayMenu();
     }
+
+
 
     /**
     * Display a graphic representation of the given part
@@ -86,9 +93,14 @@ class GameDisplay extends Sprite {
 
     private function displayMenu()
     {
+        game.layout.init();
+
         menu = new MenuDisplay(game);
         menu.launchPart = launchPart;
         addChild(menu);
+
+
+
     }
 
     private function launchPart(part: Part): Void

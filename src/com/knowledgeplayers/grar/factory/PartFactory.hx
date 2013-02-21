@@ -40,6 +40,8 @@ class PartFactory {
             default: Lib.trace(partType + ": Unsupported part type");
         }
 
+
+
         return creation;
     }
 
@@ -51,6 +53,7 @@ class PartFactory {
 
     public static function createPartFromXml(xml: Fast): Null<Part>
     {
+
         return createPart(xml.att.type);
     }
 }

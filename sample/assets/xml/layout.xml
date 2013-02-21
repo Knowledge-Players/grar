@@ -2,7 +2,7 @@
 <!-- WARNING: the size of the app is set in the NMML file -->
 <Layouts>
     <Layout ref="default" rows="100,*,50">
-        <Row columns="50%,*">
+        <Row columns="50%,*" >
             <Column>
                 <Zone ref="header">
                     <Button id="" type="text" x="400" y="400" scaleX="1" scaleY="1"/>
@@ -37,8 +37,12 @@
         </Row>
     </Layout>
     <Layout ref="fullscreen">
-        <Zone ref="main">
-        </Zone>
+        <Row columns="100%">
+            <Column>
+                <Zone ref="main">
+                </Zone>
+            </Column>
+        </Row>
     </Layout>
     <Layout ref="popUp" rows="100,*,50">
         <Row columns="50%,*">

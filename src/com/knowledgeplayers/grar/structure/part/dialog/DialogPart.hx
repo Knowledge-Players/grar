@@ -18,16 +18,16 @@ import com.knowledgeplayers.grar.factory.PatternFactory;
  * @author jbrichardet
  */
 
+
+
 class DialogPart extends StructurePart {
 
-    public var arrayTexts: Array<Fast>;
-    public var arrayElements: Array<Fast>;
 
     public function new()
     {
         super();
-        arrayTexts = new Array<Fast>();
-        arrayElements = new Array<Fast>();
+
+
     }
 
     override public function isDialog(): Bool
@@ -72,22 +72,15 @@ class DialogPart extends StructurePart {
     {
         super.parseContent(content);
 
+
         var partFast: Fast = new Fast(content).node.Part;
 
-        for(elment in partFast.elements){
-            arrayElements.push(elment);
+        for(patternNode in partFast.nodes.Pattern){
 
-            if(elment.name == "Pattern"){
-                var pattern: Pattern = PatternFactory.createPatternFromXml(elment);
-                pattern.init(elment);
-                elements.push(pattern);
-            }
-            if(elment.name == "Text"){
-
-                arrayTexts.push(elment);
-            }
+            var pattern: Pattern = PatternFactory.createPatternFromXml(patternNode);
+            pattern.init(patternNode);
+            elements.push(pattern);
         }
-
     }
 
 }

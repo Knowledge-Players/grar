@@ -56,39 +56,83 @@ class LoadData extends EventDispatcher {
     }
 
 /**
-* Load all the displays
+* Load all the displays of sample_structure.xml
 **/
 
-    public function loadDisplayXml(?structureXml:Fast=null):Void
+    public function loadDisplayXml(?structureXml:Xml=null):Void
     {
+
+
         var arrayDisplayXml:Array<String> = new Array<String>();
 
-        var displayNode: Fast = structureXml.node.Grar.node.Display;
-        var structureNode: Fast = structureXml.node.Grar.node.Structure;
 
+        parseChildrenXml(structureXml,arrayDisplayXml,"display");
 
-        for(part in structureNode.nodes.Part){
-            if (part.has.display)arrayDisplayXml.push(part.att.display);
-            }
-        for(node in displayNode.elements){
-            if (node.has.display)arrayDisplayXml.push(node.att.display);
-            }
-
+        arrayDisplayXml = removeDuplicates(arrayDisplayXml);
 
         var lgArray:Int = arrayDisplayXml.length;
         nbXml = lgArray;
-        for( i in 0...lgArray ) {
-            //Lib.trace("xml load : "+arrayDisplayXml[i]);
-            //if (arrayDisplayXml[i] != "ui/ui.xml")
-            XmlLoader.load(arrayDisplayXml[i],onXmlDisplayLoaded,parseContent);
 
+
+        for( i in 0...lgArray ) {
+            Lib.trace("xml load : "+arrayDisplayXml[i]);
+
+            XmlLoader.load(arrayDisplayXml[i],onXmlDisplayLoaded,parseContent);
         }
 
 
 
     }
 
+/**
+* Parse all the nodes of Xml and get the attribute needed
+**/
 
+    public function parseChildrenXml(_xml:Xml,_array:Array<String>,_att:String):Void{
+
+
+        for( elt in _xml.elements() ) {
+            for( user in _xml.elementsNamed(elt.nodeName) ) {
+
+                if(user.get(_att) !=null)
+                    _array.push(user.get(_att));
+
+                if(user.firstChild() != null)
+                    parseChildrenXml(user,_array,_att);
+
+
+            }
+        }
+
+    }
+/**
+* Remove duplicates from an Array<String>
+**/
+
+    public function removeDuplicates(ar:Array<String>):Array<String>
+    {
+        var result:Array<String> = ar.slice(0,ar.length);
+
+
+        var t;
+
+        for (a1 in 0...result.length)
+        {
+            t = ar[a1];
+
+            for (a2 in 0...result.length)
+            {
+                if (result[a2] == result[a1])
+                {
+                    if (a2 != a1)
+                    {
+                        result.splice(a2, 1);
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
     private function onXmlDisplayLoaded(e:Event=null):Void{
 
@@ -154,34 +198,6 @@ class LoadData extends EventDispatcher {
         }
 
 
-    }
-/**
-* Remove duplicates from an Array<String>
-**/
-
-    public function removeDuplicates(ar:Array<String>):Array<String>
-    {
-        var result:Array<String> = ar.slice(0,ar.length);
-
-
-        var t;
-
-        for (a1 in 0...result.length)
-        {
-            t = ar[a1];
-
-            for (a2 in 0...result.length)
-            {
-                if (result[a2] == result[a1])
-                {
-                    if (a2 != a1)
-                    {
-                        result.splice(a2, 1);
-                    }
-                }
-            }
-        }
-        return result;
     }
 
 
