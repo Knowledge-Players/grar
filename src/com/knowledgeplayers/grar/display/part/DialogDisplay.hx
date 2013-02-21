@@ -62,10 +62,6 @@ class DialogDisplay extends PartDisplay {
             displayedToken = null;
         }
 
-        /*if(currentPattern.hasChoices()){
-            displayChoices();
-        }*/
-
         var nextItem = pattern.getNextItem();
         if(nextItem != null){
             setText(nextItem);
@@ -97,14 +93,6 @@ class DialogDisplay extends PartDisplay {
             tokens.set(tokenNode.att.name, token);
 
             dispatchEvent(new TokenEvent(TokenEvent.ADD, true));
-        }
-    }
-
-    private function displayChoices(): Void
-    {
-        for(choice in cast(currentPattern, ChoicePattern).choices){
-            displays.get(choice.ref).obj.addEventListener(MouseEvent.CLICK, goToPattern);
-            //addChildAt(displays.get(choice.ref).obj, cast(Math.min(displays.get(choice.ref).z, numChildren), Int));
         }
     }
 
