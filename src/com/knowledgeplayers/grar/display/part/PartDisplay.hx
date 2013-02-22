@@ -77,6 +77,7 @@ class PartDisplay extends Sprite {
     private var displayFast: Fast;
     private var numSpriteSheetsLoaded: Int = 0;
     private var totalSpriteSheets: Int = 0;
+    private  var textGroups:Hash<Hash<{obj:Fast,z:Int}>>;
 
     /**
      * Constructor
@@ -89,6 +90,8 @@ class PartDisplay extends Sprite {
         this.part = part;
         displaysFast = new Hash<Fast>();
         displays = new Hash<{obj: DisplayObject, z: Int}>();
+        textGroups = new Hash<Hash<{obj:Fast,z:Int}>>();
+
         resizeD = ResizeManager.getInstance();
         spritesheets = new Hash<SparrowTilesheet>();
 
@@ -106,7 +109,6 @@ class PartDisplay extends Sprite {
 
     public function unLoad(): Void
     {
-        TweenManager.applyTransition(this, transitionOut);
         while(numChildren > 0)
             removeChildAt(numChildren - 1);
     }
@@ -209,6 +211,17 @@ class PartDisplay extends Sprite {
     private function startPattern(pattern: Pattern): Void
     {
         currentElement = pattern;
+        /*for(key in displays.keys()){
+            if(Std.is(displays.get(key).obj, TextButton)){
+                var pattern = cast(currentElement, Pattern);
+                for(keyB in pattern.buttons.keys()){
+                    if(keyB == key){
+                        cast(displays.get(key).obj, TextButton).setText(Localiser.instance.getItemContent(pattern.buttons.get(keyB)));
+                        break;
+                    }
+                }
+            }
+        }*/
     }
 
     private function launchActivity(activity: Activity)
@@ -279,11 +292,21 @@ class PartDisplay extends Sprite {
 
     private function createTextGroup(textNode: Fast): Void
     {
-        for(child in textNode.elements){
-            switch(child.name.toLowerCase()){
 
-            }
+        var numIndex = 0;
+        var hashTextGroup = new Hash<{obj:Fast,z:Int}>();
+
+        for(child in textNode.elements)
+        {
+           if(child.name.toLowerCase()=="text"){
+
+               //createText(child);
+               hashTextGroup.set(child.att.ref,{obj:child,z:numIndex});
+                numIndex++;
+
+           }
         }
+        textGroups.set(textNode.att.ref,hashTextGroup);
     }
 
     private function createCharacter(character: Fast)
@@ -304,6 +327,55 @@ class PartDisplay extends Sprite {
 
     private function setText(item: TextItem): Void
     {
+        //Lib.trace('item : '+item.ref);
+        var groupKey = "";
+        var arrayElements = new Array<PartElement>();
+        if(textGroups != null){
+
+            for (key in textGroups.keys()){
+
+                if( textGroups.get(key).exists(item.ref)){
+                        Lib.trace("ref encours  "+key);
+                        groupKey=key;
+                }
+            }
+
+            if (groupKey != ""){
+                var isFirst = true;
+                var textItem=null;
+                for (keyG in textGroups.get(groupKey).keys())
+                    {
+
+                    }
+
+
+                //while (textGroups.get(groupKey).keys().hasNext()){
+
+
+                       // if (!isFirst){
+                           // textItem = cast(part.getNextElement(),TextItem);
+                        /*}
+                        else
+                        {
+                            textItem = item;
+                        }*/
+
+                    //Lib.trace(textItem.ref);
+                    //var content = Localiser.getInstance().getItemContent(textItem.content);
+                    //Lib.trace("content : "+content);
+                    //cast(displays.get(textItem.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
+
+                      //  isFirst= false;
+
+                      //
+                    //textGroups.get(groupKey).keys().next();
+
+               // }
+            }
+
+        }
+
+
         // Clean previous background
         if(previousBackground != null && previousBackground.ref != item.background){
             if(previousBackground.bmp != null)
@@ -347,7 +419,6 @@ class PartDisplay extends Sprite {
                         char.visible = true;
                     }
                     currentSpeaker = char;
-                    TweenManager.applyTransition(currentSpeaker, item.transition);
 
                     char.visible = true;
                 }
