@@ -15,9 +15,9 @@ class TextItem implements PartElement {
     public var author (default, default): String;
 
     /**
-     * Position of the author
+     * Transition between this item and the one before
      */
-    public var direction (default, default): String;
+    public var transition (default, default): String;
 
     /**
     * Background when the item is displayed
@@ -46,8 +46,8 @@ class TextItem implements PartElement {
                 this.content = xml.att.content;
             if(xml.has.author)
                 author = xml.att.author;
-            if(xml.has.direction)
-                direction = xml.att.direction;
+            if(xml.has.transition)
+                transition = xml.att.transition;
             if(xml.has.ref)
                 ref = xml.att.ref;
             if(xml.has.background)

@@ -55,6 +55,16 @@ class PartDisplay extends Sprite {
     **/
     public var activityDisplay (default, null): ActivityDisplay;
 
+    /**
+    * Transition to play at the beginning of the part
+    **/
+    public var transitionIn (default, default): String;
+
+    /**
+    * Transition to play at the end of the part
+    **/
+    public var transitionOut (default, default): String;
+
     private var resizeD: ResizeManager;
     private var currentSpeaker: CharacterDisplay;
     private var previousBackground: {ref: String, bmp: Bitmap};
@@ -96,6 +106,7 @@ class PartDisplay extends Sprite {
 
     public function unLoad(): Void
     {
+        TweenManager.applyTransition(this, transitionOut);
         while(numChildren > 0)
             removeChildAt(numChildren - 1);
     }
@@ -151,6 +162,10 @@ class PartDisplay extends Sprite {
     private function parseContent(content: Xml): Void
     {
         displayFast = new Fast(content).node.Display;
+        if(displayFast.has.transitionIn)
+            transitionIn = displayFast.att.transitionIn;
+        if(displayFast.has.transitionOut)
+            transitionOut = displayFast.att.transitionOut;
 
         totalSpriteSheets = Lambda.count(displayFast.nodes.SpriteSheet);
 
@@ -213,24 +228,18 @@ class PartDisplay extends Sprite {
         activityDisplay = null;
     }
 
-    private function initDisplayObject(display: DisplayObject, node: Fast, anime: Bool = false): Void
+    private function initDisplayObject(display: DisplayObject, node: Fast, ?transition: String): Void
     {
-
-        if(anime){
-            TweenManager.translate(display, new Point(0, 0), new Point(Std.parseFloat(node.att.x), Std.parseFloat(node.att.y)));
-        }
-        else{
-            display.x = Std.parseFloat(node.att.x);
-            display.y = Std.parseFloat(node.att.y);
-        }
+        display.x = Std.parseFloat(node.att.x);
+        display.y = Std.parseFloat(node.att.y);
 
         if(node.has.width)
             display.width = Std.parseFloat(node.att.width);
-        else
+        else if(node.has.scaleX)
             display.scaleX = Std.parseFloat(node.att.scaleX);
         if(node.has.height)
             display.height = Std.parseFloat(node.att.height);
-        else
+        else if(node.has.scaleY)
             display.scaleY = Std.parseFloat(node.att.scaleY);
     }
 
@@ -338,6 +347,7 @@ class PartDisplay extends Sprite {
                         char.visible = true;
                     }
                     currentSpeaker = char;
+                    TweenManager.applyTransition(currentSpeaker, item.transition);
 
                     char.visible = true;
                 }
@@ -370,6 +380,7 @@ class PartDisplay extends Sprite {
             addChild(obj.obj);
         }
 
+        TweenManager.applyTransition(this, transitionIn);
     }
 
     /*

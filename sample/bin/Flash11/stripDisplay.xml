@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Display>
+<Display transitionIn="fadeIn" transition="fadeOut">
     <Box x="0" y="0" width="600" height="400" ref="case1"/>
     <Box x="600" y="0" width="360" height="400" ref="case2"/>
     <Box x="0" y="400" width="960" height="180" ref="case3"/>

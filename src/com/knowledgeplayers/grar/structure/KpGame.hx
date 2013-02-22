@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.grar.display.TweenManager;
 import com.knowledgeplayers.grar.display.LayoutDisplay;
 import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
@@ -48,7 +49,6 @@ class KpGame extends EventDispatcher, implements Game {
     public var inventory (default, null): Array<String>;
     public var partIndex: Int = 0;
 
-
     private var structureXml: Fast;
     private var languages: Hash<String>;
     private var stateInfos: StateInfos;
@@ -56,8 +56,6 @@ class KpGame extends EventDispatcher, implements Game {
     private var parts: IntHash<Part>;
     private var connection: Connection;
     private var nbPartsLoaded: Int = 0;
-
-
 
     public function new()
     {
@@ -74,7 +72,6 @@ class KpGame extends EventDispatcher, implements Game {
      * Initialize the game with a xml structure
      * @param	xml : the structure
      */
-
 
     public function init(xml: Xml): Void
     {
@@ -96,8 +93,6 @@ class KpGame extends EventDispatcher, implements Game {
         title = parametersNode.node.Title.innerData;
         state = parametersNode.node.State.innerData;
 
-
-
         initTracking();
 
         XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
@@ -105,6 +100,8 @@ class KpGame extends EventDispatcher, implements Game {
         var displayNode: Fast = structureXml.node.Grar.node.Display;
         if(displayNode.hasNode.Ui)
             UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
+        if(displayNode.hasNode.Transitions)
+            TweenManager.loadTemplate(displayNode.node.Transitions.att.display);
 
         for(activity in displayNode.nodes.Activity){
             var activityXml = XmlLoader.load(activity.att.display, onActivityComplete, initActivities);

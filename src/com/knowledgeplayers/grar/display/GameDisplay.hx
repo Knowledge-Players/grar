@@ -36,8 +36,7 @@ class GameDisplay extends Sprite {
      */
     private var menu: MenuDisplay;
 
-    private var layout:LayoutDisplay;
-
+    private var layout: LayoutDisplay;
 
     /**
      * Constructor
@@ -50,8 +49,6 @@ class GameDisplay extends Sprite {
         this.game = game;
         displayMenu();
     }
-
-
 
     /**
     * Display a graphic representation of the given part
@@ -99,8 +96,6 @@ class GameDisplay extends Sprite {
         menu.launchPart = launchPart;
         addChild(menu);
 
-
-
     }
 
     private function launchPart(part: Part): Void
@@ -119,7 +114,6 @@ class GameDisplay extends Sprite {
     {
         var partDisplay = cast(event.target, PartDisplay);
         partDisplay.startPart();
-        TweenManager.fadeIn(partDisplay);
         addChild(partDisplay);
     }
 

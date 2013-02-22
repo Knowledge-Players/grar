@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Display>
+<Display transitionIn="fadeInt" transition="fadeOut">
     <!-- Spritesheets declaration -->
     <SpriteSheet id="Thuynhan_happy" src="Thuynhan_happy.xml"/>
     <SpriteSheet id="Thuynhan_thinking" src="Thuynhan_thinking.xml"/>

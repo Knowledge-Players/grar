@@ -19,6 +19,7 @@
         <Activity display="scannerDisplay.xml"/>
         <Activity display="folderDisplay.xml"/>
         <Ui display="ui/ui.xml"/>
+        <Transitions display="ui/transition.xml"/>
     </Display>
     <!-- Structure of the application -->
     <Structure idObjective="" ref="main">
