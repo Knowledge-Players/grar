@@ -39,7 +39,6 @@ class Main {
 
         // Set Keyboard Manager
         KeyboardManager.instance.game = gameDisplay;
-
     }
 
     private function onGameOver(ev: GameEvent): Void

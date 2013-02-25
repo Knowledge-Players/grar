@@ -2,9 +2,11 @@
 <!-- WARNING: the size of the app is set in the NMML file -->
 <Layouts>
     <Layout ref="default" rows="100,*,50">
+
         <Row columns="50%,*">
             <Column>
                 <Zone ref="header">
+
                     <Button id="" type="text" x="400" y="400" scaleX="1" scaleY="1"/>
                     <Image id="" x="400" y="400" width="" height=""/>
                     <Background src=""/>
@@ -22,21 +24,32 @@
                 </Zone>
             </Column>
             <Column>
+
                 <Zone ref="menu">
                     <Button/>
                     <Image/>
                 </Zone>
             </Column>
         </Row>
-        <Row>
-            <Zone ref="main"/>
-        </Row>
-        <Row>
-            <Zone ref="footer">
 
-            </Zone>
+
+        <Row columns="100%">
+            <Column>
+                <Zone ref="main"/>
+            </Column>
+        </Row>
+
+
+        <Row columns="100%">
+            <Column>
+                <Zone ref="footer">
+                </Zone>
+            </Column>
         </Row>
     </Layout>
+
+
+
     <Layout ref="fullscreen">
         <Row columns="100%">
             <Column>
