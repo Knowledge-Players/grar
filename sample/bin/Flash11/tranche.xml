@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Part>
-    <Text type="" content="text1" author="Thuynhan_happy" transition="leftToRight" background="labo" ref="intro1"/>
+    <Text type="" content="text1" author="Thuynhan_happy" transition="blink" background="labo" ref="intro1"/>
     <Text type="" content="text2" author="Caroline_happy" transition="rightToLeft" background="labo" ref="intro2"/>
 
     <Part id="0" name="miniSims" type="dialog" file="wort.xml" display="wortDisplay.xml"/>

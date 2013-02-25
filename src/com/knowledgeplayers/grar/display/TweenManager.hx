@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import nme.geom.ColorTransform;
 import Reflect;
 import Reflect;
 import Reflect;
@@ -45,6 +46,8 @@ class TweenManager {
             return zoom(display, ref);
         else if(Reflect.hasField(transition, "xRange"))
             return wiggle(display, ref);
+        else if(Reflect.hasField(transition, "color"))
+            return blink(display, ref);
         else
             return slide(display, ref);
     }
@@ -118,6 +121,12 @@ class TweenManager {
         return Actuate.tween(display, slide.duration, { x: origin.x, y: origin.y }).ease(getEasing(slide));
     }
 
+    public static function blink(display: DisplayObject, ref: String): IGenericActuator
+    {
+        var blink = transitions.get(ref);
+        return Actuate.transform(display, blink.duration).color(blink.color).repeat(blink.repeat).reflect();
+    }
+
     /**
     * Load an XML file with transitions templates
     * @param    file : Path to the file
@@ -160,6 +169,9 @@ class TweenManager {
                 case "slide":
                     transition.x = Std.parseFloat(child.att.x);
                     transition.y = Std.parseFloat(child.att.y);
+                case "blink":
+                    transition.color = Std.parseInt(child.att.color);
+                    transition.repeat = Std.parseInt(child.att.repeat);
             }
             transitions.set(child.att.ref, transition);
         }
