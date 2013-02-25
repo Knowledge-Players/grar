@@ -28,13 +28,13 @@ class Main {
 
         game.addEventListener(PartEvent.PART_LOADED, onLoadingComplete);
         game.init(Xml.parse(Assets.getText("xml/sample_structure.xml")));
+
     }
 
     private function onLoadingComplete(e: PartEvent): Void
     {
         var gameDisplay = new GameDisplay(game);
         gameDisplay.addEventListener(GameEvent.GAME_OVER, onGameOver);
-
         Lib.current.addChild(gameDisplay);
 
         // Set Keyboard Manager

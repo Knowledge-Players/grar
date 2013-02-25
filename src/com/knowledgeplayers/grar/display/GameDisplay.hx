@@ -56,10 +56,10 @@ class GameDisplay extends Sprite {
         // Cleanup
         if(currentPart != null){
             currentPart.unLoad();
-            removeChild(currentPart);
+            game.layout.zones.get("main").removeChild(currentPart);
         }
-        if(contains(menu))
-            removeChild(menu);
+        //if(contains(menu))
+        //    removeChild(menu);
 
         // Display the new part
         currentPart = DisplayFactory.createPartDisplay(part);
@@ -80,18 +80,26 @@ class GameDisplay extends Sprite {
     public function displayPartById(id: Int): Void
     {
         displayPart(game.start(id));
+
     }
 
     // Private
 
     private function displayMenu()
     {
+        game.layout.addEventListener("onLayout",addMenu);
         game.layout.init(this);
 
+
+
+    }
+
+    private function addMenu(e:Event):Void{
+        game.layout.removeEventListener("onLayout",addMenu);
         menu = new MenuDisplay(game);
         menu.launchPart = launchPart;
-        addChild(menu);
 
+        game.layout.zones.get("menu").addChild(menu);
     }
 
     private function launchPart(part: Part): Void
@@ -110,7 +118,7 @@ class GameDisplay extends Sprite {
     {
         var partDisplay = cast(event.target, PartDisplay);
         partDisplay.startPart();
-        addChild(partDisplay);
+        game.layout.zones.get("main").addChild(partDisplay);
     }
 
     private function onExitSubPart(event: PartEvent): Void

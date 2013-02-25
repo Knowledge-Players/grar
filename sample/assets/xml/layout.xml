@@ -24,7 +24,6 @@
                 </Zone>
             </Column>
             <Column>
-
                 <Zone ref="menu">
                     <Button/>
                     <Image/>
