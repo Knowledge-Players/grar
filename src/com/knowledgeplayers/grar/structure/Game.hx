@@ -2,8 +2,6 @@ package com.knowledgeplayers.grar.structure;
 
 import com.knowledgeplayers.grar.display.LayoutDisplay;
 import com.knowledgeplayers.grar.structure.part.Part;
-import com.knowledgeplayers.grar.tracking.Connection;
-import haxe.xml.Fast;
 import nme.events.IEventDispatcher;
 
 interface Game implements IEventDispatcher {

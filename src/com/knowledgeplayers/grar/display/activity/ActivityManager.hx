@@ -1,8 +1,8 @@
 package com.knowledgeplayers.grar.display.activity;
-import com.knowledgeplayers.grar.display.activity.folder.FolderDisplay;
 import com.knowledgeplayers.grar.display.activity.cards.CardsDisplay;
-import com.knowledgeplayers.grar.display.activity.scanner.ScannerDisplay;
+import com.knowledgeplayers.grar.display.activity.folder.FolderDisplay;
 import com.knowledgeplayers.grar.display.activity.quizz.QuizzDisplay;
+import com.knowledgeplayers.grar.display.activity.scanner.ScannerDisplay;
 import nme.Lib;
 
 /**

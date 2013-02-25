@@ -1,14 +1,16 @@
 package com.knowledgeplayers.grar.util;
 
-import com.knowledgeplayers.grar.util.LoadData;
-import Std;
-import nme.display.Bitmap;
-import nme.display.Sprite;
-import nme.Lib;
 import com.eclecticdesignstudio.motion.Actuate;
+import com.knowledgeplayers.grar.util.LoadData;
+import nme.display.Bitmap;
 import nme.display.DisplayObject;
+import nme.display.Sprite;
 import nme.geom.Point;
+import nme.Lib;
 
+/**
+ * Manage a grid to place object
+ */
 class Grid {
     public var numRow (default, default): Int;
     public var numCol (default, default): Int;

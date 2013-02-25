@@ -1,12 +1,12 @@
 package com.knowledgeplayers.grar.factory;
 
-import com.knowledgeplayers.grar.structure.part.dialog.pattern.ChoicePattern;
-import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
-import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.structure.part.dialog.pattern.ActivityPattern;
-
-import nme.Lib;
+import com.knowledgeplayers.grar.structure.part.dialog.pattern.ChoicePattern;
+import com.knowledgeplayers.grar.structure.part.Pattern;
+import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
 import haxe.xml.Fast;
+import nme.Lib;
+
 
 /**
  * Factory to create dialog pattern

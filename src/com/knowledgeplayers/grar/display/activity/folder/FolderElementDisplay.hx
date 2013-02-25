@@ -1,19 +1,17 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.eclecticdesignstudio.motion.Actuate;
+import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import com.knowledgeplayers.grar.display.style.KpTextDownParser;
+import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.util.LoadData;
-import nme.events.Event;
-import nme.Assets;
 import nme.display.Bitmap;
 import nme.display.SimpleButton;
+import nme.display.Sprite;
+import nme.events.Event;
+import nme.events.MouseEvent;
 import nme.filters.DropShadowFilter;
 import nme.geom.Point;
-import nme.Lib;
-import nme.events.MouseEvent;
-import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import com.knowledgeplayers.grar.display.component.ScrollPanel;
-import nme.display.Sprite;
-import com.eclecticdesignstudio.motion.Actuate;
 
 /**
 * Display of an element in a folder activity

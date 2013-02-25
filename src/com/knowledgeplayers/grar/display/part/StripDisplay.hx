@@ -1,21 +1,14 @@
 package com.knowledgeplayers.grar.display.part;
 
-import nme.display.Bitmap;
-import Xml;
-import nme.display.Sprite;
-import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
-import com.knowledgeplayers.grar.structure.part.Pattern;
-import com.knowledgeplayers.grar.structure.part.TextItem;
-import com.knowledgeplayers.grar.structure.part.strip.StripPart;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
-import com.knowledgeplayers.grar.structure.activity.Activity;
-import com.knowledgeplayers.grar.event.LocaleEvent;
-import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import nme.events.Event;
-import nme.Lib;
-import nme.display.DisplayObject;
+import com.knowledgeplayers.grar.structure.part.Pattern;
+import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
+import com.knowledgeplayers.grar.structure.part.strip.StripPart;
+import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
+import nme.display.DisplayObject;
+import nme.display.Sprite;
 
 /**
  * Display for the strip parts, like a comic

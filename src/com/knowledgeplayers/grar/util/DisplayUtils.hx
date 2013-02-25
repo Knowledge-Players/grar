@@ -1,16 +1,12 @@
 package com.knowledgeplayers.grar.util;
 
-/**
- * Utility class for display
- */
+import nme.Assets;
+import nme.display.Bitmap;
+import nme.display.Sprite;
 
 /**
  * Utility class for display
  */
-import nme.Assets;
-import nme.display.Sprite;
-import nme.display.Bitmap;
-import nme.display.DisplayObject;
 class DisplayUtils {
     private function new()
     {}

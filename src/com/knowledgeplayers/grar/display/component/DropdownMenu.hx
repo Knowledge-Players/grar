@@ -1,9 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import com.knowledgeplayers.grar.display.text.StyledTextField;
 import haxe.FastList;
-import nme.display.DisplayObject;
-import nme.display.DisplayObjectContainer;
 import nme.display.Sprite;
 import nme.events.Event;
 import nme.events.MouseEvent;

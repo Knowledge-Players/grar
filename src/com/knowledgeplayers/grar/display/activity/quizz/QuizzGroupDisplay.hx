@@ -1,12 +1,9 @@
 package com.knowledgeplayers.grar.display.activity.quizz;
-import nme.display.Bitmap;
-import com.knowledgeplayers.grar.util.LoadData;
-import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.structure.activity.quizz.QuizzGroup;
-import com.knowledgeplayers.grar.util.XmlLoader;
+import com.knowledgeplayers.grar.util.LoadData;
 import haxe.xml.Fast;
+import nme.display.Bitmap;
 import nme.display.Sprite;
-import nme.Lib;
 
 /**
  * Display for a group of answer in a quizz

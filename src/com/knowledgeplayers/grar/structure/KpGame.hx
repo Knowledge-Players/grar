@@ -1,9 +1,8 @@
 package com.knowledgeplayers.grar.structure;
 
-import com.knowledgeplayers.grar.display.TweenManager;
-import com.knowledgeplayers.grar.display.LayoutDisplay;
-import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
+import com.knowledgeplayers.grar.display.LayoutDisplay;
+import com.knowledgeplayers.grar.display.TweenManager;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.event.TokenEvent;
 import com.knowledgeplayers.grar.factory.PartFactory;
@@ -12,6 +11,7 @@ import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.tracking.Connection;
 import com.knowledgeplayers.grar.tracking.StateInfos;
+import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;
 import nme.events.Event;

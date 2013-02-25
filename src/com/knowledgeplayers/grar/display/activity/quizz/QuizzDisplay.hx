@@ -1,33 +1,22 @@
 package com.knowledgeplayers.grar.display.activity.quizz;
 
-import nme.display.Bitmap;
-import Std;
-import nme.display.Bitmap;
-import com.knowledgeplayers.grar.util.LoadData;
-import com.knowledgeplayers.grar.event.PartEvent;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import com.knowledgeplayers.grar.display.component.ScrollPanel;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
-import com.knowledgeplayers.grar.display.style.StyleParser;
-import com.knowledgeplayers.grar.display.text.StyledTextField;
+import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.event.LocaleEvent;
-import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.activity.quizz.Quizz;
-import com.knowledgeplayers.grar.util.DisplayUtils;
+import com.knowledgeplayers.grar.util.LoadData;
 import haxe.xml.Fast;
-import nme.Assets;
 import nme.display.Bitmap;
 import nme.display.BitmapData;
-import nme.display.SimpleButton;
-import nme.events.Event;
-import nme.events.MouseEvent;
-import nme.Lib;
 import nme.display.DisplayObject;
+import nme.events.MouseEvent;
+import Std;
 
 /**
 * Display for quizz activity. Since all quizz in a game must look alike,

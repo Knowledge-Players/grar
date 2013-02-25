@@ -1,10 +1,5 @@
 package com.knowledgeplayers.grar.factory;
 
-import String;
-import nme.display.Bitmap;
-import com.knowledgeplayers.grar.util.XmlLoader;
-import nme.events.Event;
-import com.knowledgeplayers.grar.util.LoadData;
 import aze.display.SparrowTilesheet;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.display.component.button.AnimationButton;
@@ -12,9 +7,12 @@ import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.component.ScrollBar;
+import com.knowledgeplayers.grar.util.LoadData;
+import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;
-import nme.Assets;
-import nme.Lib;
+import nme.display.Bitmap;
+import nme.events.Event;
+import String;
 
 /**
  * Factory to create UI components

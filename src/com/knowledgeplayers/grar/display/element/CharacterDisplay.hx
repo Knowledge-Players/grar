@@ -1,16 +1,11 @@
 package com.knowledgeplayers.grar.display.element;
 
-import aze.display.TileSprite;
 import aze.display.SparrowTilesheet;
 import aze.display.TileLayer;
-import nme.events.Event;
-import com.knowledgeplayers.grar.util.SpriteSheetLoader;
-import nme.display.Bitmap;
+import aze.display.TileSprite;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import nme.display.Sprite;
 import nme.geom.Point;
-import nme.Lib;
-import aze.display.TilesheetEx;
 
 /**
  * Graphic representation of a character of the game

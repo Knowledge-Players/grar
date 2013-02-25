@@ -1,25 +1,17 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.display.component.button.DefaultButton;
-import nme.events.MouseEvent;
-import com.knowledgeplayers.grar.structure.part.dialog.pattern.ChoicePattern;
-import com.knowledgeplayers.grar.structure.part.Pattern;
-import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
-import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
+import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.event.TokenEvent;
-import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
-import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
+import com.knowledgeplayers.grar.structure.part.dialog.pattern.ChoicePattern;
+import com.knowledgeplayers.grar.structure.part.Pattern;
 import haxe.xml.Fast;
 import nme.Assets;
 import nme.display.Bitmap;
-import nme.events.Event;
-import nme.Lib;
 
 /**
  * Display of a dialog

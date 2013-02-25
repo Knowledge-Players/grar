@@ -1,20 +1,13 @@
 package com.knowledgeplayers.grar.display.activity.scanner;
 
-import com.knowledgeplayers.grar.util.LoadData;
-import nme.display.Bitmap;
 import com.knowledgeplayers.grar.display.activity.scanner.PointDisplay.PointStyle;
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
-import nme.display.DisplayObject;
-import nme.Lib;
-import nme.display.Sprite;
-import nme.display.Bitmap;
-import nme.Assets;
-import haxe.xml.Fast;
-import com.knowledgeplayers.grar.event.PartEvent;
-import nme.events.Event;
 import com.knowledgeplayers.grar.event.LocaleEvent;
-import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.activity.scanner.Scanner;
+import com.knowledgeplayers.grar.util.LoadData;
+import haxe.xml.Fast;
+import nme.display.Bitmap;
+import nme.display.Sprite;
 
 class ScannerDisplay extends ActivityDisplay {
 

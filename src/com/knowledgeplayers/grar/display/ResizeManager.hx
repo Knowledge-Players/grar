@@ -2,7 +2,6 @@ package com.knowledgeplayers.grar.display;
 
 import haxe.xml.Fast;
 import nme.display.DisplayObject;
-import nme.display.Sprite;
 import nme.events.Event;
 import nme.Lib;
 

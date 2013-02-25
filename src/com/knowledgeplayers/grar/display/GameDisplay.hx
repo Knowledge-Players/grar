@@ -1,20 +1,16 @@
 package com.knowledgeplayers.grar.display;
 
-import com.eclecticdesignstudio.motion.Actuate;
-import com.eclecticdesignstudio.motion.easing.Cubic;
+import com.knowledgeplayers.grar.display.LayoutDisplay;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;
-
+import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.GameEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.factory.DisplayFactory;
 import com.knowledgeplayers.grar.structure.Game;
-import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.structure.part.Part;
 import nme.display.Sprite;
 import nme.events.Event;
-import nme.events.EventDispatcher;
-import nme.Lib;
-import com.knowledgeplayers.grar.display.LayoutDisplay;
+
 
 /**
  * Display of a game

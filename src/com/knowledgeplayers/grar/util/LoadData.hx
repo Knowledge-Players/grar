@@ -1,26 +1,23 @@
 package com.knowledgeplayers.grar.util;
 
-import Std;
-import haxe.xml.Fast;
-import Std;
-import nme.display.Loader;
-import nme.display.DisplayObject;
-import nme.display.Bitmap;
 import nme.Assets;
-import nme.display.Sprite;
+import nme.display.Bitmap;
 import nme.display.DisplayObject;
-import nme.net.URLRequest;
 import nme.display.Loader;
-import nme.net.URLLoader;
-import nme.events.IOErrorEvent;
 import nme.events.Event;
 import nme.events.EventDispatcher;
+import nme.events.IOErrorEvent;
 import nme.Lib;
+import nme.net.URLRequest;
 
-
+/**
+ * Data loader for external resources
+ */
 class LoadData extends EventDispatcher {
 
-
+	/**
+	 * Instance of the LoadData
+	 */
     public static var instance (getInstance, null): LoadData;
 
     private var cacheElementsDisplay:Hash<DisplayObject>;

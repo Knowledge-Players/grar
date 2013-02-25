@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.factory;
-import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
+import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
 import nme.Lib;
 

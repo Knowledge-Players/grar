@@ -1,19 +1,22 @@
 package com.knowledgeplayers.grar.util;
 
-import nme.net.URLRequest;
-import nme.display.Loader;
-import nme.events.IOErrorEvent;
-import nme.display.DisplayObject;
-import nme.display.Bitmap;
-import nme.events.Event;
-import aze.display.TilesheetEx;
-import haxe.xml.Fast;
 import aze.display.SparrowTilesheet;
-import nme.events.EventDispatcher;
+import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.util.XmlLoader;
+import haxe.xml.Fast;
 import nme.Assets;
+import nme.display.Bitmap;
+import nme.display.DisplayObject;
+import nme.display.Loader;
+import nme.events.Event;
+import nme.events.EventDispatcher;
+import nme.events.IOErrorEvent;
 import nme.Lib;
+import nme.net.URLRequest;
 
+/**
+ * Loader of spritesheets form XML
+ */
 class SpriteSheetLoader extends EventDispatcher {
     public var name: String;
     public var spriteSheet: TilesheetEx;

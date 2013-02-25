@@ -1,14 +1,11 @@
 package com.knowledgeplayers.grar.factory;
 
-import com.knowledgeplayers.grar.structure.part.strip.StripPart;
-import com.knowledgeplayers.grar.display.part.StripDisplay;
-import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
-import com.knowledgeplayers.grar.display.activity.quizz.QuizzDisplay;
 import com.knowledgeplayers.grar.display.part.DialogDisplay;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
+import com.knowledgeplayers.grar.display.part.StripDisplay;
 import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
 import com.knowledgeplayers.grar.structure.part.Part;
-import nme.Lib;
+import com.knowledgeplayers.grar.structure.part.strip.StripPart;
 
 /**
  * Factory to create displays

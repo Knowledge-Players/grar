@@ -1,13 +1,10 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.factory.UiFactory;
-import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.structure.Game;
 import com.knowledgeplayers.grar.structure.part.Part;
 import nme.display.Sprite;
 import nme.events.MouseEvent;
-import nme.Lib;
 
 /**
  * Display of a menu

@@ -1,16 +1,13 @@
 package com.knowledgeplayers.grar.display.activity.scanner;
 
-import nme.display.Bitmap;
-import com.knowledgeplayers.grar.util.LoadData;
-import String;
-import nme.Lib;
-import com.knowledgeplayers.grar.structure.activity.scanner.ScannerPoint;
-import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import nme.events.MouseEvent;
-import nme.Assets;
+import com.knowledgeplayers.grar.localisation.Localiser;
+import com.knowledgeplayers.grar.structure.activity.scanner.ScannerPoint;
+import com.knowledgeplayers.grar.util.LoadData;
 import nme.display.Bitmap;
 import nme.display.Sprite;
+import nme.events.MouseEvent;
+import String;
 
 class PointDisplay extends Sprite {
 

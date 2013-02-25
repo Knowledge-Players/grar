@@ -1,9 +1,13 @@
 package com.knowledgeplayers.grar.util;
 
 import com.knowledgeplayers.grar.display.GameDisplay;
-import nme.ui.Keyboard;
 import nme.events.KeyboardEvent;
 import nme.Lib;
+import nme.ui.Keyboard;
+
+/**
+ * Utility class to manage Keyboard inputs
+ */
 class KeyboardManager {
     public static var instance (getInstance, null): KeyboardManager;
 

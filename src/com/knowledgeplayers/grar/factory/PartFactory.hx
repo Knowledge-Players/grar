@@ -1,12 +1,12 @@
 package com.knowledgeplayers.grar.factory;
 
-import com.knowledgeplayers.grar.structure.part.strip.StripPart;
-import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
+import com.knowledgeplayers.grar.structure.part.Part;
+import com.knowledgeplayers.grar.structure.part.strip.StripPart;
 import com.knowledgeplayers.grar.structure.part.StructurePart;
+import haxe.xml.Fast;
 import nme.Lib;
 
-import haxe.xml.Fast;
 
 /**
  * Factory to create parts

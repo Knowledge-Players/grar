@@ -1,22 +1,14 @@
 package com.knowledgeplayers.grar.display;
 
-import nme.geom.ColorTransform;
-import Reflect;
-import Reflect;
-import Reflect;
-import Type;
-import com.eclecticdesignstudio.motion.easing.Linear;
-import com.eclecticdesignstudio.motion.easing.IEasing;
-import haxe.xml.Fast;
-import nme.events.Event;
-import com.knowledgeplayers.grar.util.XmlLoader;
-import nme.geom.Rectangle;
-import nme.display.Sprite;
 import com.eclecticdesignstudio.motion.Actuate;
 import com.eclecticdesignstudio.motion.actuators.GenericActuator.IGenericActuator;
 import com.eclecticdesignstudio.motion.easing.Cubic;
+import com.eclecticdesignstudio.motion.easing.IEasing;
+import com.knowledgeplayers.grar.util.XmlLoader;
+import haxe.xml.Fast;
 import nme.display.DisplayObject;
-import nme.geom.Point;
+import nme.display.Sprite;
+import nme.events.Event;
 import nme.Lib;
 
 /**

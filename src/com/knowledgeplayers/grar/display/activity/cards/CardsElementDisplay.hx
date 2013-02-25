@@ -1,18 +1,10 @@
 package com.knowledgeplayers.grar.display.activity.cards;
 
-import nme.events.Event;
-import nme.Assets;
-import nme.display.Bitmap;
-import nme.display.SimpleButton;
-import nme.filters.DropShadowFilter;
-import nme.geom.Point;
-import nme.Lib;
-import nme.events.MouseEvent;
-import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import com.knowledgeplayers.grar.display.style.KpTextDownParser;
+import com.knowledgeplayers.grar.localisation.Localiser;
 import nme.display.Sprite;
-import com.eclecticdesignstudio.motion.Actuate;
+import nme.events.MouseEvent;
 
 /**
 * Display of an element in a folder activity

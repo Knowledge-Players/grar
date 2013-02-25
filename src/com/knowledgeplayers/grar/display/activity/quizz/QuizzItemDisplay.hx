@@ -1,19 +1,12 @@
 package com.knowledgeplayers.grar.display.activity.quizz;
 
-import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.structure.activity.quizz.QuizzItem;
-import com.knowledgeplayers.grar.display.style.StyleParser;
-import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import com.knowledgeplayers.grar.util.XmlLoader;
-import haxe.xml.Fast;
-import nme.Assets;
+import com.knowledgeplayers.grar.localisation.Localiser;
+import com.knowledgeplayers.grar.structure.activity.quizz.QuizzItem;
 import nme.display.Bitmap;
-import nme.display.BitmapData;
 import nme.display.Sprite;
 import nme.events.MouseEvent;
-import nme.Lib;
 
 /**
  * Display for quizz propositions

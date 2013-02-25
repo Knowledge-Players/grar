@@ -1,23 +1,16 @@
 package com.knowledgeplayers.grar.display.activity;
 
-import com.knowledgeplayers.grar.util.SpriteSheetLoader;
-
-import com.knowledgeplayers.grar.util.LoadData;
-import nme.display.Bitmap;
-
-import nme.Lib;
-import aze.display.SparrowTilesheet;
-import com.knowledgeplayers.grar.util.XmlLoader;
 import aze.display.TilesheetEx;
-import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.event.LocaleEvent;
-import nme.events.Event;
 import com.knowledgeplayers.grar.structure.activity.Activity;
-import haxe.FastList;
+import com.knowledgeplayers.grar.util.SpriteSheetLoader;
 import haxe.xml.Fast;
 import nme.display.DisplayObject;
 import nme.display.Sprite;
-import nme.Assets;
+import nme.events.Event;
+import nme.Lib;
+
+
 
 /**
 * Abstract display for an activity
