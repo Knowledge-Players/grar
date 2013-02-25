@@ -19,8 +19,8 @@
     <Character id="Caroline_worried" ref="Caroline_worried" scaleX="0.3" scaleY="0.3" x="700" y="500"/>
     <Character id="Thuynhan_worried" ref="Thuynhan_worried" scaleX="0.3" scaleY="0.3" x="400" y="500"/>
     <Text x="0" y="480" width="960" height="100" background="0xFFFFFF" ref="dialog"/>
-    <Button id="continueButton" type="text" action="next" x="791" y="530" scaleX="1" scaleY="1" ref="next"/>
-    <Button id="continueButton" type="text" action="goto" x="100" y="530" scaleX="1" scaleY="1" ref="choice1"/>
-    <Button id="continueButton" type="text" action="goto" x="500" y="530" scaleX="1" scaleY="1" ref="choice2"/>
-    <Button id="continueButton" type="text" action="goto" x="791" y="530" scaleX="1" scaleY="1" ref="choice3"/>
+    <Button id="continueButton" type="text" action="next" x="800" y="400" scaleX="1" scaleY="1" ref="next"/>
+    <Button id="continueButton" type="text" action="goto" x="100" y="400" scaleX="1" scaleY="1" ref="choice1"/>
+    <Button id="continueButton" type="text" action="goto" x="500" y="400" scaleX="1" scaleY="1" ref="choice2"/>
+    <Button id="continueButton" type="text" action="goto" x="791" y="400" scaleX="1" scaleY="1" ref="choice3"/>
 </Display>

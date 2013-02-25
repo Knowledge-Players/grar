@@ -11,7 +11,7 @@
     <Background src="img/background2.jpg" ref="empty"/>
     <Character id="Thuynhan_happy" ref="Thuynhan_happy" scaleX="0.3" scaleY="0.3" x="400" y="500"/>
     <Character id="Caroline_happy" ref="Caroline_happy" scaleX="0.3" scaleY="0.3" x="700" y="500"/>
-    <Button id="continueButton" type="text" action="next" x="791" y="530" scaleX="1" scaleY="1" ref="next"/>
+    <Button id="continueButton" type="text" action="next" x="800" y="400" scaleX="1" scaleY="1" ref="next"/>
 
     <!--<TextGroup ref="group1">-->
     <!--</TextGroup>-->

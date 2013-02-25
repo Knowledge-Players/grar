@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.grar.tracking.Connection.Mode;
 import com.knowledgeplayers.grar.display.LayoutDisplay;
 import com.knowledgeplayers.grar.structure.part.Part;
 import nme.events.IEventDispatcher;

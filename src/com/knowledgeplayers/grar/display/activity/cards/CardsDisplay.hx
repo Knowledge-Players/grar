@@ -114,7 +114,7 @@ class CardsDisplay extends ActivityDisplay {
     override private function parseContent(content: Fast): Void
     {
         this.content = content;
-        Lib.trace("----- parse content");
+
 
         for(child in content.elements){
             if(child.name.toLowerCase() == "background"){

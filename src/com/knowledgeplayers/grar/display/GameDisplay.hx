@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import nme.Lib;
 import com.knowledgeplayers.grar.display.LayoutDisplay;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
@@ -100,6 +101,7 @@ class GameDisplay extends Sprite {
         menu.launchPart = launchPart;
 
         game.layout.zones.get("menu").addChild(menu);
+
     }
 
     private function launchPart(part: Part): Void
@@ -118,6 +120,10 @@ class GameDisplay extends Sprite {
     {
         var partDisplay = cast(event.target, PartDisplay);
         partDisplay.startPart();
+        //partDisplay.width = game.layout.zones.get("main").width;
+        //partDisplay.height = game.layout.zones.get("main").height;
+        Lib.trace("game.layout.zones.get('main').height : "+game.layout.zones.get("main").height);
+        //Lib.trace("");
         game.layout.zones.get("main").addChild(partDisplay);
     }
 
