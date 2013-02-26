@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import nme.Lib;
 import com.eclecticdesignstudio.motion.Actuate;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.structure.activity.folder.Folder;
@@ -109,6 +110,7 @@ class FolderDisplay extends ActivityDisplay {
     override private function parseContent(content: Fast): Void
     {
         this.content = content;
+
         for (child in content.elements){
             if(child.name.toLowerCase() == "background"){
 

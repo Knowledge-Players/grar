@@ -15,9 +15,10 @@
     <!-- List of static displays -->
     <Display>
         <Activity display="quizzDisplay.xml"/>
-        <Activity display="cardsDisplay.xml"/>
-        <Activity display="scannerDisplay.xml"/>
         <Activity display="folderDisplay.xml"/>
+        <Activity display="scannerDisplay.xml"/>
+        <Activity display="cardsDisplay.xml"/>
+
         <Ui display="ui/ui.xml"/>
         <Transitions display="ui/transition.xml"/>
     </Display>

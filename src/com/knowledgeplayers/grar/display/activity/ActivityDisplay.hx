@@ -106,7 +106,10 @@ class ActivityDisplay extends Sprite {
     // Private
 
     private function parseContent(display: Fast): Void
-    {}
+    {
+
+
+    }
 
     private function unLoad(keepLayer: Int = 0): Void
     {

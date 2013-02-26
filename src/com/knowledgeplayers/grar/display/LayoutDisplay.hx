@@ -25,7 +25,7 @@ class LayoutDisplay extends Sprite {
     public function new():Void {
 
     super();
-    Lib.trace("LayoutDisplay");
+    //Lib.trace("LayoutDisplay");
     layouts = new Hash<Layout>();
     zones = new Hash<Sprite>();
     WIDTH = Lib.current.stage.stageWidth;

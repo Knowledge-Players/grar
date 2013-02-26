@@ -42,11 +42,12 @@ class ActivityManager {
         var activity: ActivityDisplay = activities.get(name.toLowerCase());
         if(activity == null){
             switch(name.toLowerCase()) {
-                case "quizz": activity = QuizzDisplay.instance;
 
+                case "quizz": activity = QuizzDisplay.instance;
                 case "scanner": activity = ScannerDisplay.instance;
                 case "folder": activity = FolderDisplay.instance;
                 case "cards": activity = CardsDisplay.instance;
+
                 default: Lib.trace(name + ": Unsupported activity type");
             }
             if(activity != null)

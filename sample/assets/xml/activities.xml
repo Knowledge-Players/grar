@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Part>
-    <Activity type="Cards" content="cards.xml" perk="FlipIt"/>
+    <Activity type="Cards" content="cards.xml" perk="SwipIt"/>
     <Activity type="Quizz" content="quizz.xml" perk="QuizzIt"/>
     <Activity type="Folder" content="folder.xml" perk="SwipIt"/>
     <Activity type="Scanner" content="scanner.xml" perk="ScanIt"/>

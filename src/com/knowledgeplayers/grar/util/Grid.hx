@@ -37,6 +37,7 @@ class Grid {
         this.alignY = _alignY;
         container = new Sprite();
 
+
         if(cellWidth != "" && cellHeight != "")
             {
                 cellSize = {width: Std.parseFloat(cellWidth), height: Std.parseFloat(cellHeight)};

@@ -1,6 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.cards;
 
 
+import nme.Lib;
 import aze.display.TileClip;
 import aze.display.TileLayer;
 import com.eclecticdesignstudio.motion.Actuate;
@@ -68,7 +69,7 @@ class CardsDisplay extends ActivityDisplay {
         grids = new Hash<Grid>();
         popUp = new Sprite();
         elementsArray = new Array<CardsElementDisplay>();
-
+        Lib.trace("new cards display");
     }
 
 /**
@@ -107,14 +108,14 @@ class CardsDisplay extends ActivityDisplay {
 
         grids.get("dispatch").alignContainer(grids.get("dispatch").container,background);
 
-
         super.onModelComplete(e);
+
     }
 
     override private function parseContent(content: Fast): Void
     {
-        this.content = content;
 
+        this.content = content;
 
         for(child in content.elements){
             if(child.name.toLowerCase() == "background"){
@@ -138,11 +139,11 @@ class CardsDisplay extends ActivityDisplay {
 
 
             } else if(child.name.toLowerCase() == "popup"){
-//popUp.addChild(new Bitmap(Assets.getBitmapData(content.node.PopUp.att.background)));
+                //popUp.addChild(new Bitmap(Assets.getBitmapData(content.node.PopUp.att.background)));
                 var pop:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(content.node.PopUp.att.background),Bitmap).bitmapData);
                 popUp.addChild(pop);
 
-//var icon = new Bitmap(Assets.getBitmapData(content.node.PopUp.att.buttonIcon));
+                //var icon = new Bitmap(Assets.getBitmapData(content.node.PopUp.att.buttonIcon));
                 var icon:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(content.node.PopUp.att.buttonIcon),Bitmap).bitmapData);
                 popUp.addChild(icon);
                 popUp.addEventListener(MouseEvent.CLICK, onClosePopUp);
@@ -163,6 +164,7 @@ class CardsDisplay extends ActivityDisplay {
 
 
         for(grid in content.nodes.Grid){
+
             var g = new Grid(Std.parseInt(grid.att.numRow), Std.parseInt(grid.att.numCol), grid.att.cellWidth, grid.att.cellHeight, Std.parseFloat(grid.att.gapCol), Std.parseFloat(grid.att.gapRow), Std.string(grid.att.alignX), Std.string(grid.att.alignY),elemNode.att.src);
             g.x = Std.parseFloat(grid.att.x);
             g.y = Std.parseFloat(grid.att.y);

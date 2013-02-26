@@ -72,7 +72,7 @@ class LoadData extends EventDispatcher {
 
 
         for( i in 0...lgArray ) {
-            Lib.trace("xml load : "+arrayDisplayXml[i]);
+            //Lib.trace("xml load : "+arrayDisplayXml[i]);
 
             XmlLoader.load(arrayDisplayXml[i],onXmlDisplayLoaded,parseContent);
         }
