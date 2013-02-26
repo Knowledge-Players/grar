@@ -58,8 +58,8 @@ class Grid {
 
     public function alignContainer(_container:Sprite,_bkg:Bitmap):Void
     {
-            Lib.trace("alignX : "+alignX);
-            Lib.trace("alignY : "+alignY);
+            //Lib.trace("alignX : "+alignX);
+            //Lib.trace("alignY : "+alignY);
 
 
             switch(alignX)

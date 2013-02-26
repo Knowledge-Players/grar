@@ -63,7 +63,7 @@ class ActivityDisplay extends Sprite {
             var n = new SpriteSheetLoader();
             //var nom = Std.string(spr.att.src).split("/")[1];
             // var url = nom.split(".")[0]+".xml";
-            n.addEventListener("loaded", onSpriteSheetLoaded);
+            n.addEventListener(Event.COMPLETE, onSpriteSheetLoaded);
 
             n.init(spr.att.id, spr.att.src);
         }
