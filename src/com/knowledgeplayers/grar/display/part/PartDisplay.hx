@@ -477,6 +477,15 @@ class PartDisplay extends Sprite {
                 addChild(obj.obj);
             }
         }
+        else
+        {
+            for(key in displays.keys()){
+                if(Std.is(displays.get(key).obj, TextButton)){
+                    addChild(displays.get(key).obj);
+                }
+
+                }
+        }
     }
 
     /*
@@ -489,6 +498,7 @@ class PartDisplay extends Sprite {
         var textItem: TextItem = null;
         if(currentElement.isText())
             textItem = cast(currentElement, TextItem);
+
         else if(currentElement.isPattern() && Std.is(object.obj, DefaultButton)){
             var pattern = cast(currentElement, Pattern);
             if(Std.is(displays.get(key).obj, TextButton)){
