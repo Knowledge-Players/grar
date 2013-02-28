@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.localisation;
 
+import nme.Lib;
+import haxe.xml.Fast;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import nme.events.Event;
@@ -49,9 +51,27 @@ class Localisation extends EventDispatcher {
         return tradHash.get(key);
     }
 
-    // Can't use haxe.xml.Fast because Excel XML isn't supported
 
     private function parseContent(content: Xml): Void
+    {
+        Lib.trace(content.firstElement().nodeName);
+        if(content.firstElement().nodeName == "Workbook")
+            parseExcelContent(content);
+        else
+            parseXmlContent(content);
+        dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));
+    }
+
+    private function parseXmlContent(content: Xml): Void
+    {
+        var locale = new Fast(content).node.Localisation;
+        for(elem in locale.nodes.Element){
+            tradHash.set(elem.node.key.innerData, elem.node.value.innerData);
+        }
+    }
+
+    // Can't use haxe.xml.Fast because Excel XML isn't supported
+    private function parseExcelContent(content: Xml): Void
     {
         var table: Xml = null;
         for(element in content.firstElement().elements()){
@@ -82,7 +102,6 @@ class Localisation extends EventDispatcher {
                 }
             }
         }
-        dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));
     }
 
     // Handlers

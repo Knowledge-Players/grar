@@ -1,158 +1,29 @@
 <?xml version="1.0"?>
-<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
-          xmlns:x="urn:schemas-microsoft-com:office:excel"
-          xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
-        >
-    <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
-        <Author>Vincent BLIN</Author>
-        <LastAuthor>Jean-Baptiste Richardet</LastAuthor>
-        <Created>2010-08-02T16:10:31Z</Created>
-        <LastSaved>2012-04-12T08:53:14Z</LastSaved>
-        <Version>14.0</Version>
-    </DocumentProperties>
-    <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
-        <AllowPNG/>
-    </OfficeDocumentSettings>
-    <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
-        <WindowHeight>12340</WindowHeight>
-        <WindowWidth>28800</WindowWidth>
-        <WindowTopX>0</WindowTopX>
-        <WindowTopY>0</WindowTopY>
-        <Date1904/>
-        <ProtectStructure>False</ProtectStructure>
-        <ProtectWindows>False</ProtectWindows>
-    </ExcelWorkbook>
-    <Styles>
-        <Style ss:ID="Default" ss:Name="Normal">
-            <Alignment ss:Vertical="Bottom"/>
-            <Borders/>
-            <Font ss:FontName="Verdana"/>
-            <Interior/>
-            <NumberFormat/>
-            <Protection/>
-        </Style>
-        <Style ss:ID="s62">
-            <Borders>
-                <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
-            </Borders>
-            <Interior ss:Color="#FFFFFF" ss:Pattern="ThinDiagStripe"
-                      ss:PatternColor="#000000"/>
-        </Style>
-        <Style ss:ID="s63">
-            <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
-            <Borders>
-                <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
-            </Borders>
-            <Interior ss:Color="#FFFFFF" ss:Pattern="ThinDiagStripe"
-                      ss:PatternColor="#000000"/>
-        </Style>
-        <Style ss:ID="s64">
-            <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
-            <Borders>
-                <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
-            </Borders>
-            <Interior ss:Color="#FFFFFF" ss:Pattern="ThinDiagStripe"
-                      ss:PatternColor="#000000"/>
-        </Style>
-        <Style ss:ID="s65">
-            <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
-            <Borders>
-                <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
-            </Borders>
-            <Interior/>
-        </Style>
-    </Styles>
-    <Worksheet ss:Name="Feuil1">
-        <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="6" x:FullColumns="1"
-               x:FullRows="1" ss:StyleID="s62" ss:DefaultColumnWidth="66">
-            <Column ss:StyleID="s63" ss:AutoFitWidth="0" ss:Width="90"/>
-            <Column ss:StyleID="s64" ss:AutoFitWidth="0" ss:Width="375"/>
-            <Row>
-                <Cell>
-                    <Data ss:Type="String">nextButton</Data>
-                </Cell>
-                <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">Continuer</Data>
-                </Cell>
-            </Row>
-            <Row ss:AutoFitHeight="0" ss:Height="26">
-                <Cell>
-                    <Data ss:Type="String">Caroline</Data>
-                </Cell>
-                <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">Caroline</Data>
-                </Cell>
-            </Row>
-            <Row ss:AutoFitHeight="0" ss:Height="26">
-                <Cell>
-                    <Data ss:Type="String">Thuynhan_happy</Data>
-                </Cell>
-                <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">Thuynhan</Data>
-                </Cell>
-            </Row>
-            <Row ss:AutoFitHeight="0" ss:Height="26">
-                <Cell>
-                    <Data ss:Type="String">text1</Data>
-                </Cell>
-                <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">You are Thuynhan, a newly appointed Weber factory manager in China.&#13;As a
-                        part of your initial training, you have been invited to Les Miroirs in Paris, in order to attend
-                        a series of conferences and workshops led by Caroline Jones, Saint-Gobain’s Training Manager and
-                        Leader for the People Development WCM pillar. At the end of the day, you have the opportunity to
-                        meet with her in person as she is packing her training material back.&#13;</Data>
-                </Cell>
-            </Row>
-            <Row ss:AutoFitHeight="0" ss:Height="26">
-                <Cell>
-                    <Data ss:Type="String">text2</Data>
-                </Cell>
-                <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">During the following conversation, you are going to ask Caroline to provide
-                        you with real-life examples illustrating the benefits of Training for the Group’s employees.&#13;You
-                        will have to:&#13;* Identify the Group’s WCM model’s main components for HR;&#13;* Collect
-                        information about the MKT2 program.&#13;</Data>
-                </Cell>
-            </Row>
-            <Row ss:AutoFitHeight="0" ss:Height="26"/>
-        </Table>
-        <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
-            <PageSetup>
-                <Header
-                        x:Data="&amp;CFichier de Traduction Knowledge-players&#13;Veillez à ne pas insérer de lignes et ne pas modifier les cellules hachurées"/>
-                <Footer x:Margin="0.4921259845"/>
-                <PageMargins x:Left="0.75196850393700798" x:Right="0.75196850393700798"/>
-            </PageSetup>
-            <Print>
-                <ValidPrinterInfo/>
-                <HorizontalResolution>-4</HorizontalResolution>
-                <VerticalResolution>-4</VerticalResolution>
-            </Print>
-            <ShowPageLayoutZoom/>
-            <PageLayoutZoom>100</PageLayoutZoom>
-            <Selected/>
-            <Panes>
-                <Pane>
-                    <Number>3</Number>
-                    <ActiveRow>2</ActiveRow>
-                    <ActiveCol>1</ActiveCol>
-                    <RangeSelection>R1C1:R3C2</RangeSelection>
-                </Pane>
-            </Panes>
-            <ProtectObjects>False</ProtectObjects>
-            <ProtectScenarios>False</ProtectScenarios>
-        </WorksheetOptions>
-    </Worksheet>
-</Workbook>
+<!-- There must be no space around <![CDATA[ ]]> -->
+<Localisation>
+    <Element>
+        <key>nextButton</key>
+        <value><![CDATA[Continuer]]></value>
+    </Element>
+    <Element>
+        <key>Caroline</key>
+        <value><![CDATA[Caroline]]></value>
+    </Element>
+    <Element>
+        <key>Thuynhan_happy</key>
+        <value><![CDATA[Thuynhan]]></value>
+    </Element>
+    <Element>
+        <key>text1</key>
+        <value><![CDATA[You are Thuynhan, a newly appointed Weber factory manager in China.
+As a part of your initial training, you have been invited to Les Miroirs in Paris, in order to attend a series of conferences and workshops led by Caroline Jones, Saint-Gobain’s Training Manager and Leader for the People Development WCM pillar.
+At the end of the day, you have the opportunity to meet with her in person as she is packing her training material back.]]></value>
+    </Element>
+    <Element>
+        <key>text2</key>
+        <value><![CDATA[During the following conversation, you are going to ask Caroline to provide you with real-life examples illustrating the benefits of Training for the Group’s employees.
+You will have to:
+* Identify the Group’s WCM model’s main components for HR
+* Collect information about the MKT2 program.]]></value>
+    </Element>
+</Localisation>
