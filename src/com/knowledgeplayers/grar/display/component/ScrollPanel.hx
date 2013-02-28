@@ -87,7 +87,6 @@ class ScrollPanel extends Sprite {
     public function setBackground(bkg: String): String
     {
         background = bkg;
-
         if(Std.parseInt(bkg) != null)
         {
 

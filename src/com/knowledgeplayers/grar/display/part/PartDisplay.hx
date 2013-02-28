@@ -327,6 +327,7 @@ class PartDisplay extends Sprite {
 
                 //createText(child);
                 var text = new ScrollPanel(Std.parseFloat(child.att.width), Std.parseFloat(child.att.height));
+                text.setBackground(child.att.background);
                 hashTextGroup.set(child.att.ref, {obj:child, z:numIndex});
 
                 addElement(text,child);
@@ -366,6 +367,7 @@ class PartDisplay extends Sprite {
                         displayArea.removeChild(previousBackground.bmp);
                 }
                 // Add new background
+
                 if(item.background != null){
                     var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(item.background).att.src), Bitmap).bitmapData);
                     if(bkg != null){
@@ -393,6 +395,7 @@ class PartDisplay extends Sprite {
                 }
                 else{
                 // Set text and display author
+
                     var content = Localiser.getInstance().getItemContent(item.content);
                     if(item.author != null && displays.exists(item.author)){
 
@@ -431,8 +434,6 @@ class PartDisplay extends Sprite {
                             char.alpha = 1;
                             char.visible = true;
                             addChild(char);
-                            //currentSpeaker = char;
-                           // TweenManager.applyTransition(char, item.transition);
 
                             var name = char.model.getName();
 
@@ -444,6 +445,8 @@ class PartDisplay extends Sprite {
                             }
 
                             addChild(cast(displays.get(item.ref).obj, ScrollPanel));
+
+
                         }
 
                     }
