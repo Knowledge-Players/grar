@@ -5,6 +5,6 @@
 
     <Part id="0" name="miniSims" type="dialog" file="wort.xml" display="wortDisplay.xml"/>
 
-    <Text type="" content="text2" author="" direction="" background="labo" ref="conclusion1"/>
+    <Text type="" content="text1" author="Thuynhan_happy" transition="" background="labo" ref="conclusion1"/>
     <Button ref="next" content="nextButton"/>
 </Part>
