@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.localisation.Localiser;
+import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.structure.part.Pattern;
@@ -67,6 +69,9 @@ class StripDisplay extends PartDisplay {
         for(key in displays.keys()){
             if(key == currentItem.ref || currentBox.buttons.exists(key) || key == currentItem.author)
                 array.push(displays.get(key));
+
+            if(currentBox.buttons.exists(key))
+                cast(displays.get(key).obj, TextButton).setText(Localiser.instance.getItemContent(currentBox.buttons.get(key)));
         }
         array.sort(sortDisplayObjects);
         for(obj in array){

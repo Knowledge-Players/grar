@@ -82,6 +82,7 @@ class PartDisplay extends Sprite {
     {
         super();
         this.part = part;
+
         displaysFast = new Hash<Fast>();
         displays = new Hash<{obj: DisplayObject, z: Int}>();
         textGroups = new Hash<Hash<{obj: Fast, z: Int}>>();
@@ -114,6 +115,7 @@ class PartDisplay extends Sprite {
     public function nextElement(): Void
     {
         currentElement = part.getNextElement();
+
         if(currentElement == null){
             dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
             return;
@@ -178,6 +180,7 @@ class PartDisplay extends Sprite {
             event.part = cast(currentElement, Part);
             dispatchEvent(event);
         }
+
     }
 
     /**
@@ -247,6 +250,7 @@ class PartDisplay extends Sprite {
     {
         currentElement = pattern;
 
+
     }
 
     private function launchActivity(activity: Activity)
@@ -298,8 +302,11 @@ class PartDisplay extends Sprite {
     private function createButton(buttonNode: Fast): Void
     {
         var button: DefaultButton = UiFactory.createButtonFromXml(buttonNode);
-        if(buttonNode.has.Content)
-            cast(button, TextButton).setText(Localiser.instance.getItemContent(buttonNode.att.Content));
+
+        //Lib.trace(cast(currentElement,Pattern).buttons.get(buttonNode.att.ref));
+
+       //cast(button, TextButton).setText(Localiser.instance.getItemContent());
+
         if(buttonNode.has.action)
             setButtonAction(cast(button, CustomEventButton), buttonNode.att.action);
         else
@@ -358,9 +365,7 @@ class PartDisplay extends Sprite {
 
     private function setText(item: TextItem,?_textGroup:Bool=false): Void
     {
-
-
-
+                Lib.trace(item);
                 // Clean previous background
                 if(previousBackground != null && previousBackground.ref != item.background){
                     if(previousBackground.bmp != null)
@@ -397,6 +402,7 @@ class PartDisplay extends Sprite {
                 // Set text and display author
 
                     var content = Localiser.getInstance().getItemContent(item.content);
+
                     if(item.author != null && displays.exists(item.author)){
 
                         var char = cast(displays.get(item.author).obj, CharacterDisplay);
@@ -446,7 +452,6 @@ class PartDisplay extends Sprite {
 
                             addChild(cast(displays.get(item.ref).obj, ScrollPanel));
 
-
                         }
 
                     }
@@ -484,6 +489,7 @@ class PartDisplay extends Sprite {
         {
             for(key in displays.keys()){
                 if(Std.is(displays.get(key).obj, TextButton)){
+
                     addChild(displays.get(key).obj);
                 }
 
@@ -499,10 +505,13 @@ class PartDisplay extends Sprite {
     {
         var object = displays.get(key);
         var textItem: TextItem = null;
-        if(currentElement.isText())
-            textItem = cast(currentElement, TextItem);
+        Lib.trace("here"+currentElement);
 
+        if(currentElement.isText()){
+            textItem = cast(currentElement, TextItem);
+        }
         else if(currentElement.isPattern() && Std.is(object.obj, DefaultButton)){
+
             var pattern = cast(currentElement, Pattern);
             if(Std.is(displays.get(key).obj, TextButton)){
                 if(pattern.buttons.exists(key)){
@@ -552,13 +561,16 @@ class PartDisplay extends Sprite {
 
     private function onLocaleLoaded(ev: LocaleEvent): Void
     {
+
         startPattern(cast(currentElement, Pattern));
     }
 
     private function onActivityReady(e: Event): Void
     {
+        e.currentTarget.removeEventListener(Event.COMPLETE, onActivityReady);
         while(numChildren > 1)
             removeChildAt(numChildren - 1);
+
         addChild(activityDisplay);
         activityDisplay.startActivity();
     }
