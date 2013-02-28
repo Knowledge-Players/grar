@@ -65,7 +65,6 @@ class SpriteSheetLoader extends EventDispatcher {
         spriteSheet = new SparrowTilesheet(cast(elementDisplay, Bitmap).bitmapData, xmlSprite.toString());
         dispatchEvent(new Event(Event.COMPLETE));
 
-
         #end
 
     }

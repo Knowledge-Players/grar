@@ -9,6 +9,7 @@
     <Box x="600" y="0" width="360" height="400" ref="case2"/>
     <Box x="0" y="300" width="960" height="280" ref="case3"/>
 
+
     <Background src="img/background.jpg" ref="bck1" width="1000" height="1000" x="0" y="0"/>
 
     <Character id="Thuynhan_happy" ref="Thuynhan_happy" scaleX="0.3" scaleY="0.3" x="400" y="500"/>

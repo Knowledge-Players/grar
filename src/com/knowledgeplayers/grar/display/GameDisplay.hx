@@ -122,7 +122,7 @@ class GameDisplay extends Sprite {
         partDisplay.startPart();
         //partDisplay.width = game.layout.zones.get("main").width;
         //partDisplay.height = game.layout.zones.get("main").height;
-        Lib.trace("game.layout.zones.get('main').height : "+game.layout.zones.get("main").height);
+        //Lib.trace("game.layout.zones.get('main').height : "+game.layout.zones.get("main").height);
         //Lib.trace("");
         game.layout.zones.get("main").addChild(partDisplay);
     }
