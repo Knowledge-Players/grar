@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.factory;
 
+import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import aze.display.TileSprite;
 import aze.display.SparrowTilesheet;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.display.component.button.AnimationButton;
@@ -19,7 +21,8 @@ import String;
  */
 
 class UiFactory {
-    private static var tilesheet: TilesheetEx;
+    public static var tilesheet: TilesheetEx;
+
     private static var layerPath: String;
 
     private function new()
@@ -35,7 +38,7 @@ class UiFactory {
      * @return the created button
      */
 
-    public static function createButton(buttonType: String, ref: String, tile: String, ?action: String): DefaultButton
+    public static function createButton(buttonType: String, ref: String, tile: String, x: Float = 0, y: Float = 0, scaleX: Float = 1, scaleY: Float = 1, ?action: String): DefaultButton
     {
         var creation: DefaultButton =
         switch(buttonType.toLowerCase()) {
@@ -45,6 +48,10 @@ class UiFactory {
             default: new DefaultButton(tilesheet, tile);
         }
         creation.ref = ref;
+        creation.x = x;
+        creation.y = y;
+        creation.scaleX = scaleX;
+        creation.scaleY = scaleY;
 
         return creation;
     }
@@ -72,7 +79,32 @@ class UiFactory {
 
     public static function createButtonFromXml(xml: Fast): DefaultButton
     {
-        return createButton(xml.att.type, xml.att.ref, xml.att.id, (xml.has.action ? xml.att.action : null));
+        var x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
+        var y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
+        var scaleX = xml.has.scaleX ? Std.parseFloat(xml.att.scaleX) : 1;
+        var scaleY = xml.has.scaleY ? Std.parseFloat(xml.att.scaleY) : 1;
+        var action = xml.has.action ? xml.att.action : null;
+        return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scaleX, scaleY, action);
+    }
+
+    public static function createImageFromXml(xml: Fast): TileSprite
+    {
+        var image = new TileSprite(xml.att.id);
+        image.x = Std.parseFloat(xml.att.x);
+        image.y = Std.parseFloat(xml.att.y);
+        image.scaleX = Std.parseFloat(xml.att.scaleX);
+        image.scaleY = Std.parseFloat(xml.att.scaleY);
+        return image;
+    }
+
+    public static function createTextFromXml(xml: Fast): ScrollPanel
+    {
+        var text = new ScrollPanel(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height));
+        text.x = Std.parseFloat(xml.att.x);
+        text.y = Std.parseFloat(xml.att.y);
+        if(xml.has.background)
+            text.setBackground(xml.att.background);
+        return text;
     }
 
     /**

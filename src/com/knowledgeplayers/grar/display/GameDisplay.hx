@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.display;
 
 import nme.Lib;
-import com.knowledgeplayers.grar.display.LayoutDisplay;
+import com.knowledgeplayers.grar.display.LayoutManager;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.GameEvent;
@@ -11,7 +11,6 @@ import com.knowledgeplayers.grar.structure.Game;
 import com.knowledgeplayers.grar.structure.part.Part;
 import nme.display.Sprite;
 import nme.events.Event;
-
 
 /**
  * Display of a game
@@ -33,8 +32,6 @@ class GameDisplay extends Sprite {
      */
     private var menu: MenuDisplay;
 
-    private var layout: LayoutDisplay;
-
     /**
      * Constructor
      * @param	game : the model to display
@@ -44,7 +41,7 @@ class GameDisplay extends Sprite {
     {
         super();
         this.game = game;
-        displayMenu();
+        displayPartById(0);
     }
 
     /**
@@ -57,7 +54,7 @@ class GameDisplay extends Sprite {
         // Cleanup
         if(currentPart != null){
             currentPart.unLoad();
-            game.layout.zones.get("main").removeChild(currentPart);
+            //game.layout.zones.get("main").removeChild(currentPart);
         }
         //if(contains(menu))
         //    removeChild(menu);
@@ -71,6 +68,8 @@ class GameDisplay extends Sprite {
             currentPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
             currentPart.addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
         }
+        LayoutManager.instance.getLayout("default").zones.get("main").addChild(currentPart);
+        addChild(LayoutManager.instance.getLayout("default").content);
     }
 
     /**
@@ -88,20 +87,8 @@ class GameDisplay extends Sprite {
 
     private function displayMenu()
     {
-        game.layout.addEventListener("onLayout",addMenu);
-        game.layout.init(this);
-
-
-
-    }
-
-    private function addMenu(e:Event):Void{
-        game.layout.removeEventListener("onLayout",addMenu);
         menu = new MenuDisplay(game);
         menu.launchPart = launchPart;
-
-        game.layout.zones.get("menu").addChild(menu);
-
     }
 
     private function launchPart(part: Part): Void
@@ -124,7 +111,6 @@ class GameDisplay extends Sprite {
         //partDisplay.height = game.layout.zones.get("main").height;
         //Lib.trace("game.layout.zones.get('main').height : "+game.layout.zones.get("main").height);
         //Lib.trace("");
-        game.layout.zones.get("main").addChild(partDisplay);
     }
 
     private function onExitSubPart(event: PartEvent): Void

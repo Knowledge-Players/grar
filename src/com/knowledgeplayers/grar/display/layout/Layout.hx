@@ -1,49 +1,62 @@
 package com.knowledgeplayers.grar.display.layout;
+
+import com.knowledgeplayers.grar.event.LayoutEvent;
+import nme.events.Event;
 import nme.Lib;
 import haxe.xml.Fast;
+
+/**
+* Layout of the application
+**/
 class Layout {
+    /**
+    * All the child zones of this layout
+    **/
+    public var zones: Hash<Zone>;
 
-    public var rows:Array<Row>;
-    public var ref:String;
+    /**
+    * Content of the layout
+    **/
+    public var content (getContent, null): Zone;
 
-    public function new(_fast:Fast):Void {
+    /**
+    * Name of this layout
+    **/
+    public var name: String;
 
-        rows = new Array<Row>();
+    /**
+    * Constructor
+    * @param    name : Name of the layout
+    * @param    content : Content of the layout
+    * @param    fast : XML description of the layout
+    **/
 
-        for (_row in _fast.elements){
+    public function new(?_name: String, ?_content: Zone, ?_fast: Fast): Void
+    {
 
-            initRow(_row);
+        zones = new Hash<Zone>();
+
+        if(_fast != null){
+            content = new Zone(Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
+            content.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
+            content.init(_fast);
+            name = _fast.att.layoutName;
         }
-        if(_fast.has.rows){
-
-
-
-            var rowsSize = Std.string(_fast.att.rows);
-            var nbRows = rowsSize.split(",").length;
-            for(i in 0...nbRows){
-                var size = rowsSize.split(",")[i];
-                rows[i].size = size;
-
-            }
-
-
+        else{
+            name = _name;
+            content = _content;
         }
-        else
-        {
-            rows[0].size = "*";
-        }
-
-        if(_fast.has.ref)
-           ref = _fast.att.ref;
-
-
     }
 
-    private function initRow(_row:Fast):Void{
-
-        var row = new Row(_row);
-        rows.push(row);
+    public function getContent(): Zone
+    {
+        return content;
     }
 
+    // Handlers
 
+    private function onNewZone(e: LayoutEvent): Void
+    {
+        zones.set(e.ref, e.zone);
+    }
 }

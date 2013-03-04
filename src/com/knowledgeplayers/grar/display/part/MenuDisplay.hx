@@ -21,7 +21,7 @@ class MenuDisplay extends Sprite {
     public function new(game: Game)
     {
         super();
-        game.layout.zones.get("header").addChild(KpTextDownParser.parse("WELCOME ! (header)"));
+        //game.layout.zones.get("header").addChild(KpTextDownParser.parse("WELCOME ! (header)"));
         //var yOffset: Float = getChildAt(0).height;
         var yOffset: Float = 0;
         parts = game.getAllParts();

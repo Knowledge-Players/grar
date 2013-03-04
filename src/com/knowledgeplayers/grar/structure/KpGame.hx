@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.structure;
 
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
-import com.knowledgeplayers.grar.display.LayoutDisplay;
+import com.knowledgeplayers.grar.display.LayoutManager;
 import com.knowledgeplayers.grar.display.TweenManager;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.event.TokenEvent;
@@ -39,11 +39,6 @@ class KpGame extends EventDispatcher, implements Game {
     public var state (default, default): String;
 
     /**
-    * Layout of the game
-    */
-    public var layout (default, default): LayoutDisplay;
-
-    /**
      * Global inventory
      */
     public var inventory (default, null): Array<String>;
@@ -65,7 +60,6 @@ class KpGame extends EventDispatcher, implements Game {
         parts = new IntHash<Part>();
         inventory = new Array<String>();
         Lib.current.stage.addEventListener(Event.DEACTIVATE, onExit);
-        layout = new LayoutDisplay();
     }
 
     /**
@@ -260,7 +254,7 @@ class KpGame extends EventDispatcher, implements Game {
 
     private function initLayout(xml: Xml): Void
     {
-        layout.parseXml(xml);
+        LayoutManager.instance.parseXml(xml);
     }
 
     // Handlers

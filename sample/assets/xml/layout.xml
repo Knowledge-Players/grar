@@ -1,92 +1,45 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!-- WARNING: the size of the app is set in the NMML file -->
 <Layouts>
-    <Layout ref="default" rows="100,*,50">
-
+    <Layout layoutName="default" rows="100,*,50">
         <Row columns="50%,*">
-            <Column>
-                <Zone ref="header">
-
-                    <Button id="" type="text" x="400" y="400" scaleX="1" scaleY="1"/>
-                    <Image id="" x="400" y="400" width="" height=""/>
-                    <Background src=""/>
-                    <Text content="$MODULE_NAME$" x="400" y="400" width="" height=""/>
-                    <Menu type="part/activity/both" direction="horizontal/vertical" x="" y="" width="" height="">
-                        <Part>
-                            <Button id="partButton" type="text" x="400" y="400" scaleX="1" scaleY="1"/>
-                            <Image id="" x="400" y="400" width="" height=""/>
-                        </Part>
-                        <Activity>
-                            <Button id="activityButton" type="text" x="400" y="400" scaleX="1" scaleY="1"/>
-
-                        </Activity>
-                    </Menu>
-                </Zone>
+            <Column ref="header" bgColor="0xFF0000">
+                <Button id="" type="text" x="400" y="400" scaleX="1" scaleY="1"/>
+                <Image id="" x="400" y="400" scaleX="1" scaleY="1"/>
+                <Background src=""/>
+                <Text content="$MODULE_NAME$" x="400" y="400" width="" height=""/>
+                <Menu type="part/activity/both" direction="horizontal/vertical" x="" y="" width="" height="">
+                    <Part>
+                        <Button id="partButton" type="text" x="400" y="400" scaleX="1" scaleY="1"/>
+                        <Image id="" x="400" y="400" scaleX="" scaleY=""/>
+                    </Part>
+                    <Activity>
+                        <Button id="activityButton" type="text" x="400" y="400" scaleX="1" scaleY="1"/>
+                    </Activity>
+                </Menu>
             </Column>
-            <Column>
-                <Zone ref="menu">
-                    <Button/>
-                    <Image/>
-                </Zone>
+            <Column ref="menu" bgColor="0x00FF00">
+                <Button/>
+                <Image/>
             </Column>
         </Row>
 
+        <Row ref="main" bgColor="0xFFF000"/>
 
-        <Row columns="100%">
-            <Column>
-                <Zone ref="main"/>
-            </Column>
-        </Row>
-
-
-        <Row columns="100%">
-            <Column>
-                <Zone ref="footer">
-                </Zone>
-            </Column>
-        </Row>
+        <Row ref="footer" bgColor="0x0000FF"/>
     </Layout>
 
+    <Layout layoutName="fullscreen" ref="main"/>
 
-
-    <Layout ref="fullscreen">
-        <Row columns="100%">
-            <Column>
-                <Zone ref="main">
-                </Zone>
-            </Column>
-        </Row>
-    </Layout>
-    <Layout ref="popUp" rows="100,*,50">
+    <Layout layoutName="popUp" rows="100,*,50">
         <Row columns="50%,*">
-            <Column>
-                <Zone ref="header">
-                    <Button/>
-                    <Image/>
-                </Zone>
-            </Column>
-            <Column>
-                <Zone ref="menu">
-                    <Button/>
-                    <Image/>
-                </Zone>
-            </Column>
+            <Column ref="header"/>
+            <Column ref="menu"/>
         </Row>
         <Row columns="90%, *">
-            <Column>
-                <Zone ref="main">
-                </Zone>
-            </Column>
-            <Column>
-                <Zone ref="popUp">
-
-                </Zone>
-            </Column>
+            <Column ref="main"/>
+            <Column ref="popUp"/>
         </Row>
-        <Row>
-            <Zone ref="footer">
-
-            </Zone>
-        </Row>
+        <Row ref="footer"/>
     </Layout>
 </Layouts>

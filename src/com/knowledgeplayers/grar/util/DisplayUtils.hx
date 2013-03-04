@@ -54,4 +54,11 @@ class DisplayUtils {
             return bitmap;
         }
     }
+
+    public static function initSprite(sprite: Sprite, width: Float = 1, height: Float = 1, color: Int = 0): Void
+    {
+        sprite.graphics.beginFill(color);
+        sprite.graphics.drawRect(0, 0, width, height);
+        sprite.graphics.endFill();
+    }
 }
