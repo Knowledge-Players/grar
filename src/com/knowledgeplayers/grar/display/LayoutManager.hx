@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.structure.Game;
 import nme.events.Event;
 import nme.text.TextField;
 import nme.display.Stage;
@@ -14,6 +15,11 @@ class LayoutManager {
     * Instance of the manager
     **/
     public static var instance (getInstance, null): LayoutManager;
+
+    /**
+    * Reference of the current game
+    **/
+    public var game (default, default): Game;
 
     private var layouts: Hash<Layout>;
 

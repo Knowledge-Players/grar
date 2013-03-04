@@ -108,7 +108,7 @@ class MenuDisplay extends Sprite {
             var partXOffset = Std.parseFloat(display.node.Part.att.xOffset);
             var partYOffset = Std.parseFloat(display.node.Part.att.yOffset);
             for(child in display.node.Part.elements){
-                switch(child.name){
+                switch(child.name.toLowerCase()){
                     case "button": buttonPartPrototype = child;
                     case "image": createImage(child);
                 }
@@ -119,7 +119,7 @@ class MenuDisplay extends Sprite {
             var activityXOffset = Std.parseFloat(display.node.Activity.att.xOffset);
             var activityYOffset = Std.parseFloat(display.node.Activity.att.yOffset);
             for(child in display.node.Activity.elements){
-                switch(child.name){
+                switch(child.name.toLowerCase()){
                     case "button": buttonActivityPrototype = child;
                     case "image": createImage(child);
                 }
@@ -167,7 +167,8 @@ class MenuDisplay extends Sprite {
                     item.button.x = Std.parseFloat(node.att.xOffset);
                 item.button.y = offset;
                 addChild(item.button);
-                offset += item.button.height;
+                // TODO Height of a tilesprite is wrong
+                //offset += item.button.height;
                 if(node.has.yOffset)
                     offset += Std.parseFloat(node.att.yOffset);
             }
@@ -214,16 +215,20 @@ class MenuDisplay extends Sprite {
     private function onClick(e: MouseEvent): Void
     {
         var target = cast(e.target, DefaultButton);
-        for(part in parts){
-            if(part.name == target.name){
-                launchPart(part);
-                break;
+        if(parts != null){
+            for(part in parts){
+                if(part.name == target.name){
+                    launchPart(part);
+                    break;
+                }
             }
         }
-        for(activity in activities){
-            if(activity.name == target.name){
-                launchActivity(activity);
-                break;
+        if(activities != null){
+            for(activity in activities){
+                if(activity.name == target.name){
+                    launchActivity(activity);
+                    break;
+                }
             }
         }
     }

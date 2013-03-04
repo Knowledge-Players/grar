@@ -225,6 +225,7 @@ class KpGame extends EventDispatcher, implements Game {
 
     private function initLayout(xml: Xml): Void
     {
+        LayoutManager.instance.game = this;
         LayoutManager.instance.parseXml(xml);
     }
 
@@ -250,12 +251,12 @@ class KpGame extends EventDispatcher, implements Game {
             var activityXml = XmlLoader.load(activity.att.display, onActivityComplete, initActivities);
         }
 
-        XmlLoader.load(parametersNode.node.Layout.att.file, onLayoutComplete, initLayout);
-
         var structureNode: Fast = structureXml.node.Grar.node.Structure;
         for(part in structureNode.nodes.Part){
             addPartFromXml(Std.parseInt(part.att.id), part);
         }
+
+        XmlLoader.load(parametersNode.node.Layout.att.file, onLayoutComplete, initLayout);
     }
 
     private function onActivityComplete(event: Event): Void

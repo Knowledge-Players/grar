@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.layout;
 
+import Std;
+import Std;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import aze.display.TileLayer;
 import com.knowledgeplayers.grar.factory.UiFactory;
@@ -35,11 +37,15 @@ class Zone extends Sprite {
             dispatchEvent(new LayoutEvent(LayoutEvent.NEW_ZONE, ref, this));
             for(element in _zone.elements){
                 switch(element.name.toLowerCase()){
-                    case "Button":addChild(UiFactory.createButtonFromXml(element));
-                    case "Image": layer.addChild(UiFactory.createImageFromXml(element));
-                    case "Background": DisplayUtils.setBackground(element.att.src, this);
-                    case "Text": addChild(UiFactory.createTextFromXml(element));
-                    //case "Menu": addChild(new MenuDisplay())
+                    case "button":addChild(UiFactory.createButtonFromXml(element));
+                    case "image": layer.addChild(UiFactory.createImageFromXml(element));
+                    case "background": DisplayUtils.setBackground(element.att.src, this);
+                    case "text": addChild(UiFactory.createTextFromXml(element));
+                    case "menu": var menu = new MenuDisplay(LayoutManager.instance.game);
+                        menu.init(element);
+                        menu.x = Std.parseFloat(element.att.x);
+                        menu.y = Std.parseFloat(element.att.y);
+                        addChild(menu);
                 }
             }
             addChild(layer.view);
@@ -50,12 +56,12 @@ class Zone extends Sprite {
             var yOffset: Float = 0;
             var i = 0;
             for(row in _zone.nodes.Row){
-                var zone = new Zone(width, heights[i]);
+                var zone = new Zone(zoneWidth, heights[i]);
                 zone.x = x;
                 zone.y = yOffset;
                 zone.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
                 zone.init(row);
-                yOffset += zone.height;
+                yOffset += zone.zoneHeight;
                 addChild(zone);
                 i++;
             }
@@ -65,12 +71,12 @@ class Zone extends Sprite {
             var xOffset: Float = 0;
             var j = 0;
             for(column in _zone.nodes.Column){
-                var zone = new Zone(widths[j], height);
+                var zone = new Zone(widths[j], zoneHeight);
                 zone.x = xOffset;
                 zone.y = y;
                 zone.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
                 zone.init(column);
-                xOffset += zone.width;
+                xOffset += zone.zoneWidth;
                 addChild(zone);
                 j++;
             }
@@ -87,7 +93,7 @@ class Zone extends Sprite {
         for(i in 0...sizeArray.length){
             sizeArray[i] = StringTools.trim(sizeArray[i]);
             if(sizeArray[i].indexOf("%") > 0){
-                sizeArray[i] = Std.parseFloat(sizeArray[i].substr(0, sizeArray[i].length - 2)) * maxSize / 100;
+                sizeArray[i] = Std.parseFloat(sizeArray[i].substr(0, sizeArray[i].length - 1)) * maxSize / 100;
             }
             else if(sizeArray[i] == "*"){
                 starPosition = i;

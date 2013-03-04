@@ -1,19 +1,15 @@
 package com.knowledgeplayers.grar.display;
 
-import com.knowledgeplayers.grar.display.GameDisplay;
-import com.knowledgeplayers.grar.display.GameDisplay;
-import com.knowledgeplayers.grar.structure.activity.Activity;
+import nme.display.Sprite;
 import com.knowledgeplayers.grar.util.KeyboardManager;
 import nme.Lib;
 import com.knowledgeplayers.grar.display.LayoutManager;
-import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.GameEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.factory.DisplayFactory;
 import com.knowledgeplayers.grar.structure.Game;
 import com.knowledgeplayers.grar.structure.part.Part;
-import nme.display.Sprite;
 import nme.events.Event;
 
 /**
@@ -30,11 +26,6 @@ class GameDisplay extends Sprite {
      * Part currently displayed
      */
     public var currentPart (default, null): PartDisplay;
-
-    /**
-     * Menu of the game
-     */
-    private var menu: MenuDisplay;
 
     /**
      * Constructor
@@ -84,24 +75,6 @@ class GameDisplay extends Sprite {
     public function displayPartById(id: Int): Void
     {
         displayPart(game.start(id));
-
-    }
-
-    // Private
-
-    private function displayMenu()
-    {
-        menu = new MenuDisplay(game);
-        menu.launchPart = launchPart;
-    }
-
-    private function launchPart(part: Part): Void
-    {
-        displayPart(part.start(true));
-    }
-
-    private function launchActivity(activity: Activity)
-    {
 
     }
 
