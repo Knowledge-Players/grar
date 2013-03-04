@@ -20,8 +20,6 @@ class Main {
         #if cpp
             new hxcpp.DebugSocket("127.0.0.1", 65333, true);
         #end
-        // Load styles
-        StyleParser.instance.parse(Assets.getText("xml/style.xml"));
 
         // Create a new game
         game = new KpGame();
@@ -36,9 +34,6 @@ class Main {
         var gameDisplay = new GameDisplay(game);
         gameDisplay.addEventListener(GameEvent.GAME_OVER, onGameOver);
         Lib.current.addChild(gameDisplay);
-
-        // Set Keyboard Manager
-        KeyboardManager.instance.game = gameDisplay;
     }
 
     private function onGameOver(ev: GameEvent): Void

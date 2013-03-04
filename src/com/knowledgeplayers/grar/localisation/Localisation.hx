@@ -51,10 +51,8 @@ class Localisation extends EventDispatcher {
         return tradHash.get(key);
     }
 
-
     private function parseContent(content: Xml): Void
     {
-        Lib.trace(content.firstElement().nodeName);
         if(content.firstElement().nodeName == "Workbook")
             parseExcelContent(content);
         else
@@ -71,6 +69,7 @@ class Localisation extends EventDispatcher {
     }
 
     // Can't use haxe.xml.Fast because Excel XML isn't supported
+
     private function parseExcelContent(content: Xml): Void
     {
         var table: Xml = null;

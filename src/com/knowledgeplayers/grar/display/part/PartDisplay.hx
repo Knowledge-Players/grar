@@ -115,7 +115,6 @@ class PartDisplay extends Sprite {
     public function nextElement(): Void
     {
         currentElement = part.getNextElement();
-
         if(currentElement == null){
             dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
             return;
@@ -132,32 +131,27 @@ class PartDisplay extends Sprite {
                     }
                 }
 
-                if(groupKey != "")
-                {
+                if(groupKey != ""){
 
                     var isFirst = true;
                     var textItem = null;
-                    for(keyG in textGroups.get(groupKey).keys())
-                    {
+                    for(keyG in textGroups.get(groupKey).keys()){
 
                         //Lib.trace("keyG : "+keyG);
-                        if (!isFirst)
-                        {
-                            textItem = cast(part.getNextElement(),TextItem);
+                        if(!isFirst){
+                            textItem = cast(part.getNextElement(), TextItem);
 
                         }
-                        else
-                        {
+                        else{
                             textItem = cast(currentElement, TextItem);
                         }
 
-                        isFirst=false;
-                        setText(cast(textItem, TextItem),true);
+                        isFirst = false;
+                        setText(cast(textItem, TextItem), true);
 
                     }
                 }
-                else
-                {
+                else{
                     setText(cast(currentElement, TextItem));
                 }
             }
@@ -180,7 +174,6 @@ class PartDisplay extends Sprite {
             event.part = cast(currentElement, Part);
             dispatchEvent(event);
         }
-
     }
 
     /**
@@ -212,7 +205,6 @@ class PartDisplay extends Sprite {
             for(child in displayFast.nodes.SpriteSheet){
                 var loader = new SpriteSheetLoader();
                 loader.addEventListener(Event.COMPLETE, onSpriteSheetLoaded);
-
 
                 loader.init(child.att.id, child.att.src);
             }
@@ -250,12 +242,10 @@ class PartDisplay extends Sprite {
     {
         currentElement = pattern;
 
-
     }
 
     private function launchActivity(activity: Activity)
     {
-
         activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
         var activityName: String = Type.getClassName(Type.getClass(activity));
         activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
@@ -302,11 +292,8 @@ class PartDisplay extends Sprite {
     private function createButton(buttonNode: Fast): Void
     {
         var button: DefaultButton = UiFactory.createButtonFromXml(buttonNode);
-
-        //Lib.trace(cast(currentElement,Pattern).buttons.get(buttonNode.att.ref));
-
-       //cast(button, TextButton).setText(Localiser.instance.getItemContent());
-
+        if(buttonNode.has.Content)
+            cast(button, TextButton).setText(Localiser.instance.getItemContent(buttonNode.att.Content));
         if(buttonNode.has.action)
             setButtonAction(cast(button, CustomEventButton), buttonNode.att.action);
         else
@@ -337,10 +324,9 @@ class PartDisplay extends Sprite {
                 text.setBackground(child.att.background);
                 hashTextGroup.set(child.att.ref, {obj:child, z:numIndex});
 
-                addElement(text,child);
+                addElement(text, child);
 
                 numIndex++;
-
 
             }
         }
@@ -359,118 +345,113 @@ class PartDisplay extends Sprite {
     private function setButtonAction(button: CustomEventButton, action: String): Void
     {
         if(action.toLowerCase() == ButtonActionEvent.NEXT){
-            button.addEventListener(action, next);
+            button.addEventListener(action.toLowerCase(), next);
         }
     }
 
-    private function setText(item: TextItem,?_textGroup:Bool=false): Void
+    private function setText(item: TextItem, ?_textGroup: Bool = false): Void
     {
-                Lib.trace(item);
-                // Clean previous background
-                if(previousBackground != null && previousBackground.ref != item.background){
-                    if(previousBackground.bmp != null)
-                        displayArea.removeChild(previousBackground.bmp);
+        Lib.trace(item);
+        // Clean previous background
+        if(previousBackground != null && previousBackground.ref != item.background){
+            if(previousBackground.bmp != null)
+                displayArea.removeChild(previousBackground.bmp);
+        }
+        // Add new background
+
+        if(item.background != null){
+            var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(item.background).att.src), Bitmap).bitmapData);
+            if(bkg != null){
+                displayArea.addChildAt(bkg, 0);
+            }
+
+            previousBackground = {ref: item.background, bmp: bkg};
+            if(bkg != null)
+                resizeD.addDisplayObjects(bkg, displaysFast.get(item.background));
+        }
+        // Remove text area if there is no text
+        if(item.content == null){
+            var toRemove = new FastList<DisplayObject>();
+
+            if(!_textGroup){
+
+                for(i in 0...numChildren){
+                    if(Std.is(getChildAt(i), CharacterDisplay) || Std.is(getChildAt(i), ScrollPanel))
+                        toRemove.add(getChildAt(i));
                 }
-                // Add new background
+                for(obj in toRemove)
+                    removeChild(obj);
+            }
 
-                if(item.background != null){
-                    var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(item.background).att.src), Bitmap).bitmapData);
-                    if(bkg != null){
-                        displayArea.addChildAt(bkg, 0);
-                    }
+        }
+        else{
+            // Set text and display author
 
-                    previousBackground = {ref: item.background, bmp: bkg};
-                    if(bkg != null)
-                        resizeD.addDisplayObjects(bkg, displaysFast.get(item.background));
-                }
-                // Remove text area if there is no text
-                if(item.content == null){
-                    var toRemove = new FastList<DisplayObject>();
+            var content = Localiser.getInstance().getItemContent(item.content);
 
-                    if(!_textGroup){
+            if(item.author != null && displays.exists(item.author)){
 
-                        for(i in 0...numChildren){
-                            if(Std.is(getChildAt(i), CharacterDisplay) || Std.is(getChildAt(i), ScrollPanel))
-                                toRemove.add(getChildAt(i));
+                var char = cast(displays.get(item.author).obj, CharacterDisplay);
+
+                if(!_textGroup){
+                    if(char != currentSpeaker){
+
+                        if(currentSpeaker != null && !Std.is(this, StripDisplay)){
+                            currentSpeaker.visible = false;
                         }
-                        for(obj in toRemove)
-                            removeChild(obj);
-                    }
-
-                }
-                else{
-                // Set text and display author
-
-                    var content = Localiser.getInstance().getItemContent(item.content);
-
-                    if(item.author != null && displays.exists(item.author)){
-
-                        var char = cast(displays.get(item.author).obj, CharacterDisplay);
-
-                        if(!_textGroup)
-                        {
-                            if(char != currentSpeaker){
-
-                                if(currentSpeaker != null && !Std.is(this, StripDisplay)){
-                                    currentSpeaker.visible = false;
-                                }
-                                else{
-                                    char.alpha = 1;
-                                    char.visible = true;
-                                }
-                                currentSpeaker = char;
-                                TweenManager.applyTransition(currentSpeaker, item.transition);
-
-                                char.visible = true;
-                            }
-
-                            if(item.ref != null){
-                                var name = currentSpeaker.model.getName();
-
-                                if(displays.get(item.ref) !=null){
-                                    if(name != null)
-                                        cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse("*" + name + "*\n" + content);
-                                    else
-                                        cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
-                                }
-                            }
-                        }
-                        else
-                        {
+                        else{
                             char.alpha = 1;
                             char.visible = true;
-                            addChild(char);
-
-                            var name = char.model.getName();
-
-                            if(displays.get(item.ref) !=null){
-                                if(name != null)
-                                    cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse("*" + name + "*\n" + content);
-                                else
-                                    cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
-                            }
-
-                            addChild(cast(displays.get(item.ref).obj, ScrollPanel));
-
                         }
+                        currentSpeaker = char;
+                        TweenManager.applyTransition(currentSpeaker, item.transition);
 
+                        char.visible = true;
                     }
-                    else if(item.ref != null)
-                        cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
 
+                    if(item.ref != null){
+                        var name = currentSpeaker.model.getName();
 
-                    displayPart(_textGroup);
+                        if(displays.get(item.ref) != null){
+                            if(name != null)
+                                cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse("*" + name + "*\n" + content);
+                            else
+                                cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
+                        }
+                    }
                 }
+                else{
+                    char.alpha = 1;
+                    char.visible = true;
+                    addChild(char);
+
+                    var name = char.model.getName();
+
+                    if(displays.get(item.ref) != null){
+                        if(name != null)
+                            cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse("*" + name + "*\n" + content);
+                        else
+                            cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
+                    }
+
+                    addChild(cast(displays.get(item.ref).obj, ScrollPanel));
+
+                }
+
+            }
+            else if(item.ref != null)
+                cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
+
+            displayPart(_textGroup);
+        }
 
     }
 
-    private function displayPart(?_textGroup:Bool=false): Void
+    private function displayPart(?_textGroup: Bool = false): Void
     {
-        if(!_textGroup)
-        {
+        if(!_textGroup){
             while(numChildren > 1)
                 removeChildAt(numChildren - 1);
-
 
             var array = new Array<{obj: DisplayObject, z: Int}>();
 
@@ -485,15 +466,14 @@ class PartDisplay extends Sprite {
                 addChild(obj.obj);
             }
         }
-        else
-        {
+        else{
             for(key in displays.keys()){
                 if(Std.is(displays.get(key).obj, TextButton)){
 
                     addChild(displays.get(key).obj);
                 }
 
-                }
+            }
         }
     }
 
@@ -505,7 +485,7 @@ class PartDisplay extends Sprite {
     {
         var object = displays.get(key);
         var textItem: TextItem = null;
-        Lib.trace("here"+currentElement);
+        //Lib.trace("here"+currentElement);
 
         if(currentElement.isText()){
             textItem = cast(currentElement, TextItem);
@@ -561,16 +541,13 @@ class PartDisplay extends Sprite {
 
     private function onLocaleLoaded(ev: LocaleEvent): Void
     {
-
         startPattern(cast(currentElement, Pattern));
     }
 
     private function onActivityReady(e: Event): Void
     {
-        e.currentTarget.removeEventListener(Event.COMPLETE, onActivityReady);
         while(numChildren > 1)
             removeChildAt(numChildren - 1);
-
         addChild(activityDisplay);
         activityDisplay.startActivity();
     }

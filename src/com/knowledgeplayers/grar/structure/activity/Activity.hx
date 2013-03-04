@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.activity;
 
+import com.knowledgeplayers.grar.structure.part.Part;
 import nme.Lib;
 import nme.events.Event;
 import com.knowledgeplayers.grar.structure.part.PartElement;
@@ -14,6 +15,10 @@ import nme.events.EventDispatcher;
  */
 class Activity extends EventDispatcher, implements PartElement {
     /**
+    * Name of the activity
+    **/
+    public var name (default, default): String;
+    /**
      * Score for this activity
      */
     public var score (default, default): Int = 0;
@@ -23,14 +28,19 @@ class Activity extends EventDispatcher, implements PartElement {
     public var content (default, default): String;
 
     /**
+    * Part where the activity is
+    **/
+    public var container (default, default): Part;
+
+    /**
      * Path to the previous content file
      */
-    private var previousContent (default, default): String;
+    private var previousContent: String;
 
     /**
      * True if the activity has been done
      */
-    private var isEnded (default, default): Bool;
+    private var isEnded: Bool;
 
     /**
      * Constructor

@@ -146,31 +146,6 @@ class StructurePart extends EventDispatcher, implements Part {
     }
 
     /**
-     * @return the next undone part
-     */
-
-    /*public function getNextPart(): Null<Part>
-    {
-        var part: Part = null;
-        if(hasParts()){
-            if(partIndex == Lambda.count(parts)){
-                exitPart();
-                return null;
-            }
-            part = parts.get(partIndex).getNextPart();
-            if(part == null){
-                partIndex++;
-                part = getNextPart();
-            }
-        }
-
-        if(part != null)
-            return part.start();
-        else
-            return part;
-    }*/
-
-    /**
      * Tell if this part has sub-part or not
      * @return true if it has sub-part
      */
@@ -200,6 +175,22 @@ class StructurePart extends EventDispatcher, implements Part {
         if(elements.length > 0)
             array.push(this);
         return array;
+    }
+
+    /**
+    * @return all the activities of this part
+    **/
+
+    public function getAllActivities(): Array<Activity>
+    {
+        var activities = new Array<Activity>();
+        for(elem in elements){
+            if(elem.isPart())
+                activities = activities.concat(cast(elem, Part).getAllActivities());
+            if(elem.isActivity())
+                activities.push(cast(elem, Activity));
+        }
+        return activities;
     }
 
     /**
@@ -283,7 +274,7 @@ class StructurePart extends EventDispatcher, implements Part {
         for(child in partFast.elements){
             switch(child.name.toLowerCase()){
                 case "text": elements.push(ItemFactory.createItemFromXml(child));
-                case "activity": elements.push(ActivityFactory.createActivityFromXml(child));
+                case "activity": elements.push(ActivityFactory.createActivityFromXml(child, this));
                 case "part": nbSubPartTotal++;
                     createPart(child);
             }

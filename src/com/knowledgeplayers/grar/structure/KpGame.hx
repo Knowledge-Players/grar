@@ -1,7 +1,11 @@
 package com.knowledgeplayers.grar.structure;
 
-import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.display.LayoutManager;
+import nme.Assets;
+import com.knowledgeplayers.grar.display.style.StyleParser;
+import com.knowledgeplayers.grar.structure.activity.Activity;
+import com.knowledgeplayers.grar.display.TweenManager;
+import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.display.TweenManager;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.event.TokenEvent;
@@ -60,6 +64,9 @@ class KpGame extends EventDispatcher, implements Game {
         parts = new IntHash<Part>();
         inventory = new Array<String>();
         Lib.current.stage.addEventListener(Event.DEACTIVATE, onExit);
+
+        // Load styles
+        StyleParser.instance.parse(Assets.getText("xml/style.xml"));
     }
 
     /**
@@ -72,41 +79,11 @@ class KpGame extends EventDispatcher, implements Game {
         structureXml = new Fast(xml);
 
         #if flash
-        LoadData.getInstance().addEventListener("DATA_LOADED",onDisplayLoaded);
-        LoadData.getInstance().loadDisplayXml(xml);
+            LoadData.getInstance().addEventListener("DATA_LOADED",onDisplayLoaded);
+            LoadData.getInstance().loadDisplayXml(xml);
         #else
         onDisplayLoaded();
         #end
-    }
-
-    private function onDisplayLoaded(e: Event = null): Void
-    {
-        Lib.trace("data display loaded");
-        var parametersNode: Fast = structureXml.node.Grar.node.Parameters;
-        mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
-        title = parametersNode.node.Title.innerData;
-        state = parametersNode.node.State.innerData;
-
-        initTracking();
-
-        XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
-
-        var displayNode: Fast = structureXml.node.Grar.node.Display;
-        if(displayNode.hasNode.Ui)
-            UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
-        if(displayNode.hasNode.Transitions)
-            TweenManager.loadTemplate(displayNode.node.Transitions.att.display);
-
-        for(activity in displayNode.nodes.Activity){
-            var activityXml = XmlLoader.load(activity.att.display, onActivityComplete, initActivities);
-        }
-
-        XmlLoader.load(parametersNode.node.Layout.att.file, onLayoutComplete, initLayout);
-
-        var structureNode: Fast = structureXml.node.Grar.node.Structure;
-        for(part in structureNode.nodes.Part){
-            addPartFromXml(Std.parseInt(part.att.id), part);
-        }
     }
 
     /**
@@ -123,25 +100,6 @@ class KpGame extends EventDispatcher, implements Game {
         }
         return null;
     }
-
-    /**
-     * Return the next part of the game
-     * @return the next part or null if the game is over
-     */
-
-    /*public function next(): Null<Part>
-    {
-        if(partIndex == Lambda.count(parts)){
-            return null;
-        }
-        var nextPart: Part = parts.get(partIndex).getNextPart();
-        if(nextPart == null){
-            partIndex++;
-            return next();
-        }
-        else
-            return nextPart;
-    }*/
 
     /**
      * Add a part to the game at partIndex
@@ -207,8 +165,7 @@ class KpGame extends EventDispatcher, implements Game {
     }
 
     /**
-     * Return all the parts of the game
-     * @return an array of parts
+     * @return all the parts of the game
      */
 
     public function getAllParts(): Array<Part>
@@ -219,6 +176,20 @@ class KpGame extends EventDispatcher, implements Game {
         }
 
         return array;
+    }
+
+    /**
+    * @return all the activities of the game
+    **/
+
+    public function getAllActivities(): Array<Activity>
+    {
+        var activities = new Array<Activity>();
+        for(part in parts){
+            activities = activities.concat(part.getAllActivities());
+        }
+
+        return activities;
     }
 
     // Privates
@@ -258,6 +229,34 @@ class KpGame extends EventDispatcher, implements Game {
     }
 
     // Handlers
+
+    private function onDisplayLoaded(e: Event = null): Void
+    {
+        var parametersNode: Fast = structureXml.node.Grar.node.Parameters;
+        mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
+        title = parametersNode.node.Title.innerData;
+        state = parametersNode.node.State.innerData;
+
+        initTracking();
+
+        XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
+
+        var displayNode: Fast = structureXml.node.Grar.node.Display;
+        UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
+        if(displayNode.hasNode.Transitions)
+            TweenManager.loadTemplate(displayNode.node.Transitions.att.display);
+
+        for(activity in displayNode.nodes.Activity){
+            var activityXml = XmlLoader.load(activity.att.display, onActivityComplete, initActivities);
+        }
+
+        XmlLoader.load(parametersNode.node.Layout.att.file, onLayoutComplete, initLayout);
+
+        var structureNode: Fast = structureXml.node.Grar.node.Structure;
+        for(part in structureNode.nodes.Part){
+            addPartFromXml(Std.parseInt(part.att.id), part);
+        }
+    }
 
     private function onActivityComplete(event: Event): Void
     {

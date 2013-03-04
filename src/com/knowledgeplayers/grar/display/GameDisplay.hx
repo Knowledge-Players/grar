@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.display.GameDisplay;
+import com.knowledgeplayers.grar.display.GameDisplay;
+import com.knowledgeplayers.grar.structure.activity.Activity;
+import com.knowledgeplayers.grar.util.KeyboardManager;
 import nme.Lib;
 import com.knowledgeplayers.grar.display.LayoutManager;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;
@@ -41,6 +45,10 @@ class GameDisplay extends Sprite {
     {
         super();
         this.game = game;
+
+        // Set Keyboard Manager
+        KeyboardManager.instance.game = this;
+
         displayPartById(0);
     }
 
@@ -54,10 +62,7 @@ class GameDisplay extends Sprite {
         // Cleanup
         if(currentPart != null){
             currentPart.unLoad();
-            //game.layout.zones.get("main").removeChild(currentPart);
         }
-        //if(contains(menu))
-        //    removeChild(menu);
 
         // Display the new part
         currentPart = DisplayFactory.createPartDisplay(part);
@@ -68,7 +73,6 @@ class GameDisplay extends Sprite {
             currentPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
             currentPart.addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
         }
-        LayoutManager.instance.getLayout("default").zones.get("main").addChild(currentPart);
         addChild(LayoutManager.instance.getLayout("default").content);
     }
 
@@ -96,6 +100,11 @@ class GameDisplay extends Sprite {
         displayPart(part.start(true));
     }
 
+    private function launchActivity(activity: Activity)
+    {
+
+    }
+
     // Handlers
 
     private function onExitPart(event: Event): Void
@@ -107,10 +116,7 @@ class GameDisplay extends Sprite {
     {
         var partDisplay = cast(event.target, PartDisplay);
         partDisplay.startPart();
-        //partDisplay.width = game.layout.zones.get("main").width;
-        //partDisplay.height = game.layout.zones.get("main").height;
-        //Lib.trace("game.layout.zones.get('main').height : "+game.layout.zones.get("main").height);
-        //Lib.trace("");
+        LayoutManager.instance.getLayout("default").zones.get("main").addChild(partDisplay);
     }
 
     private function onExitSubPart(event: PartEvent): Void

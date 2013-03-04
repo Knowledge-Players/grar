@@ -50,23 +50,16 @@ class SpriteSheetLoader extends EventDispatcher {
     private function loadData(?path: String = ""): Void
     {
         #if flash
-                    var urlR = new URLRequest("assets/"+path);
-
-
-                    var mloader = new Loader();
-                    mloader.contentLoaderInfo.addEventListener(Event.COMPLETE,onCompleteLoading);
-                    mloader.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
-                    mloader.load(urlR);
-
-
-                #else
-
+            var urlR = new URLRequest("assets/"+path);
+            var mloader = new Loader();
+            mloader.contentLoaderInfo.addEventListener(Event.COMPLETE,onCompleteLoading);
+            mloader.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
+            mloader.load(urlR);
+        #else
         elementDisplay = new Bitmap(Assets.getBitmapData(path));
         spriteSheet = new SparrowTilesheet(cast(elementDisplay, Bitmap).bitmapData, xmlSprite.toString());
         dispatchEvent(new Event(Event.COMPLETE));
-
         #end
-
     }
 
     private function onIOError(error: IOErrorEvent): Void
@@ -76,12 +69,9 @@ class SpriteSheetLoader extends EventDispatcher {
 
     private function onCompleteLoading(event: Event): Void
     {
-
         elementDisplay = event.currentTarget.content;
         spriteSheet = new SparrowTilesheet(cast(elementDisplay, Bitmap).bitmapData, xmlSprite.toString());
         dispatchEvent(new Event(Event.COMPLETE));
-
-
     }
 
 }

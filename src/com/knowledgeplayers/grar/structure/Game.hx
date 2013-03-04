@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.tracking.Connection.Mode;
-import com.knowledgeplayers.grar.display.LayoutManager;
 import com.knowledgeplayers.grar.structure.part.Part;
 import nme.events.IEventDispatcher;
 
@@ -18,6 +18,8 @@ interface Game implements IEventDispatcher {
     public function addPart(partIndex: Int, part: Part): Void;
 
     public function getAllParts(): Array<Part>;
+
+    public function getAllActivities(): Array<Activity>;
 
     public function addLanguage(value: String, path: String, flagIconPath: String): Void;
 

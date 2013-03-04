@@ -31,6 +31,8 @@ interface Part implements IEventDispatcher, implements PartElement {
 
     public function getAllParts(): Array<Part>;
 
+    public function getAllActivities(): Array<Activity>;
+
     public function hasParts(): Bool;
 
     public function toString(): String;

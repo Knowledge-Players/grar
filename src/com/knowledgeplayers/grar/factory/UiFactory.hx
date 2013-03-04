@@ -21,7 +21,11 @@ import String;
  */
 
 class UiFactory {
-    public static var tilesheet: TilesheetEx;
+
+    /**
+    * Tilesheet containing UI elements
+    **/
+    public static var tilesheet (default, null): TilesheetEx;
 
     private static var layerPath: String;
 
