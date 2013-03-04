@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.util;
 
-import com.knowledgeplayers.grar.display.GameDisplay;
+import com.knowledgeplayers.grar.display.GameManager;
 import nme.events.KeyboardEvent;
 import nme.Lib;
 import nme.ui.Keyboard;
@@ -11,7 +11,7 @@ import nme.ui.Keyboard;
 class KeyboardManager {
     public static var instance (getInstance, null): KeyboardManager;
 
-    public var game (default, default): GameDisplay;
+    public var game (default, default): GameManager;
 
     public static function getInstance(): KeyboardManager
     {

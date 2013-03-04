@@ -194,22 +194,6 @@ class MenuDisplay extends Sprite {
         layer.render();
     }
 
-    /**
-     * Abstract function which launch the given part
-     * @param	part : Part to start
-     */
-
-    dynamic public function launchPart(part: Part)
-    {}
-
-    /**
-     * Abstract function which launch the given activity
-     * @param	activity : Activity to start
-     */
-
-    dynamic public function launchActivity(activity: Activity)
-    {}
-
     // Private
 
     private function onClick(e: MouseEvent): Void
@@ -218,7 +202,7 @@ class MenuDisplay extends Sprite {
         if(parts != null){
             for(part in parts){
                 if(part.name == target.name){
-                    launchPart(part);
+                    GameManager.instance.displayPart(part);
                     break;
                 }
             }
@@ -226,7 +210,7 @@ class MenuDisplay extends Sprite {
         if(activities != null){
             for(activity in activities){
                 if(activity.name == target.name){
-                    launchActivity(activity);
+                    GameManager.instance.displayActivity(activity);
                     break;
                 }
             }

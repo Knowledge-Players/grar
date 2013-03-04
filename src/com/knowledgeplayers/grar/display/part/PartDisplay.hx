@@ -47,7 +47,7 @@ class PartDisplay extends Sprite {
     /**
     * Current activity displayed. Null if there is not
     **/
-    public var activityDisplay (default, null): ActivityDisplay;
+    //public var activityDisplay (default, null): ActivityDisplay;
 
     /**
     * Transition to play at the beginning of the part
@@ -157,9 +157,7 @@ class PartDisplay extends Sprite {
             }
         }
         else if(currentElement.isActivity()){
-            cleanActivity();
-            onActivityEnd(null);
-            launchActivity(cast(currentElement, Activity));
+            GameManager.instance.displayActivity(cast(currentElement, Activity));
         }
         else if(currentElement.isPattern()){
             if(Localiser.instance.layoutPath != part.file){
@@ -244,7 +242,7 @@ class PartDisplay extends Sprite {
 
     }
 
-    private function launchActivity(activity: Activity)
+    /*private function launchActivity(activity: Activity)
     {
         activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
         var activityName: String = Type.getClassName(Type.getClass(activity));
@@ -259,7 +257,7 @@ class PartDisplay extends Sprite {
         if(activityDisplay != null && contains(activityDisplay))
             removeChild(activityDisplay);
         activityDisplay = null;
-    }
+    }*/
 
     private function initDisplayObject(display: DisplayObject, node: Fast, ?transition: String): Void
     {
@@ -544,7 +542,7 @@ class PartDisplay extends Sprite {
         startPattern(cast(currentElement, Pattern));
     }
 
-    private function onActivityReady(e: Event): Void
+    /*private function onActivityReady(e: Event): Void
     {
         while(numChildren > 1)
             removeChildAt(numChildren - 1);
@@ -559,7 +557,7 @@ class PartDisplay extends Sprite {
         if(activityDisplay != null && contains(activityDisplay))
             removeChild(activityDisplay);
         activityDisplay = null;
-    }
+    }*/
 
     private function onSpriteSheetLoaded(ev: Event): Void
     {

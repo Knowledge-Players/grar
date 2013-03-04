@@ -36,11 +36,7 @@ class DialogDisplay extends PartDisplay {
 
     }
 
-
-
     // Private
-
-
 
     override private function next(event: ButtonActionEvent): Void
     {
@@ -64,7 +60,7 @@ class DialogDisplay extends PartDisplay {
             setText(nextItem);
 
             if(nextItem.hasActivity()){
-                launchActivity(cast(nextItem, RemarkableEvent).activity);
+                GameManager.instance.displayActivity(cast(nextItem, RemarkableEvent).activity);
             }
         }
         else if(currentPattern.nextPattern != "")

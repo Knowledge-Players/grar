@@ -1,6 +1,6 @@
 package grar;
 
-import com.knowledgeplayers.grar.display.GameDisplay;
+import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.ResizeManager;
 import com.knowledgeplayers.grar.display.TweenManager;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;

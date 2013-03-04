@@ -3,7 +3,7 @@ package com.knowledgeplayers.sample;
 import com.knowledgeplayers.grar.util.KeyboardManager;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.event.GameEvent;
-import com.knowledgeplayers.grar.display.GameDisplay;
+import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.style.StyleParser;
 import nme.Assets;
 import com.knowledgeplayers.grar.event.PartEvent;
@@ -31,9 +31,8 @@ class Main {
 
     private function onLoadingComplete(e: PartEvent): Void
     {
-        var gameDisplay = new GameDisplay(game);
-        gameDisplay.addEventListener(GameEvent.GAME_OVER, onGameOver);
-        Lib.current.addChild(gameDisplay);
+        GameManager.instance.addEventListener(GameEvent.GAME_OVER, onGameOver);
+        GameManager.instance.startGame(game);
     }
 
     private function onGameOver(ev: GameEvent): Void
