@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.component;
 
+import aze.display.SparrowTilesheet;
+import nme.geom.Rectangle;
 import nme.events.Event;
 import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.util.DisplayUtils;
@@ -21,9 +23,10 @@ class ScrollPanel extends Sprite {
     public var content (default, setContent): Sprite;
 
     /**
-    * Background of the panel. It can be only a color or a reference to a Bitmap
+    * Background of the panel. It can be only a color or a reference to a Bitmap,
     **/
     public var background (default, setBackground): String;
+
 
     /**
     * If true, the text won't scroll even if it's bigger than the panel
@@ -34,7 +37,9 @@ class ScrollPanel extends Sprite {
     private var maskWidth: Float;
     private var maskHeight: Float;
     private var scrollable: Bool;
-
+    private var spriteS: String;
+    private var spriteSheet:SparrowTilesheet;
+    private  var scaleNine:ScaleNine;
     /**
      * Constructor
      * @param	width : Width of the displayed content
@@ -42,13 +47,15 @@ class ScrollPanel extends Sprite {
      * @param	scrollLock : Disable scroll. False by default
      */
 
-    public function new(width: Float, height: Float, scrollLock: Bool = false)
+    public function new(width: Float, height: Float, ?_scrollLock: Bool = false,?_spriteS:String="false",?_spriteSheet:SparrowTilesheet)
     {
         super();
         maskWidth = width;
         maskHeight = height;
         content = new Sprite();
-        this.scrollLock = scrollLock;
+        this.scrollLock = _scrollLock;
+        spriteS = _spriteS;
+        spriteSheet = _spriteSheet;
         addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
     }
 
@@ -87,26 +94,42 @@ class ScrollPanel extends Sprite {
     public function setBackground(bkg: String): String
     {
         background = bkg;
-        if(Std.parseInt(bkg) != null)
+        if(spriteS == "false")
         {
+            if(Std.parseInt(bkg) != null)
+            {
 
-            this.graphics.beginFill(Std.parseInt(bkg));
-            this.graphics.drawRect(0, 0, maskWidth, maskHeight);
-            this.graphics.endFill();
+                this.graphics.beginFill(Std.parseInt(bkg));
+                this.graphics.drawRect(0, 0, maskWidth, maskHeight);
+                this.graphics.endFill();
+            }
+            else
+            {
+
+                if(LoadData.getInstance().getElementDisplayInCache(background) != null)
+                {
+
+                    var bkg:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(background),Bitmap).bitmapData);
+                    bkg.width = maskWidth;
+                    bkg.height = maskHeight;
+
+                    this.addChildAt(bkg,0);
+                }
+
+            }
         }
         else
         {
-
-            if(LoadData.getInstance().getElementDisplayInCache(background) != null)
-            {
-
-                var bkg:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(background),Bitmap).bitmapData);
-                bkg.width = maskWidth;
-                bkg.height = maskHeight;
-                this.addChildAt(bkg,0);
-            }
+            Lib.trace(spriteSheet);
+            scaleNine = new ScaleNine();
+            scaleNine.addEventListener("onScaleInit",onInitScale);
+            scaleNine.init(spriteSheet);
 
         }
+
+
+        //var scaleNine:ScaleNine = new ScaleNine();
+
 
         return bkg;
     }
@@ -115,7 +138,12 @@ class ScrollPanel extends Sprite {
 
     // Private
 
-
+    private function onInitScale(e:Event):Void
+    {
+        Lib.trace("onInitScale");
+        e.currentTarget.removeEventListener("onScaleInit",onInitScale);
+        addChildAt(e.currentTarget,0);
+    }
 
     private function scrollToRatio(position: Float)
     {

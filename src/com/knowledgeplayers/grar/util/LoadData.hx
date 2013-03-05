@@ -69,7 +69,7 @@ class LoadData extends EventDispatcher {
         nbXml = lgArray;
 
         for(i in 0...lgArray){
-            //Lib.trace("xml load : "+arrayDisplayXml[i]);
+            Lib.trace("xml load : "+arrayDisplayXml[i]);
 
             XmlLoader.load(arrayDisplayXml[i], onXmlDisplayLoaded, parseContent);
         }
@@ -147,8 +147,10 @@ class LoadData extends EventDispatcher {
 
                     }
                     if(nd.exists("background")){
+                        if(Std.string(nd.get("background")).indexOf(".")==1){
                         if(Std.string(nd.get("background")).charAt(0) != "0")
                             arrayOfUrlImgs.push(nd.get("background"));
+                            }
                     }
                     if(nd.exists("buttonIcon")){
                         arrayOfUrlImgs.push(nd.get("buttonIcon"));

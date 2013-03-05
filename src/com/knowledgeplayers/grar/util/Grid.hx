@@ -27,7 +27,7 @@ class Grid {
 
     private var nextCell: Point;
 
-    public function new(numRow: Int, numCol: Int, cellWidth: String, cellHeight: String,gapCol:Float,gapRow:Float,_alignX:String,_alignY:String,?img:String="")
+    public function new(numRow: Int, numCol: Int, ?cellWidth: String, ?cellHeight: String,?gapCol:Float,?gapRow:Float,?_alignX:String,?_alignY:String,?img:String="")
     {
         this.numRow = numRow;
         this.numCol = numCol;
@@ -87,7 +87,7 @@ class Grid {
 
     }
 
-    public function add(object: DisplayObject, withTween: Bool = true): Void
+    public function add(object: DisplayObject, ?withTween: Bool = true): Void
     {
 
         if (cellSize.width == 0)
@@ -124,11 +124,15 @@ class Grid {
             object.width = cellSize.width;
             object.height = cellSize.height;
         }
+
+
+
     }
 
     public function empty(): Void
     {
         nextCell = new Point(0, 0);
+        Lib.trace("empty");
 
     }
 }
