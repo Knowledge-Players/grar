@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="img/bubble.png">
+	<!--
+	Created with ShoeBox
+	http://renderhjs.net/shoebox/
+	-->
+	<SubTexture name="bas" x="0" y="106" width="203" height="49"/>
+	<SubTexture name="bas_droit" x="27" y="221"	 width="25" height="19"/>
+	<SubTexture name="bas_gauche" x="0"	 y="201" width="27" height="49"/>
+	<SubTexture name="droit" x="203" y="106" width="47" height="106"/>
+	<SubTexture name="gauche" x="203" y="0" width="49" height="106"/>
+	<SubTexture name="haut" x="0"	 y="156" width="203" height="45"/>
+	<SubTexture name="haut_droit" x="54" y="201" width="24" height="18"/>
+	<SubTexture name="haut_gauche" x="27" y="201" width="26" height="19"/>
+	<SubTexture name="milieu" x="0" y="0" width="203" height="106"/>
+
+</TextureAtlas>

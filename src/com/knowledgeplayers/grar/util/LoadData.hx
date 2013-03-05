@@ -147,7 +147,7 @@ class LoadData extends EventDispatcher {
 
                     }
                     if(nd.exists("background")){
-                        if(Std.string(nd.get("background")).indexOf(".")==1){
+                        if(Std.string(nd.get("background")).indexOf(".")!=-1){
                         if(Std.string(nd.get("background")).charAt(0) != "0")
                             arrayOfUrlImgs.push(nd.get("background"));
                             }
