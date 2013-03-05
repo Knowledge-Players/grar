@@ -74,8 +74,8 @@ class ScaleNine extends Sprite {
             //scaleNineGrid.addTile(arrayTile[j]);
         }
         scaleNineGrid.initMatrice(arrayTile,bkg_width,bkg_height);
-        /*
-        img1.x = 0;
+
+        /*img1.x = 0;
         img2.x = img1.x+img1.width/2+img2.width/2;
         img3.x = img2.x+img2.width/2+img3.width/2;
 
@@ -98,8 +98,8 @@ class ScaleNine extends Sprite {
         img7.y = img4.y+img4.height/2+img7.height/2;
         img8.y = img7.y;
         img9.y = img7.y;
-        */
 
+        */
 
 
         layer.render();

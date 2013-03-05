@@ -118,7 +118,7 @@ class ScrollPanel extends Sprite {
         }
         else
         {
-            Lib.trace(spriteSheet);
+
             scaleNine = new ScaleNine(maskWidth,maskHeight);
             scaleNine.addEventListener("onScaleInit",onInitScale);
             scaleNine.init(spriteSheet);
@@ -138,7 +138,6 @@ class ScrollPanel extends Sprite {
 
     private function onInitScale(e:Event):Void
     {
-        Lib.trace("onInitScale");
         e.currentTarget.removeEventListener("onScaleInit",onInitScale);
         addChildAt(e.currentTarget,0);
     }
