@@ -205,7 +205,7 @@ class PartDisplay extends Sprite {
                 loader.addEventListener(Event.COMPLETE, onSpriteSheetLoaded);
 
                 loader.init(child.att.id, child.att.src);
-                Lib.trace("child.att.id : "+child.att.id);
+                //Lib.trace("child.att.id : "+child.att.id);
             }
         }
         else{
@@ -303,7 +303,9 @@ class PartDisplay extends Sprite {
 
     private function createText(textNode: Fast): Void
     {
-        var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height),false,textNode.att.spriteS,spritesheets.get(textNode.att.background));
+
+
+        var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height),false,spritesheets.get(textNode.att.background));
         text.background = textNode.att.background;
 
         addElement(text, textNode);

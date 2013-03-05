@@ -11,21 +11,32 @@ import nme.display.Sprite;
 class ScaleNine extends Sprite {
 
     private var spriteSheet:SparrowTilesheet;
-    public function new() {
+    private var bkg_width:Float;
+    private var bkg_height:Float;
+
+    public function new(w:Float=0,h:Float=0) {
         super();
+        bkg_width =w;
+        bkg_height =h;
+
         }
+
+
     public function init(_spritesheet: SparrowTilesheet) {
 
         spriteSheet = _spritesheet;
+
         var arrayTile:Array<TileSprite> = new Array<TileSprite>();
 
         var layer = new TileLayer(spriteSheet);
         var img1 = new TileSprite("haut_gauche");
         var img2 = new TileSprite("haut");
         var img3 = new TileSprite("haut_droit");
+
         var img4 = new TileSprite("gauche");
         var img5 = new TileSprite("milieu");
         var img6 = new TileSprite("droit");
+
         var img7 = new TileSprite("bas_gauche");
         var img8 = new TileSprite("bas");
         var img9 = new TileSprite("bas_droit");
@@ -41,8 +52,12 @@ class ScaleNine extends Sprite {
         arrayTile.push(img9);
 
         var tileGroup = new TileGroup();
+
         var scaleNineGrid:ScaleNineGrid = new ScaleNineGrid(3,3);
+
+
         addChild(scaleNineGrid.container);
+
 
         for ( i in 0...arrayTile.length){
             tileGroup.addChild(arrayTile[i]);
@@ -50,12 +65,42 @@ class ScaleNine extends Sprite {
         }
 
         layer.addChild(tileGroup);
+
         scaleNineGrid.container.addChild(layer.view);
 
-        for ( j in 1...arrayTile.length){
 
-            scaleNineGrid.addTile(arrayTile[j-1],arrayTile[j]);
+        for ( j in 0...arrayTile.length){
+
+            //scaleNineGrid.addTile(arrayTile[j]);
         }
+        scaleNineGrid.initMatrice(arrayTile,bkg_width,bkg_height);
+        /*
+        img1.x = 0;
+        img2.x = img1.x+img1.width/2+img2.width/2;
+        img3.x = img2.x+img2.width/2+img3.width/2;
+
+        img4.x = 0;
+        img5.x = img4.x+img4.width/2+img5.width/2;
+        img6.x = img5.x+img5.width/2+img6.width/2;
+
+        img7.x = 0;
+        img8.x = img7.x+img7.width/2+img8.width/2;
+        img9.x = img8.x+img8.width/2+img9.width/2;
+
+        img1.y = 0;
+        img2.y = 0;
+        img3.y = 0;
+
+        img4.y = img1.y+img1.height/2+img4.height/2;
+        img5.y = img4.y;
+        img6.y = img4.y;
+
+        img7.y = img4.y+img4.height/2+img7.height/2;
+        img8.y = img7.y;
+        img9.y = img7.y;
+        */
+
+
 
         layer.render();
 

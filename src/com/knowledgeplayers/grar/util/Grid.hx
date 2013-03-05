@@ -125,8 +125,6 @@ class Grid {
             object.height = cellSize.height;
         }
 
-
-
     }
 
     public function empty(): Void

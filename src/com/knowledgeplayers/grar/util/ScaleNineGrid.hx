@@ -4,6 +4,8 @@ import aze.display.TileSprite;
 import nme.display.DisplayObject;
 class ScaleNineGrid extends Grid{
 
+    private var tileEnCours:TileSprite;
+
     public function new(numRow: Int, numCol: Int) {
         super(numRow, numCol);
 
@@ -11,12 +13,26 @@ class ScaleNineGrid extends Grid{
     }
 
 
-   public function addTile(object:TileSprite,_oldTS:TileSprite): Void
+    public function initMatrice(_array:Array<TileSprite>,_width:Float,_height:Float):Void{
+
+        for(i in 0..._array.length){
+            if( i % 2 == 0 )
+                {
+
+                    if(_array[i].tile != "milieu"){
+
+                    }
+                }
+        }
+
+
+    }
+
+
+   public function addTile(object:TileSprite): Void
     {
-
-
-        var targetX = nextCell.x * object.width;
-        var targetY = nextCell.y * object.height;
+        var targetX:Float=0;
+        var targetY:Float=0;
 
 
         if(nextCell.x < numCol - 1)
@@ -35,6 +51,9 @@ class ScaleNineGrid extends Grid{
             object.y = targetY;
 
 
+        Lib.trace("object.width : "+object.width);
+        Lib.trace("object.height : "+object.height);
+        tileEnCours = object;
 
     }
 

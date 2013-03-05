@@ -37,7 +37,6 @@ class ScrollPanel extends Sprite {
     private var maskWidth: Float;
     private var maskHeight: Float;
     private var scrollable: Bool;
-    private var spriteS: String;
     private var spriteSheet:SparrowTilesheet;
     private  var scaleNine:ScaleNine;
     /**
@@ -47,14 +46,13 @@ class ScrollPanel extends Sprite {
      * @param	scrollLock : Disable scroll. False by default
      */
 
-    public function new(width: Float, height: Float, ?_scrollLock: Bool = false,?_spriteS:String="false",?_spriteSheet:SparrowTilesheet)
+    public function new(width: Float, height: Float, ?_scrollLock: Bool = false,?_spriteSheet:SparrowTilesheet)
     {
         super();
         maskWidth = width;
         maskHeight = height;
         content = new Sprite();
         this.scrollLock = _scrollLock;
-        spriteS = _spriteS;
         spriteSheet = _spriteSheet;
         addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
     }
@@ -94,7 +92,7 @@ class ScrollPanel extends Sprite {
     public function setBackground(bkg: String): String
     {
         background = bkg;
-        if(spriteS == "false")
+        if(spriteSheet == null)
         {
             if(Std.parseInt(bkg) != null)
             {
@@ -121,7 +119,7 @@ class ScrollPanel extends Sprite {
         else
         {
             Lib.trace(spriteSheet);
-            scaleNine = new ScaleNine();
+            scaleNine = new ScaleNine(maskWidth,maskHeight);
             scaleNine.addEventListener("onScaleInit",onInitScale);
             scaleNine.init(spriteSheet);
 
