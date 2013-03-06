@@ -35,12 +35,8 @@ class ScaleNineGrid extends Grid{
         largeur= _width-largeur;
         hauteur= _height-hauteur;
 
-        var heightMiddle:Float=largeur/_array[4].width;
-        var widthMiddle:Float=hauteur/_array[4].height;
-
-       // Lib.trace("largeur : "+largeur);
-       // Lib.trace("hauteur : "+hauteur);
-        var lastY:Float=0;
+        var widthMiddle:Float=largeur/_array[4].width;
+        var heightMiddle:Float=hauteur/_array[4].height;
 
         for(i in 0..._array.length){
             if( i % 2 == 0 ){
