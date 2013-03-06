@@ -27,7 +27,7 @@ class XmlLoader extends EventDispatcher {
 			fileLoader.addEventListener(Event.COMPLETE, listener);
 			fileLoader.load(new URLRequest(path));
 		#else
-        parser(Xml.parse(Assets.getText("xml/" + path)));
+        parser(Xml.parse(Assets.getText(path)));
         #end
     }
 
@@ -53,6 +53,6 @@ class XmlLoader extends EventDispatcher {
     private static function onIOError(error: IOErrorEvent): Void
     {
         cast(error.currentTarget, URLLoader).close();
-        nme.Lib.trace("File requested doesn't exist: " + error.toString().substr(error.toString().indexOf("/")));
+        nme.Lib.trace("[XMLLoader] File requested doesn't exist: " + error.toString().substr(error.toString().indexOf("/")));
     }
 }

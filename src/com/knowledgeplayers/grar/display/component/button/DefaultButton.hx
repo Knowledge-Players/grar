@@ -46,16 +46,24 @@ class DefaultButton extends Sprite {
      * name upstateName+"_pressed" and upstateName+"_over"
      * @param	tilesheet : UI Sheet
      * @param	tile : Tile containing the upstate
+     * @param	tilePressed : Tile containing the downstate
+     * @param	tileOver : Tile containing the overstate
      */
 
-    public function new(tilesheet: TilesheetEx, tile: String)
+    public function new(tilesheet: TilesheetEx, tile: String, ?tilePressed: String, ?tileOver: String)
     {
         super();
 
-        this.layer = new TileLayer(tilesheet);
-        this.upState = new TileSprite(tile);
-        this.downState = new TileSprite(tile + "_pressed");
-        this.overState = new TileSprite(tile + "_over");
+        layer = new TileLayer(tilesheet);
+        upState = new TileSprite(tile);
+        if(tilePressed != null)
+            downState = new TileSprite(tilePressed);
+        else
+            downState = new TileSprite(tile);
+        if(tileOver != null)
+            overState = new TileSprite(tileOver);
+        else
+            overState = new TileSprite(tile);
 
         mouseChildren = false;
 

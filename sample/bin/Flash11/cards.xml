@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<Cards>
-    <Element Ref="card1"/>
-    <Element Ref="card2"/>
-    <Element Ref="card3"/>
-    <Element Ref="card4"/>
-</Cards>

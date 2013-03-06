@@ -43,7 +43,7 @@
               ref="dialog"/>
         <Text type="activity" content="step4_3" author="Caroline_happy" transition="rightToLeft" background="labo"
               ref="dialog">
-            <Activity type="Folder" name="Proof" content="folder.xml" perk="SwipIt"/>
+            <Activity type="Folder" name="Proof" content="xml/folder.xml" perk="SwipIt"/>
         </Text>
         <Text type="" content="step4_4" author="Thuynhan_happy" transition="leftToRight" background="labo"
               ref="dialog"/>

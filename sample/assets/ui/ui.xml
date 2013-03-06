@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<TextureAtlas imagePath="ui.png">
+<TextureAtlas imagePath="ui/ui.png">
     <SubTexture name="btCircle.png" x="169" y="0" width="40" height="40"/>
     <SubTexture name="continueButton.jpg" x="0" y="0" width="169" height="50"/>
     <SubTexture name="continueButton_over.jpg" x="0" y="50" width="169" height="50"/>

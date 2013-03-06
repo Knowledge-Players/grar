@@ -135,7 +135,7 @@ class LoadData extends EventDispatcher {
 
             if(node.exists("imagePath")){
 
-                arrayOfUrlImgs.push("ui/" + node.get("imagePath"));
+                arrayOfUrlImgs.push(node.get("imagePath"));
             }
             for(nd in node.elements()){
                 if(nd.nodeName != "SubTexture"){
@@ -147,10 +147,10 @@ class LoadData extends EventDispatcher {
 
                     }
                     if(nd.exists("background")){
-                        if(Std.string(nd.get("background")).indexOf(".")!=-1){
-                        if(Std.string(nd.get("background")).charAt(0) != "0")
-                            arrayOfUrlImgs.push(nd.get("background"));
-                            }
+                        if(Std.string(nd.get("background")).indexOf(".") != -1){
+                            if(Std.string(nd.get("background")).charAt(0) != "0")
+                                arrayOfUrlImgs.push(nd.get("background"));
+                        }
                     }
                     if(nd.exists("buttonIcon")){
                         arrayOfUrlImgs.push(nd.get("buttonIcon"));
@@ -183,13 +183,18 @@ class LoadData extends EventDispatcher {
         if(!checkElementsDisplayInCache(path)){
             #if flash
 
-                    var urlR = new URLRequest("assets/"+path);
+                    var urlR = new URLRequest(path);
                     //Lib.trace("------------- urlR : "+urlR.url);
 
                     var mloader = new Loader();
                     mloader.contentLoaderInfo.addEventListener(Event.COMPLETE,onCompleteLoading);
                     mloader.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
+                    try{
                     mloader.load(urlR);
+                    }
+                    catch(msg: String){
+                        throw "[LoadData] Error while loading: "+urlR+"\n"+msg;
+                    }
 
 
                 #else
@@ -244,7 +249,7 @@ class LoadData extends EventDispatcher {
     * Get the display loaded
     **/
 
-    public function getElementDisplayInCache(_name: String): DisplayObject
+    public function getElementDisplayInCache(_name: String): Null<DisplayObject>
     {
         var element: DisplayObject = null;
         //Lib.trace("_name = "+_name);

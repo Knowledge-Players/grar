@@ -3,7 +3,7 @@
     <Text type="" content="text1" author="Thuynhan_happy" transition="" background="labo" ref="intro1"/>
     <Text type="" content="text2" author="Caroline_happy" transition="" background="labo" ref="intro2"/>
 
-    <Part id="0" name="miniSims" type="dialog" file="wort.xml" display="wortDisplay.xml"/>
+    <Part id="0" name="miniSims" type="dialog" file="xml/wort.xml" display="xml/wortDisplay.xml"/>
 
     <Text type="" content="text1" author="Thuynhan_happy" transition="" background="labo" ref="conclusion1"/>
 

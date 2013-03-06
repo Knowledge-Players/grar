@@ -50,7 +50,7 @@ class SpriteSheetLoader extends EventDispatcher {
     private function loadData(?path: String = ""): Void
     {
         #if flash
-            var urlR = new URLRequest("assets/"+path);
+            var urlR = new URLRequest(path);
             var mloader = new Loader();
             mloader.contentLoaderInfo.addEventListener(Event.COMPLETE,onCompleteLoading);
             mloader.addEventListener(IOErrorEvent.IO_ERROR, onIOError);

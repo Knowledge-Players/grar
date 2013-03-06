@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure;
 
+import nme.Assets;
 import com.knowledgeplayers.grar.display.LayoutManager;
 import nme.Assets;
 import com.knowledgeplayers.grar.display.style.StyleParser;
@@ -64,9 +65,6 @@ class KpGame extends EventDispatcher, implements Game {
         parts = new IntHash<Part>();
         inventory = new Array<String>();
         Lib.current.stage.addEventListener(Event.DEACTIVATE, onExit);
-
-        // Load styles
-        StyleParser.instance.parse(Assets.getText("xml/style.xml"));
     }
 
     /**
@@ -243,6 +241,12 @@ class KpGame extends EventDispatcher, implements Game {
         XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
 
         var displayNode: Fast = structureXml.node.Grar.node.Display;
+
+        // Load styles
+        StyleParser.instance.parse(Assets.getText(displayNode.node.Style.att.file));
+        // Load Layout
+        initLayout(Xml.parse(Assets.getText(parametersNode.node.Layout.att.file)));
+
         UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
         if(displayNode.hasNode.Transitions)
             TweenManager.loadTemplate(displayNode.node.Transitions.att.display);
@@ -256,7 +260,6 @@ class KpGame extends EventDispatcher, implements Game {
             addPartFromXml(Std.parseInt(part.att.id), part);
         }
 
-        XmlLoader.load(parametersNode.node.Layout.att.file, onLayoutComplete, initLayout);
     }
 
     private function onActivityComplete(event: Event): Void

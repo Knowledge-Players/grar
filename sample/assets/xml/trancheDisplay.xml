@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Display transitionIn="fadeIn" transition="fadeOut">
     <!-- Spritesheets declaration -->
-    <SpriteSheet id="Caroline_happy" src="Caroline_happy.xml"/>
-    <SpriteSheet id="Thuynhan_happy" src="Thuynhan_happy.xml"/>
+    <SpriteSheet id="Caroline_happy" src="xml/Caroline_happy.xml"/>
+    <SpriteSheet id="Thuynhan_happy" src="xml/Thuynhan_happy.xml"/>
     <!-- DisplayObjects. Start at z=0 -->
 
 
     <Background src="img/background.jpg" ref="labo"/>
     <Background src="img/background2.jpg" ref="empty"/>
-    <Character id="Thuynhan_happy" ref="Thuynhan_happy" scaleX="0.3" scaleY="0.3" x="400" y="500"/>
-    <Character id="Caroline_happy" ref="Caroline_happy" scaleX="0.3" scaleY="0.3" x="700" y="500"/>
+    <Character id="Thuynhan_happy" spritesheet="Thuynhan_happy" ref="Thuynhan_happy" scaleX="0.3" scaleY="0.3" x="400"
+               y="500"/>
+    <Character id="Caroline_happy" spritesheet="Caroline_happy" ref="Caroline_happy" scaleX="0.3" scaleY="0.3" x="700"
+               y="500"/>
     <Button id="continueButton" type="text" action="next" x="200" y="200" scaleX="1" scaleY="1" ref="next"/>
     <TextGroup ref="group1">
         <Text x="0" y="0" width="960" height="100" background="0xFFFFFF" ref="intro2"/>

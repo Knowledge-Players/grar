@@ -1,23 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Display transitionIn="fadeIn" transition="fadeOut">
     <!-- Spritesheets declaration -->
-    <SpriteSheet id="Thuynhan_happy" src="Thuynhan_happy.xml"/>
-    <SpriteSheet id="Thuynhan_thinking" src="Thuynhan_thinking.xml"/>
-    <SpriteSheet id="Thuynhan_neutral" src="Thuynhan_neutral.xml"/>
-    <SpriteSheet id="Thuynhan_worried" src="Thuynhan_worried.xml"/>
-    <SpriteSheet id="Caroline_happy" src="Caroline_happy.xml"/>
-    <SpriteSheet id="Caroline_neutral" src="Caroline_neutral.xml"/>
-    <SpriteSheet id="Caroline_worried" src="Caroline_worried.xml"/>
+    <SpriteSheet id="Thuynhan_happy" src="xml/Thuynhan_happy.xml"/>
+    <SpriteSheet id="Thuynhan_thinking" src="xml/Thuynhan_thinking.xml"/>
+    <SpriteSheet id="Thuynhan_neutral" src="xml/Thuynhan_neutral.xml"/>
+    <SpriteSheet id="Thuynhan_worried" src="xml/Thuynhan_worried.xml"/>
+    <SpriteSheet id="Caroline_happy" src="xml/Caroline_happy.xml"/>
+    <SpriteSheet id="Caroline_neutral" src="xml/Caroline_neutral.xml"/>
+    <SpriteSheet id="Caroline_worried" src="xml/Caroline_worried.xml"/>
     <!-- DisplayObjects. Start at z=0 -->
     <Background src="img/background.jpg" ref="labo"/>
     <Background src="img/background2.jpg" ref="empty"/>
-    <Character id="Thuynhan_happy" ref="Thuynhan_happy" scaleX="0.3" scaleY="0.3" x="400" y="500"/>
-    <Character id="Caroline_happy" ref="Caroline_happy" scaleX="0.3" scaleY="0.3" x="700" y="500"/>
-    <Character id="Thuynhan_thinking" ref="Thuynhan_thinking" scaleX="0.3" scaleY="0.3" x="400" y="500"/>
-    <Character id="Caroline_neutral" ref="Caroline_neutral" scaleX="0.3" scaleY="0.3" x="700" y="500"/>
-    <Character id="Thuynhan_neutral" ref="Thuynhan_neutral" scaleX="0.3" scaleY="0.3" x="400" y="500"/>
-    <Character id="Caroline_worried" ref="Caroline_worried" scaleX="0.3" scaleY="0.3" x="700" y="500"/>
-    <Character id="Thuynhan_worried" ref="Thuynhan_worried" scaleX="0.3" scaleY="0.3" x="400" y="500"/>
+    <Character id="Thuynhan_happy" spritesheet="Thuynhan_happy" ref="Thuynhan_happy" scaleX="0.3" scaleY="0.3" x="400"
+               y="500"/>
+    <Character id="Caroline_happy" spritesheet="Caroline_happy" ref="Caroline_happy" scaleX="0.3" scaleY="0.3" x="700"
+               y="500"/>
+    <Character id="Thuynhan_thinking" spritesheet="Thuynhan_thinking" ref="Thuynhan_thinking" scaleX="0.3" scaleY="0.3"
+               x="400" y="500"/>
+    <Character id="Caroline_neutral" spritesheet="Caroline_neutral" ref="Caroline_neutral" scaleX="0.3" scaleY="0.3"
+               x="700" y="500"/>
+    <Character id="Thuynhan_neutral" spritesheet="Thuynhan_neutral" ref="Thuynhan_neutral" scaleX="0.3" scaleY="0.3"
+               x="400" y="500"/>
+    <Character id="Caroline_worried" spritesheet="Caroline_worried" ref="Caroline_worried" scaleX="0.3" scaleY="0.3"
+               x="700" y="500"/>
+    <Character id="Thuynhan_worried" spritesheet="Thuynhan_worried" ref="Thuynhan_worried" scaleX="0.3" scaleY="0.3"
+               x="400" y="500"/>
     <Text x="0" y="350" width="960" height="100" background="0xFFFFFF" ref="dialog"/>
     <Button id="continueButton" type="text" action="next" x="800" y="400" scaleX="1" scaleY="1" ref="next"/>
     <Button id="continueButton" type="text" action="goto" x="100" y="400" scaleX="1" scaleY="1" ref="choice1"/>

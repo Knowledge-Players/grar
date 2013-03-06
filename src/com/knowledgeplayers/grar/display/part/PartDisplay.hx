@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import aze.display.TileSprite;
+import aze.display.TileLayer;
 import aze.display.SparrowTilesheet;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
@@ -45,11 +47,6 @@ class PartDisplay extends Sprite {
     public var part: Part;
 
     /**
-    * Current activity displayed. Null if there is not
-    **/
-    //public var activityDisplay (default, null): ActivityDisplay;
-
-    /**
     * Transition to play at the beginning of the part
     **/
     public var transitionIn (default, default): String;
@@ -72,6 +69,7 @@ class PartDisplay extends Sprite {
     private var numSpriteSheetsLoaded: Int = 0;
     private var totalSpriteSheets: Int = 0;
     private var textGroups: Hash<Hash<{obj: Fast, z: Int}>>;
+    private var layers: Hash<TileLayer>;
 
     /**
      * Constructor
@@ -89,6 +87,7 @@ class PartDisplay extends Sprite {
 
         resizeD = ResizeManager.getInstance();
         spritesheets = new Hash<SparrowTilesheet>();
+        layers = new Hash<TileLayer>();
 
         displayArea = this;
 
@@ -243,23 +242,6 @@ class PartDisplay extends Sprite {
 
     }
 
-    /*private function launchActivity(activity: Activity)
-    {
-        activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
-        var activityName: String = Type.getClassName(Type.getClass(activity));
-        activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
-        activityDisplay = ActivityManager.instance.getActivity(activityName);
-        activityDisplay.addEventListener(Event.COMPLETE, onActivityReady);
-        activityDisplay.model = activity;
-    }
-
-    private function cleanActivity(): Void
-    {
-        if(activityDisplay != null && contains(activityDisplay))
-            removeChild(activityDisplay);
-        activityDisplay = null;
-    }*/
-
     private function initDisplayObject(display: DisplayObject, node: Fast, ?transition: String): Void
     {
         display.x = Std.parseFloat(node.att.x);
@@ -283,16 +265,22 @@ class PartDisplay extends Sprite {
 
     private function createItem(itemNode: Fast): Void
     {
-        var itemBmp: Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src), Bitmap).bitmapData);
+        if(itemNode.has.src){
+            var itemBmp: Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src), Bitmap).bitmapData);
+            addElement(itemBmp, itemNode);
+        }
+        else{
+            var itemTile = new TileSprite(itemNode.att.id);
+            layers.get(itemNode.att.spritesheet).addChild(itemTile);
+            addElement(layers.get(itemNode.att.spritesheet).view, itemNode);
+        }
 
-        addElement(itemBmp, itemNode);
     }
 
     private function createButton(buttonNode: Fast): Void
     {
         var button: DefaultButton = UiFactory.createButtonFromXml(buttonNode);
-        if(buttonNode.has.Content)
-            cast(button, TextButton).setText(Localiser.instance.getItemContent(buttonNode.att.Content));
+
         if(buttonNode.has.action)
             setButtonAction(cast(button, CustomEventButton), buttonNode.att.action);
         else
@@ -303,10 +291,20 @@ class PartDisplay extends Sprite {
 
     private function createText(textNode: Fast): Void
     {
+        var background: String = textNode.has.background ? textNode.att.background : null;
+        var spritesheet = null;
+        if(background != null && background.indexOf(".") < 0)
+            spritesheet = spritesheets.get(textNode.att.background);
 
+        var scrollable: Bool;
+        if(textNode.has.scrollable)
+            scrollable = textNode.att.scrollable == "true";
+        else
+            scrollable = true;
 
-        var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height),false,spritesheets.get(textNode.att.background));
-        text.background = textNode.att.background;
+        var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height), scrollable, spritesheet);
+        if(spritesheet != null && background != null)
+            text.background = background;
 
         addElement(text, textNode);
     }
@@ -336,7 +334,7 @@ class PartDisplay extends Sprite {
 
     private function createCharacter(character: Fast)
     {
-        var char: CharacterDisplay = new CharacterDisplay(spritesheets.get(character.att.ref), character.att.id, new Character(character.att.ref));
+        var char: CharacterDisplay = new CharacterDisplay(spritesheets.get(character.att.spritesheet), character.att.id, new Character(character.att.ref));
         char.visible = false;
         char.origin = new Point(Std.parseFloat(character.att.x), Std.parseFloat(character.att.y));
         addElement(char, character);
@@ -476,6 +474,10 @@ class PartDisplay extends Sprite {
 
             }
         }
+
+        for(layer in layers){
+            layer.render();
+        }
     }
 
     /*
@@ -486,7 +488,6 @@ class PartDisplay extends Sprite {
     {
         var object = displays.get(key);
         var textItem: TextItem = null;
-        //Lib.trace("here"+currentElement);
 
         if(currentElement.isText()){
             textItem = cast(currentElement, TextItem);
@@ -517,8 +518,18 @@ class PartDisplay extends Sprite {
     private function addElement(elem: DisplayObject, node: Fast): Void
     {
         initDisplayObject(elem, node);
-        displays.set(node.att.ref, {obj: elem, z: zIndex});
-        displaysFast.set(node.att.ref, node);
+        if(node.has.id && !node.has.ref){
+            displays.set(node.att.id, {obj: elem, z: zIndex});
+            displaysFast.set(node.att.id, node);
+        }
+        else if(!node.has.ref){
+            displays.set(node.att.src, {obj: elem, z: zIndex});
+            displaysFast.set(node.att.src, node);
+        }
+        else{
+            displays.set(node.att.ref, {obj: elem, z: zIndex});
+            displaysFast.set(node.att.ref, node);
+        }
         resizeD.addDisplayObjects(elem, node);
         zIndex++;
     }
@@ -545,27 +556,12 @@ class PartDisplay extends Sprite {
         startPattern(cast(currentElement, Pattern));
     }
 
-    /*private function onActivityReady(e: Event): Void
-    {
-        while(numChildren > 1)
-            removeChildAt(numChildren - 1);
-        addChild(activityDisplay);
-        activityDisplay.startActivity();
-    }
-
-    private function onActivityEnd(e: PartEvent): Void
-    {
-        if(e != null)
-            cast(e.target, Activity).removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
-        if(activityDisplay != null && contains(activityDisplay))
-            removeChild(activityDisplay);
-        activityDisplay = null;
-    }*/
-
     private function onSpriteSheetLoaded(ev: Event): Void
     {
         ev.target.removeEventListener(Event.COMPLETE, onSpriteSheetLoaded);
         spritesheets.set(ev.target.name, ev.target.spriteSheet);
+        var layer = new TileLayer(ev.target.spriteSheet);
+        layers.set(ev.target.name, layer);
         numSpriteSheetsLoaded++;
         if(numSpriteSheetsLoaded == totalSpriteSheets){
             createDisplay();

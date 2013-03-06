@@ -125,7 +125,7 @@ class CardsDisplay extends ActivityDisplay {
             }
             else if(child.name.toLowerCase() == "animationelement"){
 
-                var tilesheet = spriteSheets.get(content.node.AnimationElement.att.ref);
+                var tilesheet = spriteSheets.get(content.node.AnimationElement.att.spritesheet);
                 flipLayer = new TileLayer(tilesheet);
 
                 flipClip = new TileClip(content.node.AnimationElement.att.id);
