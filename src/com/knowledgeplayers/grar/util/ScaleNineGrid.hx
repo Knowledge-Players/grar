@@ -19,6 +19,7 @@ class ScaleNineGrid extends Grid{
         var largeur:Float=0;
         var hauteur:Float=0;
 
+
         for(i in 0..._array.length){
             if (i == 0 || i ==2)
                 {
@@ -34,6 +35,8 @@ class ScaleNineGrid extends Grid{
         largeur= _width-largeur;
         hauteur= _height-hauteur;
 
+        var heightMiddle:Float=largeur/_array[4].width;
+        var widthMiddle:Float=hauteur/_array[4].height;
 
        // Lib.trace("largeur : "+largeur);
        // Lib.trace("hauteur : "+hauteur);
@@ -42,22 +45,23 @@ class ScaleNineGrid extends Grid{
         for(i in 0..._array.length){
             if( i % 2 == 0 ){
 
-                    if(_array[i].tile == "milieu"){
-                        _array[i].scaleX=largeur/ _array[i].width;
-                        _array[i].scaleY=hauteur/ _array[i].height;
 
-                       //_array[i].width=largeur;
-                       // _array[i].height=hauteur;
-                    }
+                if(_array[i].tile == "milieu"){
+
+                    _array[i].scaleX=widthMiddle;
+                    _array[i].scaleY=heightMiddle;
+                }
+
             }
-
+        }
+        for(i in 0..._array.length){
             if(i==1 || i==7){
-            //_array[i].width=largeur;
-            _array[i].scaleX=largeur/ _array[i].width;
+
+            _array[i].scaleX = widthMiddle;
             }
             if(i==3 || i==5){
             //_array[i].height=hauteur;
-              _array[i].scaleY=hauteur/ _array[i].height;
+              _array[i].scaleY=heightMiddle;
             }
 
             if(i==0 || i== 3 || i==6)
@@ -77,7 +81,7 @@ class ScaleNineGrid extends Grid{
                 _array[i].y =  _array[0].y+ _array[0].height/2+ _array[i].height/2;
 
             }
-            if( i ==6){
+            if( i ==6|| i== 7 || i ==8 ){
 
                 _array[i].y =  _array[3].y+ _array[3].height/2+ _array[i].height/2;
 
@@ -87,11 +91,7 @@ class ScaleNineGrid extends Grid{
                 _array[i].y =  _array[3].y;
 
             }
-            if(i== 7|| i ==8 ){
 
-                _array[i].y =  _array[6].y;
-
-            }
 
         }
     }
