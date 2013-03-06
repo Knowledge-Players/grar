@@ -13,9 +13,12 @@
 
     <Background src="img/background.jpg" ref="bck1" width="1000" height="1000" x="0" y="0"/>
 
-    <Character id="Thuynhan_happy" ref="Thuynhan_happy" scaleX="0.3" scaleY="0.3" x="400" y="500"/>
-    <Character id="Caroline_happy" ref="Caroline_happy" scaleX="0.3" scaleY="0.3" x="100" y="300"/>
-    <Character id="Thuynhan_happy2" ref="Thuynhan_happy2" scaleX="0.3" scaleY="0.3" x="400" y="330"/>
+    <Character id="Thuynhan_happy" spritesheet="Thuynhan_happy" ref="Thuynhan_happy" scaleX="0.3" scaleY="0.3" x="400"
+               y="500"/>
+    <Character id="Caroline_happy" spritesheet="Caroline_happy" ref="Caroline_happy" scaleX="0.3" scaleY="0.3" x="100"
+               y="300"/>
+    <Character id="Thuynhan_happy2" spritesheet="Thuynhan_happy2" ref="Thuynhan_happy2" scaleX="0.3" scaleY="0.3"
+               x="400" y="330"/>
 
     <Text x="300" y="100" width="300" height="150" ref="text1" background="bubble"/>
     <Text x="200" y="50" width="150" height="100" ref="text2" background="bubble"/>
