@@ -67,10 +67,22 @@ class ScrollPanel extends Sprite {
     {
         clear();
         this.content = content;
+        var posXMask:Float=0;
+        var posYMask:Float=0;
+        if(scaleNine != null)
+        {
+            content.x =  scaleNine.middleTile.x-scaleNine.middleTile.width/2;
+            content.y = scaleNine.middleTile.y-scaleNine.middleTile.height/2;
+            maskWidth = scaleNine.middleTile.width;
+            maskHeight =  scaleNine.middleTile.height;
+            posXMask = content.x;
+            posYMask = content.y;
+        }
+
         addChild(content);
         var mask = new Sprite();
         mask.graphics.beginFill(0x000000);
-        mask.graphics.drawRect(0, 0, maskWidth, maskHeight);
+        mask.graphics.drawRect(posXMask, posYMask, maskWidth, maskHeight);
         mask.graphics.endFill();
         content.mask = mask;
         addChild(mask);
@@ -85,6 +97,7 @@ class ScrollPanel extends Sprite {
         else{
             scrollable = false;
         }
+
 
         return content;
     }
@@ -118,27 +131,22 @@ class ScrollPanel extends Sprite {
         }
         else
         {
-            Lib.trace(spriteSheet);
+
             scaleNine = new ScaleNine(maskWidth,maskHeight);
             scaleNine.addEventListener("onScaleInit",onInitScale);
             scaleNine.init(spriteSheet);
 
+
+
         }
-
-
-        //var scaleNine:ScaleNine = new ScaleNine();
-
 
         return bkg;
     }
-
-
 
     // Private
 
     private function onInitScale(e:Event):Void
     {
-        Lib.trace("onInitScale");
         e.currentTarget.removeEventListener("onScaleInit",onInitScale);
         addChildAt(e.currentTarget,0);
     }

@@ -4,13 +4,13 @@
 	Created with ShoeBox
 	http://renderhjs.net/shoebox/
 	-->
-	<SubTexture name="bas.png" x="0" y="305" width="405" height="97"/>
-	<SubTexture name="bas_droit.png" x="296" y="403" width="97" height="97"/>
-	<SubTexture name="bas_gauche.png" x="197" y="403" width="98" height="97"/>
-	<SubTexture name="droit.png" x="406" y="205" width="97" height="204"/>
-	<SubTexture name="gauche.png" x="406" y="0" width="98" height="204"/>
-	<SubTexture name="haut.png" x="0" y="205" width="405" height="99"/>
-	<SubTexture name="haut_droit.png" x="99" y="403" width="97" height="99"/>
-	<SubTexture name="haut_gauche.png" x="0" y="403" width="98" height="99"/>
-	<SubTexture name="milieu.png" x="0" y="0" width="405" height="204"/>
+	<SubTexture name="bas.png"	x="0"	y="131"	width="336"	height="70" frameX="-0" frameY="-0" frameWidth="336" frameHeight="70"/>
+	<SubTexture name="bas_droit.png"	x="383"	y="44"	width="45"	height="43" frameX="-0" frameY="-0" frameWidth="45" frameHeight="43"/>
+	<SubTexture name="bas_gauche.png"	x="429"	y="44"	width="45"	height="43" frameX="-0" frameY="-0" frameWidth="45" frameHeight="43"/>
+	<SubTexture name="droit.png"	x="337"	y="0"	width="45"	height="130" frameX="-0" frameY="-0" frameWidth="45" frameHeight="130"/>
+	<SubTexture name="gauche.png"	x="337"	y="0"	width="45"	height="130" frameX="-0" frameY="-0" frameWidth="45" frameHeight="130"/>
+	<SubTexture name="haut.png"	x="0"	y="202"	width="336"	height="44" frameX="-0" frameY="-0" frameWidth="336" frameHeight="44"/>
+	<SubTexture name="haut_droit.png"	x="383"	y="0"	width="45"	height="44" frameX="-0" frameY="-0" frameWidth="45" frameHeight="44"/>
+	<SubTexture name="haut_gauche.png"	x="429"	y="0"	width="45"	height="44" frameX="-0" frameY="-0" frameWidth="45" frameHeight="44"/>
+	<SubTexture name="milieu.png"	x="0"	y="0"	width="336"	height="130" frameX="-0" frameY="-0" frameWidth="336" frameHeight="130"/>
 </TextureAtlas>

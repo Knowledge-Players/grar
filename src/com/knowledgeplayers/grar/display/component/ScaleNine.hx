@@ -13,6 +13,7 @@ class ScaleNine extends Sprite {
     private var spriteSheet:SparrowTilesheet;
     private var bkg_width:Float;
     private var bkg_height:Float;
+    public var middleTile:TileSprite;
 
     public function new(w:Float=0,h:Float=0) {
         super();
@@ -29,6 +30,7 @@ class ScaleNine extends Sprite {
         var arrayTile:Array<TileSprite> = new Array<TileSprite>();
 
         var layer = new TileLayer(spriteSheet);
+
         var img1 = new TileSprite("haut_gauche");
         var img2 = new TileSprite("haut");
         var img3 = new TileSprite("haut_droit");
@@ -74,8 +76,11 @@ class ScaleNine extends Sprite {
             //scaleNineGrid.addTile(arrayTile[j]);
         }
         scaleNineGrid.initMatrice(arrayTile,bkg_width,bkg_height);
-        /*
-        img1.x = 0;
+
+
+        middleTile = img5;
+
+        /*img1.x = 0;
         img2.x = img1.x+img1.width/2+img2.width/2;
         img3.x = img2.x+img2.width/2+img3.width/2;
 
@@ -98,17 +103,14 @@ class ScaleNine extends Sprite {
         img7.y = img4.y+img4.height/2+img7.height/2;
         img8.y = img7.y;
         img9.y = img7.y;
-        */
 
+        */
 
 
         layer.render();
 
 
         this.dispatchEvent(new Event("onScaleInit",true));
-
-
-
     }
 
 }
