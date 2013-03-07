@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.quizz;
 
+import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
@@ -28,46 +29,46 @@ class QuizzDisplay extends ActivityDisplay {
     /**
 * Instance
 */
-    public static var instance (getInstance, null): QuizzDisplay;
+    public static var instance (getInstance, null):QuizzDisplay;
 
     /**
 * Questions field
 */
-    public var questions (default, null): Hash<ScrollPanel>;
+    public var questions (default, null):Hash<ScrollPanel>;
 
     /**
 * Buttons for the quizz
 */
-    public var buttons (default, null): Hash<DefaultButton>;
+    public var buttons (default, null):Hash<DefaultButton>;
 
     /**
     * Graphical item for the quizz (checkboxes, checks, ...)
 **/
-    public var items (default, null): Hash<BitmapData>;
+    public var items (default, null):Hash<BitmapData>;
 
     /**
 * Template for groups of answers
 */
-    public var quizzGroups (default, null): Hash<QuizzGroupDisplay>;
+    public var quizzGroups (default, null):Hash<QuizzGroupDisplay>;
 
     /**
     * Backgrounds for the quizz
 **/
-    public var backgrounds (default, null): Hash<DisplayObject>;
+    public var backgrounds (default, null):Hash<DisplayObject>;
 
     /**
 * Lock state of the quizz. If true, the answers can't be changed
 */
-    public var locked: Bool;
+    public var locked:Bool;
 
-    private var quizz: Quizz;
-    private var resizeD: ResizeManager;
+    private var quizz:Quizz;
+    private var resizeD:ResizeManager;
 
     /**
 * @return the instance
 */
 
-    public static function getInstance(): QuizzDisplay
+    public static function getInstance():QuizzDisplay
     {
         if(instance == null)
             return instance = new QuizzDisplay();
@@ -75,12 +76,12 @@ class QuizzDisplay extends ActivityDisplay {
             return instance;
     }
 
-    override public function setModel(model: Activity): Activity
+    override public function setModel(model:Activity):Activity
     {
         return quizz = cast(super.setModel(model), Quizz);
     }
 
-    override public function startActivity(): Void
+    override public function startActivity():Void
     {
         super.startActivity();
 
@@ -91,13 +92,13 @@ class QuizzDisplay extends ActivityDisplay {
 
     // Private
 
-    override private function onModelComplete(e: LocaleEvent): Void
+    override private function onModelComplete(e:LocaleEvent):Void
     {
         updateRound();
         super.onModelComplete(e);
     }
 
-    private function displayRound(): Void
+    private function displayRound():Void
     {
         addChild(questions.get(quizz.getCurrentQuestion().ref));
         addChild(quizzGroups.get(quizz.getCurrentGroup()));
@@ -118,20 +119,15 @@ class QuizzDisplay extends ActivityDisplay {
         resizeD = ResizeManager.getInstance();
     }
 
-    override private function parseContent(content: Fast): Void
+    override private function createElement(elemNode:Fast):Void
     {
-        for(child in content.elements){
-            switch(child.name.toLowerCase()){
-                case "background":backgrounds.set(child.att.ref,LoadData.getInstance().getElementDisplayInCache(Std.string(child.att.src)));
-                case "text": createQuestion(child);
-                case "button": createButton(child);
-                case "item": createItem(child);
-                case "group": createGroup(child);
-            }
+        super.createElement(elemNode);
+        if(elemNode.name.toLowerCase() == "group"){
+            createGroup(elemNode);
         }
     }
 
-    private function createGroup(groupNode: Fast): Void
+    private function createGroup(groupNode:Fast):Void
     {
         var group = new QuizzGroupDisplay(groupNode);
         //initDisplayObject(group, groupNode);
@@ -139,13 +135,22 @@ class QuizzDisplay extends ActivityDisplay {
         resizeD.addDisplayObjects(group, groupNode);
     }
 
-    private function createItem(itemNode: Fast): Void
+    /*private function createItem(itemNode: Fast): Void
     {
+        if(itemNode.has.src){
+        var itemBmp:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src), Bitmap).bitmapData);
+        addElement(itemBmp, itemNode);
+    }
+    else{
+        var itemTile = new TileSprite(itemNode.att.id);
+        layers.get(itemNode.att.spritesheet).addChild(itemTile);
+        addElement(layers.get(itemNode.att.spritesheet).view, itemNode);
+    }
         var bmp = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src),Bitmap).bitmapData);
         items.set(itemNode.att.ref.toLowerCase(), bmp.bitmapData);
-    }
+    }*/
 
-    private function createButton(buttonNode: Fast): Void
+    /*private function createButton(buttonNode: Fast): Void
     {
         var button = UiFactory.createButtonFromXml(buttonNode);
         button.addEventListener(MouseEvent.CLICK, onValidation);
@@ -164,12 +169,12 @@ class QuizzDisplay extends ActivityDisplay {
         question.y = Std.parseFloat(questionNode.att.y);
         questions.set(questionNode.att.ref, question);
         resizeD.addDisplayObjects(question, questionNode);
-    }
+    }*/
 
-    private function updateButtonText(): Void
+    private function updateButtonText():Void
     {
         if(Std.is(buttons.get(quizz.getCurrentButton().ref), TextButton)){
-            var stateId: String = null;
+            var stateId:String = null;
             switch(quizz.state){
                 case EMPTY: stateId = "";
                 case VALIDATED: stateId = "_correct";
@@ -180,7 +185,7 @@ class QuizzDisplay extends ActivityDisplay {
         }
     }
 
-    private function onValidation(e: MouseEvent): Void
+    private function onValidation(e:MouseEvent):Void
     {
         switch(quizz.state) {
             case EMPTY: quizzGroups.get(quizz.getCurrentGroup()).validate();
@@ -198,7 +203,7 @@ class QuizzDisplay extends ActivityDisplay {
         }
     }
 
-    private function updateRound(): Void
+    private function updateRound():Void
     {
         quizzGroups.get(quizz.getCurrentGroup()).model = quizz.getCurrentAnswers();
         var content = Localiser.getInstance().getItemContent(quizz.getCurrentQuestion().content);
@@ -207,7 +212,7 @@ class QuizzDisplay extends ActivityDisplay {
         displayRound();
     }
 
-    private function setState(state: QuizzState): Void
+    private function setState(state:QuizzState):Void
     {
         quizz.state = state;
         if(quizz.state == QuizzState.EMPTY)

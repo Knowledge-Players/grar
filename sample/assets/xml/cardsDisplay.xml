@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Cards>
     <SpriteSheet id="global" src="xml/AnimCard.xml"/>
-    <Background src="img/background.jpg"/>
+    <Background src="img/background.jpg" ref="default"/>
     <Element src="img/postit.png"/>
     <Grid ref="dispatch" x="0" y="0" numCol="4" numRow="1" cellWidth="220" cellHeight="260" gapCol="10" gapRow="10"
           alignX="middle" alignY="center"/>

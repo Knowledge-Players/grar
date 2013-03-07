@@ -19,16 +19,16 @@ import nme.display.Bitmap;
 
 class DialogDisplay extends PartDisplay {
 
-    private var tokens: Hash<Bitmap>;
-    private var displayedToken: Bitmap;
-    private var currentPattern: Pattern;
+    private var tokens:Hash<Bitmap>;
+    private var displayedToken:Bitmap;
+    private var currentPattern:Pattern;
 
     /**
      * Constructor
      * @param	part : DialogPart to display
      */
 
-    public function new(part: DialogPart)
+    public function new(part:DialogPart)
     {
         tokens = new Hash<Bitmap>();
         resizeD = ResizeManager.getInstance();
@@ -38,12 +38,12 @@ class DialogDisplay extends PartDisplay {
 
     // Private
 
-    override private function next(event: ButtonActionEvent): Void
+    override private function next(event:ButtonActionEvent):Void
     {
         startPattern(currentPattern);
     }
 
-    override private function startPattern(pattern: Pattern): Void
+    override private function startPattern(pattern:Pattern):Void
     {
         super.startPattern(pattern);
 
@@ -71,25 +71,21 @@ class DialogDisplay extends PartDisplay {
 
     // Privates
 
-    override private function parseContent(content: Xml): Void
+    override private function createElement(elemNode:Fast):Void
     {
-        super.parseContent(content);
+        super.createElement(elemNode);
 
-        var displayFast: Fast = new Fast(content).node.Display;
-        for(tokenNode in displayFast.nodes.Token){
-            var token: Bitmap = new Bitmap(Assets.getBitmapData(tokenNode.att.id));
+        if(elemNode.name.toLowerCase() == "token"){
+            var token:Bitmap = new Bitmap(Assets.getBitmapData(elemNode.att.id));
             token.visible = false;
-            initDisplayObject(token, tokenNode);
-
-            resizeD.addDisplayObjects(token, tokenNode);
-            addChild(token);
-            tokens.set(tokenNode.att.name, token);
+            addElement(token, elemNode);
+            tokens.set(elemNode.att.name, token);
 
             dispatchEvent(new TokenEvent(TokenEvent.ADD, true));
         }
     }
 
-    override private function setButtonAction(button: CustomEventButton, action: String): Void
+    override private function setButtonAction(button:CustomEventButton, action:String):Void
     {
         super.setButtonAction(button, action);
         if(action.toLowerCase() == ButtonActionEvent.GOTO){
@@ -97,14 +93,14 @@ class DialogDisplay extends PartDisplay {
         }
     }
 
-    private function onChoice(ev: ButtonActionEvent): Void
+    private function onChoice(ev:ButtonActionEvent):Void
     {
         var choice = cast(ev.target, DefaultButton);
         var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
         goToPattern(target);
     }
 
-    private function goToPattern(target: String): Void
+    private function goToPattern(target:String):Void
     {
         var i = 0;
         while(!(part.elements[i].isPattern() && cast(part.elements[i], Pattern).name == target)){

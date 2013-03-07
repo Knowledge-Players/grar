@@ -12,22 +12,22 @@ import nme.Lib;
  * Manage a grid to place object
  */
 class Grid {
-    public var numRow (default, default): Int;
-    public var numCol (default, default): Int;
-    public var cellSize (default, default): {width: Float, height: Float};
-    public var x (default, default): Float;
-    public var y (default, default): Float;
-    public var gapCol (default, default): Float;
-    public var gapRow (default, default): Float;
-    public var alignX (default, default): String;
-    public var alignY (default, default): String;
+    public var numRow (default, default):Int;
+    public var numCol (default, default):Int;
+    public var cellSize (default, default):{width:Float, height:Float};
+    public var x (default, default):Float;
+    public var y (default, default):Float;
+    public var gapCol (default, default):Float;
+    public var gapRow (default, default):Float;
+    public var alignX (default, default):String;
+    public var alignY (default, default):String;
     public var gapX(default, default):Float = 0;
     public var gapY(default, default):Float = 0;
     public var container:Sprite;
 
-    private var nextCell: Point;
+    private var nextCell:Point;
 
-    public function new(numRow: Int, numCol: Int, ?cellWidth: String, ?cellHeight: String,?gapCol:Float,?gapRow:Float,?_alignX:String,?_alignY:String,?img:String="")
+    public function new(numRow:Int, numCol:Int, ?cellWidth:String, ?cellHeight:String, ?gapCol:Float, ?gapRow:Float, ?_alignX:String, ?_alignY:String, ?img:String = "")
     {
         this.numRow = numRow;
         this.numCol = numCol;
@@ -37,75 +37,61 @@ class Grid {
         this.alignY = _alignY;
         container = new Sprite();
 
-
-        if(cellWidth != "" && cellHeight != "")
-            {
-                cellSize = {width: Std.parseFloat(cellWidth), height: Std.parseFloat(cellHeight)};
-            }
-        else if (img !="")
-        {
-            cellSize = {width: cast(LoadData.getInstance().getElementDisplayInCache(img),Bitmap).width, height: cast(LoadData.getInstance().getElementDisplayInCache(img),Bitmap).height};
-
-
+        if(cellWidth != "" && cellHeight != ""){
+            cellSize = {width: Std.parseFloat(cellWidth), height: Std.parseFloat(cellHeight)};
         }
-        else
-        {
+        else if(img != ""){
+            cellSize = {width: cast(LoadData.getInstance().getElementDisplayInCache(img), Bitmap).width, height: cast(LoadData.getInstance().getElementDisplayInCache(img), Bitmap).height};
+        }
+        else{
             cellSize = {width: 0, height: 0};
         }
 
+        // Initialize nextCell to (0;0)
         empty();
     }
 
-    public function alignContainer(_container:Sprite,_bkg:Bitmap):Void
+    public function alignContainer(_container:Sprite, _bkg:Bitmap):Void
     {
-            //Lib.trace("alignX : "+alignX);
-            //Lib.trace("alignY : "+alignY);
+        switch(alignX)
+        {
+            case "left":
+                _container.x = 0;
 
+            case "middle":
+                _container.x = _bkg.x + _bkg.width / 2 - _container.width / 2;
 
-            switch(alignX)
-            {
-                case "left":
-                    _container.x = 0;
+            case "right":
+                _container.x = _bkg.x + _bkg.width - _container.width;
+        }
+        switch(alignY)
+        {
+            case "top":
+                _container.y = 0;
 
-                case "middle":
-                    _container.x = _bkg.x+_bkg.width/2-_container.width/2;
+            case "center":
+                _container.y = _bkg.y + _bkg.height / 2 - _container.height / 2 ;
 
-                case "right":
-                    _container.x = _bkg.x+_bkg.width-_container.width;
-            }
-            switch(alignY)
-            {
-                case "top":
-                    _container.y = 0;
-
-                case "center":
-                    _container.y = _bkg.y+_bkg.height/2-_container.height/2 ;
-
-                case "bottom":
-                    _container.y = _bkg.y+_bkg.height-_container.height;
-            }
-
+            case "bottom":
+                _container.y = _bkg.y + _bkg.height - _container.height;
+        }
     }
 
-    public function add(object: DisplayObject, ?withTween: Bool = true): Void
+    public function add(object:DisplayObject, ?withTween:Bool = true):Void
     {
-
-        if (cellSize.width == 0)
-        {
+        if(cellSize.width == 0){
             cellSize.width = object.width;
         }
-        if (cellSize.width == 0)
-        {
+        if(cellSize.width == 0){
             cellSize.height = object.height;
         }
-        if (nextCell.x!=0)gapX += gapRow;
-        if (nextCell.y!=0)gapY += gapCol;
+        if(nextCell.x != 0)gapX += gapRow;
+        if(nextCell.y != 0)gapY += gapCol;
 
-        var targetX = x + nextCell.x * cellSize.width+gapX;
-        var targetY = y + nextCell.y * cellSize.height+gapY;
+        var targetX = x + nextCell.x * cellSize.width + gapX;
+        var targetY = y + nextCell.y * cellSize.height + gapY;
 
-        if(nextCell.x < numCol - 1)
-        {
+        if(nextCell.x < numCol - 1){
             nextCell.x++;
         }
         else if(nextCell.y < numRow){
@@ -127,10 +113,8 @@ class Grid {
 
     }
 
-    public function empty(): Void
+    public function empty():Void
     {
         nextCell = new Point(0, 0);
-        Lib.trace("empty");
-
     }
 }

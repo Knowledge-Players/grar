@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Scanner>
-    <Background src="img/background.jpg"/>
+    <Background src="img/background.jpg" ref="default"/>
     <Point ref="color" src="0xFF0000" radius="10" state="unseen"/>
     <Point ref="color" src="0x00FF00" radius="10" state="over"/>
     <Point ref="default" src="img/ScannerSpot.png" state="unseen"/>

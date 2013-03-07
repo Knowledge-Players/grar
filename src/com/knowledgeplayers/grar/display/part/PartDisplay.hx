@@ -40,54 +40,39 @@ import nme.Lib;
 /**
  * Display of a part
  */
-class PartDisplay extends Sprite {
+class PartDisplay extends KpDisplay {
     /**
      * Part model to display
      */
-    public var part: Part;
+    public var part:Part;
 
     /**
     * Transition to play at the beginning of the part
     **/
-    public var transitionIn (default, default): String;
+    public var transitionIn (default, default):String;
 
     /**
     * Transition to play at the end of the part
     **/
-    public var transitionOut (default, default): String;
+    public var transitionOut (default, default):String;
 
-    private var resizeD: ResizeManager;
-    private var currentSpeaker: CharacterDisplay;
-    private var previousBackground: {ref: String, bmp: Bitmap};
-    private var displays: Hash<{obj: DisplayObject, z: Int}>;
-    private var displaysFast: Hash<Fast>;
-    private var spritesheets: Hash<SparrowTilesheet>;
-    private var zIndex: Int = 0;
-    private var displayArea: Sprite;
-    private var currentElement: PartElement;
-    private var displayFast: Fast;
-    private var numSpriteSheetsLoaded: Int = 0;
-    private var totalSpriteSheets: Int = 0;
-    private var textGroups: Hash<Hash<{obj: Fast, z: Int}>>;
-    private var layers: Hash<TileLayer>;
+    private var resizeD:ResizeManager;
+    private var currentSpeaker:CharacterDisplay;
+    private var previousBackground:{ref:String, bmp:Bitmap};
+    private var displayArea:Sprite;
+    private var currentElement:PartElement;
 
     /**
      * Constructor
      * @param	part : Part to display
      */
 
-    public function new(part: Part)
+    public function new(part:Part)
     {
         super();
         this.part = part;
 
-        displaysFast = new Hash<Fast>();
-        displays = new Hash<{obj: DisplayObject, z: Int}>();
-        textGroups = new Hash<Hash<{obj: Fast, z: Int}>>();
-
         resizeD = ResizeManager.getInstance();
-        spritesheets = new Hash<SparrowTilesheet>();
-        layers = new Hash<TileLayer>();
 
         displayArea = this;
 
@@ -101,7 +86,7 @@ class PartDisplay extends Sprite {
      * Unload the display from the scene
      */
 
-    public function unLoad(): Void
+    public function unLoad():Void
     {
         while(numChildren > 0)
             removeChildAt(numChildren - 1);
@@ -111,7 +96,7 @@ class PartDisplay extends Sprite {
     * @return the TextItem in the part or null if there is an activity or the part is over
     **/
 
-    public function nextElement(): Void
+    public function nextElement():Void
     {
         currentElement = part.getNextElement();
         if(currentElement == null){
@@ -177,178 +162,53 @@ class PartDisplay extends Sprite {
     * Start the part
     **/
 
-    public function startPart(): Void
+    public function startPart():Void
     {
         TweenManager.applyTransition(this, transitionIn);
         nextElement();
     }
 
-    // Private
-
-    private function onTokenAdded(e: TokenEvent): Void
-    {}
-
-    private function parseContent(content: Xml): Void
+    override public function parseContent(content:Xml):Void
     {
-        displayFast = new Fast(content).node.Display;
+        super.parseContent(content);
+
         if(displayFast.has.transitionIn)
             transitionIn = displayFast.att.transitionIn;
         if(displayFast.has.transitionOut)
             transitionOut = displayFast.att.transitionOut;
-
-        totalSpriteSheets = Lambda.count(displayFast.nodes.SpriteSheet);
-
-        if(totalSpriteSheets > 0){
-            for(child in displayFast.nodes.SpriteSheet){
-                var loader = new SpriteSheetLoader();
-                loader.addEventListener(Event.COMPLETE, onSpriteSheetLoaded);
-
-                loader.init(child.att.id, child.att.src);
-                //Lib.trace("child.att.id : "+child.att.id);
-            }
-        }
-        else{
-            createDisplay();
-        }
-
-        resizeD.onResize();
     }
 
-    private function createDisplay(): Void
-    {
-        for(child in displayFast.elements){
-            switch(child.name.toLowerCase()){
-                case "background": createBackground(child);
-                case "item": createItem(child);
-                case "character": createCharacter(child);
-                case "button": createButton(child);
-                case "text": createText(child);
-                case "textgroup":createTextGroup(child);
+    // Private
 
-            }
-        }
+    private function onTokenAdded(e:TokenEvent):Void
+    {}
+
+    override private function createDisplay():Void
+    {
+        super.createDisplay();
 
         dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
     }
 
-    private function next(event: ButtonActionEvent): Void
+    private function next(event:ButtonActionEvent):Void
     {
         nextElement();
     }
 
-    private function startPattern(pattern: Pattern): Void
+    private function startPattern(pattern:Pattern):Void
     {
         currentElement = pattern;
 
     }
 
-    private function initDisplayObject(display: DisplayObject, node: Fast, ?transition: String): Void
-    {
-        display.x = Std.parseFloat(node.att.x);
-        display.y = Std.parseFloat(node.att.y);
-
-        if(node.has.width)
-            display.width = Std.parseFloat(node.att.width);
-        else if(node.has.scaleX)
-            display.scaleX = Std.parseFloat(node.att.scaleX);
-        if(node.has.height)
-            display.height = Std.parseFloat(node.att.height);
-        else if(node.has.scaleY)
-            display.scaleY = Std.parseFloat(node.att.scaleY);
-    }
-
-    private function createBackground(bkgNode: Fast): Void
-    {
-        displaysFast.set(bkgNode.att.ref, bkgNode);
-        zIndex++;
-    }
-
-    private function createItem(itemNode: Fast): Void
-    {
-        if(itemNode.has.src){
-            var itemBmp: Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src), Bitmap).bitmapData);
-            addElement(itemBmp, itemNode);
-        }
-        else{
-            var itemTile = new TileSprite(itemNode.att.id);
-            layers.get(itemNode.att.spritesheet).addChild(itemTile);
-            addElement(layers.get(itemNode.att.spritesheet).view, itemNode);
-        }
-
-    }
-
-    private function createButton(buttonNode: Fast): Void
-    {
-        var button: DefaultButton = UiFactory.createButtonFromXml(buttonNode);
-
-        if(buttonNode.has.action)
-            setButtonAction(cast(button, CustomEventButton), buttonNode.att.action);
-        else
-            button.addEventListener("next", next);
-
-        addElement(button, buttonNode);
-    }
-
-    private function createText(textNode: Fast): Void
-    {
-        var background: String = textNode.has.background ? textNode.att.background : null;
-        var spritesheet = null;
-        if(background != null && background.indexOf(".") < 0)
-            spritesheet = spritesheets.get(textNode.att.background);
-
-        var scrollable: Bool;
-        if(textNode.has.scrollable)
-            scrollable = textNode.att.scrollable == "true";
-        else
-            scrollable = true;
-
-        var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height), scrollable, spritesheet);
-        if(spritesheet != null && background != null)
-            text.background = background;
-
-        addElement(text, textNode);
-    }
-
-    private function createTextGroup(textNode: Fast): Void
-    {
-
-        var numIndex = 0;
-        var hashTextGroup = new Hash<{obj: Fast, z: Int}>();
-
-        for(child in textNode.elements){
-            if(child.name.toLowerCase() == "text"){
-
-                //createText(child);
-                var text = new ScrollPanel(Std.parseFloat(child.att.width), Std.parseFloat(child.att.height));
-                text.setBackground(child.att.background);
-                hashTextGroup.set(child.att.ref, {obj:child, z:numIndex});
-
-                addElement(text, child);
-
-                numIndex++;
-
-            }
-        }
-        textGroups.set(textNode.att.ref, hashTextGroup);
-    }
-
-    private function createCharacter(character: Fast)
-    {
-        var char: CharacterDisplay = new CharacterDisplay(spritesheets.get(character.att.spritesheet), character.att.id, new Character(character.att.ref));
-        char.visible = false;
-        char.origin = new Point(Std.parseFloat(character.att.x), Std.parseFloat(character.att.y));
-        addElement(char, character);
-
-    }
-
-    private function setButtonAction(button: CustomEventButton, action: String): Void
+    override private function setButtonAction(button:CustomEventButton, action:String):Void
     {
         if(action.toLowerCase() == ButtonActionEvent.NEXT){
             button.addEventListener(action.toLowerCase(), next);
         }
     }
 
-    private function setText(item: TextItem, ?_textGroup: Bool = false): Void
+    private function setText(item:TextItem, ?_textGroup:Bool = false):Void
     {
         Lib.trace(item);
         // Clean previous background
@@ -446,13 +306,13 @@ class PartDisplay extends Sprite {
 
     }
 
-    private function displayPart(?_textGroup: Bool = false): Void
+    private function displayPart(?_textGroup:Bool = false):Void
     {
         if(!_textGroup){
             while(numChildren > 1)
                 removeChildAt(numChildren - 1);
 
-            var array = new Array<{obj: DisplayObject, z: Int}>();
+            var array = new Array<{obj:DisplayObject, z:Int}>();
 
             for(key in displays.keys()){
 
@@ -484,10 +344,10 @@ class PartDisplay extends Sprite {
         TODO: refactoriser tout ça !
      */
 
-    private function mustBeDisplayed(key: String): Bool
+    private function mustBeDisplayed(key:String):Bool
     {
         var object = displays.get(key);
-        var textItem: TextItem = null;
+        var textItem:TextItem = null;
 
         if(currentElement.isText()){
             textItem = cast(currentElement, TextItem);
@@ -515,26 +375,7 @@ class PartDisplay extends Sprite {
         return true;
     }
 
-    private function addElement(elem: DisplayObject, node: Fast): Void
-    {
-        initDisplayObject(elem, node);
-        if(node.has.id && !node.has.ref){
-            displays.set(node.att.id, {obj: elem, z: zIndex});
-            displaysFast.set(node.att.id, node);
-        }
-        else if(!node.has.ref){
-            displays.set(node.att.src, {obj: elem, z: zIndex});
-            displaysFast.set(node.att.src, node);
-        }
-        else{
-            displays.set(node.att.ref, {obj: elem, z: zIndex});
-            displaysFast.set(node.att.ref, node);
-        }
-        resizeD.addDisplayObjects(elem, node);
-        zIndex++;
-    }
-
-    private function sortDisplayObjects(x: {obj: DisplayObject, z: Int}, y: {obj: DisplayObject, z: Int}): Int
+    private function sortDisplayObjects(x:{obj:DisplayObject, z:Int}, y:{obj:DisplayObject, z:Int}):Int
     {
         if(x.z < y.z)
             return -1;
@@ -546,25 +387,13 @@ class PartDisplay extends Sprite {
 
     // Handlers
 
-    private function onLoadComplete(event: Event): Void
+    private function onLoadComplete(event:Event):Void
     {
         parseContent(XmlLoader.getXml(event));
     }
 
-    private function onLocaleLoaded(ev: LocaleEvent): Void
+    private function onLocaleLoaded(ev:LocaleEvent):Void
     {
         startPattern(cast(currentElement, Pattern));
-    }
-
-    private function onSpriteSheetLoaded(ev: Event): Void
-    {
-        ev.target.removeEventListener(Event.COMPLETE, onSpriteSheetLoaded);
-        spritesheets.set(ev.target.name, ev.target.spriteSheet);
-        var layer = new TileLayer(ev.target.spriteSheet);
-        layers.set(ev.target.name, layer);
-        numSpriteSheetsLoaded++;
-        if(numSpriteSheetsLoaded == totalSpriteSheets){
-            createDisplay();
-        }
     }
 }

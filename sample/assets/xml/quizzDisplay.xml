@@ -5,11 +5,11 @@
         <GroupElement ref="default" width="200" height="80" checkX="5" contentX="25" correctionX="100"
                       background="0x00F000"/>
     </Group>
-    <Item ref="good" src="img/ok.png"/>
+    <!--<Item ref="good" src="img/ok.png"/>
     <Item ref="CHECK" src="img/checked.png"/>
     <Item ref="CHECKRight" src="img/checked_right.png"/>
     <Item ref="CHECKWrong" src="img/checked_false.png"/>
-    <Item ref="UNCHecK" src="img/unchecked.png"/>
+    <Item ref="UNCHecK" src="img/unchecked.png"/>-->
     <Text ref="question" x="50" y="300" width="500" height="80"/>
     <Button ref="validate" id="continueButton" type="text" x="400" y="400" scaleX="1" scaleY="1"/>
 </Quizz>

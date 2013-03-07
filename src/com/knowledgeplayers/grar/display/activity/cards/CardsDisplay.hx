@@ -23,57 +23,48 @@ class CardsDisplay extends ActivityDisplay {
     /**
     * Instance
     **/
-    public static var instance (getInstance, null): CardsDisplay;
+    public static var instance (getInstance, null):CardsDisplay;
 
     /**
     * PopUp where additional text will be displayed
     **/
-    public var popUp (default, default): Sprite;
+    public var popUp (default, default):Sprite;
 
     /**
     * Grid to dispatch cards
     **/
-    public var grids (default, null): Hash<Grid>;
+    public var grids (default, null):Hash<Grid>;
 
-    private var flipLayer: TileLayer;
-    private var flipClip: TileClip;
-    private var flipDirection: Int;
-    private var cardInProgress: CardsElementDisplay;
-    private var nextCard: CardsElementDisplay;
-    private var nextText: String;
-    private var elementsContainer: Sprite;
-    private var background: Bitmap;
+    private var flipLayer:TileLayer;
+    private var flipClip:TileClip;
+    private var flipDirection:Int;
+    private var cardInProgress:CardsElementDisplay;
+    private var nextCard:CardsElementDisplay;
+    private var nextText:String;
+    private var elementsContainer:Sprite;
+    private var background:Bitmap;
 
-    private var content: Fast;
+    private var content:Fast;
 
-    private var elementTemplate: {background: String};
-    private var elementsArray: Array<CardsElementDisplay>;
+    private var elementTemplate:{background:String};
+    private var elementsArray:Array<CardsElementDisplay>;
 
     /**
     * @return the instance
     **/
 
-    public static function getInstance(): CardsDisplay
+    public static function getInstance():CardsDisplay
     {
         if(instance == null)
             instance = new CardsDisplay();
         return instance;
     }
 
-    private function new()
-    {
-        super();
-        grids = new Hash<Grid>();
-        popUp = new Sprite();
-        elementsArray = new Array<CardsElementDisplay>();
-        //Lib.trace("new cards display");
-    }
-
     /**
     *
     **/
 
-    public function clickCard(pCard: CardsElementDisplay, pText: String)
+    public function clickCard(pCard:CardsElementDisplay, pText:String)
     {
         nextCard = pCard;
         nextText = pText;
@@ -87,20 +78,16 @@ class CardsDisplay extends ActivityDisplay {
 
     // Private
 
-    override private function onModelComplete(e: LocaleEvent): Void
+    override private function onModelComplete(e:LocaleEvent):Void
     {
 
         addChild(grids.get("dispatch").container);
 
         for(i in 0...cast(model, Cards).elements.length){
-
-            // Lib.trace("-------- : "+elem.content);
-
             var elementDisplay = new CardsElementDisplay(cast(model, Cards).elements[i].content, grids.get("dispatch").cellSize.width, grids.get("dispatch").cellSize.height, elementTemplate.background);
             elementsArray.push(elementDisplay);
             grids.get("dispatch").add(elementDisplay, false);
             grids.get("dispatch").container.addChild(elementDisplay);
-
         }
 
         grids.get("dispatch").alignContainer(grids.get("dispatch").container, background);
@@ -109,67 +96,33 @@ class CardsDisplay extends ActivityDisplay {
 
     }
 
-    override private function parseContent(content: Fast): Void
+    override private function createElement(elemNode:Fast):Void
     {
-
-        this.content = content;
-
-        for(child in content.elements){
-            if(child.name.toLowerCase() == "background"){
-
-                background = cast(LoadData.getInstance().getElementDisplayInCache(child.att.src), Bitmap);
-
-                ResizeManager.instance.addDisplayObjects(background, child);
-                addChild(background);
-
-            }
-            else if(child.name.toLowerCase() == "animationelement"){
-
-                var tilesheet = spriteSheets.get(content.node.AnimationElement.att.spritesheet);
-                flipLayer = new TileLayer(tilesheet);
-
-                flipClip = new TileClip(content.node.AnimationElement.att.id);
-                flipClip.loop = false;
-                flipLayer.addChild(flipClip);
-
-                addChild(flipLayer.view);
-
-            }
-            else if(child.name.toLowerCase() == "popup"){
-                //popUp.addChild(new Bitmap(Assets.getBitmapData(content.node.PopUp.att.background)));
-                var pop: Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(content.node.PopUp.att.background), Bitmap).bitmapData);
+        super.createElement(elemNode);
+        switch(elemNode.name.toLowerCase()){
+            case "target" : var target = {obj: cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.src), Bitmap), ref: elemNode.att.ref};
+                addElement(target.obj, elemNode);
+            case "popup" : var pop:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.background), Bitmap).bitmapData);
                 popUp.addChild(pop);
-
-                //var icon = new Bitmap(Assets.getBitmapData(content.node.PopUp.att.buttonIcon));
-                var icon: Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(content.node.PopUp.att.buttonIcon), Bitmap).bitmapData);
+                var icon:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.buttonIcon), Bitmap).bitmapData);
                 popUp.addChild(icon);
                 popUp.addEventListener(MouseEvent.CLICK, onClosePopUp);
-                initDisplayObject(popUp, content.node.PopUp);
-
                 popUp.visible = false;
                 popUp.alpha = 0;
-                ResizeManager.instance.addDisplayObjects(popUp, content.node.PopUp);
-                addChild(popUp);
-
-            }
+            case "animationelement" : var tilesheet = spritesheets.get(elemNode.att.spritesheet);
+                flipLayer = new TileLayer(tilesheet);
+                flipClip = new TileClip(elemNode.att.id);
+                flipClip.loop = false;
+                flipLayer.addChild(flipClip);
+                addElement(flipLayer.view, elemNode, false);
+            case "grid" : var grid = new Grid(Std.parseInt(elemNode.att.numRow), Std.parseInt(elemNode.att.numCol), elemNode.att.cellWidth, elemNode.att.cellHeight, Std.parseFloat(elemNode.att.gapCol), Std.parseFloat(elemNode.att.gapRow), Std.string(elemNode.att.alignX), Std.string(elemNode.att.alignY));
+                grid.x = Std.parseFloat(elemNode.att.x);
+                grid.y = Std.parseFloat(elemNode.att.y);
+                grids.set(elemNode.att.ref, grid);
         }
-
-        var elemNode = content.node.Element;
-        elementTemplate = {background: elemNode.att.src};
-
-        for(grid in content.nodes.Grid){
-
-            var g = new Grid(Std.parseInt(grid.att.numRow), Std.parseInt(grid.att.numCol), grid.att.cellWidth, grid.att.cellHeight, Std.parseFloat(grid.att.gapCol), Std.parseFloat(grid.att.gapRow), Std.string(grid.att.alignX), Std.string(grid.att.alignY), elemNode.att.src);
-            g.x = Std.parseFloat(grid.att.x);
-            g.y = Std.parseFloat(grid.att.y);
-
-            grids.set(grid.att.ref, g);
-
-        }
-
     }
 
-    private function onClosePopUp(ev: MouseEvent): Void
+    private function onClosePopUp(ev:MouseEvent):Void
     {
         nextCard = null;
         nextText = null;
@@ -211,7 +164,7 @@ class CardsDisplay extends ActivityDisplay {
 
     }
 
-    private function showPopUp(pText: String)
+    private function showPopUp(pText:String)
     {
         popUp.addChild(KpTextDownParser.parse(pText));
         setChildIndex(popUp, numChildren - 1);
@@ -220,7 +173,7 @@ class CardsDisplay extends ActivityDisplay {
         flipLayer.view.visible = false;
     }
 
-    private function onEnterFrameClip(e: Event)
+    private function onEnterFrameClip(e:Event)
     {
         flipClip.currentFrame += 1 * flipDirection;
         flipLayer.render();
@@ -229,11 +182,19 @@ class CardsDisplay extends ActivityDisplay {
         }
     }
 
-    override private function unLoad(keepLayer: Int = 0): Void
+    override private function unLoad(keepLayer:Int = 0):Void
     {
         super.unLoad(2);
         for(grid in grids){
             grid.empty();
         }
+    }
+
+    private function new()
+    {
+        super();
+        grids = new Hash<Grid>();
+        popUp = new Sprite();
+        elementsArray = new Array<CardsElementDisplay>();
     }
 }

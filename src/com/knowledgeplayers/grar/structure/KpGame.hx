@@ -31,31 +31,31 @@ class KpGame extends EventDispatcher, implements Game {
     /**
      * Connection mode
      */
-    public var mode (default, default): Mode;
+    public var mode (default, default):Mode;
 
     /**
      * Game title
      */
-    public var title (default, default): String;
+    public var title (default, default):String;
 
     /**
      * State of the game
      */
-    public var state (default, default): String;
+    public var state (default, default):String;
 
     /**
      * Global inventory
      */
-    public var inventory (default, null): Array<String>;
-    public var partIndex: Int = 0;
+    public var inventory (default, null):Array<String>;
+    public var partIndex:Int = 0;
 
-    private var structureXml: Fast;
-    private var languages: Hash<String>;
-    private var stateInfos: StateInfos;
-    private var flags: Hash<String>;
-    private var parts: IntHash<Part>;
-    private var connection: Connection;
-    private var nbPartsLoaded: Int = 0;
+    private var structureXml:Fast;
+    private var languages:Hash<String>;
+    private var stateInfos:StateInfos;
+    private var flags:Hash<String>;
+    private var parts:IntHash<Part>;
+    private var connection:Connection;
+    private var nbPartsLoaded:Int = 0;
 
     public function new()
     {
@@ -72,7 +72,7 @@ class KpGame extends EventDispatcher, implements Game {
      * @param	xml : the structure
      */
 
-    public function init(xml: Xml): Void
+    public function init(xml:Xml):Void
     {
         structureXml = new Fast(xml);
 
@@ -90,7 +90,7 @@ class KpGame extends EventDispatcher, implements Game {
      * @return 	the part with id partId or null if this part doesn't exist
      */
 
-    public function start(partId: Int = 0): Null<Part>
+    public function start(partId:Int = 0):Null<Part>
     {
         for(part in getAllParts()){
             if(part.id == partId)
@@ -105,7 +105,7 @@ class KpGame extends EventDispatcher, implements Game {
      * @param	part : the part to add
      */
 
-    public function addPart(partIndex: Int, part: Part): Void
+    public function addPart(partIndex:Int, part:Part):Void
     {
         part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
         part.addEventListener(PartEvent.EXIT_PART, onPartComplete);
@@ -120,7 +120,7 @@ class KpGame extends EventDispatcher, implements Game {
      * @param	flagIconPath : path to the flag for this language
      */
 
-    public function addLanguage(value: String, path: String, flagIconPath: String): Void
+    public function addLanguage(value:String, path:String, flagIconPath:String):Void
     {
         Localiser.getInstance().localisations.set(value, path);
         flags.set(value, flagIconPath);
@@ -130,7 +130,7 @@ class KpGame extends EventDispatcher, implements Game {
      * @return a string-based representation of the game
      */
 
-    override public function toString(): String
+    override public function toString():String
     {
         return title + " - " + mode + " - " + state + ". Parts: \n\t" + parts.toString();
     }
@@ -140,7 +140,7 @@ class KpGame extends EventDispatcher, implements Game {
      * @param	mode : tracking mode (SCORM/AICC)
      */
 
-    public function initTracking(?mode: Mode): Void
+    public function initTracking(?mode:Mode):Void
     {
         connection = new Connection();
         if(mode != null)
@@ -157,7 +157,7 @@ class KpGame extends EventDispatcher, implements Game {
      * @return a float between 0 (nothing loaded) and 1 (everything's loaded)
      */
 
-    public function getLoadingCompletion(): Float
+    public function getLoadingCompletion():Float
     {
         return nbPartsLoaded / Lambda.count(parts);
     }
@@ -166,7 +166,7 @@ class KpGame extends EventDispatcher, implements Game {
      * @return all the parts of the game
      */
 
-    public function getAllParts(): Array<Part>
+    public function getAllParts():Array<Part>
     {
         var array = new Array<Part>();
         for(part in parts){
@@ -180,7 +180,7 @@ class KpGame extends EventDispatcher, implements Game {
     * @return all the activities of the game
     **/
 
-    public function getAllActivities(): Array<Activity>
+    public function getAllActivities():Array<Activity>
     {
         var activities = new Array<Activity>();
         for(part in parts){
@@ -192,36 +192,35 @@ class KpGame extends EventDispatcher, implements Game {
 
     // Privates
 
-    private function checkIntegrity(): Void
+    private function checkIntegrity():Void
     {
         if(stateInfos.checksum != getAllParts().length){
             throw "Invalid checksum (" + getAllParts().length + " must be " + stateInfos.checksum + "). The structure file must be corrupt";
         }
     }
 
-    private function addPartFromXml(partIndex: Int, partXml: Fast): Void
+    private function addPartFromXml(partIndex:Int, partXml:Fast):Void
     {
-        var part: Part = PartFactory.createPartFromXml(partXml);
+        var part:Part = PartFactory.createPartFromXml(partXml);
         addPart(partIndex, part);
         part.init(partXml);
     }
 
-    private function initLangs(xml: Xml): Void
+    private function initLangs(xml:Xml):Void
     {
-        var languagesXml: Fast = new Fast(xml);
+        var languagesXml:Fast = new Fast(xml);
         for(lang in languagesXml.node.Langs.nodes.Lang){
             addLanguage(lang.att.value, lang.att.folder, lang.att.pic);
         }
         Localiser.instance.setCurrentLocale(stateInfos.currentLanguage);
     }
 
-    private function initActivities(xml: Xml): Void
+    private function initActivities(xml:Xml):Void
     {
-        var activityNode: Fast = new Fast(xml.firstElement());
-        ActivityManager.instance.getActivity(activityNode.name).setDisplay(activityNode);
+        ActivityManager.instance.getActivity(xml.firstElement().nodeName).parseContent(xml);
     }
 
-    private function initLayout(xml: Xml): Void
+    private function initLayout(xml:Xml):Void
     {
         LayoutManager.instance.game = this;
         LayoutManager.instance.parseXml(xml);
@@ -229,9 +228,9 @@ class KpGame extends EventDispatcher, implements Game {
 
     // Handlers
 
-    private function onDisplayLoaded(e: Event = null): Void
+    private function onDisplayLoaded(e:Event = null):Void
     {
-        var parametersNode: Fast = structureXml.node.Grar.node.Parameters;
+        var parametersNode:Fast = structureXml.node.Grar.node.Parameters;
         mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
         title = parametersNode.node.Title.innerData;
         state = parametersNode.node.State.innerData;
@@ -240,7 +239,7 @@ class KpGame extends EventDispatcher, implements Game {
 
         XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
 
-        var displayNode: Fast = structureXml.node.Grar.node.Display;
+        var displayNode:Fast = structureXml.node.Grar.node.Display;
 
         // Load styles
         StyleParser.instance.parse(Assets.getText(displayNode.node.Style.att.file));
@@ -255,32 +254,32 @@ class KpGame extends EventDispatcher, implements Game {
             var activityXml = XmlLoader.load(activity.att.display, onActivityComplete, initActivities);
         }
 
-        var structureNode: Fast = structureXml.node.Grar.node.Structure;
+        var structureNode:Fast = structureXml.node.Grar.node.Structure;
         for(part in structureNode.nodes.Part){
             addPartFromXml(Std.parseInt(part.att.id), part);
         }
 
     }
 
-    private function onActivityComplete(event: Event): Void
+    private function onActivityComplete(event:Event):Void
     {
-        var loader: URLLoader = cast(event.currentTarget, URLLoader);
+        var loader:URLLoader = cast(event.currentTarget, URLLoader);
         initActivities(Xml.parse(loader.data));
     }
 
-    private function onLanguagesComplete(event: Event): Void
+    private function onLanguagesComplete(event:Event):Void
     {
-        var loader: URLLoader = cast(event.currentTarget, URLLoader);
+        var loader:URLLoader = cast(event.currentTarget, URLLoader);
         initLangs(Xml.parse(loader.data));
     }
 
-    private function onLayoutComplete(event: Event): Void
+    private function onLayoutComplete(event:Event):Void
     {
-        var loader: URLLoader = cast(event.currentTarget, URLLoader);
+        var loader:URLLoader = cast(event.currentTarget, URLLoader);
         initLayout(Xml.parse(loader.data));
     }
 
-    private function onPartLoaded(event: Event): Void
+    private function onPartLoaded(event:Event):Void
     {
         nbPartsLoaded++;
         if(getLoadingCompletion() == 1){
@@ -291,18 +290,18 @@ class KpGame extends EventDispatcher, implements Game {
         }
     }
 
-    private function onPartComplete(event: PartEvent): Void
+    private function onPartComplete(event:PartEvent):Void
     {
         stateInfos.activityCompletion[cast(event.target, Part).id] = true;
 
     }
 
-    private function onGlobalTokenAdd(e: TokenEvent): Void
+    private function onGlobalTokenAdd(e:TokenEvent):Void
     {
         inventory.push(e.tokenId);
     }
 
-    private function onExit(e: Event): Void
+    private function onExit(e:Event):Void
     {
         Lib.exit();
     }

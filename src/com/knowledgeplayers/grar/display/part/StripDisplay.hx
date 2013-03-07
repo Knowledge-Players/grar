@@ -17,13 +17,12 @@ import nme.display.Sprite;
  */
 class StripDisplay extends PartDisplay {
 
-    private var boxesref: Array<String>;
-    private var currentBox: BoxPattern;
-    private var currentItem: TextItem;
-    private var boxIndex: Int = 0;
+    private var boxesref:Array<String>;
+    private var currentBox:BoxPattern;
+    private var currentItem:TextItem;
+    private var boxIndex:Int = 0;
 
-
-    public function new(part: StripPart)
+    public function new(part:StripPart)
     {
         super(part);
         boxesref = new Array<String>();
@@ -31,23 +30,21 @@ class StripDisplay extends PartDisplay {
 
     // Private
 
-    override private function next(event: ButtonActionEvent): Void
+    override private function next(event:ButtonActionEvent):Void
     {
         startPattern(currentBox);
     }
 
-    override private function parseContent(content: Xml): Void
+    override private function createElement(elemNode:Fast):Void
     {
-        var displayFast: Fast = new Fast(content).node.Display;
-        for(boxNode in displayFast.nodes.Box){
-            boxesref.push(boxNode.att.ref);
-            displaysFast.set(boxNode.att.ref, boxNode);
+        super.createElement(elemNode);
+        if(elemNode.name.toLowerCase() == "box"){
+            boxesref.push(elemNode.att.ref);
+            displaysFast.set(elemNode.att.ref, elemNode);
         }
-
-        super.parseContent(content);
     }
 
-    override private function startPattern(pattern: Pattern): Void
+    override private function startPattern(pattern:Pattern):Void
     {
         super.startPattern(pattern);
 
@@ -63,9 +60,9 @@ class StripDisplay extends PartDisplay {
             this.nextElement();
     }
 
-    override private function displayPart(?textGroup:Bool=false): Void
+    override private function displayPart(?textGroup:Bool = false):Void
     {
-        var array = new Array<{obj: DisplayObject, z: Int}>();
+        var array = new Array<{obj:DisplayObject, z:Int}>();
         for(key in displays.keys()){
             if(key == currentItem.ref || currentBox.buttons.exists(key) || key == currentItem.author)
                 array.push(displays.get(key));

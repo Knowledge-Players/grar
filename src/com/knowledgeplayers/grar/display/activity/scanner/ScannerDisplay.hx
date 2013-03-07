@@ -14,32 +14,31 @@ class ScannerDisplay extends ActivityDisplay {
     /**
 * Instance
 **/
-    public static var instance (getInstance, null): ScannerDisplay;
+    public static var instance (getInstance, null):ScannerDisplay;
 
-    private var textAreas: Hash<ScrollPanel>;
-    private var pointStyles: Hash<PointStyle>;
-    private var lineHeight: Float;
+    private var pointStyles:Hash<PointStyle>;
+    private var lineHeight:Float;
 
     /**
 * @return the instance
 **/
 
-    public static function getInstance(): ScannerDisplay
+    public static function getInstance():ScannerDisplay
     {
         if(instance == null)
             instance = new ScannerDisplay();
         return instance;
     }
 
-    public function setText(textId: String, content: Sprite): Void
+    public function setText(textId:String, content:Sprite):Void
     {
-        textAreas.get(textId).content = content;
-        addChild(textAreas.get(textId));
+        cast(displays.get(textId).obj, ScrollPanel).content = content;
+        addChild(displays.get(textId).obj);
     }
 
     // Private
 
-    override private function onModelComplete(e: LocaleEvent): Void
+    override private function onModelComplete(e:LocaleEvent):Void
     {
         for(point in cast(model, Scanner).pointsMap){
             var pointDisplay = new PointDisplay(pointStyles.get(point.ref), point);
@@ -51,39 +50,22 @@ class ScannerDisplay extends ActivityDisplay {
         super.onModelComplete(e);
     }
 
-    override private function parseContent(content: Fast): Void
+    override private function createElement(elemNode:Fast):Void
     {
-        for(child in content.elements){
-            if(child.name.toLowerCase() == "background"){
-
-                var bmp = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(child.att.src),Bitmap).bitmapData);
-                var background = bmp;
-                ResizeManager.instance.addDisplayObjects(background, child);
-                addChild(background);
+        super.createElement(elemNode);
+        if(elemNode.name.toLowerCase() == "point"){
+            if(!pointStyles.exists(elemNode.att.ref)){
+                pointStyles.set(elemNode.att.ref, new PointStyle());
             }
-            if(child.name.toLowerCase() == "text"){
-                var textZone = new ScrollPanel(Std.parseFloat(child.att.width), Std.parseFloat(child.att.height));
-                textZone.x = Std.parseFloat(child.att.x);
-                textZone.y = Std.parseFloat(child.att.y);
-                textZone.setBackground(child.att.background);
-                textAreas.set(child.att.ref, textZone);
-            }
-        }
-
-        for(point in content.nodes.Point){
-            if(!pointStyles.exists(point.att.ref)){
-                pointStyles.set(point.att.ref, new PointStyle());
-            }
-            if(point.has.radius)
-                pointStyles.get(point.att.ref).radius = Std.parseInt(point.att.radius);
-            pointStyles.get(point.att.ref).addGraphic(point.att.state, point.att.src);
+            if(elemNode.has.radius)
+                pointStyles.get(elemNode.att.ref).radius = Std.parseInt(elemNode.att.radius);
+            pointStyles.get(elemNode.att.ref).addGraphic(elemNode.att.state, elemNode.att.src);
         }
     }
 
     private function new()
     {
         super();
-        textAreas = new Hash<ScrollPanel>();
         pointStyles = new Hash<PointStyle>();
     }
 }
