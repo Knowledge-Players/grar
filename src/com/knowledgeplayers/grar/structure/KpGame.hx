@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.eclecticdesignstudio.motion.Actuate;
+import nme.events.TimerEvent;
+import nme.utils.Timer;
 import nme.Assets;
 import com.knowledgeplayers.grar.display.LayoutManager;
 import nme.Assets;
@@ -80,7 +83,7 @@ class KpGame extends EventDispatcher, implements Game {
             LoadData.getInstance().addEventListener("DATA_LOADED",onDisplayLoaded);
             LoadData.getInstance().loadDisplayXml(xml);
         #else
-        onDisplayLoaded();
+            onDisplayLoaded();
         #end
     }
 
@@ -230,23 +233,36 @@ class KpGame extends EventDispatcher, implements Game {
 
     private function onDisplayLoaded(e:Event = null):Void
     {
+        var displayNode:Fast = structureXml.node.Grar.node.Display;
+        UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
+
+        //TO DO : CHANGE THE TIMER BY SOMETHING CLEANER\\
+        /*call functions after the spriteSheet is loaded*/
+            Actuate.timer(1).onComplete(onTimeComplete);
+    }
+
+    private function onTimeComplete():Void{
+
+        Lib.trace("onTimeComplete");
         var parametersNode:Fast = structureXml.node.Grar.node.Parameters;
+        var displayNode:Fast = structureXml.node.Grar.node.Display;
+
         mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
         title = parametersNode.node.Title.innerData;
         state = parametersNode.node.State.innerData;
 
         initTracking();
 
-        XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
 
-        var displayNode:Fast = structureXml.node.Grar.node.Display;
+
+        XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
 
         // Load styles
         StyleParser.instance.parse(Assets.getText(displayNode.node.Style.att.file));
+
         // Load Layout
         initLayout(Xml.parse(Assets.getText(parametersNode.node.Layout.att.file)));
 
-        UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
         if(displayNode.hasNode.Transitions)
             TweenManager.loadTemplate(displayNode.node.Transitions.att.display);
 
@@ -258,6 +274,7 @@ class KpGame extends EventDispatcher, implements Game {
         for(part in structureNode.nodes.Part){
             addPartFromXml(Std.parseInt(part.att.id), part);
         }
+
 
     }
 

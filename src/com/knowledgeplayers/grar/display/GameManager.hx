@@ -115,7 +115,6 @@ class GameManager extends EventDispatcher {
         displayPart(game.start(id));
 
     }
-
     // Privates
 
     private function new()

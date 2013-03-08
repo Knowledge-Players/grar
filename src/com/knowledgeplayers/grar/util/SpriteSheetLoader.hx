@@ -49,6 +49,7 @@ class SpriteSheetLoader extends EventDispatcher {
 
     private function loadData(?path: String = ""): Void
     {
+
         #if flash
             var urlR = new URLRequest(path);
             var mloader = new Loader();
@@ -69,7 +70,9 @@ class SpriteSheetLoader extends EventDispatcher {
 
     private function onCompleteLoading(event: Event): Void
     {
+
         elementDisplay = event.currentTarget.content;
+
         spriteSheet = new SparrowTilesheet(cast(elementDisplay, Bitmap).bitmapData, xmlSprite.toString());
         dispatchEvent(new Event(Event.COMPLETE));
     }

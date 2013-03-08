@@ -14,13 +14,13 @@ import nme.Lib;
 class KpTextDownParser 
 {
 	private static var specialRegEx: EReg = ~/[#*_>.!@+-]+/g;
-	
+	private static var widthTF:Float = 0;
 	/**
 	 * Parse the string for MarkUp
 	 * @param	text : text to parse
 	 * @return a sprite with well-formed text
 	 */
-	public static function parse(text: String) : Sprite 
+	public static function parse(text: String,?widthText:Float=0) : Sprite
 	{
 		var sprite = new Sprite();
 		
@@ -28,7 +28,7 @@ class KpTextDownParser
 			// Standardize line endings
 			var lineEnding: EReg = ~/(\r)(\n)?|(&#13;)|(&#10;)|(<br\/>)/g;
 			var uniformedText = lineEnding.replace(text, "\n");
-			
+
 			var yOffset: Float = 0;
 			for (line in uniformedText.split("\n")) {
 				var formattedLine = parseLine(line);
@@ -39,7 +39,9 @@ class KpTextDownParser
 			sprite.graphics.beginFill(0x000000, 0.001);
 			sprite.graphics.drawRect(0, 0, sprite.width, sprite.height);
 			sprite.graphics.endFill();
+
 		}
+        widthTF = widthText;
 		return sprite;
 	}
 	
@@ -166,6 +168,7 @@ class KpTextDownParser
 	static private function createTextField(substring: String, ?style: Style): StyledTextField 
 	{
 		var tf = new StyledTextField();
+
 		if(style != null)
 			tf.style = style;
 			
@@ -185,11 +188,24 @@ class KpTextDownParser
 		}
 		
 		tf.text = substring;
+
+        /*if(tf.width>widthTF){
+            tf.wordWrap = true;
+            tf.width = 960;
+
+        }*/
+
+       /* Lib.trace(tf.width);
+        Lib.trace(tf.text);
+        Lib.trace(widthTF);*/
 		if(hasBold)
 			tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName+ "bold"), regexBold.matchedPos().pos, regexBold.matchedPos().pos + regexBold.matchedPos().len - 2);
 		if(hasItalic)
 			tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName + "italic"), regexIta.matchedPos().pos, regexIta.matchedPos().pos + regexIta.matchedPos().len - 2);
-			
+
+
+
+
 		return tf;
 	}
 	
@@ -243,6 +259,7 @@ class KpTextDownParser
 				style.background.height = output.height;
 			}
 		}
+
 	}
 	
 	private function new() 

@@ -26,7 +26,10 @@ class DynBubble
 	 */
 	public static function getInstance() : DynBubble
 	{
-		instance == null ? return new DynBubble() : return instance;
+		//instance == null ? return new DynBubble() : return instance;
+        if(instance == null)
+        instance = new DynBubble();
+        return instance;
 	}
 
 	/**
@@ -86,6 +89,7 @@ class DynBubble
 			}
 
 			textField.appendText(message.charAt(currentLetter));
+
 			#if flash
 				var length: Int = textField.length;
 			#else

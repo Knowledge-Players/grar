@@ -344,10 +344,10 @@ class PartDisplay extends KpDisplay {
         TODO: refactoriser tout ça !
      */
 
-    private function mustBeDisplayed(key:String):Bool
+    private function mustBeDisplayed(key: String): Bool
     {
         var object = displays.get(key);
-        var textItem:TextItem = null;
+        var textItem: TextItem = null;
 
         if(currentElement.isText()){
             textItem = cast(currentElement, TextItem);

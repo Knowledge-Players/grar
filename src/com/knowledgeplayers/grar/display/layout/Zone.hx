@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.display.layout;
 
-import Std;
-import Std;
+
+import com.knowledgeplayers.grar.display.component.ProgressBar;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import aze.display.TileLayer;
 import com.knowledgeplayers.grar.factory.UiFactory;
@@ -10,6 +10,7 @@ import nme.Lib;
 import com.knowledgeplayers.grar.event.LayoutEvent;
 import nme.display.Sprite;
 import haxe.xml.Fast;
+
 
 class Zone extends Sprite {
     public var ref: String;
@@ -25,6 +26,7 @@ class Zone extends Sprite {
         zoneHeight = _height;
     }
 
+
     public function init(_zone: Fast): Void
     {
         if(_zone.has.bgColor)
@@ -33,6 +35,7 @@ class Zone extends Sprite {
             DisplayUtils.initSprite(this, zoneWidth, zoneHeight);
         if(_zone.has.ref){
             var layer = new TileLayer(UiFactory.tilesheet);
+
             ref = _zone.att.ref;
             dispatchEvent(new LayoutEvent(LayoutEvent.NEW_ZONE, ref, this));
             for(element in _zone.elements){
@@ -46,6 +49,9 @@ class Zone extends Sprite {
                         menu.x = Std.parseFloat(element.att.x);
                         menu.y = Std.parseFloat(element.att.y);
                         addChild(menu);
+                    case "progressbar": var progress = new ProgressBar(LayoutManager.instance.game);
+                        progress.init(element);
+                        addChild(progress);
                 }
             }
             addChild(layer.view);

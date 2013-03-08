@@ -7,6 +7,5 @@
     <Grid ref="drop" x="15" y="15" numCol="2" numRow="1" cellWidth="198" cellHeight="187" gapCol="100" gapRow="100"
           alignX="left" alignY="top"/>
     <Element buttonIcon="img/PlusButton.png" buttonX="351" buttonY="228" src="img/postit.png"/>
-    <PopUp x="200" y="200" width="200" height="200" buttonIcon="img/CloseButton.png" buttonX="300" buttonY="110"
-           src="img/postit.png"/>
+    <PopUp x="200" y="200" width="200" height="200" buttonIcon="img/CloseButton.png" buttonX="300" buttonY="110" src="img/postit.png"/>
 </Folder>

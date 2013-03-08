@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.factory;
 
+import com.knowledgeplayers.grar.display.style.KpTextDownParser;
+import nme.events.EventDispatcher;
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
 import aze.display.TileSprite;
 import aze.display.SparrowTilesheet;
@@ -106,6 +108,8 @@ class UiFactory {
         var text = new ScrollPanel(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height));
         text.x = Std.parseFloat(xml.att.x);
         text.y = Std.parseFloat(xml.att.y);
+        text.content = KpTextDownParser.parse(xml.att.ref);
+
         if(xml.has.background)
             text.setBackground(xml.att.background);
         return text;
@@ -130,8 +134,10 @@ class UiFactory {
 
     public static function onXmlLoaded(e: Event = null): Void
     {
-
         tilesheet = new SparrowTilesheet(cast(LoadData.getInstance().getElementDisplayInCache(layerPath + ".png"), Bitmap).bitmapData, XmlLoader.getXml(e).toString());
 
     }
+
+
+
 }

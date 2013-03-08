@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.button;
 
+import nme.text.TextField;
 import nme.display.Sprite;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import aze.display.TilesheetEx;
@@ -39,7 +40,7 @@ class TextButton extends CustomEventButton {
 
     public function setText(text: String): Void
     {
-        textSprite = KpTextDownParser.parse(text);
+        textSprite = KpTextDownParser.parse(text,this.downState.width);
         centerText();
         if(!contains(textSprite))
             addChild(textSprite);
@@ -49,8 +50,10 @@ class TextButton extends CustomEventButton {
 
     private function centerText(): Void
     {
-        textSprite.x = -textSprite.width / 2;
-        textSprite.y = -(textSprite.height / 2);
+
+        textSprite.x =-textSprite.width/2;
+
+        textSprite.y = this.downState.y-(textSprite.height/2);
 
         #if flash
 			 // Remove 3px to match the center of the button
