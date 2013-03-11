@@ -14,17 +14,17 @@ class AnimationButton extends CustomEventButton {
     /**
      * TileGroup for the button
      */
-    public var iconGroup: TileGroup;
+    public var iconGroup:TileGroup;
 
     /**
      * Tile for the background
      */
-    public var fondIcon: TileSprite;
+    public var fondIcon:TileSprite;
 
     /**
      * Tile for the animation
      */
-    public var arrowIcon: TileClip;
+    public var arrowIcon:TileClip;
 
     /**
      * Constructor
@@ -33,7 +33,7 @@ class AnimationButton extends CustomEventButton {
      * @param	eventName : Custom event to dispatch
      */
 
-    public function new(tilesheet: TilesheetEx, tile: String, ?eventName: String)
+    public function new(tilesheet:TilesheetEx, tile:String, ?eventName:String)
     {
         if(eventName == null){
             this.eventType = "next";
@@ -42,14 +42,15 @@ class AnimationButton extends CustomEventButton {
         else
             this.eventType = eventName;
 
-        super(eventType, tilesheet, tile);
+        super(tilesheet, tile, eventType);
         addIcon();
     }
 
-    // P¨rivates
+    // Privates
 
-    private function addIcon(): Void
+    private function addIcon():Void
     {
+        // TODO use icon property
         this.iconGroup = new TileGroup();
         this.fondIcon = new TileSprite("btCircle");
         this.arrowIcon = new TileClip("fleche_mc");
@@ -61,31 +62,31 @@ class AnimationButton extends CustomEventButton {
         layer.render();
     }
 
-    override private function onOver(event: MouseEvent): Void
+    override private function onOver(event:MouseEvent):Void
     {
         super.onOver(event);
         startAnimIcon();
     }
 
-    override private function onOut(event: MouseEvent): Void
+    override private function onOut(event:MouseEvent):Void
     {
         super.onOut(event);
         endAnimIcon();
     }
 
-    private function animRender(e: Event = null): Void
+    private function animRender(e:Event = null):Void
     {
         layer.render();
     }
 
-    private function endAnimIcon(): Void
+    private function endAnimIcon():Void
     {
         this.removeEventListener(Event.ENTER_FRAME, animRender);
         arrowIcon.currentFrame = 0;
         layer.render();
     }
 
-    private function startAnimIcon(): Void
+    private function startAnimIcon():Void
     {
         this.addEventListener(Event.ENTER_FRAME, animRender);
     }

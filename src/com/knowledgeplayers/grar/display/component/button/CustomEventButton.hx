@@ -12,12 +12,12 @@ class CustomEventButton extends DefaultButton {
     /**
      * Type of the event to dispatch
      */
-    public var eventType (default, default): String;
+    public var eventType (default, default):String;
 
     /**
      * Control whether or not the native event (CLICK) must be propagated
      */
-    public var propagateNativeEvent (default, default): Bool = false;
+    public var propagateNativeEvent (default, default):Bool = false;
 
     /**
      * Constructor
@@ -26,13 +26,13 @@ class CustomEventButton extends DefaultButton {
      * @param	tile : Tile containing the button
      */
 
-    public function new(eventName: String, tilesheet: TilesheetEx, tile: String)
+    public function new(tilesheet:TilesheetEx, tile:String, eventName:String)
     {
         super(tilesheet, tile);
         this.eventType = eventName;
     }
 
-    override private function onClick(event: MouseEvent): Void
+    override private function onClick(event:MouseEvent):Void
     {
         if(!propagateNativeEvent)
             event.stopImmediatePropagation();

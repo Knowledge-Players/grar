@@ -87,9 +87,24 @@ class KpDisplay extends Sprite {
             addElement(itemBmp, itemNode);
         }
         else{
+            var spritesheet;
             var itemTile = new TileSprite(itemNode.att.id);
-            layers.get(itemNode.att.spritesheet).addChild(itemTile);
-            addElement(layers.get(itemNode.att.spritesheet).view, itemNode);
+            if(itemNode.has.spritesheet){
+                layers.get(itemNode.att.spritesheet).addChild(itemTile);
+                spritesheet = itemNode.att.spritesheet;
+            }
+            else{
+                spritesheet = "ui";
+                if(layers.exists("ui"))
+                    layers.get("ui").addChild(itemTile);
+                else{
+                    var layer = new TileLayer(UiFactory.tilesheet);
+                    layer.addChild(itemTile);
+                    layers.set("ui", layer);
+                }
+            }
+
+            addElement(layers.get(spritesheet).view, itemNode);
         }
 
     }

@@ -12,8 +12,8 @@ import com.knowledgeplayers.grar.display.text.StyledTextField;
  */
 
 class TextButton extends CustomEventButton {
-    private var text: String;
-    private var textSprite: Sprite;
+    private var text:String;
+    private var textSprite:Sprite;
 
     /**
      * Constructor
@@ -24,9 +24,9 @@ class TextButton extends CustomEventButton {
      * @param	tag : Tag of the text
      */
 
-    public function new(tilesheet: TilesheetEx, tile: String, ?eventName: String, text: String = "")
+    public function new(tilesheet:TilesheetEx, tile:String, ?eventName:String, text:String = "")
     {
-        super((eventName == null ? "next" : eventName), tilesheet, tile);
+        super(tilesheet, tile, (eventName == null ? "next" : eventName));
         if(eventName == null)
             propagateNativeEvent = true;
 
@@ -38,9 +38,9 @@ class TextButton extends CustomEventButton {
      * @param	text : Text to set
      */
 
-    public function setText(text: String): Void
+    public function setText(text:String):Void
     {
-        textSprite = KpTextDownParser.parse(text,this.downState.width);
+        textSprite = KpTextDownParser.parse(text, this.downState.width);
         centerText();
         if(!contains(textSprite))
             addChild(textSprite);
@@ -48,12 +48,12 @@ class TextButton extends CustomEventButton {
 
     // Private
 
-    private function centerText(): Void
+    private function centerText():Void
     {
 
-        textSprite.x =-textSprite.width/2;
+        textSprite.x = -textSprite.width / 2;
 
-        textSprite.y = this.downState.y-(textSprite.height/2);
+        textSprite.y = this.downState.y - (textSprite.height / 2);
 
         #if flash
 			 // Remove 3px to match the center of the button

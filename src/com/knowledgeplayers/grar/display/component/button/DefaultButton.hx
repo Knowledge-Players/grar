@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.display.component.button;
+import nme.geom.Point;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import aze.display.TileSprite;
@@ -14,32 +15,37 @@ class DefaultButton extends Sprite {
     /**
      * Sprite containing the upstate
      */
-    public var upState: TileSprite;
+    public var upState:TileSprite;
 
     /**
      * Sprite containing the overstater
      */
-    public var overState: TileSprite;
+    public var overState:TileSprite;
 
     /**
      * Sprite containing the downstate
      */
-    public var downState: TileSprite;
+    public var downState:TileSprite;
 
     /**
      * Layer of the button
      */
-    public var layer: TileLayer;
+    public var layer:TileLayer;
 
     /**
      * Switch to enable the button
      */
-    public var enabled (default, enable): Bool;
+    public var enabled (default, enable):Bool;
 
     /**
     * Reference of the button
 **/
-    public var ref (default, default): String;
+    public var ref (default, default):String;
+
+    /**
+    * Icon to add over the button
+    **/
+    private var icon:TileSprite;
 
     /**
      * Constructor. Downstate and overstate are automatically set if their tile are
@@ -50,7 +56,7 @@ class DefaultButton extends Sprite {
      * @param	tileOver : Tile containing the overstate
      */
 
-    public function new(tilesheet: TilesheetEx, tile: String, ?tilePressed: String, ?tileOver: String)
+    public function new(tilesheet:TilesheetEx, tile:String, ?tilePressed:String, ?tileOver:String)
     {
         super();
 
@@ -76,36 +82,45 @@ class DefaultButton extends Sprite {
      * @return true if the button is now activated
      */
 
-    public function enable(activate: Bool): Bool
+    public function enable(activate:Bool):Bool
     {
         enabled = buttonMode = mouseEnabled = activate;
 
         return activate;
     }
 
+    public function setIcon(icon:TileSprite, iconPos:Point):TileSprite
+    {
+        icon.x = iconPos.x;
+        icon.y = iconPos.y;
+        layer.addChild(icon);
+        layer.render();
+        return this.icon = icon;
+    }
+
     // Abstract
 
-    private function onMouseOver(event: MouseEvent): Void
+    private function onMouseOver(event:MouseEvent):Void
     {}
 
-    private function onMouseOut(event: MouseEvent): Void
+    private function onMouseOut(event:MouseEvent):Void
     {}
 
-    private function onClick(event: MouseEvent): Void
+    private function onClick(event:MouseEvent):Void
     {}
 
-    private function onDblClick(event: MouseEvent): Void
+    private function onDblClick(event:MouseEvent):Void
     {}
 
-    private function open(event: MouseEvent): Void
+    private function open(event:MouseEvent):Void
     {}
 
-    private function close(event: MouseEvent): Void
+    private function close(event:MouseEvent):Void
     {}
 
     // Private
 
-    private function setAllListeners(listener: MouseEvent -> Void): Void
+    private function setAllListeners(listener:MouseEvent -> Void):Void
     {
         removeAllEventsListeners(listener);
         addEventListener(MouseEvent.MOUSE_OUT, listener);
@@ -118,7 +133,7 @@ class DefaultButton extends Sprite {
         addEventListener(MouseEvent.MOUSE_UP, listener);
     }
 
-    private function onOver(event: MouseEvent): Void
+    private function onOver(event:MouseEvent):Void
     {
         upState.visible = false;
         overState.visible = true;
@@ -126,7 +141,7 @@ class DefaultButton extends Sprite {
         layer.render();
     }
 
-    private function onOut(event: MouseEvent): Void
+    private function onOut(event:MouseEvent):Void
     {
         overState.visible = false;
         upState.visible = true;
@@ -134,21 +149,21 @@ class DefaultButton extends Sprite {
         layer.render();
     }
 
-    private function onClickDown(event: MouseEvent): Void
+    private function onClickDown(event:MouseEvent):Void
     {
         overState.visible = false;
         downState.visible = true;
         layer.render();
     }
 
-    private function onClickUp(event: MouseEvent): Void
+    private function onClickUp(event:MouseEvent):Void
     {
         upState.visible = true;
         downState.visible = false;
         layer.render();
     }
 
-    private function init(): Void
+    private function init():Void
     {
         enabled = true;
 
@@ -172,7 +187,7 @@ class DefaultButton extends Sprite {
 		#end
     }
 
-    private function removeAllEventsListeners(listener: MouseEvent -> Void): Void
+    private function removeAllEventsListeners(listener:MouseEvent -> Void):Void
     {
         removeEventListener(MouseEvent.MOUSE_OUT, listener);
         removeEventListener(MouseEvent.MOUSE_OVER, listener);
@@ -186,7 +201,7 @@ class DefaultButton extends Sprite {
 
     // Listener
 
-    private function onMouseEvent(event: MouseEvent): Void
+    private function onMouseEvent(event:MouseEvent):Void
     {
         if(!enabled){
             event.stopImmediatePropagation();

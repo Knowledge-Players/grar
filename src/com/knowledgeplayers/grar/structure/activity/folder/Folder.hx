@@ -10,15 +10,40 @@ import com.knowledgeplayers.grar.util.XmlLoader;
 class Folder extends Activity {
     /**
     * Elements of the activity
-**/
+    **/
     public var elements (default, null):Hash<FolderElement>;
 
+    /**
+    * Targets where to drop elements
+    **/
     public var targets (default, default):Array<String>;
+
+    /**
+    * Localisation key for the instructions
+    **/
+    public var instructionContent (default, default):String;
+
+    /**
+    * Reference to the text zone where to display instructions
+    **/
+    public var ref (default, default):String;
+
+    /**
+    * Mode of control.
+    * If auto, the control is done when the elemnt is drop.
+    * If end, the control is done when the activity is validated.
+    **/
+    public var controlMode (default, default):String;
+
+    /**
+    * Reference of the button which will validate the activity
+    **/
+    public var buttonRef (default, default):{ref:String, content:String};
 
     /**
     * Constructor
     * @param content : Content of the activity
-**/
+    **/
 
     public function new(content:String)
     {
@@ -28,19 +53,33 @@ class Folder extends Activity {
         XmlLoader.load(content, onLoadComplete, parseContent);
     }
 
+    public function validate():Void
+    {
+
+    }
+
     // Private
 
-    override private function parseContent(content:Xml):Void
+    override private function parseContent(xml:Xml):Void
     {
-        var fast = new Fast(content).node.Folder;
+        var fast = new Fast(xml).node.Folder;
         background = fast.att.background;
+        instructionContent = fast.att.instructionContent;
+        ref = fast.att.ref;
+        controlMode = fast.att.controlMode.toLowerCase();
         for(element in fast.nodes.Element){
             var elem = new FolderElement(element.att.content, element.att.ref);
             if(element.has.target){
                 elem.target = element.att.target;
                 targets.push(element.att.target);
             }
-            elements.set(elem.content, elem);
+            elements.set(elem.ref, elem);
         }
+        var content;
+        if(fast.node.Button.has.content)
+            content = fast.node.Button.att.content;
+        else
+            content = null;
+        buttonRef = {ref: fast.node.Button.att.ref, content: content};
     }
 }

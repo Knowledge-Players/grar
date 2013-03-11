@@ -17,48 +17,21 @@ import com.knowledgeplayers.grar.factory.PatternFactory;
  * @author jbrichardet
  */
 
-
-
 class DialogPart extends StructurePart {
-
 
     public function new()
     {
         super();
 
-
     }
 
-    override public function isDialog(): Bool
+    override public function isDialog():Bool
     {
         return true;
 
     }
 
-    /**
-     * @return the next item in a vertical flow, or null if the flow reach its end
-     */
-
-    /*public function getNextVerticalIndex(): Null<ChoiceItem>
-    {
-        var collect: CollectPattern = null;
-        if(Std.is(elements[elemIndex], CollectPattern))
-            collect = cast(elements[elemIndex], CollectPattern);
-        else
-            return null;
-
-        var item: ChoiceItem = null;
-        item = collect.progressVertically();
-
-        if(item != null && item.hasToken()){
-            var event = new TokenEvent(TokenEvent.ADD, item.tokenId, item.tokenType, item.target);
-            dispatchEvent(event);
-        }
-
-        return item;
-    }*/
-
-    override public function restart(): Void
+    override public function restart():Void
     {
         super.restart();
         if(elements[elemIndex].isPattern())
@@ -67,16 +40,15 @@ class DialogPart extends StructurePart {
 
     // Private
 
-    override private function parseContent(content: Xml): Void
+    override private function parseContent(content:Xml):Void
     {
         super.parseContent(content);
 
-
-        var partFast: Fast = new Fast(content).node.Part;
+        var partFast:Fast = new Fast(content).node.Part;
 
         for(patternNode in partFast.nodes.Pattern){
 
-            var pattern: Pattern = PatternFactory.createPatternFromXml(patternNode);
+            var pattern:Pattern = PatternFactory.createPatternFromXml(patternNode);
             pattern.init(patternNode);
             elements.push(pattern);
         }
