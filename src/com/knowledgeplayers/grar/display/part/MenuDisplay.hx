@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import nme.filters.DropShadowFilter;
 import com.knowledgeplayers.grar.display.component.button.AnimationButton;
 import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
@@ -89,6 +90,7 @@ class MenuDisplay extends Sprite {
             case "part": 1;
             case "activity": 2;
             case "both": 3;
+            case "button": 4;
         }
         return this.type;
     }
@@ -97,11 +99,29 @@ class MenuDisplay extends Sprite {
     * Init the menu with an XML descriptor
     * @param    xml : XML descriptor
     **/
+    private function createButton(_child:Fast):Void{
+
+        var button: DefaultButton = null;
+        button = UiFactory.createButtonFromXml(_child);
+        addChild(button);
+    }
 
     public function init(display: Fast): Void
     {
         orientation = display.att.orientation;
         type = display.att.type;
+
+        var containerBkg = new Sprite();
+        addChild(containerBkg);
+        createBackground(display,containerBkg);
+
+        for (child in display.elements)
+            {
+                switch(child.name.toLowerCase()){
+                    case "button":createButton(child);
+                    case "text": addChild(UiFactory.createTextFromXml(child));
+                }
+            }
 
         //Part
         if(typeInt & 1 == 1){
@@ -111,6 +131,8 @@ class MenuDisplay extends Sprite {
                 switch(child.name.toLowerCase()){
                     case "button": buttonPartPrototype = child;
                     case "image": createImage(child);
+                    //case "background":createBackground(child);
+
                 }
             }
         }
@@ -122,6 +144,7 @@ class MenuDisplay extends Sprite {
                 switch(child.name.toLowerCase()){
                     case "button": buttonActivityPrototype = child;
                     case "image": createImage(child);
+                    //case "background":createBackground(child);
                 }
             }
         }
@@ -225,6 +248,33 @@ class MenuDisplay extends Sprite {
         image.x = Std.parseFloat(imageNode.att.x);
         image.y = Std.parseFloat(imageNode.att.y);
         layer.addChild(image);
+    }
+
+    private function createBackground(bkgNode:Fast,_container:Sprite): Void{
+
+        var background = new Sprite();
+        var color:Int;
+        if (bkgNode.has.color)
+        color=Std.parseInt(bkgNode.att.color);
+        else
+        color=Std.parseInt("0xFFFFFF");
+
+
+        background.graphics.beginFill(color);
+        background.graphics.drawRect(Std.parseFloat(bkgNode.att.x),Std.parseFloat(bkgNode.att.y),Std.parseFloat(bkgNode.att.width),Std.parseFloat(bkgNode.att.height));
+        background.graphics.endFill();
+        //?distance : Float, ?angle : Float, ?color : Float, ?alpha : Float, ?blurX : Float, ?blurY : Float, ?strength : Float, ?quality : Float, ?inner : Bool, ?knockout : Bool, ?hideObject : Bool
+        var shadow:DropShadowFilter = new DropShadowFilter(0,90,0x000000,.3,70,0,3,1);
+        background.filters =[shadow];
+        _container.addChild(background);
+
+
+
+
+    }
+
+    private function createHeader():Void{
+
     }
 
     private function addButton(isPart: Bool, text: String = ""): Void

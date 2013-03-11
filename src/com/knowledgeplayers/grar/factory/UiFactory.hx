@@ -114,7 +114,7 @@ class UiFactory {
         var text = new ScrollPanel(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height));
         text.x = Std.parseFloat(xml.att.x);
         text.y = Std.parseFloat(xml.att.y);
-        text.content = KpTextDownParser.parse(xml.att.ref);
+       // text.content = KpTextDownParser.parse(xml.att.ref);
 
         if(xml.has.background)
             text.setBackground(xml.att.background);

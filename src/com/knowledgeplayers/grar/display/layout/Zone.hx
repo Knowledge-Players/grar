@@ -38,23 +38,25 @@ class Zone extends Sprite {
 
             ref = _zone.att.ref;
             dispatchEvent(new LayoutEvent(LayoutEvent.NEW_ZONE, ref, this));
+            addChild(layer.view);
+
             for(element in _zone.elements){
                 switch(element.name.toLowerCase()){
-                    case "button":addChild(UiFactory.createButtonFromXml(element));
-                    case "image": layer.addChild(UiFactory.createImageFromXml(element));
                     case "background": DisplayUtils.setBackground(element.att.src, this);
+                    case "image": layer.addChild(UiFactory.createImageFromXml(element));
                     case "text": addChild(UiFactory.createTextFromXml(element));
+                    case "button":addChild(UiFactory.createButtonFromXml(element));
+                    case "progressbar": var progress = new ProgressBar(LayoutManager.instance.game);
+                        progress.init(element);
+                        addChild(progress);
                     case "menu": var menu = new MenuDisplay(LayoutManager.instance.game);
                         menu.init(element);
                         menu.x = Std.parseFloat(element.att.x);
                         menu.y = Std.parseFloat(element.att.y);
                         addChild(menu);
-                    case "progressbar": var progress = new ProgressBar(LayoutManager.instance.game);
-                        progress.init(element);
-                        addChild(progress);
                 }
             }
-            addChild(layer.view);
+
             layer.render();
         }
         else if(_zone.has.rows){
