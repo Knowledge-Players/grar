@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.activity.folder;
 
+import Math;
 import nme.events.Event;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.util.XmlLoader;
@@ -60,6 +61,7 @@ class Folder extends Activity {
             if(element.currentTarget == element.target)
                 score++;
         }
+        score = Math.floor(score * 100 / Lambda.count(elements));
     }
 
     // Private
