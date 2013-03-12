@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.display.component;
+import aze.display.TilesheetEx;
 import nme.display.DisplayObject;
 import com.knowledgeplayers.grar.util.ScaleNineGrid;
 import nme.Lib;
@@ -6,24 +7,24 @@ import nme.events.Event;
 import aze.display.TileGroup;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
-import aze.display.SparrowTilesheet;
 import nme.display.Sprite;
 class ScaleNine extends Sprite {
 
-    private var spriteSheet:SparrowTilesheet;
+    private var spriteSheet:TilesheetEx;
     private var bkg_width:Float;
     private var bkg_height:Float;
     public var middleTile:TileSprite;
 
-    public function new(w:Float=0,h:Float=0) {
+    public function new(w:Float = 0, h:Float = 0)
+    {
         super();
-        bkg_width =w;
-        bkg_height =h;
+        bkg_width = w;
+        bkg_height = h;
 
-        }
+    }
 
-
-    public function init(_spritesheet: SparrowTilesheet) {
+    public function init(_spritesheet:TilesheetEx)
+    {
 
         spriteSheet = _spritesheet;
 
@@ -55,13 +56,11 @@ class ScaleNine extends Sprite {
 
         var tileGroup = new TileGroup();
 
-        var scaleNineGrid:ScaleNineGrid = new ScaleNineGrid(3,3);
-
+        var scaleNineGrid:ScaleNineGrid = new ScaleNineGrid(3, 3);
 
         addChild(scaleNineGrid.container);
 
-
-        for ( i in 0...arrayTile.length){
+        for(i in 0...arrayTile.length){
             tileGroup.addChild(arrayTile[i]);
 
         }
@@ -70,13 +69,11 @@ class ScaleNine extends Sprite {
 
         scaleNineGrid.container.addChild(layer.view);
 
-
-        for ( j in 0...arrayTile.length){
+        for(j in 0...arrayTile.length){
 
             //scaleNineGrid.addTile(arrayTile[j]);
         }
-        scaleNineGrid.initMatrice(arrayTile,bkg_width,bkg_height);
-
+        scaleNineGrid.initMatrice(arrayTile, bkg_width, bkg_height);
 
         middleTile = img5;
 
@@ -106,11 +103,9 @@ class ScaleNine extends Sprite {
 
         */
 
-
         layer.render();
 
-
-        this.dispatchEvent(new Event("onScaleInit",true));
+        this.dispatchEvent(new Event("onScaleInit", true));
     }
 
 }

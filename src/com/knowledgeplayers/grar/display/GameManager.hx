@@ -26,33 +26,33 @@ class GameManager extends EventDispatcher {
     /**
     * Instance of the game manager
     **/
-    public static var instance (getInstance, null): GameManager;
+    public static var instance (getInstance, null):GameManager;
 
     /**
      * The game model
      */
-    public var game (default, default): Game;
+    public var game (default, default):Game;
 
     /**
      * Part currently displayed
      */
-    public var currentPart (default, null): PartDisplay;
+    public var currentPart (default, null):PartDisplay;
 
-    private var layout: Layout;
-    private var activityDisplay: ActivityDisplay;
+    private var layout:Layout;
+    private var activityDisplay:ActivityDisplay;
 
     /**
     * @return the instance of the singleton
     **/
 
-    public static function getInstance(): GameManager
+    public static function getInstance():GameManager
     {
         if(instance == null)
             instance = new GameManager();
         return instance;
     }
 
-    public function setLayout(layout: String): Void
+    public function setLayout(layout:String):Void
     {
         this.layout = LayoutManager.instance.getLayout(layout);
     }
@@ -63,7 +63,7 @@ class GameManager extends EventDispatcher {
     * @param    layout : The layout to display
     **/
 
-    public function startGame(game: Game, layout: String = "default"): Void
+    public function startGame(game:Game, layout:String = "default"):Void
     {
         this.game = game;
         setLayout(layout);
@@ -76,7 +76,7 @@ class GameManager extends EventDispatcher {
     * @param part : The part to display
     **/
 
-    public function displayPart(part: Part): Void
+    public function displayPart(part:Part):Void
     {
         // Cleanup
         if(currentPart != null){
@@ -94,11 +94,13 @@ class GameManager extends EventDispatcher {
         }
     }
 
-    public function displayActivity(activity: Activity): Void
+    public function displayActivity(activity:Activity):Void
     {
         onActivityEnd(null);
+        if(currentPart != null)
+            currentPart.visible = false;
         activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
-        var activityName: String = Type.getClassName(Type.getClass(activity));
+        var activityName:String = Type.getClassName(Type.getClass(activity));
         activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
         activityDisplay = ActivityManager.instance.getActivity(activityName);
         activityDisplay.addEventListener(Event.COMPLETE, onActivityReady);
@@ -110,11 +112,12 @@ class GameManager extends EventDispatcher {
     * @param id : The ID of the part to display
     **/
 
-    public function displayPartById(id: Int): Void
+    public function displayPartById(id:Int):Void
     {
         displayPart(game.start(id));
 
     }
+
     // Privates
 
     private function new()
@@ -126,19 +129,19 @@ class GameManager extends EventDispatcher {
 
     // Handlers
 
-    private function onExitPart(event: Event): Void
+    private function onExitPart(event:Event):Void
     {
         displayPartById(currentPart.part.id + 1);
     }
 
-    private function onPartLoaded(event: PartEvent): Void
+    private function onPartLoaded(event:PartEvent):Void
     {
         var partDisplay = cast(event.target, PartDisplay);
         partDisplay.startPart();
         layout.zones.get("main").addChild(partDisplay);
     }
 
-    private function onExitSubPart(event: PartEvent): Void
+    private function onExitSubPart(event:PartEvent):Void
     {
         var subPart = cast(event.target, PartDisplay);
         subPart.unLoad();
@@ -146,26 +149,30 @@ class GameManager extends EventDispatcher {
         currentPart.visible = true;
     }
 
-    public function onEnterSubPart(event: PartEvent): Void
+    public function onEnterSubPart(event:PartEvent):Void
     {
         currentPart.visible = false;
-        var subPart: PartDisplay = DisplayFactory.createPartDisplay(event.part);
+        var subPart:PartDisplay = DisplayFactory.createPartDisplay(event.part);
         subPart.addEventListener(PartEvent.EXIT_PART, onExitSubPart);
         subPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
     }
 
-    private function onActivityReady(e: Event): Void
+    private function onActivityReady(e:Event):Void
     {
         layout.zones.get("main").addChild(activityDisplay);
         activityDisplay.startActivity();
     }
 
-    private function onActivityEnd(e: PartEvent): Void
+    private function onActivityEnd(e:PartEvent):Void
     {
         if(e != null)
             e.target.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
         if(activityDisplay != null && layout.zones.get("main").contains(activityDisplay))
             layout.zones.get("main").removeChild(activityDisplay);
         activityDisplay = null;
+        if(currentPart != null){
+            currentPart.visible = true;
+            currentPart.nextElement();
+        }
     }
 }

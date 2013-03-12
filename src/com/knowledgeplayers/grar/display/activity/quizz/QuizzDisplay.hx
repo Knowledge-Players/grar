@@ -27,38 +27,38 @@ import Std;
 
 class QuizzDisplay extends ActivityDisplay {
     /**
-* Instance
-*/
+    * Instance
+    **/
     public static var instance (getInstance, null):QuizzDisplay;
 
     /**
-* Questions field
-*/
+    * Questions field
+    **/
     public var questions (default, null):Hash<ScrollPanel>;
 
     /**
-* Buttons for the quizz
-*/
+    * Buttons for the quizz
+    **/
     public var buttons (default, null):Hash<DefaultButton>;
 
     /**
     * Graphical item for the quizz (checkboxes, checks, ...)
-**/
+    **/
     public var items (default, null):Hash<BitmapData>;
 
     /**
-* Template for groups of answers
-*/
+    * Template for groups of answers
+    */
     public var quizzGroups (default, null):Hash<QuizzGroupDisplay>;
 
     /**
     * Backgrounds for the quizz
-**/
+    **/
     public var backgrounds (default, null):Hash<DisplayObject>;
 
     /**
-* Lock state of the quizz. If true, the answers can't be changed
-*/
+    * Lock state of the quizz. If true, the answers can't be changed
+    **/
     public var locked:Bool;
 
     private var quizz:Quizz;
@@ -134,42 +134,6 @@ class QuizzDisplay extends ActivityDisplay {
         quizzGroups.set(groupNode.att.ref, group);
         resizeD.addDisplayObjects(group, groupNode);
     }
-
-    /*private function createItem(itemNode: Fast): Void
-    {
-        if(itemNode.has.src){
-        var itemBmp:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src), Bitmap).bitmapData);
-        addElement(itemBmp, itemNode);
-    }
-    else{
-        var itemTile = new TileSprite(itemNode.att.id);
-        layers.get(itemNode.att.spritesheet).addChild(itemTile);
-        addElement(layers.get(itemNode.att.spritesheet).view, itemNode);
-    }
-        var bmp = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src),Bitmap).bitmapData);
-        items.set(itemNode.att.ref.toLowerCase(), bmp.bitmapData);
-    }*/
-
-    /*private function createButton(buttonNode: Fast): Void
-    {
-        var button = UiFactory.createButtonFromXml(buttonNode);
-        button.addEventListener(MouseEvent.CLICK, onValidation);
-        initDisplayObject(button, buttonNode);
-        buttons.set(buttonNode.att.ref, button);
-        resizeD.addDisplayObjects(button, buttonNode);
-    }
-
-    private function createQuestion(questionNode: Fast): Void
-    {
-        var question = new ScrollPanel(Std.parseFloat(questionNode.att.width), Std.parseFloat(questionNode.att.height));
-        if(questionNode.has.scrollable)
-            question.scrollLock = questionNode.att.scrollable == "false";
-
-        question.x = Std.parseFloat(questionNode.att.x);
-        question.y = Std.parseFloat(questionNode.att.y);
-        questions.set(questionNode.att.ref, question);
-        resizeD.addDisplayObjects(question, questionNode);
-    }*/
 
     private function updateButtonText():Void
     {

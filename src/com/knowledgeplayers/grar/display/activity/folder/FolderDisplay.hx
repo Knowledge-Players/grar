@@ -34,7 +34,7 @@ class FolderDisplay extends ActivityDisplay {
     /**
     * DisplayObject where to drag the elements
     **/
-    public var targets (default, default):Array<{obj:DisplayObject, name:String}>;
+    public var targets (default, default):Array<{obj:DisplayObject, name:String, elem:FolderElementDisplay}>;
 
     /**
     * PopUp where additional text will be displayed
@@ -66,7 +66,7 @@ class FolderDisplay extends ActivityDisplay {
         super();
         grids = new Hash<Grid>();
         popUp = new Sprite();
-        targets = new Array<{obj:DisplayObject, name:String}>();
+        targets = new Array<{obj:DisplayObject, name:String, elem:FolderElementDisplay}>();
         elementsArray = new Array<FolderElementDisplay>();
     }
 
@@ -106,18 +106,13 @@ class FolderDisplay extends ActivityDisplay {
         for(elem in cast(model, Folder).elements){
             var elementDisplay:FolderElementDisplay;
             if(elementTemplate.buttonIcon != null)
-                elementDisplay = new FolderElementDisplay(elem.content, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
+                elementDisplay = new FolderElementDisplay(elem, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
             else
-                elementDisplay = new FolderElementDisplay(elem.content, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height, elementTemplate.background);
-            elementDisplay.target = elem.target;
+                elementDisplay = new FolderElementDisplay(elem, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height, elementTemplate.background);
             elementsArray.push(elementDisplay);
             grids.get("drag").add(elementDisplay, false);
             addChild(elementDisplay);
-            //grids.get("drag").addChild(elementDisplay);
-
         }
-
-        //grids.get("drag").alignContainer(grids.get("drag").container, background);
 
         super.onModelComplete(e);
     }
@@ -139,7 +134,7 @@ class FolderDisplay extends ActivityDisplay {
                     targetSpritesheet = true;
                 }
                 addElement(target, elemNode);
-                targets.push({obj: target, name: elemNode.att.ref});
+                targets.push({obj: target, name: elemNode.att.ref, elem: null});
 
             case "popup" :
                 if(elemNode.has.src)
@@ -206,6 +201,7 @@ class FolderDisplay extends ActivityDisplay {
             Lib.trace("next");
         else
             cast(model, Folder).validate();
+        endActivity();
     }
 
     private function onClosePopUp(ev:MouseEvent):Void

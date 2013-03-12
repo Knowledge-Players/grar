@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.structure.activity.folder.FolderElement;
 import com.knowledgeplayers.grar.structure.activity.folder.Folder;
 import nme.Lib;
 import nme.display.Bitmap;
@@ -27,24 +28,20 @@ class FolderElementDisplay extends Sprite {
     public var text (default, null):ScrollPanel;
 
     /**
-    * Content ID
-**/
-    public var content (default, null):String;
+    * Model
+    **/
+    public var model (default, null):FolderElement;
 
     /**
     * Origin before the drag
 **/
     public var origin (default, default):Point;
 
-    /**
-    * Target ref for this element
-    **/
-    public var target (default, default):String;
-
     private var shadows:Hash<DropShadowFilter>;
-
     private var btIcon:String;
     private var btPos:Point;
+    private var originWidth:Float;
+    private var originHeight:Float;
     /**
     * Constructor
     * @param content : Text of the element
@@ -52,10 +49,12 @@ class FolderElementDisplay extends Sprite {
     * @param height : Height of the element
 **/
 
-    public function new(content:String, width:Float, height:Float, background:BitmapData, ?buttonIcon:String, ?buttonPos:Point)
+    public function new(model:FolderElement, width:Float, height:Float, background:BitmapData, ?buttonIcon:String, ?buttonPos:Point)
     {
         super();
-        this.content = content;
+        this.model = model;
+        originWidth = width;
+        originHeight = height;
         text = new ScrollPanel(width, height);
         buttonMode = true;
         btIcon = buttonIcon;
@@ -65,7 +64,7 @@ class FolderElementDisplay extends Sprite {
         shadows.set("down", new DropShadowFilter(10, 45, 0x000000, 0.3, 10, 10));
         shadows.set("up", new DropShadowFilter(15, 45, 0x000000, 0.2, 10, 10));
 
-        var localizedText = Localiser.instance.getItemContent(content + "_title");
+        var localizedText = Localiser.instance.getItemContent(model.content + "_title");
         text.setContent(KpTextDownParser.parse(localizedText));
         var bkg = new Bitmap(background);
         text.x = bkg.width / 2 - text.width / 2;
@@ -99,6 +98,17 @@ class FolderElementDisplay extends Sprite {
         buttonMode = false;
     }
 
+    public function reset():Void
+    {
+        width = originWidth;
+        height = originHeight;
+        if(!hasEventListener(MouseEvent.MOUSE_DOWN))
+            addEventListener(MouseEvent.MOUSE_DOWN, onDown);
+        if(!hasEventListener(MouseEvent.MOUSE_UP))
+            addEventListener(MouseEvent.MOUSE_UP, onUp);
+        buttonMode = true;
+    }
+
     // Handler
 
     private function onAdd(ev:Event):Void
@@ -128,7 +138,7 @@ class FolderElementDisplay extends Sprite {
                 outOfBound = true;
             i++;
         }
-        if(outOfBound || (cast(folder.model, Folder).controlMode == "auto" && this.target != currentTarget.name)){
+        if(outOfBound || (cast(folder.model, Folder).controlMode == "auto" && model.target != currentTarget.name)){
             stopDrag();
             Actuate.tween(this, 0.5, {x: origin.x, y: origin.y});
         }
@@ -148,7 +158,15 @@ class FolderElementDisplay extends Sprite {
                 y = currentTarget.obj.y - height / 2;
             }
             stopDrag();
-            blockElement();
+            model.currentTarget = currentTarget.name;
+            if(cast(folder.model, Folder).controlMode == "auto")
+                blockElement();
+            else if(currentTarget.elem != null){
+                Actuate.tween(currentTarget.elem, 0.5, {x: origin.x, y: origin.y});
+                currentTarget.elem.reset();
+                currentTarget.elem.model.currentTarget = "";
+            }
+            currentTarget.elem = this;
         }
         filters = [shadows.get("down")];
     }
@@ -158,7 +176,7 @@ class FolderElementDisplay extends Sprite {
         // TODO modifier quand la grid sera propre
         var popUp = cast(parent, FolderDisplay).popUp;
         if(!popUp.visible){
-            var localizedText = Localiser.instance.getItemContent(content);
+            var localizedText = Localiser.instance.getItemContent(model.content);
             popUp.addChild(KpTextDownParser.parse(localizedText));
             parent.setChildIndex(popUp, parent.numChildren - 1);
             popUp.visible = true;

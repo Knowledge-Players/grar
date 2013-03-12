@@ -55,7 +55,11 @@ class Folder extends Activity {
 
     public function validate():Void
     {
-
+        for(key in elements.keys()){
+            var element = elements.get(key);
+            if(element.currentTarget == element.target)
+                score++;
+        }
     }
 
     // Private

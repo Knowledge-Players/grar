@@ -133,7 +133,7 @@ class KpDisplay extends Sprite {
             scrollable = true;
 
         var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height), scrollable, spritesheet);
-        if(spritesheet != null && background != null)
+        if(background != null)
             text.background = background;
 
         addElement(text, textNode);

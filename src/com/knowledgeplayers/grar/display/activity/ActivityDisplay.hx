@@ -73,7 +73,7 @@ class ActivityDisplay extends KpDisplay {
     private function onUnload(ev:Event):Void
     {}
 
-    private function endActivity(e:Event):Void
+    private function endActivity():Void
     {
         model.endActivity();
         unLoad();

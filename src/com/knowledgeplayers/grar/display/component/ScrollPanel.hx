@@ -1,6 +1,8 @@
 package com.knowledgeplayers.grar.display.component;
 
-import aze.display.SparrowTilesheet;
+import aze.display.TileSprite;
+import aze.display.TileLayer;
+import aze.display.TilesheetEx;
 import nme.geom.Rectangle;
 import nme.events.Event;
 import com.knowledgeplayers.grar.util.LoadData;
@@ -20,25 +22,24 @@ class ScrollPanel extends Sprite {
     /**
      * Text in the panel
      */
-    public var content (default, setContent): Sprite;
+    public var content (default, setContent):Sprite;
 
     /**
     * Background of the panel. It can be only a color or a reference to a Bitmap,
     **/
-    public var background (default, setBackground): String;
-
+    public var background (default, setBackground):String;
 
     /**
     * If true, the text won't scroll even if it's bigger than the panel
     **/
-    public var scrollLock (default, default): Bool;
+    public var scrollLock (default, default):Bool;
 
-    private var scrollBar: ScrollBar;
-    private var maskWidth: Float;
-    private var maskHeight: Float;
-    private var scrollable: Bool;
-    private var spriteSheet:SparrowTilesheet;
-    private  var scaleNine:ScaleNine;
+    private var scrollBar:ScrollBar;
+    private var maskWidth:Float;
+    private var maskHeight:Float;
+    private var scrollable:Bool;
+    private var spriteSheet:TilesheetEx;
+    private var scaleNine:ScaleNine;
     /**
      * Constructor
      * @param	width : Width of the displayed content
@@ -46,7 +47,7 @@ class ScrollPanel extends Sprite {
      * @param	scrollLock : Disable scroll. False by default
      */
 
-    public function new(width: Float, height: Float, ?_scrollLock: Bool = false,?_spriteSheet:SparrowTilesheet)
+    public function new(width:Float, height:Float, ?_scrollLock:Bool = false, ?_spriteSheet:TilesheetEx)
     {
         super();
         maskWidth = width;
@@ -63,18 +64,17 @@ class ScrollPanel extends Sprite {
      * @return the text
      */
 
-    public function setContent(content: Sprite): Sprite
+    public function setContent(content:Sprite):Sprite
     {
         clear();
         this.content = content;
-        var posXMask:Float=0;
-        var posYMask:Float=0;
-        if(scaleNine != null)
-        {
-            content.x =  scaleNine.middleTile.x-scaleNine.middleTile.width/2;
-            content.y = scaleNine.middleTile.y-scaleNine.middleTile.height/2;
+        var posXMask:Float = 0;
+        var posYMask:Float = 0;
+        if(scaleNine != null){
+            content.x = scaleNine.middleTile.x - scaleNine.middleTile.width / 2;
+            content.y = scaleNine.middleTile.y - scaleNine.middleTile.height / 2;
             maskWidth = scaleNine.middleTile.width;
-            maskHeight =  scaleNine.middleTile.height;
+            maskHeight = scaleNine.middleTile.height;
             posXMask = content.x;
             posYMask = content.y;
         }
@@ -98,46 +98,39 @@ class ScrollPanel extends Sprite {
             scrollable = false;
         }
 
-
         return content;
     }
 
-    public function setBackground(bkg: String): String
+    public function setBackground(bkg:String):String
     {
         background = bkg;
-        if(spriteSheet == null)
-        {
-            if(Std.parseInt(bkg) != null)
-            {
-
+        if(spriteSheet == null){
+            if(Std.parseInt(bkg) != null){
                 this.graphics.beginFill(Std.parseInt(bkg));
                 this.graphics.drawRect(0, 0, maskWidth, maskHeight);
                 this.graphics.endFill();
             }
-            else
-            {
+            else if(background.indexOf(".") < 0){
+                var layer = new TileLayer(UiFactory.tilesheet);
+                var tile = new TileSprite(background);
+                layer.addChild(tile);
+                addChildAt(layer.view, 0);
+                tile.x += tile.width / 2;
+                tile.y += tile.height / 2;
+                layer.render();
+            }
+            else if(LoadData.getInstance().getElementDisplayInCache(background) != null){
+                var bkg:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(background), Bitmap).bitmapData);
+                bkg.width = maskWidth;
+                bkg.height = maskHeight;
 
-                if(LoadData.getInstance().getElementDisplayInCache(background) != null)
-                {
-
-                    var bkg:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(background),Bitmap).bitmapData);
-                    bkg.width = maskWidth;
-                    bkg.height = maskHeight;
-
-                    this.addChildAt(bkg,0);
-                }
-
+                this.addChildAt(bkg, 0);
             }
         }
-        else
-        {
-
-            scaleNine = new ScaleNine(maskWidth,maskHeight);
-            scaleNine.addEventListener("onScaleInit",onInitScale);
+        else{
+            scaleNine = new ScaleNine(maskWidth, maskHeight);
+            scaleNine.addEventListener("onScaleInit", onInitScale);
             scaleNine.init(spriteSheet);
-
-
-
         }
 
         return bkg;
@@ -147,11 +140,11 @@ class ScrollPanel extends Sprite {
 
     private function onInitScale(e:Event):Void
     {
-        e.currentTarget.removeEventListener("onScaleInit",onInitScale);
-        addChildAt(e.currentTarget,0);
+        e.currentTarget.removeEventListener("onScaleInit", onInitScale);
+        addChildAt(e.currentTarget, 0);
     }
 
-    private function scrollToRatio(position: Float)
+    private function scrollToRatio(position:Float)
     {
         content.y = -position * content.height;
     }
@@ -163,7 +156,7 @@ class ScrollPanel extends Sprite {
             removeChildAt(numChildren - 1);
     }
 
-    private function onWheel(e: MouseEvent): Void
+    private function onWheel(e:MouseEvent):Void
     {
         if(scrollable){
             if(e.delta > 0 && content.y + e.delta > 0){
@@ -180,7 +173,7 @@ class ScrollPanel extends Sprite {
         }
     }
 
-    private function moveCursor(delta: Float)
+    private function moveCursor(delta:Float)
     {
         scrollBar.moveCursor(delta);
     }
