@@ -107,10 +107,13 @@ class TweenManager {
     public static function slide(display: DisplayObject, ref: String): IGenericActuator
     {
         var slide = transitions.get(ref);
+        /*
         var origin = {x: display.x, y: display.y};
         display.x = slide.x;
         display.y = slide.y;
         return Actuate.tween(display, slide.duration, { x: origin.x, y: origin.y }).ease(getEasing(slide));
+        */
+        return Actuate.tween(display, slide.duration, { x: slide.x, y: slide.y }).ease(getEasing(slide));
     }
 
     public static function blink(display: DisplayObject, ref: String): IGenericActuator

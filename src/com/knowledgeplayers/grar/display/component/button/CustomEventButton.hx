@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.display.component.button;
+import nme.Lib;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import nme.events.MouseEvent;
@@ -30,6 +31,7 @@ class CustomEventButton extends DefaultButton {
     {
         super(tilesheet, tile);
         this.eventType = eventName;
+
     }
 
     override private function onClick(event:MouseEvent):Void

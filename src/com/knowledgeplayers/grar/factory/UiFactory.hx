@@ -96,6 +96,7 @@ class UiFactory {
         var icon = xml.has.icon ? xml.att.icon : null;
         var iconX = xml.has.iconX ? Std.parseFloat(xml.att.iconX) : 0;
         var iconY = xml.has.iconY ? Std.parseFloat(xml.att.iconY) : 0;
+
         return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scaleX, scaleY, icon, iconX, iconY, action);
     }
 

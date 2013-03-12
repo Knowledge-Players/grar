@@ -5,7 +5,7 @@
     <Wiggle ref="wizz" duration="0.05" repeat="9" xRange="10" yRange="10"/>
     <Fade ref="fadeIn" duration="1" alpha="1" easingType="cubic" easingStyle="out"/>
     <Fade ref="fadeOut" duration="1" alpha="0" easingType="cubic" easingStyle="out"/>
-    <Slide ref="rightToLeft" duration="1" x="1000" y="200" easingType="cubic" easingStyle="out"/>
-    <Slide ref="leftToRight" duration="1" x="-100" y="200" easingType="cubic" easingStyle="out"/>
+    <Slide ref="leftToRight" duration="1" x="100" y="200" easingType="cubic" easingStyle="out"/>
+    <Slide ref="rightToLeft" duration="1" x="-100" y="200" easingType="cubic" easingStyle="out"/>
     <Blink ref="blink" duration="0.05" color="0xFFFFFF" repeat="9"/>
 </Transitions>

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import nme.events.Event;
 import nme.filters.DropShadowFilter;
 import com.knowledgeplayers.grar.display.component.button.AnimationButton;
 import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
@@ -43,12 +44,28 @@ class MenuDisplay extends Sprite {
     **/
     public var buttonActivityPrototype (default, default): Fast;
 
+    /**
+    * transition open menu
+    **/
+    public var transitionIn:String;
+    /**
+    * transition close menu
+    **/
+    public var transitionOut:String;
+
+    /**
+    *  Button Close Menu
+    **/
+    public var btClose:DefaultButton;
+
     private var parts: Array<Part>;
     private var activities: Array<Activity>;
     private var items: List<MenuItem>;
     private var layer: TileLayer;
     private var typeInt: Int;
     private var game: Game;
+
+
 
     /**
      * Constructor
@@ -90,11 +107,18 @@ class MenuDisplay extends Sprite {
             case "part": 1;
             case "activity": 2;
             case "both": 3;
-            case "button": 4;
+
         }
         return this.type;
-    }
 
+    }
+    private function onActionEvent(e:Event):Void{
+        switch(e.type){
+
+
+            case "close_menu": TweenManager.applyTransition(this,transitionOut);
+        }
+    }
     /**
     * Init the menu with an XML descriptor
     * @param    xml : XML descriptor
@@ -103,6 +127,10 @@ class MenuDisplay extends Sprite {
 
         var button: DefaultButton = null;
         button = UiFactory.createButtonFromXml(_child);
+        if(_child.att.type=="event")
+            {
+                cast(button,CustomEventButton).addEventListener(_child.att.action,onActionEvent);
+            }
         addChild(button);
     }
 
@@ -111,15 +139,17 @@ class MenuDisplay extends Sprite {
         orientation = display.att.orientation;
         type = display.att.type;
 
-        var containerBkg = new Sprite();
-        addChild(containerBkg);
-        createBackground(display,containerBkg);
+        // TODO FilterManager
+        var shadow:DropShadowFilter = new DropShadowFilter(0,90,0x000000,.3,70,0,3,1);
+        this.filters=[shadow];
+        /**/
 
         for (child in display.elements)
             {
                 switch(child.name.toLowerCase()){
                     case "button":createButton(child);
                     case "text": addChild(UiFactory.createTextFromXml(child));
+                    case "background":createBackground(child);
                 }
             }
 
@@ -131,7 +161,7 @@ class MenuDisplay extends Sprite {
                 switch(child.name.toLowerCase()){
                     case "button": buttonPartPrototype = child;
                     case "image": createImage(child);
-                    //case "background":createBackground(child);
+                    case "background":createBackground(child);
 
                 }
             }
@@ -144,7 +174,7 @@ class MenuDisplay extends Sprite {
                 switch(child.name.toLowerCase()){
                     case "button": buttonActivityPrototype = child;
                     case "image": createImage(child);
-                    //case "background":createBackground(child);
+                    case "background":createBackground(child);
                 }
             }
         }
@@ -248,28 +278,34 @@ class MenuDisplay extends Sprite {
         image.x = Std.parseFloat(imageNode.att.x);
         image.y = Std.parseFloat(imageNode.att.y);
         layer.addChild(image);
+
+
     }
 
-    private function createBackground(bkgNode:Fast,_container:Sprite): Void{
+    private function createBackground(bkgNode:Fast,?_container:Sprite): Sprite{
+
+        if (_container == null)
+            {
+                _container = new Sprite();
+                addChild(_container);
+            }
 
         var background = new Sprite();
+
         var color:Int;
         if (bkgNode.has.color)
         color=Std.parseInt(bkgNode.att.color);
         else
         color=Std.parseInt("0xFFFFFF");
 
-
         background.graphics.beginFill(color);
         background.graphics.drawRect(Std.parseFloat(bkgNode.att.x),Std.parseFloat(bkgNode.att.y),Std.parseFloat(bkgNode.att.width),Std.parseFloat(bkgNode.att.height));
         background.graphics.endFill();
-        //?distance : Float, ?angle : Float, ?color : Float, ?alpha : Float, ?blurX : Float, ?blurY : Float, ?strength : Float, ?quality : Float, ?inner : Bool, ?knockout : Bool, ?hideObject : Bool
-        var shadow:DropShadowFilter = new DropShadowFilter(0,90,0x000000,.3,70,0,3,1);
-        background.filters =[shadow];
+
+
         _container.addChild(background);
 
-
-
+        return _container;
 
     }
 

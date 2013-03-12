@@ -1,6 +1,11 @@
 package com.knowledgeplayers.grar.display.layout;
 
 
+import com.eclecticdesignstudio.motion.easing.Quart;
+import com.eclecticdesignstudio.motion.Actuate;
+import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
+import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import nme.events.Event;
 import com.knowledgeplayers.grar.display.component.ProgressBar;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import aze.display.TileLayer;
@@ -17,6 +22,7 @@ class Zone extends Sprite {
 
     private var zoneWidth: Float;
     private var zoneHeight: Float;
+    private var menu:MenuDisplay;
 
     public function new(_width: Float, _height: Float): Void
     {
@@ -45,19 +51,33 @@ class Zone extends Sprite {
                     case "background": DisplayUtils.setBackground(element.att.src, this);
                     case "image": layer.addChild(UiFactory.createImageFromXml(element));
                     case "text": addChild(UiFactory.createTextFromXml(element));
-                    case "button":addChild(UiFactory.createButtonFromXml(element));
+                    case "button":
+                        {
+                            var bt:DefaultButton= UiFactory.createButtonFromXml(element);
+                            addChild(bt);
+                            if(element.att.type=="event")
+                                {
+
+                                    cast(bt,CustomEventButton).addEventListener(element.att.action,onActionEvent);
+
+                                }
+                        }
                     case "progressbar": var progress = new ProgressBar(LayoutManager.instance.game);
                         progress.init(element);
                         addChild(progress);
-                    case "menu": var menu = new MenuDisplay(LayoutManager.instance.game);
+                    case "menu": menu = new MenuDisplay(LayoutManager.instance.game);
                         menu.init(element);
-                        menu.x = Std.parseFloat(element.att.x);
-                        menu.y = Std.parseFloat(element.att.y);
+                        menu.transitionIn = element.att.transitionIn;
+                        menu.transitionOut = element.att.transitionOut;
+                        menu.x= Std.parseFloat(element.att.x);
+                        menu.y= Std.parseFloat(element.att.y);
+
                         addChild(menu);
                 }
             }
 
             layer.render();
+
         }
         else if(_zone.has.rows){
             var heights = initSize(_zone.att.rows, height);
@@ -93,6 +113,18 @@ class Zone extends Sprite {
             Lib.trace("[Zone] This zone is empty. Are you sure your XML is correct ?");
         }
     }
+
+    private function onActionEvent(e:Event):Void{
+       switch(e.type){
+
+           case "open_menu":
+
+               TweenManager.applyTransition(menu,menu.transitionIn);
+
+       }
+
+    }
+
 
     private function initSize(sizes: String, maxSize: Float): Array<Dynamic>
     {
