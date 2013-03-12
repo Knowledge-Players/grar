@@ -51,10 +51,8 @@ import com.knowledgeplayers.grar.structure.part.dialog.conclusion.ConclusionActi
 import com.knowledgeplayers.grar.structure.part.dialog.conclusion.Fetch;
 import com.knowledgeplayers.grar.structure.part.dialog.conclusion.Shake;
 import com.knowledgeplayers.grar.structure.part.dialog.conclusion.Sketch;
-import com.knowledgeplayers.grar.structure.part.dialog.item.ChoiceItem;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import com.knowledgeplayers.grar.structure.part.dialog.pattern.ActivityPattern;
-import com.knowledgeplayers.grar.structure.part.dialog.pattern.CollectPattern;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.tracking.AiccTracking;
 import com.knowledgeplayers.grar.tracking.AutoTracking;

@@ -5,6 +5,7 @@
 -xml ../../haxedoc.xml
 -cp src
 -swf obj/grar.swf
+-swf-version 10.1
 grar.ImportAll
 -lib grar
 -lib actuate
@@ -22,6 +23,7 @@ grar.ImportAll
 -lib actuate
 -lib tilelayer
 --no-output
+-swf-version 10.1
 
 --next
 
