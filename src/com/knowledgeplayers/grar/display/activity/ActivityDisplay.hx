@@ -54,7 +54,8 @@ class ActivityDisplay extends KpDisplay {
 
     private function displayActivity():Void
     {
-        DisplayUtils.setBackground(displaysFast.get(model.background).att.src, this);
+        if(model.background != null)
+            DisplayUtils.setBackground(displaysFast.get(model.background).att.src, this);
     }
 
     private function unLoad(keepLayer:Int = 0):Void

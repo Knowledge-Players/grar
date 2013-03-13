@@ -1,4 +1,11 @@
 package com.knowledgeplayers.grar.display.activity.quizz;
+
+import nme.Lib;
+import nme.display.BitmapData;
+import aze.display.TileLayer;
+import aze.display.TileSprite;
+import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.structure.activity.quizz.QuizzGroup;
 import com.knowledgeplayers.grar.util.LoadData;
 import haxe.xml.Fast;
@@ -12,19 +19,19 @@ class QuizzGroupDisplay extends Sprite {
     /**
      * Model to display
      */
-    public var model (default, setModel): QuizzGroup;
+    public var model (default, setModel):QuizzGroup;
 
-    private var items: Array<QuizzItemDisplay>;
-    private var xOffset: Float;
-    private var yOffset: Float;
-    private var itemTemplates: Hash<Fast>;
-
+    private var items:Array<QuizzItemDisplay>;
+    private var xOffset:Float;
+    private var yOffset:Float;
+    private var itemTemplates:Hash<Fast>;
+    private var separator:BitmapData;
     /**
      * Constructor
      * @param	group : Model to display
      */
 
-    public function new(xOffset: Float = 0, yOffset: Float = 0, width: Float = 0, height: Float = 0, ?xml: Fast)
+    public function new(xOffset:Float = 0, yOffset:Float = 0, width:Float = 0, height:Float = 0, ?separator:BitmapData, ?xml:Fast)
     {
         super();
         items = new Array<QuizzItemDisplay>();
@@ -32,20 +39,28 @@ class QuizzGroupDisplay extends Sprite {
         if(xml == null){
             this.xOffset = xOffset;
             this.yOffset = yOffset;
-            graphics.beginFill(0);
-            graphics.drawRect(0, 0, width, height);
-            graphics.endFill();
         }
         else{
             this.xOffset = Std.parseFloat(xml.att.xOffset);
             this.yOffset = Std.parseFloat(xml.att.yOffset);
             x = Std.parseFloat(xml.att.x);
             y = Std.parseFloat(xml.att.y);
-            graphics.beginFill(0);
-            graphics.drawRect(0, 0, Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height));
-            graphics.endFill();
             for(elem in xml.nodes.GroupElement){
                 itemTemplates.set(elem.att.ref, elem);
+            }
+            if(xml.hasNode.Separator){
+                var layer:TileLayer;
+                if(xml.node.Separator.has.spritesheet)
+                    layer = new TileLayer(QuizzDisplay.instance.spritesheets.get(xml.node.Separator.att.spritesheet));
+                else
+                    layer = new TileLayer(UiFactory.tilesheet);
+                var sep = new TileSprite(xml.node.Separator.att.id);
+                layer.addChild(sep);
+                layer.render();
+                separator = sep.bmp.bitmapData;
+            }
+            if(separator != null){
+                this.separator = separator;
             }
         }
 
@@ -57,7 +72,7 @@ class QuizzGroupDisplay extends Sprite {
      * @return the model
      */
 
-    public function setModel(model: QuizzGroup): QuizzGroup
+    public function setModel(model:QuizzGroup):QuizzGroup
     {
         graphics.clear();
         this.model = model;
@@ -70,7 +85,7 @@ class QuizzGroupDisplay extends Sprite {
      * Validate the answers
      */
 
-    public function validate(): Void
+    public function validate():Void
     {
         for(item in items){
             item.validate();
@@ -81,7 +96,7 @@ class QuizzGroupDisplay extends Sprite {
      * Point out the good answers
      */
 
-    public function correct(): Void
+    public function correct():Void
     {
         for(item in items){
             item.displayCorrection();
@@ -90,41 +105,36 @@ class QuizzGroupDisplay extends Sprite {
 
     // Private
 
-    private function updateItems(): Void
+    private function updateItems():Void
     {
-        var totalYOffset: Float = 0;
+        var totalYOffset:Float = 0;
         unloadItems();
         for(item in model.items){
             var itemTemplate = itemTemplates.get(item.ref);
             var itemDisplay = new QuizzItemDisplay(item);
-            // Do we have to use these ?
-            /*itemDisplay.width = Std.parseFloat(itemTemplate.att.width);
-            itemDisplay.height = Std.parseFloat(itemTemplate.att.height);*/
+            if(itemTemplate.has.spritesheet)
+                itemDisplay.setIcon(itemTemplate.att.id, itemTemplate.att.spritesheet);
+            else
+                itemDisplay.setIcon(itemTemplate.att.id);
             itemDisplay.y = totalYOffset;
             itemDisplay.x = xOffset;
             itemDisplay.text.x = Std.parseFloat(itemTemplate.att.contentX);
             itemDisplay.correction.x = Std.parseFloat(itemTemplate.att.correctionX);
             itemDisplay.checkIcon.x = Std.parseFloat(itemTemplate.att.checkX);
-            //Lib.trace("itemTemplate.att.background : "+itemTemplate.att.background);
+            totalYOffset += itemDisplay.height;
 
-            if(Std.parseInt(itemTemplate.att.background) != null)
-            {
-                itemDisplay.graphics.beginFill(Std.parseInt(itemTemplate.att.background));
-                itemDisplay.graphics.drawRect(0, 0, Std.parseFloat(itemTemplate.att.width), Std.parseFloat(itemTemplate.att.height));
-                itemDisplay.graphics.endFill();
-            }
-            else
-            {
-                var bmp = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemTemplate.att.background),Bitmap).bitmapData);
-
-                    itemDisplay.addChild(bmp);
+            if(itemTemplate.has.background){
+                DisplayUtils.setBackground(itemTemplate.att.background, itemDisplay);
             }
 
-            //DisplayUtils.setBackground(itemTemplate.att.background, itemDisplay);
-
-            totalYOffset += yOffset;
             items.push(itemDisplay);
             addChild(itemDisplay);
+            var sep = new Bitmap(separator);
+            sep.x = itemDisplay.x;
+            sep.y = totalYOffset;
+            addChild(sep);
+            Lib.trace(totalYOffset);
+            totalYOffset += yOffset + sep.height;
         }
     }
 

@@ -20,9 +20,13 @@ import haxe.xml.Fast;
 import nme.display.Sprite;
 
 class KpDisplay extends Sprite {
+    /**
+    * All the spritesheets used here
+    **/
+    public var spritesheets:Hash<SparrowTilesheet>;
+
     private var displays:Hash<{obj:DisplayObject, z:Int}>;
     private var displaysFast:Hash<Fast>;
-    private var spritesheets:Hash<SparrowTilesheet>;
     private var zIndex:Int = 0;
     private var textGroups:Hash<Hash<{obj:Fast, z:Int}>>;
     private var layers:Hash<TileLayer>;

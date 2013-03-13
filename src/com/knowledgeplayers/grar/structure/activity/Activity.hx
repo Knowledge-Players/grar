@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.activity;
 
+import haxe.xml.Fast;
 import com.knowledgeplayers.grar.structure.part.Part;
 import nme.Lib;
 import nme.events.Event;
@@ -32,7 +33,25 @@ class Activity extends EventDispatcher, implements PartElement {
     **/
     public var container (default, default):Part;
 
+    /**
+    * Reference of the button which will validate the activity
+    **/
+    public var buttonRef (default, default):{ref:String, content:String};
+
+    /**
+    * Reference to the background for the activity
+    **/
     public var background (default, default):String;
+
+    /**
+    * Localisation key for the instructions
+    **/
+    public var instructionContent (default, default):String;
+
+    /**
+    * Reference to the text zone where to display instructions
+    **/
+    public var ref (default, default):String;
 
     /**
      * Path to the previous content file
@@ -130,7 +149,21 @@ class Activity extends EventDispatcher, implements PartElement {
     }
 
     private function parseContent(content:Xml):Void
-    {}
+    {
+        var fast = new Fast(content.firstElement());
+        if(fast.has.background)
+            background = fast.att.background;
+        if(fast.has.instructionContent){
+            instructionContent = fast.att.instructionContent;
+            ref = fast.att.ref;
+        }
+        var content;
+        if(fast.node.Button.has.content)
+            content = fast.node.Button.att.content;
+        else
+            content = null;
+        buttonRef = {ref: fast.node.Button.att.ref, content: content};
+    }
 
     // Handlers
 

@@ -20,26 +20,11 @@ class Folder extends Activity {
     public var targets (default, default):Array<String>;
 
     /**
-    * Localisation key for the instructions
-    **/
-    public var instructionContent (default, default):String;
-
-    /**
-    * Reference to the text zone where to display instructions
-    **/
-    public var ref (default, default):String;
-
-    /**
     * Mode of control.
     * If auto, the control is done when the elemnt is drop.
     * If end, the control is done when the activity is validated.
     **/
     public var controlMode (default, default):String;
-
-    /**
-    * Reference of the button which will validate the activity
-    **/
-    public var buttonRef (default, default):{ref:String, content:String};
 
     /**
     * Constructor
@@ -68,10 +53,8 @@ class Folder extends Activity {
 
     override private function parseContent(xml:Xml):Void
     {
-        var fast = new Fast(xml).node.Folder;
-        background = fast.att.background;
-        instructionContent = fast.att.instructionContent;
-        ref = fast.att.ref;
+        super.parseContent(xml);
+        var fast = new Fast(xml.firstElement());
         controlMode = fast.att.controlMode.toLowerCase();
         for(element in fast.nodes.Element){
             var elem = new FolderElement(element.att.content, element.att.ref);
@@ -81,11 +64,5 @@ class Folder extends Activity {
             }
             elements.set(elem.ref, elem);
         }
-        var content;
-        if(fast.node.Button.has.content)
-            content = fast.node.Button.att.content;
-        else
-            content = null;
-        buttonRef = {ref: fast.node.Button.att.ref, content: content};
     }
 }

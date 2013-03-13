@@ -32,16 +32,6 @@ class QuizzDisplay extends ActivityDisplay {
     public static var instance (getInstance, null):QuizzDisplay;
 
     /**
-    * Questions field
-    **/
-    public var questions (default, null):Hash<ScrollPanel>;
-
-    /**
-    * Buttons for the quizz
-    **/
-    public var buttons (default, null):Hash<DefaultButton>;
-
-    /**
     * Graphical item for the quizz (checkboxes, checks, ...)
     **/
     public var items (default, null):Hash<BitmapData>;
@@ -90,6 +80,16 @@ class QuizzDisplay extends ActivityDisplay {
         updateButtonText();
     }
 
+    override private function displayActivity():Void
+    {
+        super.displayActivity();
+        if(quizz.buttonRef.content != null)
+            cast(displays.get(quizz.buttonRef.ref).obj, TextButton).setText(Localiser.instance.getItemContent(quizz.buttonRef.content));
+        displays.get(quizz.buttonRef.ref).obj.addEventListener(MouseEvent.CLICK, onValidation);
+        addChild(displays.get(quizz.buttonRef.ref).obj);
+
+    }
+
     // Private
 
     override private function onModelComplete(e:LocaleEvent):Void
@@ -100,9 +100,8 @@ class QuizzDisplay extends ActivityDisplay {
 
     private function displayRound():Void
     {
-        addChild(questions.get(quizz.getCurrentQuestion().ref));
+        addChild(displays.get(quizz.getCurrentQuestion().ref).obj);
         addChild(quizzGroups.get(quizz.getCurrentGroup()));
-        addChild(buttons.get(quizz.getCurrentButton().ref));
 
         resizeD.onResize();
     }
@@ -110,8 +109,6 @@ class QuizzDisplay extends ActivityDisplay {
     private function new()
     {
         super();
-        questions = new Hash<ScrollPanel>();
-        buttons = new Hash<DefaultButton>();
         items = new Hash<BitmapData>();
         backgrounds = new Hash<DisplayObject>();
         quizzGroups = new Hash<QuizzGroupDisplay>();
@@ -130,14 +127,13 @@ class QuizzDisplay extends ActivityDisplay {
     private function createGroup(groupNode:Fast):Void
     {
         var group = new QuizzGroupDisplay(groupNode);
-        //initDisplayObject(group, groupNode);
         quizzGroups.set(groupNode.att.ref, group);
         resizeD.addDisplayObjects(group, groupNode);
     }
 
     private function updateButtonText():Void
     {
-        if(Std.is(buttons.get(quizz.getCurrentButton().ref), TextButton)){
+        if(Std.is(displays.get(quizz.buttonRef.ref).obj, TextButton)){
             var stateId:String = null;
             switch(quizz.state){
                 case EMPTY: stateId = "";
@@ -145,7 +141,7 @@ class QuizzDisplay extends ActivityDisplay {
                 case CORRECTED: stateId = "_next";
             }
 
-            cast(buttons.get(quizz.getCurrentButton().ref), TextButton).setText(Localiser.instance.getItemContent(quizz.getCurrentButton().content + stateId));
+            cast(displays.get(quizz.buttonRef.ref).obj, TextButton).setText(Localiser.instance.getItemContent(quizz.buttonRef.content + stateId));
         }
     }
 
@@ -171,7 +167,7 @@ class QuizzDisplay extends ActivityDisplay {
     {
         quizzGroups.get(quizz.getCurrentGroup()).model = quizz.getCurrentAnswers();
         var content = Localiser.getInstance().getItemContent(quizz.getCurrentQuestion().content);
-        questions.get(quizz.getCurrentQuestion().ref).content = KpTextDownParser.parse(content);
+        cast(displays.get(quizz.getCurrentQuestion().ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
         setState(QuizzState.EMPTY);
         displayRound();
     }
