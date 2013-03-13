@@ -14,7 +14,7 @@
         <AllowPNG/>
     </OfficeDocumentSettings>
     <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
-        <WindowHeight>12040</WindowHeight>
+        <WindowHeight>8280</WindowHeight>
         <WindowWidth>28800</WindowWidth>
         <WindowTopX>0</WindowTopX>
         <WindowTopY>0</WindowTopY>
@@ -73,19 +73,9 @@
             </Borders>
             <Interior/>
         </Style>
-        <Style ss:ID="s66">
-            <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
-            <Borders>
-                <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
-                <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
-            </Borders>
-            <Interior ss:Color="#FFFFFF" ss:Pattern="Solid"/>
-        </Style>
     </Styles>
     <Worksheet ss:Name="Feuil1">
-        <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="8" x:FullColumns="1"
+        <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="5" x:FullColumns="1"
                x:FullRows="1" ss:StyleID="s62" ss:DefaultColumnWidth="66">
             <Column ss:StyleID="s63" ss:AutoFitWidth="0" ss:Width="90"/>
             <Column ss:StyleID="s64" ss:AutoFitWidth="0" ss:Width="375"/>
@@ -126,7 +116,7 @@
                     <Data ss:Type="String">point3</Data>
                 </Cell>
                 <Cell ss:StyleID="s65">
-                    <Data ss:Type="String">You found Point #3</Data>
+                    <Data ss:Type="String">You found Point #3[style]coucou[/style]</Data>
                 </Cell>
             </Row>
         </Table>
@@ -148,7 +138,7 @@
             <Panes>
                 <Pane>
                     <Number>3</Number>
-                    <ActiveRow>2</ActiveRow>
+                    <ActiveRow>8</ActiveRow>
                     <ActiveCol>1</ActiveCol>
                 </Pane>
             </Panes>
