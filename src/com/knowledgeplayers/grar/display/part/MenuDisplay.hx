@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.layout.Zone;
+import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.events.Event;
 import nme.filters.DropShadowFilter;
 import com.knowledgeplayers.grar.display.component.button.AnimationButton;
@@ -23,7 +25,7 @@ import nme.events.MouseEvent;
  * Display of a menu
  */
 
-class MenuDisplay extends Sprite {
+class MenuDisplay extends Zone {
     /**
     * Orientation of the menu. Must be Horizontal or Vertical
     **/
@@ -61,25 +63,15 @@ class MenuDisplay extends Sprite {
     private var parts: Array<Part>;
     private var activities: Array<Activity>;
     private var items: List<MenuItem>;
-    private var layer: TileLayer;
+
     private var typeInt: Int;
-    private var game: Game;
 
-
-
-    /**
-     * Constructor
-     * @param	game : Game model linked to the menu
-     */
-
-    public function new(game: Game)
+    public function new(_width:Float,_height:Float)
     {
-        super();
-        layer = new TileLayer(UiFactory.tilesheet);
-        addChild(layer.view);
+        super(_width,_height);
+
         items = new List<MenuItem>();
 
-        this.game = game;
     }
 
     /**
@@ -112,43 +104,30 @@ class MenuDisplay extends Sprite {
         return this.type;
 
     }
-    private function onActionEvent(e:Event):Void{
-        switch(e.type){
 
-
-            case "close_menu": TweenManager.applyTransition(this,transitionOut);
-        }
-    }
     /**
     * Init the menu with an XML descriptor
     * @param    xml : XML descriptor
     **/
-    private function createButton(_child:Fast):Void{
 
-        var button: DefaultButton = null;
-        button = UiFactory.createButtonFromXml(_child);
-        if(_child.att.type=="event")
-            {
-                cast(button,CustomEventButton).addEventListener(_child.att.action,onActionEvent);
-            }
-        addChild(button);
+    override public function onActionEvent(e:Event):Void{
+        switch(e.type){
+            case "close_menu": TweenManager.applyTransition(this,transitionOut);
+        }
+
     }
-
-    public function init(display: Fast): Void
+    public function initMenu(display: Fast): Void
     {
+        //init(display);
+
         orientation = display.att.orientation;
         type = display.att.type;
-
-        // TODO FilterManager
-        var shadow:DropShadowFilter = new DropShadowFilter(0,90,0x000000,.3,70,0,3,1);
-        this.filters=[shadow];
-        /**/
 
         for (child in display.elements)
             {
                 switch(child.name.toLowerCase()){
                     case "button":createButton(child);
-                    case "text": addChild(UiFactory.createTextFromXml(child));
+                    case "text":createText(child);
                     case "background":createBackground(child);
                 }
             }
@@ -179,11 +158,13 @@ class MenuDisplay extends Sprite {
             }
         }
 
-        if(typeInt & 1 == 1){
-            parts = game.getAllParts();
+       /* if(typeInt & 1 == 1){
+
+            parts = GameManager.instance.game.getAllParts();
+
             if(((typeInt & (1 << 1)) >> 1) == 1){
                 // Both
-                activities = game.getAllActivities();
+                activities = GameManager.instance.game.getAllActivities();
                 for(part in parts){
                     addButton(true, part.name);
                     for(activity in activities){
@@ -202,11 +183,11 @@ class MenuDisplay extends Sprite {
         }
         else{
             // Activity Only
-            activities = game.getAllActivities();
+            activities = GameManager.instance.game.getAllActivities();
             for(activity in activities){
                 addButton(false, activity.name);
             }
-        }
+        }*/
 
         if(orientation == "vertical"){
             var offset: Float = 0;
@@ -244,7 +225,6 @@ class MenuDisplay extends Sprite {
             }
         }
 
-        layer.render();
     }
 
     // Private
@@ -270,48 +250,8 @@ class MenuDisplay extends Sprite {
         }
     }
 
-    private function createImage(imageNode: Fast): Void
-    {
-        var image = new TileSprite(imageNode.att.id);
-        image.scaleX = Std.parseFloat(imageNode.att.scaleX);
-        image.scaleY = Std.parseFloat(imageNode.att.scaleY);
-        image.x = Std.parseFloat(imageNode.att.x);
-        image.y = Std.parseFloat(imageNode.att.y);
-        layer.addChild(image);
 
 
-    }
-
-    private function createBackground(bkgNode:Fast,?_container:Sprite): Sprite{
-
-        if (_container == null)
-            {
-                _container = new Sprite();
-                addChild(_container);
-            }
-
-        var background = new Sprite();
-
-        var color:Int;
-        if (bkgNode.has.color)
-        color=Std.parseInt(bkgNode.att.color);
-        else
-        color=Std.parseInt("0xFFFFFF");
-
-        background.graphics.beginFill(color);
-        background.graphics.drawRect(Std.parseFloat(bkgNode.att.x),Std.parseFloat(bkgNode.att.y),Std.parseFloat(bkgNode.att.width),Std.parseFloat(bkgNode.att.height));
-        background.graphics.endFill();
-
-
-        _container.addChild(background);
-
-        return _container;
-
-    }
-
-    private function createHeader():Void{
-
-    }
 
     private function addButton(isPart: Bool, text: String = ""): Void
     {

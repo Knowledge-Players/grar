@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!-- WARNING: the size of the app is set in the NMML file -->
-<Layouts>
+<Layouts text="xml/interface.xml">
     <Layout layoutName="default" rows="100,*,50">
         <Row columns="10%,*">
             <Column ref="header" bgColor="0xFF0000">

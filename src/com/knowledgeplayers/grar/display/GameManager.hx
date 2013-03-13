@@ -57,6 +57,7 @@ class GameManager extends EventDispatcher {
         this.layout = LayoutManager.instance.getLayout(layout);
     }
 
+
     /**
     * Start the game
     * @param    game : The game to start
@@ -70,6 +71,7 @@ class GameManager extends EventDispatcher {
         Lib.current.addChild(this.layout.content);
         displayPartById(0);
     }
+
 
     /**
     * Display a graphic representation of the given part

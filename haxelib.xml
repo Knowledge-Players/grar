@@ -4,7 +4,7 @@
     <tag v="nme"/>
     <tag v="cpp"/>
     <description>GRAR is a powerful framework designed for training applications</description>
-    <version name="0.2">Minors Fixes and new API doc</version>
+    <version name="0.5">New activities, more stable</version>
 	<depends name="nme"/>
 	<depends name="actuate"/>
 	<depends name="tilelayer"/>

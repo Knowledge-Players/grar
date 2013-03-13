@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.event.LocaleEvent;
+import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.Game;
 import nme.events.Event;
 import nme.text.TextField;
@@ -20,6 +22,7 @@ class LayoutManager {
     * Reference of the current game
     **/
     public var game (default, default): Game;
+    private var layoutNode: Fast;
 
     private var layouts: Hash<Layout>;
 
@@ -47,14 +50,27 @@ class LayoutManager {
     {
 
         var fastXml = new Fast(xml);
-        var layoutNode: Fast = fastXml.node.Layouts;
+        layoutNode = fastXml.node.Layouts;
+        loadInterfaceXml(layoutNode);
+
+
+    }
+
+    public function loadInterfaceXml(_xml:Fast):Void{
+            Lib.trace(_xml.att.text);
+            Lib.trace(Localiser.instance.currentLocale);
+            Localiser.instance.addEventListener(LocaleEvent.LOCALE_LOADED,onLocaleLoaded);
+            Localiser.instance.setLocalisationFile(_xml.att.text);
+    }
+
+    public function onLocaleLoaded(e:Event):Void{
+
         for(lay in layoutNode.elements){
 
             var layout: Layout = new Layout(lay);
 
             layouts.set(layout.name, layout);
         }
-
     }
 
     /**

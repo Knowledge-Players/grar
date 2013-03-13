@@ -94,9 +94,11 @@ class Localiser extends EventDispatcher {
         }
     }
 
-    // Private
+    /**
+    * Set File of localisation
+    **/
 
-    private function setLocalisationFile(path: String): Void
+    public function setLocalisationFile(path: String): Void
     {
         var fullPath = path.split("/");
 
@@ -110,7 +112,7 @@ class Localiser extends EventDispatcher {
         localisation.addEventListener(LocaleEvent.LOCALE_LOADED, onLocaleComplete);
         localisation.setLocaleFile(localePath.toString());
     }
-
+    // Private
     private function onLocaleComplete(e: LocaleEvent): Void
     {
         dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));

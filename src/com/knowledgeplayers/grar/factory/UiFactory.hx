@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.factory;
 
+import nme.filters.DropShadowFilter;
+import nme.Lib;
+import nme.filters.BitmapFilter;
 import nme.geom.Point;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import nme.events.EventDispatcher;
@@ -115,11 +118,26 @@ class UiFactory {
         var text = new ScrollPanel(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height));
         text.x = Std.parseFloat(xml.att.x);
         text.y = Std.parseFloat(xml.att.y);
-       // text.content = KpTextDownParser.parse(xml.att.ref);
 
         if(xml.has.background)
             text.setBackground(xml.att.background);
         return text;
+    }
+
+    public static function createFilterFromXml(xml:Fast):BitmapFilter
+    {
+        var filterNode = Std.string(xml.att.filter).split(":");
+
+        var filter:BitmapFilter =
+        switch(Std.string(filterNode[0]).toLowerCase()){
+            case "dropshadow":
+            var params = Std.string(filterNode[1]).split(",");
+            new DropShadowFilter(Std.parseFloat(params[0]),Std.parseFloat(params[1]),Std.parseInt(params[2]),Std.parseFloat(params[3]),Std.parseFloat(params[4]),Std.parseFloat(params[5]));
+
+        }
+
+        return filter;
+
     }
 
     /**

@@ -234,6 +234,16 @@ class KpGame extends EventDispatcher, implements Game {
     private function onDisplayLoaded(e:Event = null):Void
     {
         var displayNode:Fast = structureXml.node.Grar.node.Display;
+        var parametersNode:Fast = structureXml.node.Grar.node.Parameters;
+        var displayNode:Fast = structureXml.node.Grar.node.Display;
+
+        mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
+        title = parametersNode.node.Title.innerData;
+        state = parametersNode.node.State.innerData;
+
+        initTracking();
+        XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
+
         UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
 
         //TO DO : CHANGE THE TIMER BY SOMETHING CLEANER\\
@@ -247,15 +257,15 @@ class KpGame extends EventDispatcher, implements Game {
         var parametersNode:Fast = structureXml.node.Grar.node.Parameters;
         var displayNode:Fast = structureXml.node.Grar.node.Display;
 
-        mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
-        title = parametersNode.node.Title.innerData;
-        state = parametersNode.node.State.innerData;
+        //mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
+        // title = parametersNode.node.Title.innerData;
+        //state = parametersNode.node.State.innerData;
 
-        initTracking();
+        //initTracking();
 
 
 
-        XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
+
 
         // Load styles
         StyleParser.instance.parse(Assets.getText(displayNode.node.Style.att.file));

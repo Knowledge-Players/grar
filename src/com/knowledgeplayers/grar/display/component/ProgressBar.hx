@@ -6,7 +6,7 @@ import nme.display.Sprite;
 class ProgressBar extends Sprite{
 
     private var colorProgress:Int;
-    public function new(game: Game):Void{
+    public function new():Void{
         super();
 
     }

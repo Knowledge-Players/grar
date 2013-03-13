@@ -1,6 +1,11 @@
 package com.knowledgeplayers.grar.display.layout;
 
 
+import com.knowledgeplayers.grar.localisation.Localiser;
+import com.knowledgeplayers.grar.util.XmlLoader;
+import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.display.style.KpTextDownParser;
+import aze.display.TileSprite;
 import com.eclecticdesignstudio.motion.easing.Quart;
 import com.eclecticdesignstudio.motion.Actuate;
 import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
@@ -23,6 +28,7 @@ class Zone extends Sprite {
     private var zoneWidth: Float;
     private var zoneHeight: Float;
     private var menu:MenuDisplay;
+    private var layer:TileLayer;
 
     public function new(_width: Float, _height: Float): Void
     {
@@ -32,15 +38,19 @@ class Zone extends Sprite {
         zoneHeight = _height;
     }
 
-
     public function init(_zone: Fast): Void
     {
+        if(_zone.has.text)
+            {
+                Lib.trace(Localiser.instance.currentLocale);
+                //XmlLoader.load();
+            }
         if(_zone.has.bgColor)
             DisplayUtils.initSprite(this, zoneWidth, zoneHeight, Std.parseInt(_zone.att.bgColor));
         else
             DisplayUtils.initSprite(this, zoneWidth, zoneHeight);
         if(_zone.has.ref){
-            var layer = new TileLayer(UiFactory.tilesheet);
+            layer = new TileLayer(UiFactory.tilesheet);
 
             ref = _zone.att.ref;
             dispatchEvent(new LayoutEvent(LayoutEvent.NEW_ZONE, ref, this));
@@ -48,31 +58,12 @@ class Zone extends Sprite {
 
             for(element in _zone.elements){
                 switch(element.name.toLowerCase()){
-                    case "background": DisplayUtils.setBackground(element.att.src, this);
-                    case "image": layer.addChild(UiFactory.createImageFromXml(element));
-                    case "text": addChild(UiFactory.createTextFromXml(element));
-                    case "button":
-                        {
-                            var bt:DefaultButton= UiFactory.createButtonFromXml(element);
-                            addChild(bt);
-                            if(element.att.type=="event")
-                                {
-
-                                    cast(bt,CustomEventButton).addEventListener(element.att.action,onActionEvent);
-
-                                }
-                        }
-                    case "progressbar": var progress = new ProgressBar(LayoutManager.instance.game);
-                        progress.init(element);
-                        addChild(progress);
-                    case "menu": menu = new MenuDisplay(LayoutManager.instance.game);
-                        menu.init(element);
-                        menu.transitionIn = element.att.transitionIn;
-                        menu.transitionOut = element.att.transitionOut;
-                        menu.x= Std.parseFloat(element.att.x);
-                        menu.y= Std.parseFloat(element.att.y);
-
-                        addChild(menu);
+                    case "background": createBackground(element);
+                    case "image": createImage(element);
+                    case "text":createText(element);
+                    case "button": createButton(element);
+                    case "progressbar": createProgressBar(element);
+                    case "menu":createMenu(element);
                 }
             }
 
@@ -114,17 +105,97 @@ class Zone extends Sprite {
         }
     }
 
-    private function onActionEvent(e:Event):Void{
-       switch(e.type){
+    public function createButton(_child:Fast):Void{
 
-           case "open_menu":
+        var button: DefaultButton = null;
 
-               TweenManager.applyTransition(menu,menu.transitionIn);
 
-       }
+        button = UiFactory.createButtonFromXml(_child);
+        if(_child.att.type=="event")
+        {
+            cast(button,CustomEventButton).addEventListener(_child.att.action,onActionEvent);
+        }
+        addChild(button);
+    }
+
+    public function createImage(imageNode: Fast): Void
+    {
+        var image = UiFactory.createImageFromXml(imageNode);
+        layer.addChild(image);
+
 
     }
 
+    private function createHeader():Void{
+
+    }
+    private function createProgressBar(element:Fast):Void{
+        var progress = new ProgressBar();
+        progress.init(element);
+        addChild(progress);
+    }
+
+    private function createText(element:Fast):Void{
+        var textF = UiFactory.createTextFromXml(element);
+
+        textF.content = KpTextDownParser.parse(Localiser.instance.getItemContent(element.att.content));
+
+        addChild(textF);
+
+
+    }
+
+    public function createBackground(bkgNode:Fast,?_container:Sprite): Sprite{
+
+        if (_container == null)
+        {
+            _container = new Sprite();
+            addChild(_container);
+        }
+
+        var background = new Sprite();
+
+        var color:Int;
+        if (bkgNode.has.color)
+            color=Std.parseInt(bkgNode.att.color);
+        else
+            color=Std.parseInt("0xFFFFFF");
+
+
+
+        background.graphics.beginFill(color);
+        background.graphics.drawRect(Std.parseFloat(bkgNode.att.x),Std.parseFloat(bkgNode.att.y),Std.parseFloat(bkgNode.att.width),Std.parseFloat(bkgNode.att.height));
+        background.graphics.endFill();
+        if(bkgNode.has.filter){
+            _container.filters=[UiFactory.createFilterFromXml(bkgNode)];
+        }
+
+        _container.addChild(background);
+
+        return _container;
+
+    }
+
+    public function createMenu(element:Fast):Void{
+
+        menu = new MenuDisplay(Std.parseFloat(element.att.width),Std.parseFloat(element.att.height));
+        menu.initMenu(element);
+        menu.transitionIn = element.att.transitionIn;
+        menu.transitionOut = element.att.transitionOut;
+        menu.x= Std.parseFloat(element.att.x);
+        menu.y= Std.parseFloat(element.att.y);
+
+        addChild(menu);
+    }
+
+
+
+    public function onActionEvent(e:Event):Void{
+       switch(e.type){
+           case "open_menu":TweenManager.applyTransition(menu,menu.transitionIn);
+       }
+
+    }
 
     private function initSize(sizes: String, maxSize: Float): Array<Dynamic>
     {
