@@ -3,3 +3,8 @@
 *.iml
 .idea
 include.nmml
+out/
+test/*
+!test/test
+!test/runTests.sh
+sample/bin/
