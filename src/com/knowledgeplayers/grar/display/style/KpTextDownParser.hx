@@ -199,19 +199,13 @@ class KpTextDownParser {
 
         tf.text = substring;
 
-        /*if(tf.width>widthTF){
-            tf.wordWrap = true;
-            tf.width = 960;
-
-        }*/
-
-        /* Lib.trace(tf.width);
-         Lib.trace(tf.text);
-         Lib.trace(widthTF);*/
-        if(hasBold)
-            tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName + "bold"), regexBold.matchedPos().pos, regexBold.matchedPos().pos + regexBold.matchedPos().len - 2);
+        if(hasBold){
+            Lib.trace("style: "+styleName);
+            styleName = StringTools.replace(styleName, "-", "");
+            tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName + "-bold"), regexBold.matchedPos().pos, regexBold.matchedPos().pos + regexBold.matchedPos().len - 2);
+        }
         if(hasItalic)
-            tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName + "italic"), regexIta.matchedPos().pos, regexIta.matchedPos().pos + regexIta.matchedPos().len - 2);
+            tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName + "-italic"), regexIta.matchedPos().pos, regexIta.matchedPos().pos + regexIta.matchedPos().len - 2);
 
         return tf;
     }

@@ -152,7 +152,7 @@ class LoadData extends EventDispatcher {
                                 arrayOfUrlImgs.push(nd.get("background"));
                         }
                     }
-                    if(nd.exists("buttonIcon")){
+                    if(nd.exists("buttonIcon") && nd.get("buttonIcon").indexOf(".")>0){
                         arrayOfUrlImgs.push(nd.get("buttonIcon"));
                     }
                 }

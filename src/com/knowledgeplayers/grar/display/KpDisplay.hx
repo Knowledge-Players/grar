@@ -197,8 +197,10 @@ class KpDisplay extends Sprite {
 
     private function initDisplayObject(display:DisplayObject, node:Fast, ?transition:String):Void
     {
-        display.x = Std.parseFloat(node.att.x);
-        display.y = Std.parseFloat(node.att.y);
+        if(node.has.x)
+            display.x = Std.parseFloat(node.att.x);
+        if(node.has.y)
+            display.y = Std.parseFloat(node.att.y);
 
         if(node.has.width)
             display.width = Std.parseFloat(node.att.width);

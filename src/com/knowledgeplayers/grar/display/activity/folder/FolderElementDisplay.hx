@@ -38,8 +38,6 @@ class FolderElementDisplay extends Sprite {
     public var origin (default, default):Point;
 
     private var shadows:Hash<DropShadowFilter>;
-    private var btIcon:String;
-    private var btPos:Point;
     private var originWidth:Float;
     private var originHeight:Float;
     /**
@@ -49,7 +47,7 @@ class FolderElementDisplay extends Sprite {
     * @param height : Height of the element
 **/
 
-    public function new(model:FolderElement, width:Float, height:Float, background:BitmapData, ?buttonIcon:String, ?buttonPos:Point)
+    public function new(model:FolderElement, width:Float, height:Float, background:BitmapData, ?buttonIcon:BitmapData, ?buttonPos:Point)
     {
         super();
         this.model = model;
@@ -57,14 +55,12 @@ class FolderElementDisplay extends Sprite {
         originHeight = height;
         text = new ScrollPanel(width, height);
         buttonMode = true;
-        btIcon = buttonIcon;
-        btPos = buttonPos;
 
         shadows = new Hash<DropShadowFilter>();
         shadows.set("down", new DropShadowFilter(10, 45, 0x000000, 0.3, 10, 10));
         shadows.set("up", new DropShadowFilter(15, 45, 0x000000, 0.2, 10, 10));
 
-        var localizedText = Localiser.instance.getItemContent(model.content + "_title");
+        var localizedText = Localiser.instance.getItemContent(model.content + "_front");
         text.setContent(KpTextDownParser.parse(localizedText));
         var bkg = new Bitmap(background);
         text.x = bkg.width / 2 - text.width / 2;
@@ -74,21 +70,18 @@ class FolderElementDisplay extends Sprite {
 
         addChild(text);
 
-        if(btIcon != null){
-            var icon = cast(LoadData.getInstance().getElementDisplayInCache(btIcon), Bitmap);
+        if(buttonIcon != null){
+            var icon = new Bitmap(buttonIcon);
             var button = new SimpleButton(icon, icon, icon, icon);
             button.addEventListener(MouseEvent.CLICK, onPlusClick);
-            button.x = btPos.x;
-            button.y = btPos.y;
+            button.x = buttonPos.x;
+            button.y = buttonPos.y;
             addChild(button);
         }
-        //else
-        //    addEventListener(MouseEvent.CLICK, onPlusClick);
 
         addEventListener(MouseEvent.MOUSE_DOWN, onDown);
         addEventListener(MouseEvent.MOUSE_UP, onUp);
         addEventListener(Event.ADDED_TO_STAGE, onAdd);
-
     }
 
     public function blockElement():Void
@@ -173,14 +166,23 @@ class FolderElementDisplay extends Sprite {
 
     private function onPlusClick(ev:MouseEvent):Void
     {
-        // TODO modifier quand la grid sera propre
         var popUp = cast(parent, FolderDisplay).popUp;
-        if(!popUp.visible){
+        if(!popUp.sprite.visible){
             var localizedText = Localiser.instance.getItemContent(model.content);
-            popUp.addChild(KpTextDownParser.parse(localizedText));
-            parent.setChildIndex(popUp, parent.numChildren - 1);
-            popUp.visible = true;
-            Actuate.tween(popUp, 0.5, {alpha: 1});
+            var content = KpTextDownParser.parse(localizedText);
+            content.x = popUp.contentPos.x;
+            content.y = popUp.contentPos.y;
+            popUp.sprite.addChild(content);
+            localizedText = Localiser.instance.getItemContent(model.content+"_title");
+            var title = KpTextDownParser.parse(localizedText);
+            title.x = popUp.titlePos.x;
+            title.y = popUp.titlePos.y;
+            popUp.sprite.addChild(title);
+            /*popUp.sprite.x = x+width/2;
+            popUp.sprite.y = y+height/2;*/
+            parent.setChildIndex(popUp.sprite, parent.numChildren - 1);
+            popUp.sprite.visible = true;
+            Actuate.tween(popUp.sprite, 0.5, {alpha: 1});
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import nme.display.BitmapData;
+import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.localisation.Localiser;
@@ -39,7 +41,7 @@ class FolderDisplay extends ActivityDisplay {
     /**
     * PopUp where additional text will be displayed
     **/
-    public var popUp (default, default):Sprite;
+    public var popUp (default, default):{sprite: Sprite, titlePos: Point, contentPos: Point};
 
     /**
     * Grid to organize drag & drop display
@@ -51,7 +53,7 @@ class FolderDisplay extends ActivityDisplay {
     **/
     public var targetSpritesheet (default, default):Bool = false;
 
-    private var elementTemplate:{background:BitmapData, buttonIcon:String, buttonPos:Point};
+    private var elementTemplate:{background:BitmapData, buttonIcon:BitmapData, buttonPos:Point};
 
     private var elementsArray:Array<FolderElementDisplay>;
 
@@ -65,7 +67,6 @@ class FolderDisplay extends ActivityDisplay {
     {
         super();
         grids = new Hash<Grid>();
-        popUp = new Sprite();
         targets = new Array<{obj:DisplayObject, name:String, elem:FolderElementDisplay}>();
         elementsArray = new Array<FolderElementDisplay>();
     }
@@ -137,42 +138,62 @@ class FolderDisplay extends ActivityDisplay {
                 targets.push({obj: target, name: elemNode.att.ref, elem: null});
 
             case "popup" :
+                var popUpSprite = new Sprite();
+                var titlePos = new Point(0,0);
+                var contentPos = titlePos;
                 if(elemNode.has.src)
-                    popUp.addChild(cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.src), Bitmap));
+                    popUpSprite.addChild(cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.src), Bitmap));
                 else{
                     var layer = new TileLayer(spritesheets.get(elemNode.att.spritesheet));
                     layer.addChild(new TileSprite(elemNode.att.id));
-                    popUp.addChild(layer.view);
+                    popUpSprite.addChild(layer.view);
                     layer.render();
                 }
                 if(elemNode.has.buttonIcon){
-                    var icon = cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.buttonIcon), Bitmap);
+                    var buttonIcon: BitmapData;
+                    if(elemNode.att.buttonIcon.indexOf(".") < 0){
+                        buttonIcon = DisplayUtils.getBitmapDataFromLayer(new TileLayer(spritesheets.get(elemNode.att.spritesheet)), elemNode.att.buttonIcon);
+                    }
+                    else
+                        buttonIcon = cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.buttonIcon), Bitmap).bitmapData;
+                    var icon = new Bitmap(buttonIcon);
                     var button = new SimpleButton(icon, icon, icon, icon);
                     button.x = Std.parseFloat(elemNode.att.buttonX);
                     button.y = Std.parseFloat(elemNode.att.buttonY);
                     button.addEventListener(MouseEvent.CLICK, onClosePopUp);
-                    popUp.addChild(button);
+                    popUpSprite.addChild(button);
                 }
-
-                popUp.visible = false;
-                popUp.alpha = 0;
-                addElement(popUp, elemNode);
+                if(elemNode.has.titlePos){
+                    var pos = elemNode.att.titlePos.split(";");
+                    titlePos = new Point(Std.parseFloat(pos[0]), Std.parseFloat(pos[1]));
+                }
+                if(elemNode.has.contentPos){
+                    var pos = elemNode.att.contentPos.split(";");
+                    contentPos = new Point(Std.parseFloat(pos[0]), Std.parseFloat(pos[1]));
+                }
+                popUpSprite.visible = false;
+                popUpSprite.alpha = 0;
+                addElement(popUpSprite, elemNode);
+                addChild(popUpSprite);
+                popUp = {sprite: popUpSprite, titlePos: titlePos, contentPos: contentPos};
 
             case "element" :
                 var background:BitmapData;
                 var buttonIcon = null;
                 var buttonPos = null;
+                var layer = null;
                 if(elemNode.has.src)
-                    background = cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.buttonIcon), Bitmap).bitmapData;
+                    background = cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.src), Bitmap).bitmapData;
                 else{
-                    var layer = new TileLayer(spritesheets.get(elemNode.att.spritesheet));
-                    var tile = new TileSprite(elemNode.att.id);
-                    layer.addChild(tile);
-                    layer.render();
-                    background = tile.bmp.bitmapData;
+                    layer = new TileLayer(spritesheets.get(elemNode.att.spritesheet));
+                    background = DisplayUtils.getBitmapDataFromLayer(layer, elemNode.att.id);
                 }
                 if(elemNode.has.buttonIcon){
-                    buttonIcon = elemNode.att.buttonIcon;
+                    if(elemNode.att.buttonIcon.indexOf(".") < 0){
+                        buttonIcon = DisplayUtils.getBitmapDataFromLayer(layer, elemNode.att.buttonIcon);
+                    }
+                    else
+                        buttonIcon = cast(LoadData.instance.getElementDisplayInCache(elemNode.att.buttonIcon), Bitmap).bitmapData;
                     buttonPos = new Point(Std.parseFloat(elemNode.att.buttonX), Std.parseFloat(elemNode.att.buttonY));
                 }
                 elementTemplate = {background: background, buttonIcon: buttonIcon, buttonPos: buttonPos};
@@ -206,7 +227,7 @@ class FolderDisplay extends ActivityDisplay {
 
     private function onClosePopUp(ev:MouseEvent):Void
     {
-        popUp.removeChildAt(popUp.numChildren - 1);
-        popUp.visible = false;
+        popUp.sprite.removeChildAt(popUp.sprite.numChildren - 1);
+        popUp.sprite.visible = false;
     }
 }

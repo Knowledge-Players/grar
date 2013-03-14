@@ -1,8 +1,11 @@
 package com.knowledgeplayers.grar.util;
 
+import nme.display.BitmapData;
 import nme.Assets;
 import nme.display.Bitmap;
 import nme.display.Sprite;
+import aze.display.TileSprite;
+import aze.display.TileLayer;
 
 /**
  * Utility class for display
@@ -58,5 +61,13 @@ class DisplayUtils {
         sprite.graphics.beginFill(color);
         sprite.graphics.drawRect(0, 0, width, height);
         sprite.graphics.endFill();
+    }
+
+    public static function getBitmapDataFromLayer(layer: TileLayer, tileId: String):BitmapData
+    {
+        var tile = new TileSprite(tileId);
+        layer.addChild(tile);
+        layer.render();
+        return tile.bmp.bitmapData;
     }
 }
