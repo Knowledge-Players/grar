@@ -126,9 +126,11 @@ class MenuDisplay extends Zone {
         for (child in display.elements)
             {
                 switch(child.name.toLowerCase()){
-                    case "button":createButton(child);
-                    case "text":createText(child);
                     case "background":createBackground(child);
+                    case "button":createButton(child);
+                    case "image": createImage(child);
+                    case "text":createText(child);
+
                 }
             }
 
@@ -138,9 +140,11 @@ class MenuDisplay extends Zone {
             var partYOffset = Std.parseFloat(display.node.Part.att.yOffset);
             for(child in display.node.Part.elements){
                 switch(child.name.toLowerCase()){
+                    case "background":createBackground(child);
                     case "button": buttonPartPrototype = child;
                     case "image": createImage(child);
-                    case "background":createBackground(child);
+                    case "text":createText(child);
+
 
                 }
             }
@@ -151,17 +155,19 @@ class MenuDisplay extends Zone {
             var activityYOffset = Std.parseFloat(display.node.Activity.att.yOffset);
             for(child in display.node.Activity.elements){
                 switch(child.name.toLowerCase()){
+                    case "background":createBackground(child);
                     case "button": buttonActivityPrototype = child;
                     case "image": createImage(child);
-                    case "background":createBackground(child);
+                    case "text":createText(child);
+
                 }
             }
         }
 
-       /* if(typeInt & 1 == 1){
+        if(typeInt & 1 == 1){
 
             parts = GameManager.instance.game.getAllParts();
-
+            Lib.trace("parts : "+parts);
             if(((typeInt & (1 << 1)) >> 1) == 1){
                 // Both
                 activities = GameManager.instance.game.getAllActivities();
@@ -187,7 +193,7 @@ class MenuDisplay extends Zone {
             for(activity in activities){
                 addButton(false, activity.name);
             }
-        }*/
+        }
 
         if(orientation == "vertical"){
             var offset: Float = 0;

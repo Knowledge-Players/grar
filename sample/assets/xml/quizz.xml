@@ -5,6 +5,7 @@
         <Answer ref="default" content="a1_1"/>
         <Answer ref="default" content="a1_2" isAnswer="true"/>
         <Answer ref="default" content="a1_3"/>
+
     </Round>
     <Round buttonRef="validate" buttonContent="validateButton" groupRef="default">
         <Question ref="question" content="q2"/>
@@ -12,4 +13,5 @@
         <Answer ref="default" content="a2_2"/>
         <Answer ref="default" content="a2_3"/>
     </Round>
+    <Button ref="validate" content="validationButton"/>
 </Quizz>

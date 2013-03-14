@@ -91,6 +91,7 @@ class UiFactory {
 
     public static function createButtonFromXml(xml:Fast):DefaultButton
     {
+
         var x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
         var y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
         var scaleX = xml.has.scaleX ? Std.parseFloat(xml.att.scaleX) : 1;

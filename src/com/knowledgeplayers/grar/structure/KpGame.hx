@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.grar.display.GameManager;
 import com.eclecticdesignstudio.motion.Actuate;
 import nme.events.TimerEvent;
 import nme.utils.Timer;
@@ -226,6 +227,7 @@ class KpGame extends EventDispatcher, implements Game {
     private function initLayout(xml:Xml):Void
     {
         LayoutManager.instance.game = this;
+        GameManager.instance.game = this;
         LayoutManager.instance.parseXml(xml);
     }
 
@@ -253,7 +255,7 @@ class KpGame extends EventDispatcher, implements Game {
 
     private function onTimeComplete():Void{
 
-        Lib.trace("onTimeComplete");
+
         var parametersNode:Fast = structureXml.node.Grar.node.Parameters;
         var displayNode:Fast = structureXml.node.Grar.node.Display;
 

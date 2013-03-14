@@ -57,8 +57,7 @@ class LayoutManager {
     }
 
     public function loadInterfaceXml(_xml:Fast):Void{
-            Lib.trace(_xml.att.text);
-            Lib.trace(Localiser.instance.currentLocale);
+
             Localiser.instance.addEventListener(LocaleEvent.LOCALE_LOADED,onLocaleLoaded);
             Localiser.instance.setLocalisationFile(_xml.att.text);
     }
