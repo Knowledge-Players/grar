@@ -58,7 +58,7 @@ class ScaleNine extends Sprite {
 
         var scaleNineGrid:ScaleNineGrid = new ScaleNineGrid(3, 3);
 
-        addChild(scaleNineGrid.container);
+        //addChild(scaleNineGrid.container);
 
         for(i in 0...arrayTile.length){
             tileGroup.addChild(arrayTile[i]);
@@ -67,7 +67,7 @@ class ScaleNine extends Sprite {
 
         layer.addChild(tileGroup);
 
-        scaleNineGrid.container.addChild(layer.view);
+        //scaleNineGrid.container.addChild(layer.view);
 
         for(j in 0...arrayTile.length){
 
@@ -76,32 +76,6 @@ class ScaleNine extends Sprite {
         scaleNineGrid.initMatrice(arrayTile, bkg_width, bkg_height);
 
         middleTile = img5;
-
-        /*img1.x = 0;
-        img2.x = img1.x+img1.width/2+img2.width/2;
-        img3.x = img2.x+img2.width/2+img3.width/2;
-
-        img4.x = 0;
-        img5.x = img4.x+img4.width/2+img5.width/2;
-        img6.x = img5.x+img5.width/2+img6.width/2;
-
-        img7.x = 0;
-        img8.x = img7.x+img7.width/2+img8.width/2;
-        img9.x = img8.x+img8.width/2+img9.width/2;
-
-        img1.y = 0;
-        img2.y = 0;
-        img3.y = 0;
-
-        img4.y = img1.y+img1.height/2+img4.height/2;
-        img5.y = img4.y;
-        img6.y = img4.y;
-
-        img7.y = img4.y+img4.height/2+img7.height/2;
-        img8.y = img7.y;
-        img9.y = img7.y;
-
-        */
 
         layer.render();
 

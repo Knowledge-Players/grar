@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.cards;
 
+import Std;
+import Std;
 import nme.Lib;
 import aze.display.TileClip;
 import aze.display.TileLayer;
@@ -81,16 +83,18 @@ class CardsDisplay extends ActivityDisplay {
     override private function onModelComplete(e:LocaleEvent):Void
     {
 
-        addChild(grids.get("dispatch").container);
+        //addChild(grids.get("dispatch").container);
 
         for(i in 0...cast(model, Cards).elements.length){
             var elementDisplay = new CardsElementDisplay(cast(model, Cards).elements[i].content, grids.get("dispatch").cellSize.width, grids.get("dispatch").cellSize.height, elementTemplate.background);
             elementsArray.push(elementDisplay);
             grids.get("dispatch").add(elementDisplay, false);
-            grids.get("dispatch").container.addChild(elementDisplay);
+            // TODO Container
+            //grids.get("dispatch").container.addChild(elementDisplay);
         }
 
-        grids.get("dispatch").alignContainer(grids.get("dispatch").container, background);
+        // TODO Container
+        //grids.get("dispatch").alignContainer(grids.get("dispatch").container, background);
 
         super.onModelComplete(e);
 
@@ -115,7 +119,7 @@ class CardsDisplay extends ActivityDisplay {
                 flipClip.loop = false;
                 flipLayer.addChild(flipClip);
                 addElement(flipLayer.view, elemNode, false);
-            case "grid" : var grid = new Grid(Std.parseInt(elemNode.att.numRow), Std.parseInt(elemNode.att.numCol), elemNode.att.cellWidth, elemNode.att.cellHeight, Std.parseFloat(elemNode.att.gapCol), Std.parseFloat(elemNode.att.gapRow), Std.string(elemNode.att.alignX), Std.string(elemNode.att.alignY));
+            case "grid" : var grid = new Grid(Std.parseInt(elemNode.att.numRow), Std.parseInt(elemNode.att.numCol), Std.parseFloat(elemNode.att.cellWidth), Std.parseFloat(elemNode.att.cellHeight), Std.parseFloat(elemNode.att.gapCol), Std.parseFloat(elemNode.att.gapRow), Std.string(elemNode.att.alignX), Std.string(elemNode.att.alignY));
                 grid.x = Std.parseFloat(elemNode.att.x);
                 grid.y = Std.parseFloat(elemNode.att.y);
                 grids.set(elemNode.att.ref, grid);
@@ -139,7 +143,8 @@ class CardsDisplay extends ActivityDisplay {
         setChildIndex(flipLayer.view, numChildren - 1);
         flipDirection = -1;
         addEventListener(Event.ENTER_FRAME, onEnterFrameClip);
-        Actuate.tween(flipLayer.view, 0.8, {x: grids.get("dispatch").container.x + cardInProgress.x + cardInProgress.width / 2, y:grids.get("dispatch").container.y + cardInProgress.y + cardInProgress.height / 2}).onComplete(launchCard);
+        // TODO Container
+        //Actuate.tween(flipLayer.view, 0.8, {x: grids.get("dispatch").container.x + cardInProgress.x + cardInProgress.width / 2, y:grids.get("dispatch").container.y + cardInProgress.y + cardInProgress.height / 2}).onComplete(launchCard);
     }
 
     private function launchCard()
@@ -153,8 +158,9 @@ class CardsDisplay extends ActivityDisplay {
         if(nextCard != null){
             nextCard.visible = false;
             cardInProgress = nextCard;
-            flipLayer.view.x = grids.get("dispatch").container.x + cardInProgress.x + cardInProgress.width / 2;
-            flipLayer.view.y = grids.get("dispatch").container.y + cardInProgress.y + cardInProgress.height / 2;
+            // TODO Container
+            /*flipLayer.view.x = grids.get("dispatch").container.x + cardInProgress.x + cardInProgress.width / 2;
+            flipLayer.view.y = grids.get("dispatch").container.y + cardInProgress.y + cardInProgress.height / 2;*/
             setChildIndex(flipLayer.view, numChildren - 1);
             flipLayer.view.visible = true;
             flipDirection = 1;

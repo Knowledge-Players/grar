@@ -23,11 +23,10 @@ class Grid {
     public var alignY (default, default):String;
     public var gapX(default, default):Float = 0;
     public var gapY(default, default):Float = 0;
-    public var container:Sprite;
 
     private var nextCell:Point;
 
-    public function new(numRow:Int, numCol:Int, ?cellWidth:String, ?cellHeight:String, ?gapCol:Float, ?gapRow:Float, ?_alignX:String, ?_alignY:String, ?img:String = "")
+    public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?_alignX:String, ?_alignY:String, ?img:String = "")
     {
         this.numRow = numRow;
         this.numCol = numCol;
@@ -35,17 +34,8 @@ class Grid {
         this.gapRow = gapRow;
         this.alignX = _alignX;
         this.alignY = _alignY;
-        container = new Sprite();
 
-        if(cellWidth != "" && cellHeight != ""){
-            cellSize = {width: Std.parseFloat(cellWidth), height: Std.parseFloat(cellHeight)};
-        }
-        else if(img != ""){
-            cellSize = {width: cast(LoadData.getInstance().getElementDisplayInCache(img), Bitmap).width, height: cast(LoadData.getInstance().getElementDisplayInCache(img), Bitmap).height};
-        }
-        else{
-            cellSize = {width: 0, height: 0};
-        }
+        cellSize = {width: cellWidth, height: cellHeight};
 
         // Initialize nextCell to (0;0)
         empty();
@@ -82,11 +72,11 @@ class Grid {
         if(cellSize.width == 0){
             cellSize.width = object.width;
         }
-        if(cellSize.width == 0){
+        if(cellSize.height == 0){
             cellSize.height = object.height;
         }
-        if(nextCell.x != 0)gapX += gapRow;
-        if(nextCell.y != 0)gapY += gapCol;
+        //if(nextCell.x != 0)gapX += gapRow;
+        //if(nextCell.y != 0)gapY += gapCol;
 
         var targetX = x + nextCell.x * cellSize.width + gapX;
         var targetY = y + nextCell.y * cellSize.height + gapY;

@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import Std;
+import Std;
 import nme.display.BitmapData;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
@@ -102,14 +104,14 @@ class FolderDisplay extends ActivityDisplay {
 
     override private function onModelComplete(e:LocaleEvent):Void
     {
-        addChild(grids.get("drag").container);
+        //addChild(grids.get("drag").container);
 
         for(elem in cast(model, Folder).elements){
             var elementDisplay:FolderElementDisplay;
-            if(elementTemplate.buttonIcon != null)
+            //if(elementTemplate.buttonIcon != null)
                 elementDisplay = new FolderElementDisplay(elem, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
-            else
-                elementDisplay = new FolderElementDisplay(elem, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height, elementTemplate.background);
+            //else
+                //elementDisplay = new FolderElementDisplay(elem, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height, elementTemplate.background);
             elementsArray.push(elementDisplay);
             grids.get("drag").add(elementDisplay, false);
             addChild(elementDisplay);
@@ -198,7 +200,10 @@ class FolderDisplay extends ActivityDisplay {
                 }
                 elementTemplate = {background: background, buttonIcon: buttonIcon, buttonPos: buttonPos};
 
-            case "grid" : var grid = new Grid(Std.parseInt(elemNode.att.numRow), Std.parseInt(elemNode.att.numCol), elemNode.att.cellWidth, elemNode.att.cellHeight, Std.parseFloat(elemNode.att.gapCol), Std.parseFloat(elemNode.att.gapRow), Std.string(elemNode.att.alignX), Std.string(elemNode.att.alignY));
+            case "grid" :
+                var cellWidth = elemNode.has.cellWidth ? Std.parseFloat(elemNode.att.cellWidth) : 0;
+                var cellHeight = elemNode.has.cellHeight ? Std.parseFloat(elemNode.att.cellHeight) : 0;
+                var grid = new Grid(Std.parseInt(elemNode.att.numRow), Std.parseInt(elemNode.att.numCol), cellWidth, cellHeight, Std.parseFloat(elemNode.att.gapCol), Std.parseFloat(elemNode.att.gapRow), Std.string(elemNode.att.alignX), Std.string(elemNode.att.alignY));
                 grid.x = Std.parseFloat(elemNode.att.x);
                 grid.y = Std.parseFloat(elemNode.att.y);
 
