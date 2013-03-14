@@ -20,13 +20,6 @@ class Folder extends Activity {
     public var targets (default, default):Array<String>;
 
     /**
-    * Mode of control.
-    * If auto, the control is done when the elemnt is drop.
-    * If end, the control is done when the activity is validated.
-    **/
-    public var controlMode (default, default):String;
-
-    /**
     * Constructor
     * @param content : Content of the activity
     **/
@@ -55,7 +48,6 @@ class Folder extends Activity {
     {
         super.parseContent(xml);
         var fast = new Fast(xml.firstElement());
-        controlMode = fast.att.controlMode.toLowerCase();
         for(element in fast.nodes.Element){
             var elem = new FolderElement(element.att.content, element.att.ref);
             if(element.has.target){

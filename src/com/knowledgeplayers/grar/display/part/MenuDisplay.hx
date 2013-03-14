@@ -167,7 +167,6 @@ class MenuDisplay extends Zone {
         if(typeInt & 1 == 1){
 
             parts = GameManager.instance.game.getAllParts();
-            Lib.trace("parts : "+parts);
             if(((typeInt & (1 << 1)) >> 1) == 1){
                 // Both
                 activities = GameManager.instance.game.getAllActivities();

@@ -133,7 +133,6 @@ class QuizzGroupDisplay extends Sprite {
             sep.x = itemDisplay.x;
             sep.y = totalYOffset;
             addChild(sep);
-            Lib.trace(totalYOffset);
             totalYOffset += yOffset + sep.height;
         }
     }

@@ -34,6 +34,7 @@ class Localiser extends EventDispatcher {
     private var introId: String;
     private var outroId: String;
     private var localisation: Localisation;
+    private var stashedLocale: Localisation;
 
     private function new()
     {
@@ -112,7 +113,19 @@ class Localiser extends EventDispatcher {
         localisation.addEventListener(LocaleEvent.LOCALE_LOADED, onLocaleComplete);
         localisation.setLocaleFile(localePath.toString());
     }
+
+    public function popLocale():Void
+    {
+        stashedLocale = localisation;
+    }
+
+    public function pushLocale():Void
+    {
+        localisation = stashedLocale;
+    }
+
     // Private
+
     private function onLocaleComplete(e: LocaleEvent): Void
     {
         dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));

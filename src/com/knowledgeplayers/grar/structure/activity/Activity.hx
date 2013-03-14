@@ -54,9 +54,10 @@ class Activity extends EventDispatcher, implements PartElement {
     public var ref (default, default):String;
 
     /**
-     * Path to the previous content file
-     */
-    private var previousContent:String;
+    * Mode of control.
+    * If end, the control is done when the activity is validated.
+    **/
+    public var controlMode (default, default):String;
 
     /**
      * True if the activity has been done
@@ -82,7 +83,7 @@ class Activity extends EventDispatcher, implements PartElement {
     public function loadActivity():Void
     {
         Localiser.instance.addEventListener(LocaleEvent.LOCALE_LOADED, onLocaleComplete);
-        previousContent = Localiser.instance.layoutPath;
+        Localiser.instance.pushLocale();
         Localiser.instance.setLayoutFile(content);
     }
 
@@ -100,7 +101,7 @@ class Activity extends EventDispatcher, implements PartElement {
     public function endActivity():Void
     {
         isEnded = true;
-        Localiser.instance.setLayoutFile(previousContent);
+        Localiser.instance.popLocale();
         dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
     }
 
@@ -157,6 +158,10 @@ class Activity extends EventDispatcher, implements PartElement {
             instructionContent = fast.att.instructionContent;
             ref = fast.att.ref;
         }
+        if(fast.has.controlMode)
+            controlMode = fast.att.controlMode.toLowerCase();
+        else
+            controlMode = "auto";
         var content;
         if(fast.node.Button.has.content)
             content = fast.node.Button.att.content;

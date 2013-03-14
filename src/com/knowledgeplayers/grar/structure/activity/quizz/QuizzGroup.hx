@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.structure.activity.quizz;
+import Math;
 import haxe.xml.Fast;
 
 /**
@@ -26,13 +27,14 @@ class QuizzGroup {
         items.add(item);
     }
 
-    public function isFullyCorrect(): Bool
+    public function getRoundScore(): Int
     {
+        var rightAnswers: Int = 0;
         for(item in items){
-            if(!item.isRightAnswered())
-                return false;
+            if(item.isRightAnswered())
+                rightAnswers++;
         }
-        return true;
+        return Math.round(rightAnswers*100/items.length);
     }
 
     /**

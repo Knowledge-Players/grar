@@ -86,8 +86,8 @@ class Quizz extends Activity {
     public function validate():Bool
     {
         // Count points
-        if(getCurrentAnswers().isFullyCorrect())
-            score++;
+        score = getCurrentAnswers().getRoundScore();
+        nme.Lib.trace("Score "+score);
 
         // Next round
         roundIndex++;

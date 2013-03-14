@@ -147,19 +147,24 @@ class QuizzDisplay extends ActivityDisplay {
 
     private function onValidation(e:MouseEvent):Void
     {
-        switch(quizz.state) {
-            case EMPTY: quizzGroups.get(quizz.getCurrentGroup()).validate();
-                setState(QuizzState.VALIDATED);
-                locked = true;
-                updateButtonText();
-            case VALIDATED: quizzGroups.get(quizz.getCurrentGroup()).correct();
-                setState(QuizzState.CORRECTED);
-                updateButtonText();
-            case CORRECTED: var isEnded = quizz.validate();
-                if(!isEnded){
-                    updateRound();
+        if(quizz.controlMode == "auto"){
+            switch(quizz.state) {
+                case EMPTY: quizzGroups.get(quizz.getCurrentGroup()).validate();
+                    setState(QuizzState.VALIDATED);
+                    locked = true;
                     updateButtonText();
-                }
+                case VALIDATED: quizzGroups.get(quizz.getCurrentGroup()).correct();
+                    setState(QuizzState.CORRECTED);
+                    updateButtonText();
+                case CORRECTED: var isEnded = quizz.validate();
+                    if(!isEnded){
+                        updateRound();
+                        updateButtonText();
+                    }
+            }
+        }
+        else{
+            quizz.validate();
         }
     }
 
