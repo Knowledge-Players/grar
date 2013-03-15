@@ -18,19 +18,19 @@ class LoadData extends EventDispatcher {
     /**
      * Instance of the LoadData
      */
-    public static var instance (getInstance, null): LoadData;
+    public static var instance (getInstance, null):LoadData;
 
-    private var cacheElementsDisplay: Hash<DisplayObject>;
-    private var arrayOfUrlImgs: Array<String>;
-    private var elementBitmap: Bitmap;
-    private var mloader: Loader;
-    private var z: Float;
-    private var nameElementDisplay: String;
-    private var eventCaller: String;
-    private var numData: Float = 0;
-    private var nbDatas: Float = 0;
-    private var nbXml: Float = 0;
-    private var numXml: Float = 0;
+    private var cacheElementsDisplay:Hash<DisplayObject>;
+    private var arrayOfUrlImgs:Array<String>;
+    private var elementBitmap:Bitmap;
+    private var mloader:Loader;
+    private var z:Float;
+    private var nameElementDisplay:String;
+    private var eventCaller:String;
+    private var numData:Float = 0;
+    private var nbDatas:Float = 0;
+    private var nbXml:Float = 0;
+    private var numXml:Float = 0;
 
     private function new()
     {
@@ -45,7 +45,7 @@ class LoadData extends EventDispatcher {
      * @return the instance of the loaderdatas
      */
 
-    public static function getInstance(): LoadData
+    public static function getInstance():LoadData
     {
         if(instance == null)
             instance = new LoadData();
@@ -56,16 +56,16 @@ class LoadData extends EventDispatcher {
     * Load all the displays of sample_structure.xml
     **/
 
-    public function loadDisplayXml(?structureXml: Xml = null): Void
+    public function loadDisplayXml(?structureXml:Xml = null):Void
     {
 
-        var arrayDisplayXml: Array<String> = new Array<String>();
+        var arrayDisplayXml:Array<String> = new Array<String>();
 
         parseChildrenXml(structureXml, arrayDisplayXml, "display");
 
         arrayDisplayXml = removeDuplicates(arrayDisplayXml);
 
-        var lgArray: Int = arrayDisplayXml.length;
+        var lgArray:Int = arrayDisplayXml.length;
         nbXml = lgArray;
 
         for(i in 0...lgArray){
@@ -80,7 +80,7 @@ class LoadData extends EventDispatcher {
     * Parse all the nodes of Xml and get the attribute needed
     **/
 
-    public function parseChildrenXml(_xml: Xml, _array: Array<String>, _att: String): Void
+    public function parseChildrenXml(_xml:Xml, _array:Array<String>, _att:String):Void
     {
 
         for(elt in _xml.elements()){
@@ -100,9 +100,9 @@ class LoadData extends EventDispatcher {
     * Remove duplicates from an Array<String>
     **/
 
-    public function removeDuplicates(ar: Array<String>): Array<String>
+    public function removeDuplicates(ar:Array<String>):Array<String>
     {
-        var result: Array<String> = ar.slice(0, ar.length);
+        var result:Array<String> = ar.slice(0, ar.length);
 
         var t;
 
@@ -120,7 +120,7 @@ class LoadData extends EventDispatcher {
         return result;
     }
 
-    private function onXmlDisplayLoaded(e: Event = null): Void
+    private function onXmlDisplayLoaded(e:Event = null):Void
     {
 
         var xmlSprite = XmlLoader.getXml(e);
@@ -128,7 +128,7 @@ class LoadData extends EventDispatcher {
 
     }
 
-    private function parseContent(content: Xml): Void
+    private function parseContent(content:Xml):Void
     {
         numXml++;
         for(node in content.elements()){
@@ -152,7 +152,7 @@ class LoadData extends EventDispatcher {
                                 arrayOfUrlImgs.push(nd.get("background"));
                         }
                     }
-                    if(nd.exists("buttonIcon") && nd.get("buttonIcon").indexOf(".")>0){
+                    if(nd.exists("buttonIcon") && nd.get("buttonIcon").indexOf(".") > 0){
                         arrayOfUrlImgs.push(nd.get("buttonIcon"));
                     }
                 }
@@ -163,7 +163,7 @@ class LoadData extends EventDispatcher {
         //Lib.trace(numXml +" -- "+nbXml);
         if(numXml == nbXml){
             arrayOfUrlImgs = removeDuplicates(arrayOfUrlImgs);
-            var lgImgsArray: Int = arrayOfUrlImgs.length;
+            var lgImgsArray:Int = arrayOfUrlImgs.length;
             nbDatas = lgImgsArray;
 
             for(i in 0...lgImgsArray){
@@ -177,7 +177,7 @@ class LoadData extends EventDispatcher {
 
     }
 
-    private function loadData(?path: String = ""): Void
+    private function loadData(?path:String = ""):Void
     {
 
         if(!checkElementsDisplayInCache(path)){
@@ -188,7 +188,7 @@ class LoadData extends EventDispatcher {
 
                     var mloader = new Loader();
                     mloader.contentLoaderInfo.addEventListener(Event.COMPLETE,onCompleteLoading);
-                    mloader.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
+                    mloader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
                     try{
                     mloader.load(urlR);
                     }
@@ -207,12 +207,12 @@ class LoadData extends EventDispatcher {
 
     }
 
-    private function onIOError(error: IOErrorEvent): Void
+    private function onIOError(error:IOErrorEvent):Void
     {
         Lib.trace("File requested doesn't exist: " + error.toString().substr(error.toString().indexOf("/")));
     }
 
-    private function onCompleteLoading(event: Event): Void
+    private function onCompleteLoading(event:Event):Void
     {
         numData++;
         var arrayName = Std.string(event.currentTarget.url).split("/");
@@ -227,7 +227,7 @@ class LoadData extends EventDispatcher {
         }
     }
 
-    private function checkElementsDisplayInCache(_name: String): Bool
+    private function checkElementsDisplayInCache(_name:String):Bool
     {
         var existInCache = false;
 
@@ -249,9 +249,9 @@ class LoadData extends EventDispatcher {
     * Get the display loaded
     **/
 
-    public function getElementDisplayInCache(_name: String): Null<DisplayObject>
+    public function getElementDisplayInCache(_name:String):Null<DisplayObject>
     {
-        var element: DisplayObject = null;
+        var element:DisplayObject = null;
         //Lib.trace("_name = "+_name);
         for(_key in cacheElementsDisplay.keys()){
             // Lib.trace("getElementDisplayInCache_key = "+_key);
