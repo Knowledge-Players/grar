@@ -14,27 +14,27 @@ class Localiser extends EventDispatcher {
     /**
      * Instance of the singleton
      */
-    public static var instance (getInstance, null): Localiser;
+    public static var instance (getInstance, null):Localiser;
 
     /**
      * Current locale
      */
-    public var currentLocale (default, setCurrentLocale): String;
+    public var currentLocale (default, setCurrentLocale):String;
 
     /**
      * Hash of all the localisations registred in the localiser
      */
-    public var localisations (default, null): Hash<String>;
+    public var localisations (default, null):Hash<String>;
 
     /**
      * Path of the structure file that describes the layout
      */
-    public var layoutPath (default, setLayoutFile): String;
+    public var layoutPath (default, setLayoutFile):String;
 
-    private var introId: String;
-    private var outroId: String;
-    private var localisation: Localisation;
-    private var stashedLocale: Localisation;
+    private var introId:String;
+    private var outroId:String;
+    private var localisation:Localisation;
+    private var stashedLocale:Localisation;
 
     private function new()
     {
@@ -46,7 +46,7 @@ class Localiser extends EventDispatcher {
      * @return the instance of the singleton
      */
 
-    public static function getInstance(): Localiser
+    public static function getInstance():Localiser
     {
         if(instance == null){
             instance = new Localiser();
@@ -60,7 +60,7 @@ class Localiser extends EventDispatcher {
      * @return the path
      */
 
-    public function setLayoutFile(path: String): String
+    public function setLayoutFile(path:String):String
     {
         layoutPath = path;
         setLocalisationFile(path);
@@ -73,7 +73,7 @@ class Localiser extends EventDispatcher {
      * @return the name of the current locale
      */
 
-    public function setCurrentLocale(locale: String): String
+    public function setCurrentLocale(locale:String):String
     {
         currentLocale = locale;
         return currentLocale;
@@ -85,7 +85,7 @@ class Localiser extends EventDispatcher {
      * @return the localised text
      */
 
-    public function getItemContent(key: String): Null<String>
+    public function getItemContent(key:String):Null<String>
     {
         if(localisation != null)
             return localisation.getItem(key);
@@ -99,11 +99,11 @@ class Localiser extends EventDispatcher {
     * Set File of localisation
     **/
 
-    public function setLocalisationFile(path: String): Void
+    public function setLocalisationFile(path:String):Void
     {
         var fullPath = path.split("/");
 
-        var localePath: StringBuf = new StringBuf();
+        var localePath:StringBuf = new StringBuf();
         for(i in 0...fullPath.length - 1){
             localePath.add(fullPath[i] + "/");
         }
@@ -114,19 +114,28 @@ class Localiser extends EventDispatcher {
         localisation.setLocaleFile(localePath.toString());
     }
 
+    /**
+    * Store the current locale
+    **/
+
     public function popLocale():Void
     {
         stashedLocale = localisation;
     }
 
+    /**
+    * Restore the previously stored locale
+    **/
+
     public function pushLocale():Void
     {
         localisation = stashedLocale;
+        stashedLocale = null;
     }
 
     // Private
 
-    private function onLocaleComplete(e: LocaleEvent): Void
+    private function onLocaleComplete(e:LocaleEvent):Void
     {
         dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));
     }

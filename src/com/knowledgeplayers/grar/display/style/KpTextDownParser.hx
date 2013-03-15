@@ -200,9 +200,10 @@ class KpTextDownParser {
         tf.text = substring;
 
         if(hasBold){
-            Lib.trace("style: "+styleName);
-            styleName = StringTools.replace(styleName, "-", "");
-            tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName + "-bold"), regexBold.matchedPos().pos, regexBold.matchedPos().pos + regexBold.matchedPos().len - 2);
+            Lib.trace("style: " + styleName);
+            if(styleName != "")
+                styleName += styleName.charAt(styleName.length - 1) == "-" ? "" : "-";
+            tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName + "bold"), regexBold.matchedPos().pos, regexBold.matchedPos().pos + regexBold.matchedPos().len - 2);
         }
         if(hasItalic)
             tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName + "-italic"), regexIta.matchedPos().pos, regexIta.matchedPos().pos + regexIta.matchedPos().len - 2);

@@ -12,59 +12,52 @@ import nme.Lib;
  * Manage a grid to place object
  */
 class Grid {
+    /**
+    * Number of rows
+    **/
     public var numRow (default, default):Int;
+    /**
+    * Number of columns
+    **/
     public var numCol (default, default):Int;
+    /**
+    * Size of a cell
+    **/
     public var cellSize (default, default):{width:Float, height:Float};
+    /**
+    * X of the grid
+    **/
     public var x (default, default):Float;
+    /**
+    * Y of the grid
+    **/
     public var y (default, default):Float;
+
     public var gapCol (default, default):Float;
     public var gapRow (default, default):Float;
-    public var alignX (default, default):String;
-    public var alignY (default, default):String;
     public var gapX(default, default):Float = 0;
     public var gapY(default, default):Float = 0;
 
+    /**
+    * Align the elment in the cell, if the cell is too large
+    **/
+    public var alignment (default, default):GridAlignment;
+
     private var nextCell:Point;
 
-    public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?_alignX:String, ?_alignY:String, ?img:String = "")
+    public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?_alignX:String, ?_alignY:String, ?img:String = "", ?alignment:GridAlignment)
     {
         this.numRow = numRow;
         this.numCol = numCol;
         this.gapCol = gapCol;
         this.gapRow = gapRow;
-        this.alignX = _alignX;
-        this.alignY = _alignY;
+
+        this.alignment = alignment != null ? alignment : GridAlignment.TOP_LEFT;
 
         cellSize = {width: cellWidth, height: cellHeight};
 
         // Initialize nextCell to (0;0)
         empty();
-    }
-
-    public function alignContainer(_container:Sprite, _bkg:Bitmap):Void
-    {
-        switch(alignX)
-        {
-            case "left":
-                _container.x = 0;
-
-            case "middle":
-                _container.x = _bkg.x + _bkg.width / 2 - _container.width / 2;
-
-            case "right":
-                _container.x = _bkg.x + _bkg.width - _container.width;
-        }
-        switch(alignY)
-        {
-            case "top":
-                _container.y = 0;
-
-            case "center":
-                _container.y = _bkg.y + _bkg.height / 2 - _container.height / 2 ;
-
-            case "bottom":
-                _container.y = _bkg.y + _bkg.height - _container.height;
-        }
     }
 
     public function add(object:DisplayObject, ?withTween:Bool = true):Void
@@ -78,8 +71,20 @@ class Grid {
         //if(nextCell.x != 0)gapX += gapRow;
         //if(nextCell.y != 0)gapY += gapCol;
 
-        var targetX = x + nextCell.x * cellSize.width + gapX;
-        var targetY = y + nextCell.y * cellSize.height + gapY;
+        Lib.trace("Align: " + alignment);
+        var targetX = x + nextCell.x * cellSize.width;
+        targetX += switch(alignment){
+            case CENTER, TOP_MIDDLE, BOTTOM_MIDDLE: cellSize.width / 2 - object.width / 2;
+            case TOP_RIGHT, MIDDLE_RIGHT, BOTTOM_RIGHT: cellSize.width - object.width;
+            default: // Already on the left
+        }
+
+        var targetY = y + nextCell.y * cellSize.height;
+        targetY += switch(alignment){
+            case CENTER, MIDDLE_LEFT, MIDDLE_RIGHT: targetY += cellSize.height / 2 - object.height / 2;
+            case BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT: targetY += cellSize.height - object.height;
+            default: // Already on top
+        }
 
         if(nextCell.x < numCol - 1){
             nextCell.x++;
@@ -107,4 +112,16 @@ class Grid {
     {
         nextCell = new Point(0, 0);
     }
+}
+
+enum GridAlignment {
+    CENTER;
+    TOP_LEFT;
+    TOP_RIGHT;
+    TOP_MIDDLE;
+    MIDDLE_LEFT;
+    MIDDLE_RIGHT;
+    BOTTOM_LEFT;
+    BOTTOM_MIDDLE;
+    BOTTOM_RIGHT;
 }

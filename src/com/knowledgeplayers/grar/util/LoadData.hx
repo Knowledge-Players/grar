@@ -32,15 +32,6 @@ class LoadData extends EventDispatcher {
     private var nbXml:Float = 0;
     private var numXml:Float = 0;
 
-    private function new()
-    {
-
-        super();
-        cacheElementsDisplay = new Hash<DisplayObject>();
-
-        arrayOfUrlImgs = new Array<String>();
-    }
-
     /**
      * @return the instance of the loaderdatas
      */
@@ -54,6 +45,7 @@ class LoadData extends EventDispatcher {
 
     /**
     * Load all the displays of sample_structure.xml
+    * @param    structureXml : Xml to parse
     **/
 
     public function loadDisplayXml(?structureXml:Xml = null):Void
@@ -77,10 +69,42 @@ class LoadData extends EventDispatcher {
     }
 
     /**
-    * Parse all the nodes of Xml and get the attribute needed
+    * Get the display loaded
+    * @param    name : Name of the wanted element
+    * @return the element or null if it doesn't exist
     **/
 
-    public function parseChildrenXml(_xml:Xml, _array:Array<String>, _att:String):Void
+    public function getElementDisplayInCache(_name:String):Null<DisplayObject>
+    {
+        var element:DisplayObject = null;
+        for(_key in cacheElementsDisplay.keys()){
+            if(_key == _name){
+                element = cacheElementsDisplay.get(_key);
+            }
+        }
+
+        return element;
+    }
+
+    // Privates
+
+    private function new()
+    {
+
+        super();
+        cacheElementsDisplay = new Hash<DisplayObject>();
+
+        arrayOfUrlImgs = new Array<String>();
+    }
+
+    /**
+    * Parse all the nodes of Xml and get the attribute needed
+    * @param    xml : Xml node @:autoBuild parse
+    * @param    array : Array where to store the results
+    * @param    att : Attribut to find
+    **/
+
+    private function parseChildrenXml(_xml:Xml, _array:Array<String>, _att:String):Void
     {
 
         for(elt in _xml.elements()){
@@ -96,14 +120,16 @@ class LoadData extends EventDispatcher {
         }
 
     }
+
     /**
     * Remove duplicates from an Array<String>
+    * @param    ar : The array to clean
+    * @return the array without duplicates
     **/
 
-    public function removeDuplicates(ar:Array<String>):Array<String>
+    private function removeDuplicates(ar:Array<String>):Array<String>
     {
         var result:Array<String> = ar.slice(0, ar.length);
-
         var t;
 
         for(a1 in 0...result.length){
@@ -122,10 +148,8 @@ class LoadData extends EventDispatcher {
 
     private function onXmlDisplayLoaded(e:Event = null):Void
     {
-
         var xmlSprite = XmlLoader.getXml(e);
         parseContent(xmlSprite);
-
     }
 
     private function parseContent(content:Xml):Void
@@ -160,18 +184,13 @@ class LoadData extends EventDispatcher {
 
         }
 
-        //Lib.trace(numXml +" -- "+nbXml);
         if(numXml == nbXml){
             arrayOfUrlImgs = removeDuplicates(arrayOfUrlImgs);
             var lgImgsArray:Int = arrayOfUrlImgs.length;
             nbDatas = lgImgsArray;
 
             for(i in 0...lgImgsArray){
-
-                // Lib.trace("-------------- image load "+arrayOfUrlImgs[i]);
-
                 loadData(arrayOfUrlImgs[i]);
-
             }
         }
 
@@ -182,26 +201,14 @@ class LoadData extends EventDispatcher {
 
         if(!checkElementsDisplayInCache(path)){
             #if flash
-
-                    var urlR = new URLRequest(path);
-                    //Lib.trace("------------- urlR : "+urlR.url);
-
-                    var mloader = new Loader();
-                    mloader.contentLoaderInfo.addEventListener(Event.COMPLETE,onCompleteLoading);
-                    mloader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
-                    try{
-                    mloader.load(urlR);
-                    }
-                    catch(msg: String){
-                        throw "[LoadData] Error while loading: "+urlR+"\n"+msg;
-                    }
-
-
-                #else
-
+                var urlR = new URLRequest(path);
+                var mloader = new Loader();
+                mloader.contentLoaderInfo.addEventListener(Event.COMPLETE,onCompleteLoading);
+                mloader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
+                mloader.load(urlR);
+            #else
             var elementDisplay = new Bitmap(Assets.getBitmapData(path));
             cacheElementsDisplay.set(path, elementDisplay);
-
             #end
         }
 
@@ -218,8 +225,6 @@ class LoadData extends EventDispatcher {
         var arrayName = Std.string(event.currentTarget.url).split("/");
 
         nameElementDisplay = arrayName[arrayName.length - 2] + "/" + arrayName[arrayName.length - 1];
-        //Lib.trace("nameElementDisplay = "+nameElementDisplay);
-        //Lib.trace(numData+"-- "+nbDatas);
         cacheElementsDisplay.set(nameElementDisplay, event.currentTarget.content);
 
         if(nbDatas == numData){
@@ -232,40 +237,11 @@ class LoadData extends EventDispatcher {
         var existInCache = false;
 
         for(key in cacheElementsDisplay.keys()){
-
             if(key == _name){
-                //Lib.trace("_name : " + _name);
-                //Lib.trace("elemt : " + key);
                 existInCache = true;
-                //Lib.trace("existInCache : " + existInCache);
             }
-
         }
 
         return existInCache;
     }
-
-    /**
-    * Get the display loaded
-    **/
-
-    public function getElementDisplayInCache(_name:String):Null<DisplayObject>
-    {
-        var element:DisplayObject = null;
-        //Lib.trace("_name = "+_name);
-        for(_key in cacheElementsDisplay.keys()){
-            // Lib.trace("getElementDisplayInCache_key = "+_key);
-
-            if(_key == _name){
-
-                // Lib.trace("_key = "+_key);
-
-                element = cacheElementsDisplay.get(_key);
-
-            }
-        }
-
-        return element;
-    }
-
 }

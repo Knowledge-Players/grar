@@ -114,7 +114,7 @@ class QuizzGroupDisplay extends Sprite {
             var itemDisplay = new QuizzItemDisplay(item);
             if(itemTemplate.has.spritesheet)
                 itemDisplay.setIcon(itemTemplate.att.id, itemTemplate.att.spritesheet);
-            else
+            else if(itemTemplate.has.id)
                 itemDisplay.setIcon(itemTemplate.att.id);
             itemDisplay.y = totalYOffset;
             itemDisplay.x = xOffset;

@@ -8,4 +8,6 @@
     <AnimationElement id="AnimCard" spritesheet="global"/>
     <PopUp x="300" y="80" width="328" height="448" buttonIcon="img/CloseButton.png" buttonX="310" buttonY="10"
            background="img/Carte.png"/>
+    <Button ref="validate" id="continueButton" type="text" x="610" y="500" scaleX="1" scaleY="1"/>
+    <Text ref="banner" x="470" y="70" width="500" height="80"/>
 </Cards>

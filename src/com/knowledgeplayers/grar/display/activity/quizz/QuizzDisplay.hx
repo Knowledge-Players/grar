@@ -85,7 +85,7 @@ class QuizzDisplay extends ActivityDisplay {
         super.displayActivity();
         if(quizz.buttonRef.content != null)
             cast(displays.get(quizz.buttonRef.ref).obj, TextButton).setText(Localiser.instance.getItemContent(quizz.buttonRef.content));
-        displays.get(quizz.buttonRef.ref).obj.addEventListener(MouseEvent.CLICK, onValidation);
+        displays.get(quizz.buttonRef.ref).obj.addEventListener(MouseEvent.CLICK, onValidate);
         addChild(displays.get(quizz.buttonRef.ref).obj);
 
     }
@@ -145,7 +145,7 @@ class QuizzDisplay extends ActivityDisplay {
         }
     }
 
-    private function onValidation(e:MouseEvent):Void
+    override private function onValidate(e:MouseEvent):Void
     {
         if(quizz.controlMode == "auto"){
             switch(quizz.state) {

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import com.knowledgeplayers.grar.display.GameManager;
 import nme.filters.DropShadowFilter;
 import nme.Lib;
 import nme.filters.BitmapFilter;
@@ -36,9 +37,7 @@ class UiFactory {
     private static var layerPath:String;
 
     private function new()
-    {
-
-    }
+    {}
 
     /**
      * Create a button
@@ -104,6 +103,12 @@ class UiFactory {
         return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scaleX, scaleY, icon, iconX, iconY, action);
     }
 
+    /**
+    * Create a tilesprite from an XML descriptor
+    * @param    xml : Fast descriptor
+    * @return a tilesprite
+    **/
+
     public static function createImageFromXml(xml:Fast):TileSprite
     {
         var image = new TileSprite(xml.att.id);
@@ -113,6 +118,12 @@ class UiFactory {
         image.scaleY = Std.parseFloat(xml.att.scaleY);
         return image;
     }
+
+    /**
+    * Create a textfield from an XML descriptor
+    * @param    xml : Fast descriptor
+    * @return a textfield
+    **/
 
     public static function createTextFromXml(xml:Fast):ScrollPanel
     {
@@ -125,6 +136,12 @@ class UiFactory {
         return text;
     }
 
+    /**
+    * Create a bitmap filter from an XML descriptor
+    * @param    xml : Fast descriptor
+    * @return a bitmap filter
+    **/
+
     public static function createFilterFromXml(xml:Fast):BitmapFilter
     {
         var filterNode = Std.string(xml.att.filter).split(":");
@@ -132,13 +149,12 @@ class UiFactory {
         var filter:BitmapFilter =
         switch(Std.string(filterNode[0]).toLowerCase()){
             case "dropshadow":
-            var params = Std.string(filterNode[1]).split(",");
-            new DropShadowFilter(Std.parseFloat(params[0]),Std.parseFloat(params[1]),Std.parseInt(params[2]),Std.parseFloat(params[3]),Std.parseFloat(params[4]),Std.parseFloat(params[5]));
+                var params = Std.string(filterNode[1]).split(",");
+                new DropShadowFilter(Std.parseFloat(params[0]), Std.parseFloat(params[1]), Std.parseInt(params[2]), Std.parseFloat(params[3]), Std.parseFloat(params[4]), Std.parseFloat(params[5]));
 
         }
 
         return filter;
-
     }
 
     /**
@@ -158,10 +174,10 @@ class UiFactory {
         onXmlLoaded();
     }
 
-    public static function onXmlLoaded(e:Event = null):Void
+    private static function onXmlLoaded(e:Event = null):Void
     {
         tilesheet = new SparrowTilesheet(cast(LoadData.getInstance().getElementDisplayInCache(layerPath + ".png"), Bitmap).bitmapData, XmlLoader.getXml(e).toString());
-
+        GameManager.instance.game.uiLoaded = true;
     }
 
 }

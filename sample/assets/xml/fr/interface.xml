@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!-- There must be no space around <![CDATA[ ]]> -->
+<Localisation>
+    <Element>
+        <key>TITLE_MENU</key>
+        <value><![CDATA[[bold-cond-gold]MENU[/bold-cond-gold]]]></value>
+    </Element>
+    <Element>
+        <key>TITLE_MODULE</key>
+        <value><![CDATA[[bold-black]TRAINING[/bold-black]]]></value>
+    </Element>
+    <Element>
+        <key>TITLE_CHAPTER</key>
+        <value><![CDATA[[bold-grey]DISCOVER TRAINING IN SAINT GOBAIN STEP BY STEP[/bold-grey]]]></value>
+    </Element>
+    <Element>
+        <key>TITLE_PART</key>
+        <value><![CDATA[[bold-black]PART[/bold-black]]]></value>
+    </Element>
+    <Element>
+        <key>TITLE_ACTIVITE</key>
+        <value><![CDATA[[bold-black]ACTIVITE[/bold-black]]]></value>
+    </Element>
+</Localisation>

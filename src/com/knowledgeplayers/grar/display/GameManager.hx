@@ -96,7 +96,6 @@ class GameManager extends EventDispatcher {
 
     public function displayActivity(activity:Activity):Void
     {
-        //onActivityEnd(null);
         if(currentPart != null)
             currentPart.visible = false;
         activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);

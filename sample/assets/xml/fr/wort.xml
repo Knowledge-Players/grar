@@ -102,7 +102,7 @@
                 </Cell>
                 <Cell ss:StyleID="s65">
                     <Data ss:Type="String">Good evening, Mrs. Jones – my name is Thuynhan, and I’m the new manager of a
-                        Weber factory in China. I wanted to tell you how inspiring the workshops you have offered us
+                        factory in China. I wanted to tell you how inspiring the workshops you have offered us
                         today have been for me!
                     </Data>
                 </Cell>
@@ -132,9 +132,9 @@
                     <Data ss:Type="String">step1_1</Data>
                 </Cell>
                 <Cell ss:StyleID="s69">
-                    <Data ss:Type="String">And that’s why, at Saint-Gobain, we place a very strong emphasis on people –
-                        they are essential components of our WCM Temple model.&#13;Their daily involvement is
-                        instrumental in securing our ambition to become the world leader of Sustainable Habitat.&#13;But
+                    <Data ss:Type="String">And that’s why, we place a very strong emphasis on people –
+                        they are essential components of our model.&#13;Their daily involvement is
+                        instrumental in securing our ambition to become the world leader.&#13;But
                         I’m quite in a rush, right now: was there anything you wanted to ask me about?&#13;</Data>
                 </Cell>
             </Row>
@@ -143,7 +143,7 @@
                     <Data ss:Type="String">choice1</Data>
                 </Cell>
                 <Cell ss:StyleID="s69">
-                    <Data ss:Type="String">-Ask about WCM</Data>
+                    <Data ss:Type="String">-Ask about the model</Data>
                 </Cell>
             </Row>
             <Row ss:AutoFitHeight="0" ss:Height="26">
@@ -167,7 +167,8 @@
                     <Data ss:Type="String">step3_0</Data>
                 </Cell>
                 <Cell ss:StyleID="s71">
-                    <Data ss:Type="String">Well, people are at the core of WCM: real change and success can only occur
+                    <Data ss:Type="String">Well, people are at the core of the model: real change and success can only
+                        occur
                         when they are involved and engaged.
                     </Data>
                 </Cell>
@@ -177,7 +178,7 @@
                     <Data ss:Type="String">step3_1</Data>
                 </Cell>
                 <Cell ss:StyleID="s71">
-                    <Data ss:Type="String">And what does that statement imply in the WCM model – I mean, concretely?
+                    <Data ss:Type="String">And what does that statement imply in the model – I mean, concretely?
                     </Data>
                 </Cell>
             </Row>
@@ -207,9 +208,9 @@
                     <Data ss:Type="String">step3_4</Data>
                 </Cell>
                 <Cell ss:StyleID="s69">
-                    <Data ss:Type="String">Yes: if we want to archive our ambition to become the world leader for
-                        Sustainable Habitat, we need to secure our employees’ daily involvement. That’s what the Focus
-                        Improvement &amp; People Involvement foundation is about: providing the tools to make that
+                    <Data ss:Type="String">Yes: if we want to archive our ambition to become the world leader, we need
+                        to secure our employees’ daily involvement. That’s what the foundation is about: providing the
+                        tools to make that
                         involvement happen.
                     </Data>
                 </Cell>
@@ -219,9 +220,10 @@
                     <Data ss:Type="String">step4_0</Data>
                 </Cell>
                 <Cell ss:StyleID="s71">
-                    <Data ss:Type="String">Thanks for telling me more about the key part people play in WCM… But let’s
+                    <Data ss:Type="String">Thanks for telling me more about the key part people play in the model… But
+                        let’s
                         move on to something else: could you give me one example of a success story about Training &amp;
-                        Development within the Group? Back in my factory in China, I’ve heard of a program called… MKT
+                        Development within the Group? Back in my factory in China, I’ve heard of a program called… NKM
                         <Sup
                                 xmlns="http://www.w3.org/TR/REC-html40">2
                         </Sup>
@@ -236,15 +238,9 @@
                     <Data ss:Type="String">step4_1</Data>
                 </Cell>
                 <Cell ss:StyleID="s69">
-                    <Data ss:Type="String">Yes, MKT2 illustrates very well the benefits Training &amp; Development can
-                        bring!&#13;MKT2 means “Manufacturing Know-how Transfer and Training”. This program is basically
-                        targeted at technical training for operators in plants. It was launched in 2001 in Cuautla,
-                        Mexico, to address the very high turnover they were having with operators. They needed to
-                        improve the training to enable new hires to become operational faster.&#13;Basically, MKT2
-                        combines training on the computer with work in the field overseen by a tutor. Basic theory,
-                        concepts and simple daily tasks are explained to the operator on a computer, using eLearning.
-                        They are able to go at their pace, review sections if needed, and test their knowledge.&#13;After
-                        that, the more complex tasks are explained on the shop floor by the tutor.&#13;</Data>
+                    <Data ss:Type="String">Yes, NKM illustrates very well the benefits Training &amp; Development can
+                        bring!&#13;This program is basically targeted at technical training for operators in plants.
+                    </Data>
                 </Cell>
             </Row>
             <Row ss:AutoFitHeight="0" ss:Height="26">
@@ -261,7 +257,7 @@
                 </Cell>
                 <Cell ss:StyleID="s71">
                     <Data ss:Type="String">Sure! Look, I think I have a file somewhere that sums up all the main
-                        benefits MKT2 has shown… I hope
+                        benefits NKM has shown… I hope
                     </Data>
                 </Cell>
             </Row>

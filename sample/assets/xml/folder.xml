@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Folder background="default"  instructionContent="instruction" ref="banner" controlMode="end">
+<Folder background="default" instructionContent="instruction" ref="banner" controlMode="auto">
     <Element content="postit1" ref="postit1" target="target1"/>
     <Element content="postit2" ref="postit2"/>
     <Button ref="validate" content=""/>

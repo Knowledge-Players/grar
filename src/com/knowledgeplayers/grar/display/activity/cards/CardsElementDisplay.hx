@@ -13,13 +13,12 @@ class CardsElementDisplay extends Sprite {
     /**
     * Text of the element
 **/
-    public var text (default, null): ScrollPanel;
+    public var text (default, null):ScrollPanel;
 
     /**
     * Content ID
 **/
-    public var content (default, null): String;
-
+    public var content (default, null):String;
 
     /**
     * Constructor
@@ -28,7 +27,7 @@ class CardsElementDisplay extends Sprite {
     * @param height : Height of the element
 **/
 
-    public function new(content: String, width: Float, height: Float, background: String)
+    public function new(content:String, width:Float, height:Float, background:String)
     {
         super();
         this.content = content;
@@ -43,15 +42,15 @@ class CardsElementDisplay extends Sprite {
         addEventListener(MouseEvent.CLICK, onClick);
     }
 
-    public function blockElement(): Void
+    public function blockElement():Void
     {
         removeEventListener(MouseEvent.CLICK, onClick);
         buttonMode = false;
     }
 
-    private function onClick(e: MouseEvent): Void
+    private function onClick(e:MouseEvent):Void
     {
-        var cd = cast(parent.parent, CardsDisplay);
+        var cd = cast(parent, CardsDisplay);
         var localizedText = Localiser.instance.getItemContent(content);
         cd.clickCard(this, localizedText);
     }

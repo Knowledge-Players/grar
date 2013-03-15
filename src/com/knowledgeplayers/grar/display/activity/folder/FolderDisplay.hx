@@ -43,7 +43,7 @@ class FolderDisplay extends ActivityDisplay {
     /**
     * PopUp where additional text will be displayed
     **/
-    public var popUp (default, default):{sprite: Sprite, titlePos: Point, contentPos: Point};
+    public var popUp (default, default):{sprite:Sprite, titlePos:Point, contentPos:Point};
 
     /**
     * Grid to organize drag & drop display
@@ -104,14 +104,11 @@ class FolderDisplay extends ActivityDisplay {
 
     override private function onModelComplete(e:LocaleEvent):Void
     {
-        //addChild(grids.get("drag").container);
-
         for(elem in cast(model, Folder).elements){
             var elementDisplay:FolderElementDisplay;
-            //if(elementTemplate.buttonIcon != null)
-                elementDisplay = new FolderElementDisplay(elem, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
-            //else
-                //elementDisplay = new FolderElementDisplay(elem, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height, elementTemplate.background);
+            // TODO set true size
+            //elementDisplay = new FolderElementDisplay(elem, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
+            elementDisplay = new FolderElementDisplay(elem, 200, 300, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
             elementsArray.push(elementDisplay);
             grids.get("drag").add(elementDisplay, false);
             addChild(elementDisplay);
@@ -141,7 +138,7 @@ class FolderDisplay extends ActivityDisplay {
 
             case "popup" :
                 var popUpSprite = new Sprite();
-                var titlePos = new Point(0,0);
+                var titlePos = new Point(0, 0);
                 var contentPos = titlePos;
                 if(elemNode.has.src)
                     popUpSprite.addChild(cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.src), Bitmap));
@@ -152,7 +149,7 @@ class FolderDisplay extends ActivityDisplay {
                     layer.render();
                 }
                 if(elemNode.has.buttonIcon){
-                    var buttonIcon: BitmapData;
+                    var buttonIcon:BitmapData;
                     if(elemNode.att.buttonIcon.indexOf(".") < 0){
                         buttonIcon = DisplayUtils.getBitmapDataFromLayer(new TileLayer(spritesheets.get(elemNode.att.spritesheet)), elemNode.att.buttonIcon);
                     }
@@ -221,7 +218,7 @@ class FolderDisplay extends ActivityDisplay {
 
     // Handlers
 
-    private function onValidate(e:MouseEvent):Void
+    override private function onValidate(e:MouseEvent):Void
     {
         if(cast(model, Folder).controlMode == "auto")
             Lib.trace("next");

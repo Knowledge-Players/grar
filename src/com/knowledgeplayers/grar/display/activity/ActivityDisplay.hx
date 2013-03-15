@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity;
 
+import nme.events.MouseEvent;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.event.LocaleEvent;
@@ -72,7 +73,9 @@ class ActivityDisplay extends KpDisplay {
     // Handlers
 
     private function onUnload(ev:Event):Void
-    {}
+    {
+        // Override in subclass
+    }
 
     private function endActivity():Void
     {
@@ -84,5 +87,10 @@ class ActivityDisplay extends KpDisplay {
     private function onModelComplete(e:LocaleEvent):Void
     {
         dispatchEvent(new Event(Event.COMPLETE));
+    }
+
+    private function onValidate(e:MouseEvent):Void
+    {
+        // Override in subclass
     }
 }
