@@ -63,13 +63,12 @@ class Grid {
         if(cellSize.width == 0){
             cellSize.width = object.width;
         }
-        if(cellSize.height - gapRow == 0){
+        if(cellSize.height == 0){
             cellSize.height = object.height;
         }
 
         var targetX = x + nextCell.x * cellSize.width;
-        if(nextCell.x > 0)
-            targetX += gapCol;
+        targetX += gapCol * nextCell.x;
         targetX += switch(alignment){
             case CENTER, TOP_MIDDLE, BOTTOM_MIDDLE: cellSize.width / 2 - object.width / 2;
             case TOP_RIGHT, MIDDLE_RIGHT, BOTTOM_RIGHT: cellSize.width - object.width;
@@ -77,11 +76,10 @@ class Grid {
         }
 
         var targetY = y + nextCell.y * cellSize.height;
-        if(nextCell.y > 0)
-            targetY += gapRow;
+        targetY += gapRow * nextCell.y;
         targetY += switch(alignment){
-            case CENTER, MIDDLE_LEFT, MIDDLE_RIGHT: targetY += cellSize.height / 2 - object.height / 2;
-            case BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT: targetY += cellSize.height - object.height;
+            case CENTER, MIDDLE_LEFT, MIDDLE_RIGHT: cellSize.height / 2 - object.height / 2;
+            case BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT: cellSize.height - object.height;
             default: // Already on top
         }
 

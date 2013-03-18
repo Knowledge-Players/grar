@@ -109,6 +109,7 @@ class FolderDisplay extends ActivityDisplay {
             elementDisplay = new FolderElementDisplay(elem, elementTemplate.width, elementTemplate.height, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
             elementsArray.push(elementDisplay);
             grids.get("drag").add(elementDisplay, false);
+            Lib.trace("Y: " + elementDisplay.y);
             addChild(elementDisplay);
         }
 
