@@ -88,7 +88,7 @@ class FolderDisplay extends ActivityDisplay {
         var folder = cast(model, Folder);
         // Targets
         for(target in folder.targets){
-            addChildAt(displays.get(target).obj, displays.get(target).z);
+            addChildAt(displays.get(target).obj, cast(Math.min(displays.get(target).z, numChildren), Int));
         }
         // Instructions
         var localizedText = Localiser.instance.getItemContent(folder.instructionContent);
@@ -200,7 +200,7 @@ class FolderDisplay extends ActivityDisplay {
             case "grid" :
                 var cellWidth = elemNode.has.cellWidth ? Std.parseFloat(elemNode.att.cellWidth) : 0;
                 var cellHeight = elemNode.has.cellHeight ? Std.parseFloat(elemNode.att.cellHeight) : 0;
-                var grid = new Grid(Std.parseInt(elemNode.att.numRow), Std.parseInt(elemNode.att.numCol), cellWidth, cellHeight, Std.parseFloat(elemNode.att.gapCol), Std.parseFloat(elemNode.att.gapRow), Std.string(elemNode.att.alignX), Std.string(elemNode.att.alignY));
+                var grid = new Grid(Std.parseInt(elemNode.att.numRow), Std.parseInt(elemNode.att.numCol), cellWidth, cellHeight, Std.parseFloat(elemNode.att.gapCol), Std.parseFloat(elemNode.att.gapRow));
                 grid.x = Std.parseFloat(elemNode.att.x);
                 grid.y = Std.parseFloat(elemNode.att.y);
 
@@ -210,7 +210,7 @@ class FolderDisplay extends ActivityDisplay {
 
     override private function unLoad(keepLayer:Int = 0):Void
     {
-        super.unLoad(2);
+        super.unLoad();
         for(grid in grids){
             grid.empty();
         }

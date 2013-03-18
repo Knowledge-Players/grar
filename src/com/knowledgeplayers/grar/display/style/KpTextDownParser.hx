@@ -197,12 +197,11 @@ class KpTextDownParser {
         if(hasItalic){
             substring = regexIta.matchedLeft() + regexIta.matched(1) + regexIta.matchedRight();
         }
-       // tf.autoSize = TextFieldAutoSize.LEFT;
-       // tf.wordWrap = true;
+        // tf.autoSize = TextFieldAutoSize.LEFT;
+        // tf.wordWrap = true;
         tf.text = substring;
 
         if(hasBold){
-            Lib.trace("style: " + styleName);
             if(styleName != "")
                 styleName += styleName.charAt(styleName.length - 1) == "-" ? "" : "-";
             tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName + "bold"), regexBold.matchedPos().pos, regexBold.matchedPos().pos + regexBold.matchedPos().len - 2);

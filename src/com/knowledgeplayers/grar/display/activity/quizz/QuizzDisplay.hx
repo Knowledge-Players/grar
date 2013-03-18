@@ -87,7 +87,6 @@ class QuizzDisplay extends ActivityDisplay {
             cast(displays.get(quizz.buttonRef.ref).obj, TextButton).setText(Localiser.instance.getItemContent(quizz.buttonRef.content));
         displays.get(quizz.buttonRef.ref).obj.addEventListener(MouseEvent.CLICK, onValidate);
         addChild(displays.get(quizz.buttonRef.ref).obj);
-
     }
 
     // Private

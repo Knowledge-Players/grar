@@ -137,7 +137,7 @@ class CardsDisplay extends ActivityDisplay {
                 flipLayer.addChild(flipClip);
                 addChild(flipLayer.view);
             case "grid" :
-                var grid = new Grid(Std.parseInt(elemNode.att.numRow), Std.parseInt(elemNode.att.numCol), Std.parseFloat(elemNode.att.cellWidth), Std.parseFloat(elemNode.att.cellHeight), Std.parseFloat(elemNode.att.gapCol), Std.parseFloat(elemNode.att.gapRow), Std.string(elemNode.att.alignX), Std.string(elemNode.att.alignY));
+                var grid = new Grid(Std.parseInt(elemNode.att.numRow), Std.parseInt(elemNode.att.numCol), Std.parseFloat(elemNode.att.cellWidth), Std.parseFloat(elemNode.att.cellHeight), Std.parseFloat(elemNode.att.gapCol), Std.parseFloat(elemNode.att.gapRow));
                 grid.x = Std.parseFloat(elemNode.att.x);
                 grid.y = Std.parseFloat(elemNode.att.y);
                 grids.set(elemNode.att.ref, grid);

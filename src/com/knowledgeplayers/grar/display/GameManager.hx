@@ -40,6 +40,7 @@ class GameManager extends EventDispatcher {
 
     private var layout:Layout;
     private var activityDisplay:ActivityDisplay;
+    private var navByMenu:Bool = false;
 
     /**
     * @return the instance of the singleton
@@ -79,9 +80,7 @@ class GameManager extends EventDispatcher {
     public function displayPart(part:Part):Void
     {
         // Cleanup
-        if(currentPart != null){
-            currentPart.unLoad();
-        }
+        cleanup();
 
         // Display the new part
         currentPart = DisplayFactory.createPartDisplay(part);
@@ -96,8 +95,7 @@ class GameManager extends EventDispatcher {
 
     public function displayActivity(activity:Activity):Void
     {
-        if(currentPart != null)
-            currentPart.visible = false;
+        cleanup(true);
         activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
         var activityName:String = Type.getClassName(Type.getClass(activity));
         activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
@@ -158,20 +156,38 @@ class GameManager extends EventDispatcher {
 
     private function onActivityReady(e:Event):Void
     {
+        activityDisplay.removeEventListener(Event.COMPLETE, onActivityReady);
         layout.zones.get("main").addChild(activityDisplay);
         activityDisplay.startActivity();
     }
 
     private function onActivityEnd(e:PartEvent):Void
     {
-        if(e != null)
-            e.target.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
+        e.target.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
         if(activityDisplay != null && layout.zones.get("main").contains(activityDisplay))
             layout.zones.get("main").removeChild(activityDisplay);
-        activityDisplay = null;
-        if(currentPart != null){
-            currentPart.visible = true;
+        cleanup(true);
+        if(currentPart != null && !navByMenu){
             currentPart.nextElement();
         }
+        else
+            navByMenu = false;
+    }
+
+    private function cleanup(activity:Bool = false):Void
+    {
+        if(activityDisplay != null){
+            activityDisplay.model.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
+            activityDisplay.endActivity();
+            navByMenu = true;
+            activityDisplay = null;
+        }
+        if(currentPart != null){
+            currentPart.unLoad();
+        }
+        else if(currentPart != null){
+            currentPart.visible = !currentPart.visible;
+        }
+
     }
 }

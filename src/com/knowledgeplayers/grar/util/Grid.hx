@@ -35,17 +35,15 @@ class Grid {
 
     public var gapCol (default, default):Float;
     public var gapRow (default, default):Float;
-    public var gapX(default, default):Float = 0;
-    public var gapY(default, default):Float = 0;
 
     /**
-    * Align the elment in the cell, if the cell is too large
+    * Align the element in the cell, if the cell is too large
     **/
     public var alignment (default, default):GridAlignment;
 
     private var nextCell:Point;
 
-    public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?_alignX:String, ?_alignY:String, ?img:String = "", ?alignment:GridAlignment)
+    public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?alignment:GridAlignment)
     {
         this.numRow = numRow;
         this.numCol = numCol;

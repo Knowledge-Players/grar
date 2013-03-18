@@ -46,6 +46,16 @@ class ActivityDisplay extends KpDisplay {
         displayActivity();
     }
 
+    /**
+    * End the activity
+    **/
+
+    public function endActivity():Void
+    {
+        model.endActivity();
+        unLoad();
+    }
+
     public function showDebrief():Void
     {
         Lib.trace("Debrief!");
@@ -77,15 +87,9 @@ class ActivityDisplay extends KpDisplay {
         // Override in subclass
     }
 
-    private function endActivity():Void
-    {
-        model.endActivity();
-        unLoad();
-        model.removeEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
-    }
-
     private function onModelComplete(e:LocaleEvent):Void
     {
+        model.removeEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
         dispatchEvent(new Event(Event.COMPLETE));
     }
 

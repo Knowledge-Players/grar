@@ -120,7 +120,8 @@ class Localiser extends EventDispatcher {
 
     public function popLocale():Void
     {
-        stashedLocale = localisation;
+        localisation = stashedLocale;
+        stashedLocale = null;
     }
 
     /**
@@ -129,8 +130,7 @@ class Localiser extends EventDispatcher {
 
     public function pushLocale():Void
     {
-        localisation = stashedLocale;
-        stashedLocale = null;
+        stashedLocale = localisation;
     }
 
     // Private
