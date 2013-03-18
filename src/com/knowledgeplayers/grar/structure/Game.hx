@@ -11,6 +11,7 @@ interface Game implements IEventDispatcher {
     public var state (default, default):String;
     public var inventory (default, null):Array<String>;
     public var uiLoaded (default, default):Bool;
+    public var ref (default, default):String;
 
     public function start(partId:Int = 0):Null<Part>;
 

@@ -53,11 +53,6 @@ class GameManager extends EventDispatcher {
         return instance;
     }
 
-    public function setLayout(layout:String):Void
-    {
-        this.layout = LayoutManager.instance.getLayout(layout);
-    }
-
     /**
     * Start the game
     * @param    game : The game to start
@@ -67,9 +62,16 @@ class GameManager extends EventDispatcher {
     public function startGame(game:Game, layout:String = "default"):Void
     {
         this.game = game;
-        setLayout(layout);
-        Lib.current.addChild(this.layout.content);
+        changeLayout(layout);
         displayPartById(0);
+    }
+
+    public function changeLayout(layout:String):Void
+    {
+        if(this.layout != null)
+            Lib.current.removeChild(this.layout.content);
+        this.layout = LayoutManager.instance.getLayout(layout);
+        Lib.current.addChild(this.layout.content);
     }
 
     /**
@@ -135,14 +137,14 @@ class GameManager extends EventDispatcher {
     {
         var partDisplay = cast(event.target, PartDisplay);
         partDisplay.startPart();
-        layout.zones.get("main").addChild(partDisplay);
+        layout.zones.get(game.ref).addChild(partDisplay);
     }
 
     private function onExitSubPart(event:PartEvent):Void
     {
         var subPart = cast(event.target, PartDisplay);
         subPart.unLoad();
-        layout.zones.get("main").removeChild(subPart);
+        layout.zones.get(game.ref).removeChild(subPart);
         currentPart.visible = true;
     }
 
@@ -157,15 +159,15 @@ class GameManager extends EventDispatcher {
     private function onActivityReady(e:Event):Void
     {
         activityDisplay.removeEventListener(Event.COMPLETE, onActivityReady);
-        layout.zones.get("main").addChild(activityDisplay);
+        layout.zones.get(game.ref).addChild(activityDisplay);
         activityDisplay.startActivity();
     }
 
     private function onActivityEnd(e:PartEvent):Void
     {
         e.target.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
-        if(activityDisplay != null && layout.zones.get("main").contains(activityDisplay))
-            layout.zones.get("main").removeChild(activityDisplay);
+        if(activityDisplay != null && layout.zones.get(game.ref).contains(activityDisplay))
+            layout.zones.get(game.ref).removeChild(activityDisplay);
         cleanup(true);
         if(currentPart != null && !navByMenu){
             currentPart.nextElement();

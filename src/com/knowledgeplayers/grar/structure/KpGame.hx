@@ -58,6 +58,11 @@ class KpGame extends EventDispatcher, implements Game {
     public var uiLoaded (default, default):Bool = false;
 
     /**
+    * Reference for the layout
+    **/
+    public var ref (default, default):String;
+
+    /**
     * Index of the current part
     **/
     private var partIndex:Int = 0;
@@ -280,6 +285,7 @@ class KpGame extends EventDispatcher, implements Game {
 
         // Load Parts
         var structureNode:Fast = structureXml.node.Grar.node.Structure;
+        ref = structureNode.att.ref;
         for(part in structureNode.nodes.Part){
             addPartFromXml(Std.parseInt(part.att.id), part);
         }

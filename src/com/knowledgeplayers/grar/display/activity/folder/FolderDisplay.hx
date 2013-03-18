@@ -109,7 +109,6 @@ class FolderDisplay extends ActivityDisplay {
             elementDisplay = new FolderElementDisplay(elem, elementTemplate.width, elementTemplate.height, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
             elementsArray.push(elementDisplay);
             grids.get("drag").add(elementDisplay, false);
-            Lib.trace("Y: " + elementDisplay.y);
             addChild(elementDisplay);
         }
 
@@ -200,7 +199,9 @@ class FolderDisplay extends ActivityDisplay {
                 var cellWidth = elemNode.has.cellWidth ? Std.parseFloat(elemNode.att.cellWidth) : 0;
                 var cellHeight = elemNode.has.cellHeight ? Std.parseFloat(elemNode.att.cellHeight) : 0;
                 var align = elemNode.has.align ? Type.createEnum(GridAlignment, elemNode.att.align.toUpperCase()) : null;
-                var grid = new Grid(Std.parseInt(elemNode.att.numRow), Std.parseInt(elemNode.att.numCol), cellWidth, cellHeight, Std.parseFloat(elemNode.att.gapCol), Std.parseFloat(elemNode.att.gapRow), align);
+                var gapCol = elemNode.has.gapCol ? Std.parseFloat(elemNode.att.gapCol) : 0;
+                var gapRow = elemNode.has.gapRow ? Std.parseFloat(elemNode.att.gapRow) : 0;
+                var grid = new Grid(Std.parseInt(elemNode.att.numRow), Std.parseInt(elemNode.att.numCol), cellWidth, cellHeight, gapCol, gapRow, align);
                 grid.x = Std.parseFloat(elemNode.att.x);
                 grid.y = Std.parseFloat(elemNode.att.y);
 
