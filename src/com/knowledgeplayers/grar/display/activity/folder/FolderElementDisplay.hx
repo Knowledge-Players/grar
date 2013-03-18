@@ -57,6 +57,7 @@ class FolderElementDisplay extends Sprite {
         buttonMode = true;
 
         shadows = new Hash<DropShadowFilter>();
+        // TODO filter manager
         shadows.set("down", new DropShadowFilter(10, 45, 0x000000, 0.3, 10, 10));
         shadows.set("up", new DropShadowFilter(15, 45, 0x000000, 0.2, 10, 10));
 
@@ -173,7 +174,7 @@ class FolderElementDisplay extends Sprite {
             content.x = popUp.contentPos.x;
             content.y = popUp.contentPos.y;
             popUp.sprite.addChild(content);
-            localizedText = Localiser.instance.getItemContent(model.content+"_title");
+            localizedText = Localiser.instance.getItemContent(model.content + "_title");
             var title = KpTextDownParser.parse(localizedText);
             title.x = popUp.titlePos.x;
             title.y = popUp.titlePos.y;

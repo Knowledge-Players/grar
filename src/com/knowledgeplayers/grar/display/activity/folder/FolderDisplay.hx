@@ -55,7 +55,7 @@ class FolderDisplay extends ActivityDisplay {
     **/
     public var targetSpritesheet (default, default):Bool = false;
 
-    private var elementTemplate:{background:BitmapData, buttonIcon:BitmapData, buttonPos:Point};
+    private var elementTemplate:{background:BitmapData, width:Float, height:Float, buttonIcon:BitmapData, buttonPos:Point};
 
     private var elementsArray:Array<FolderElementDisplay>;
 
@@ -106,9 +106,7 @@ class FolderDisplay extends ActivityDisplay {
     {
         for(elem in cast(model, Folder).elements){
             var elementDisplay:FolderElementDisplay;
-            // TODO set true size
-            //elementDisplay = new FolderElementDisplay(elem, grids.get("drag").cellSize.width, grids.get("drag").cellSize.height, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
-            elementDisplay = new FolderElementDisplay(elem, 200, 300, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
+            elementDisplay = new FolderElementDisplay(elem, elementTemplate.width, elementTemplate.height, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
             elementsArray.push(elementDisplay);
             grids.get("drag").add(elementDisplay, false);
             addChild(elementDisplay);
@@ -195,12 +193,13 @@ class FolderDisplay extends ActivityDisplay {
                         buttonIcon = cast(LoadData.instance.getElementDisplayInCache(elemNode.att.buttonIcon), Bitmap).bitmapData;
                     buttonPos = new Point(Std.parseFloat(elemNode.att.buttonX), Std.parseFloat(elemNode.att.buttonY));
                 }
-                elementTemplate = {background: background, buttonIcon: buttonIcon, buttonPos: buttonPos};
+                elementTemplate = {background: background, width: Std.parseFloat(elemNode.att.width), height: Std.parseFloat(elemNode.att.height), buttonIcon: buttonIcon, buttonPos: buttonPos};
 
             case "grid" :
                 var cellWidth = elemNode.has.cellWidth ? Std.parseFloat(elemNode.att.cellWidth) : 0;
                 var cellHeight = elemNode.has.cellHeight ? Std.parseFloat(elemNode.att.cellHeight) : 0;
-                var grid = new Grid(Std.parseInt(elemNode.att.numRow), Std.parseInt(elemNode.att.numCol), cellWidth, cellHeight, Std.parseFloat(elemNode.att.gapCol), Std.parseFloat(elemNode.att.gapRow));
+                var align = elemNode.has.align ? Type.createEnum(GridAlignment, elemNode.att.align.toUpperCase()) : null;
+                var grid = new Grid(Std.parseInt(elemNode.att.numRow), Std.parseInt(elemNode.att.numCol), cellWidth, cellHeight, Std.parseFloat(elemNode.att.gapCol), Std.parseFloat(elemNode.att.gapRow), align);
                 grid.x = Std.parseFloat(elemNode.att.x);
                 grid.y = Std.parseFloat(elemNode.att.y);
 

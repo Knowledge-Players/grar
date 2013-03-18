@@ -56,6 +56,10 @@ class ActivityDisplay extends KpDisplay {
         unLoad();
     }
 
+    /**
+    * Show the debrief of this activity
+    **/
+
     public function showDebrief():Void
     {
         Lib.trace("Debrief!");
