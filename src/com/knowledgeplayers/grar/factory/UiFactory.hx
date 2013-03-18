@@ -112,10 +112,11 @@ class UiFactory {
     public static function createImageFromXml(xml:Fast):TileSprite
     {
         var image = new TileSprite(xml.att.id);
-        image.x = Std.parseFloat(xml.att.x);
-        image.y = Std.parseFloat(xml.att.y);
-        image.scaleX = Std.parseFloat(xml.att.scaleX);
-        image.scaleY = Std.parseFloat(xml.att.scaleY);
+        image.x =  xml.has.x ? Std.parseFloat(xml.att.x):0;
+        image.y =  xml.has.y ? Std.parseFloat(xml.att.y):0;
+        image.scaleX = xml.has.scaleX ? Std.parseFloat(xml.att.scaleX) : 1;
+        image.scaleY = xml.has.scaleY ? Std.parseFloat(xml.att.scaleY) : 1;
+
         return image;
     }
 
@@ -128,8 +129,8 @@ class UiFactory {
     public static function createTextFromXml(xml:Fast):ScrollPanel
     {
         var text = new ScrollPanel(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height));
-        text.x = Std.parseFloat(xml.att.x);
-        text.y = Std.parseFloat(xml.att.y);
+        text.x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
+        text.y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
 
         if(xml.has.background)
             text.setBackground(xml.att.background);
@@ -141,7 +142,7 @@ class UiFactory {
     * @param    xml : Fast descriptor
     * @return a bitmap filter
     **/
-
+    //TODO FILTERMANAGER
     public static function createFilterFromXml(xml:Fast):BitmapFilter
     {
         var filterNode = Std.string(xml.att.filter).split(":");

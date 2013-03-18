@@ -1,6 +1,7 @@
 package com.knowledgeplayers.grar.display.layout;
 
 
+import com.knowledgeplayers.grar.display.component.ScrollPanel;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import com.knowledgeplayers.grar.factory.UiFactory;
@@ -105,7 +106,7 @@ class Zone extends Sprite {
         }
     }
 
-    public function createButton(_child:Fast):Void{
+    public function createButton(_child:Fast):DefaultButton{
 
         var button: DefaultButton = null;
 
@@ -116,12 +117,16 @@ class Zone extends Sprite {
             cast(button,CustomEventButton).addEventListener(_child.att.action,onActionEvent);
         }
         addChild(button);
+
+        return button;
     }
 
-    public function createImage(imageNode: Fast): Void
+    public function createImage(imageNode: Fast): TileSprite
     {
         var image = UiFactory.createImageFromXml(imageNode);
         layer.addChild(image);
+
+        return image;
 
 
     }
@@ -129,19 +134,22 @@ class Zone extends Sprite {
     private function createHeader():Void{
 
     }
-    private function createProgressBar(element:Fast):Void{
+    private function createProgressBar(element:Fast):ProgressBar{
         var progress = new ProgressBar();
         progress.init(element);
         addChild(progress);
+
+        return progress;
     }
 
-    private function createText(element:Fast):Void{
+    private function createText(element:Fast):ScrollPanel{
         var textF = UiFactory.createTextFromXml(element);
 
         textF.content = KpTextDownParser.parse(Localiser.instance.getItemContent(element.att.content));
 
         addChild(textF);
 
+        return textF;
 
     }
 
@@ -160,12 +168,10 @@ class Zone extends Sprite {
             color=Std.parseInt(bkgNode.att.color);
         else
             color=Std.parseInt("0xFFFFFF");
+            background.graphics.beginFill(color);
+            background.graphics.drawRect(Std.parseFloat(bkgNode.att.x),Std.parseFloat(bkgNode.att.y),Std.parseFloat(bkgNode.att.width),Std.parseFloat(bkgNode.att.height));
+            background.graphics.endFill();
 
-
-
-        background.graphics.beginFill(color);
-        background.graphics.drawRect(Std.parseFloat(bkgNode.att.x),Std.parseFloat(bkgNode.att.y),Std.parseFloat(bkgNode.att.width),Std.parseFloat(bkgNode.att.height));
-        background.graphics.endFill();
         if(bkgNode.has.filter){
             _container.filters=[UiFactory.createFilterFromXml(bkgNode)];
         }
