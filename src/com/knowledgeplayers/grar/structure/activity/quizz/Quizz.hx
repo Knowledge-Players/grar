@@ -87,7 +87,6 @@ class Quizz extends Activity {
     {
         // Count points
         score = getCurrentAnswers().getRoundScore();
-        nme.Lib.trace("Score "+score);
 
         // Next round
         roundIndex++;

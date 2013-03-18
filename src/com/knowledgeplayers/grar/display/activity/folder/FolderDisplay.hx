@@ -221,6 +221,7 @@ class FolderDisplay extends ActivityDisplay {
     override private function onValidate(e:MouseEvent):Void
     {
         if(cast(model, Folder).controlMode == "auto")
+            // TODO faire le next
             Lib.trace("next");
         else
             cast(model, Folder).validate();

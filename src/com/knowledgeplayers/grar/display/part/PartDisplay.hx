@@ -120,8 +120,6 @@ class PartDisplay extends KpDisplay {
                     var isFirst = true;
                     var textItem = null;
                     for(keyG in textGroups.get(groupKey).keys()){
-
-                        //Lib.trace("keyG : "+keyG);
                         if(!isFirst){
                             textItem = cast(part.getNextElement(), TextItem);
 
@@ -210,7 +208,6 @@ class PartDisplay extends KpDisplay {
 
     private function setText(item:TextItem, ?_textGroup:Bool = false):Void
     {
-        Lib.trace(item);
         // Clean previous background
         if(previousBackground != null && previousBackground.ref != item.background){
             if(previousBackground.bmp != null)
@@ -344,10 +341,10 @@ class PartDisplay extends KpDisplay {
         TODO: refactoriser tout ça !
      */
 
-    private function mustBeDisplayed(key: String): Bool
+    private function mustBeDisplayed(key:String):Bool
     {
         var object = displays.get(key);
-        var textItem: TextItem = null;
+        var textItem:TextItem = null;
 
         if(currentElement.isText()){
             textItem = cast(currentElement, TextItem);

@@ -17,7 +17,7 @@ import nme.Lib;
 
 class TweenManager {
 
-    private static var transitions: Hash<Dynamic> = new Hash<Dynamic>();
+    private static var transitions:Hash<Dynamic> = new Hash<Dynamic>();
 
     /**
     * Apply the given transition to the given displayObject
@@ -26,7 +26,7 @@ class TweenManager {
     * @return the actuator
     **/
 
-    public static function applyTransition(display: DisplayObject, ref: String): IGenericActuator
+    public static function applyTransition(display:DisplayObject, ref:String):IGenericActuator
     {
         var transition = transitions.get(ref);
         if(transition == null)
@@ -51,7 +51,7 @@ class TweenManager {
      * @return the actuator
      */
 
-    public static function fade(display: DisplayObject, ref: String): IGenericActuator
+    public static function fade(display:DisplayObject, ref:String):IGenericActuator
     {
         var fade = transitions.get(ref);
         if(fade.alpha > 0)
@@ -68,7 +68,7 @@ class TweenManager {
     * @return the actuator
 **/
 
-    public static function wiggle(display: DisplayObject, ref: String): IGenericActuator
+    public static function wiggle(display:DisplayObject, ref:String):IGenericActuator
     {
         var wiggle = transitions.get(ref);
         return Actuate.tween(display, wiggle.duration, {x: display.x + wiggle.xRange, y: display.y + wiggle.yRange}).repeat(wiggle.repeat).reflect();
@@ -81,7 +81,7 @@ class TweenManager {
     * @return the actuator
 **/
 
-    public static function zoom(display: DisplayObject, ref: String): IGenericActuator
+    public static function zoom(display:DisplayObject, ref:String):IGenericActuator
     {
         var zoom = transitions.get(ref);
         var mask = new Sprite();
@@ -91,9 +91,6 @@ class TweenManager {
         display.mask = mask;
         if(display.parent != null)
             display.parent.addChild(mask);
-        Lib.trace(display.width + "/" + zoom.width);
-        Lib.trace(display.height + "/" + zoom.height);
-        Lib.trace("targetX: " + (2 * display.x - zoom.x) + " TargetY: " + (2 * display.y - zoom.y) + " TargetScaleX: " + (display.width / zoom.width) + " TargetScaleY: " + (display.height / zoom.height));
         return Actuate.tween(display, zoom.duration, {x: 2 * display.x - zoom.x, y: 2 * display.y - zoom.y, scaleX: display.width / zoom.width, scaleY: display.height / zoom.height}).ease(getEasing(zoom));
     }
 
@@ -104,7 +101,7 @@ class TweenManager {
      * @return the actuator
      */
 
-    public static function slide(display: DisplayObject, ref: String): IGenericActuator
+    public static function slide(display:DisplayObject, ref:String):IGenericActuator
     {
         var slide = transitions.get(ref);
         /*
@@ -116,7 +113,7 @@ class TweenManager {
         return Actuate.tween(display, slide.duration, { x: slide.x, y: slide.y }).ease(getEasing(slide));
     }
 
-    public static function blink(display: DisplayObject, ref: String): IGenericActuator
+    public static function blink(display:DisplayObject, ref:String):IGenericActuator
     {
         var blink = transitions.get(ref);
         return Actuate.transform(display, blink.duration).color(blink.color).repeat(blink.repeat).reflect();
@@ -127,23 +124,23 @@ class TweenManager {
     * @param    file : Path to the file
 **/
 
-    public static function loadTemplate(file: String): Void
+    public static function loadTemplate(file:String):Void
     {
         XmlLoader.load(file, onTemplateLoaded, parseXml);
     }
 
     // Private
 
-    private static function onTemplateLoaded(ev: Event): Void
+    private static function onTemplateLoaded(ev:Event):Void
     {
         parseXml(XmlLoader.getXml(ev));
     }
 
-    private static function parseXml(xml: Xml): Void
+    private static function parseXml(xml:Xml):Void
     {
         var root = new Fast(xml).node.Transitions;
         for(child in root.elements){
-            var transition: Dynamic = {};
+            var transition:Dynamic = {};
             transition.duration = Std.parseFloat(child.att.duration);
             if(child.has.easingType){
                 transition.easingType = child.att.easingType.toLowerCase();
@@ -172,10 +169,10 @@ class TweenManager {
         }
     }
 
-    private static function getEasing(transition: Dynamic): IEasing
+    private static function getEasing(transition:Dynamic):IEasing
     {
-        var easingType: String;
-        var easingStyle: String;
+        var easingType:String;
+        var easingStyle:String;
         if(Reflect.hasField(transition, "easingType")){
             easingType = transition.easingType.charAt(0).toUpperCase() + transition.easingType.substr(1).toLowerCase();
             easingStyle = "Ease" + transition.easingStyle.charAt(0).toUpperCase() + transition.easingStyle.substr(1).toLowerCase();

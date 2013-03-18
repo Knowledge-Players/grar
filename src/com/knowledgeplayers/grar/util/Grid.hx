@@ -69,7 +69,6 @@ class Grid {
         //if(nextCell.x != 0)gapX += gapRow;
         //if(nextCell.y != 0)gapY += gapCol;
 
-        Lib.trace("Align: " + alignment);
         var targetX = x + nextCell.x * cellSize.width;
         targetX += switch(alignment){
             case CENTER, TOP_MIDDLE, BOTTOM_MIDDLE: cellSize.width / 2 - object.width / 2;

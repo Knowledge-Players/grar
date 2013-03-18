@@ -36,7 +36,6 @@ class CustomEventButton extends DefaultButton {
 
     override private function onClick(event:MouseEvent):Void
     {
-        Lib.trace("on click custom event "+propagateNativeEvent+" - "+eventType);
         if(!propagateNativeEvent)
             event.stopImmediatePropagation();
 

@@ -30,22 +30,22 @@ class MenuDisplay extends Zone {
     /**
     * Orientation of the menu. Must be Horizontal or Vertical
     **/
-    public var orientation (default, setOrientation): String;
+    public var orientation (default, setOrientation):String;
 
     /**
     * Type of the menu. The menu could index parts or activities
     **/
-    public var type (default, setType): String;
+    public var type (default, setType):String;
 
     /**
     * Prototype for the buttons of the menu
     **/
-    public var buttonPartPrototype (default, default): Fast;
+    public var buttonPartPrototype (default, default):Fast;
 
     /**
     * Prototype for the buttons of the menu
     **/
-    public var buttonActivityPrototype (default, default): Fast;
+    public var buttonActivityPrototype (default, default):Fast;
 
     /**
     * transition open menu
@@ -61,15 +61,15 @@ class MenuDisplay extends Zone {
     **/
     public var btClose:DefaultButton;
 
-    private var parts: Array<Part>;
-    private var activities: Array<Activity>;
-    private var items: List<MenuItem>;
+    private var parts:Array<Part>;
+    private var activities:Array<Activity>;
+    private var items:List<MenuItem>;
 
-    private var typeInt: Int;
+    private var typeInt:Int;
 
-    public function new(_width:Float,_height:Float)
+    public function new(_width:Float, _height:Float)
     {
-        super(_width,_height);
+        super(_width, _height);
 
         items = new List<MenuItem>();
 
@@ -81,7 +81,7 @@ class MenuDisplay extends Zone {
     * @return the orientation
     **/
 
-    public function setOrientation(orientation: String): String
+    public function setOrientation(orientation:String):String
     {
         this.orientation = orientation.toLowerCase();
         return this.orientation;
@@ -93,7 +93,7 @@ class MenuDisplay extends Zone {
     * @return the type
     **/
 
-    public function setType(type: String): String
+    public function setType(type:String):String
     {
         this.type = type.toLowerCase();
         typeInt = switch(type){
@@ -111,29 +111,30 @@ class MenuDisplay extends Zone {
     * @param    xml : XML descriptor
     **/
 
-    override public function onActionEvent(e:Event):Void{
+    override public function onActionEvent(e:Event):Void
+    {
         switch(e.type){
-            case "close_menu": TweenManager.applyTransition(this,transitionOut);
+            case "close_menu": TweenManager.applyTransition(this, transitionOut);
         }
 
     }
-    public function initMenu(display: Fast): Void
+
+    public function initMenu(display:Fast):Void
     {
         //init(display);
 
         orientation = display.att.orientation;
         type = display.att.type;
 
-        for (child in display.elements)
-            {
-                switch(child.name.toLowerCase()){
-                    case "background":createBackground(child);
-                    case "image": createImage(child);
-                    case "text":createText(child);
-                    case "button":createButton(child);
+        for(child in display.elements){
+            switch(child.name.toLowerCase()){
+                case "background":createBackground(child);
+                case "image": createImage(child);
+                case "text":createText(child);
+                case "button":createButton(child);
 
-                }
             }
+        }
 
         //Part
         if(typeInt & 1 == 1){
@@ -195,9 +196,9 @@ class MenuDisplay extends Zone {
         }
 
         if(orientation == "vertical"){
-            var offset: Float = 0;
+            var offset:Float = 0;
             for(item in items){
-                var node: Fast;
+                var node:Fast;
                 if(item.isPart)
                     node = display.node.Part;
                 else
@@ -213,15 +214,15 @@ class MenuDisplay extends Zone {
             }
         }
         else{
-            var offset: Float = 0;
+            var offset:Float = 0;
             for(item in items){
-                var node: Fast;
+                var node:Fast;
                 if(item.isPart)
                     node = display.node.Part;
                 else
                     node = display.node.Activity;
                 if(node.has.yOffset)
-                item.button.y = Std.parseFloat(node.att.yOffset);
+                    item.button.y = Std.parseFloat(node.att.yOffset);
                 item.button.x = offset;
                 addChild(item.button);
                 offset += item.button.width;
@@ -234,10 +235,8 @@ class MenuDisplay extends Zone {
 
     // Private
 
-    private function onClick(e: Event): Void
+    private function onClick(e:Event):Void
     {
-
-        Lib.trace("display on clic");
         var target = cast(e.target, DefaultButton);
         if(parts != null){
             for(part in parts){
@@ -257,12 +256,9 @@ class MenuDisplay extends Zone {
         }
     }
 
-
-
-
-    private function addButton(isPart: Bool, text: String = ""): Void
+    private function addButton(isPart:Bool, text:String = ""):Void
     {
-        var button: DefaultButton = null;
+        var button:DefaultButton = null;
         if(isPart)
             button = UiFactory.createButtonFromXml(buttonPartPrototype);
         else
@@ -271,11 +267,10 @@ class MenuDisplay extends Zone {
         if(Std.is(button, TextButton))
             cast(button, TextButton).setText(text);
         button.name = text;
-        button.addEventListener(ButtonActionEvent.GOTO,onClick);
-        Lib.trace("yap addButton");
+        button.addEventListener(ButtonActionEvent.GOTO, onClick);
 
         items.add({button: button, isPart: isPart});
     }
 }
 
-typedef MenuItem = {button: DefaultButton, isPart: Bool}
+typedef MenuItem = {button:DefaultButton, isPart:Bool}
