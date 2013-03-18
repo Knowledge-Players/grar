@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.display.layout.Zone;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.events.Event;
@@ -127,9 +128,9 @@ class MenuDisplay extends Zone {
             {
                 switch(child.name.toLowerCase()){
                     case "background":createBackground(child);
-                    case "button":createButton(child);
                     case "image": createImage(child);
                     case "text":createText(child);
+                    case "button":createButton(child);
 
                 }
             }
@@ -141,10 +142,9 @@ class MenuDisplay extends Zone {
             for(child in display.node.Part.elements){
                 switch(child.name.toLowerCase()){
                     case "background":createBackground(child);
-                    case "button": buttonPartPrototype = child;
                     case "image": createImage(child);
                     case "text":createText(child);
-
+                    case "button": buttonPartPrototype = child;
 
                 }
             }
@@ -156,9 +156,9 @@ class MenuDisplay extends Zone {
             for(child in display.node.Activity.elements){
                 switch(child.name.toLowerCase()){
                     case "background":createBackground(child);
-                    case "button": buttonActivityPrototype = child;
                     case "image": createImage(child);
                     case "text":createText(child);
+                    case "button": buttonActivityPrototype = child;
 
                 }
             }
@@ -221,7 +221,7 @@ class MenuDisplay extends Zone {
                 else
                     node = display.node.Activity;
                 if(node.has.yOffset)
-                    item.button.y = Std.parseFloat(node.att.yOffset);
+                item.button.y = Std.parseFloat(node.att.yOffset);
                 item.button.x = offset;
                 addChild(item.button);
                 offset += item.button.width;
@@ -234,8 +234,10 @@ class MenuDisplay extends Zone {
 
     // Private
 
-    private function onClick(e: MouseEvent): Void
+    private function onClick(e: Event): Void
     {
+
+        Lib.trace("display on clic");
         var target = cast(e.target, DefaultButton);
         if(parts != null){
             for(part in parts){
@@ -265,10 +267,13 @@ class MenuDisplay extends Zone {
             button = UiFactory.createButtonFromXml(buttonPartPrototype);
         else
             button = UiFactory.createButtonFromXml(buttonActivityPrototype);
+
         if(Std.is(button, TextButton))
             cast(button, TextButton).setText(text);
         button.name = text;
-        button.addEventListener(MouseEvent.CLICK, onClick);
+        button.addEventListener(ButtonActionEvent.GOTO,onClick);
+        Lib.trace("yap addButton");
+
         items.add({button: button, isPart: isPart});
     }
 }

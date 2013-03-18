@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.display.style;
+import nme.text.TextFieldAutoSize;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.display.text.UrlField;
 import nme.Assets;
@@ -196,7 +197,8 @@ class KpTextDownParser {
         if(hasItalic){
             substring = regexIta.matchedLeft() + regexIta.matched(1) + regexIta.matchedRight();
         }
-
+       // tf.autoSize = TextFieldAutoSize.LEFT;
+       // tf.wordWrap = true;
         tf.text = substring;
 
         if(hasBold){
