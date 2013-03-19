@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import Std;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
 import aze.display.SparrowTilesheet;
@@ -206,31 +207,62 @@ class PartDisplay extends KpDisplay {
         }
     }
 
-    private function setText(item:TextItem, ?_textGroup:Bool = false):Void
+    private function displayBackground(background:String):Void
     {
         // Clean previous background
-        if(previousBackground != null && previousBackground.ref != item.background){
+        if(previousBackground != null && previousBackground.ref != background){
             if(previousBackground.bmp != null)
                 displayArea.removeChild(previousBackground.bmp);
         }
         // Add new background
 
-        if(item.background != null){
-            var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(item.background).att.src), Bitmap).bitmapData);
+        if(background != null){
+            var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(background).att.src), Bitmap).bitmapData);
             if(bkg != null){
                 displayArea.addChildAt(bkg, 0);
             }
 
-            previousBackground = {ref: item.background, bmp: bkg};
+            previousBackground = {ref: background, bmp: bkg};
             if(bkg != null)
-                resizeD.addDisplayObjects(bkg, displaysFast.get(item.background));
+                resizeD.addDisplayObjects(bkg, displaysFast.get(background));
         }
+    }
+
+    private function setSpeaker(author:String, ?transition:String):Void
+    {
+        if(author != null && displays.exists(author)){
+
+            var char = cast(displays.get(author).obj, CharacterDisplay);
+
+            if(char != currentSpeaker){
+
+                if(currentSpeaker != null && !Std.is(this, StripDisplay)){
+                    currentSpeaker.visible = false;
+                }
+                else{
+                    char.alpha = 1;
+                    char.visible = true;
+                }
+                currentSpeaker = char;
+                if(transition != null)
+                    TweenManager.applyTransition(currentSpeaker, transition);
+
+                currentSpeaker.visible = true;
+            }
+        }
+        else
+            currentSpeaker = null;
+    }
+
+    private function setText(item:TextItem, ?_textGroup:Bool = false):Void
+    {
+        displayBackground(item.background);
+
         // Remove text area if there is no text
         if(item.content == null){
             var toRemove = new FastList<DisplayObject>();
 
             if(!_textGroup){
-
                 for(i in 0...numChildren){
                     if(Std.is(getChildAt(i), CharacterDisplay) || Std.is(getChildAt(i), ScrollPanel))
                         toRemove.add(getChildAt(i));
@@ -238,98 +270,35 @@ class PartDisplay extends KpDisplay {
                 for(obj in toRemove)
                     removeChild(obj);
             }
-
         }
         else{
-            // Set text and display author
-
+            setSpeaker(item.author, item.transition);
             var content = Localiser.getInstance().getItemContent(item.content);
-
-            if(item.author != null && displays.exists(item.author)){
-
-                var char = cast(displays.get(item.author).obj, CharacterDisplay);
-
-                if(!_textGroup){
-                    if(char != currentSpeaker){
-
-                        if(currentSpeaker != null && !Std.is(this, StripDisplay)){
-                            currentSpeaker.visible = false;
-                        }
-                        else{
-                            char.alpha = 1;
-                            char.visible = true;
-                        }
-                        currentSpeaker = char;
-                        TweenManager.applyTransition(currentSpeaker, item.transition);
-
-                        char.visible = true;
-                    }
-
-                    if(item.ref != null){
-                        var name = currentSpeaker.model.getName();
-
-                        if(displays.get(item.ref) != null){
-                            if(name != null)
-                                cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse("*" + name + "*\n" + content);
-                            else
-                                cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
-                        }
-                    }
-                }
-                else{
-                    char.alpha = 1;
-                    char.visible = true;
-                    addChild(char);
-
-                    var name = char.model.getName();
-
-                    if(displays.get(item.ref) != null){
-                        if(name != null)
-                            cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse("*" + name + "*\n" + content);
-                        else
-                            cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
-                    }
-
-                    addChild(cast(displays.get(item.ref).obj, ScrollPanel));
-
-                }
-
+            if(item.ref != null){
+                if(currentSpeaker != null && currentSpeaker.model.getName() != null)
+                    cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse("*" + currentSpeaker.model.getName() + "*\n" + content);
+                else
+                    cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
             }
-            else if(item.ref != null)
-                cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
-
-            displayPart(_textGroup);
         }
 
+        if(_textGroup)
+            addChild(cast(displays.get(item.ref).obj, ScrollPanel));
+        displayPart(_textGroup);
     }
 
     private function displayPart(?_textGroup:Bool = false):Void
     {
-        if(!_textGroup){
-            while(numChildren > 1)
-                removeChildAt(numChildren - 1);
+        var array = new Array<{obj:DisplayObject, z:Int}>();
 
-            var array = new Array<{obj:DisplayObject, z:Int}>();
-
-            for(key in displays.keys()){
-
-                if(mustBeDisplayed(key))
-                    array.push(displays.get(key));
-            }
-
-            array.sort(sortDisplayObjects);
-            for(obj in array){
-                addChild(obj.obj);
-            }
+        for(key in displays.keys()){
+            if(mustBeDisplayed(key))
+                array.push(displays.get(key));
         }
-        else{
-            for(key in displays.keys()){
-                if(Std.is(displays.get(key).obj, TextButton)){
 
-                    addChild(displays.get(key).obj);
-                }
-
-            }
+        array.sort(sortDisplayObjects);
+        for(obj in array){
+            addChild(obj.obj);
         }
 
         for(layer in layers){
@@ -337,36 +306,40 @@ class PartDisplay extends KpDisplay {
         }
     }
 
-    /*
-        TODO: refactoriser tout ça !
-     */
-
     private function mustBeDisplayed(key:String):Bool
     {
         var object = displays.get(key);
-        var textItem:TextItem = null;
 
-        if(currentElement.isText()){
-            textItem = cast(currentElement, TextItem);
+        if(currentElement.isText() && Std.is(object.obj, ScrollPanel) && key != cast(currentElement, TextItem).ref){
+            return false;
         }
-        else if(currentElement.isPattern() && Std.is(object.obj, DefaultButton)){
+        if(Std.is(object.obj, DefaultButton)){
+            if(currentElement.isPattern()){
+                var pattern = cast(currentElement, Pattern);
+                if(Std.is(displays.get(key).obj, TextButton)){
+                    if(pattern.buttons.exists(key)){
+                        cast(displays.get(key).obj, TextButton).setText(Localiser.instance.getItemContent(pattern.buttons.get(key)));
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+            }
+            else{
+                var button = null;
+                if(currentElement.isText())
+                    button = cast(currentElement, TextItem).button;
+                else if(currentElement.isActivity())
+                    button = cast(currentElement, Activity).button;
 
-            var pattern = cast(currentElement, Pattern);
-            if(Std.is(displays.get(key).obj, TextButton)){
-                if(pattern.buttons.exists(key)){
-                    cast(displays.get(key).obj, TextButton).setText(Localiser.instance.getItemContent(pattern.buttons.get(key)));
+                if(button.ref == key && Std.is(displays.get(key).obj, TextButton)){
+                    cast(displays.get(key).obj, TextButton).setText(Localiser.instance.getItemContent(button.content));
                     return true;
                 }
                 else
                     return false;
             }
-            else if(pattern.buttons.exists(key))
-                return true;
-            else
-                return false;
         }
-        if(Std.is(object.obj, ScrollPanel) && textItem != null && key != textItem.ref)
-            return false;
         if(Std.is(object.obj, CharacterDisplay) && object.obj != currentSpeaker)
             return false;
         return true;

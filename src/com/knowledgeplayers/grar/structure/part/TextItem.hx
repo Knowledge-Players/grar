@@ -7,39 +7,39 @@ class TextItem implements PartElement {
     /**
      * Text of the item
      */
-    public var content (default, default): String;
+    public var content (default, default):String;
 
     /**
      * Character who says this text
      */
-    public var author (default, default): String;
+    public var author (default, default):String;
 
     /**
      * Transition between this item and the one before
      */
-    public var transition (default, default): String;
+    public var transition (default, default):String;
 
     /**
     * Background when the item is displayed
 **/
-    public var background (default, default): String;
+    public var background (default, default):String;
 
     /**
     * ID of the button that will appear with this item
 **/
-    public var button (default, default): String;
+    public var button (default, default):{ref:String, content:String};
 
     /**
     * Unique ref that will match the display
 **/
-    public var ref (default, default): String;
+    public var ref (default, default):String;
     /**
      * Constructor
      * @param	xml : fast xml node with structure info
      * @param	content : text of the item
      */
 
-    public function new(?xml: Fast, content: String = "")
+    public function new(?xml:Fast, content:String = "")
     {
         if(xml != null){
             if(xml.has.content)
@@ -62,7 +62,7 @@ class TextItem implements PartElement {
      * @return true if the item starts a vertical flow
      */
 
-    public function hasVerticalFlow(): Bool
+    public function hasVerticalFlow():Bool
     {
         return false;
     }
@@ -71,7 +71,7 @@ class TextItem implements PartElement {
      * @return true if the item starts an activity
      */
 
-    public function hasActivity(): Bool
+    public function hasActivity():Bool
     {
         return false;
     }
@@ -80,7 +80,7 @@ class TextItem implements PartElement {
     * @return true
 **/
 
-    public function isText(): Bool
+    public function isText():Bool
     {
         return true;
     }
@@ -89,7 +89,7 @@ class TextItem implements PartElement {
     * @return false
 **/
 
-    public function isActivity(): Bool
+    public function isActivity():Bool
     {
         return false;
     }
@@ -98,7 +98,7 @@ class TextItem implements PartElement {
     * @return false
 **/
 
-    public function isPattern(): Bool
+    public function isPattern():Bool
     {
         return false;
     }
@@ -107,7 +107,7 @@ class TextItem implements PartElement {
     * @return false
 **/
 
-    public function isPart(): Bool
+    public function isPart():Bool
     {
         return false;
     }

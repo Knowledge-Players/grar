@@ -36,7 +36,7 @@ class Activity extends EventDispatcher, implements PartElement {
     /**
     * Reference of the button which will validate the activity
     **/
-    public var buttonRef (default, default):{ref:String, content:String};
+    public var button (default, default):{ref:String, content:String};
 
     /**
     * Reference to the background for the activity
@@ -167,7 +167,7 @@ class Activity extends EventDispatcher, implements PartElement {
             content = fast.node.Button.att.content;
         else
             content = null;
-        buttonRef = {ref: fast.node.Button.att.ref, content: content};
+        button = {ref: fast.node.Button.att.ref, content: content};
     }
 
     // Handlers

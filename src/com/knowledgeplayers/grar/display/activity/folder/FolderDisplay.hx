@@ -96,10 +96,10 @@ class FolderDisplay extends ActivityDisplay {
         addChild(displays.get(folder.ref).obj);
 
         // Button
-        if(folder.buttonRef.content != null)
-            cast(displays.get(folder.buttonRef.ref).obj, TextButton).setText(Localiser.instance.getItemContent(folder.buttonRef.content));
-        displays.get(folder.buttonRef.ref).obj.addEventListener(MouseEvent.CLICK, onValidate);
-        addChild(displays.get(folder.buttonRef.ref).obj);
+        if(folder.button.content != null)
+            cast(displays.get(folder.button.ref).obj, TextButton).setText(Localiser.instance.getItemContent(folder.button.content));
+        displays.get(folder.button.ref).obj.addEventListener(MouseEvent.CLICK, onValidate);
+        addChild(displays.get(folder.button.ref).obj);
     }
 
     override private function onModelComplete(e:LocaleEvent):Void

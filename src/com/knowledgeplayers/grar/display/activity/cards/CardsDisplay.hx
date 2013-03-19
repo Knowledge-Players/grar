@@ -91,10 +91,10 @@ class CardsDisplay extends ActivityDisplay {
         addChild(displays.get(model.ref).obj);
 
         // Button
-        if(model.buttonRef.content != null)
-            cast(displays.get(model.buttonRef.ref).obj, TextButton).setText(Localiser.instance.getItemContent(model.buttonRef.content));
-        displays.get(model.buttonRef.ref).obj.addEventListener(MouseEvent.CLICK, onValidate);
-        addChild(displays.get(model.buttonRef.ref).obj);
+        if(model.button.content != null)
+            cast(displays.get(model.button.ref).obj, TextButton).setText(Localiser.instance.getItemContent(model.button.content));
+        displays.get(model.button.ref).obj.addEventListener(MouseEvent.CLICK, onValidate);
+        addChild(displays.get(model.button.ref).obj);
     }
 
     override private function onModelComplete(e:LocaleEvent):Void

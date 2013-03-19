@@ -83,10 +83,10 @@ class QuizzDisplay extends ActivityDisplay {
     override private function displayActivity():Void
     {
         super.displayActivity();
-        if(quizz.buttonRef.content != null)
-            cast(displays.get(quizz.buttonRef.ref).obj, TextButton).setText(Localiser.instance.getItemContent(quizz.buttonRef.content));
-        displays.get(quizz.buttonRef.ref).obj.addEventListener(MouseEvent.CLICK, onValidate);
-        addChild(displays.get(quizz.buttonRef.ref).obj);
+        if(quizz.button.content != null)
+            cast(displays.get(quizz.button.ref).obj, TextButton).setText(Localiser.instance.getItemContent(quizz.button.content));
+        displays.get(quizz.button.ref).obj.addEventListener(MouseEvent.CLICK, onValidate);
+        addChild(displays.get(quizz.button.ref).obj);
     }
 
     // Private
@@ -132,7 +132,7 @@ class QuizzDisplay extends ActivityDisplay {
 
     private function updateButtonText():Void
     {
-        if(Std.is(displays.get(quizz.buttonRef.ref).obj, TextButton)){
+        if(Std.is(displays.get(quizz.button.ref).obj, TextButton)){
             var stateId:String = null;
             switch(quizz.state){
                 case EMPTY: stateId = "";
@@ -140,7 +140,7 @@ class QuizzDisplay extends ActivityDisplay {
                 case CORRECTED: stateId = "_next";
             }
 
-            cast(displays.get(quizz.buttonRef.ref).obj, TextButton).setText(Localiser.instance.getItemContent(quizz.buttonRef.content + stateId));
+            cast(displays.get(quizz.button.ref).obj, TextButton).setText(Localiser.instance.getItemContent(quizz.button.content + stateId));
         }
     }
 

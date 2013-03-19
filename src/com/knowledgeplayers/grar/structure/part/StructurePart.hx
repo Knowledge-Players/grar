@@ -27,59 +27,59 @@ class StructurePart extends EventDispatcher, implements Part {
     /**
      * Name of the part
      */
-    public var name (default, default): String;
+    public var name (default, default):String;
 
     /**
      * ID of the part
      */
-    public var id (default, default): Int;
+    public var id (default, default):Int;
 
     /**
      * Path to the XML structure file
      */
-    public var file (default, null): String;
+    public var file (default, null):String;
 
     /**
      * Path to the XML display file
      */
-    public var display (default, default): String;
+    public var display (default, default):String;
 
     /**
      * True if the part is done
      */
-    public var isDone (default, default): Bool;
+    public var isDone (default, default):Bool;
 
     /**
      * Misc options for the part
      * @todo Do something with the options
      */
-    public var options (default, null): Hash<String>;
+    public var options (default, null):Hash<String>;
 
     /**
      * Inventory specific to the part
      */
-    public var inventory (default, null): Array<String>;
+    public var inventory (default, null):Array<String>;
 
     /**
      * Sound playing during the part
      */
-    public var soundLoop (default, default): Sound;
+    public var soundLoop (default, default):Sound;
 
     /**
     * Elements of the part
 **/
-    public var elements (default, null): Array<PartElement>;
+    public var elements (default, null):Array<PartElement>;
 
     /**
-    * Characters of the part
-**/
-    public var characters (default, null): Hash<Character>;
+    * Button of the part
+    **/
+    public var button (default, default):{ref:String, content:String};
 
-    private var nbSubPartLoaded: Int = 0;
-    private var nbSubPartTotal: Int = 0;
-    private var partIndex: Int = 0;
-    private var elemIndex: Int = 0;
-    private var soundLoopChannel: SoundChannel;
+    private var nbSubPartLoaded:Int = 0;
+    private var nbSubPartTotal:Int = 0;
+    private var partIndex:Int = 0;
+    private var elemIndex:Int = 0;
+    private var soundLoopChannel:SoundChannel;
 
     public function new()
     {
@@ -87,7 +87,6 @@ class StructurePart extends EventDispatcher, implements Part {
         options = new Hash<String>();
         inventory = new Array<String>();
         elements = new Array<PartElement>();
-        characters = new Hash<Character>();
         addEventListener(TokenEvent.ADD, onAddToken);
     }
 
@@ -97,7 +96,7 @@ class StructurePart extends EventDispatcher, implements Part {
      * @param	filePath : path to an XML structure file (set the file variable)
      */
 
-    public function init(xml: Fast, filePath: String = ""): Void
+    public function init(xml:Fast, filePath:String = ""):Void
     {
 
         file = filePath;
@@ -119,7 +118,7 @@ class StructurePart extends EventDispatcher, implements Part {
      * @return this part, or null if it can't be start
      */
 
-    public function start(forced: Bool = false): Null<Part>
+    public function start(forced:Bool = false):Null<Part>
     {
         if(!isDone || forced){
             enterPart();
@@ -133,7 +132,7 @@ class StructurePart extends EventDispatcher, implements Part {
      * @return the next element in the part or null if the part is over
      */
 
-    public function getNextElement(): Null<PartElement>
+    public function getNextElement():Null<PartElement>
     {
         if(elemIndex < elements.length){
             elemIndex++;
@@ -150,7 +149,7 @@ class StructurePart extends EventDispatcher, implements Part {
      * @return true if it has sub-part
      */
 
-    public function hasParts(): Bool
+    public function hasParts():Bool
     {
         for(elem in elements){
             if(elem.isPart())
@@ -163,7 +162,7 @@ class StructurePart extends EventDispatcher, implements Part {
      * @return all the sub-part of this part
      */
 
-    public function getAllParts(): Array<Part>
+    public function getAllParts():Array<Part>
     {
         var array = new Array<Part>();
         if(hasParts()){
@@ -181,7 +180,7 @@ class StructurePart extends EventDispatcher, implements Part {
     * @return all the activities of this part
     **/
 
-    public function getAllActivities(): Array<Activity>
+    public function getAllActivities():Array<Activity>
     {
         var activities = new Array<Activity>();
         for(elem in elements){
@@ -197,12 +196,12 @@ class StructurePart extends EventDispatcher, implements Part {
      * @return a string-based representation of the part
      */
 
-    override public function toString(): String
+    override public function toString():String
     {
         return "Part " + name + " " + file + " : " + elements.toString();
     }
 
-    public function restart(): Void
+    public function restart():Void
     {
         elemIndex = 0;
     }
@@ -212,7 +211,7 @@ class StructurePart extends EventDispatcher, implements Part {
      * @return true if this part is a dialog
      */
 
-    public function isDialog(): Bool
+    public function isDialog():Bool
     {
         return false;
     }
@@ -222,7 +221,7 @@ class StructurePart extends EventDispatcher, implements Part {
      * @return true if this part is a strip
      */
 
-    public function isStrip(): Bool
+    public function isStrip():Bool
     {
         return false;
     }
@@ -233,7 +232,7 @@ class StructurePart extends EventDispatcher, implements Part {
     * @return false
 **/
 
-    public function isActivity(): Bool
+    public function isActivity():Bool
     {
         return false;
     }
@@ -242,7 +241,7 @@ class StructurePart extends EventDispatcher, implements Part {
     * @return false
 **/
 
-    public function isText(): Bool
+    public function isText():Bool
     {
         return false;
     }
@@ -251,7 +250,7 @@ class StructurePart extends EventDispatcher, implements Part {
     * @return false
 **/
 
-    public function isPattern(): Bool
+    public function isPattern():Bool
     {
         return false;
     }
@@ -260,30 +259,39 @@ class StructurePart extends EventDispatcher, implements Part {
     * @return true
 **/
 
-    public function isPart(): Bool
+    public function isPart():Bool
     {
         return true;
     }
 
     // Private
 
-    private function parseContent(content: Xml): Void
+    private function parseContent(content:Xml):Void
     {
-        var partFast: Fast = new Fast(content).node.Part;
+        var partFast:Fast = new Fast(content).node.Part;
 
         for(child in partFast.elements){
             switch(child.name.toLowerCase()){
-                case "text": elements.push(ItemFactory.createItemFromXml(child));
-                case "activity": elements.push(ActivityFactory.createActivityFromXml(child, this));
-                case "part": nbSubPartTotal++;
+                case "text":
+                    elements.push(ItemFactory.createItemFromXml(child));
+                case "activity":
+                    elements.push(ActivityFactory.createActivityFromXml(child, this));
+                case "part":
+                    nbSubPartTotal++;
                     createPart(child);
+                case "button":
+                    button = {ref: child.att.ref, content: child.att.content};
             }
+        }
+        for(elem in elements){
+            if(elem.isText())
+                cast(elem, TextItem).button = button;
         }
         if(nbSubPartLoaded == nbSubPartTotal)
             fireLoaded();
     }
 
-    private function parseXml(xml: Fast): Void
+    private function parseXml(xml:Fast):Void
     {
         id = Std.parseInt(xml.att.id);
         if(xml.has.name) name = xml.att.name;
@@ -304,17 +312,17 @@ class StructurePart extends EventDispatcher, implements Part {
         if(xml.has.Options){
             for(option in xml.att.options.split(";")){
                 if(option != ""){
-                    var key: String = StringTools.trim(option.split(":")[0]);
-                    var value: String = StringTools.trim(option.split(":")[1]);
+                    var key:String = StringTools.trim(option.split(":")[0]);
+                    var value:String = StringTools.trim(option.split(":")[1]);
                     options.set(key, value);
                 }
             }
         }
     }
 
-    private function createPart(partNode: Fast): Void
+    private function createPart(partNode:Fast):Void
     {
-        var part: Part = PartFactory.createPartFromXml(partNode);
+        var part:Part = PartFactory.createPartFromXml(partNode);
         part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
         part.addEventListener(TokenEvent.ADD, onAddToken);
         part.init(partNode);
@@ -323,19 +331,19 @@ class StructurePart extends EventDispatcher, implements Part {
 
     // Handlers
 
-    private function onLoadComplete(event: Event): Void
+    private function onLoadComplete(event:Event):Void
     {
         parseContent(XmlLoader.getXml(event));
     }
 
-    private function enterPart(): Void
+    private function enterPart():Void
     {
         Localiser.getInstance().setLayoutFile(file);
         if(soundLoop != null)
             soundLoopChannel = soundLoop.play();
     }
 
-    private function onPartLoaded(event: Event): Void
+    private function onPartLoaded(event:Event):Void
     {
         nbSubPartLoaded++;
         if(nbSubPartLoaded == nbSubPartTotal){
@@ -343,12 +351,12 @@ class StructurePart extends EventDispatcher, implements Part {
         }
     }
 
-    private function fireLoaded(): Void
+    private function fireLoaded():Void
     {
         dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
     }
 
-    private function onAddToken(e: TokenEvent): Void
+    private function onAddToken(e:TokenEvent):Void
     {
         if(e.tokenTarget == "activity"){
             e.stopImmediatePropagation();
@@ -360,7 +368,7 @@ class StructurePart extends EventDispatcher, implements Part {
         }
     }
 
-    private function exitPart(): Void
+    private function exitPart():Void
     {
         isDone = true;
         if(soundLoopChannel != null)
