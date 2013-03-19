@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.component.ScrollPanel;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.display.layout.Zone;
 import com.knowledgeplayers.grar.factory.UiFactory;
@@ -158,6 +159,7 @@ class MenuDisplay extends Zone {
                         img.x += xPart;
                         img.y += yPart;
                     case "text":
+
                         var txt = createText(child);
                         txt.x += xPart;
                         txt.y += yPart;
@@ -187,9 +189,13 @@ class MenuDisplay extends Zone {
                         img.x += xAct;
                         img.y += yAct;
                     case "text":
+
                         var txt = createText(child);
                         txt.x += xAct;
                         txt.y += yAct;
+
+
+
                     case "button": buttonActivityPrototype = child;
 
                 }
@@ -235,7 +241,6 @@ class MenuDisplay extends Zone {
 
         if(orientation == "vertical"){
 
-
             for(item in items){
                 var node: Fast;
                 if(item.isPart){
@@ -248,9 +253,9 @@ class MenuDisplay extends Zone {
                     ySet=yAct;
                 }
                 if(node.has.xOffset)
-                    item.button.x = xSet+Std.parseFloat(node.att.xOffset);
+                    item.button.x += xSet+Std.parseFloat(node.att.xOffset);
 
-                item.button.y = ySet+offset;
+                item.button.y += ySet+offset;
 
                  addChild(item.button);
                 // TODO Height of a tilesprite is wrong
@@ -276,8 +281,8 @@ class MenuDisplay extends Zone {
                     ySet=yAct;
                 }
                 if(node.has.yOffset)
-                item.button.y = ySet+Std.parseFloat(node.att.yOffset);
-                item.button.x = xSet+offset;
+                item.button.y += ySet+Std.parseFloat(node.att.yOffset);
+                item.button.x += xSet+offset;
                 addChild(item.button);
                 offset += item.button.width;
                 if(node.has.xOffset)
@@ -325,6 +330,7 @@ class MenuDisplay extends Zone {
         if(Std.is(button, TextButton))
             cast(button, TextButton).setText(text);
         button.name = text;
+
         button.addEventListener(ButtonActionEvent.GOTO, onClick);
 
         items.add({button: button, isPart: isPart});

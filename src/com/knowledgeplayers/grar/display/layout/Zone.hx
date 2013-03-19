@@ -143,9 +143,11 @@ class Zone extends Sprite {
     }
 
     private function createText(element:Fast):ScrollPanel{
+
         var textF = UiFactory.createTextFromXml(element);
 
-        textF.content = KpTextDownParser.parse(Localiser.instance.getItemContent(element.att.content));
+        var keyText:String = element.att.content;
+        textF.content = KpTextDownParser.parse(Localiser.instance.getItemContent(keyText));
 
         addChild(textF);
 
