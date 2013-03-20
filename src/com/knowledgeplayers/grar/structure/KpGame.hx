@@ -92,6 +92,8 @@ class KpGame extends EventDispatcher, implements Game {
 
         Lib.current.stage.addEventListener(Event.DEACTIVATE, onExit);
         LayoutManager.instance.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+
+
     }
 
     /**

@@ -12,7 +12,7 @@ import nme.Lib;
 /**
  * Parser for the KP MarkUp language
  */
-class KpTextDownParser {
+class KpTextDownParser extends Sprite {
     private static var specialRegEx:EReg = ~/[#*_>.!@+-]+/g;
     private static var widthTF:Float = 0;
     /**
@@ -23,6 +23,7 @@ class KpTextDownParser {
 
     public static function parse(text:String, ?widthText:Float = 0):Sprite
     {
+
         var sprite = new Sprite();
 
         if(text != null && text != ""){
@@ -43,6 +44,7 @@ class KpTextDownParser {
 
         }
         widthTF = widthText;
+
         return sprite;
     }
 
@@ -197,8 +199,11 @@ class KpTextDownParser {
         if(hasItalic){
             substring = regexIta.matchedLeft() + regexIta.matched(1) + regexIta.matchedRight();
         }
-        // tf.autoSize = TextFieldAutoSize.LEFT;
-        // tf.wordWrap = true;
+        /*
+        tf.width = widthTF;
+        tf.wordWrap = true;
+        tf.autoSize = TextFieldAutoSize.LEFT;
+        */
         tf.text = substring;
 
         if(hasBold){
@@ -267,6 +272,6 @@ class KpTextDownParser {
 
     private function new()
     {
-
+    super();
     }
 }

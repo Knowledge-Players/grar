@@ -40,7 +40,8 @@ class TextButton extends CustomEventButton {
 
     public function setText(text:String):Void
     {
-        textSprite = KpTextDownParser.parse(text, this.downState.width);
+        textSprite = KpTextDownParser.parse(text);
+
         centerText();
         if(!contains(textSprite))
             addChild(textSprite);

@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.localisation.Localiser;
+import com.knowledgeplayers.grar.display.component.button.MenuButton;
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.display.layout.Zone;
@@ -213,6 +215,7 @@ class MenuDisplay extends Zone {
                     for(activity in activities){
                         if(activity.container == part){
                             addButton(false, activity.name);
+
                         }
                     }
                 }
@@ -328,7 +331,11 @@ class MenuDisplay extends Zone {
             button = UiFactory.createButtonFromXml(buttonActivityPrototype);
 
         if(Std.is(button, TextButton))
-            cast(button, TextButton).setText(text);
+            cast(button, TextButton).setText(Localiser.instance.getItemContent(text));
+
+        if(Std.is(button, MenuButton))
+            cast(button, MenuButton).setText(Localiser.instance.getItemContent(text));
+
         button.name = text;
 
         button.addEventListener(ButtonActionEvent.GOTO, onClick);
