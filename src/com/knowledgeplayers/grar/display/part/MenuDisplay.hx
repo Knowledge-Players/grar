@@ -333,8 +333,11 @@ class MenuDisplay extends Zone {
         if(Std.is(button, TextButton))
             cast(button, TextButton).setText(Localiser.instance.getItemContent(text));
 
-        if(Std.is(button, MenuButton))
+        if(Std.is(button, MenuButton)){
             cast(button, MenuButton).setText(Localiser.instance.getItemContent(text));
+            cast(button, MenuButton).alignElements();
+        }
+
 
         button.name = text;
 

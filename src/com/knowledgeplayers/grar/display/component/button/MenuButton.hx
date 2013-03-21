@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.button;
 
+import nme.events.MouseEvent;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import nme.Lib;
 import aze.display.TileSprite;
@@ -11,30 +12,26 @@ import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
 
 class MenuButton extends CustomEventButton{
 
-    public var hitBox:Sprite;
-    public var status:TileClip;
-    public var layerStatus:TileLayer;
+    private var hitBox:Sprite;
+    private var status:TileClip;
+    private var layerStatus:TileLayer;
     private var textSprite:Sprite;
 
-    public function new(tilesheet:TilesheetEx, tile:String, eventName:String,?hitBoxWidth:Float,?hitBoxHeight:Float,?_status:String)
+    public function new(tilesheet:TilesheetEx, tile:String, eventName:String,?_status:String)
     {
         super(tilesheet, tile,eventName);
         layer.view.visible=false;
 
-        hitBox = setHitBox(hitBoxWidth,hitBoxHeight);
-
-        layerStatus = new TileLayer(tilesheet);
-        addChild(layerStatus.view);
-
-        //var test = new TileSprite(_status);
-        status = getStatus(_status);
-
-        layerStatus.addChild(status);
-
-        status.currentFrame = 0;
-
-        layerStatus.render();
-
+        hitBox = setHitBox(10,10);
+        hitBox.alpha=0;
+        if (_status != ""){
+            layerStatus = new TileLayer(tilesheet);
+            addChild(layerStatus.view);
+            status = getStatus(_status);
+            layerStatus.addChild(status);
+            status.currentFrame = 0;
+            layerStatus.render();
+            }
 
     }
 
@@ -42,7 +39,7 @@ class MenuButton extends CustomEventButton{
 
         var _hitBox = new Sprite();
 
-        _hitBox.graphics.beginFill(0x999999,.1);
+        _hitBox.graphics.beginFill(0xFFFFFF,1);
         _hitBox.graphics.drawRect(0,0,_w,_h);
         _hitBox.graphics.endFill();
 
@@ -71,6 +68,37 @@ class MenuButton extends CustomEventButton{
             addChild(textSprite);
 
         textSprite.mouseEnabled = false;
+    }
+
+    override private function onMouseOver(event:MouseEvent):Void
+    {
+        hitBox.alpha=1;
+    }
+    override private function onMouseOut(event:MouseEvent):Void
+    {
+        hitBox.alpha=0;
+    }
+/**
+*  Align all elements of the Menu Button
+**/
+
+    public function alignElements():Void{
+
+        hitBox.height =textSprite.height;
+       var hWidth:Float = 0;
+        if(status != null){
+            textSprite.x = status.width;
+            status.y = hitBox.y+(status.height/2);
+            layerStatus.render();
+            hWidth+=status.width;
+        }
+
+        hWidth+=textSprite.width;
+        hitBox.width = hWidth;
+
+        textSprite.y = hitBox.y;
+
+
     }
 
 

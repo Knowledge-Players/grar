@@ -48,14 +48,14 @@ class UiFactory {
      * @return the created button
      */
 
-    public static function createButton(buttonType:String, ref:String, tile:String, x:Float = 0, y:Float = 0, scaleX:Float = 1, scaleY:Float = 1, ?icon:String, iconX:Float = 0, iconY:Float = 0, ?action:String, ?hitBoxWidth:Float, ?hitBoxHeight:Float,?iconStatus:String):DefaultButton
+    public static function createButton(buttonType:String, ref:String, tile:String, x:Float = 0, y:Float = 0, scaleX:Float = 1, scaleY:Float = 1, ?icon:String, iconX:Float = 0, iconY:Float = 0, ?action:String,?iconStatus:String):DefaultButton
     {
         var creation:DefaultButton =
         switch(buttonType.toLowerCase()) {
             case "text": new TextButton(tilesheet, tile, action);
             case "event": new CustomEventButton(tilesheet, tile, action);
             case "anim": new AnimationButton(tilesheet, tile, action);
-            case "menu": new MenuButton(tilesheet, tile, action,hitBoxWidth,hitBoxHeight,iconStatus);
+            case "menu": new MenuButton(tilesheet, tile, action,iconStatus);
             default: new DefaultButton(tilesheet, tile);
         }
         creation.ref = ref;
@@ -101,11 +101,9 @@ class UiFactory {
         var icon = xml.has.icon ? xml.att.icon : null;
         var iconX = xml.has.iconX ? Std.parseFloat(xml.att.iconX) : 0;
         var iconY = xml.has.iconY ? Std.parseFloat(xml.att.iconY) : 0;
-        var hitBoxWidth =xml.has.hitBoxWidth ? Std.parseFloat(xml.att.hitBoxWidth) : 0;
-        var hitBoxHeight =xml.has.hitBoxHeight ? Std.parseFloat(xml.att.hitBoxHeight) : 0;
         var iconStatus =xml.has.status ? xml.att.status : null;
 
-        return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scaleX, scaleY, icon, iconX, iconY, action,hitBoxWidth,hitBoxHeight,iconStatus);
+        return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scaleX, scaleY, icon, iconX, iconY, action,iconStatus);
     }
 
     /**

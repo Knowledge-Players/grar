@@ -215,6 +215,7 @@ class FolderDisplay extends ActivityDisplay {
         for(grid in grids){
             grid.empty();
         }
+
     }
 
     // Handlers
