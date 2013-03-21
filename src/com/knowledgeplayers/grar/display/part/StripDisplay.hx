@@ -70,10 +70,9 @@ class StripDisplay extends PartDisplay {
             if(currentBox.buttons.exists(key))
                 cast(displays.get(key).obj, TextButton).setText(Localiser.instance.getItemContent(currentBox.buttons.get(key)));
         }
-        array.sort(sortDisplayObjects);
-        for(obj in array){
 
-            displayArea.addChild(obj.obj);
+        for(obj in array){
+            displayArea.addChildAt(obj.obj, cast(Math.min(obj.z, numChildren), Int));
         }
 
         var node = displaysFast.get(boxesref[boxIndex]);

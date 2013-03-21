@@ -6,7 +6,7 @@
         <!-- Module title -->
         <Title>SAMPLE ACTIVITY</Title>
         <!-- State of the local save -->
-        <State>fr@1@0-0-0@3</State>
+        <State>fr@1@0-0-0-0@4</State>
         <!-- Layout file for the app -->
         <Layout file="xml/layout.xml"/>
         <!-- Paths to the langages files -->

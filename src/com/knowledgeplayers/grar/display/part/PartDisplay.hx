@@ -1,6 +1,8 @@
 package com.knowledgeplayers.grar.display.part;
 
 import Std;
+import Math;
+import Std;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
 import aze.display.SparrowTilesheet;
@@ -27,7 +29,6 @@ import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.util.LoadData;
-import com.knowledgeplayers.grar.util.SpriteSheetLoader;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.FastList;
 import haxe.xml.Fast;
@@ -62,6 +63,8 @@ class PartDisplay extends KpDisplay {
     private var previousBackground:{ref:String, bmp:Bitmap};
     private var displayArea:Sprite;
     private var currentElement:PartElement;
+    private var localeLoaded:Bool = false;
+    private var displayLoaded:Bool = false;
 
     /**
      * Constructor
@@ -77,10 +80,19 @@ class PartDisplay extends KpDisplay {
 
         displayArea = this;
 
-        XmlLoader.load(part.display, onLoadComplete, parseContent);
-
         addEventListener(TokenEvent.ADD, onTokenAdded);
+    }
 
+    /**
+    * Initialize the part display. Dispatch a PartEvent.PART_LOADED
+    * when ready.
+    **/
+
+    public function init():Void
+    {
+        XmlLoader.load(part.display, onLoadComplete, parseContent);
+        Localiser.instance.addEventListener(LocaleEvent.LOCALE_LOADED, onLocaleLoaded);
+        Localiser.instance.setLayoutFile(part.file);
     }
 
     /**
@@ -185,8 +197,14 @@ class PartDisplay extends KpDisplay {
     override private function createDisplay():Void
     {
         super.createDisplay();
+        displayLoaded = true;
+        checkPartLoaded();
+    }
 
-        dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
+    private function checkPartLoaded():Void
+    {
+        if(localeLoaded && displayLoaded)
+            dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
     }
 
     private function next(event:ButtonActionEvent):Void
@@ -203,7 +221,7 @@ class PartDisplay extends KpDisplay {
     override private function setButtonAction(button:CustomEventButton, action:String):Void
     {
         if(action.toLowerCase() == ButtonActionEvent.NEXT){
-            button.addEventListener(action.toLowerCase(), next);
+            button.addEventListener(ButtonActionEvent.NEXT, next);
         }
     }
 
@@ -237,7 +255,7 @@ class PartDisplay extends KpDisplay {
             if(char != currentSpeaker){
 
                 if(currentSpeaker != null && !Std.is(this, StripDisplay)){
-                    currentSpeaker.visible = false;
+                    displayArea.removeChild(currentSpeaker);
                 }
                 else{
                     char.alpha = 1;
@@ -268,7 +286,7 @@ class PartDisplay extends KpDisplay {
                         toRemove.add(getChildAt(i));
                 }
                 for(obj in toRemove)
-                    removeChild(obj);
+                    displayArea.removeChild(obj);
             }
         }
         else{
@@ -283,12 +301,22 @@ class PartDisplay extends KpDisplay {
         }
 
         if(_textGroup)
-            addChild(cast(displays.get(item.ref).obj, ScrollPanel));
+            displayArea.addChild(cast(displays.get(item.ref).obj, ScrollPanel));
         displayPart(_textGroup);
     }
 
     private function displayPart(?_textGroup:Bool = false):Void
     {
+        // Clean-up buttons
+        var toRemove = new FastList<DisplayObject>();
+        for(i in 0...numChildren){
+            if(Std.is(getChildAt(i), DefaultButton))
+                toRemove.add(getChildAt(i));
+        }
+        for(button in toRemove){
+            displayArea.removeChild(button);
+        }
+
         var array = new Array<{obj:DisplayObject, z:Int}>();
 
         for(key in displays.keys()){
@@ -296,9 +324,8 @@ class PartDisplay extends KpDisplay {
                 array.push(displays.get(key));
         }
 
-        array.sort(sortDisplayObjects);
         for(obj in array){
-            addChild(obj.obj);
+            displayArea.addChildAt(obj.obj, cast(Math.min(obj.z, numChildren), Int));
         }
 
         for(layer in layers){
@@ -310,6 +337,11 @@ class PartDisplay extends KpDisplay {
     {
         var object = displays.get(key);
 
+        // If the object is already displayed
+        if(contains(object.obj))
+            return false;
+
+        // If the text area is not referenced by the current text item
         if(currentElement.isText() && Std.is(object.obj, ScrollPanel) && key != cast(currentElement, TextItem).ref){
             return false;
         }
@@ -340,19 +372,10 @@ class PartDisplay extends KpDisplay {
                     return false;
             }
         }
+        // If the character is not the current speaker
         if(Std.is(object.obj, CharacterDisplay) && object.obj != currentSpeaker)
             return false;
         return true;
-    }
-
-    private function sortDisplayObjects(x:{obj:DisplayObject, z:Int}, y:{obj:DisplayObject, z:Int}):Int
-    {
-        if(x.z < y.z)
-            return -1;
-        else if(x.z > y.z)
-            return 1;
-        else
-            return 0;
     }
 
     // Handlers
@@ -364,6 +387,11 @@ class PartDisplay extends KpDisplay {
 
     private function onLocaleLoaded(ev:LocaleEvent):Void
     {
-        startPattern(cast(currentElement, Pattern));
+        if(currentElement != null && currentElement.isPattern())
+            startPattern(cast(currentElement, Pattern));
+        else{
+            localeLoaded = true;
+            checkPartLoaded();
+        }
     }
 }

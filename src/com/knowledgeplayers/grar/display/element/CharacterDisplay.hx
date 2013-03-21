@@ -15,25 +15,38 @@ class CharacterDisplay extends Sprite {
     /**
      * Starting point of the character
      */
-    public var origin: Point;
+    public var origin:Point;
+
+    /**
+    * Scale of the character
+    **/
+    public var scale (default, setScale):Float;
 
     /**
     * Model of the character
     **/
-    public var model: Character;
+    public var model:Character;
 
-    private var tileId: String;
+    private var layer:TileLayer;
+    private var img:TileSprite;
 
-    public function new(spritesheet: SparrowTilesheet, tileId: String, ?model: Character)
+    public function new(spritesheet:SparrowTilesheet, tileId:String, ?model:Character)
     {
         super();
         this.model = model;
-        this.tileId = tileId;
 
-        var layer = new TileLayer(spritesheet);
-        var img = new TileSprite(tileId);
+        layer = new TileLayer(spritesheet);
+        img = new TileSprite(tileId);
         layer.addChild(img);
         addChild(layer.view);
         layer.render();
     }
+
+    public function setScale(scale:Float):Float
+    {
+        img.scale = scale;
+        layer.render();
+        return scale;
+    }
+
 }

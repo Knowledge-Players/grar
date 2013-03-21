@@ -16,9 +16,9 @@
     <TextGroup ref="group2">
         <Text x="0" y="0" width="960" height="100" background="0xFFFFFF" ref="conclusion1"/>
     </TextGroup>
-    <Character id="Thuynhan_happy" spritesheet="Thuynhan_happy" ref="Thuynhan_happy" scaleX="0.3" scaleY="0.3" x="400"
+    <Character id="Thuynhan_happy" spritesheet="Thuynhan_happy" ref="Thuynhan_happy" scale="0.3" x="400"
                y="500"/>
-    <Character id="Caroline_happy" spritesheet="Caroline_happy" ref="Caroline_happy" scaleX="0.3" scaleY="0.3" x="700"
+    <Character id="Caroline_happy" spritesheet="Caroline_happy" ref="Caroline_happy" scale="0.3" x="700"
                y="500"/>
     <Button id="continueButton" type="text" action="next" x="200" y="200" scaleX="1" scaleY="1" ref="next"/>
 </Display>
