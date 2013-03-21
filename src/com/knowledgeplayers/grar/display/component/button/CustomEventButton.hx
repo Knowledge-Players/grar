@@ -30,7 +30,7 @@ class CustomEventButton extends DefaultButton {
     public function new(tilesheet:TilesheetEx, tile:String, eventName:String)
     {
         super(tilesheet, tile);
-        this.eventType = eventName;
+        this.eventType = eventName.toLowerCase();
 
     }
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Display transitionIn="fadeIn" transition="fadeOut">
     <!-- Spritesheets declaration -->
-    <SpriteSheet id="Caroline_happy" src="Caroline_happy.xml"/>
-    <SpriteSheet id="Thuynhan_happy" src="Thuynhan_happy.xml"/>
-    <SpriteSheet id="Thuynhan_happy2" src="Thuynhan_happy.xml"/>
-    <SpriteSheet id="bubble" src="bubble.xml"/>
+    <SpriteSheet id="Caroline_happy" src="xml/Caroline_happy.xml"/>
+    <SpriteSheet id="Thuynhan_happy" src="xml/Thuynhan_happy.xml"/>
+    <SpriteSheet id="Thuynhan_happy2" src="xml/Thuynhan_happy.xml"/>
+    <SpriteSheet id="bubble" src="xml/bubble.xml"/>
 
     <Box x="0" y="0" width="600" height="400" ref="case1"/>
     <Box x="600" y="0" width="360" height="400" ref="case2"/>

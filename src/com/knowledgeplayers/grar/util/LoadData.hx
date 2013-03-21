@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.util;
 
+import aze.display.TilesheetEx;
+import haxe.xml.Fast;
+import aze.display.SparrowTilesheet;
 import nme.Assets;
 import nme.display.Bitmap;
 import nme.display.DisplayObject;
@@ -21,16 +24,11 @@ class LoadData extends EventDispatcher {
     public static var instance (getInstance, null):LoadData;
 
     private var cacheElementsDisplay:Hash<DisplayObject>;
-    private var arrayOfUrlImgs:Array<String>;
-    private var elementBitmap:Bitmap;
-    private var mloader:Loader;
-    private var z:Float;
-    private var nameElementDisplay:String;
-    private var eventCaller:String;
-    private var numData:Float = 0;
+    private var imagesUrls:Array<String>;
+    private var numDataLoaded:Float = 0;
     private var nbDatas:Float = 0;
     private var nbXml:Float = 0;
-    private var numXml:Float = 0;
+    private var numXmlLoaded:Float = 0;
 
     /**
      * @return the instance of the loaderdatas
@@ -50,20 +48,25 @@ class LoadData extends EventDispatcher {
 
     public function loadDisplayXml(?structureXml:Xml = null):Void
     {
+        var arrayDisplayXml = parseChildrenXml(structureXml, "display");
 
-        var arrayDisplayXml:Array<String> = new Array<String>();
+        if(arrayDisplayXml.length > 0){
+            arrayDisplayXml = removeDuplicates(arrayDisplayXml);
 
-        parseChildrenXml(structureXml, arrayDisplayXml, "display");
+            nbXml += arrayDisplayXml.length;
 
-        arrayDisplayXml = removeDuplicates(arrayDisplayXml);
-
-        var lgArray:Int = arrayDisplayXml.length;
-        nbXml = lgArray;
-
-        for(i in 0...lgArray){
-            XmlLoader.load(arrayDisplayXml[i], onXmlDisplayLoaded, parseContent);
+            for(xml in arrayDisplayXml){
+                XmlLoader.load(xml, onXmlDisplayLoaded, parseContent);
+            }
         }
+    }
 
+    public function loadSpritesheet(pName:String, src:String, listener:Event -> Void)
+    {
+        var loader = new SpriteSheetLoader();
+        loader.addEventListener(Event.COMPLETE, listener);
+
+        loader.init(pName, src);
     }
 
     /**
@@ -74,49 +77,41 @@ class LoadData extends EventDispatcher {
 
     public function getElementDisplayInCache(_name:String):Null<DisplayObject>
     {
-        var element:DisplayObject = null;
-        for(_key in cacheElementsDisplay.keys()){
-            if(_key == _name){
-                element = cacheElementsDisplay.get(_key);
-            }
-        }
-
-        return element;
+        return cacheElementsDisplay.get(_name);
     }
 
     // Privates
 
     private function new()
     {
-
         super();
         cacheElementsDisplay = new Hash<DisplayObject>();
-
-        arrayOfUrlImgs = new Array<String>();
+        imagesUrls = new Array<String>();
     }
 
     /**
     * Parse all the nodes of Xml and get the attribute needed
     * @param    xml : Xml node @:autoBuild parse
-    * @param    array : Array where to store the results
     * @param    att : Attribut to find
+    * @return an array with the results
     **/
 
-    private function parseChildrenXml(_xml:Xml, _array:Array<String>, _att:String):Void
+    private function parseChildrenXml(_xml:Xml, _att:String):Array<String>
     {
-
+        var array:Array<String> = new Array<String>();
         for(elt in _xml.elements()){
-            for(user in _xml.elementsNamed(elt.nodeName)){
-
-                if(user.get(_att) != null)
-                    _array.push(user.get(_att));
-
-                if(user.firstChild() != null)
-                    parseChildrenXml(user, _array, _att);
-
+            if(elt.nodeName == "Part" && elt.get("file") != null){
+                XmlLoader.load(elt.get("file"), function(e:Event)
+                {
+                    loadDisplayXml(XmlLoader.getXml(e));
+                }, loadDisplayXml);
             }
+            if(elt.get(_att) != null)
+                array.push(elt.get(_att));
+            if(elt.firstChild() != null)
+                array = array.concat(parseChildrenXml(elt, _att));
         }
-
+        return array;
     }
 
     /**
@@ -125,121 +120,155 @@ class LoadData extends EventDispatcher {
     * @return the array without duplicates
     **/
 
-    private function removeDuplicates(ar:Array<String>):Array<String>
+    private function removeDuplicates(array:Array<String>):Array<String>
     {
-        var result:Array<String> = ar.slice(0, ar.length);
-        var t;
+        var uniques = new Array<String>();
 
-        for(a1 in 0...result.length){
-            t = ar[a1];
-
-            for(a2 in 0...result.length){
-                if(result[a2] == result[a1]){
-                    if(a2 != a1){
-                        result.splice(a2, 1);
-                    }
-                }
+        for(elem in array){
+            var isUnique = true;
+            for(unique in uniques){
+                if(elem == unique)
+                    isUnique = false;
             }
+            if(isUnique)
+                uniques.push(elem);
         }
-        return result;
+
+        return uniques;
     }
 
     private function onXmlDisplayLoaded(e:Event = null):Void
     {
-        var xmlSprite = XmlLoader.getXml(e);
-        parseContent(xmlSprite);
+        parseContent(XmlLoader.getXml(e));
     }
 
     private function parseContent(content:Xml):Void
     {
-        numXml++;
+        numXmlLoaded++;
         for(node in content.elements()){
 
             if(node.exists("imagePath")){
 
-                arrayOfUrlImgs.push(node.get("imagePath"));
+                imagesUrls.push(node.get("imagePath"));
             }
             for(nd in node.elements()){
                 if(nd.nodeName != "SubTexture"){
                     if(nd.exists("src")){
                         if(Std.string(nd.get("src")).indexOf(".xml") == -1){
                             if(Std.string(nd.get("src")).charAt(0) != "0")
-                                arrayOfUrlImgs.push(nd.get("src"));
+                                imagesUrls.push(nd.get("src"));
+                        }
+                        else{
+                            XmlLoader.load(nd.get("src"), function(e:Event)
+                            {
+                                parseXmlSpritesheet(XmlLoader.getXml(e));
+                            }, parseXmlSpritesheet);
                         }
 
                     }
                     if(nd.exists("background")){
                         if(Std.string(nd.get("background")).indexOf(".") != -1){
                             if(Std.string(nd.get("background")).charAt(0) != "0")
-                                arrayOfUrlImgs.push(nd.get("background"));
+                                imagesUrls.push(nd.get("background"));
                         }
                     }
                     if(nd.exists("buttonIcon") && nd.get("buttonIcon").indexOf(".") > 0){
-                        arrayOfUrlImgs.push(nd.get("buttonIcon"));
+                        imagesUrls.push(nd.get("buttonIcon"));
                     }
                 }
             }
 
         }
 
-        if(numXml == nbXml){
-            arrayOfUrlImgs = removeDuplicates(arrayOfUrlImgs);
-            var lgImgsArray:Int = arrayOfUrlImgs.length;
-            nbDatas = lgImgsArray;
-
-            for(i in 0...lgImgsArray){
-                loadData(arrayOfUrlImgs[i]);
-            }
+        if(numXmlLoaded == nbXml){
+            refreshCache();
         }
 
     }
 
-    private function loadData(?path:String = ""):Void
+    private function parseXmlSpritesheet(xml:Xml):Void
     {
+        var fast = new Fast(xml).node.TextureAtlas;
+        imagesUrls.push(fast.att.imagePath);
+        refreshCache();
+    }
 
-        if(!checkElementsDisplayInCache(path)){
-            #if flash
-                var urlR = new URLRequest(path);
-                var mloader = new Loader();
-                mloader.contentLoaderInfo.addEventListener(Event.COMPLETE,onCompleteLoading);
-                mloader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
-                mloader.load(urlR);
-            #else
-            var elementDisplay = new Bitmap(Assets.getBitmapData(path));
-            cacheElementsDisplay.set(path, elementDisplay);
-            #end
+    private function refreshCache():Void
+    {
+        imagesUrls = removeDuplicates(imagesUrls);
+        nbDatas += imagesUrls.length;
+
+        while(imagesUrls.length > 0){
+            var object = imagesUrls.pop();
+            if(!cacheElementsDisplay.exists(object)){
+                #if flash
+                    var urlR = new URLRequest(object);
+                    var mloader = new Loader();
+                    mloader.contentLoaderInfo.addEventListener(Event.COMPLETE,onCompleteLoading);
+                    mloader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
+                    mloader.load(urlR);
+                #else
+                var elementDisplay = new Bitmap(Assets.getBitmapData(object));
+                cacheElementsDisplay.set(object, elementDisplay);
+                #end
+            }
         }
-
     }
 
     private function onIOError(error:IOErrorEvent):Void
     {
-        Lib.trace("File requested doesn't exist: " + error.toString().substr(error.toString().indexOf("/")));
+        Lib.trace("[LoadData] File requested doesn't exist: " + error.toString().substr(error.toString().indexOf("/")));
     }
 
     private function onCompleteLoading(event:Event):Void
     {
-        numData++;
-        var arrayName = Std.string(event.currentTarget.url).split("/");
+        numDataLoaded++;
+        var path = Std.string(event.currentTarget.url).split("/");
 
-        nameElementDisplay = arrayName[arrayName.length - 2] + "/" + arrayName[arrayName.length - 1];
+        var rootIndex = -1;
+        for(i in 0...path.length){
+            if(path[i] == "bin")
+                rootIndex = i;
+        }
+        path = path.slice(rootIndex + 1, path.length);
+        var nameElementDisplay = path.join("/");
         cacheElementsDisplay.set(nameElementDisplay, event.currentTarget.content);
 
-        if(nbDatas == numData){
+        if(nbDatas == numDataLoaded){
             dispatchEvent(new Event("DATA_LOADED", true));
         }
     }
+}
 
-    private function checkElementsDisplayInCache(_name:String):Bool
+/**
+ * Loader of spritesheets form XML
+ */
+class SpriteSheetLoader extends EventDispatcher {
+    public var name:String;
+    public var spritesheet:TilesheetEx;
+
+    public function new()
     {
-        var existInCache = false;
+        super();
+    }
 
-        for(key in cacheElementsDisplay.keys()){
-            if(key == _name){
-                existInCache = true;
-            }
-        }
+    public function init(pName:String, src:String)
+    {
+        name = pName;
 
-        return existInCache;
+        XmlLoader.load(src, onXmlSpriteSheetLoaded, parseXmlSprite);
+    }
+
+    private function onXmlSpriteSheetLoaded(e:Event):Void
+    {
+        parseXmlSprite(XmlLoader.getXml(e));
+    }
+
+    private function parseXmlSprite(xmlSprite:Xml):Void
+    {
+        var fast = new Fast(xmlSprite).node.TextureAtlas;
+        var elementDisplay = LoadData.instance.getElementDisplayInCache(fast.att.imagePath);
+        spritesheet = new SparrowTilesheet(cast(elementDisplay, Bitmap).bitmapData, xmlSprite.toString());
+        dispatchEvent(new Event(Event.COMPLETE));
     }
 }

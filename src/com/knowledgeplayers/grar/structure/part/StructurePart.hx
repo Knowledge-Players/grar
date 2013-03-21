@@ -165,14 +165,14 @@ class StructurePart extends EventDispatcher, implements Part {
     public function getAllParts():Array<Part>
     {
         var array = new Array<Part>();
+        if(elements.length > 0)
+            array.push(this);
         if(hasParts()){
             for(elem in elements){
                 if(elem.isPart())
                     array = array.concat(cast(elem, Part).getAllParts());
             }
         }
-        if(elements.length > 0)
-            array.push(this);
         return array;
     }
 
@@ -338,7 +338,6 @@ class StructurePart extends EventDispatcher, implements Part {
 
     private function enterPart():Void
     {
-        Localiser.getInstance().setLayoutFile(file);
         if(soundLoop != null)
             soundLoopChannel = soundLoop.play();
     }

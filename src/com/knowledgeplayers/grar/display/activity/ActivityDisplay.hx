@@ -5,7 +5,6 @@ import com.knowledgeplayers.grar.util.DisplayUtils;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.structure.activity.Activity;
-import com.knowledgeplayers.grar.util.SpriteSheetLoader;
 import haxe.xml.Fast;
 import nme.display.DisplayObject;
 import nme.display.Sprite;

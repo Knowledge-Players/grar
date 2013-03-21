@@ -93,7 +93,6 @@ class KpGame extends EventDispatcher, implements Game {
         Lib.current.stage.addEventListener(Event.DEACTIVATE, onExit);
         LayoutManager.instance.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
 
-
     }
 
     /**
@@ -188,7 +187,7 @@ class KpGame extends EventDispatcher, implements Game {
 
     public function getLoadingCompletion():Float
     {
-        return nbPartsLoaded / Lambda.count(parts);
+        return nbPartsLoaded / getAllParts().length;
     }
 
     /**
@@ -224,7 +223,7 @@ class KpGame extends EventDispatcher, implements Game {
     private function checkIntegrity():Void
     {
         if(stateInfos.checksum != getAllParts().length){
-            throw "Invalid checksum (" + getAllParts().length + " must be " + stateInfos.checksum + "). The structure file must be corrupt";
+            throw "Invalid checksum (" + getAllParts().length + " part(s) found instead of " + stateInfos.checksum + "). The structure file must be corrupt";
         }
     }
 

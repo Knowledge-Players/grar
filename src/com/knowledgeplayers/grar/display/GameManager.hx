@@ -92,6 +92,7 @@ class GameManager extends EventDispatcher {
             currentPart.addEventListener(PartEvent.EXIT_PART, onExitPart);
             currentPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
             currentPart.addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
+            currentPart.init();
         }
     }
 
@@ -114,7 +115,6 @@ class GameManager extends EventDispatcher {
     public function displayPartById(id:Int):Void
     {
         displayPart(game.start(id));
-
     }
 
     // Privates
@@ -154,6 +154,7 @@ class GameManager extends EventDispatcher {
         var subPart:PartDisplay = DisplayFactory.createPartDisplay(event.part);
         subPart.addEventListener(PartEvent.EXIT_PART, onExitSubPart);
         subPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+        subPart.init();
     }
 
     private function onActivityReady(e:Event):Void

@@ -48,14 +48,14 @@ class UiFactory {
      * @return the created button
      */
 
-    public static function createButton(buttonType:String, ref:String, tile:String, x:Float = 0, y:Float = 0, scaleX:Float = 1, scaleY:Float = 1, ?icon:String, iconX:Float = 0, iconY:Float = 0, ?action:String,?iconStatus:String):DefaultButton
+    public static function createButton(buttonType:String, ref:String, tile:String, x:Float = 0, y:Float = 0, scaleX:Float = 1, scaleY:Float = 1, ?icon:String, iconX:Float = 0, iconY:Float = 0, ?action:String, ?iconStatus:String):DefaultButton
     {
         var creation:DefaultButton =
         switch(buttonType.toLowerCase()) {
             case "text": new TextButton(tilesheet, tile, action);
             case "event": new CustomEventButton(tilesheet, tile, action);
             case "anim": new AnimationButton(tilesheet, tile, action);
-            case "menu": new MenuButton(tilesheet, tile, action,iconStatus);
+            case "menu": new MenuButton(tilesheet, tile, action, iconStatus);
             default: new DefaultButton(tilesheet, tile);
         }
         creation.ref = ref;
@@ -101,9 +101,9 @@ class UiFactory {
         var icon = xml.has.icon ? xml.att.icon : null;
         var iconX = xml.has.iconX ? Std.parseFloat(xml.att.iconX) : 0;
         var iconY = xml.has.iconY ? Std.parseFloat(xml.att.iconY) : 0;
-        var iconStatus =xml.has.status ? xml.att.status : null;
+        var iconStatus = xml.has.status ? xml.att.status : null;
 
-        return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scaleX, scaleY, icon, iconX, iconY, action,iconStatus);
+        return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scaleX, scaleY, icon, iconX, iconY, action, iconStatus);
     }
 
     /**
@@ -115,8 +115,8 @@ class UiFactory {
     public static function createImageFromXml(xml:Fast):TileSprite
     {
         var image = new TileSprite(xml.att.id);
-        image.x =  xml.has.x ? Std.parseFloat(xml.att.x):0;
-        image.y =  xml.has.y ? Std.parseFloat(xml.att.y):0;
+        image.x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
+        image.y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
         image.scaleX = xml.has.scaleX ? Std.parseFloat(xml.att.scaleX) : 1;
         image.scaleY = xml.has.scaleY ? Std.parseFloat(xml.att.scaleY) : 1;
 
@@ -146,6 +146,7 @@ class UiFactory {
     * @return a bitmap filter
     **/
     //TODO FILTERMANAGER
+
     public static function createFilterFromXml(xml:Fast):BitmapFilter
     {
         var filterNode = Std.string(xml.att.filter).split(":");
@@ -170,17 +171,13 @@ class UiFactory {
     {
         layerPath = pathToXml.substr(0, pathToXml.indexOf("."));
 
-        XmlLoader.load(layerPath + ".xml", onXmlLoaded, parseContent);
+        //XmlLoader.load(layerPath + ".xml", onXmlLoaded, parseContent);
+        LoadData.instance.loadSpritesheet("ui", layerPath + ".xml", onXmlLoaded);
     }
 
-    private static function parseContent(content:Xml):Void
+    private static function onXmlLoaded(e:Event):Void
     {
-        onXmlLoaded();
-    }
-
-    private static function onXmlLoaded(e:Event = null):Void
-    {
-        tilesheet = new SparrowTilesheet(cast(LoadData.getInstance().getElementDisplayInCache(layerPath + ".png"), Bitmap).bitmapData, XmlLoader.getXml(e).toString());
+        tilesheet = e.target.spritesheet;//new SparrowTilesheet(cast(LoadData.getInstance().getElementDisplayInCache(layerPath + ".png"), Bitmap).bitmapData, XmlLoader.getXml(e).toString());
         GameManager.instance.game.uiLoaded = true;
     }
 

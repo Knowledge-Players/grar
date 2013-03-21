@@ -1,6 +1,7 @@
 package com.knowledgeplayers.grar.display;
 
-import com.knowledgeplayers.grar.util.SpriteSheetLoader;
+import Std;
+import browser.Lib;
 import nme.events.Event;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.factory.UiFactory;
@@ -47,7 +48,7 @@ class KpDisplay extends Sprite {
 
         if(totalSpriteSheets > 0){
             for(child in displayFast.nodes.SpriteSheet){
-                loadSpritesheet(child);
+                LoadData.instance.loadSpritesheet(child.att.id, child.att.src, onSpriteSheetLoaded);
             }
         }
         else{
@@ -119,7 +120,6 @@ class KpDisplay extends Sprite {
 
         if(buttonNode.has.action)
             setButtonAction(cast(button, CustomEventButton), buttonNode.att.action);
-
         addElement(button, buttonNode);
     }
 
@@ -171,6 +171,8 @@ class KpDisplay extends Sprite {
         var char:CharacterDisplay = new CharacterDisplay(spritesheets.get(character.att.spritesheet), character.att.id, new Character(character.att.ref));
         char.visible = false;
         char.origin = new Point(Std.parseFloat(character.att.x), Std.parseFloat(character.att.y));
+        if(character.has.scale)
+            char.scale = Std.parseFloat(character.att.scale);
         addElement(char, character);
 
     }
@@ -212,14 +214,6 @@ class KpDisplay extends Sprite {
             display.scaleY = Std.parseFloat(node.att.scaleY);
     }
 
-    private function loadSpritesheet(spritesheetNode:Fast):Void
-    {
-        var loader = new SpriteSheetLoader();
-        loader.addEventListener(Event.COMPLETE, onSpriteSheetLoaded);
-
-        loader.init(spritesheetNode.att.id, spritesheetNode.att.src);
-    }
-
     private function setButtonAction(button:CustomEventButton, action:String):Void
     {}
 
@@ -238,8 +232,8 @@ class KpDisplay extends Sprite {
     private function onSpriteSheetLoaded(ev:Event):Void
     {
         ev.target.removeEventListener(Event.COMPLETE, onSpriteSheetLoaded);
-        spritesheets.set(ev.target.name, ev.target.spriteSheet);
-        var layer = new TileLayer(ev.target.spriteSheet);
+        spritesheets.set(ev.target.name, ev.target.spritesheet);
+        var layer = new TileLayer(ev.target.spritesheet);
         layers.set(ev.target.name, layer);
         numSpriteSheetsLoaded++;
         if(numSpriteSheetsLoaded == totalSpriteSheets){
