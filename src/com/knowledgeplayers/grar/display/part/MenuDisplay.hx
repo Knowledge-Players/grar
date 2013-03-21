@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import nme.display.Shape;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.component.button.MenuButton;
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
@@ -244,19 +245,23 @@ class MenuDisplay extends Zone {
 
         if(orientation == "vertical"){
 
+
             for(item in items){
                 var node: Fast;
                 if(item.isPart){
                     node = display.node.Part;
                     xSet= xPart;
-                    ySet=yPart;
+                    ySet= yPart;
                 } else{
                     node = display.node.Activity;
                     xSet=xAct;
                     ySet=yAct;
                 }
-                if(node.has.xOffset)
-                    item.button.x += xSet+Std.parseFloat(node.att.xOffset);
+                if(node.has.xOffset){
+
+                    item.button.x += xSet+ Std.parseFloat(node.att.xOffset);
+                }
+
 
                 item.button.y += ySet+offset;
 
@@ -264,9 +269,16 @@ class MenuDisplay extends Zone {
                 // TODO Height of a tilesprite is wrong
                 //Lib.trace("item.button.height"+item.button.height);
                 offset += item.button.height-10000;
+
                 if(node.has.yOffset)
                     offset += Std.parseFloat(node.att.yOffset);
+
+                if (item.isPart){
+                    addLine(20,offset-75);
+                }
+
             }
+
 
 
         }
@@ -291,6 +303,7 @@ class MenuDisplay extends Zone {
                 if(node.has.xOffset)
                     offset += Std.parseFloat(node.att.xOffset);
             }
+
         }
 
     }
@@ -319,7 +332,22 @@ class MenuDisplay extends Zone {
         }
     }
 
+    private function addLine(_x:Float=0,_y:Float=0):Void{
 
+        var line = new Shape();
+        line.graphics.lineStyle(1, 0x999999, 1);
+        line.graphics.moveTo(0,0);
+        line.graphics.lineTo(310,0);
+
+
+        line.x = _x;
+        line.y = _y;
+
+        addChild(line);
+
+
+
+    }
 
 
     private function addButton(isPart: Bool, text: String = ""): Void
