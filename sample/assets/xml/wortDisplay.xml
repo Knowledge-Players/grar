@@ -11,6 +11,7 @@
     <!-- DisplayObjects. Start at z=0 -->
     <Background src="img/background.jpg" ref="labo"/>
     <Background src="img/background2.jpg" ref="empty"/>
+
     <Character id="Thuynhan_happy" spritesheet="Thuynhan_happy" ref="Thuynhan_happy" scale="0.3" x="400"
                y="500"/>
     <Character id="Caroline_happy" spritesheet="Caroline_happy" ref="Caroline_happy" scale="0.3" x="700"

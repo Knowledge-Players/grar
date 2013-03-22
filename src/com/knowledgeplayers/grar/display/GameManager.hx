@@ -159,6 +159,7 @@ class GameManager extends EventDispatcher {
 
     private function onActivityReady(e:Event):Void
     {
+        if (activityDisplay != null)
         activityDisplay.removeEventListener(Event.COMPLETE, onActivityReady);
         layout.zones.get(game.ref).addChild(activityDisplay);
         activityDisplay.startActivity();

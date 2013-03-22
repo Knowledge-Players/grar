@@ -331,6 +331,8 @@ class MenuDisplay extends Zone {
                 }
             }
         }
+
+        TweenManager.applyTransition(this,transitionOut);
     }
 
     private function addLine(_x:Float=0,_y:Float=0):Void{
@@ -362,9 +364,11 @@ class MenuDisplay extends Zone {
         if(Std.is(button, TextButton))
             cast(button, TextButton).setText(Localiser.instance.getItemContent(text));
 
+
         if(Std.is(button, MenuButton)){
             cast(button, MenuButton).setText(Localiser.instance.getItemContent(text));
             cast(button, MenuButton).alignElements();
+
         }
 
 
