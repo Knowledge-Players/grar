@@ -25,11 +25,6 @@ class ScrollPanel extends Sprite {
     public var content (default, setContent):Sprite;
 
     /**
-    * Background of the panel. It can be only a color or a reference to a Bitmap,
-    **/
-    public var background (default, setBackground):String;
-
-    /**
     * If true, the text won't scroll even if it's bigger than the panel
     **/
     public var scrollLock (default, default):Bool;
@@ -40,12 +35,18 @@ class ScrollPanel extends Sprite {
     private var scrollable:Bool;
     private var spriteSheet:TilesheetEx;
     private var scaleNine:ScaleNine;
+
+    /**
+    * Background of the panel. It can be only a color or a reference to a Bitmap,
+    **/
+    private var background:String;
     /**
      * Constructor
      * @param	width : Width of the displayed content
      * @param	height : Height of the displayed content
      * @param	scrollLock : Disable scroll. False by default
      */
+    // TODO What to do with _spritesheet
 
     public function new(width:Float, height:Float, ?_scrollLock:Bool = false, ?_spriteSheet:TilesheetEx)
     {
@@ -101,7 +102,7 @@ class ScrollPanel extends Sprite {
         return content;
     }
 
-    public function setBackground(bkg:String):String
+    public function setBackground(bkg:String, ?tilesheet:TilesheetEx):Void
     {
         background = bkg;
         if(spriteSheet == null){
@@ -111,7 +112,9 @@ class ScrollPanel extends Sprite {
                 this.graphics.endFill();
             }
             else if(background.indexOf(".") < 0){
-                var layer = new TileLayer(UiFactory.tilesheet);
+                if(tilesheet == null)
+                    tilesheet = UiFactory.tilesheet;
+                var layer = new TileLayer(tilesheet);
                 var tile = new TileSprite(background);
                 layer.addChild(tile);
                 addChildAt(layer.view, 0);
@@ -132,8 +135,6 @@ class ScrollPanel extends Sprite {
             scaleNine.addEventListener("onScaleInit", onInitScale);
             scaleNine.init(spriteSheet);
         }
-
-        return bkg;
     }
 
     // Private

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import haxe.FastList;
 import haxe.xml.Fast;
 import nme.Lib;
 
@@ -33,6 +34,12 @@ class TextItem implements PartElement {
     * Unique ref that will match the display
 **/
     public var ref (default, default):String;
+
+    /**
+    * Items associated with this item
+    **/
+    public var items (default, default):FastList<String>;
+
     /**
      * Constructor
      * @param	xml : fast xml node with structure info
@@ -41,6 +48,7 @@ class TextItem implements PartElement {
 
     public function new(?xml:Fast, content:String = "")
     {
+        items = new FastList<String>();
         if(xml != null){
             if(xml.has.content)
                 this.content = xml.att.content;
@@ -52,6 +60,9 @@ class TextItem implements PartElement {
                 ref = xml.att.ref;
             if(xml.has.background)
                 background = xml.att.background;
+            for(item in xml.nodes.Item){
+                items.add(item.att.ref);
+            }
         }
         else{
             this.content = content;

@@ -48,7 +48,7 @@ class UiFactory {
      * @return the created button
      */
 
-    public static function createButton(buttonType:String, ref:String, tile:String, x:Float = 0, y:Float = 0, scaleX:Float = 1, scaleY:Float = 1, ?icon:String, iconX:Float = 0, iconY:Float = 0, ?action:String, ?iconStatus:String):DefaultButton
+    public static function createButton(buttonType:String, ref:String, tile:String, ?tileDown:String, ?tileOver:String, x:Float = 0, y:Float = 0, scaleX:Float = 1, scaleY:Float = 1, ?icon:String, iconX:Float = 0, iconY:Float = 0, ?action:String, ?iconStatus:String):DefaultButton
     {
         var creation:DefaultButton =
         switch(buttonType.toLowerCase()) {
@@ -63,6 +63,10 @@ class UiFactory {
         creation.y = y;
         creation.scaleX = scaleX;
         creation.scaleY = scaleY;
+        if(tileDown != null)
+            creation.setStateIcon(ButtonState.DOWN, tileDown);
+        if(tileOver != null)
+            creation.setStateIcon(ButtonState.OVER, tileOver);
         if(icon != null)
             creation.setIcon(new TileSprite(icon), new Point(iconX, iconY));
 
@@ -102,8 +106,10 @@ class UiFactory {
         var iconX = xml.has.iconX ? Std.parseFloat(xml.att.iconX) : 0;
         var iconY = xml.has.iconY ? Std.parseFloat(xml.att.iconY) : 0;
         var iconStatus = xml.has.status ? xml.att.status : null;
+        var idOver = xml.has.idOver ? xml.att.idOver : null;
+        var idDown = xml.has.idDown ? xml.att.idDown : null;
 
-        return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scaleX, scaleY, icon, iconX, iconY, action, iconStatus);
+        return createButton(xml.att.type, xml.att.ref, xml.att.id, idDown, idOver, x, y, scaleX, scaleY, icon, iconX, iconY, action, iconStatus);
     }
 
     /**

@@ -7,7 +7,7 @@ import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import aze.display.TileLayer;
 import com.knowledgeplayers.grar.util.LoadData;
-import aze.display.SparrowTilesheet;
+import aze.display.TilesheetEx;
 import nme.display.DisplayObject;
 import nme.geom.Point;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
@@ -24,7 +24,7 @@ class KpDisplay extends Sprite {
     /**
     * All the spritesheets used here
     **/
-    public var spritesheets:Hash<SparrowTilesheet>;
+    public var spritesheets:Hash<TilesheetEx>;
 
     private var displays:Hash<{obj:DisplayObject, z:Int}>;
     private var displaysFast:Hash<Fast>;
@@ -94,6 +94,14 @@ class KpDisplay extends Sprite {
         else{
             var spritesheet;
             var itemTile = new TileSprite(itemNode.att.id);
+            if(itemNode.has.scale)
+                itemTile.scale = Std.parseFloat(itemNode.att.scale);
+            if(itemNode.has.mirror){
+                itemTile.mirror = switch(itemNode.att.mirror.toLowerCase()){
+                    case "horizontal": 1;
+                    case "vertical": 2;
+                }
+            }
             if(itemNode.has.spritesheet){
                 layers.get(itemNode.att.spritesheet).addChild(itemTile);
                 spritesheet = itemNode.att.spritesheet;
@@ -138,8 +146,7 @@ class KpDisplay extends Sprite {
 
         var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height), scrollable, spritesheet);
         if(background != null)
-            text.background = background;
-
+            text.setBackground(background, textNode.has.spritesheet ? spritesheets.get(textNode.att.spritesheet) : null);
         addElement(text, textNode);
     }
 
@@ -168,7 +175,8 @@ class KpDisplay extends Sprite {
 
     private function createCharacter(character:Fast)
     {
-        var char:CharacterDisplay = new CharacterDisplay(spritesheets.get(character.att.spritesheet), character.att.id, new Character(character.att.ref));
+        var mirror = character.has.mirror ? character.att.mirror : null;
+        var char:CharacterDisplay = new CharacterDisplay(spritesheets.get(character.att.spritesheet), character.att.id, new Character(character.att.ref), mirror);
         char.visible = false;
         char.origin = new Point(Std.parseFloat(character.att.x), Std.parseFloat(character.att.y));
         if(character.has.scale)
@@ -222,7 +230,7 @@ class KpDisplay extends Sprite {
         super();
         displays = new Hash<{obj:DisplayObject, z:Int}>();
         displaysFast = new Hash<Fast>();
-        spritesheets = new Hash<SparrowTilesheet>();
+        spritesheets = new Hash<TilesheetEx>();
         textGroups = new Hash<Hash<{obj:Fast, z:Int}>>();
         layers = new Hash<TileLayer>();
     }

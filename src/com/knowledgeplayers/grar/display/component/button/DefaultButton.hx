@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.display.component.button;
+import browser.Lib;
 import nme.geom.Point;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
@@ -12,20 +13,6 @@ import nme.events.MouseEvent;
  */
 
 class DefaultButton extends Sprite {
-    /**
-     * Sprite containing the upstate
-     */
-    public var upState:TileSprite;
-
-    /**
-     * Sprite containing the overstater
-     */
-    public var overState:TileSprite;
-
-    /**
-     * Sprite containing the downstate
-     */
-    public var downState:TileSprite;
 
     /**
      * Layer of the button
@@ -48,6 +35,21 @@ class DefaultButton extends Sprite {
     private var icon:TileSprite;
 
     /**
+     * Sprite containing the upstate
+     */
+    private var upState:TileSprite;
+
+    /**
+     * Sprite containing the overstater
+     */
+    private var overState:TileSprite;
+
+    /**
+     * Sprite containing the downstate
+     */
+    private var downState:TileSprite;
+
+    /**
      * Constructor. Downstate and overstate are automatically set if their tile are
      * name upstateName+"_pressed" and upstateName+"_over"
      * @param	tilesheet : UI Sheet
@@ -56,20 +58,14 @@ class DefaultButton extends Sprite {
      * @param	tileOver : Tile containing the overstate
      */
 
-    public function new(tilesheet:TilesheetEx, tile:String, ?tilePressed:String, ?tileOver:String)
+    public function new(tilesheet:TilesheetEx, tile:String)
     {
         super();
 
         layer = new TileLayer(tilesheet);
         upState = new TileSprite(tile);
-        if(tilePressed != null)
-            downState = new TileSprite(tilePressed);
-        else
-            downState = new TileSprite(tile);
-        if(tileOver != null)
-            overState = new TileSprite(tileOver);
-        else
-            overState = new TileSprite(tile);
+        downState = new TileSprite(tile);
+        overState = new TileSprite(tile);
 
         mouseChildren = false;
 
@@ -87,6 +83,33 @@ class DefaultButton extends Sprite {
         enabled = buttonMode = mouseEnabled = activate;
 
         return activate;
+    }
+
+    public function setStateIcon(state:ButtonState, tileId:String)
+    {
+        var visible = false;
+        switch(state){
+            case UP :
+                visible = upState.visible;
+                layer.removeChild(upState);
+                upState = new TileSprite(tileId);
+                layer.addChild(upState);
+                upState.visible = visible;
+            case DOWN :
+                visible = downState.visible;
+                layer.removeChild(downState);
+                downState = new TileSprite(tileId);
+                layer.addChild(downState);
+                downState.visible = visible;
+            case OVER :
+                visible = overState.visible;
+                layer.removeChild(overState);
+                overState = new TileSprite(tileId);
+                layer.addChild(overState);
+                overState.visible = visible;
+        }
+
+        layer.render();
     }
 
     public function setIcon(icon:TileSprite, iconPos:Point):TileSprite
@@ -180,6 +203,7 @@ class DefaultButton extends Sprite {
 
         layer.render();
 
+        // TODO Test if this is still necessary
         // Hack for C++ hitArea (NME 3.4.4)
         #if cpp
 			graphics.beginFill (0xFFFFFF, 0.01);
@@ -219,4 +243,10 @@ class DefaultButton extends Sprite {
             case MouseEvent.DOUBLE_CLICK: onDblClick(event);
         }
     }
+}
+
+enum ButtonState {
+    UP;
+    DOWN;
+    OVER;
 }

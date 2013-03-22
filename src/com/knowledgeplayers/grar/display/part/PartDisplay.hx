@@ -1,6 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
 import Std;
+import Std;
 import Math;
 import Std;
 import aze.display.TileSprite;
@@ -65,6 +66,8 @@ class PartDisplay extends KpDisplay {
     private var currentElement:PartElement;
     private var localeLoaded:Bool = false;
     private var displayLoaded:Bool = false;
+    private var currentItems:FastList<DisplayObject>;
+    private var currentTextItem:TextItem;
 
     /**
      * Constructor
@@ -77,6 +80,7 @@ class PartDisplay extends KpDisplay {
         this.part = part;
 
         resizeD = ResizeManager.getInstance();
+        currentItems = new FastList<DisplayObject>();
 
         displayArea = this;
 
@@ -236,6 +240,7 @@ class PartDisplay extends KpDisplay {
 
         if(background != null){
             var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(background).att.src), Bitmap).bitmapData);
+            initDisplayObject(bkg, displaysFast.get(background));
             if(bkg != null){
                 displayArea.addChildAt(bkg, 0);
             }
@@ -262,8 +267,7 @@ class PartDisplay extends KpDisplay {
                     char.visible = true;
                 }
                 currentSpeaker = char;
-                if(transition != null)
-                    TweenManager.applyTransition(currentSpeaker, transition);
+                TweenManager.applyTransition(currentSpeaker, transition);
 
                 currentSpeaker.visible = true;
             }
@@ -274,31 +278,32 @@ class PartDisplay extends KpDisplay {
 
     private function setText(item:TextItem, ?_textGroup:Bool = false):Void
     {
+        currentTextItem = item;
         displayBackground(item.background);
 
-        // Remove text area if there is no text
-        if(item.content == null){
-            var toRemove = new FastList<DisplayObject>();
+        var toRemove = new FastList<DisplayObject>();
 
-            if(!_textGroup){
-                for(i in 0...numChildren){
-                    if(Std.is(getChildAt(i), CharacterDisplay) || Std.is(getChildAt(i), ScrollPanel))
-                        toRemove.add(getChildAt(i));
-                }
-                for(obj in toRemove)
+        if(!_textGroup){
+            for(i in 0...numChildren){
+                if(Std.is(getChildAt(i), ScrollPanel))
+                    toRemove.add(getChildAt(i));
+            }
+            for(item in currentItems)
+                toRemove.add(item);
+            for(obj in toRemove){
+                if(displayArea.contains(obj))
                     displayArea.removeChild(obj);
             }
         }
-        else{
-            setSpeaker(item.author, item.transition);
-            var content = Localiser.getInstance().getItemContent(item.content);
-            if(item.ref != null){
-                if(currentSpeaker != null && currentSpeaker.model.getName() != null)
-                    cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse("*" + currentSpeaker.model.getName() + "*\n" + content);
-                else
-                    cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
-            }
+        setSpeaker(item.author, item.transition);
+        var content = Localiser.getInstance().getItemContent(item.content);
+        if(item.ref != null){
+            if(currentSpeaker != null && currentSpeaker.model.getName() != null)
+                cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse("*" + currentSpeaker.model.getName() + "*\n" + content);
+            else
+                cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
         }
+        //}
 
         if(_textGroup)
             displayArea.addChild(cast(displays.get(item.ref).obj, ScrollPanel));
@@ -324,13 +329,24 @@ class PartDisplay extends KpDisplay {
                 array.push(displays.get(key));
         }
 
+        array.sort(sortDisplayObjects);
         for(obj in array){
-            displayArea.addChildAt(obj.obj, cast(Math.min(obj.z, numChildren), Int));
+            displayArea.addChild(obj.obj);
         }
 
         for(layer in layers){
             layer.render();
         }
+    }
+
+    private function sortDisplayObjects(x:{obj:DisplayObject, z:Int}, y:{obj:DisplayObject, z:Int}):Int
+    {
+        if(x.z < y.z)
+            return -1;
+        else if(x.z > y.z)
+            return 1;
+        else
+            return 0;
     }
 
     private function mustBeDisplayed(key:String):Bool
@@ -341,10 +357,6 @@ class PartDisplay extends KpDisplay {
         if(contains(object.obj))
             return false;
 
-        // If the text area is not referenced by the current text item
-        if(currentElement.isText() && Std.is(object.obj, ScrollPanel) && key != cast(currentElement, TextItem).ref){
-            return false;
-        }
         if(Std.is(object.obj, DefaultButton)){
             if(currentElement.isPattern()){
                 var pattern = cast(currentElement, Pattern);
@@ -375,6 +387,24 @@ class PartDisplay extends KpDisplay {
         // If the character is not the current speaker
         if(Std.is(object.obj, CharacterDisplay) && object.obj != currentSpeaker)
             return false;
+
+        // If the text area is not referenced by the current text item
+        if(currentTextItem != null){
+            if(Std.is(object.obj, ScrollPanel) && key != currentTextItem.ref)
+                return false;
+            if(!Std.is(object.obj, ScrollPanel) && !Std.is(object.obj, CharacterDisplay)){
+                var exists = false;
+                for(item in currentTextItem.items){
+                    Lib.trace("item: " + item);
+                    if(key == item){
+                        exists = true;
+                        currentItems.add(object.obj);
+                    }
+                }
+                return exists;
+            }
+        }
+
         return true;
     }
 

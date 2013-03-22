@@ -1,7 +1,5 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
-import Std;
-import Std;
 import nme.display.BitmapData;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
