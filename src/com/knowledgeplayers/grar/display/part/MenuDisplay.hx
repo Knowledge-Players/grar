@@ -274,6 +274,7 @@ class MenuDisplay extends Zone {
                     offset += Std.parseFloat(node.att.yOffset);
 
                 if (item.isPart){
+                    //TODO SUPPRIMER LE NOMBRE MAGIQUE
                     addLine(20,offset-75);
                 }
 
