@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import haxe.FastList;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.structure.activity.Activity;
@@ -8,7 +9,6 @@ import nme.Lib;
 import nme.events.EventDispatcher;
 import nme.display.Sprite;
 import com.knowledgeplayers.grar.util.KeyboardManager;
-import nme.Lib;
 import com.knowledgeplayers.grar.display.LayoutManager;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.GameEvent;
@@ -34,9 +34,9 @@ class GameManager extends EventDispatcher {
     public var game (default, default):Game;
 
     /**
-     * Part currently displayed
+     * Queue of parts managed in the game
      */
-    public var currentPart (default, null):PartDisplay;
+    public var parts (default, null):FastList<PartDisplay>;
 
     private var layout:Layout;
     private var activityDisplay:ActivityDisplay;
@@ -81,18 +81,15 @@ class GameManager extends EventDispatcher {
 
     public function displayPart(part:Part):Void
     {
-        // Cleanup
-        cleanup();
-
         // Display the new part
-        currentPart = DisplayFactory.createPartDisplay(part);
-        if(currentPart == null)
+        parts.add(DisplayFactory.createPartDisplay(part));
+        if(parts.first() == null)
             dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
         else{
-            currentPart.addEventListener(PartEvent.EXIT_PART, onExitPart);
-            currentPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-            currentPart.addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
-            currentPart.init();
+            parts.first().addEventListener(PartEvent.EXIT_PART, onExitPart);
+            parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+            parts.first().addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
+            parts.first().init();
         }
     }
 
@@ -104,7 +101,6 @@ class GameManager extends EventDispatcher {
         activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
         activityDisplay = ActivityManager.instance.getActivity(activityName);
         activityDisplay.addEventListener(Event.COMPLETE, onActivityReady);
-        currentPart.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
         activityDisplay.model = activity;
     }
 
@@ -123,6 +119,7 @@ class GameManager extends EventDispatcher {
     private function new()
     {
         super();
+        parts = new FastList<PartDisplay>();
         // Set Keyboard Manager
         KeyboardManager.instance.game = this;
     }
@@ -131,33 +128,34 @@ class GameManager extends EventDispatcher {
 
     private function onExitPart(event:Event):Void
     {
-        displayPartById(currentPart.part.id + 1);
+        parts.first().unLoad();
+        displayPartById(parts.pop().part.id + 1);
     }
 
     private function onPartLoaded(event:PartEvent):Void
     {
         var partDisplay = cast(event.target, PartDisplay);
+        partDisplay.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
         partDisplay.startPart();
         layout.zones.get(game.ref).addChild(partDisplay);
     }
 
     private function onExitSubPart(event:PartEvent):Void
     {
-        var subPart = cast(event.target, PartDisplay);
-        subPart.unLoad();
-        layout.zones.get(game.ref).removeChild(subPart);
-        currentPart.visible = true;
-        currentPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+        parts.first().unLoad();
+        layout.zones.get(game.ref).removeChild(parts.pop());
+        parts.first().visible = true;
+        parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
     }
 
     public function onEnterSubPart(event:PartEvent):Void
     {
-        currentPart.visible = false;
-        currentPart.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
-        var subPart: PartDisplay = DisplayFactory.createPartDisplay(event.part);
-        subPart.addEventListener(PartEvent.EXIT_PART, onExitSubPart);
-        subPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-        subPart.init();
+        parts.first().visible = false;
+        parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
+        parts.add(DisplayFactory.createPartDisplay(event.part));
+        parts.first().addEventListener(PartEvent.EXIT_PART, onExitSubPart);
+        parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+        parts.first().init();
     }
 
     private function onActivityReady(e:Event):Void
@@ -173,8 +171,8 @@ class GameManager extends EventDispatcher {
         if(activityDisplay != null && layout.zones.get(game.ref).contains(activityDisplay))
             layout.zones.get(game.ref).removeChild(activityDisplay);
         cleanup();
-        if(currentPart != null && !navByMenu){
-            currentPart.nextElement();
+        if(parts != null && !navByMenu){
+            parts.first().nextElement();
         }
         else
             navByMenu = false;
@@ -187,12 +185,6 @@ class GameManager extends EventDispatcher {
             activityDisplay.endActivity();
             navByMenu = true;
             activityDisplay = null;
-        }
-        if(currentPart != null){
-            currentPart.unLoad();
-        }
-        else if(currentPart != null){
-            currentPart.visible = !currentPart.visible;
         }
     }
 }

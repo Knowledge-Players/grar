@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
@@ -73,7 +74,7 @@ class DialogDisplay extends PartDisplay {
         else if(currentPattern.nextPattern != "")
             goToPattern(currentPattern.nextPattern);
         else
-            this.nextElement();
+            dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
     }
 
     // Privates

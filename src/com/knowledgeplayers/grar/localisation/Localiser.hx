@@ -120,8 +120,12 @@ class Localiser extends EventDispatcher {
 
     public function popLocale():Void
     {
-        localisation = stashedLocale;
-        stashedLocale = null;
+        if(stashedLocale != null){
+            localisation = stashedLocale;
+            stashedLocale = null;
+        }
+        else
+            throw "The localiser has no stashed locale";
     }
 
     /**

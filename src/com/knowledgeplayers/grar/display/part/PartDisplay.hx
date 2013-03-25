@@ -215,7 +215,6 @@ class PartDisplay extends KpDisplay {
     private function startPattern(pattern:Pattern):Void
     {
         currentElement = pattern;
-
     }
 
     override private function setButtonAction(button:CustomEventButton, action:String):Void

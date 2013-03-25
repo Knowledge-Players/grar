@@ -100,9 +100,11 @@ class Activity extends EventDispatcher, implements PartElement {
 
     public function endActivity():Void
     {
-        isEnded = true;
-        Localiser.instance.popLocale();
-        dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+        if(!isEnded){
+            isEnded = true;
+            Localiser.instance.popLocale();
+            dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+        }
     }
 
     /**
