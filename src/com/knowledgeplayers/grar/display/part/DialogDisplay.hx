@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
@@ -22,6 +23,7 @@ class DialogDisplay extends PartDisplay {
     private var tokens:Hash<Bitmap>;
     private var displayedToken:Bitmap;
     private var currentPattern:Pattern;
+    private var nextActivity: Activity;
 
     /**
      * Constructor
@@ -40,7 +42,12 @@ class DialogDisplay extends PartDisplay {
 
     override private function next(event:ButtonActionEvent):Void
     {
-        startPattern(currentPattern);
+        if(nextActivity != null){
+            GameManager.instance.displayActivity(nextActivity);
+            nextActivity = null;
+        }
+        else
+            startPattern(currentPattern);
     }
 
     override private function startPattern(pattern:Pattern):Void
@@ -60,7 +67,7 @@ class DialogDisplay extends PartDisplay {
             setText(nextItem);
 
             if(nextItem.hasActivity()){
-                GameManager.instance.displayActivity(cast(nextItem, RemarkableEvent).activity);
+                nextActivity = cast(nextItem, RemarkableEvent).activity;
             }
         }
         else if(currentPattern.nextPattern != "")

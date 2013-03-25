@@ -18,7 +18,7 @@ class RemarkableEvent extends TextItem {
 
     public function new(?xml: Fast)
     {
-        super();
+        super(xml);
         activity = ActivityFactory.createActivityFromXml(xml.node.Activity);
     }
 

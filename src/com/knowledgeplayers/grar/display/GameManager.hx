@@ -98,12 +98,13 @@ class GameManager extends EventDispatcher {
 
     public function displayActivity(activity:Activity):Void
     {
-        cleanup(true);
+        cleanup();
         activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
         var activityName:String = Type.getClassName(Type.getClass(activity));
         activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
         activityDisplay = ActivityManager.instance.getActivity(activityName);
         activityDisplay.addEventListener(Event.COMPLETE, onActivityReady);
+        currentPart.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
         activityDisplay.model = activity;
     }
 
@@ -153,7 +154,7 @@ class GameManager extends EventDispatcher {
     {
         currentPart.visible = false;
         currentPart.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
-        var subPart:PartDisplay = DisplayFactory.createPartDisplay(event.part);
+        var subPart: PartDisplay = DisplayFactory.createPartDisplay(event.part);
         subPart.addEventListener(PartEvent.EXIT_PART, onExitSubPart);
         subPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
         subPart.init();
@@ -161,7 +162,6 @@ class GameManager extends EventDispatcher {
 
     private function onActivityReady(e:Event):Void
     {
-
         activityDisplay.removeEventListener(Event.COMPLETE, onActivityReady);
         layout.zones.get(game.ref).addChild(activityDisplay);
         activityDisplay.startActivity();
@@ -172,7 +172,7 @@ class GameManager extends EventDispatcher {
         e.target.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
         if(activityDisplay != null && layout.zones.get(game.ref).contains(activityDisplay))
             layout.zones.get(game.ref).removeChild(activityDisplay);
-        cleanup(true);
+        cleanup();
         if(currentPart != null && !navByMenu){
             currentPart.nextElement();
         }
@@ -180,7 +180,7 @@ class GameManager extends EventDispatcher {
             navByMenu = false;
     }
 
-    private function cleanup(activity:Bool = false):Void
+    private function cleanup():Void
     {
         if(activityDisplay != null){
             activityDisplay.model.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
@@ -194,6 +194,5 @@ class GameManager extends EventDispatcher {
         else if(currentPart != null){
             currentPart.visible = !currentPart.visible;
         }
-
     }
 }

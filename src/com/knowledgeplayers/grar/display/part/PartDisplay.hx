@@ -1,9 +1,5 @@
 package com.knowledgeplayers.grar.display.part;
 
-import Std;
-import Std;
-import Math;
-import Std;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
 import aze.display.SparrowTilesheet;
@@ -417,6 +413,7 @@ class PartDisplay extends KpDisplay {
 
     private function onLocaleLoaded(ev:LocaleEvent):Void
     {
+        Localiser.instance.removeEventListener(LocaleEvent.LOCALE_LOADED, onLocaleLoaded);
         if(currentElement != null && currentElement.isPattern())
             startPattern(cast(currentElement, Pattern));
         else{

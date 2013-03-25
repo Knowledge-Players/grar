@@ -31,7 +31,6 @@ class CustomEventButton extends DefaultButton {
     {
         super(tilesheet, tile);
         this.eventType = eventName.toLowerCase();
-
     }
 
     override private function onClick(event:MouseEvent):Void
@@ -42,5 +41,4 @@ class CustomEventButton extends DefaultButton {
         var e = new ButtonActionEvent(eventType);
         dispatchEvent(e);
     }
-
 }
