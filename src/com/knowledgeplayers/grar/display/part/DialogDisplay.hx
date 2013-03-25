@@ -1,7 +1,5 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.event.PartEvent;
-import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
@@ -21,7 +19,7 @@ import nme.display.Bitmap;
 
 class DialogDisplay extends PartDisplay {
 
-    private var tokens:Hash<Bitmap>;
+    private var tokens:Hash<Sprite>;
     private var displayedToken:Bitmap;
     private var currentPattern:Pattern;
     private var nextActivity: Activity;
@@ -33,7 +31,7 @@ class DialogDisplay extends PartDisplay {
 
     public function new(part:DialogPart)
     {
-        tokens = new Hash<Bitmap>();
+        tokens = new Hash<Sprite>();
         resizeD = ResizeManager.getInstance();
         super(part);
 
@@ -70,6 +68,9 @@ class DialogDisplay extends PartDisplay {
             if(nextItem.hasActivity()){
                 nextActivity = cast(nextItem, RemarkableEvent).activity;
             }
+            if(nextItem.hasToken()){
+
+            }
         }
         else if(currentPattern.nextPattern != "")
             goToPattern(currentPattern.nextPattern);
@@ -84,10 +85,13 @@ class DialogDisplay extends PartDisplay {
         super.createElement(elemNode);
 
         if(elemNode.name.toLowerCase() == "token"){
-            var token:Bitmap = new Bitmap(Assets.getBitmapData(elemNode.att.id));
+            //var token:Bitmap = new Bitmap(Assets.getBitmapData(elemNode.att.id));
+
+            var token:TokenDisplay = new TokenDisplay( spritesheets.get(elemNode.att.spritesheet),elemNode.att.id,elemNode);
+
             token.visible = false;
             addElement(token, elemNode);
-            tokens.set(elemNode.att.name, token);
+            tokens.set(elemNode.att.id, token);
 
             dispatchEvent(new TokenEvent(TokenEvent.ADD, true));
         }

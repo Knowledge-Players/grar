@@ -157,6 +157,7 @@ class LoadData extends EventDispatcher {
                         if(Std.string(nd.get("src")).indexOf(".xml") == -1){
                             if(Std.string(nd.get("src")).charAt(0) != "0")
                                 imagesUrls.push(nd.get("src"));
+
                         }
                         else{
                             XmlLoader.load(nd.get("src"), function(e:Event)
@@ -175,8 +176,16 @@ class LoadData extends EventDispatcher {
                     if(nd.exists("buttonIcon") && nd.get("buttonIcon").indexOf(".") > 0){
                         imagesUrls.push(nd.get("buttonIcon"));
                     }
+
                 }
+                if(nd.nodeName == "Token"){
+                    for(nI in nd.elements()){
+                        if(Std.string(nI.get("src")).charAt(0) != "0")
+                            imagesUrls.push(nI.get("src"));
+                    }
+                };
             }
+
 
         }
 

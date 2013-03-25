@@ -333,6 +333,7 @@ class MenuDisplay extends Zone {
         }
 
         TweenManager.applyTransition(this,transitionOut);
+
     }
 
     private function addLine(_x:Float=0,_y:Float=0):Void{
