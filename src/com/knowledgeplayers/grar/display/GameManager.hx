@@ -146,11 +146,13 @@ class GameManager extends EventDispatcher {
         subPart.unLoad();
         layout.zones.get(game.ref).removeChild(subPart);
         currentPart.visible = true;
+        currentPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
     }
 
     public function onEnterSubPart(event:PartEvent):Void
     {
         currentPart.visible = false;
+        currentPart.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
         var subPart:PartDisplay = DisplayFactory.createPartDisplay(event.part);
         subPart.addEventListener(PartEvent.EXIT_PART, onExitSubPart);
         subPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);

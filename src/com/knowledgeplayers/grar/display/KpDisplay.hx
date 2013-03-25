@@ -1,7 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
-import Std;
-import browser.Lib;
+import nme.Lib;
 import nme.events.Event;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.factory.UiFactory;
