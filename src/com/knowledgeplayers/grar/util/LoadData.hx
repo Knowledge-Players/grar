@@ -234,6 +234,7 @@ class LoadData extends EventDispatcher {
         numDataLoaded++;
         var path = Std.string(event.currentTarget.url).split("/");
 
+        // TODO repérer le Main.swf
         var rootIndex = -1;
         for(i in 0...path.length){
             if(path[i] == "bin")

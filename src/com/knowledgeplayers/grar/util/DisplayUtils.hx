@@ -1,11 +1,11 @@
 package com.knowledgeplayers.grar.util;
 
 import nme.display.BitmapData;
-import nme.Assets;
 import nme.display.Bitmap;
 import nme.display.Sprite;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
+import com.knowledgeplayers.grar.util.LoadData;
 
 /**
  * Utility class for display
@@ -37,16 +37,12 @@ class DisplayUtils {
 
     public static function setBackground(bkg: String, container: Sprite, width: Float = 0, height: Float = 0): Null<Bitmap>
     {
-        /*if(width == 0)
-            width = container.width;
-        if(height == 0)
-            height = container.height;*/
         if(Std.parseInt(bkg) != null){
             initSprite(container, width, height, Std.parseInt(bkg));
             return null;
         }
         else{
-            var bitmap = new Bitmap(Assets.getBitmapData(bkg));
+            var bitmap = cast(LoadData.instance.getElementDisplayInCache(bkg), Bitmap);
             if(width != 0)
                 bitmap.width = width;
             if(height != 0)
