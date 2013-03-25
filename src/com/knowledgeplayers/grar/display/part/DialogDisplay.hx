@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.element.TokenDisplay;
+import com.knowledgeplayers.grar.event.PartEvent;
+import com.knowledgeplayers.grar.structure.activity.Activity;
+import nme.display.Sprite;
 import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
@@ -68,9 +72,9 @@ class DialogDisplay extends PartDisplay {
             if(nextItem.hasActivity()){
                 nextActivity = cast(nextItem, RemarkableEvent).activity;
             }
-            if(nextItem.hasToken()){
+            /*if(nextItem.hasToken()){
 
-            }
+            }*/
         }
         else if(currentPattern.nextPattern != "")
             goToPattern(currentPattern.nextPattern);
