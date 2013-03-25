@@ -29,6 +29,7 @@ class LoadData extends EventDispatcher {
     private var nbDatas:Float = 0;
     private var nbXml:Float = 0;
     private var numXmlLoaded:Float = 0;
+    private var urlLoading: Array<String>;
 
     /**
      * @return the instance of the loaderdatas
@@ -87,6 +88,7 @@ class LoadData extends EventDispatcher {
         super();
         cacheElementsDisplay = new Hash<DisplayObject>();
         imagesUrls = new Array<String>();
+        urlLoading = new Array<String>();
     }
 
     /**
@@ -119,7 +121,6 @@ class LoadData extends EventDispatcher {
     * @param    ar : The array to clean
     * @return the array without duplicates
     **/
-
     private function removeDuplicates(array:Array<String>):Array<String>
     {
         var uniques = new Array<String>();
@@ -213,6 +214,7 @@ class LoadData extends EventDispatcher {
                 #if flash
                     var urlR = new URLRequest(object);
                     var mloader = new Loader();
+                    urlLoading.push(object);
                     mloader.contentLoaderInfo.addEventListener(Event.COMPLETE,onCompleteLoading);
                     mloader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
                     mloader.load(urlR);
@@ -232,17 +234,13 @@ class LoadData extends EventDispatcher {
     private function onCompleteLoading(event:Event):Void
     {
         numDataLoaded++;
-        var path = Std.string(event.currentTarget.url).split("/");
-
-        // TODO repérer le Main.swf
-        var rootIndex = -1;
-        for(i in 0...path.length){
-            if(path[i] == "bin")
-                rootIndex = i;
+        var path = event.currentTarget.url;
+        var i: Int = 0;
+        while(!StringTools.endsWith(path, urlLoading[i])){
+            i++;
         }
-        path = path.slice(rootIndex + 1, path.length);
-        var nameElementDisplay = path.join("/");
-        cacheElementsDisplay.set(nameElementDisplay, event.currentTarget.content);
+
+        cacheElementsDisplay.set(urlLoading[i], event.currentTarget.content);
 
         if(nbDatas == numDataLoaded){
             dispatchEvent(new Event("DATA_LOADED", true));
