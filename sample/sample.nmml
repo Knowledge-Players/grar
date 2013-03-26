@@ -28,6 +28,7 @@
     <assets path="assets/xml" rename="xml" exclude="flash"/>
     <assets path="assets/font" rename="font"/>
 
+
     <!-- optimize JS output -->
     <haxeflag name="--js-modern" if="html5"/>
 

@@ -12,11 +12,6 @@ import com.knowledgeplayers.grar.structure.part.StructurePart;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.factory.PatternFactory;
 
-/**
- * ...
- * @author jbrichardet
- */
-
 class DialogPart extends StructurePart {
 
     public function new()

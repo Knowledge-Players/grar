@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.event;
+import com.knowledgeplayers.grar.structure.Token;
 import nme.events.Event;
 
 /**
@@ -11,32 +12,26 @@ class TokenEvent extends Event
 	 * Add token to the inventory
 	 */
 	public static var ADD (default, null): String = "Add";
-	
+
 	/**
 	 * Add token to the global inventory
 	 */
 	public static var ADD_GLOBAL (default, default): String = "Add_global";
-	
-	/**
-	 * ID of the token
-	 */
-	public var tokenId (default, default): String;
-	
-	/**
-	 * Type of the token
-	 */
-	public var tokenType (default, default): String;
-	
-	/**
-	 * Inventory targeted by the token
-	 */
-	public var tokenTarget (default, default): String;
-	
-	public function new(type : String, ?tokenId: String, ?tokenType: String, ?tokenTarget: String, bubbles : Bool = false, cancelable : Bool = false)
+
+    /**
+    * object Token
+    **/
+	public var token:Token;
+
+	public function new(type : String, ?_token: Token, bubbles : Bool = false, cancelable : Bool = false)
 	{
 		super(type, bubbles, cancelable);
-		this.tokenId = tokenId;
-		this.tokenTarget = tokenTarget;
-		this.tokenType = tokenType;
+		this.token = _token;
+
 	}
+
+    override public function clone(): Event
+    {
+        return new TokenEvent(type, token, bubbles, cancelable);
+    }
 }

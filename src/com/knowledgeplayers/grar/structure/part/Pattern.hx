@@ -135,4 +135,8 @@ class Pattern implements PartElement {
         return false;
     }
 
+    public function hasToken():Bool {
+        return false;
+    }
+
 }

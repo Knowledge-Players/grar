@@ -8,4 +8,6 @@
     <Slide ref="leftToRight" duration="1" x="100" y="200" easingType="cubic" easingStyle="out"/>
     <Slide ref="rightToLeft" duration="1" x="-100" y="200" easingType="cubic" easingStyle="out"/>
     <Blink ref="blink" duration="0.05" color="0xFFFFFF" repeat="9"/>
+    <Slide ref="showToken" duration=".7" x="200" y="100" easingType="cubic" easingStyle="out"/>
+    <Slide ref="hideToken" duration=".7" x="200" y="-100" easingType="cubic" easingStyle="out"/>
 </Transitions>

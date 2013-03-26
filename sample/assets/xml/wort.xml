@@ -30,7 +30,7 @@
         <Text type="" content="step3_3" author="Thuynhan_thinking" transition="leftToRight" background="labo"
               ref="dialog"/>
         <Text type="" content="step3_4" author="Caroline_happy" transition="rightToLeft" background="labo" ref="dialog">
-            <Token ref="wcm" target="part" type="reward"/>
+            <Token ref="wcm" target="part" type="reward" img="token_folder"/>
         </Text>
         <Button ref="next" content="nextButton"/>
     </Pattern>

@@ -191,8 +191,10 @@ class PartDisplay extends KpDisplay {
 
     // Private
 
-    private function onTokenAdded(e:TokenEvent):Void
-    {}
+    private function onTokenAdded(e:TokenEvent):Void{
+
+
+    }
 
     override private function createDisplay():Void
     {

@@ -50,7 +50,7 @@ class KpGame extends EventDispatcher, implements Game {
     /**
      * Global inventory
      */
-    public var inventory (default, null):Array<String>;
+    public var inventory (default, null):Array<Token>;
 
     /**
     * Flag for the loading of UI
@@ -86,7 +86,7 @@ class KpGame extends EventDispatcher, implements Game {
         languages = new Hash<String>();
         flags = new Hash<String>();
         parts = new IntHash<Part>();
-        inventory = new Array<String>();
+        inventory = new Array<Token>();
 
         GameManager.instance.game = this;
 
@@ -325,7 +325,7 @@ class KpGame extends EventDispatcher, implements Game {
 
     private function onGlobalTokenAdd(e:TokenEvent):Void
     {
-        inventory.push(e.tokenId);
+        inventory.push(e.token);
     }
 
     private function onExit(e:Event):Void

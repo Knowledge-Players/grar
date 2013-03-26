@@ -58,7 +58,7 @@ class StructurePart extends EventDispatcher, implements Part {
     /**
      * Inventory specific to the part
      */
-    public var inventory (default, null):Array<String>;
+    public var inventory (default, null):Array<Token>;
 
     /**
      * Sound playing during the part
@@ -80,12 +80,13 @@ class StructurePart extends EventDispatcher, implements Part {
     private var partIndex:Int = 0;
     private var elemIndex:Int = 0;
     private var soundLoopChannel:SoundChannel;
+    private var token:Token;
 
     public function new()
     {
         super();
         options = new Hash<String>();
-        inventory = new Array<String>();
+        inventory = new Array<Token>();
         elements = new Array<PartElement>();
         addEventListener(TokenEvent.ADD, onAddToken);
     }
@@ -264,6 +265,11 @@ class StructurePart extends EventDispatcher, implements Part {
         return true;
     }
 
+    public function hasToken():Bool
+    {
+        return token != null;
+    }
+
     // Private
 
     private function parseContent(content:Xml):Void
@@ -357,12 +363,12 @@ class StructurePart extends EventDispatcher, implements Part {
 
     private function onAddToken(e:TokenEvent):Void
     {
-        if(e.tokenTarget == "activity"){
+        if(e.token.target == "activity"){
             e.stopImmediatePropagation();
-            inventory.push(e.tokenId);
+            inventory.push(e.token);
         }
         else{
-            var globalEvent = new TokenEvent(TokenEvent.ADD_GLOBAL, e.tokenId, e.tokenType, e.tokenTarget);
+            var globalEvent = new TokenEvent(TokenEvent.ADD_GLOBAL, e.token);
             dispatchEvent(globalEvent);
         }
     }

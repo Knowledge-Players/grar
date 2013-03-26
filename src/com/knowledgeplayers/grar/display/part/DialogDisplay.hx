@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import nme.Lib;
+import com.knowledgeplayers.grar.structure.Token;
 import com.knowledgeplayers.grar.display.element.TokenDisplay;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.structure.activity.Activity;
@@ -26,6 +28,7 @@ class DialogDisplay extends PartDisplay {
     private var tokens:Hash<Sprite>;
     private var displayedToken:Bitmap;
     private var currentPattern:Pattern;
+    private var currentToken:Token;
     private var nextActivity: Activity;
 
     /**
@@ -72,9 +75,11 @@ class DialogDisplay extends PartDisplay {
             if(nextItem.hasActivity()){
                 nextActivity = cast(nextItem, RemarkableEvent).activity;
             }
-            /*if(nextItem.hasToken()){
+            if(nextItem.hasToken()){
 
-            }*/
+                var token:Token = nextItem.token;
+                dispatchEvent(new TokenEvent(TokenEvent.ADD,token, true));
+            }
         }
         else if(currentPattern.nextPattern != "")
             goToPattern(currentPattern.nextPattern);
@@ -91,14 +96,21 @@ class DialogDisplay extends PartDisplay {
         if(elemNode.name.toLowerCase() == "token"){
             //var token:Bitmap = new Bitmap(Assets.getBitmapData(elemNode.att.id));
 
-            var token:TokenDisplay = new TokenDisplay( spritesheets.get(elemNode.att.spritesheet),elemNode.att.id,elemNode);
-
-            token.visible = false;
-            addElement(token, elemNode);
+            var token:TokenDisplay = new TokenDisplay( spritesheets.get(elemNode.att.spritesheet),elemNode.att.id,Std.parseFloat(elemNode.att.x),Std.parseFloat(elemNode.att.y),Std.parseFloat(elemNode.att.scale),elemNode.att.transitionIn,elemNode.att.transitionOut,elemNode);
             tokens.set(elemNode.att.id, token);
 
-            dispatchEvent(new TokenEvent(TokenEvent.ADD, true));
         }
+    }
+
+    override private function onTokenAdded(e:TokenEvent):Void
+    {
+        currentToken = e.token;
+        var tok = cast(tokens.get(currentToken.ref),TokenDisplay);
+        addChild(tok);
+        tok.setImage(currentToken.img);
+
+        TweenManager.slide(tok,tok.showToken);
+
     }
 
     override private function setButtonAction(button:CustomEventButton, action:String):Void
@@ -118,10 +130,21 @@ class DialogDisplay extends PartDisplay {
 
     private function goToPattern(target:String):Void
     {
+        hideToken();
         var i = 0;
         while(!(part.elements[i].isPattern() && cast(part.elements[i], Pattern).name == target)){
             i++;
         }
+
         startPattern(cast(part.elements[i], Pattern));
+    }
+
+    private function hideToken():Void{
+        if(currentToken != null)
+        {
+            var tok = cast(tokens.get(currentToken.ref),TokenDisplay);
+            TweenManager.slide(tok,tok.hideToken);
+
+        }
     }
 }

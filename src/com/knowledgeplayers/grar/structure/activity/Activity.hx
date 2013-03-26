@@ -64,6 +64,8 @@ class Activity extends EventDispatcher, implements PartElement {
      */
     private var isEnded:Bool;
 
+    private var token:Token;
+
     /**
      * Constructor
      * @param	content : Path to the content file
@@ -141,6 +143,10 @@ class Activity extends EventDispatcher, implements PartElement {
     public function isPart():Bool
     {
         return false;
+    }
+
+    public function hasToken():Bool {
+        return token != null;
     }
 
     // Privates

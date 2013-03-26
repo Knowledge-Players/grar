@@ -18,7 +18,7 @@ interface Part implements IEventDispatcher, implements PartElement {
     public var button (default, default):{ref:String, content:String};
     public var options (default, null):Hash<String>;
     public var elements (default, null):Array<PartElement>;
-    public var inventory (default, null):Array<String>;
+    public var inventory (default, null):Array<Token>;
     public var soundLoop (default, default):Sound;
 
     public function init(xml:Fast, filePath:String = ""):Void;
@@ -48,4 +48,6 @@ interface Part implements IEventDispatcher, implements PartElement {
     public function isPattern():Bool;
 
     public function isPart():Bool;
+
+    public function hasToken():Bool;
 }

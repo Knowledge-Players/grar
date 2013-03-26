@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import com.knowledgeplayers.grar.display.element.TokenDisplay;
 import haxe.FastList;
 import haxe.xml.Fast;
 import nme.Lib;
@@ -40,6 +41,8 @@ class TextItem implements PartElement {
     **/
     public var items (default, default):FastList<String>;
 
+    public var token:Token;
+
     /**
      * Constructor
      * @param	xml : fast xml node with structure info
@@ -60,6 +63,9 @@ class TextItem implements PartElement {
                 ref = xml.att.ref;
             if(xml.has.background)
                 background = xml.att.background;
+            if(xml.hasNode.Token)
+               token = new Token(xml.node.Token);
+
             for(item in xml.nodes.Item){
                 items.add(item.att.ref);
             }
@@ -67,6 +73,7 @@ class TextItem implements PartElement {
         else{
             this.content = content;
         }
+
     }
 
     /**
@@ -85,6 +92,14 @@ class TextItem implements PartElement {
     public function hasActivity():Bool
     {
         return false;
+    }
+    /**
+     * @return true if the item starts an activity
+     */
+    public function hasToken():Bool
+    {
+
+        return token != null;
     }
 
     /**

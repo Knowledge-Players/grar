@@ -16,20 +16,30 @@ import nme.display.Sprite;
 
 class TokenDisplay extends Sprite {
 
+
+    public var showToken:String;
+    public var hideToken:String;
+
+
     private var layer:TileLayer;
     private var img:TileSprite;
+
 /**
 * Images of the different tokens
 **/
     public var imgsToken:Hash<Bitmap>;
 
-    public function new(spritesheet:TilesheetEx, tileId:String,nodesImg:Fast)
+    public function new(spritesheet:TilesheetEx, tileId:String,_x:Float,_y:Float,_scale:Float,_transitionIn:String,_transitionOut:String,nodesImg:Fast)
     {
         super();
-
+        this.x = _x;
+        this.y = _y;
         layer = new TileLayer(spritesheet);
         img = new TileSprite(tileId);
         imgsToken = new Hash<Bitmap>();
+        img.scale = _scale;
+        showToken = _transitionIn;
+        hideToken = _transitionOut;
 
         layer.addChild(img);
         addChild(layer.view);
@@ -46,10 +56,16 @@ class TokenDisplay extends Sprite {
             image.y = Std.parseFloat(img.att.y);
             image.scaleX = Std.parseFloat(img.att.scale);
             image.scaleY = Std.parseFloat(img.att.scale);
-
+            image.visible = false;
+            addChild(image);
             imgsToken.set(img.att.ref,image);
 
             }
+    }
+
+    public function setImage(_key:String):Void
+    {
+        imgsToken.get(_key).visible = true;
     }
 
     public function setScale(scale:Float):Float

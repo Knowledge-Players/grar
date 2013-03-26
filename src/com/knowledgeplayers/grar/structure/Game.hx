@@ -9,7 +9,7 @@ interface Game implements IEventDispatcher {
     public var mode (default, default):Mode;
     public var title (default, default):String;
     public var state (default, default):String;
-    public var inventory (default, null):Array<String>;
+    public var inventory (default, null):Array<Token>;
     public var uiLoaded (default, default):Bool;
     public var ref (default, default):String;
 
