@@ -180,10 +180,13 @@ class LoadData extends EventDispatcher {
 
                 }
                 if(nd.nodeName == "Token"){
+
                     for(nI in nd.elements()){
+                        if(nI.nodeName == "Img"){
                         if(Std.string(nI.get("src")).charAt(0) != "0")
                             imagesUrls.push(nI.get("src"));
                     }
+                        }
                 };
             }
 
