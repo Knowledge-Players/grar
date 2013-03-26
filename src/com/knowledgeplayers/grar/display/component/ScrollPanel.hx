@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
+import nme.text.TextFormatAlign;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
@@ -7,6 +8,7 @@ import nme.geom.Rectangle;
 import nme.events.Event;
 import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.util.DisplayUtils;
+import com.knowledgeplayers.grar.display.style.StyleParser;
 import nme.Lib;
 import nme.Assets;
 import nme.display.Bitmap;
@@ -80,12 +82,26 @@ class ScrollPanel extends Sprite {
             posYMask = content.y;
         }
 
+        switch(StyleParser.instance.getStyle().getAlignment()){
+            case TextFormatAlign.CENTER:
+                content.x = maskWidth/2 - content.width/2;
+                //content.y = maskHeight/2- content.height/2;
+            case TextFormatAlign.RIGHT:
+                content.x = maskWidth - content.width;
+            case TextFormatAlign.LEFT, TextFormatAlign.JUSTIFY:
+        }
+        var padding = StyleParser.instance.getStyle().getPadding();
+        if(padding.length > 2){
+            content.y += padding[0];
+            content.x += padding[1];
+        }
+
         addChild(content);
         var mask = new Sprite();
         mask.graphics.beginFill(0x000000);
         mask.graphics.drawRect(posXMask, posYMask, maskWidth, maskHeight);
         mask.graphics.endFill();
-        content.mask = mask;
+        this.mask = mask;
         addChild(mask);
 
         if(maskHeight < content.height && !scrollLock){

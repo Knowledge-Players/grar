@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import haxe.FastList;
 import nme.Lib;
 import com.knowledgeplayers.grar.structure.Token;
 import com.knowledgeplayers.grar.localisation.Localiser;
@@ -132,6 +133,7 @@ class DialogDisplay extends PartDisplay {
     {
         var choice = cast(ev.target, DefaultButton);
         var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
+        choice.removeEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
         goToPattern(target);
     }
 

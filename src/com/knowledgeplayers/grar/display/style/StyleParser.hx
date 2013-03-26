@@ -3,21 +3,20 @@ package com.knowledgeplayers.grar.display.style;
 import haxe.xml.Fast;
 import nme.Assets;
 import nme.display.Bitmap;
-import nme.Lib;
 
 /**
  * Parser and manager of the styles
  */
-class StyleParser 
+class StyleParser
 {
-	
+
 	/**
 	 * Instance of the parser
 	 */
 	public static var instance (getInstance, null): StyleParser;
-	
+
 	private static var styles = new Hash<Style>();
-	
+
 	private function new() { }
 
 	/**
@@ -68,10 +67,12 @@ class StyleParser
 	 * @param	name : Name of the style
 	 * @return the style, or null if it doesn't exist
 	 */
-	public function getStyle(name: String) : Null<Style>
+	public function getStyle(?name: String) : Null<Style>
 	{
 		if(Lambda.count(styles) == 0)
-			Lib.trace("No style here. Have you parse a style file ?");
+			throw "No style here. Have you parse a style file ?";
+        if(name == null)
+            return styles.get("text");
 		if (StringTools.endsWith(name, "-"))
 			return styles.get(name + "text");
 		else
