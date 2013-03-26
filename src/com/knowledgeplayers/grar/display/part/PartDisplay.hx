@@ -390,7 +390,6 @@ class PartDisplay extends KpDisplay {
             if(!Std.is(object.obj, ScrollPanel) && !Std.is(object.obj, CharacterDisplay)){
                 var exists = false;
                 for(item in currentTextItem.items){
-                    Lib.trace("item: " + item);
                     if(key == item){
                         exists = true;
                         currentItems.add(object.obj);
