@@ -7,7 +7,8 @@
 
     <window borderless="false" vsync="true" antialiasing="4"/>
     <window width="0" height="0" fps="60" orientation="landscape" if="mobile"/>
-    <window width="960" height="580" background="0xFFFFFF" fps="60" fullscreen="false" resizable="true" unless="mobile"/>
+    <window width="960" height="580" background="0xFFFFFF" fps="60" fullscreen="false" resizable="true"
+            unless="mobile"/>
 
     <set name="BUILD_DIR" value="bin"/>
     <set name="SWF_VERSION" value="11"/>
@@ -22,10 +23,14 @@
     <haxedef name="HXCPP_DEBUGGER"/>
 
     <include path=".."/>
-
-    <assets path="assets/img" rename="img" exclude="flash"/>
-    <assets path="assets/ui" rename="ui" exclude="flash"/>
-    <assets path="assets/xml" rename="xml" exclude="flash"/>
+    <section unless="flash">
+        <assets path="assets/img" rename="img"/>
+        <assets path="assets/ui" rename="ui"/>
+        <assets path="assets/xml" rename="xml"/>
+    </section>
+    <section if="flash">
+        <assets path="assets/xml" rename="xml" include="sample_structure.xml|style.xml|layout.xml"/>
+    </section>
     <assets path="assets/font" rename="font"/>
 
 

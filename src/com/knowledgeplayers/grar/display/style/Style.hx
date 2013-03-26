@@ -11,34 +11,34 @@ import nme.Assets;
 /**
  * Style of a text
  */
-class Style extends Hash<String>
-{
+class Style extends Hash<String> {
     /**
      * Name of the style
      */
-    public var name: String;
+    public var name:String;
 
     /**
      * Icon in the style
      */
-    public var icon: BitmapData;
+    public var icon:BitmapData;
 
     /**
      * Position of the icon
      */
-    public var iconPosition: String;
+    public var iconPosition:String;
 
     /**
      * Background propertie
      */
-    public var background: Bitmap;
+    public var background:Bitmap;
 
     /**
      * Add a rule to the style
      * @param	name : Name of the rule
      * @param	value : Value of the rule;
      */
-    public function addRule(name: String, value: String): Void
+
+    public function addRule(name:String, value:String):Void
     {
         set(name, value);
     }
@@ -47,7 +47,8 @@ class Style extends Hash<String>
      * Make this style inherit from the parent style
      * @param	parentName : Name of the parent style
      */
-    public function inherit(parentName: String): Void
+
+    public function inherit(parentName:String):Void
     {
         var parent = StyleParser.instance.getStyle(parentName);
         if(parent == null)
@@ -60,7 +61,8 @@ class Style extends Hash<String>
     /**
      * @return the font of the style
      */
-    public function getFont(): Null<Font>
+
+    public function getFont():Null<Font>
     {
         return Assets.getFont(get("font"));
     }
@@ -68,7 +70,8 @@ class Style extends Hash<String>
     /**
      * @return the size of the style
      */
-    public function getSize(): Null<Int>
+
+    public function getSize():Null<Int>
     {
         return Std.parseInt(get("size"));
     }
@@ -76,7 +79,8 @@ class Style extends Hash<String>
     /**
      * @return the color of the style
      */
-    public function getColor(): Null<Int>
+
+    public function getColor():Null<Int>
     {
         return Std.parseInt(get("color"));
     }
@@ -84,7 +88,8 @@ class Style extends Hash<String>
     /**
      * @return whether or not the style is bold
      */
-    public function getBold(): Null<Bool>
+
+    public function getBold():Null<Bool>
     {
         return get("bold") == "true";
     }
@@ -92,7 +97,8 @@ class Style extends Hash<String>
     /**
      * @return whether or not the style is italic
      */
-    public function getItalic(): Null<Bool>
+
+    public function getItalic():Null<Bool>
     {
         return get("italic") == "true";
     }
@@ -100,7 +106,8 @@ class Style extends Hash<String>
     /**
      * @return whether or not the style is underline
      */
-    public function getUnderline(): Null<Bool>
+
+    public function getUnderline():Null<Bool>
     {
         return get("underline") == "true";
     }
@@ -108,9 +115,10 @@ class Style extends Hash<String>
     /**
     * @return the alignment of the text
     **/
+
     public function getAlignment():Null<TextFormatAlign>
     {
-        var alignment: TextFormatAlign = null;
+        var alignment:TextFormatAlign = null;
         if(exists("alignment")){
             alignment = Type.createEnum(TextFormatAlign, get("alignment").toUpperCase());
         }
@@ -120,16 +128,18 @@ class Style extends Hash<String>
     public function getPadding():Array<Float>
     {
         var array = new Array<Float>();
-        for(pad in get("padding").split(" ")){
-            array.push(Std.parseFloat(pad));
-        }
-        switch(array.length){
-            case 1:
-                while(array.length < 4)
+        if(get("padding") != null){
+            for(pad in get("padding").split(" ")){
+                array.push(Std.parseFloat(pad));
+            }
+            switch(array.length){
+                case 1:
+                    while(array.length < 4)
+                        array.push(array[0]);
+                case 2:
                     array.push(array[0]);
-            case 2:
-                array.push(array[0]);
-                array.push(array[1]);
+                    array.push(array[1]);
+            }
         }
         return array;
     }
