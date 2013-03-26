@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style name="text">
+    <font value="font/origin/Origin-Regular.ttf"/>
+    <size value="16"/>
+    <color value="0x000000"/>
+    <border value="false"/>
+</style>
+<style name="big-text" inherit="text">
+<size value="40"/>
+</style>
+<style name="small-text" inherit="text">
+<size value="12"/>
+</style>
+<style name="important" inherit="text">
+<color value="0xFF0000"/>
+<bold value="true"/>
+</style>
+<style name="italic" inherit="text">
+<color value="0x00F000"/>
+<italic value="true"/>
+</style>
+<style name="big-italic" inherit="italic">
+<size value="32"/>
+</style>
+<style name="small-italic" inherit="italic">
+<size value="12"/>
+</style>
+<style name="bold" inherit="text">
+<font value="font/origin/Origin-Bold.ttf"/>
+<bold value="true"/>
+</style>
+<style name="big-bold" inherit="bold">
+<size value="32"/>
+</style>
+<style name="small-bold" inherit="bold">
+<size value="12"/>
+</style>
+<style name="title1" inherit="text">
+<color value="0xFF0000"/>
+<bold value="true"/>
+</style>
+<style name="title2" inherit="title1">
+<bold value="false"/>
+</style>
+<style name="url" inherit="text">
+<color value="0x0000FF"/>
+<underline value="true"/>
+</style>

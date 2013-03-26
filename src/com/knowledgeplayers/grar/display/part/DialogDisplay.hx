@@ -2,6 +2,11 @@ package com.knowledgeplayers.grar.display.part;
 
 import nme.Lib;
 import com.knowledgeplayers.grar.structure.Token;
+import com.knowledgeplayers.grar.localisation.Localiser;
+import com.knowledgeplayers.grar.display.style.KpTextDownParser;
+import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import com.knowledgeplayers.grar.structure.part.TextItem;
+import nme.events.MouseEvent;
 import com.knowledgeplayers.grar.display.element.TokenDisplay;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.structure.activity.Activity;
@@ -118,6 +123,8 @@ class DialogDisplay extends PartDisplay {
         super.setButtonAction(button, action);
         if(action.toLowerCase() == ButtonActionEvent.GOTO){
             button.addEventListener(action, onChoice);
+            button.addEventListener(MouseEvent.MOUSE_OVER, onOverChoice);
+            button.addEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
         }
     }
 
@@ -126,6 +133,33 @@ class DialogDisplay extends PartDisplay {
         var choice = cast(ev.target, DefaultButton);
         var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
         goToPattern(target);
+    }
+
+    private function onOverChoice(e:MouseEvent):Void
+    {
+        var choiceButton = cast(e.target, DefaultButton);
+        var pattern = cast(currentPattern, ChoicePattern);
+        var choice: Choice = null;
+        for(key in pattern.choices.keys()){
+            if(choiceButton.ref == key)
+                choice = pattern.choices.get(key);
+        }
+        if(choice != null){
+            var tooltip = cast(displays.get(pattern.tooltipRef).obj, ScrollPanel);
+            var content = Localiser.instance.getItemContent(choice.toolTip);
+            tooltip.content = KpTextDownParser.parse(content);
+            var i:Int = 0;
+            while(!Std.is(displayArea.getChildAt(i), DefaultButton)){
+                i++;
+            }
+            displayArea.addChildAt(tooltip, i);
+        }
+    }
+
+    private function onOutChoice(e: MouseEvent):Void
+    {
+        var pattern = cast(currentPattern, ChoicePattern);
+        removeChild(displays.get(pattern.tooltipRef).obj);
     }
 
     private function goToPattern(target:String):Void

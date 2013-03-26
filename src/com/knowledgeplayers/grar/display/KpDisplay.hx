@@ -151,7 +151,6 @@ class KpDisplay extends Sprite {
 
     private function createTextGroup(textNode:Fast):Void
     {
-
         var numIndex = 0;
         var hashTextGroup = new Hash<{obj:Fast, z:Int}>();
 

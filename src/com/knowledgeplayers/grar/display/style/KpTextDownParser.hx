@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.display.style;
+
 import nme.text.TextFieldAutoSize;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.display.text.UrlField;
