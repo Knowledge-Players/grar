@@ -14,7 +14,7 @@
               ref="dialog"/>
         <Button ref="next" content="nextButton"/>
     </Pattern>
-    <Pattern type="Choice" id="choice" minChoice="1" next="">
+    <Pattern type="Choice" id="choice" minChoice="1" next="" toolTip="">
         <Text type="" content="step1_2" author="Thuynhan_thinking" transition="leftToRight" background="labo"
               ref="dialog"/>
         <Choice ref="choice1" content="choice1" toolTip="tip1" goTo="pattern3"/>
