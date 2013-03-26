@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<Part>
+    <Text type="" content="text1" author="Thuynhan_happy" transition="" background="labo" ref="intro1"/>
+    <Text type="" content="text2" author="" transition="" background="labo" ref="intro2"/>
+
+    <Part id="0" name="miniSims" type="dialog" file="xml/wort.xml" display="xml/wortDisplay.xml"/>
+
+    <Text type="" content="text1" author="Thuynhan_happy" transition="" background="labo" ref="conclusion1"/>
+
+    <Button ref="next" content="nextButton"/>
+</Part>

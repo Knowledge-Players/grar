@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Scanner>
+    <Background src="img/background.jpg" ref="default"/>
+    <Point ref="color" src="0xFF0000" radius="10" state="unseen"/>
+    <Point ref="color" src="0x00FF00" radius="10" state="over"/>
+    <Point ref="default" src="img/ScannerSpot.png" state="unseen"/>
+    <Point ref="default" src="img/ScannerSpot_seen.png" state="over"/>
+    <Text ref="text1" width="300" height="100" x="660" y="40" background="0xFFFFFF"/>
+    <Text ref="text2" width="300" height="100" x="660" y="150" background="0xFFFFFF"/>
+    <Text ref="text3" width="300" height="100" x="660" y="260" background="0xFFFFFF"/>
+</Scanner>

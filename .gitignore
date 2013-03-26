@@ -7,4 +7,8 @@ out/
 test/*
 !test/test
 !test/runTests.sh
-sample/bin/
+sample/bin/.*
+sample/bin/android
+sample/bin/mac
+sample/bin/flash
+sample/bin/ios
