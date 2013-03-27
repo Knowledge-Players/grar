@@ -84,16 +84,22 @@ class ScrollPanel extends Sprite {
 
         switch(StyleParser.instance.getStyle().getAlignment()){
             case TextFormatAlign.CENTER:
-                content.x = maskWidth/2 - content.width/2;
-                //content.y = maskHeight/2- content.height/2;
+                content.x = maskWidth / 2 - content.width / 2;
+            //content.y = maskHeight/2- content.height/2;
             case TextFormatAlign.RIGHT:
                 content.x = maskWidth - content.width;
             case TextFormatAlign.LEFT, TextFormatAlign.JUSTIFY:
         }
         var padding = StyleParser.instance.getStyle().getPadding();
-        if(padding.length > 2){
+        if(content.width > 0 && padding.length > 0){
             content.y += padding[0];
-            content.x += padding[1];
+            content.x += padding[3];
+            var mask = new Sprite();
+            mask.graphics.beginFill(0);
+            mask.graphics.drawRect(0, 0, maskWidth - padding[1], maskHeight - padding[2]);
+            mask.graphics.endFill();
+            content.mask = mask;
+            addChild(mask);
         }
 
         addChild(content);
