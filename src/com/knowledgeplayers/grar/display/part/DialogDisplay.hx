@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import haxe.FastList;
 import nme.Lib;
 import com.knowledgeplayers.grar.structure.Token;
@@ -54,6 +55,7 @@ class DialogDisplay extends PartDisplay {
 
     override private function next(event:ButtonActionEvent):Void
     {
+        hideToken();
         if(nextActivity != null){
             GameManager.instance.displayActivity(nextActivity);
             nextActivity = null;
@@ -113,9 +115,15 @@ class DialogDisplay extends PartDisplay {
         currentToken = e.token;
         var tok = cast(tokens.get(currentToken.ref),TokenDisplay);
         addChild(tok);
-        tok.setImage(currentToken.img);
 
+        tok.setImage(currentToken.img);
+        var content = Localiser.instance.getItemContent(currentToken.ref);
+        var content2 = Localiser.instance.getItemContent(currentToken.img);
+        tok.textsToken.get(currentToken.ref).content = KpTextDownParser.parse(content);
+
+        tok.textsToken.get(currentToken.img).content = KpTextDownParser.parse(content2);
         TweenManager.slide(tok,tok.showToken);
+
 
     }
 
@@ -166,7 +174,7 @@ class DialogDisplay extends PartDisplay {
 
     private function goToPattern(target:String):Void
     {
-        hideToken();
+
         var i = 0;
         while(!(part.elements[i].isPattern() && cast(part.elements[i], Pattern).name == target)){
             i++;
@@ -178,7 +186,12 @@ class DialogDisplay extends PartDisplay {
     private function hideToken():Void{
         if(currentToken != null)
         {
+            Lib.trace(currentToken.ref);
             var tok = cast(tokens.get(currentToken.ref),TokenDisplay);
+
+            tok.imgsToken.get(currentToken.img).visible = false;
+            tok.textsToken.get(currentToken.img).visible = false;
+
             TweenManager.slide(tok,tok.hideToken);
 
         }

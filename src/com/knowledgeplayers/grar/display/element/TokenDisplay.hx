@@ -72,10 +72,9 @@ class TokenDisplay extends Sprite {
 
                     case "text":
                         var txt:ScrollPanel  =UiFactory.createTextFromXml(node);
-                        var content = Localiser.instance.getItemContent(node.att.ref);
-                        txt.content = KpTextDownParser.parse(content);
-                        Lib.trace("node.att.ref : "+node.att.ref);
-                        Lib.trace("content : "+content);
+                        //var content = Localiser.instance.getItemContent(node.att.ref);
+                        //txt.content = KpTextDownParser.parse(content);
+
                         textsToken.set(node.att.ref,txt);
                         addChild(txt);
 
@@ -85,10 +84,6 @@ class TokenDisplay extends Sprite {
             }
 
     }
-
-
-
-
     public function setImage(_key:String):Void
     {
         imgsToken.get(_key).visible = true;
