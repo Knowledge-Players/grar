@@ -82,10 +82,11 @@ class ScrollPanel extends Sprite {
             posYMask = content.y;
         }
 
-        switch(StyleParser.instance.getStyle().getAlignment()){
+        // Type Conflict between Flash and native for TextFormatAlign
+        var alignment: Dynamic = StyleParser.instance.getStyle().getAlignment();
+        switch(alignment){
             case TextFormatAlign.CENTER:
                 content.x = maskWidth / 2 - content.width / 2;
-            //content.y = maskHeight/2- content.height/2;
             case TextFormatAlign.RIGHT:
                 content.x = maskWidth - content.width;
             case TextFormatAlign.LEFT, TextFormatAlign.JUSTIFY:

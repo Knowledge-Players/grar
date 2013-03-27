@@ -11,6 +11,7 @@ import com.knowledgeplayers.grar.util.LoadData;
 import haxe.xml.Fast;
 import nme.display.Bitmap;
 import nme.display.Sprite;
+import com.knowledgeplayers.grar.util.DisplayUtils;
 
 /**
  * Display for a group of answer in a quizz
@@ -54,12 +55,9 @@ class QuizzGroupDisplay extends Sprite {
                     layer = new TileLayer(QuizzDisplay.instance.spritesheets.get(xml.node.Separator.att.spritesheet));
                 else
                     layer = new TileLayer(UiFactory.tilesheet);
-                var sep = new TileSprite(xml.node.Separator.att.id);
-                layer.addChild(sep);
-                layer.render();
-                separator = sep.bmp.bitmapData;
+                this.separator = DisplayUtils.getBitmapDataFromLayer(layer, xml.node.Separator.att.id);
             }
-            if(separator != null){
+            else if(separator != null){
                 this.separator = separator;
             }
         }

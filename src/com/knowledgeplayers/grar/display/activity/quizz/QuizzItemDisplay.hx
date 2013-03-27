@@ -10,6 +10,7 @@ import com.knowledgeplayers.grar.structure.activity.quizz.QuizzItem;
 import nme.display.Bitmap;
 import nme.display.Sprite;
 import nme.events.MouseEvent;
+import com.knowledgeplayers.grar.util.DisplayUtils;
 
 /**
  * Display for quizz propositions
@@ -106,10 +107,7 @@ class QuizzItemDisplay extends Sprite {
             layer = new TileLayer(QuizzDisplay.instance.spritesheets.get(spritesheetRef));
         else
             layer = new TileLayer(UiFactory.tilesheet);
-        var icon = new TileSprite(id);
-        layer.addChild(icon);
-        layer.render();
-        checkIcon.bitmapData = icon.bmp.bitmapData;
+        checkIcon.bitmapData = DisplayUtils.getBitmapDataFromLayer(layer, id);
     }
 
     // Handlers

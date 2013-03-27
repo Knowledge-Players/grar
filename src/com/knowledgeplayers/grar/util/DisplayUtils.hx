@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.util;
 
+import Math;
+import Math;
 import nme.display.BitmapData;
 import nme.display.Bitmap;
 import nme.display.Sprite;
@@ -61,9 +63,12 @@ class DisplayUtils {
 
     public static function getBitmapDataFromLayer(layer: TileLayer, tileId: String):BitmapData
     {
+        var tmpLayer = new TileLayer(layer.tilesheet);
         var tile = new TileSprite(tileId);
-        layer.addChild(tile);
-        layer.render();
-        return tile.bmp.bitmapData;
+        tmpLayer.addChild(tile);
+        tmpLayer.render();
+        var bmpData = new BitmapData(Math.round(tile.width), Math.round(tile.height));
+        bmpData.draw(tmpLayer.view);
+        return bmpData;
     }
 }

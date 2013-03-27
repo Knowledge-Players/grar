@@ -115,12 +115,16 @@ class Style extends Hash<String> {
     /**
     * @return the alignment of the text
     **/
-
-    public function getAlignment():Null<TextFormatAlign>
+    public function getAlignment():Null<Dynamic>
     {
-        var alignment:TextFormatAlign = null;
+        // Type Conflict between Flash and native for TextFormatAlign
+        var alignment:Dynamic = null;
         if(exists("alignment")){
-            alignment = Type.createEnum(TextFormatAlign, get("alignment").toUpperCase());
+            #if flash
+                alignment = Type.createEnum(TextFormatAlign, get("alignment").toUpperCase());
+            #else
+                alignment = get("alignment").toUpperCase();
+            #end
         }
         return alignment;
     }
