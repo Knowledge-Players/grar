@@ -48,11 +48,8 @@ class Style extends Hash<String> {
      * @param	parentName : Name of the parent style
      */
 
-    public function inherit(parentName:String):Void
+    public function inherit(parent:Style):Void
     {
-        var parent = StyleParser.instance.getStyle(parentName);
-        if(parent == null)
-            throw "Parent not found or must be placed before the style";
         for(rule in parent.keys()){
             set(rule, parent.get(rule));
         }
