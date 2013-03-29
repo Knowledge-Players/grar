@@ -126,7 +126,9 @@ class TweenManager {
 
     public static function loadTemplate(file:String):Void
     {
+
         XmlLoader.load(file, onTemplateLoaded, parseXml);
+
     }
 
     // Private

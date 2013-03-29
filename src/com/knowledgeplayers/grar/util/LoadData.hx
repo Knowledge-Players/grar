@@ -222,8 +222,21 @@ class LoadData extends EventDispatcher {
                     mloader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
                     mloader.load(urlR);
                 #else
+
+
+                numDataLoaded++;
+                var urlR = new URLRequest(object);
+                var path = urlR.url;
+                var i: Int = 0;
+                while(!StringTools.endsWith(path, urlLoading[i])){
+                    i++;
+                }
                 var elementDisplay = new Bitmap(Assets.getBitmapData(object));
-                cacheElementsDisplay.set(object, elementDisplay);
+
+                cacheElementsDisplay.set(urlLoading[i], elementDisplay);
+                if(nbDatas == numDataLoaded){
+                    dispatchEvent(new Event("DATA_LOADED", true));
+                }
                 #end
             }
         }
@@ -277,9 +290,21 @@ class SpriteSheetLoader extends EventDispatcher {
 
     private function parseXmlSprite(xmlSprite:Xml):Void
     {
+
+
         var fast = new Fast(xmlSprite).node.TextureAtlas;
-        var elementDisplay = LoadData.instance.getElementDisplayInCache(fast.att.imagePath);
-        spritesheet = new SparrowTilesheet(cast(elementDisplay, Bitmap).bitmapData, xmlSprite.toString());
+
+
+
+        #if flash
+            var elementDisplay = LoadData.instance.getElementDisplayInCache(fast.att.imagePath);
+            spritesheet = new SparrowTilesheet(cast(elementDisplay, Bitmap).bitmapData, xmlSprite.toString());
+        #else
+
+            spritesheet = new SparrowTilesheet(Assets.getBitmapData(fast.att.imagePath), xmlSprite.toString());
+
+        #end
+
         dispatchEvent(new Event(Event.COMPLETE));
     }
 }

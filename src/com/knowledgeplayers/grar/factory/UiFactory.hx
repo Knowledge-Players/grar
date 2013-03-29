@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import nme.Assets;
 import com.knowledgeplayers.grar.display.GameManager;
 import nme.filters.DropShadowFilter;
 import nme.Lib;
@@ -178,12 +179,23 @@ class UiFactory {
         layerPath = pathToXml.substr(0, pathToXml.indexOf("."));
 
         //XmlLoader.load(layerPath + ".xml", onXmlLoaded, parseContent);
-        LoadData.instance.loadSpritesheet("ui", layerPath + ".xml", onXmlLoaded);
+        #if flash
+            LoadData.instance.loadSpritesheet("ui", layerPath + ".xml", onXmlLoaded);
+
+        #else
+            onXmlLoaded();
+        #end
+
     }
 
-    private static function onXmlLoaded(e:Event):Void
+    private static function onXmlLoaded(e:Event=null):Void
     {
-        tilesheet = e.target.spritesheet;//new SparrowTilesheet(cast(LoadData.getInstance().getElementDisplayInCache(layerPath + ".png"), Bitmap).bitmapData, XmlLoader.getXml(e).toString());
+
+        #if flash
+        tilesheet = e.target.spritesheet;
+        #else
+        tilesheet = new SparrowTilesheet(Assets.getBitmapData(layerPath + ".png"), Assets.getText(layerPath + ".xml"));
+        #end
         GameManager.instance.game.uiLoaded = true;
     }
 
