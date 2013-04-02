@@ -5,6 +5,7 @@ package com.knowledgeplayers.grar.display.element;
  * Graphic representation of a token of the game
  */
 
+import nme.Assets;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
@@ -58,10 +59,16 @@ class TokenDisplay extends Sprite {
         for (node in nodes.elements)
             {
                 //Lib.trace("img : "+img.att.src);
+
                 switch(node.name.toLowerCase())
                 {
                     case "img":
-                        var image:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(node.att.src), Bitmap).bitmapData);
+                        var image:Bitmap = new Bitmap();
+                        #if flash
+                        image = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(node.att.src), Bitmap).bitmapData);
+                        #else
+                        image = new Bitmap(Assets.getBitmapData(node.att.src));
+                        #end
                         image.x = Std.parseFloat(node.att.x);
                         image.y = Std.parseFloat(node.att.y);
                         image.scaleX = Std.parseFloat(node.att.scale);

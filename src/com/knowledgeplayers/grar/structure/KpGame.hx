@@ -108,7 +108,7 @@ class KpGame extends EventDispatcher, implements Game {
             LoadData.getInstance().addEventListener("DATA_LOADED",onDisplayLoaded);
             LoadData.getInstance().loadDisplayXml(xml);
         #else
-        onDisplayLoaded();
+            onDisplayLoaded();
         #end
     }
 
@@ -236,11 +236,12 @@ class KpGame extends EventDispatcher, implements Game {
 
     private function initLangs(xml:Xml):Void
     {
+
         var languagesXml:Fast = new Fast(xml);
         for(lang in languagesXml.node.Langs.nodes.Lang){
             addLanguage(lang.att.value, lang.att.folder, lang.att.pic);
         }
-        Localiser.instance.setCurrentLocale(stateInfos.currentLanguage);
+       Localiser.instance.setCurrentLocale(stateInfos.currentLanguage);
 
         // Load Layout
         LayoutManager.instance.parseXml(Xml.parse(Assets.getText(structureXml.node.Grar.node.Parameters.node.Layout.att.file)));
@@ -263,17 +264,16 @@ class KpGame extends EventDispatcher, implements Game {
         title = parametersNode.node.Title.innerData;
         state = parametersNode.node.State.innerData;
 
-        // Start Tracking
-        initTracking();
-
-        // Load Languages
-        XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
-
         // Load UI
         UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
 
         // Load styles
         StyleParser.instance.parse(Assets.getText(displayNode.node.Style.att.file));
+        // Start Tracking
+        initTracking();
+
+        // Load Languages
+        XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
 
         // Load Transition
         if(displayNode.hasNode.Transitions)
@@ -290,6 +290,8 @@ class KpGame extends EventDispatcher, implements Game {
         for(part in structureNode.nodes.Part){
             addPartFromXml(Std.parseInt(part.att.id), part);
         }
+
+
     }
 
     private function onActivityComplete(event:Event):Void

@@ -61,6 +61,7 @@ class LayoutManager extends EventDispatcher {
 
     public function onLocaleLoaded(e:Event):Void
     {
+
         Localiser.instance.removeEventListener(LocaleEvent.LOCALE_LOADED, onLocaleLoaded);
         for(lay in layoutNode.elements){
 

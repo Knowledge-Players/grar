@@ -69,7 +69,7 @@ class GameManager extends EventDispatcher {
     public function changeLayout(layout:String):Void
     {
         if(this.layout != null)
-            Lib.current.removeChild(this.layout.content);
+           Lib.current.removeChild(this.layout.content);
         this.layout = LayoutManager.instance.getLayout(layout);
         Lib.current.addChild(this.layout.content);
     }
@@ -111,6 +111,7 @@ class GameManager extends EventDispatcher {
 
     public function displayPartById(id:Int):Void
     {
+
         displayPart(game.start(id));
     }
 

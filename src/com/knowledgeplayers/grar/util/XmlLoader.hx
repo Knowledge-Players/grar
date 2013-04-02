@@ -39,7 +39,7 @@ class XmlLoader extends EventDispatcher {
             else
                 parser(Xml.parse(cache.get(path)));
 		#else
-        parser(Xml.parse(Assets.getText(path)));
+            parser(Xml.parse(Assets.getText(path)));
         #end
     }
 

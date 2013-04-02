@@ -35,12 +35,14 @@ class Zone extends Sprite {
     {
         super();
         //DisplayUtils.initSprite(this, width, height);
+
         zoneWidth = _width;
         zoneHeight = _height;
     }
 
     public function init(_zone: Fast): Void
     {
+
         if(_zone.has.text)
             {
                 Lib.trace(Localiser.instance.currentLocale);
@@ -53,10 +55,9 @@ class Zone extends Sprite {
         if(_zone.has.ref){
             layer = new TileLayer(UiFactory.tilesheet);
 
-            ref = _zone.att.ref;
+           ref = _zone.att.ref;
             dispatchEvent(new LayoutEvent(LayoutEvent.NEW_ZONE, ref, this));
             addChild(layer.view);
-
             for(element in _zone.elements){
                 switch(element.name.toLowerCase()){
                     case "background": createBackground(element);

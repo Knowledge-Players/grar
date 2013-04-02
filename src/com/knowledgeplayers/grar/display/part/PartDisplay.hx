@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import nme.Assets;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
 import aze.display.SparrowTilesheet;
@@ -90,6 +91,7 @@ class PartDisplay extends KpDisplay {
 
     public function init():Void
     {
+
         XmlLoader.load(part.display, onLoadComplete, parseContent);
         Localiser.instance.addEventListener(LocaleEvent.LOCALE_LOADED, onLocaleLoaded);
         Localiser.instance.setLayoutFile(part.file);
@@ -112,10 +114,11 @@ class PartDisplay extends KpDisplay {
     public function nextElement():Void
     {
         currentElement = part.getNextElement();
-        if(currentElement == null){
+       if(currentElement == null){
             dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
             return;
         }
+
         if(currentElement.isText()){
             var groupKey = "";
             if(textGroups != null){
@@ -151,9 +154,11 @@ class PartDisplay extends KpDisplay {
                 }
             }
         }
+
         else if(currentElement.isActivity()){
             GameManager.instance.displayActivity(cast(currentElement, Activity));
         }
+
         else if(currentElement.isPattern()){
             if(Localiser.instance.layoutPath != part.file){
                 Localiser.instance.addEventListener(LocaleEvent.LOCALE_LOADED, onLocaleLoaded);
@@ -162,11 +167,14 @@ class PartDisplay extends KpDisplay {
             else
                 startPattern(cast(currentElement, Pattern));
         }
+
         else if(currentElement.isPart()){
             var event = new PartEvent(PartEvent.ENTER_SUB_PART);
             event.part = cast(currentElement, Part);
             dispatchEvent(event);
         }
+
+
     }
 
     /**
@@ -187,6 +195,7 @@ class PartDisplay extends KpDisplay {
             transitionIn = displayFast.att.transitionIn;
         if(displayFast.has.transitionOut)
             transitionOut = displayFast.att.transitionOut;
+
     }
 
     // Private
@@ -236,7 +245,13 @@ class PartDisplay extends KpDisplay {
         // Add new background
 
         if(background != null){
-            var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(background).att.src), Bitmap).bitmapData);
+            var bkg:Bitmap = new Bitmap();
+            #if flash
+            bkg= new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(background).att.src), Bitmap).bitmapData);
+            #else
+            bkg= new Bitmap(Assets.getBitmapData(displaysFast.get(background).att.src));
+            #end
+
             initDisplayObject(bkg, displaysFast.get(background));
             if(bkg != null){
                 displayArea.addChildAt(bkg, 0);
@@ -400,6 +415,7 @@ class PartDisplay extends KpDisplay {
                 return exists;
             }
         }
+
 
         return true;
     }

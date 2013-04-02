@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import nme.Assets;
 import nme.Lib;
 import nme.events.Event;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
@@ -46,6 +47,7 @@ class KpDisplay extends Sprite {
         totalSpriteSheets = Lambda.count(displayFast.nodes.SpriteSheet);
 
         if(totalSpriteSheets > 0){
+
             for(child in displayFast.nodes.SpriteSheet){
                 LoadData.instance.loadSpritesheet(child.att.id, child.att.src, onSpriteSheetLoaded);
             }
@@ -68,6 +70,7 @@ class KpDisplay extends Sprite {
 
     private function createElement(elemNode:Fast):Void
     {
+
         switch(elemNode.name.toLowerCase()){
             case "background": createBackground(elemNode);
             case "item": createItem(elemNode);
@@ -76,6 +79,7 @@ class KpDisplay extends Sprite {
             case "text": createText(elemNode);
             case "textgroup":createTextGroup(elemNode);
         }
+
     }
 
     private function createBackground(bkgNode:Fast):Void
@@ -87,8 +91,14 @@ class KpDisplay extends Sprite {
     private function createItem(itemNode:Fast):Void
     {
         if(itemNode.has.src){
-            var itemBmp:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src), Bitmap).bitmapData);
+            var itemBmp:Bitmap = new Bitmap();
+            #if flash
+             itemBmp = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src), Bitmap).bitmapData);
+            #else
+             itemBmp = new Bitmap(Assets.getBitmapData(itemNode.att.src));
+            #end
             addElement(itemBmp, itemNode);
+
         }
         else{
             var spritesheet;
@@ -237,6 +247,7 @@ class KpDisplay extends Sprite {
 
     private function onSpriteSheetLoaded(ev:Event):Void
     {
+
         ev.target.removeEventListener(Event.COMPLETE, onSpriteSheetLoaded);
         spritesheets.set(ev.target.name, ev.target.spritesheet);
         var layer = new TileLayer(ev.target.spritesheet);

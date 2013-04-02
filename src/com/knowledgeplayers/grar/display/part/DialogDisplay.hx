@@ -102,8 +102,6 @@ class DialogDisplay extends PartDisplay {
         super.createElement(elemNode);
 
         if(elemNode.name.toLowerCase() == "token"){
-            //var token:Bitmap = new Bitmap(Assets.getBitmapData(elemNode.att.id));
-
             var token:TokenDisplay = new TokenDisplay( spritesheets.get(elemNode.att.spritesheet),elemNode.att.id,Std.parseFloat(elemNode.att.x),Std.parseFloat(elemNode.att.y),Std.parseFloat(elemNode.att.scale),elemNode.att.transitionIn,elemNode.att.transitionOut,elemNode);
             tokens.set(elemNode.att.id, token);
 
@@ -186,7 +184,7 @@ class DialogDisplay extends PartDisplay {
     private function hideToken():Void{
         if(currentToken != null)
         {
-            Lib.trace(currentToken.ref);
+            //Lib.trace(currentToken.ref);
             var tok = cast(tokens.get(currentToken.ref),TokenDisplay);
 
             tok.imgsToken.get(currentToken.img).visible = false;

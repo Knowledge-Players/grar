@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.localisation;
 
+import nme.Lib;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.localisation.Localisation;
 import nme.events.Event;
