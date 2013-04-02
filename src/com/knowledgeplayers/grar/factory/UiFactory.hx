@@ -63,7 +63,10 @@ class UiFactory {
         creation.x = x;
         creation.y = y;
         creation.scale = scale;
-        creation.mirror = mirror == "vertical" ? 2 : 1;
+        if(mirror == "horizontal")
+            creation.mirror = 1;
+        if(mirror == "vertical")
+            creation.mirror = 2;
         if(tileDown != null)
             creation.setStateIcon(ButtonState.DOWN, tileDown);
         if(tileOver != null)
