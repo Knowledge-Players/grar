@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.display.activity.quizz;
 
+import Std;
+import Std;
+import Std;
+import Std;
 import nme.Lib;
 import nme.display.BitmapData;
 import aze.display.TileLayer;
@@ -109,21 +113,10 @@ class QuizzGroupDisplay extends Sprite {
         unloadItems();
         for(item in model.items){
             var itemTemplate = itemTemplates.get(item.ref);
-            var itemDisplay = new QuizzItemDisplay(item);
-            if(itemTemplate.has.spritesheet)
-                itemDisplay.setIcon(itemTemplate.att.id, itemTemplate.att.spritesheet);
-            else if(itemTemplate.has.id)
-                itemDisplay.setIcon(itemTemplate.att.id);
+            var itemDisplay = new QuizzItemDisplay(item, itemTemplate);
             itemDisplay.y = totalYOffset;
             itemDisplay.x = xOffset;
-            itemDisplay.text.x = Std.parseFloat(itemTemplate.att.contentX);
-            itemDisplay.correction.x = Std.parseFloat(itemTemplate.att.correctionX);
-            itemDisplay.checkIcon.x = Std.parseFloat(itemTemplate.att.checkX);
-            totalYOffset += itemDisplay.height;
-
-            if(itemTemplate.has.background){
-                DisplayUtils.setBackground(itemTemplate.att.background, itemDisplay);
-            }
+            totalYOffset += itemDisplay.height + yOffset / 2;
 
             items.push(itemDisplay);
             addChild(itemDisplay);
@@ -131,7 +124,7 @@ class QuizzGroupDisplay extends Sprite {
             sep.x = itemDisplay.x;
             sep.y = totalYOffset;
             addChild(sep);
-            totalYOffset += yOffset + sep.height;
+            totalYOffset += yOffset / 2 + sep.height;
         }
     }
 

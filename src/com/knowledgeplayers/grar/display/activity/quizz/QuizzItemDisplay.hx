@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.activity.quizz;
 
+import Std;
+import Std;
+import haxe.xml.Fast;
 import aze.display.TileLayer;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.factory.UiFactory;
@@ -42,30 +45,46 @@ class QuizzItemDisplay extends Sprite {
      * @param	item : Model to display
      */
 
-    public function new(item:QuizzItem)
+    public function new(item:QuizzItem, ?xmlTemplate:Fast, ?width:Float, ?height:Float, ?style:String)
     {
         super();
 
         model = item;
-
         buttonMode = true;
+        correction = new Bitmap();
+        checkIcon = new Bitmap();
+        if(width != null && height != null){
+            text = new ScrollPanel(width, height, style != null ? style : (xmlTemplate.has.style ? xmlTemplate.att.style : null));
+        }
+        else{
+            text = new ScrollPanel(Std.parseFloat(xmlTemplate.att.width), Std.parseFloat(xmlTemplate.att.height), style != null ? style : (xmlTemplate.has.style ? xmlTemplate.att.style : null));
+        }
+
+        if(xmlTemplate != null){
+            if(xmlTemplate.has.spritesheet)
+                setIcon(xmlTemplate.att.id, xmlTemplate.att.spritesheet);
+            else if(xmlTemplate.has.id)
+                setIcon(xmlTemplate.att.id);
+            text.x = Std.parseFloat(xmlTemplate.att.contentX);
+            correction.x = Std.parseFloat(xmlTemplate.att.correctionX);
+            checkIcon.x = Std.parseFloat(xmlTemplate.att.checkX);
+
+            if(xmlTemplate.has.background){
+                DisplayUtils.setBackground(xmlTemplate.att.background, this);
+            }
+        }
 
         var content = Localiser.getInstance().getItemContent(model.content);
-        var contentParsed = KpTextDownParser.parse(content);
 
-        text = new ScrollPanel(contentParsed.width, 50);
-
-        text.content = contentParsed;
-
-        correction = new Bitmap();
-
-        checkIcon = new Bitmap();
+        text.setContent(content);
 
         addEventListener(MouseEvent.CLICK, onClick);
 
-        addChild(checkIcon);
         addChild(text);
         addChild(correction);
+
+        checkIcon.y = this.height / 2 - checkIcon.height / 2;
+        addChild(checkIcon);
     }
 
     /**

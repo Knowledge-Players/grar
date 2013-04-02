@@ -87,7 +87,7 @@ class CardsDisplay extends ActivityDisplay {
 
         // Instructions
         var localizedText = Localiser.instance.getItemContent(model.instructionContent);
-        cast(displays.get(model.ref).obj, ScrollPanel).setContent(KpTextDownParser.parse(localizedText));
+        cast(displays.get(model.ref).obj, ScrollPanel).setContent(localizedText);
         addChild(displays.get(model.ref).obj);
 
         // Button

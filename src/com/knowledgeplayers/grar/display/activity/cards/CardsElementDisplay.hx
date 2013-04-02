@@ -35,7 +35,7 @@ class CardsElementDisplay extends Sprite {
         buttonMode = true;
 
         var localizedText = Localiser.instance.getItemContent(content + "_title");
-        text.setContent(KpTextDownParser.parse(localizedText));
+        text.setContent(localizedText);
         text.setBackground(background);
         addChild(text);
 

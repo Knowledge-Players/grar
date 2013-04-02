@@ -11,9 +11,9 @@ import String;
 
 class PointDisplay extends Sprite {
 
-    private var style: PointStyle;
-    private var bitmap: Bitmap;
-    private var point: ScannerPoint;
+    private var style:PointStyle;
+    private var bitmap:Bitmap;
+    private var point:ScannerPoint;
 
     /**
     * Constructor
@@ -22,7 +22,7 @@ class PointDisplay extends Sprite {
     * @param point : Model of the display
 **/
 
-    public function new(style: PointStyle, point: ScannerPoint)
+    public function new(style:PointStyle, point:ScannerPoint)
     {
         super();
         this.style = style;
@@ -37,7 +37,7 @@ class PointDisplay extends Sprite {
 
     // Handler
 
-    private function setGraphic(state: String): Void
+    private function setGraphic(state:String):Void
     {
         if(!style.graphics.exists(state))
             return;
@@ -48,20 +48,20 @@ class PointDisplay extends Sprite {
             graphics.endFill();
         }
         else{
-            var bmp = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(style.graphics.get(state)),Bitmap).bitmapData);
+            var bmp = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(style.graphics.get(state)), Bitmap).bitmapData);
             bitmap.bitmapData = bmp.bitmapData;
         }
     }
 
-    private function onOver(e: MouseEvent): Void
+    private function onOver(e:MouseEvent):Void
     {
         alpha = 1;
         setGraphic("over");
         var text = Localiser.instance.getItemContent(point.content);
-        cast(parent, ScannerDisplay).setText(point.textRef, KpTextDownParser.parse(text));
+        cast(parent, ScannerDisplay).setText(point.textRef, text);
     }
 
-    private function onOut(e: MouseEvent): Void
+    private function onOut(e:MouseEvent):Void
     {
         setGraphic("seen");
     }
@@ -71,19 +71,19 @@ class PointStyle {
     /**
     * Radius of the point. If 0, the size of the image will be unchanged
 **/
-    public var radius (default, default): Float = 0;
+    public var radius (default, default):Float = 0;
 
     /**
     * Graphics for the different states of the point
     **/
-    public var graphics (default, default): Hash<String>;
+    public var graphics (default, default):Hash<String>;
 
     public function new()
     {
         graphics = new Hash<String>();
     }
 
-    public function addGraphic(key: String, graph: String): Void
+    public function addGraphic(key:String, graph:String):Void
     {
         graphics.set(key, graph);
     }

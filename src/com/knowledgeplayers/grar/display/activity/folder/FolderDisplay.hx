@@ -90,7 +90,7 @@ class FolderDisplay extends ActivityDisplay {
         }
         // Instructions
         var localizedText = Localiser.instance.getItemContent(folder.instructionContent);
-        cast(displays.get(folder.ref).obj, ScrollPanel).setContent(KpTextDownParser.parse(localizedText));
+        cast(displays.get(folder.ref).obj, ScrollPanel).setContent(localizedText);
         addChild(displays.get(folder.ref).obj);
 
         // Button

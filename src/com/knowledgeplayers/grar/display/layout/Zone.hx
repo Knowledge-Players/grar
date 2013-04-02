@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.display.layout;
 
-
 import com.knowledgeplayers.grar.display.component.ScrollPanel;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.util.XmlLoader;
@@ -22,16 +21,15 @@ import com.knowledgeplayers.grar.event.LayoutEvent;
 import nme.display.Sprite;
 import haxe.xml.Fast;
 
-
 class Zone extends Sprite {
-    public var ref: String;
+    public var ref:String;
 
-    private var zoneWidth: Float;
-    private var zoneHeight: Float;
+    private var zoneWidth:Float;
+    private var zoneHeight:Float;
     private var menu:MenuDisplay;
     private var layer:TileLayer;
 
-    public function new(_width: Float, _height: Float): Void
+    public function new(_width:Float, _height:Float):Void
     {
         super();
         //DisplayUtils.initSprite(this, width, height);
@@ -40,14 +38,13 @@ class Zone extends Sprite {
         zoneHeight = _height;
     }
 
-    public function init(_zone: Fast): Void
+    public function init(_zone:Fast):Void
     {
 
-        if(_zone.has.text)
-            {
-                Lib.trace(Localiser.instance.currentLocale);
-                //XmlLoader.load();
-            }
+        if(_zone.has.text){
+            Lib.trace(Localiser.instance.currentLocale);
+            //XmlLoader.load();
+        }
         if(_zone.has.bgColor)
             DisplayUtils.initSprite(this, zoneWidth, zoneHeight, Std.parseInt(_zone.att.bgColor));
         else
@@ -55,7 +52,7 @@ class Zone extends Sprite {
         if(_zone.has.ref){
             layer = new TileLayer(UiFactory.tilesheet);
 
-           ref = _zone.att.ref;
+            ref = _zone.att.ref;
             dispatchEvent(new LayoutEvent(LayoutEvent.NEW_ZONE, ref, this));
             addChild(layer.view);
             for(element in _zone.elements){
@@ -74,7 +71,7 @@ class Zone extends Sprite {
         }
         else if(_zone.has.rows){
             var heights = initSize(_zone.att.rows, height);
-            var yOffset: Float = 0;
+            var yOffset:Float = 0;
             var i = 0;
             for(row in _zone.nodes.Row){
                 var zone = new Zone(zoneWidth, heights[i]);
@@ -89,7 +86,7 @@ class Zone extends Sprite {
         }
         else if(_zone.has.columns){
             var widths = initSize(_zone.att.columns, width);
-            var xOffset: Float = 0;
+            var xOffset:Float = 0;
             var j = 0;
             for(column in _zone.nodes.Column){
                 var zone = new Zone(widths[j], zoneHeight);
@@ -107,35 +104,36 @@ class Zone extends Sprite {
         }
     }
 
-    public function createButton(_child:Fast):DefaultButton{
+    public function createButton(_child:Fast):DefaultButton
+    {
 
-        var button: DefaultButton = null;
-
+        var button:DefaultButton = null;
 
         button = UiFactory.createButtonFromXml(_child);
-        if(_child.att.type=="event")
-        {
-            cast(button,CustomEventButton).addEventListener(_child.att.action,onActionEvent);
+        if(_child.att.type == "event"){
+            cast(button, CustomEventButton).addEventListener(_child.att.action, onActionEvent);
         }
         addChild(button);
 
         return button;
     }
 
-    public function createImage(imageNode: Fast): TileSprite
+    public function createImage(imageNode:Fast):TileSprite
     {
         var image = UiFactory.createImageFromXml(imageNode);
         layer.addChild(image);
 
         return image;
 
+    }
+
+    private function createHeader():Void
+    {
 
     }
 
-    private function createHeader():Void{
-
-    }
-    private function createProgressBar(element:Fast):ProgressBar{
+    private function createProgressBar(element:Fast):ProgressBar
+    {
         var progress = new ProgressBar();
         progress.init(element);
         addChild(progress);
@@ -143,12 +141,13 @@ class Zone extends Sprite {
         return progress;
     }
 
-    private function createText(element:Fast):ScrollPanel{
+    private function createText(element:Fast):ScrollPanel
+    {
 
         var textF = UiFactory.createTextFromXml(element);
 
         var keyText:String = element.att.content;
-        textF.content = KpTextDownParser.parse(Localiser.instance.getItemContent(keyText));
+        textF.setContent(Localiser.instance.getItemContent(keyText));
 
         addChild(textF);
 
@@ -156,12 +155,12 @@ class Zone extends Sprite {
 
     }
 
-    public function createBackground(bkgNode:Fast,?_container:Sprite): Sprite{
+    public function createBackground(bkgNode:Fast, ?_container:Sprite):Sprite
+    {
 
         //TODO Créer un Ui.createBackgroundFromXml ?
 
-        if (_container == null)
-        {
+        if(_container == null){
             _container = new Sprite();
             addChild(_container);
         }
@@ -172,16 +171,16 @@ class Zone extends Sprite {
 
         var _alpha = bkgNode.has.alpha ? Std.parseFloat(bkgNode.att.alpha) : 1;
 
-        if (bkgNode.has.color)
-            color=Std.parseInt(bkgNode.att.color);
+        if(bkgNode.has.color)
+            color = Std.parseInt(bkgNode.att.color);
         else
-            color=Std.parseInt("0xFFFFFF");
-            background.graphics.beginFill(color,_alpha);
-            background.graphics.drawRect(Std.parseFloat(bkgNode.att.x),Std.parseFloat(bkgNode.att.y),Std.parseFloat(bkgNode.att.width),Std.parseFloat(bkgNode.att.height));
-            background.graphics.endFill();
+            color = Std.parseInt("0xFFFFFF");
+        background.graphics.beginFill(color, _alpha);
+        background.graphics.drawRect(Std.parseFloat(bkgNode.att.x), Std.parseFloat(bkgNode.att.y), Std.parseFloat(bkgNode.att.width), Std.parseFloat(bkgNode.att.height));
+        background.graphics.endFill();
 
         if(bkgNode.has.filter){
-            _container.filters=[UiFactory.createFilterFromXml(bkgNode)];
+            _container.filters = [UiFactory.createFilterFromXml(bkgNode)];
         }
 
         _container.addChild(background);
@@ -190,31 +189,31 @@ class Zone extends Sprite {
 
     }
 
-    public function createMenu(element:Fast):Void{
+    public function createMenu(element:Fast):Void
+    {
 
-        menu = new MenuDisplay(Std.parseFloat(element.att.width),Std.parseFloat(element.att.height));
+        menu = new MenuDisplay(Std.parseFloat(element.att.width), Std.parseFloat(element.att.height));
         menu.initMenu(element);
         menu.transitionIn = element.att.transitionIn;
         menu.transitionOut = element.att.transitionOut;
-        menu.x= Std.parseFloat(element.att.x);
-        menu.y= Std.parseFloat(element.att.y);
+        menu.x = Std.parseFloat(element.att.x);
+        menu.y = Std.parseFloat(element.att.y);
 
         addChild(menu);
     }
 
-
-
-    public function onActionEvent(e:Event):Void{
-       switch(e.type){
-           case "open_menu":TweenManager.applyTransition(menu,menu.transitionIn);
-       }
+    public function onActionEvent(e:Event):Void
+    {
+        switch(e.type){
+            case "open_menu":TweenManager.applyTransition(menu, menu.transitionIn);
+        }
 
     }
 
-    private function initSize(sizes: String, maxSize: Float): Array<Dynamic>
+    private function initSize(sizes:String, maxSize:Float):Array<Dynamic>
     {
-        var sizeArray: Array<Dynamic> = sizes.split(",");
-        var starPosition: Int = -1;
+        var sizeArray:Array<Dynamic> = sizes.split(",");
+        var starPosition:Int = -1;
         for(i in 0...sizeArray.length){
             sizeArray[i] = StringTools.trim(sizeArray[i]);
             if(sizeArray[i].indexOf("%") > 0){
@@ -236,7 +235,7 @@ class Zone extends Sprite {
 
     // Handlers
 
-    private function onNewZone(e: LayoutEvent): Void
+    private function onNewZone(e:LayoutEvent):Void
     {
         dispatchEvent(e);
     }

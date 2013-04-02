@@ -114,7 +114,7 @@ class PartDisplay extends KpDisplay {
     public function nextElement():Void
     {
         currentElement = part.getNextElement();
-       if(currentElement == null){
+        if(currentElement == null){
             dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
             return;
         }
@@ -174,7 +174,6 @@ class PartDisplay extends KpDisplay {
             dispatchEvent(event);
         }
 
-
     }
 
     /**
@@ -200,8 +199,8 @@ class PartDisplay extends KpDisplay {
 
     // Private
 
-    private function onTokenAdded(e:TokenEvent):Void{
-
+    private function onTokenAdded(e:TokenEvent):Void
+    {
 
     }
 
@@ -249,7 +248,7 @@ class PartDisplay extends KpDisplay {
             #if flash
             bkg= new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(background).att.src), Bitmap).bitmapData);
             #else
-            bkg= new Bitmap(Assets.getBitmapData(displaysFast.get(background).att.src));
+            bkg = new Bitmap(Assets.getBitmapData(displaysFast.get(background).att.src));
             #end
 
             initDisplayObject(bkg, displaysFast.get(background));
@@ -311,9 +310,9 @@ class PartDisplay extends KpDisplay {
         var content = Localiser.getInstance().getItemContent(item.content);
         if(item.ref != null){
             if(currentSpeaker != null && currentSpeaker.model.getName() != null)
-                cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse("*" + currentSpeaker.model.getName() + "*\n" + content);
+                cast(displays.get(item.ref).obj, ScrollPanel).setContent("*" + currentSpeaker.model.getName() + "*\n" + content);
             else
-                cast(displays.get(item.ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
+                cast(displays.get(item.ref).obj, ScrollPanel).setContent(content);
         }
         //}
 
@@ -415,7 +414,6 @@ class PartDisplay extends KpDisplay {
                 return exists;
             }
         }
-
 
         return true;
     }

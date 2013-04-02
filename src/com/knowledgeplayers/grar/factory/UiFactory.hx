@@ -49,11 +49,11 @@ class UiFactory {
      * @return the created button
      */
 
-    public static function createButton(buttonType:String, ref:String, tile:String, ?tileDown:String, ?tileOver:String, x:Float = 0, y:Float = 0, scaleX:Float = 1, scaleY:Float = 1, ?icon:String, iconX:Float = 0, iconY:Float = 0, ?action:String, ?iconStatus:String):DefaultButton
+    public static function createButton(buttonType:String, ref:String, tile:String, ?tileDown:String, ?tileOver:String, x:Float = 0, y:Float = 0, scaleX:Float = 1, scaleY:Float = 1, ?icon:String, iconX:Float = 0, iconY:Float = 0, ?action:String, ?iconStatus:String, ?style:String):DefaultButton
     {
         var creation:DefaultButton =
         switch(buttonType.toLowerCase()) {
-            case "text": new TextButton(tilesheet, tile, action);
+            case "text": new TextButton(tilesheet, tile, action, style);
             case "event": new CustomEventButton(tilesheet, tile, action);
             case "anim": new AnimationButton(tilesheet, tile, action);
             case "menu": new MenuButton(tilesheet, tile, action, iconStatus);
@@ -109,8 +109,9 @@ class UiFactory {
         var iconStatus = xml.has.status ? xml.att.status : null;
         var idOver = xml.has.idOver ? xml.att.idOver : null;
         var idDown = xml.has.idDown ? xml.att.idDown : null;
+        var style = xml.has.style ? xml.att.style : null;
 
-        return createButton(xml.att.type, xml.att.ref, xml.att.id, idDown, idOver, x, y, scaleX, scaleY, icon, iconX, iconY, action, iconStatus);
+        return createButton(xml.att.type, xml.att.ref, xml.att.id, idDown, idOver, x, y, scaleX, scaleY, icon, iconX, iconY, action, iconStatus, style);
     }
 
     /**
@@ -183,12 +184,12 @@ class UiFactory {
             LoadData.instance.loadSpritesheet("ui", layerPath + ".xml", onXmlLoaded);
 
         #else
-            onXmlLoaded();
+        onXmlLoaded();
         #end
 
     }
 
-    private static function onXmlLoaded(e:Event=null):Void
+    private static function onXmlLoaded(e:Event = null):Void
     {
 
         #if flash

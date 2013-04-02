@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.display.style;
 
-import Std;
 import nme.text.TextFormatAlign;
 import nme.display.Bitmap;
 import nme.display.BitmapData;
@@ -50,6 +49,8 @@ class Style extends Hash<String> {
 
     public function inherit(parent:Style):Void
     {
+        if(parent == null)
+            throw "Can't inherit style for " + name + ", the parent doesn't exist";
         for(rule in parent.keys()){
             set(rule, parent.get(rule));
         }
@@ -112,6 +113,7 @@ class Style extends Hash<String> {
     /**
     * @return the alignment of the text
     **/
+
     public function getAlignment():Null<Dynamic>
     {
         // Type Conflict between Flash and native for TextFormatAlign
@@ -120,7 +122,7 @@ class Style extends Hash<String> {
             #if flash
                 alignment = Type.createEnum(TextFormatAlign, get("alignment").toUpperCase());
             #else
-                alignment = get("alignment").toUpperCase();
+            alignment = get("alignment").toUpperCase();
             #end
         }
         return alignment;

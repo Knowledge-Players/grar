@@ -36,7 +36,7 @@ class DialogDisplay extends PartDisplay {
     private var displayedToken:Bitmap;
     private var currentPattern:Pattern;
     private var currentToken:Token;
-    private var nextActivity: Activity;
+    private var nextActivity:Activity;
 
     /**
      * Constructor
@@ -86,7 +86,7 @@ class DialogDisplay extends PartDisplay {
             if(nextItem.hasToken()){
 
                 var token:Token = nextItem.token;
-                dispatchEvent(new TokenEvent(TokenEvent.ADD,token, true));
+                dispatchEvent(new TokenEvent(TokenEvent.ADD, token, true));
             }
         }
         else if(currentPattern.nextPattern != "")
@@ -102,7 +102,7 @@ class DialogDisplay extends PartDisplay {
         super.createElement(elemNode);
 
         if(elemNode.name.toLowerCase() == "token"){
-            var token:TokenDisplay = new TokenDisplay( spritesheets.get(elemNode.att.spritesheet),elemNode.att.id,Std.parseFloat(elemNode.att.x),Std.parseFloat(elemNode.att.y),Std.parseFloat(elemNode.att.scale),elemNode.att.transitionIn,elemNode.att.transitionOut,elemNode);
+            var token:TokenDisplay = new TokenDisplay( spritesheets.get(elemNode.att.spritesheet), elemNode.att.id, Std.parseFloat(elemNode.att.x), Std.parseFloat(elemNode.att.y), Std.parseFloat(elemNode.att.scale), elemNode.att.transitionIn, elemNode.att.transitionOut, elemNode);
             tokens.set(elemNode.att.id, token);
 
         }
@@ -111,17 +111,16 @@ class DialogDisplay extends PartDisplay {
     override private function onTokenAdded(e:TokenEvent):Void
     {
         currentToken = e.token;
-        var tok = cast(tokens.get(currentToken.ref),TokenDisplay);
+        var tok = cast(tokens.get(currentToken.ref), TokenDisplay);
         addChild(tok);
 
         tok.setImage(currentToken.img);
         var content = Localiser.instance.getItemContent(currentToken.ref);
         var content2 = Localiser.instance.getItemContent(currentToken.img);
-        tok.textsToken.get(currentToken.ref).content = KpTextDownParser.parse(content);
+        tok.textsToken.get(currentToken.ref).setContent(content);
 
-        tok.textsToken.get(currentToken.img).content = KpTextDownParser.parse(content2);
-        TweenManager.slide(tok,tok.showToken);
-
+        tok.textsToken.get(currentToken.img).setContent(content2);
+        TweenManager.slide(tok, tok.showToken);
 
     }
 
@@ -147,7 +146,7 @@ class DialogDisplay extends PartDisplay {
     {
         var choiceButton = cast(e.target, DefaultButton);
         var pattern = cast(currentPattern, ChoicePattern);
-        var choice: Choice = null;
+        var choice:Choice = null;
         for(key in pattern.choices.keys()){
             if(choiceButton.ref == key)
                 choice = pattern.choices.get(key);
@@ -155,7 +154,7 @@ class DialogDisplay extends PartDisplay {
         if(choice != null){
             var tooltip = cast(displays.get(pattern.tooltipRef).obj, ScrollPanel);
             var content = Localiser.instance.getItemContent(choice.toolTip);
-            tooltip.content = KpTextDownParser.parse(content);
+            tooltip.setContent(content);
             var i:Int = 0;
             while(!Std.is(displayArea.getChildAt(i), DefaultButton)){
                 i++;
@@ -164,7 +163,7 @@ class DialogDisplay extends PartDisplay {
         }
     }
 
-    private function onOutChoice(e: MouseEvent):Void
+    private function onOutChoice(e:MouseEvent):Void
     {
         var pattern = cast(currentPattern, ChoicePattern);
         removeChild(displays.get(pattern.tooltipRef).obj);
@@ -181,16 +180,16 @@ class DialogDisplay extends PartDisplay {
         startPattern(cast(part.elements[i], Pattern));
     }
 
-    private function hideToken():Void{
-        if(currentToken != null)
-        {
+    private function hideToken():Void
+    {
+        if(currentToken != null){
             //Lib.trace(currentToken.ref);
-            var tok = cast(tokens.get(currentToken.ref),TokenDisplay);
+            var tok = cast(tokens.get(currentToken.ref), TokenDisplay);
 
             tok.imgsToken.get(currentToken.img).visible = false;
             tok.textsToken.get(currentToken.img).visible = false;
 
-            TweenManager.slide(tok,tok.hideToken);
+            TweenManager.slide(tok, tok.hideToken);
 
         }
     }

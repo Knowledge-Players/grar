@@ -10,67 +10,69 @@ import nme.text.TextField;
 /**
  * Textfield with embedded style
  */
-class StyledTextField extends TextField 
-{
-	/**
-	 * Style of the text
-	 */
-	public var style(default, setStyle): Style;
+class StyledTextField extends TextField {
+    /**
+     * Style of the text
+     */
+    public var style(default, setStyle):Style;
 
-	/**
-	 * Constructor
-	 * @param	style : Style of the text
-	 */
-	public function new(?style: Style)
-	{
-		super();
+    /**
+     * Constructor
+     * @param	style : Style of the text
+     */
 
-		if(style != null)
-			setStyle(style);
-		else
-			setStyle(StyleParser.getInstance().getStyle("text"));
+    public function new(?style:Style)
+    {
+        super();
 
-		//Default Values
-		autoSize = nme.text.TextFieldAutoSize.LEFT;
-		embedFonts = true;
-		selectable = mouseEnabled = false;
-	}
+        if(style != null)
+            setStyle(style);
+        else
+            setStyle(StyleParser.getStyle("text"));
 
-	/**
-	 * Set the style of the text
-	 * @param	style : Style to set
-	 * @return  the style
-	 */
-	public function setStyle(style : Style) : Style
-	{
-		this.style = style;
-		if(style != null)
-			applyStyle(style);
+        //Default Values
+        autoSize = nme.text.TextFieldAutoSize.LEFT;
+        embedFonts = true;
+        selectable = mouseEnabled = false;
+    }
 
-		return style;
-	}
+    /**
+     * Set the style of the text
+     * @param	style : Style to set
+     * @return  the style
+     */
 
-	/**
-	 * Set a style between bounds
-	 * @param	style : Style to set
-	 * @param	startIndex : First affected char
-	 * @param	endIndex : Last affected char
-	 */
-	public function setPartialStyle(style : Style, startIndex: Int, endIndex: Int) : Void
-	{
-		applyStyle(style, startIndex, endIndex);
-	}
+    public function setStyle(style:Style):Style
+    {
+        this.style = style;
+        if(style != null)
+            applyStyle(style);
 
-	// Private
-	
-	private function applyStyle(style: Style, startIndex: Int = -1, endIndex: Int = -1) : Void
-	{
-		var textFormat : TextFormat = new TextFormat(style.getFont().fontName, style.getSize(), style.getColor(), style.getBold(), style.getItalic(), style.getUnderline());
+        return style;
+    }
 
-		if(startIndex == -1 || endIndex == -1)
-			defaultTextFormat = textFormat;
-		else{
-			setTextFormat(textFormat, startIndex, endIndex);
-		}
-	}
+    /**
+     * Set a style between bounds
+     * @param	style : Style to set
+     * @param	startIndex : First affected char
+     * @param	endIndex : Last affected char
+     */
+
+    public function setPartialStyle(style:Style, startIndex:Int, endIndex:Int):Void
+    {
+        applyStyle(style, startIndex, endIndex);
+    }
+
+    // Private
+
+    private function applyStyle(style:Style, startIndex:Int = -1, endIndex:Int = -1):Void
+    {
+        var textFormat:TextFormat = new TextFormat(style.getFont().fontName, style.getSize(), style.getColor(), style.getBold(), style.getItalic(), style.getUnderline());
+
+        if(startIndex == -1 || endIndex == -1)
+            defaultTextFormat = textFormat;
+        else{
+            setTextFormat(textFormat, startIndex, endIndex);
+        }
+    }
 }

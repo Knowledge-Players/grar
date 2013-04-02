@@ -22,9 +22,9 @@ class DisplayUtils {
      * @return the pressed ID for this button
      */
 
-    public static function getPressedId(buttonId: String): String
+    public static function getPressedId(buttonId:String):String
     {
-        var strings: Array<String> = buttonId.split(".");
+        var strings:Array<String> = buttonId.split(".");
         return strings[0] + "_pressed." + strings[1];
     }
 
@@ -35,9 +35,9 @@ class DisplayUtils {
     * @param width : Force width of the background. If 0, the width will be the width of the container
     * @param height : Force height of the background. If 0, the height will be the height of the container
     * @return the bitmap of the background if there was any
-**/
+    **/
 
-    public static function setBackground(bkg: String, container: Sprite, width: Float = 0, height: Float = 0): Null<Bitmap>
+    public static function setBackground(bkg:String, container:Sprite, width:Float = 0, height:Float = 0):Null<Bitmap>
     {
         if(Std.parseInt(bkg) != null){
             initSprite(container, width, height, Std.parseInt(bkg));
@@ -54,21 +54,39 @@ class DisplayUtils {
         }
     }
 
-    public static function initSprite(sprite: Sprite, width: Float = 1, height: Float = 1, color: Int = 0): Void
+    /**
+    * Init a sprite with a rectangle
+    * @param    sprite : Sprite to init
+    * @param    width : Width of the rectangle
+    * @param    height : Height of the rectangle
+    * @color    color : Color of the rectangle
+    **/
+
+    public static function initSprite(sprite:Sprite, width:Float = 1, height:Float = 1, color:Int = 0):Void
     {
         sprite.graphics.beginFill(color);
         sprite.graphics.drawRect(0, 0, width, height);
         sprite.graphics.endFill();
     }
 
-    public static function getBitmapDataFromLayer(layer: TileLayer, tileId: String):BitmapData
+    /**
+    * @param    layer : Layer with all tiles
+    * @param    tileId : Id of the tile to get
+    * @return the bitmapData in the given tile
+**/
+
+    public static function getBitmapDataFromLayer(layer:TileLayer, tileId:String):BitmapData
     {
         var tmpLayer = new TileLayer(layer.tilesheet);
         var tile = new TileSprite(tileId);
         tmpLayer.addChild(tile);
         tmpLayer.render();
         var bmpData = new BitmapData(Math.round(tile.width), Math.round(tile.height));
-        bmpData.draw(tmpLayer.view);
+        var tmpSprite = new Sprite();
+        tmpSprite.addChild(tmpLayer.view);
+        tmpLayer.view.x = tile.width / 2;
+        tmpLayer.view.y = tile.height / 2;
+        bmpData.draw(tmpSprite);
         return bmpData;
     }
 }

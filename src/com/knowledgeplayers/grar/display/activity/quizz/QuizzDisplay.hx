@@ -171,7 +171,7 @@ class QuizzDisplay extends ActivityDisplay {
     {
         quizzGroups.get(quizz.getCurrentGroup()).model = quizz.getCurrentAnswers();
         var content = Localiser.getInstance().getItemContent(quizz.getCurrentQuestion().content);
-        cast(displays.get(quizz.getCurrentQuestion().ref).obj, ScrollPanel).content = KpTextDownParser.parse(content);
+        cast(displays.get(quizz.getCurrentQuestion().ref).obj, ScrollPanel).setContent(content);
         setState(QuizzState.EMPTY);
         displayRound();
     }

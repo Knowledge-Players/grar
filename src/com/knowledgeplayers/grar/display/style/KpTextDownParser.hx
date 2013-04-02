@@ -97,7 +97,7 @@ class KpTextDownParser extends Sprite {
 
         substring = StringTools.ltrim(substring);
 
-        var style = StyleParser.getInstance().getStyle(styleName);
+        var style = StyleParser.getStyle(styleName);
 
         // Image Style
         var regexImg:EReg = ~/!\[(.+)\]\((.+)\)!/;
@@ -120,7 +120,7 @@ class KpTextDownParser extends Sprite {
             substring = regexStyle.replace(substring, "");
             if(regexStyle.matchedLeft() != "")
                 concatObjects(output, createTextField(regexStyle.matchedLeft(), style));
-            concatObjects(output, createTextField(regexStyle.matched(2), StyleParser.getInstance().getStyle(styleName)));
+            concatObjects(output, createTextField(regexStyle.matched(2), StyleParser.getStyle(styleName)));
             substring = regexStyle.matchedRight();
         }
 
@@ -210,10 +210,10 @@ class KpTextDownParser extends Sprite {
         if(hasBold){
             if(styleName != "")
                 styleName += styleName.charAt(styleName.length - 1) == "-" ? "" : "-";
-            tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName + "bold"), regexBold.matchedPos().pos, regexBold.matchedPos().pos + regexBold.matchedPos().len - 2);
+            tf.setPartialStyle(StyleParser.getStyle(styleName + "bold"), regexBold.matchedPos().pos, regexBold.matchedPos().pos + regexBold.matchedPos().len - 2);
         }
         if(hasItalic)
-            tf.setPartialStyle(StyleParser.getInstance().getStyle(styleName + "-italic"), regexIta.matchedPos().pos, regexIta.matchedPos().pos + regexIta.matchedPos().len - 2);
+            tf.setPartialStyle(StyleParser.getStyle(styleName + "-italic"), regexIta.matchedPos().pos, regexIta.matchedPos().pos + regexIta.matchedPos().len - 2);
 
         return tf;
     }
@@ -243,7 +243,7 @@ class KpTextDownParser extends Sprite {
     {
         if(style.background.opaqueBackground != null){
             if(bulletChar != null){
-                var bullet = new StyledTextField(StyleParser.getInstance().getStyle("text"));
+                var bullet = new StyledTextField(StyleParser.getStyle("text"));
                 bullet.text = bulletChar;
                 bullet.background = true;
                 bullet.backgroundColor = style.background.opaqueBackground;
@@ -256,7 +256,7 @@ class KpTextDownParser extends Sprite {
         }
         else{
             if(bulletChar != null){
-                var bullet = new StyledTextField(StyleParser.getInstance().getStyle("text"));
+                var bullet = new StyledTextField(StyleParser.getStyle("text"));
                 bullet.text = bulletChar;
                 style.background.width = bullet.width;
                 style.background.height = bullet.height;
@@ -273,6 +273,6 @@ class KpTextDownParser extends Sprite {
 
     private function new()
     {
-    super();
+        super();
     }
 }

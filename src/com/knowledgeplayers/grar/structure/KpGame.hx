@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure;
 
+import haxe.FastList;
 import com.knowledgeplayers.grar.display.GameManager;
 import com.eclecticdesignstudio.motion.Actuate;
 import nme.events.TimerEvent;
@@ -74,6 +75,9 @@ class KpGame extends EventDispatcher, implements Game {
     private var connection:Connection;
     private var nbPartsLoaded:Int = 0;
     private var layoutLoaded:Bool = false;
+    private var numStyleSheet:Int = 0;
+    private var numStyleSheetLoaded:Int = 0;
+    private var activitiesWaiting:FastList<Xml>;
 
     /**
     * Constructor.
@@ -87,6 +91,7 @@ class KpGame extends EventDispatcher, implements Game {
         flags = new Hash<String>();
         parts = new IntHash<Part>();
         inventory = new Array<Token>();
+        activitiesWaiting = new FastList<Xml>();
 
         GameManager.instance.game = this;
 
@@ -108,7 +113,7 @@ class KpGame extends EventDispatcher, implements Game {
             LoadData.getInstance().addEventListener("DATA_LOADED",onDisplayLoaded);
             LoadData.getInstance().loadDisplayXml(xml);
         #else
-            onDisplayLoaded();
+        onDisplayLoaded();
         #end
     }
 
@@ -236,12 +241,11 @@ class KpGame extends EventDispatcher, implements Game {
 
     private function initLangs(xml:Xml):Void
     {
-
         var languagesXml:Fast = new Fast(xml);
         for(lang in languagesXml.node.Langs.nodes.Lang){
             addLanguage(lang.att.value, lang.att.folder, lang.att.pic);
         }
-       Localiser.instance.setCurrentLocale(stateInfos.currentLanguage);
+        Localiser.instance.setCurrentLocale(stateInfos.currentLanguage);
 
         // Load Layout
         LayoutManager.instance.parseXml(Xml.parse(Assets.getText(structureXml.node.Grar.node.Parameters.node.Layout.att.file)));
@@ -249,7 +253,10 @@ class KpGame extends EventDispatcher, implements Game {
 
     private function initActivities(xml:Xml):Void
     {
-        ActivityManager.instance.getActivity(xml.firstElement().nodeName).parseContent(xml);
+        if(numStyleSheetLoaded != numStyleSheet)
+            activitiesWaiting.add(xml);
+        else
+            ActivityManager.instance.getActivity(xml.firstElement().nodeName).parseContent(xml);
     }
 
     // Handlers
@@ -264,16 +271,23 @@ class KpGame extends EventDispatcher, implements Game {
         title = parametersNode.node.Title.innerData;
         state = parametersNode.node.State.innerData;
 
-        // Load UI
-        UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
-
-        // Load styles
-        StyleParser.instance.parse(Assets.getText(displayNode.node.Style.att.file));
         // Start Tracking
         initTracking();
 
+        // Load styles
+        for(stylesheet in displayNode.nodes.Style){
+            numStyleSheet++;
+            XmlLoader.load(stylesheet.att.file, function(e:Event)
+            {
+                onStyleLoaded(XmlLoader.getXml(e));
+            }, onStyleLoaded);
+        }
+
         // Load Languages
         XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
+
+        // Load UI
+        UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
 
         // Load Transition
         if(displayNode.hasNode.Transitions)
@@ -290,8 +304,17 @@ class KpGame extends EventDispatcher, implements Game {
         for(part in structureNode.nodes.Part){
             addPartFromXml(Std.parseInt(part.att.id), part);
         }
+    }
 
-
+    private function onStyleLoaded(styleSheet:Xml):Void
+    {
+        StyleParser.parse(styleSheet.toString());
+        numStyleSheetLoaded++;
+        if(numStyleSheet == numStyleSheetLoaded){
+            while(!activitiesWaiting.isEmpty())
+                initActivities(activitiesWaiting.pop());
+        }
+        checkLoading();
     }
 
     private function onActivityComplete(event:Event):Void
@@ -312,7 +335,12 @@ class KpGame extends EventDispatcher, implements Game {
             layoutLoaded = true;
         else
             nbPartsLoaded++;
-        if(getLoadingCompletion() == 1 && uiLoaded && layoutLoaded){
+        checkLoading();
+    }
+
+    private function checkLoading():Void
+    {
+        if(getLoadingCompletion() == 1 && uiLoaded && layoutLoaded && (numStyleSheet == numStyleSheetLoaded)){
             checkIntegrity();
             for(part in getAllParts())
                 part.isDone = stateInfos.activityCompletion[part.id];

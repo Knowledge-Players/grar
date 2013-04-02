@@ -95,7 +95,7 @@ class KpDisplay extends Sprite {
             #if flash
              itemBmp = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(itemNode.att.src), Bitmap).bitmapData);
             #else
-             itemBmp = new Bitmap(Assets.getBitmapData(itemNode.att.src));
+            itemBmp = new Bitmap(Assets.getBitmapData(itemNode.att.src));
             #end
             addElement(itemBmp, itemNode);
 
@@ -147,13 +147,10 @@ class KpDisplay extends Sprite {
         if(background != null && background.indexOf(".") < 0)
             spritesheet = spritesheets.get(textNode.att.background);
 
-        var scrollable:Bool;
-        if(textNode.has.scrollable)
-            scrollable = textNode.att.scrollable == "true";
-        else
-            scrollable = true;
+        var scrollable = textNode.has.scrollable ? textNode.att.scrollable == "true" : true;
+        var styleSheet = textNode.has.style ? textNode.att.style : null;
 
-        var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height), scrollable, spritesheet);
+        var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height), scrollable, spritesheet, styleSheet);
         if(background != null)
             text.setBackground(background, textNode.has.spritesheet ? spritesheets.get(textNode.att.spritesheet) : null);
         addElement(text, textNode);

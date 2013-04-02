@@ -62,7 +62,7 @@ class FolderElementDisplay extends Sprite {
         shadows.set("up", new DropShadowFilter(15, 45, 0x000000, 0.2, 10, 10));
 
         var localizedText = Localiser.instance.getItemContent(model.content + "_front");
-        text.setContent(KpTextDownParser.parse(localizedText));
+        text.setContent(localizedText);
         var bkg = new Bitmap(background);
         text.x = bkg.width / 2 - text.width / 2;
         text.y = bkg.height / 2 - text.height / 2;

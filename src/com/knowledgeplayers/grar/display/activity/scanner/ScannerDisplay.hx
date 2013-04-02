@@ -30,9 +30,9 @@ class ScannerDisplay extends ActivityDisplay {
         return instance;
     }
 
-    public function setText(textId:String, content:Sprite):Void
+    public function setText(textId:String, content:String):Void
     {
-        cast(displays.get(textId).obj, ScrollPanel).content = content;
+        cast(displays.get(textId).obj, ScrollPanel).setContent(content);
         addChild(displays.get(textId).obj);
     }
 

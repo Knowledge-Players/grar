@@ -9,6 +9,7 @@ import nme.events.Event;
 import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.display.style.StyleParser;
+import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import nme.Lib;
 import nme.Assets;
 import nme.display.Bitmap;
@@ -24,12 +25,17 @@ class ScrollPanel extends Sprite {
     /**
      * Text in the panel
      */
-    public var content (default, setContent):Sprite;
+    public var content (default, null):Sprite;
 
     /**
     * If true, the text won't scroll even if it's bigger than the panel
     **/
     public var scrollLock (default, default):Bool;
+
+    /**
+    * Style sheet used for this panel
+    **/
+    public var styleSheet (default, default):String;
 
     private var scrollBar:ScrollBar;
     private var maskWidth:Float;
@@ -47,17 +53,19 @@ class ScrollPanel extends Sprite {
      * @param	width : Width of the displayed content
      * @param	height : Height of the displayed content
      * @param	scrollLock : Disable scroll. False by default
+     * @param   styleSheet : Style sheet used for this panel
      */
     // TODO What to do with _spritesheet
 
-    public function new(width:Float, height:Float, ?_scrollLock:Bool = false, ?_spriteSheet:TilesheetEx)
+    public function new(width:Float, height:Float, ?_scrollLock:Bool = false, ?_spriteSheet:TilesheetEx, ?_styleSheet:String)
     {
         super();
         maskWidth = width;
         maskHeight = height;
-        content = new Sprite();
+        //content = new Sprite();
         this.scrollLock = _scrollLock;
         spriteSheet = _spriteSheet;
+        styleSheet = _styleSheet;
         addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
     }
 
@@ -67,10 +75,17 @@ class ScrollPanel extends Sprite {
      * @return the text
      */
 
-    public function setContent(content:Sprite):Sprite
+    public function setContent(contentString:String):Sprite
     {
         clear();
-        this.content = content;
+
+        var previousStyleSheet = null;
+        if(styleSheet != null){
+            previousStyleSheet = StyleParser.currentStyleSheet;
+            StyleParser.currentStyleSheet = styleSheet;
+        }
+
+        content = KpTextDownParser.parse(contentString);
         var posXMask:Float = 0;
         var posYMask:Float = 0;
         if(scaleNine != null){
@@ -83,7 +98,7 @@ class ScrollPanel extends Sprite {
         }
 
         // Type Conflict between Flash and native for TextFormatAlign
-        var alignment: Dynamic = StyleParser.instance.getStyle().getAlignment();
+        var alignment:Dynamic = StyleParser.getStyle().getAlignment();
         switch(alignment){
             case TextFormatAlign.CENTER:
                 content.x = maskWidth / 2 - content.width / 2;
@@ -91,7 +106,7 @@ class ScrollPanel extends Sprite {
                 content.x = maskWidth - content.width;
             case TextFormatAlign.LEFT, TextFormatAlign.JUSTIFY:
         }
-        var padding = StyleParser.instance.getStyle().getPadding();
+        var padding = StyleParser.getStyle().getPadding();
         if(content.width > 0 && padding.length > 0){
             content.y += padding[0];
             content.x += padding[3];
@@ -122,6 +137,8 @@ class ScrollPanel extends Sprite {
             scrollable = false;
         }
 
+        if(previousStyleSheet != null)
+            StyleParser.currentStyleSheet = previousStyleSheet;
         return content;
     }
 
