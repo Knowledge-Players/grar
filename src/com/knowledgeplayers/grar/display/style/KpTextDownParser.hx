@@ -1,9 +1,9 @@
 package com.knowledgeplayers.grar.display.style;
 
+import com.knowledgeplayers.grar.util.LoadData;
 import nme.text.TextFieldAutoSize;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.display.text.UrlField;
-import nme.Assets;
 import nme.display.Bitmap;
 import nme.display.DisplayObject;
 import nme.display.DisplayObjectContainer;
@@ -89,7 +89,7 @@ class KpTextDownParser extends Sprite {
             default: substring = line;
         }
 
-        if(substring.charAt(1) == "."){
+        if(styleName == "" && substring.charAt(1) == "."){
             styleName += "ordered" + level;
             param = substring.charAt(0);
             substring = substring.substr(2);
@@ -104,7 +104,7 @@ class KpTextDownParser extends Sprite {
         if(regexImg.match(substring)){
             styleName += "image";
             param = regexImg.matched(1);
-            var img = new Bitmap(Assets.getBitmapData(regexImg.matched(2)));
+            var img = LoadData.instance.getElementDisplayInCache(regexImg.matched(2));
             substring = regexImg.replace(substring, "");
             if(regexImg.matchedLeft() != "")
                 concatObjects(output, createTextField(regexImg.matchedLeft(), style));
@@ -200,11 +200,7 @@ class KpTextDownParser extends Sprite {
         if(hasItalic){
             substring = regexIta.matchedLeft() + regexIta.matched(1) + regexIta.matchedRight();
         }
-        /*
-        tf.width = widthTF;
-        tf.wordWrap = true;
-        tf.autoSize = TextFieldAutoSize.LEFT;
-        */
+
         tf.text = substring;
 
         if(hasBold){

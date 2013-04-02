@@ -26,8 +26,18 @@ class DefaultButton extends Sprite {
 
     /**
     * Reference of the button
-**/
+    **/
     public var ref (default, default):String;
+
+    /**
+    * Scale of the button
+    **/
+    public var scale (default, setScale):Float;
+
+    /**
+    * Mirror
+    **/
+    public var mirror (default, setMirror):Int;
 
     /**
     * Icon to add over the button
@@ -119,6 +129,19 @@ class DefaultButton extends Sprite {
         layer.addChild(icon);
         layer.render();
         return this.icon = icon;
+    }
+
+    public function setScale(scale:Float):Float
+    {
+        return scaleX = scaleY = this.scale = scale;
+    }
+
+    public function setMirror(mirror:Int):Int
+    {
+        for(sprite in layer.children)
+            cast(sprite, TileSprite).mirror = mirror;
+        layer.render();
+        return this.mirror = mirror;
     }
 
     // Abstract

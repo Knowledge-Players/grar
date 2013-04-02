@@ -77,20 +77,4 @@ class TextButton extends CustomEventButton {
         if(!contains(textSprite))
             addChild(textSprite);
     }
-
-    // Private
-
-    /*private function centerText():Void
-    {
-
-        textSprite.x = -textSprite.width / 2;
-
-        textSprite.y = this.downState.y - (textSprite.height / 2);
-
-        #if flash
-			 // Remove 3px to match the center of the button
-			textSprite.y -= 3;
-		#end
-    }*/
-
 }

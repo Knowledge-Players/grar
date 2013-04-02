@@ -49,7 +49,7 @@ class UiFactory {
      * @return the created button
      */
 
-    public static function createButton(buttonType:String, ref:String, tile:String, ?tileDown:String, ?tileOver:String, x:Float = 0, y:Float = 0, scaleX:Float = 1, scaleY:Float = 1, ?icon:String, iconX:Float = 0, iconY:Float = 0, ?action:String, ?iconStatus:String, ?style:String):DefaultButton
+    public static function createButton(buttonType:String, ref:String, tile:String, ?tileDown:String, ?tileOver:String, x:Float = 0, y:Float = 0, scale:Float = 1, ?icon:String, iconX:Float = 0, iconY:Float = 0, ?action:String, ?iconStatus:String, ?mirror:String, ?style:String):DefaultButton
     {
         var creation:DefaultButton =
         switch(buttonType.toLowerCase()) {
@@ -62,8 +62,8 @@ class UiFactory {
         creation.ref = ref;
         creation.x = x;
         creation.y = y;
-        creation.scaleX = scaleX;
-        creation.scaleY = scaleY;
+        creation.scale = scale;
+        creation.mirror = mirror == "vertical" ? 2 : 1;
         if(tileDown != null)
             creation.setStateIcon(ButtonState.DOWN, tileDown);
         if(tileOver != null)
@@ -100,8 +100,7 @@ class UiFactory {
 
         var x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
         var y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
-        var scaleX = xml.has.scaleX ? Std.parseFloat(xml.att.scaleX) : 1;
-        var scaleY = xml.has.scaleY ? Std.parseFloat(xml.att.scaleY) : 1;
+        var scale = xml.has.scale ? Std.parseFloat(xml.att.scale) : 1;
         var action = xml.has.action ? xml.att.action : null;
         var icon = xml.has.icon ? xml.att.icon : null;
         var iconX = xml.has.iconX ? Std.parseFloat(xml.att.iconX) : 0;
@@ -109,9 +108,10 @@ class UiFactory {
         var iconStatus = xml.has.status ? xml.att.status : null;
         var idOver = xml.has.idOver ? xml.att.idOver : null;
         var idDown = xml.has.idDown ? xml.att.idDown : null;
+        var mirror = xml.has.mirror ? xml.att.mirror : null;
         var style = xml.has.style ? xml.att.style : null;
 
-        return createButton(xml.att.type, xml.att.ref, xml.att.id, idDown, idOver, x, y, scaleX, scaleY, icon, iconX, iconY, action, iconStatus, style);
+        return createButton(xml.att.type, xml.att.ref, xml.att.id, idDown, idOver, x, y, scale, icon, iconX, iconY, action, iconStatus, mirror, style);
     }
 
     /**

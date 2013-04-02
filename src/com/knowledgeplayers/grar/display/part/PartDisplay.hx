@@ -246,7 +246,7 @@ class PartDisplay extends KpDisplay {
         if(background != null){
             var bkg:Bitmap = new Bitmap();
             #if flash
-            bkg= new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(background).att.src), Bitmap).bitmapData);
+                bkg= new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(background).att.src), Bitmap).bitmapData);
             #else
             bkg = new Bitmap(Assets.getBitmapData(displaysFast.get(background).att.src));
             #end
@@ -387,10 +387,12 @@ class PartDisplay extends KpDisplay {
                 else if(currentElement.isActivity())
                     button = cast(currentElement, Activity).button;
 
-                if(button.ref == key && Std.is(displays.get(key).obj, TextButton)){
+                if(button.ref == key && Std.is(object.obj, TextButton)){
                     cast(displays.get(key).obj, TextButton).setText(Localiser.instance.getItemContent(button.content));
                     return true;
                 }
+                else if(button.ref == key)
+                    return true;
                 else
                     return false;
             }

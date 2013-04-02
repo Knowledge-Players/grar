@@ -286,7 +286,7 @@ class StructurePart extends EventDispatcher, implements Part {
                     nbSubPartTotal++;
                     createPart(child);
                 case "button":
-                    button = {ref: child.att.ref, content: child.att.content};
+                    button = {ref: child.att.ref, content: child.has.content ? child.att.content : null};
             }
         }
         for(elem in elements){
