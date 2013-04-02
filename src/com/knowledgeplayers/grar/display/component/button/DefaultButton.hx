@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.display.component.button;
+import aze.display.TileClip;
 import browser.Lib;
 import nme.geom.Point;
 import aze.display.TileLayer;
@@ -59,6 +60,8 @@ class DefaultButton extends Sprite {
      */
     private var downState:TileSprite;
 
+    private var clip:TileClip;
+
     /**
      * Constructor. Downstate and overstate are automatically set if their tile are
      * name upstateName+"_pressed" and upstateName+"_over"
@@ -73,10 +76,10 @@ class DefaultButton extends Sprite {
         super();
 
         layer = new TileLayer(tilesheet);
-        upState = new TileSprite(tile);
-        downState = new TileSprite(tile);
-        overState = new TileSprite(tile);
-
+        //upState = new TileSprite(tile);
+        //downState = new TileSprite(tile);
+        //overState = new TileSprite(tile);
+        clip = new TileClip(tile);
         mouseChildren = false;
 
         init();
@@ -100,24 +103,26 @@ class DefaultButton extends Sprite {
         var visible = false;
         switch(state){
             case UP :
-                visible = upState.visible;
-                layer.removeChild(upState);
-                upState = new TileSprite(tileId);
-                layer.addChild(upState);
-                upState.visible = visible;
+                //visible = upState.visible;
+                //layer.removeChild(upState);
+                //upState = new TileSprite(tileId);
+                //layer.addChild(upState);
+                //upState.visible = visible;
             case DOWN :
-                visible = downState.visible;
-                layer.removeChild(downState);
-                downState = new TileSprite(tileId);
-                layer.addChild(downState);
-                downState.visible = visible;
+                //visible = downState.visible;
+                //layer.removeChild(downState);
+                //downState = new TileSprite(tileId);
+                //layer.addChild(downState);
+                //downState.visible = visible;
             case OVER :
-                visible = overState.visible;
-                layer.removeChild(overState);
-                overState = new TileSprite(tileId);
-                layer.addChild(overState);
-                overState.visible = visible;
+                //visible = overState.visible;
+                //layer.removeChild(overState);
+                //overState = new TileSprite(tileId);
+                //layer.addChild(overState);
+                //overState.visible = visible;
         }
+
+        layer.addChild(clip);
 
         layer.render();
     }
@@ -181,31 +186,39 @@ class DefaultButton extends Sprite {
 
     private function onOver(event:MouseEvent):Void
     {
-        upState.visible = false;
-        overState.visible = true;
-
+        //upState.visible = false;
+        //overState.visible = false;
+        if(clip.frames.length >0)
+            {
+                clip.currentFrame = 1;
+            }
         layer.render();
     }
 
     private function onOut(event:MouseEvent):Void
     {
-        overState.visible = false;
-        upState.visible = true;
-
+        //overState.visible = false;
+        //upState.visible = false;
+        if(clip.frames.length >0)
+        {
+            clip.currentFrame = 0;
+        }
         layer.render();
     }
 
     private function onClickDown(event:MouseEvent):Void
     {
-        overState.visible = false;
-        downState.visible = true;
+        //overState.visible = false;
+        //downState.visible = false;
+
         layer.render();
     }
 
     private function onClickUp(event:MouseEvent):Void
     {
-        upState.visible = true;
-        downState.visible = false;
+        //upState.visible = false;
+        //downState.visible = false;
+
         layer.render();
     }
 
@@ -213,13 +226,14 @@ class DefaultButton extends Sprite {
     {
         enabled = true;
 
-        downState.visible = false;
-        overState.visible = false;
-        upState.visible = true;
-        layer.addChild(upState);
-        layer.addChild(downState);
-        layer.addChild(overState);
+        //downState.visible = false;
+        //overState.visible = false;
+        //upState.visible = false;
 
+        //layer.addChild(upState);
+        //layer.addChild(downState);
+        //layer.addChild(overState);
+        layer.addChild(clip);
         setAllListeners(onMouseEvent);
 
         addChild(layer.view);

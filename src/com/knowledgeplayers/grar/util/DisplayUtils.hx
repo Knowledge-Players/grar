@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.util;
 
+import nme.Lib;
+import nme.Assets;
 import Math;
 import Math;
 import nme.display.BitmapData;
@@ -39,12 +41,19 @@ class DisplayUtils {
 
     public static function setBackground(bkg:String, container:Sprite, width:Float = 0, height:Float = 0):Null<Bitmap>
     {
+
         if(Std.parseInt(bkg) != null){
             initSprite(container, width, height, Std.parseInt(bkg));
             return null;
         }
         else{
-            var bitmap = cast(LoadData.instance.getElementDisplayInCache(bkg), Bitmap);
+
+            var bitmap = new Bitmap();
+            #if flash
+            bitmap = cast(LoadData.instance.getElementDisplayInCache(bkg), Bitmap);
+            #else
+            bitmap = new Bitmap(Assets.getBitmapData(bkg));
+            #end
             if(width != 0)
                 bitmap.width = width;
             if(height != 0)

@@ -144,7 +144,8 @@ class DialogDisplay extends PartDisplay {
 
     private function onOverChoice(e:MouseEvent):Void
     {
-        var choiceButton = cast(e.target, DefaultButton);
+        //cpp n'aime pas e.target
+        var choiceButton = cast(e.currentTarget, DefaultButton);
         var pattern = cast(currentPattern, ChoicePattern);
         var choice:Choice = null;
         for(key in pattern.choices.keys()){
@@ -161,6 +162,7 @@ class DialogDisplay extends PartDisplay {
             }
             displayArea.addChildAt(tooltip, i);
         }
+
     }
 
     private function onOutChoice(e:MouseEvent):Void

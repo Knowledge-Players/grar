@@ -57,7 +57,7 @@ class MenuButton extends CustomEventButton{
     private function getStatus(_id:String):TileClip{
         var _stat = new TileClip(_id);
 
-        //_stat.currentFrame = 1;
+
         return _stat;
     }
 

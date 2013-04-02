@@ -192,12 +192,12 @@ class Zone extends Sprite {
     public function createMenu(element:Fast):Void
     {
 
-        menu = new MenuDisplay(Std.parseFloat(element.att.width), Std.parseFloat(element.att.height));
+        menu = new MenuDisplay(Std.parseFloat(element.att.width),Std.parseFloat(element.att.height));
         menu.initMenu(element);
         menu.transitionIn = element.att.transitionIn;
         menu.transitionOut = element.att.transitionOut;
-        menu.x = Std.parseFloat(element.att.x);
-        menu.y = Std.parseFloat(element.att.y);
+        menu.x= Std.parseFloat(element.att.x);
+        menu.y= Std.parseFloat(element.att.y);
 
         addChild(menu);
     }

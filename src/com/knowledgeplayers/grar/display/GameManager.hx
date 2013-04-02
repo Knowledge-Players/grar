@@ -102,6 +102,8 @@ class GameManager extends EventDispatcher {
         activityDisplay = ActivityManager.instance.getActivity(activityName);
         activityDisplay.addEventListener(Event.COMPLETE, onActivityReady);
         activityDisplay.model = activity;
+
+
     }
 
     /**

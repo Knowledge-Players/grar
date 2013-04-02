@@ -82,6 +82,7 @@ class QuizzDisplay extends ActivityDisplay {
 
     override private function displayActivity():Void
     {
+
         super.displayActivity();
         if(quizz.button.content != null)
             cast(displays.get(quizz.button.ref).obj, TextButton).setText(Localiser.instance.getItemContent(quizz.button.content));
