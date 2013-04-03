@@ -64,11 +64,7 @@ class TokenDisplay extends Sprite {
                 {
                     case "img":
                         var image:Bitmap = new Bitmap();
-                        #if flash
                         image = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(node.att.src), Bitmap).bitmapData);
-                        #else
-                        image = new Bitmap(Assets.getBitmapData(node.att.src));
-                        #end
                         image.x = Std.parseFloat(node.att.x);
                         image.y = Std.parseFloat(node.att.y);
                         image.scaleX = Std.parseFloat(node.att.scale);

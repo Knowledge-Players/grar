@@ -1,9 +1,5 @@
 package com.knowledgeplayers.grar.util;
 
-import nme.Lib;
-import nme.Assets;
-import Math;
-import Math;
 import nme.display.BitmapData;
 import nme.display.Bitmap;
 import nme.display.Sprite;
@@ -49,11 +45,7 @@ class DisplayUtils {
         else{
 
             var bitmap = new Bitmap();
-            #if flash
             bitmap = cast(LoadData.instance.getElementDisplayInCache(bkg), Bitmap);
-            #else
-            bitmap = new Bitmap(Assets.getBitmapData(bkg));
-            #end
             if(width != 0)
                 bitmap.width = width;
             if(height != 0)
@@ -68,12 +60,13 @@ class DisplayUtils {
     * @param    sprite : Sprite to init
     * @param    width : Width of the rectangle
     * @param    height : Height of the rectangle
-    * @color    color : Color of the rectangle
+    * @param    color : Color of the rectangle
+    * @param    alpha : Alpha of the color
     **/
 
-    public static function initSprite(sprite:Sprite, width:Float = 1, height:Float = 1, color:Int = 0):Void
+    public static function initSprite(sprite:Sprite, width:Float = 1, height:Float = 1, color:Int = 0, alpha: Float = 1):Void
     {
-        sprite.graphics.beginFill(color);
+        sprite.graphics.beginFill(color, alpha);
         sprite.graphics.drawRect(0, 0, width, height);
         sprite.graphics.endFill();
     }

@@ -75,10 +75,14 @@ class LoadData extends EventDispatcher {
     * @param    name : Name of the wanted element
     * @return the element or null if it doesn't exist
     **/
-
     public function getElementDisplayInCache(_name:String):Null<DisplayObject>
     {
-        return cacheElementsDisplay.get(_name);
+        // TODO Return BitmapData ?
+        #if flash
+            return cacheElementsDisplay.get(_name);
+        #else
+            return new Bitmap(Assets.getBitmapData(_name));
+        #end
     }
 
     // Privates
@@ -208,6 +212,7 @@ class LoadData extends EventDispatcher {
 
     private function refreshCache():Void
     {
+        // TODO Duplicate onCompleteLoading
         imagesUrls = removeDuplicates(imagesUrls);
         nbDatas += imagesUrls.length;
 
@@ -222,21 +227,19 @@ class LoadData extends EventDispatcher {
                     mloader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
                     mloader.load(urlR);
                 #else
+                    numDataLoaded++;
+                    var urlR = new URLRequest(object);
+                    var path = urlR.url;
+                    var i: Int = 0;
+                    while(!StringTools.endsWith(path, urlLoading[i])){
+                        i++;
+                    }
+                    var elementDisplay = new Bitmap(Assets.getBitmapData(object));
 
-
-                numDataLoaded++;
-                var urlR = new URLRequest(object);
-                var path = urlR.url;
-                var i: Int = 0;
-                while(!StringTools.endsWith(path, urlLoading[i])){
-                    i++;
-                }
-                var elementDisplay = new Bitmap(Assets.getBitmapData(object));
-
-                cacheElementsDisplay.set(urlLoading[i], elementDisplay);
-                if(nbDatas == numDataLoaded){
-                    dispatchEvent(new Event("DATA_LOADED", true));
-                }
+                    cacheElementsDisplay.set(urlLoading[i], elementDisplay);
+                    if(nbDatas == numDataLoaded){
+                        dispatchEvent(new Event("DATA_LOADED", true));
+                    }
                 #end
             }
         }

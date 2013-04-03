@@ -161,19 +161,10 @@ class KpDisplay extends Sprite {
         var numIndex = 0;
         var hashTextGroup = new Hash<{obj:Fast, z:Int}>();
 
-        for(child in textNode.elements){
-            if(child.name.toLowerCase() == "text"){
-
-                //createText(child);
-                var text = new ScrollPanel(Std.parseFloat(child.att.width), Std.parseFloat(child.att.height));
-                text.setBackground(child.att.background);
-                hashTextGroup.set(child.att.ref, {obj:child, z:numIndex});
-
-                addElement(text, child);
-
-                numIndex++;
-
-            }
+        for(child in textNode.nodes.Text){
+            createText(child);
+            hashTextGroup.set(child.att.ref, {obj:child, z:numIndex});
+            numIndex++;
         }
         textGroups.set(textNode.att.ref, hashTextGroup);
     }

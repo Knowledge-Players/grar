@@ -63,7 +63,7 @@ class StyleParser {
     {
         if(Lambda.count(styles) == 0)
             throw "No style here. Have you parse a style file ?";
-        if(name == null)
+        if(name == null || name == "")
             return styles.get(currentStyleSheet).get("text");
         if(StringTools.endsWith(name, "-"))
             return styles.get(currentStyleSheet).get(name + "text");

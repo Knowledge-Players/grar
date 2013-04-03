@@ -143,10 +143,8 @@ class PartDisplay extends KpDisplay {
                         else{
                             textItem = cast(currentElement, TextItem);
                         }
-
+                        setText(cast(textItem, TextItem), isFirst);
                         isFirst = false;
-                        setText(cast(textItem, TextItem), true);
-
                     }
                 }
                 else{
@@ -244,12 +242,7 @@ class PartDisplay extends KpDisplay {
         // Add new background
 
         if(background != null){
-            var bkg:Bitmap = new Bitmap();
-            #if flash
-                bkg= new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(background).att.src), Bitmap).bitmapData);
-            #else
-            bkg = new Bitmap(Assets.getBitmapData(displaysFast.get(background).att.src));
-            #end
+            var bkg= new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(background).att.src),Bitmap).bitmapData);
 
             initDisplayObject(bkg, displaysFast.get(background));
             if(bkg != null){
@@ -287,14 +280,14 @@ class PartDisplay extends KpDisplay {
             currentSpeaker = null;
     }
 
-    private function setText(item:TextItem, ?_textGroup:Bool = false):Void
+    private function setText(item:TextItem, ?isFirst:Bool = true):Void
     {
         currentTextItem = item;
         displayBackground(item.background);
 
         var toRemove = new FastList<DisplayObject>();
 
-        if(!_textGroup){
+        if(isFirst){
             for(i in 0...numChildren){
                 if(Std.is(getChildAt(i), ScrollPanel))
                     toRemove.add(getChildAt(i));
@@ -314,14 +307,13 @@ class PartDisplay extends KpDisplay {
             else
                 cast(displays.get(item.ref).obj, ScrollPanel).setContent(content);
         }
-        //}
 
-        if(_textGroup)
+        if(!isFirst)
             displayArea.addChild(cast(displays.get(item.ref).obj, ScrollPanel));
-        displayPart(_textGroup);
+        displayPart();
     }
 
-    private function displayPart(?_textGroup:Bool = false):Void
+    private function displayPart():Void
     {
         // Clean-up buttons
         var toRemove = new FastList<DisplayObject>();

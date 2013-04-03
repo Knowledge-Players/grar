@@ -1,6 +1,8 @@
 package com.knowledgeplayers.grar.display.style;
 
+import haxe.FastList;
 import com.knowledgeplayers.grar.util.LoadData;
+import com.knowledgeplayers.grar.util.DisplayUtils;
 import nme.text.TextFieldAutoSize;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.display.text.UrlField;
@@ -39,9 +41,7 @@ class KpTextDownParser extends Sprite {
                 yOffset += formattedLine.height;
                 sprite.addChild(formattedLine);
             }
-            sprite.graphics.beginFill(0x000000, 0.001);
-            sprite.graphics.drawRect(0, 0, sprite.width, sprite.height);
-            sprite.graphics.endFill();
+            DisplayUtils.initSprite(sprite, sprite.width, sprite.height, 0, 0.001);
 
         }
         widthTF = widthText;
@@ -152,6 +152,10 @@ class KpTextDownParser extends Sprite {
         else if(substring != ""){
             concatObjects(output, createTextField(substring, style));
         }
+        else{
+            var height = StyleParser.getStyle().getSize();
+            DisplayUtils.initSprite(output, 1, height, 0, 0.001);
+        }
 
         return output;
     }
@@ -189,27 +193,29 @@ class KpTextDownParser extends Sprite {
         var styleName:String = tf.style.name;
         styleName = StringTools.replace(styleName, "text", "");
 
-        var regexBold:EReg = ~/\*(.+)\*/;
-        var hasBold = regexBold.match(substring);
-        if(hasBold){
-            substring = regexBold.matchedLeft() + regexBold.matched(1) + regexBold.matchedRight();
+        var regexBold:EReg = ~/\*([^*]+)\*/;
+        var boldPos = new Array<{pos: Int, len: Int}>();
+        while(regexBold.match(substring)){
+            boldPos.push(regexBold.matchedPos());
+            substring = regexBold.replace(substring, regexBold.matched(1));
         }
 
-        var regexIta:EReg = ~/_(.+)_/;
-        var hasItalic = regexIta.match(substring);
-        if(hasItalic){
-            substring = regexIta.matchedLeft() + regexIta.matched(1) + regexIta.matchedRight();
+        var regexIta:EReg = ~/_([^_]+)_/;
+        var italicPos = new Array<{pos:Int, len:Int}>();
+        while(regexIta.match(substring)){
+            italicPos.push(regexIta.matchedPos());
+            substring = regexIta.replace(substring, regexIta.matched(1));
         }
 
         tf.text = substring;
 
-        if(hasBold){
+        for(matched in boldPos){
             if(styleName != "")
                 styleName += styleName.charAt(styleName.length - 1) == "-" ? "" : "-";
-            tf.setPartialStyle(StyleParser.getStyle(styleName + "bold"), regexBold.matchedPos().pos, regexBold.matchedPos().pos + regexBold.matchedPos().len - 2);
+            tf.setPartialStyle(StyleParser.getStyle(styleName + "bold"), matched.pos, matched.pos + matched.len - 2);
         }
-        if(hasItalic)
-            tf.setPartialStyle(StyleParser.getStyle(styleName + "-italic"), regexIta.matchedPos().pos, regexIta.matchedPos().pos + regexIta.matchedPos().len - 2);
+        for(matched in italicPos)
+            tf.setPartialStyle(StyleParser.getStyle(styleName + "-italic"), matched.pos, matched.pos + matched.len - 2);
 
         return tf;
     }
