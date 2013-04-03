@@ -27,6 +27,11 @@ class Style extends Hash<String> {
     public var iconPosition:String;
 
     /**
+    * Wheter or not the icon must be resized
+    **/
+    public var iconResize (default, default):Bool;
+
+    /**
      * Background propertie
      */
     public var background:Bitmap;

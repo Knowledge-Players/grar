@@ -59,7 +59,7 @@ class QuizzGroupDisplay extends Sprite {
                     layer = new TileLayer(QuizzDisplay.instance.spritesheets.get(xml.node.Separator.att.spritesheet));
                 else
                     layer = new TileLayer(UiFactory.tilesheet);
-                this.separator = DisplayUtils.getBitmapDataFromLayer(layer, xml.node.Separator.att.id);
+                this.separator = DisplayUtils.getBitmapDataFromLayer(layer.tilesheet, xml.node.Separator.att.id);
             }
             else if(separator != null){
                 this.separator = separator;

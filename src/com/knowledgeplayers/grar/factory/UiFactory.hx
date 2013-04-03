@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.factory;
 
-import nme.Assets;
 import com.knowledgeplayers.grar.display.GameManager;
 import nme.filters.DropShadowFilter;
 import nme.Lib;

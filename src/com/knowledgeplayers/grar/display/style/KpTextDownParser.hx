@@ -209,13 +209,13 @@ class KpTextDownParser extends Sprite {
 
         tf.text = substring;
 
+        if(styleName != "")
+            styleName += styleName.charAt(styleName.length - 1) == "-" ? "" : "-";
         for(matched in boldPos){
-            if(styleName != "")
-                styleName += styleName.charAt(styleName.length - 1) == "-" ? "" : "-";
             tf.setPartialStyle(StyleParser.getStyle(styleName + "bold"), matched.pos, matched.pos + matched.len - 2);
         }
         for(matched in italicPos)
-            tf.setPartialStyle(StyleParser.getStyle(styleName + "-italic"), matched.pos, matched.pos + matched.len - 2);
+            tf.setPartialStyle(StyleParser.getStyle(styleName + "italic"), matched.pos, matched.pos + matched.len - 2);
 
         return tf;
     }
@@ -223,22 +223,21 @@ class KpTextDownParser extends Sprite {
     static private function setIcons(substring:String, style:Style, output:Sprite):Void
     {
         var bmp = new Bitmap(style.icon);
-        bmp.width = bmp.height = 10;
+        if(style.iconResize)
+            bmp.width = bmp.height = 10;
         var tf = createTextField(substring, style);
         switch(style.iconPosition) {
             case "before": concatObjects(output, bmp, tf);
             case "after": concatObjects(output, tf, bmp);
             case "both": concatObjects(output, bmp, tf);
                 var bmpBis = new Bitmap(style.icon);
-                bmpBis.width = bmpBis.height = 10;
+                if(style.iconResize)
+                    bmpBis.width = bmpBis.height = 10;
                 concatObjects(output, bmpBis);
             default: Lib.trace(style.iconPosition + ": this position is not handled");
         }
 
-        var regexList:EReg = ~/list/;
-        if(regexList.match(style.name)){
-            bmp.y = output.height / 2 - bmp.height / 2;
-        }
+        bmp.y = StyleParser.getStyle().getSize() / 2 - bmp.height / 2;
     }
 
     static private function setBackground(style:Style, output:Sprite, ?bulletChar:String):Void

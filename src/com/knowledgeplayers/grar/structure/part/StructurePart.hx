@@ -290,7 +290,7 @@ class StructurePart extends EventDispatcher, implements Part {
             }
         }
         for(elem in elements){
-            if(elem.isText())
+            if(elem.isText() && cast(elem, TextItem).button == null)
                 cast(elem, TextItem).button = button;
         }
         if(nbSubPartLoaded == nbSubPartTotal)

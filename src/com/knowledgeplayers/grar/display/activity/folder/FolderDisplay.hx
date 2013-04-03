@@ -147,7 +147,7 @@ class FolderDisplay extends ActivityDisplay {
                 if(elemNode.has.buttonIcon){
                     var buttonIcon:BitmapData;
                     if(elemNode.att.buttonIcon.indexOf(".") < 0){
-                        buttonIcon = DisplayUtils.getBitmapDataFromLayer(new TileLayer(spritesheets.get(elemNode.att.spritesheet)), elemNode.att.buttonIcon);
+                        buttonIcon = DisplayUtils.getBitmapDataFromLayer(spritesheets.get(elemNode.att.spritesheet), elemNode.att.buttonIcon);
                     }
                     else
                         buttonIcon = cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.buttonIcon), Bitmap).bitmapData;
@@ -176,16 +176,14 @@ class FolderDisplay extends ActivityDisplay {
                 var background:BitmapData;
                 var buttonIcon = null;
                 var buttonPos = null;
-                var layer = null;
                 if(elemNode.has.src)
                     background = cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.src), Bitmap).bitmapData;
                 else{
-                    layer = new TileLayer(spritesheets.get(elemNode.att.spritesheet));
-                    background = DisplayUtils.getBitmapDataFromLayer(layer, elemNode.att.id);
+                    background = DisplayUtils.getBitmapDataFromLayer(spritesheets.get(elemNode.att.spritesheet), elemNode.att.id);
                 }
                 if(elemNode.has.buttonIcon){
                     if(elemNode.att.buttonIcon.indexOf(".") < 0){
-                        buttonIcon = DisplayUtils.getBitmapDataFromLayer(layer, elemNode.att.buttonIcon);
+                        buttonIcon = DisplayUtils.getBitmapDataFromLayer(spritesheets.get(elemNode.att.spritesheet), elemNode.att.buttonIcon);
                     }
                     else
                         buttonIcon = cast(LoadData.instance.getElementDisplayInCache(elemNode.att.buttonIcon), Bitmap).bitmapData;

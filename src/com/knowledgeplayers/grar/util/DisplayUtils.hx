@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.util;
 
+import aze.display.TilesheetEx;
 import nme.display.BitmapData;
 import nme.display.Bitmap;
 import nme.display.Sprite;
@@ -77,9 +78,9 @@ class DisplayUtils {
     * @return the bitmapData in the given tile
 **/
 
-    public static function getBitmapDataFromLayer(layer:TileLayer, tileId:String):BitmapData
+    public static function getBitmapDataFromLayer(tilesheet:TilesheetEx, tileId:String):BitmapData
     {
-        var tmpLayer = new TileLayer(layer.tilesheet);
+        var tmpLayer = new TileLayer(tilesheet);
         var tile = new TileSprite(tileId);
         tmpLayer.addChild(tile);
         tmpLayer.render();

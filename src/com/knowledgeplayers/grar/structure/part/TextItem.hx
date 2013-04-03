@@ -65,6 +65,8 @@ class TextItem implements PartElement {
                 background = xml.att.background;
             if(xml.hasNode.Token)
                token = new Token(xml.node.Token);
+            if(xml.hasNode.Button)
+                button = {ref: xml.node.Button.att.ref, content: xml.node.Button.has.content ? xml.node.Button.att.content:null};
 
             for(item in xml.nodes.Item){
                 items.add(item.att.ref);
