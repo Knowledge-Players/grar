@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import com.knowledgeplayers.grar.factory.ItemFactory;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import haxe.unit.TestCase;
@@ -181,14 +182,33 @@ class StructurePart extends EventDispatcher, implements Part {
     * @return all the activities of this part
     **/
 
-    public function getAllActivities():Array<Activity>
+    public function getAllActivities(_all:Bool = false):Array<Activity>
     {
         var activities = new Array<Activity>();
+
+
         for(elem in elements){
-            if(elem.isPart())
-                activities = activities.concat(cast(elem, Part).getAllActivities());
+            if(elem.isPart()){
+
+                activities = activities.concat(cast(elem, Part).getAllActivities(_all));
+             }
             if(elem.isActivity())
                 activities.push(cast(elem, Activity));
+
+
+            if(_all)
+            {
+                if(elem.isPattern()){
+                    for(el in cast(elem,Pattern).patternContent) {
+                        if(el.isText()) {
+                            if(cast(el,TextItem).hasActivity()){
+
+                                activities.push(cast(el,RemarkableEvent).activity);
+                            }
+                        }
+                    }
+                }
+            }
         }
         return activities;
     }
@@ -290,7 +310,7 @@ class StructurePart extends EventDispatcher, implements Part {
             }
         }
         for(elem in elements){
-            if(elem.isText() && cast(elem, TextItem).button == null)
+            if(elem.isText())
                 cast(elem, TextItem).button = button;
         }
         if(nbSubPartLoaded == nbSubPartTotal)

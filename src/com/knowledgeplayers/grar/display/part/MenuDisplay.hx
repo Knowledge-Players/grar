@@ -210,18 +210,20 @@ class MenuDisplay extends Zone {
             parts = GameManager.instance.game.getAllParts();
             if(((typeInt & (1 << 1)) >> 1) == 1){
                 // Both
-                activities = GameManager.instance.game.getAllActivities();
-                for(part in parts){
-                    addButton(true, part.name);
-                    for(activity in activities){
-                        if(activity.container == part){
-                            addButton(false, activity.name);
+                activities = GameManager.instance.game.getAllActivities(true);
 
-                        }
-                    }
+                for(part in parts){
+
+                    addButton(true, part.name);
+
+
                 }
-            }
-            else{
+                for(activity in activities){
+
+                    addButton(false, activity.name);
+                    //activity.container = part;
+                }
+                }else{
                 // Part Only
                 for(part in parts){
                     addButton(true, part.name);
@@ -230,7 +232,7 @@ class MenuDisplay extends Zone {
         }
         else{
             // Activity Only
-            activities = GameManager.instance.game.getAllActivities();
+            activities = GameManager.instance.game.getAllActivities(true);
             for(activity in activities){
                 addButton(false, activity.name);
             }
@@ -267,8 +269,8 @@ class MenuDisplay extends Zone {
 
                  addChild(item.button);
                 // TODO Height of a tilesprite is wrong
-                //Lib.trace("item.button.height"+item.button.height);
-                offset += item.button.height-10000;
+                Lib.trace("item.button.height"+item.button.height);
+                offset += item.button.height;
 
                 if(node.has.yOffset)
                     offset += Std.parseFloat(node.att.yOffset);

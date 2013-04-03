@@ -213,11 +213,11 @@ class KpGame extends EventDispatcher, implements Game {
     * @return all the activities of the game
     **/
 
-    public function getAllActivities():Array<Activity>
+    public function getAllActivities(_all:Bool=true):Array<Activity>
     {
         var activities = new Array<Activity>();
         for(part in parts){
-            activities = activities.concat(part.getAllActivities());
+            activities = activities.concat(part.getAllActivities(_all));
         }
 
         return activities;

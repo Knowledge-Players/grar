@@ -21,7 +21,7 @@ interface Game implements IEventDispatcher {
 
     public function getAllParts():Array<Part>;
 
-    public function getAllActivities():Array<Activity>;
+    public function getAllActivities(_all:Bool=false):Array<Activity>;
 
     public function addLanguage(value:String, path:String, flagIconPath:String):Void;
 

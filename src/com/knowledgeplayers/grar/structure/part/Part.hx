@@ -31,7 +31,7 @@ interface Part implements IEventDispatcher, implements PartElement {
 
     public function getAllParts():Array<Part>;
 
-    public function getAllActivities():Array<Activity>;
+    public function getAllActivities(_all:Bool=false):Array<Activity>;
 
     public function hasParts():Bool;
 
