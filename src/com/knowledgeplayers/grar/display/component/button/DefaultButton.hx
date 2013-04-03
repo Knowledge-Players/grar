@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.display.component.button;
+import nme.Lib;
 import aze.display.TileClip;
 import browser.Lib;
 import nme.geom.Point;
@@ -76,9 +77,6 @@ class DefaultButton extends Sprite {
         super();
 
         layer = new TileLayer(tilesheet);
-        //upState = new TileSprite(tile);
-        //downState = new TileSprite(tile);
-        //overState = new TileSprite(tile);
         clip = new TileClip(tile);
         mouseChildren = false;
 
@@ -100,30 +98,8 @@ class DefaultButton extends Sprite {
 
     public function setStateIcon(state:ButtonState, tileId:String)
     {
-        var visible = false;
-        switch(state){
-            case UP :
-                //visible = upState.visible;
-                //layer.removeChild(upState);
-                //upState = new TileSprite(tileId);
-                //layer.addChild(upState);
-                //upState.visible = visible;
-            case DOWN :
-                //visible = downState.visible;
-                //layer.removeChild(downState);
-                //downState = new TileSprite(tileId);
-                //layer.addChild(downState);
-                //downState.visible = visible;
-            case OVER :
-                //visible = overState.visible;
-                //layer.removeChild(overState);
-                //overState = new TileSprite(tileId);
-                //layer.addChild(overState);
-                //overState.visible = visible;
-        }
 
-        layer.addChild(clip);
-
+        clip.currentFrame=0;
         layer.render();
     }
 
@@ -145,6 +121,7 @@ class DefaultButton extends Sprite {
     {
         for(sprite in layer.children)
             cast(sprite, TileSprite).mirror = mirror;
+
         layer.render();
         return this.mirror = mirror;
     }
@@ -152,7 +129,9 @@ class DefaultButton extends Sprite {
     // Abstract
 
     private function onMouseOver(event:MouseEvent):Void
-    {}
+    {
+
+    }
 
     private function onMouseOut(event:MouseEvent):Void
     {}
@@ -186,19 +165,40 @@ class DefaultButton extends Sprite {
 
     private function onOver(event:MouseEvent):Void
     {
-        //upState.visible = false;
-        //overState.visible = false;
+
         if(clip.frames.length >0)
             {
                 clip.currentFrame = 1;
             }
+        Lib.trace(clip.currentFrame);
         layer.render();
     }
 
     private function onOut(event:MouseEvent):Void
     {
-        //overState.visible = false;
-        //upState.visible = false;
+        if(clip.frames.length >0)
+        {
+            clip.currentFrame = 0;
+        }
+        Lib.trace(clip.currentFrame);
+        layer.render();
+    }
+
+    private function onClickDown(event:MouseEvent):Void
+    {
+        if(clip.frames.length >1)
+        {
+            clip.currentFrame = 2;
+        }
+        else
+        {
+            clip.currentFrame = 0;
+        }
+        layer.render();
+    }
+
+    private function onClickUp(event:MouseEvent):Void
+    {
         if(clip.frames.length >0)
         {
             clip.currentFrame = 0;
@@ -206,34 +206,12 @@ class DefaultButton extends Sprite {
         layer.render();
     }
 
-    private function onClickDown(event:MouseEvent):Void
-    {
-        //overState.visible = false;
-        //downState.visible = false;
-
-        layer.render();
-    }
-
-    private function onClickUp(event:MouseEvent):Void
-    {
-        //upState.visible = false;
-        //downState.visible = false;
-
-        layer.render();
-    }
-
     private function init():Void
     {
         enabled = true;
 
-        //downState.visible = false;
-        //overState.visible = false;
-        //upState.visible = false;
-
-        //layer.addChild(upState);
-        //layer.addChild(downState);
-        //layer.addChild(overState);
         layer.addChild(clip);
+
         setAllListeners(onMouseEvent);
 
         addChild(layer.view);
@@ -270,8 +248,8 @@ class DefaultButton extends Sprite {
         }
 
         switch (event.type) {
-            case MouseEvent.MOUSE_OUT: onMouseOut(event);
-            case MouseEvent.MOUSE_OVER: onMouseOver(event);
+            case MouseEvent.MOUSE_OUT: onOut(event);
+            case MouseEvent.MOUSE_OVER: onOver(event);
             case MouseEvent.ROLL_OVER: onOver(event);
             case MouseEvent.ROLL_OUT: onOut(event);
             case MouseEvent.CLICK: onClick(event);
