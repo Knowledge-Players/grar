@@ -126,7 +126,7 @@ class QuizzItemDisplay extends Sprite {
             layer = new TileLayer(QuizzDisplay.instance.spritesheets.get(spritesheetRef));
         else
             layer = new TileLayer(UiFactory.tilesheet);
-        checkIcon.bitmapData = DisplayUtils.getBitmapDataFromLayer(layer, id);
+        checkIcon.bitmapData = DisplayUtils.getBitmapDataFromLayer(layer.tilesheet, id);
     }
 
     // Handlers

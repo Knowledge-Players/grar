@@ -1,6 +1,8 @@
 package com.knowledgeplayers.grar.display.style;
 
 import com.knowledgeplayers.grar.util.LoadData;
+import com.knowledgeplayers.grar.util.DisplayUtils;
+import com.knowledgeplayers.grar.factory.UiFactory;
 import haxe.xml.Fast;
 import nme.display.Bitmap;
 
@@ -32,7 +34,10 @@ class StyleParser {
                 style.inherit(stylesheet.get(styleNode.att.inherit));
             for(child in styleNode.elements){
                 if(child.name.toLowerCase() == "icon"){
-                    style.icon = cast(LoadData.instance.getElementDisplayInCache("items/" + child.att.value), Bitmap).bitmapData;
+                    if(child.att.value.indexOf(".")<0)
+                        style.icon = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, child.att.value);
+                    else
+                        style.icon = cast(LoadData.instance.getElementDisplayInCache(child.att.value), Bitmap).bitmapData;
                     style.iconPosition = child.att.position.toLowerCase();
                 }
                 else if(child.name.toLowerCase() == "background"){
@@ -41,7 +46,7 @@ class StyleParser {
                         style.background.opaqueBackground = Std.parseInt(child.att.value);
                     }
                     else
-                        style.background = cast(LoadData.instance.getElementDisplayInCache("items/" + child.att.value), Bitmap);
+                        style.background = cast(LoadData.instance.getElementDisplayInCache(child.att.value), Bitmap);
                 }
                 else
                     style.addRule(child.name, child.att.value);

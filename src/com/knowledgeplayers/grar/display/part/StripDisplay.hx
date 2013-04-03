@@ -60,7 +60,7 @@ class StripDisplay extends PartDisplay {
             this.nextElement();
     }
 
-    override private function displayPart(?textGroup:Bool = false):Void
+    override private function displayPart():Void
     {
         var array = new Array<{obj:DisplayObject, z:Int}>();
         for(key in displays.keys()){
