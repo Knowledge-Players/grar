@@ -215,13 +215,11 @@ class MenuDisplay extends Zone {
                 for(part in parts){
 
                     addButton(true, part.name);
+                    for(activity in activities){
 
+                        addButton(false, activity.name);
+                    }
 
-                }
-                for(activity in activities){
-
-                    addButton(false, activity.name);
-                    //activity.container = part;
                 }
                 }else{
                 // Part Only
@@ -269,7 +267,7 @@ class MenuDisplay extends Zone {
 
                  addChild(item.button);
                 // TODO Height of a tilesprite is wrong
-                Lib.trace("item.button.height"+item.button.height);
+                //Lib.trace("item.button.height"+item.button.height);
                 offset += item.button.height;
 
                 if(node.has.yOffset)
@@ -277,7 +275,7 @@ class MenuDisplay extends Zone {
 
                 if (item.isPart){
                     //TODO SUPPRIMER LE NOMBRE MAGIQUE
-                    addLine(20,offset-75);
+                    addLine(20,offset);
                 }
 
             }

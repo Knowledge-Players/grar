@@ -170,7 +170,7 @@ class DefaultButton extends Sprite {
             {
                 clip.currentFrame = 1;
             }
-        Lib.trace(clip.currentFrame);
+
         layer.render();
     }
 
@@ -180,7 +180,7 @@ class DefaultButton extends Sprite {
         {
             clip.currentFrame = 0;
         }
-        Lib.trace(clip.currentFrame);
+
         layer.render();
     }
 
