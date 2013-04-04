@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.scanner;
 
 import com.knowledgeplayers.grar.display.activity.scanner.PointDisplay.PointStyle;
-import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.structure.activity.scanner.Scanner;
 import com.knowledgeplayers.grar.util.LoadData;

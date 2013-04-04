@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.display.style;
 
-
 /**
  * Parser for the KP MarkUp language
  */
@@ -71,14 +70,22 @@ class KpTextDownParser {
 
         if(styleName == "" && substring.charAt(1) == "."){
             styleName += "ordered" + level;
+            output.bullet = substring.substr(0);
             substring = substring.substr(2);
+        }
+
+        // TODO keep it ?
+        // Custom Style
+        var regexStyle:EReg = ~/\[(.+)\](.+)\[\/(.+)\]/;
+        if(regexStyle.match(substring)){
+            styleName = regexStyle.matched(1);
+            substring = regexStyle.replace(substring, "$2");
         }
 
         substring = StringTools.ltrim(substring);
 
-        var style = StyleParser.getStyle(styleName);
-
-        output.style = style;
+        if(styleName != "")
+            output.style = styleName;
         output.content = substring;
 
         return output;

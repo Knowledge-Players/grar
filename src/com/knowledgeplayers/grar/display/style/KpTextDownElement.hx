@@ -1,4 +1,6 @@
 package com.knowledgeplayers.grar.display.style;
+import com.knowledgeplayers.grar.util.DisplayUtils;
+import com.knowledgeplayers.grar.util.LoadData;
 import nme.text.TextFieldAutoSize;
 import nme.display.Bitmap;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
@@ -8,13 +10,16 @@ import com.knowledgeplayers.grar.display.text.UrlField;
 import nme.display.Sprite;
 class KpTextDownElement {
 
-    public var content (default,default):String;
-    public var style (default,default):String;
+    public var content (default, default):String;
+    public var style (default, default):String;
+    public var bullet (default, default):String;
 
     private var width:Float;
 
-
-    public function new() {
+    public function new()
+    {
+        // Default value for style
+        style = "text";
     }
 
     public function createSprite(_width:Float):Sprite
@@ -25,8 +30,6 @@ class KpTextDownElement {
         // Image Style
         var regexImg:EReg = ~/!\[(.+)\]\((.+)\)!/;
         if(regexImg.match(content)){
-            styleName += "image";
-            param = regexImg.matched(1);
             var img = LoadData.instance.getElementDisplayInCache(regexImg.matched(2));
             content = regexImg.replace(content, "");
             if(regexImg.matchedLeft() != "")
@@ -34,17 +37,6 @@ class KpTextDownElement {
             concatObjects(output, img);
             if(regexImg.matchedRight() != "")
                 concatObjects(output, createTextField(regexImg.matchedRight(), styleName));
-        }
-
-        // Custom Style
-        var regexStyle:EReg = ~/\[(.+)\](.+)\[\/(.+)\]/;
-        if(regexStyle.match(content)){
-            styleName = regexStyle.matched(1);
-            content = regexStyle.replace(content, "");
-            if(regexStyle.matchedLeft() != "")
-                concatObjects(output, createTextField(regexStyle.matchedLeft(), styleName));
-            concatObjects(output, createTextField(regexStyle.matched(2), StyleParser.getStyle(styleName)));
-            content = regexStyle.matchedRight();
         }
 
         // Link style
@@ -60,16 +52,17 @@ class KpTextDownElement {
         }
 
         // Add background and sprite to textfield
+        var style = StyleParser.getStyle(styleName);
         if(style != null){
             var hasIcon = false;
             if(style.icon != null){
-                setIcons(content, style, output);
+                setIcons(content, styleName, output);
                 hasIcon = true;
             }
             if(style.background != null){
-                setBackground(style, output, param);
+                setBackground(styleName, output);
             }
-            if(!hasIcon)
+            if(!hasIcon && content != "")
                 concatObjects(output, createTextField(content, styleName));
         }
         else if(content != ""){
@@ -83,30 +76,37 @@ class KpTextDownElement {
         return output;
     }
 
-    private function concatObjects(container:DisplayObjectContainer, objLeft:DisplayObject, ?objRight:DisplayObject):Void
-{
-    if(objRight == null && container.numChildren > 0){
-        var maxX:Float = 0;
-        var maxWidth:Float = 0;
-        for(i in 0...container.numChildren){
-            if(container.getChildAt(i).x >= maxX){
-                maxX = container.getChildAt(i).x;
-                maxWidth = container.getChildAt(i).width;
-            }
-        }
-        objLeft.x = maxX + maxWidth;
-        container.addChild(objLeft);
+    public function toString():String
+    {
+        return "{Content: " + content + ", Style: " + style + "}";
     }
-    else if(objRight != null){
-        container.addChild(objLeft);
-        objRight.x += objLeft.width;
-        container.addChild(objRight);
-    }
-    else
-        container.addChild(objLeft);
-}
 
-    static private function createTextField(content:String, ?styleName:String):StyledTextField
+    // Privates
+
+    private function concatObjects(container:DisplayObjectContainer, objLeft:DisplayObject, ?objRight:DisplayObject):Void
+    {
+        if(objRight == null && container.numChildren > 0){
+            var maxX:Float = 0;
+            var maxWidth:Float = 0;
+            for(i in 0...container.numChildren){
+                if(container.getChildAt(i).x >= maxX){
+                    maxX = container.getChildAt(i).x;
+                    maxWidth = container.getChildAt(i).width;
+                }
+            }
+            objLeft.x = maxX + maxWidth;
+            container.addChild(objLeft);
+        }
+        else if(objRight != null){
+            container.addChild(objLeft);
+            objRight.x += objLeft.width;
+            container.addChild(objRight);
+        }
+        else
+            container.addChild(objLeft);
+    }
+
+    private function createTextField(content:String, ?styleName:String):StyledTextField
     {
         var style = StyleParser.getStyle(styleName);
         var tf = new StyledTextField();
@@ -116,7 +116,7 @@ class KpTextDownElement {
         styleName = StringTools.replace(styleName, "text", "");
 
         var regexBold:EReg = ~/\*([^*]+)\*/;
-        var boldPos = new Array<{pos: Int, len: Int}>();
+        var boldPos = new Array<{pos:Int, len:Int}>();
         while(regexBold.match(content)){
             boldPos.push(regexBold.matchedPos());
             content = regexBold.replace(content, regexBold.matched(1));
@@ -140,16 +140,32 @@ class KpTextDownElement {
         if(styleName != "")
             styleName += styleName.charAt(styleName.length - 1) == "-" ? "" : "-";
         for(matched in boldPos){
-            tf.setPartialStyle(StyleParser.getStyle(styleName + "bold"), matched.pos, matched.pos + matched.len - 2);
+            // If there was italic before, position has changed
+            var charOffset:Int = 0;
+            for(italicMatch in italicPos){
+                if(italicMatch.pos < matched.pos)
+                    charOffset += 2;
+            }
+            var position = matched.pos - charOffset;
+            // Shift by 2 because we deleted asteriks
+            tf.setPartialStyle(StyleParser.getStyle(styleName + "bold"), position, position + matched.len - 2);
         }
-        for(matched in italicPos)
-            tf.setPartialStyle(StyleParser.getStyle(styleName + "italic"), matched.pos, matched.pos + matched.len - 2);
+        for(matched in italicPos){
+            var charOffset:Int = 0;
+            for(boldMatch in boldPos){
+                if(boldMatch.pos < matched.pos)
+                    charOffset += 2;
+            }
+            var position = matched.pos - charOffset;
+            tf.setPartialStyle(StyleParser.getStyle(styleName + "italic"), position, position + matched.len - 2);
+        }
 
         return tf;
     }
 
-    static private function setIcons(content:String, styleName:String, output:Sprite):Void
+    private function setIcons(content:String, styleName:String, output:Sprite):Void
     {
+        var style = StyleParser.getStyle(styleName);
         var bmp = new Bitmap(style.icon);
         if(style.iconResize)
             bmp.width = bmp.height = 10;
@@ -162,19 +178,19 @@ class KpTextDownElement {
                 if(style.iconResize)
                     bmpBis.width = bmpBis.height = 10;
                 concatObjects(output, bmpBis);
-            default: Lib.trace(style.iconPosition + ": this position is not handled");
+            default: throw style.iconPosition + ": this position is not handled";
         }
 
         bmp.y = StyleParser.getStyle().getSize() / 2 - bmp.height / 2;
     }
 
-    static private function setBackground(styleName:String, output:Sprite, ?bulletChar:String):Void
+    private function setBackground(styleName:String, output:Sprite):Void
     {
         var style = StyleParser.getStyle(styleName);
         if(style.background.opaqueBackground != null){
-            if(bulletChar != null){
+            if(bullet != null){
                 var bullet = new StyledTextField(StyleParser.getStyle("text"));
-                bullet.text = bulletChar;
+                bullet.text = this.bullet;
                 bullet.background = true;
                 bullet.backgroundColor = style.background.opaqueBackground;
                 output.addChild(bullet);
@@ -185,9 +201,9 @@ class KpTextDownElement {
             }
         }
         else{
-            if(bulletChar != null){
+            if(bullet != null){
                 var bullet = new StyledTextField(StyleParser.getStyle("text"));
-                bullet.text = bulletChar;
+                bullet.text = this.bullet;
                 style.background.width = bullet.width;
                 style.background.height = bullet.height;
                 output.addChild(style.background);

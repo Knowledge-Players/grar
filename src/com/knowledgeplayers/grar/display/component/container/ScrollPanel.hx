@@ -1,38 +1,32 @@
 package com.knowledgeplayers.grar.display.component.container;
 
-import nme.text.TextFormatAlign;
+import com.knowledgeplayers.grar.util.LoadData;
+import nme.display.Bitmap;
+import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.display.style.KpTextDownParser;
+import com.knowledgeplayers.grar.display.style.StyleParser;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
-import nme.geom.Rectangle;
-import nme.events.Event;
-import com.knowledgeplayers.grar.util.LoadData;
-import com.knowledgeplayers.grar.util.DisplayUtils;
-import com.knowledgeplayers.grar.display.style.StyleParser;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import nme.Lib;
-import nme.Assets;
-import nme.display.Bitmap;
-import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.display.Sprite;
 import nme.events.MouseEvent;
 
 /**
- * TextPanel to display text
+ * ScrollPanel to manage text overflow, with auto scrollbar
  */
 
-class TextPanel extends Sprite {
-/**
+class ScrollPanel extends Sprite {
+    /**
  * Text in the panel
  */
     private var content (default, null):Sprite;
 
-/**
+    /**
 * If true, the text won't scroll even if it's bigger than the panel
 **/
     public var scrollLock (default, default):Bool;
 
-/**
+    /**
 * Style sheet used for this panel
 **/
     public var styleSheet (default, default):String;
@@ -42,11 +36,11 @@ class TextPanel extends Sprite {
     private var maskHeight:Float;
     private var scrollable:Bool;
 
-/**
+    /**
 * Background of the panel. It can be only a color or a reference to a Bitmap,
 **/
     private var background:String;
-/**
+    /**
  * Constructor
  * @param	width : Width of the displayed content
  * @param	height : Height of the displayed content
@@ -64,7 +58,7 @@ class TextPanel extends Sprite {
         addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
     }
 
-/**
+    /**
  * Set the text to the panel
  * @param	content : Text to set
  * @return the text
@@ -74,6 +68,7 @@ class TextPanel extends Sprite {
     {
         clear();
 
+        nme.Lib.trace(contentString);
         var previousStyleSheet = null;
         if(styleSheet != null){
             previousStyleSheet = StyleParser.currentStyleSheet;
@@ -81,26 +76,24 @@ class TextPanel extends Sprite {
         }
 
         content = new Sprite();
-        var offSetY:Float;
-
+        var offSetY:Float = 0;
         var isFirst:Bool = true;
 
-        for (element in KpTextDownParser.parse(contentString)) {
+        for(element in KpTextDownParser.parse(contentString)){
+            nme.Lib.trace(element);
             var padding = StyleParser.getStyle(element.style).getPadding();
             var item = element.createSprite(maskWidth - padding[1] - padding[3]);
 
-            if (isFirst) {
-                offSetY = padding[0];
+            if(isFirst){
+                offSetY += padding[0];
             }
             item.x = padding[3];
             item.y = offSetY;
-            offSetY += item.heigth;
+            offSetY += item.height;
 
             content.addChild(item);
 
-
         }
-
 
         addChild(content);
         var mask = new Sprite();
@@ -154,7 +147,7 @@ class TextPanel extends Sprite {
         }
     }
 
-// Private
+    // Private
 
     private function scrollToRatio(position:Float)
     {

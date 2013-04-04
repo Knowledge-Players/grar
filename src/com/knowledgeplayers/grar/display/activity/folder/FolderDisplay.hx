@@ -5,7 +5,7 @@ import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import nme.display.BitmapData;
 import aze.display.TileSprite;
 import aze.display.TileLayer;

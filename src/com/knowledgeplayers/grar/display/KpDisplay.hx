@@ -12,7 +12,7 @@ import nme.display.DisplayObject;
 import nme.geom.Point;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import com.knowledgeplayers.grar.display.element.CharacterDisplay;
-import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import aze.display.TileSprite;
@@ -150,9 +150,9 @@ class KpDisplay extends Sprite {
         var scrollable = textNode.has.scrollable ? textNode.att.scrollable == "true" : true;
         var styleSheet = textNode.has.style ? textNode.att.style : null;
 
-        var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height), scrollable, spritesheet, styleSheet);
+        var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height), scrollable, styleSheet);
         if(background != null)
-            text.setBackground(background, textNode.has.spritesheet ? spritesheets.get(textNode.att.spritesheet) : null);
+            text.setBackground(background);
         addElement(text, textNode);
     }
 

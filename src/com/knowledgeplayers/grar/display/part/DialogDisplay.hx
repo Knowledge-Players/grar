@@ -1,12 +1,13 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import haxe.FastList;
 import nme.Lib;
 import com.knowledgeplayers.grar.structure.Token;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import nme.events.MouseEvent;
 import com.knowledgeplayers.grar.display.element.TokenDisplay;
@@ -84,9 +85,7 @@ class DialogDisplay extends PartDisplay {
                 nextActivity = cast(nextItem, RemarkableEvent).activity;
             }
             if(nextItem.hasToken()){
-
-                var token:Token = nextItem.token;
-                dispatchEvent(new TokenEvent(TokenEvent.ADD, token, true));
+                GameManager.instance.activateToken(nextItem.token.ref);
             }
         }
         else if(currentPattern.nextPattern != "")
@@ -114,12 +113,12 @@ class DialogDisplay extends PartDisplay {
         var tok = cast(tokens.get(currentToken.ref), TokenDisplay);
         addChild(tok);
 
-        tok.setImage(currentToken.img);
+        //tok.setImage(currentToken.img);
         var content = Localiser.instance.getItemContent(currentToken.ref);
-        var content2 = Localiser.instance.getItemContent(currentToken.img);
+        //var content2 = Localiser.instance.getItemContent(currentToken.img);
         tok.textsToken.get(currentToken.ref).setContent(content);
 
-        tok.textsToken.get(currentToken.img).setContent(content2);
+        //tok.textsToken.get(currentToken.img).setContent(content2);
         TweenManager.slide(tok, tok.showToken);
 
     }
@@ -188,8 +187,8 @@ class DialogDisplay extends PartDisplay {
             //Lib.trace(currentToken.ref);
             var tok = cast(tokens.get(currentToken.ref), TokenDisplay);
 
-            tok.imgsToken.get(currentToken.img).visible = false;
-            tok.textsToken.get(currentToken.img).visible = false;
+            //tok.imgsToken.get(currentToken.img).visible = false;
+            //tok.textsToken.get(currentToken.img).visible = false;
 
             TweenManager.slide(tok, tok.hideToken);
 

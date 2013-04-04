@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.display.component;
+package com.knowledgeplayers.grar.display.component.container;
 
 import nme.text.TextFormatAlign;
 import aze.display.TileSprite;
@@ -18,36 +18,13 @@ import nme.display.Sprite;
 import nme.events.MouseEvent;
 
 /**
- * ScrollPanel to manage text overflow, with auto scrollbar
+ * Display text in a bubble
  */
 
-class ScrollPanel extends Sprite {
-    /**
-     * Text in the panel
-     */
-    public var content (default, null):Sprite;
-
-    /**
-    * If true, the text won't scroll even if it's bigger than the panel
-    **/
-    public var scrollLock (default, default):Bool;
-
-    /**
-    * Style sheet used for this panel
-    **/
-    public var styleSheet (default, default):String;
-
-    private var scrollBar:ScrollBar;
-    private var maskWidth:Float;
-    private var maskHeight:Float;
-    private var scrollable:Bool;
+class BubblePanel extends ScrollPanel {
     private var spriteSheet:TilesheetEx;
     private var scaleNine:ScaleNine;
 
-    /**
-    * Background of the panel. It can be only a color or a reference to a Bitmap,
-    **/
-    private var background:String;
     /**
      * Constructor
      * @param	width : Width of the displayed content
@@ -55,18 +32,11 @@ class ScrollPanel extends Sprite {
      * @param	scrollLock : Disable scroll. False by default
      * @param   styleSheet : Style sheet used for this panel
      */
-    // TODO What to do with _spritesheet
 
     public function new(width:Float, height:Float, ?_scrollLock:Bool = false, ?_spriteSheet:TilesheetEx, ?_styleSheet:String)
     {
-        super();
-        maskWidth = width;
-        maskHeight = height;
-        //content = new Sprite();
-        this.scrollLock = _scrollLock;
+        super(width, height, _scrollLock, _styleSheet);
         spriteSheet = _spriteSheet;
-        styleSheet = _styleSheet;
-        addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
     }
 
     /**
@@ -75,7 +45,7 @@ class ScrollPanel extends Sprite {
      * @return the text
      */
 
-    public function setContent(contentString:String):Sprite
+    override public function setContent(contentString:String):Sprite
     {
         clear();
 
@@ -85,7 +55,8 @@ class ScrollPanel extends Sprite {
             StyleParser.currentStyleSheet = styleSheet;
         }
 
-        content = KpTextDownParser.parse(contentString);
+        // TODO clean with new KPTD
+        content = new Sprite();//KpTextDownParser.parse(contentString);
         var posXMask:Float = 0;
         var posYMask:Float = 0;
         if(scaleNine != null){
@@ -142,33 +113,10 @@ class ScrollPanel extends Sprite {
         return content;
     }
 
-    public function setBackground(bkg:String, ?tilesheet:TilesheetEx):Void
+    override public function setBackground(bkg:String, ?tilesheet:TilesheetEx):Void
     {
-        background = bkg;
         if(spriteSheet == null){
-            if(Std.parseInt(bkg) != null){
-                this.graphics.beginFill(Std.parseInt(bkg));
-                this.graphics.drawRect(0, 0, maskWidth, maskHeight);
-                this.graphics.endFill();
-            }
-            else if(background.indexOf(".") < 0){
-                if(tilesheet == null)
-                    tilesheet = UiFactory.tilesheet;
-                var layer = new TileLayer(tilesheet);
-                var tile = new TileSprite(background);
-                layer.addChild(tile);
-                addChildAt(layer.view, 0);
-                tile.x += tile.width / 2;
-                tile.y += tile.height / 2;
-                layer.render();
-            }
-            else if(LoadData.getInstance().getElementDisplayInCache(background) != null){
-                var bkg:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(background), Bitmap).bitmapData);
-                bkg.width = maskWidth;
-                bkg.height = maskHeight;
-
-                this.addChildAt(bkg, 0);
-            }
+            super.setBackground(bkg, tilesheet);
         }
         else{
             scaleNine = new ScaleNine(maskWidth, maskHeight);
@@ -183,40 +131,6 @@ class ScrollPanel extends Sprite {
     {
         e.currentTarget.removeEventListener("onScaleInit", onInitScale);
         addChildAt(e.currentTarget, 0);
-    }
-
-    private function scrollToRatio(position:Float)
-    {
-        content.y = -position * content.height;
-    }
-
-    private function clear()
-    {
-        var max = Std.parseInt(background) != null ? 0 : 1;
-        while(numChildren > max)
-            removeChildAt(numChildren - 1);
-    }
-
-    private function onWheel(e:MouseEvent):Void
-    {
-        if(scrollable){
-            if(e.delta > 0 && content.y + e.delta > 0){
-                content.y = 0;
-            }
-            else if(e.delta < 0 && content.y + e.delta < -(content.height - maskHeight)){
-                content.y = -(content.height - maskHeight);
-            }
-            else{
-                content.y += e.delta;
-            }
-            if(scrollBar != null)
-                moveCursor(e.delta);
-        }
-    }
-
-    private function moveCursor(delta:Float)
-    {
-        scrollBar.moveCursor(delta);
     }
 
 }
