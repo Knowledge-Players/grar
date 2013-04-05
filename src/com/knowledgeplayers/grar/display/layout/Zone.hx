@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.display.layout;
 
-import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import com.knowledgeplayers.grar.factory.UiFactory;
@@ -192,12 +192,12 @@ class Zone extends Sprite {
     public function createMenu(element:Fast):Void
     {
 
-        menu = new MenuDisplay(Std.parseFloat(element.att.width),Std.parseFloat(element.att.height));
+        menu = new MenuDisplay(Std.parseFloat(element.att.width), Std.parseFloat(element.att.height));
         menu.initMenu(element);
         menu.transitionIn = element.att.transitionIn;
         menu.transitionOut = element.att.transitionOut;
-        menu.x= Std.parseFloat(element.att.x);
-        menu.y= Std.parseFloat(element.att.y);
+        menu.x = Std.parseFloat(element.att.x);
+        menu.y = Std.parseFloat(element.att.y);
 
         addChild(menu);
     }

@@ -48,28 +48,24 @@ class TextButton extends CustomEventButton {
             StyleParser.currentStyleSheet = styleSheet;
         }
 
-        textSprite = KpTextDownParser.parse(text);
+        textSprite = new Sprite();
+        var offSetY:Float = 0;
+        var isFirst:Bool = true;
 
-        var alignment:Dynamic = StyleParser.getStyle().getAlignment();
-        switch(alignment){
-            case TextFormatAlign.CENTER:
-                textSprite.x = width / 2 - textSprite.width / 2;
-            case TextFormatAlign.RIGHT:
-                textSprite.x = width - textSprite.width;
-            case TextFormatAlign.LEFT, TextFormatAlign.JUSTIFY:
-        }
-        var padding = StyleParser.getStyle().getPadding();
-        if(textSprite.width > 0 && padding.length > 0){
-            textSprite.y += padding[0];
-            textSprite.x += padding[3];
-            var mask = new Sprite();
-            mask.graphics.beginFill(0);
-            mask.graphics.drawRect(textSprite.x, textSprite.y, width - padding[1], height - padding[2]);
-            mask.graphics.endFill();
-            textSprite.mask = mask;
-            addChild(mask);
-        }
+        for(element in KpTextDownParser.parse(text)){
+            var padding = StyleParser.getStyle(element.style).getPadding();
+            var item = element.createSprite(width - padding[1] - padding[3]);
 
+            if(isFirst){
+                offSetY += padding[0];
+            }
+            item.x = padding[3];
+            item.y = offSetY;
+            offSetY += item.height;
+
+            textSprite.addChild(item);
+
+        }
         if(previousStyleSheet != null)
             StyleParser.currentStyleSheet = previousStyleSheet;
 

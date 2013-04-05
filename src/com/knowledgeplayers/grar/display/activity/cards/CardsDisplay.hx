@@ -1,8 +1,9 @@
 package com.knowledgeplayers.grar.display.activity.cards;
 
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
+import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
-import com.knowledgeplayers.grar.display.component.ScrollPanel;
 import nme.Lib;
 import aze.display.TileClip;
 import aze.display.TileLayer;
@@ -48,6 +49,7 @@ class CardsDisplay extends ActivityDisplay {
     private var background:Bitmap;
 
     private var content:Fast;
+    private var stylesheet:String;
 
     private var elementBackground:String;
     private var elementsArray:Array<CardsElementDisplay>;
@@ -129,6 +131,8 @@ class CardsDisplay extends ActivityDisplay {
                 popUp.visible = false;
                 popUp.alpha = 0;
                 addChild(popUp);
+                if(elemNode.has.style)
+                    stylesheet = elemNode.att.style;
             case "animationelement" :
                 var tilesheet = spritesheets.get(elemNode.att.spritesheet);
                 flipLayer = new TileLayer(tilesheet);
@@ -189,7 +193,35 @@ class CardsDisplay extends ActivityDisplay {
 
     private function showPopUp(pText:String)
     {
-        popUp.addChild(KpTextDownParser.parse(pText));
+        var previousStyleSheet = null;
+        if(stylesheet != null){
+            previousStyleSheet = StyleParser.currentStyleSheet;
+            StyleParser.currentStyleSheet = stylesheet;
+        }
+
+        var content = new Sprite();
+        var offSetY:Float = 0;
+
+        var isFirst:Bool = true;
+
+        for(element in KpTextDownParser.parse(pText)){
+            var padding = StyleParser.getStyle(element.style).getPadding();
+            var item = element.createSprite(popUp.width - padding[1] - padding[3]);
+
+            if(isFirst){
+                offSetY += padding[0];
+            }
+            item.x = padding[3];
+            item.y = offSetY;
+            offSetY += item.height;
+            content.addChild(item);
+
+        }
+
+        if(previousStyleSheet != null)
+            StyleParser.currentStyleSheet = previousStyleSheet;
+
+        popUp.addChild(content);
         setChildIndex(popUp, numChildren - 1);
         popUp.visible = true;
         Actuate.tween(popUp, 0.5, {alpha: 1});

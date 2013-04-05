@@ -142,7 +142,6 @@ class KpGame extends EventDispatcher, implements Game {
     {
         part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
         part.addEventListener(PartEvent.EXIT_PART, onPartComplete);
-        part.addEventListener(TokenEvent.ADD_GLOBAL, onGlobalTokenAdd);
         parts.set(partIndex, part);
     }
 
@@ -213,7 +212,7 @@ class KpGame extends EventDispatcher, implements Game {
     * @return all the activities of the game
     **/
 
-    public function getAllActivities(_all:Bool=true):Array<Activity>
+    public function getAllActivities(_all:Bool = true):Array<Activity>
     {
         var activities = new Array<Activity>();
         for(part in parts){
@@ -300,6 +299,7 @@ class KpGame extends EventDispatcher, implements Game {
 
         // Load Parts
         var structureNode:Fast = structureXml.node.Grar.node.Structure;
+        GameManager.instance.loadTokens(structureNode.att.tokens);
         ref = structureNode.att.ref;
         for(part in structureNode.nodes.Part){
             addPartFromXml(Std.parseInt(part.att.id), part);
@@ -351,11 +351,6 @@ class KpGame extends EventDispatcher, implements Game {
     private function onPartComplete(event:PartEvent):Void
     {
         stateInfos.activityCompletion[cast(event.target, Part).id] = true;
-    }
-
-    private function onGlobalTokenAdd(e:TokenEvent):Void
-    {
-        inventory.push(e.token);
     }
 
     private function onExit(e:Event):Void

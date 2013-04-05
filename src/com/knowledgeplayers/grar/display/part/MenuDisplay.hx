@@ -3,7 +3,7 @@ package com.knowledgeplayers.grar.display.part;
 import nme.display.Shape;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.component.button.MenuButton;
-import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.display.layout.Zone;
 import com.knowledgeplayers.grar.factory.UiFactory;
@@ -34,22 +34,22 @@ class MenuDisplay extends Zone {
     /**
     * Orientation of the menu. Must be Horizontal or Vertical
     **/
-    public var orientation (default, setOrientation): String;
+    public var orientation (default, setOrientation):String;
 
     /**
     * Type of the menu. The menu could index parts or activities
     **/
-    public var type (default, setType): String;
+    public var type (default, setType):String;
 
     /**
     * Prototype for the buttons of the menu
     **/
-    public var buttonPartPrototype (default, default): Fast;
+    public var buttonPartPrototype (default, default):Fast;
 
     /**
     * Prototype for the buttons of the menu
     **/
-    public var buttonActivityPrototype (default, default): Fast;
+    public var buttonActivityPrototype (default, default):Fast;
 
     /**
     * transition open menu
@@ -65,15 +65,15 @@ class MenuDisplay extends Zone {
     **/
     public var btClose:DefaultButton;
 
-    private var parts: Array<Part>;
-    private var activities: Array<Activity>;
-    private var items: List<MenuItem>;
+    private var parts:Array<Part>;
+    private var activities:Array<Activity>;
+    private var items:List<MenuItem>;
 
-    private var typeInt: Int;
+    private var typeInt:Int;
 
-    public function new(_width:Float,_height:Float)
+    public function new(_width:Float, _height:Float)
     {
-        super(_width,_height);
+        super(_width, _height);
 
         items = new List<MenuItem>();
 
@@ -85,7 +85,7 @@ class MenuDisplay extends Zone {
     * @return the orientation
     **/
 
-    public function setOrientation(orientation: String): String
+    public function setOrientation(orientation:String):String
     {
         this.orientation = orientation.toLowerCase();
         return this.orientation;
@@ -97,7 +97,7 @@ class MenuDisplay extends Zone {
     * @return the type
     **/
 
-    public function setType(type: String): String
+    public function setType(type:String):String
     {
         this.type = type.toLowerCase();
         typeInt = switch(type){
@@ -115,13 +115,15 @@ class MenuDisplay extends Zone {
     * @param    xml : XML descriptor
     **/
 
-    override public function onActionEvent(e:Event):Void{
+    override public function onActionEvent(e:Event):Void
+    {
         switch(e.type){
-            case "close_menu": TweenManager.applyTransition(this,transitionOut);
+            case "close_menu": TweenManager.applyTransition(this, transitionOut);
         }
 
     }
-    public function initMenu(display: Fast): Void
+
+    public function initMenu(display:Fast):Void
     {
         //init(display);
 
@@ -130,19 +132,18 @@ class MenuDisplay extends Zone {
 
         var xPart:Float = 0;
         var yPart:Float = 0;
-        var xAct :Float = 0;
+        var xAct:Float = 0;
         var yAct:Float = 0;
         //Elements du menu à afficher
-        for (child in display.elements)
-            {
-                switch(child.name.toLowerCase()){
-                    case "background":createBackground(child);
-                    case "image": createImage(child);
-                    case "text":createText(child);
-                    case "button":createButton(child);
+        for(child in display.elements){
+            switch(child.name.toLowerCase()){
+                case "background":createBackground(child);
+                case "image": createImage(child);
+                case "text":createText(child);
+                case "button":createButton(child);
 
-                }
             }
+        }
 
         // Elements d'une Part du Menu à afficher
         if(typeInt & 1 == 1){
@@ -155,8 +156,8 @@ class MenuDisplay extends Zone {
                 switch(child.name.toLowerCase()){
                     case "background":
                         var bkg = createBackground(child);
-                        bkg.x+= xPart;
-                        bkg.y+= yPart;
+                        bkg.x += xPart;
+                        bkg.y += yPart;
                     case "image":
                         var img = createImage(child);
                         img.x += xPart;
@@ -183,12 +184,12 @@ class MenuDisplay extends Zone {
             for(child in display.node.Activity.elements){
                 switch(child.name.toLowerCase()){
                     case "background":
-                        var bkg =createBackground(child);
-                        bkg.x+= xAct;
-                        bkg.y+= yAct;
+                        var bkg = createBackground(child);
+                        bkg.x += xAct;
+                        bkg.y += yAct;
 
                     case "image":
-                        var img =createImage(child);
+                        var img = createImage(child);
                         img.x += xAct;
                         img.y += yAct;
                     case "text":
@@ -196,8 +197,6 @@ class MenuDisplay extends Zone {
                         var txt = createText(child);
                         txt.x += xAct;
                         txt.y += yAct;
-
-
 
                     case "button": buttonActivityPrototype = child;
 
@@ -221,7 +220,8 @@ class MenuDisplay extends Zone {
                     }
 
                 }
-                }else{
+            }
+            else{
                 // Part Only
                 for(part in parts){
                     addButton(true, part.name);
@@ -236,36 +236,34 @@ class MenuDisplay extends Zone {
             }
         }
 
-
         //Positionnement des boutons des parts et activities
 
-        var xSet:Float=0;
-        var ySet:Float=0;
-        var offset: Float = 0;
+        var xSet:Float = 0;
+        var ySet:Float = 0;
+        var offset:Float = 0;
 
         if(orientation == "vertical"){
 
-
             for(item in items){
-                var node: Fast;
+                var node:Fast;
                 if(item.isPart){
                     node = display.node.Part;
-                    xSet= xPart;
-                    ySet= yPart;
-                } else{
+                    xSet = xPart;
+                    ySet = yPart;
+                }
+                else{
                     node = display.node.Activity;
-                    xSet=xAct;
-                    ySet=yAct;
+                    xSet = xAct;
+                    ySet = yAct;
                 }
                 if(node.has.xOffset){
 
-                    item.button.x += xSet+ Std.parseFloat(node.att.xOffset);
+                    item.button.x += xSet + Std.parseFloat(node.att.xOffset);
                 }
 
+                item.button.y += ySet + offset;
 
-                item.button.y += ySet+offset;
-
-                 addChild(item.button);
+                addChild(item.button);
                 // TODO Height of a tilesprite is wrong
                 //Lib.trace("item.button.height"+item.button.height);
                 offset += item.button.height;
@@ -273,32 +271,31 @@ class MenuDisplay extends Zone {
                 if(node.has.yOffset)
                     offset += Std.parseFloat(node.att.yOffset);
 
-                if (item.isPart){
+                if(item.isPart){
                     //TODO SUPPRIMER LE NOMBRE MAGIQUE
-                    addLine(20,offset);
+                    addLine(20, offset);
                 }
 
             }
-
-
 
         }
         else{
 
             for(item in items){
-                var node: Fast;
+                var node:Fast;
                 if(item.isPart){
                     node = display.node.Part;
-                    xSet= xPart;
-                    ySet= yPart;
-               } else{
+                    xSet = xPart;
+                    ySet = yPart;
+                }
+                else{
                     node = display.node.Activity;
-                    xSet=xAct;
-                    ySet=yAct;
+                    xSet = xAct;
+                    ySet = yAct;
                 }
                 if(node.has.yOffset)
-                item.button.y += ySet+Std.parseFloat(node.att.yOffset);
-                item.button.x += xSet+offset;
+                    item.button.y += ySet + Std.parseFloat(node.att.yOffset);
+                item.button.x += xSet + offset;
                 addChild(item.button);
                 offset += item.button.width;
                 if(node.has.xOffset)
@@ -311,7 +308,7 @@ class MenuDisplay extends Zone {
 
     // Private
 
-    private function onClick(e: Event): Void
+    private function onClick(e:Event):Void
     {
 
         var target = cast(e.target, DefaultButton);
@@ -332,31 +329,28 @@ class MenuDisplay extends Zone {
             }
         }
 
-        TweenManager.applyTransition(this,transitionOut);
+        TweenManager.applyTransition(this, transitionOut);
 
     }
 
-    private function addLine(_x:Float=0,_y:Float=0):Void{
+    private function addLine(_x:Float = 0, _y:Float = 0):Void
+    {
 
         var line = new Shape();
         line.graphics.lineStyle(1, 0x999999, 1);
-        line.graphics.moveTo(0,0);
-        line.graphics.lineTo(310,0);
-
+        line.graphics.moveTo(0, 0);
+        line.graphics.lineTo(310, 0);
 
         line.x = _x;
         line.y = _y;
 
         addChild(line);
 
-
-
     }
 
-
-    private function addButton(isPart: Bool, text: String = ""): Void
+    private function addButton(isPart:Bool, text:String = ""):Void
     {
-        var button: DefaultButton = null;
+        var button:DefaultButton = null;
         if(isPart)
             button = UiFactory.createButtonFromXml(buttonPartPrototype);
         else
@@ -365,13 +359,11 @@ class MenuDisplay extends Zone {
         if(Std.is(button, TextButton))
             cast(button, TextButton).setText(Localiser.instance.getItemContent(text));
 
-
         if(Std.is(button, MenuButton)){
             cast(button, MenuButton).setText(Localiser.instance.getItemContent(text));
             cast(button, MenuButton).alignElements();
 
         }
-
 
         button.name = text;
 
@@ -381,4 +373,4 @@ class MenuDisplay extends Zone {
     }
 }
 
-typedef MenuItem = {button: DefaultButton, isPart: Bool}
+typedef MenuItem = {button:DefaultButton, isPart:Bool}

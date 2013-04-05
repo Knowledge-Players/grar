@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.display;
 
+import haxe.xml.Fast;
+import com.knowledgeplayers.grar.util.XmlLoader;
+import com.knowledgeplayers.grar.event.TokenEvent;
+import com.knowledgeplayers.grar.structure.Token;
 import haxe.FastList;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
@@ -21,7 +25,6 @@ import nme.events.Event;
 /**
  * Display of a game
  */
-
 class GameManager extends EventDispatcher {
     /**
     * Instance of the game manager
@@ -37,6 +40,11 @@ class GameManager extends EventDispatcher {
      * Queue of parts managed in the game
      */
     public var parts (default, null):FastList<PartDisplay>;
+
+    /**
+    * Inventory of the game
+    **/
+    public var inventory (default, null):Hash<Token>;
 
     private var layout:Layout;
     private var activityDisplay:ActivityDisplay;
@@ -66,10 +74,40 @@ class GameManager extends EventDispatcher {
         displayPartById(0);
     }
 
+    /**
+    * Activate a token of the inventory
+    * @param    tokenName : Name of the token to activate
+    **/
+
+    public function activateToken(tokenName:String):Void
+    {
+        inventory.get(tokenName).isActivated = true;
+        var tokenEvent = new TokenEvent(TokenEvent.ADD);
+        tokenEvent.token = inventory.get(tokenName);
+        dispatchEvent(tokenEvent);
+    }
+
+    /**
+    * Load the tokens descriptor file
+    * @param    path : Path to the file
+    **/
+
+    public function loadTokens(path:String):Void
+    {
+        XmlLoader.load(path, function(e:Event)
+        {
+            parseTokens(XmlLoader.getXml(e));
+        }, parseTokens);
+    }
+
+    /**
+    * Change the layout of the game
+    **/
+
     public function changeLayout(layout:String):Void
     {
         if(this.layout != null)
-           Lib.current.removeChild(this.layout.content);
+            Lib.current.removeChild(this.layout.content);
         this.layout = LayoutManager.instance.getLayout(layout);
         Lib.current.addChild(this.layout.content);
     }
@@ -103,7 +141,6 @@ class GameManager extends EventDispatcher {
         activityDisplay.addEventListener(Event.COMPLETE, onActivityReady);
         activityDisplay.model = activity;
 
-
     }
 
     /**
@@ -123,8 +160,17 @@ class GameManager extends EventDispatcher {
     {
         super();
         parts = new FastList<PartDisplay>();
+        inventory = new Hash<Token>();
         // Set Keyboard Manager
         KeyboardManager.instance.game = this;
+    }
+
+    private function parseTokens(tokens:Xml):Void
+    {
+        var tokenFast = new Fast(tokens.firstElement());
+        for(token in tokenFast.nodes.Token){
+            inventory.set(token.att.ref, new Token(token));
+        }
     }
 
     // Handlers

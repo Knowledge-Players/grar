@@ -1,12 +1,13 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.structure.activity.folder.FolderElement;
 import com.knowledgeplayers.grar.structure.activity.folder.Folder;
 import nme.Lib;
 import nme.display.Bitmap;
 import nme.display.BitmapData;
 import com.eclecticdesignstudio.motion.Actuate;
-import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.util.LoadData;
@@ -40,6 +41,7 @@ class FolderElementDisplay extends Sprite {
     private var shadows:Hash<DropShadowFilter>;
     private var originWidth:Float;
     private var originHeight:Float;
+    private var stylesheet:String;
     /**
     * Constructor
     * @param content : Text of the element
@@ -47,12 +49,13 @@ class FolderElementDisplay extends Sprite {
     * @param height : Height of the element
 **/
 
-    public function new(model:FolderElement, width:Float, height:Float, background:BitmapData, ?buttonIcon:BitmapData, ?buttonPos:Point)
+    public function new(model:FolderElement, width:Float, height:Float, background:BitmapData, ?buttonIcon:BitmapData, ?buttonPos:Point, ?stylesheet:String)
     {
         super();
         this.model = model;
         originWidth = width;
         originHeight = height;
+        this.stylesheet = stylesheet;
         text = new ScrollPanel(width, height);
         buttonMode = true;
 
@@ -170,20 +173,52 @@ class FolderElementDisplay extends Sprite {
         var popUp = cast(parent, FolderDisplay).popUp;
         if(!popUp.sprite.visible){
             var localizedText = Localiser.instance.getItemContent(model.content);
-            var content = KpTextDownParser.parse(localizedText);
+
+            var content = createSprite(localizedText, popUp.sprite.width);
             content.x = popUp.contentPos.x;
             content.y = popUp.contentPos.y;
             popUp.sprite.addChild(content);
             localizedText = Localiser.instance.getItemContent(model.content + "_title");
-            var title = KpTextDownParser.parse(localizedText);
+            var title = createSprite(localizedText, popUp.sprite.width);
             title.x = popUp.titlePos.x;
             title.y = popUp.titlePos.y;
             popUp.sprite.addChild(title);
-            /*popUp.sprite.x = x+width/2;
-            popUp.sprite.y = y+height/2;*/
+
             parent.setChildIndex(popUp.sprite, parent.numChildren - 1);
             popUp.sprite.visible = true;
             Actuate.tween(popUp.sprite, 0.5, {alpha: 1});
         }
+    }
+
+    private function createSprite(text:String, width:Float):Sprite
+    {
+        var previousStyleSheet = null;
+        if(stylesheet != null){
+            previousStyleSheet = StyleParser.currentStyleSheet;
+            StyleParser.currentStyleSheet = stylesheet;
+        }
+
+        var content = new Sprite();
+        var offSetY:Float = 0;
+        var isFirst:Bool = true;
+
+        for(element in KpTextDownParser.parse(text)){
+            var padding = StyleParser.getStyle(element.style).getPadding();
+            var item = element.createSprite(width - padding[1] - padding[3]);
+
+            if(isFirst){
+                offSetY += padding[0];
+            }
+            item.x = padding[3];
+            item.y = offSetY;
+            offSetY += item.height;
+
+            content.addChild(item);
+
+        }
+        if(previousStyleSheet != null)
+            StyleParser.currentStyleSheet = previousStyleSheet;
+
+        return content;
     }
 }
