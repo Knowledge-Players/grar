@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.style;
 
+import Array;
 import nme.text.TextFormatAlign;
 import nme.display.Bitmap;
 import nme.display.BitmapData;
@@ -37,6 +38,11 @@ class Style extends Hash<String> {
     public var background:Bitmap;
 
     /**
+    * Margin around the icon
+    **/
+    public var iconMargin (default, null):Array<Float>;
+
+    /**
      * Add a rule to the style
      * @param	name : Name of the rule
      * @param	value : Value of the rule;
@@ -60,6 +66,29 @@ class Style extends Hash<String> {
             set(rule, parent.get(rule));
         }
     }
+
+    public function setIconMargin(string:String):Void
+    {
+        iconMargin = new Array<Float>();
+        if(string != null && string != ""){
+            for(margin in string.split(" ")){
+                iconMargin.push(Std.parseFloat(margin));
+            }
+            switch(iconMargin.length){
+                case 1:
+                    while(iconMargin.length < 4)
+                        iconMargin.push(iconMargin[0]);
+                case 2:
+                    iconMargin.push(iconMargin[0]);
+                    iconMargin.push(iconMargin[1]);
+            }
+        }
+        else{
+            iconMargin = [0, 0, 0, 0];
+        }
+    }
+
+    // Getters
 
     /**
      * @return the font of the style
@@ -113,6 +142,24 @@ class Style extends Hash<String> {
     public function getUnderline():Null<Bool>
     {
         return get("underline") == "true";
+    }/**
+    * @return an array with line leading in 0 and paragraph leading in 1
+    **/
+
+    public function getLeading():Array<Float>
+    {
+        var array = new Array<Float>();
+        if(exists("leading")){
+            for(lead in get("leading").split(" ")){
+                array.push(Std.parseFloat(lead));
+            }
+            if(array.length == 1)
+                array.push(array[0] * 2);
+        }
+        else{
+            array = [0, 0];
+        }
+        return array;
     }
 
     /**
@@ -143,7 +190,7 @@ class Style extends Hash<String> {
     public function getPadding():Array<Float>
     {
         var array = new Array<Float>();
-        if(get("padding") != null){
+        if(exists("padding")){
             for(pad in get("padding").split(" ")){
                 array.push(Std.parseFloat(pad));
             }

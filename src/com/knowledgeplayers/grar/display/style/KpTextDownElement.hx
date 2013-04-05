@@ -171,7 +171,9 @@ class KpTextDownElement {
         var tf = createTextField(content, styleName);
         switch(style.iconPosition) {
             case "before": concatObjects(output, bmp, tf);
+                tf.x += style.iconMargin[1];
             case "after": concatObjects(output, tf, bmp);
+                tf.x += style.iconMargin[3];
             case "both": concatObjects(output, bmp, tf);
                 var bmpBis = new Bitmap(style.icon);
                 if(style.iconResize)
@@ -181,6 +183,7 @@ class KpTextDownElement {
         }
 
         bmp.y = StyleParser.getStyle().getSize() / 2 - bmp.height / 2;
+
     }
 
     private function setBackground(styleName:String, output:Sprite):Void

@@ -34,11 +34,12 @@ class StyleParser {
                 style.inherit(stylesheet.get(styleNode.att.inherit));
             for(child in styleNode.elements){
                 if(child.name.toLowerCase() == "icon"){
-                    if(child.att.value.indexOf(".")<0)
+                    if(child.att.value.indexOf(".") < 0)
                         style.icon = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, child.att.value);
                     else
                         style.icon = cast(LoadData.instance.getElementDisplayInCache(child.att.value), Bitmap).bitmapData;
                     style.iconPosition = child.att.position.toLowerCase();
+                    style.setIconMargin(child.att.margin);
                 }
                 else if(child.name.toLowerCase() == "background"){
                     if(Std.parseInt(child.att.value) != null){
