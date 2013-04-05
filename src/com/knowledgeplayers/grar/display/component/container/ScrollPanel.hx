@@ -82,16 +82,18 @@ class ScrollPanel extends Sprite {
         for(element in KpTextDownParser.parse(contentString)){
             var padding = StyleParser.getStyle(element.style).getPadding();
             nme.Lib.trace(contentString);
-            nme.Lib.trace("padding droite: " + padding[1] + ", padding gauche: " + padding[3]);
-            nme.Lib.trace("width: " + width + ", maskWidth: " + maskWidth + ", final: " + (maskWidth - padding[1] - padding[3]));
+            /*nme.Lib.trace("padding droite: " + padding[1] + ", padding gauche: " + padding[3]);
+            nme.Lib.trace("width: " + width + ", maskWidth: " + maskWidth + ", final: " + (maskWidth - padding[1] - padding[3]));*/
 
             var item = element.createSprite(maskWidth - padding[1] - padding[3]);
 
             if(isFirst){
                 offSetY += padding[0];
+                isFirst = false;
             }
             item.x = padding[3];
             item.y = offSetY;
+            nme.Lib.trace("offset: " + offSetY + ", y=" + item.y + ", height: " + item.height);
             offSetY += item.height;
 
             content.addChild(item);
