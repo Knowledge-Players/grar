@@ -37,16 +37,17 @@ class ScrollPanel extends Sprite {
     private var scrollable:Bool;
 
     /**
-* Background of the panel. It can be only a color or a reference to a Bitmap,
-**/
+    * Background of the panel. It can be only a color or a reference to a Bitmap,
+    **/
     private var background:String;
+
     /**
- * Constructor
- * @param	width : Width of the displayed content
- * @param	height : Height of the displayed content
- * @param	scrollLock : Disable scroll. False by default
- * @param   styleSheet : Style sheet used for this panel
- */
+     * Constructor
+     * @param	width : Width of the displayed content
+     * @param	height : Height of the displayed content
+     * @param	scrollLock : Disable scroll. False by default
+     * @param   styleSheet : Style sheet used for this panel
+     */
 
     public function new(width:Float, height:Float, ?_scrollLock:Bool = false, ?_styleSheet:String)
     {
@@ -59,16 +60,15 @@ class ScrollPanel extends Sprite {
     }
 
     /**
- * Set the text to the panel
- * @param	content : Text to set
- * @return the text
- */
+     * Set the text to the panel
+     * @param	content : Text to set
+     * @return the text
+     */
 
     public function setContent(contentString:String):Sprite
     {
         clear();
 
-        nme.Lib.trace(contentString);
         var previousStyleSheet = null;
         if(styleSheet != null){
             previousStyleSheet = StyleParser.currentStyleSheet;
@@ -80,8 +80,11 @@ class ScrollPanel extends Sprite {
         var isFirst:Bool = true;
 
         for(element in KpTextDownParser.parse(contentString)){
-            nme.Lib.trace(element);
             var padding = StyleParser.getStyle(element.style).getPadding();
+            nme.Lib.trace(contentString);
+            nme.Lib.trace("padding droite: " + padding[1] + ", padding gauche: " + padding[3]);
+            nme.Lib.trace("width: " + width + ", maskWidth: " + maskWidth + ", final: " + (maskWidth - padding[1] - padding[3]));
+
             var item = element.createSprite(maskWidth - padding[1] - padding[3]);
 
             if(isFirst){

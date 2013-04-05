@@ -148,8 +148,6 @@ class Style extends Hash<String> {
                 array.push(Std.parseFloat(pad));
             }
             switch(array.length){
-                case 0:
-                    array = [0, 0, 0, 0];
                 case 1:
                     while(array.length < 4)
                         array.push(array[0]);
@@ -157,6 +155,9 @@ class Style extends Hash<String> {
                     array.push(array[0]);
                     array.push(array[1]);
             }
+        }
+        else{
+            array = [0, 0, 0, 0];
         }
         return array;
     }

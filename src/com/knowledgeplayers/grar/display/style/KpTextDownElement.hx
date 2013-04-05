@@ -135,6 +135,10 @@ class KpTextDownElement {
         tf.wordWrap = true;
         tf.autoSize = style.getAlignment();
         tf.height += style.getPadding()[2];
+
+        if(tf.text == "Myriad Pro Blod Condens 28 pt #FFFFF 55 characters"){
+            nme.Lib.trace("width: " + tf.width + " (" + width + "), height: " + tf.height);
+        }
         //tf.height = tf.textHeight;
 
         if(styleName != "")
