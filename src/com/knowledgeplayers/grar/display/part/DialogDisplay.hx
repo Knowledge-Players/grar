@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import haxe.FastList;
@@ -101,7 +102,12 @@ class DialogDisplay extends PartDisplay {
         super.createElement(elemNode);
 
         if(elemNode.name.toLowerCase() == "token"){
-            var token:TokenDisplay = new TokenDisplay( spritesheets.get(elemNode.att.spritesheet), elemNode.att.id, Std.parseFloat(elemNode.att.x), Std.parseFloat(elemNode.att.y), Std.parseFloat(elemNode.att.scale), elemNode.att.transitionIn, elemNode.att.transitionOut, elemNode);
+            var spritesheet = null;
+            if(elemNode.has.spritesheet)
+                spritesheet = spritesheets.get(elemNode.att.spritesheet);
+            else
+                spritesheet = UiFactory.tilesheet;
+            var token:TokenDisplay = new TokenDisplay(spritesheet, elemNode.att.id, Std.parseFloat(elemNode.att.x), Std.parseFloat(elemNode.att.y), Std.parseFloat(elemNode.att.scale), elemNode.att.transitionIn, elemNode.att.transitionOut, elemNode);
             tokens.set(elemNode.att.id, token);
 
         }

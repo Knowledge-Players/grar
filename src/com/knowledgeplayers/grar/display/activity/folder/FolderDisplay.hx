@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.display.BitmapData;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
@@ -122,7 +123,11 @@ class FolderDisplay extends ActivityDisplay {
                 if(elemNode.has.src)
                     target = cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.src), Bitmap);
                 else{
-                    var layer = new TileLayer(spritesheets.get(elemNode.att.spritesheet));
+                    var layer:TileLayer = null;
+                    if(elemNode.has.spritesheet)
+                        layer = new TileLayer(spritesheets.get(elemNode.att.spritesheet));
+                    else
+                        layer = new TileLayer(UiFactory.tilesheet);
                     layer.addChild(new TileSprite(elemNode.att.id));
                     target = layer.view;
                     cast(target, Sprite).mouseChildren = false;
@@ -139,7 +144,11 @@ class FolderDisplay extends ActivityDisplay {
                 if(elemNode.has.src)
                     popUpSprite.addChild(cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.src), Bitmap));
                 else{
-                    var layer = new TileLayer(spritesheets.get(elemNode.att.spritesheet));
+                    var layer:TileLayer = null;
+                    if(elemNode.has.spritesheet)
+                        layer = new TileLayer(spritesheets.get(elemNode.att.spritesheet));
+                    else
+                        layer = new TileLayer(UiFactory.tilesheet);
                     layer.addChild(new TileSprite(elemNode.att.id));
                     popUpSprite.addChild(layer.view);
                     layer.render();
@@ -147,7 +156,10 @@ class FolderDisplay extends ActivityDisplay {
                 if(elemNode.has.buttonIcon){
                     var buttonIcon:BitmapData;
                     if(elemNode.att.buttonIcon.indexOf(".") < 0){
-                        buttonIcon = DisplayUtils.getBitmapDataFromLayer(spritesheets.get(elemNode.att.spritesheet), elemNode.att.buttonIcon);
+                        if(elemNode.has.spritesheet)
+                            buttonIcon = DisplayUtils.getBitmapDataFromLayer(spritesheets.get(elemNode.att.spritesheet), elemNode.att.buttonIcon);
+                        else
+                            buttonIcon = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, elemNode.att.buttonIcon);
                     }
                     else
                         buttonIcon = cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.buttonIcon), Bitmap).bitmapData;
@@ -178,12 +190,17 @@ class FolderDisplay extends ActivityDisplay {
                 var buttonPos = null;
                 if(elemNode.has.src)
                     background = cast(LoadData.getInstance().getElementDisplayInCache(elemNode.att.src), Bitmap).bitmapData;
-                else{
+                else if(elemNode.has.spritesheet){
                     background = DisplayUtils.getBitmapDataFromLayer(spritesheets.get(elemNode.att.spritesheet), elemNode.att.id);
                 }
+                else
+                    background = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, elemNode.att.id);
                 if(elemNode.has.buttonIcon){
                     if(elemNode.att.buttonIcon.indexOf(".") < 0){
-                        buttonIcon = DisplayUtils.getBitmapDataFromLayer(spritesheets.get(elemNode.att.spritesheet), elemNode.att.buttonIcon);
+                        if(elemNode.has.spritesheet)
+                            buttonIcon = DisplayUtils.getBitmapDataFromLayer(spritesheets.get(elemNode.att.spritesheet), elemNode.att.buttonIcon);
+                        else
+                            buttonIcon = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, elemNode.att.buttonIcon);
                     }
                     else
                         buttonIcon = cast(LoadData.instance.getElementDisplayInCache(elemNode.att.buttonIcon), Bitmap).bitmapData;
