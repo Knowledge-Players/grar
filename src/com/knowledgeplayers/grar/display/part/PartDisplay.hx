@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
-import nme.Assets;
+import com.knowledgeplayers.grar.display.GameManager;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
 import aze.display.SparrowTilesheet;
@@ -9,7 +9,7 @@ import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
-import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.element.CharacterDisplay;
 import com.knowledgeplayers.grar.display.ResizeManager;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
@@ -28,6 +28,7 @@ import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.util.XmlLoader;
+import com.knowledgeplayers.grar.display.TweenManager;
 import haxe.FastList;
 import haxe.xml.Fast;
 import nme.display.Bitmap;
@@ -81,7 +82,7 @@ class PartDisplay extends KpDisplay {
 
         displayArea = this;
 
-        addEventListener(TokenEvent.ADD, onTokenAdded);
+        GameManager.instance.addEventListener(TokenEvent.ADD, onTokenAdded);
     }
 
     /**
@@ -242,16 +243,18 @@ class PartDisplay extends KpDisplay {
         // Add new background
 
         if(background != null){
-            var bkg= new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(displaysFast.get(background).att.src),Bitmap).bitmapData);
+            var fastBkg = displaysFast.get(background);
+            var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(fastBkg.att.src), Bitmap).bitmapData);
 
             initDisplayObject(bkg, displaysFast.get(background));
             if(bkg != null){
+                if(fastBkg.has.tween)
+                    TweenManager.applyTransition(bkg, fastBkg.att.tween);
                 displayArea.addChildAt(bkg, 0);
+                resizeD.addDisplayObjects(bkg, displaysFast.get(background));
             }
 
             previousBackground = {ref: background, bmp: bkg};
-            if(bkg != null)
-                resizeD.addDisplayObjects(bkg, displaysFast.get(background));
         }
     }
 

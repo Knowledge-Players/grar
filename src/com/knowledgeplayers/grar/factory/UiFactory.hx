@@ -7,7 +7,7 @@ import nme.filters.BitmapFilter;
 import nme.geom.Point;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import nme.events.EventDispatcher;
-import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import aze.display.TileSprite;
 import aze.display.SparrowTilesheet;
 import aze.display.TilesheetEx;

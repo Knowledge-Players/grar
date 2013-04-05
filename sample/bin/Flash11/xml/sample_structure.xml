@@ -24,7 +24,7 @@
         <Transitions display="ui/transition.xml"/>
     </Display>
     <!-- Structure of the application -->
-    <Structure idObjective="" ref="main">
+    <Structure idObjective="" ref="main" tokens="xml/tokens.xml">
         <Part id="0" name="trancheDeVie" type="" file="xml/tranche.xml" display="xml/trancheDisplay.xml"/>
         <Part id="1" name="activities" type="" file="xml/activities.xml" display="xml/activitiesDisplay.xml"/>
         <Part id="2" name="bild" type="strip" file="xml/strip.xml" display="xml/stripDisplay.xml"/>

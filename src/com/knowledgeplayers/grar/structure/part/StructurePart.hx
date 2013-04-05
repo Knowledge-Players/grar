@@ -89,7 +89,6 @@ class StructurePart extends EventDispatcher, implements Part {
         options = new Hash<String>();
         inventory = new Array<Token>();
         elements = new Array<PartElement>();
-        addEventListener(TokenEvent.ADD, onAddToken);
     }
 
     /**
@@ -186,24 +185,21 @@ class StructurePart extends EventDispatcher, implements Part {
     {
         var activities = new Array<Activity>();
 
-
         for(elem in elements){
             if(elem.isPart()){
 
                 activities = activities.concat(cast(elem, Part).getAllActivities(_all));
-             }
+            }
             if(elem.isActivity())
                 activities.push(cast(elem, Activity));
 
-
-            if(_all)
-            {
+            if(_all){
                 if(elem.isPattern()){
-                    for(el in cast(elem,Pattern).patternContent) {
-                        if(el.isText()) {
-                            if(cast(el,TextItem).hasActivity()){
+                    for(el in cast(elem, Pattern).patternContent){
+                        if(el.isText()){
+                            if(cast(el, TextItem).hasActivity()){
 
-                                activities.push(cast(el,RemarkableEvent).activity);
+                                activities.push(cast(el, RemarkableEvent).activity);
                             }
                         }
                     }
@@ -310,7 +306,7 @@ class StructurePart extends EventDispatcher, implements Part {
             }
         }
         for(elem in elements){
-            if(elem.isText())
+            if(elem.isText() && cast(elem, TextItem).button == null)
                 cast(elem, TextItem).button = button;
         }
         if(nbSubPartLoaded == nbSubPartTotal)
@@ -350,7 +346,6 @@ class StructurePart extends EventDispatcher, implements Part {
     {
         var part:Part = PartFactory.createPartFromXml(partNode);
         part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-        part.addEventListener(TokenEvent.ADD, onAddToken);
         part.init(partNode);
         elements.push(part);
     }
@@ -378,19 +373,8 @@ class StructurePart extends EventDispatcher, implements Part {
 
     private function fireLoaded():Void
     {
+        Lib.trace("part " + name + " loaded");
         dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
-    }
-
-    private function onAddToken(e:TokenEvent):Void
-    {
-        if(e.token.target == "activity"){
-            e.stopImmediatePropagation();
-            inventory.push(e.token);
-        }
-        else{
-            var globalEvent = new TokenEvent(TokenEvent.ADD_GLOBAL, e.token);
-            dispatchEvent(globalEvent);
-        }
     }
 
     private function exitPart():Void

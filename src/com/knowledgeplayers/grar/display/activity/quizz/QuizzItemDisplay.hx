@@ -6,7 +6,7 @@ import haxe.xml.Fast;
 import aze.display.TileLayer;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.factory.UiFactory;
-import com.knowledgeplayers.grar.display.component.ScrollPanel;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.quizz.QuizzItem;
