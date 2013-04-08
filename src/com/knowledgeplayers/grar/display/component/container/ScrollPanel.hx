@@ -14,21 +14,20 @@ import nme.events.MouseEvent;
 /**
  * ScrollPanel to manage text overflow, with auto scrollbar
  */
-
 class ScrollPanel extends Sprite {
     /**
- * Text in the panel
- */
+     * Text in the panel
+     */
     private var content (default, null):Sprite;
 
     /**
-* If true, the text won't scroll even if it's bigger than the panel
-**/
+    * If true, the text won't scroll even if it's bigger than the panel
+    **/
     public var scrollLock (default, default):Bool;
 
     /**
-* Style sheet used for this panel
-**/
+    * Style sheet used for this panel
+    **/
     public var styleSheet (default, default):String;
 
     private var scrollBar:ScrollBar;

@@ -1,9 +1,7 @@
 package com.knowledgeplayers.grar.structure.part;
 
-import com.knowledgeplayers.grar.display.element.TokenDisplay;
 import haxe.FastList;
 import haxe.xml.Fast;
-import nme.Lib;
 
 class TextItem implements PartElement {
     /**
@@ -23,25 +21,28 @@ class TextItem implements PartElement {
 
     /**
     * Background when the item is displayed
-**/
+    **/
     public var background (default, default):String;
 
     /**
     * ID of the button that will appear with this item
-**/
+    **/
     public var button (default, default):{ref:String, content:String};
 
     /**
     * Unique ref that will match the display
-**/
+    **/
     public var ref (default, default):String;
 
     /**
-    * Items associated with this item
+    * Graphicals items associated with this item
     **/
     public var items (default, default):FastList<String>;
 
-    public var token:Token;
+    /**
+    * Reference to the token in this item
+    **/
+    public var token:String;
 
     /**
      * Constructor
@@ -64,9 +65,9 @@ class TextItem implements PartElement {
             if(xml.has.background)
                 background = xml.att.background;
             if(xml.hasNode.Token)
-               token = new Token(xml.node.Token);
+                token = xml.node.Token.att.ref;
             if(xml.hasNode.Button)
-                button = {ref: xml.node.Button.att.ref, content: xml.node.Button.has.content ? xml.node.Button.att.content:null};
+                button = {ref: xml.node.Button.att.ref, content: xml.node.Button.has.content ? xml.node.Button.att.content : null};
 
             for(item in xml.nodes.Item){
                 items.add(item.att.ref);
@@ -98,6 +99,7 @@ class TextItem implements PartElement {
     /**
      * @return true if the item starts an activity
      */
+
     public function hasToken():Bool
     {
 

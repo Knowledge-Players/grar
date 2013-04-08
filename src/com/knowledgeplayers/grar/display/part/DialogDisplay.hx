@@ -11,7 +11,7 @@ import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import nme.events.MouseEvent;
-import com.knowledgeplayers.grar.display.element.TokenDisplay;
+import com.knowledgeplayers.grar.display.element.TokenNotification;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import nme.display.Sprite;
@@ -57,7 +57,6 @@ class DialogDisplay extends PartDisplay {
 
     override private function next(event:ButtonActionEvent):Void
     {
-        hideToken();
         if(nextActivity != null){
             GameManager.instance.displayActivity(nextActivity);
             nextActivity = null;
@@ -86,7 +85,7 @@ class DialogDisplay extends PartDisplay {
                 nextActivity = cast(nextItem, RemarkableEvent).activity;
             }
             if(nextItem.hasToken()){
-                GameManager.instance.activateToken(nextItem.token.ref);
+                GameManager.instance.activateToken(nextItem.token);
             }
         }
         else if(currentPattern.nextPattern != "")
@@ -97,36 +96,9 @@ class DialogDisplay extends PartDisplay {
 
     // Privates
 
-    override private function createElement(elemNode:Fast):Void
-    {
-        super.createElement(elemNode);
-
-        if(elemNode.name.toLowerCase() == "token"){
-            var spritesheet = null;
-            if(elemNode.has.spritesheet)
-                spritesheet = spritesheets.get(elemNode.att.spritesheet);
-            else
-                spritesheet = UiFactory.tilesheet;
-            var token:TokenDisplay = new TokenDisplay(spritesheet, elemNode.att.id, Std.parseFloat(elemNode.att.x), Std.parseFloat(elemNode.att.y), Std.parseFloat(elemNode.att.scale), elemNode.att.transitionIn, elemNode.att.transitionOut, elemNode);
-            tokens.set(elemNode.att.id, token);
-
-        }
-    }
-
     override private function onTokenAdded(e:TokenEvent):Void
     {
         currentToken = e.token;
-        var tok = cast(tokens.get(currentToken.ref), TokenDisplay);
-        addChild(tok);
-
-        //tok.setImage(currentToken.img);
-        var content = Localiser.instance.getItemContent(currentToken.ref);
-        //var content2 = Localiser.instance.getItemContent(currentToken.img);
-        tok.textsToken.get(currentToken.ref).setContent(content);
-
-        //tok.textsToken.get(currentToken.img).setContent(content2);
-        TweenManager.slide(tok, tok.showToken);
-
     }
 
     override private function setButtonAction(button:CustomEventButton, action:String):Void
@@ -185,19 +157,5 @@ class DialogDisplay extends PartDisplay {
         }
 
         startPattern(cast(part.elements[i], Pattern));
-    }
-
-    private function hideToken():Void
-    {
-        if(currentToken != null){
-            //Lib.trace(currentToken.ref);
-            var tok = cast(tokens.get(currentToken.ref), TokenDisplay);
-
-            //tok.imgsToken.get(currentToken.img).visible = false;
-            //tok.textsToken.get(currentToken.img).visible = false;
-
-            TweenManager.slide(tok, tok.hideToken);
-
-        }
     }
 }

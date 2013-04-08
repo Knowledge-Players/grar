@@ -14,7 +14,6 @@ import nme.Lib;
 /**
  * Manage the most frequently used tweens
  */
-
 class TweenManager {
 
     private static var transitions:Hash<Dynamic> = new Hash<Dynamic>();
@@ -49,7 +48,7 @@ class TweenManager {
      * @param	display : Target of the tween
      * @param   ref : The name of the fade transition to applied
      * @return the actuator
-     */
+     **/
 
     public static function fade(display:DisplayObject, ref:String):IGenericActuator
     {
@@ -66,7 +65,7 @@ class TweenManager {
     * @param    display : Target of the tween
     * @param    ref : The name of the fade transition to applied
     * @return the actuator
-**/
+    **/
 
     public static function wiggle(display:DisplayObject, ref:String):IGenericActuator
     {
@@ -79,7 +78,7 @@ class TweenManager {
     * @param    display : Target of the tween
     * @param    ref : The name of the fade transition to applied
     * @return the actuator
-**/
+    **/
 
     public static function zoom(display:DisplayObject, ref:String):IGenericActuator
     {
@@ -104,12 +103,6 @@ class TweenManager {
     public static function slide(display:DisplayObject, ref:String):IGenericActuator
     {
         var slide = transitions.get(ref);
-        /*
-        var origin = {x: display.x, y: display.y};
-        display.x = slide.x;
-        display.y = slide.y;
-        return Actuate.tween(display, slide.duration, { x: origin.x, y: origin.y }).ease(getEasing(slide));
-        */
         return Actuate.tween(display, slide.duration, { x: slide.x, y: slide.y }).ease(getEasing(slide));
     }
 
@@ -122,7 +115,7 @@ class TweenManager {
     /**
     * Load an XML file with transitions templates
     * @param    file : Path to the file
-**/
+    **/
 
     public static function loadTemplate(file:String):Void
     {

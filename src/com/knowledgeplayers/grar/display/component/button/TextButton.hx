@@ -53,6 +53,7 @@ class TextButton extends CustomEventButton {
         var isFirst:Bool = true;
 
         for(element in KpTextDownParser.parse(text)){
+            element.style = className;
             var padding = StyleParser.getStyle(element.style).getPadding();
             var item = element.createSprite(width - padding[1] - padding[3]);
 
@@ -66,10 +67,37 @@ class TextButton extends CustomEventButton {
             textSprite.addChild(item);
 
         }
+
+        textSprite.y = -textSprite.height / 2;
+
+        /*textSprite.graphics.beginFill(0);
+        textSprite.graphics.drawRect(0,0,textSprite.width, textSprite.height);
+        textSprite.graphics.endFill();*/
+
+        #if flash
+            if(StyleParser.getStyle(className).getAlignment() == TextFormatAlign.CENTER)
+        #else
+        if(StyleParser.getStyle(className).getAlignment() == "CENTER")
+            #end
+            textSprite.x = -width / 2;
+        else
+            #if flash
+            if(StyleParser.getStyle(className).getAlignment() == TextFormatAlign.RIGHT)
+        #else
+        if(StyleParser.getStyle(className).getAlignment() == "RIGHT")
+            #end
+            textSprite.x = width / 2 - textSprite.width;
+        else
+            #if flash
+            if(StyleParser.getStyle(className).getAlignment() == TextFormatAlign.LEFT)
+        #else
+        if(StyleParser.getStyle(className).getAlignment() == "LEFT")
+            #end
+            textSprite.x = -width / 2;
+
         if(previousStyleSheet != null)
             StyleParser.currentStyleSheet = previousStyleSheet;
 
-        //centerText();
         if(!contains(textSprite))
             addChild(textSprite);
     }

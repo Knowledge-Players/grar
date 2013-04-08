@@ -1,5 +1,10 @@
 package com.knowledgeplayers.grar.display;
 
+import nme.display.Bitmap;
+import com.knowledgeplayers.grar.util.LoadData;
+import nme.display.BitmapData;
+import com.knowledgeplayers.grar.display.element.TokenNotification;
+import nme.Lib;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import com.knowledgeplayers.grar.event.TokenEvent;
@@ -9,7 +14,6 @@ import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.display.layout.Layout;
-import nme.Lib;
 import nme.events.EventDispatcher;
 import nme.display.Sprite;
 import com.knowledgeplayers.grar.util.KeyboardManager;
@@ -45,6 +49,16 @@ class GameManager extends EventDispatcher {
     * Inventory of the game
     **/
     public var inventory (default, null):Hash<Token>;
+
+    /**
+    * Notification display of a token
+    **/
+    public var tokenNotif:TokenNotification;
+
+    /**
+    * Tokens images
+    **/
+    public var tokensImages (default, null):Hash<BitmapData>;
 
     private var layout:Layout;
     private var activityDisplay:ActivityDisplay;
@@ -83,6 +97,10 @@ class GameManager extends EventDispatcher {
     {
         inventory.get(tokenName).isActivated = true;
         var tokenEvent = new TokenEvent(TokenEvent.ADD);
+
+        layout.zones.get(game.ref).addChild(tokenNotif);
+        tokenNotif.showNotification(tokenName);
+
         tokenEvent.token = inventory.get(tokenName);
         dispatchEvent(tokenEvent);
     }
@@ -131,6 +149,11 @@ class GameManager extends EventDispatcher {
         }
     }
 
+    /**
+    * Displays an activity
+    * @param    activity : Activity model to display
+    **/
+
     public function displayActivity(activity:Activity):Void
     {
         cleanup();
@@ -150,7 +173,6 @@ class GameManager extends EventDispatcher {
 
     public function displayPartById(id:Int):Void
     {
-
         displayPart(game.start(id));
     }
 
@@ -161,6 +183,7 @@ class GameManager extends EventDispatcher {
         super();
         parts = new FastList<PartDisplay>();
         inventory = new Hash<Token>();
+        tokensImages = new Hash<BitmapData>();
         // Set Keyboard Manager
         KeyboardManager.instance.game = this;
     }
@@ -168,8 +191,21 @@ class GameManager extends EventDispatcher {
     private function parseTokens(tokens:Xml):Void
     {
         var tokenFast = new Fast(tokens.firstElement());
+        XmlLoader.load(tokenFast.att.display, function(e:Event)
+        {
+            parseDisplayTokens(XmlLoader.getXml(e));
+        }, parseDisplayTokens);
         for(token in tokenFast.nodes.Token){
             inventory.set(token.att.ref, new Token(token));
+        }
+    }
+
+    private function parseDisplayTokens(display:Xml):Void
+    {
+        var fast = new Fast(display.firstElement());
+        tokenNotif = new TokenNotification(fast.node.Hud);
+        for(token in fast.nodes.Token){
+            tokensImages.set(token.att.ref, cast(LoadData.instance.getElementDisplayInCache(token.att.src), Bitmap).bitmapData);
         }
     }
 

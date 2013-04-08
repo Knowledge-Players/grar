@@ -67,7 +67,7 @@ class StyledTextField extends TextField {
 
     private function applyStyle(style:Style, startIndex:Int = -1, endIndex:Int = -1):Void
     {
-        var textFormat:TextFormat = new TextFormat(style.getFont().fontName, style.getSize(), style.getColor(), style.getBold(), style.getItalic(), style.getUnderline(), 0, 0, 0, style.getLeading()[0]);
+        var textFormat:TextFormat = new TextFormat(style.getFont().fontName, style.getSize(), style.getColor(), style.getBold(), style.getItalic(), style.getUnderline(), null, null, style.getAlignment(), 0, 0, 0, style.getLeading()[0]);
 
         if(startIndex == -1 || endIndex == -1)
             defaultTextFormat = textFormat;

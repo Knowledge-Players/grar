@@ -48,7 +48,7 @@ class UiFactory {
      * @return the created button
      */
 
-    public static function createButton(buttonType:String, ref:String, tile:String, ?tileDown:String, ?tileOver:String, x:Float = 0, y:Float = 0, scale:Float = 1, ?icon:String, iconX:Float = 0, iconY:Float = 0, ?action:String, ?iconStatus:String, ?mirror:String, ?style:String):DefaultButton
+    public static function createButton(buttonType:String, ref:String, tile:String, ?tileDown:String, ?tileOver:String, x:Float = 0, y:Float = 0, scale:Float = 1, ?icon:String, iconX:Float = 0, iconY:Float = 0, ?action:String, ?iconStatus:String, ?mirror:String, ?style:String, ?className:String):DefaultButton
     {
         var creation:DefaultButton =
         switch(buttonType.toLowerCase()) {
@@ -62,6 +62,7 @@ class UiFactory {
         creation.x = x;
         creation.y = y;
         creation.scale = scale;
+        creation.className = className != null ? className : "text";
         if(mirror == "horizontal")
             creation.mirror = 1;
         if(mirror == "vertical")
@@ -112,8 +113,9 @@ class UiFactory {
         var idDown = xml.has.idDown ? xml.att.idDown : null;
         var mirror = xml.has.mirror ? xml.att.mirror : null;
         var style = xml.has.style ? xml.att.style : null;
+        var className = xml.has.className ? xml.att.className : null;
 
-        return createButton(xml.att.type, xml.att.ref, xml.att.id, idDown, idOver, x, y, scale, icon, iconX, iconY, action, iconStatus, mirror, style);
+        return createButton(xml.att.type, xml.att.ref, xml.att.id, idDown, idOver, x, y, scale, icon, iconX, iconY, action, iconStatus, mirror, style, className);
     }
 
     /**

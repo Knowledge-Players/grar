@@ -299,7 +299,7 @@ class KpGame extends EventDispatcher, implements Game {
 
         // Load Parts
         var structureNode:Fast = structureXml.node.Grar.node.Structure;
-        GameManager.instance.loadTokens(structureNode.att.tokens);
+        GameManager.instance.loadTokens(structureNode.att.inventory);
         ref = structureNode.att.ref;
         for(part in structureNode.nodes.Part){
             addPartFromXml(Std.parseInt(part.att.id), part);

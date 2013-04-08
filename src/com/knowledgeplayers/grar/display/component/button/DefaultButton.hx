@@ -42,6 +42,11 @@ class DefaultButton extends Sprite {
     public var mirror (default, setMirror):Int;
 
     /**
+    * Class of style for the button
+    **/
+    public var className (default, default):String;
+
+    /**
     * Icon to add over the button
     **/
     private var icon:TileSprite;
@@ -99,7 +104,7 @@ class DefaultButton extends Sprite {
     public function setStateIcon(state:ButtonState, tileId:String)
     {
 
-        clip.currentFrame=0;
+        clip.currentFrame = 0;
         layer.render();
     }
 
@@ -166,18 +171,16 @@ class DefaultButton extends Sprite {
     private function onOver(event:MouseEvent):Void
     {
 
-        if(clip.frames.length >0)
-            {
-                clip.currentFrame = 1;
-            }
+        if(clip.frames.length > 0){
+            clip.currentFrame = 1;
+        }
 
         layer.render();
     }
 
     private function onOut(event:MouseEvent):Void
     {
-        if(clip.frames.length >0)
-        {
+        if(clip.frames.length > 0){
             clip.currentFrame = 0;
         }
 
@@ -186,12 +189,10 @@ class DefaultButton extends Sprite {
 
     private function onClickDown(event:MouseEvent):Void
     {
-        if(clip.frames.length >1)
-        {
+        if(clip.frames.length > 1){
             clip.currentFrame = 2;
         }
-        else
-        {
+        else{
             clip.currentFrame = 0;
         }
         layer.render();
@@ -199,8 +200,7 @@ class DefaultButton extends Sprite {
 
     private function onClickUp(event:MouseEvent):Void
     {
-        if(clip.frames.length >0)
-        {
+        if(clip.frames.length > 0){
             clip.currentFrame = 0;
         }
         layer.render();
