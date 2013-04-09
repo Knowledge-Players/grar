@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import com.knowledgeplayers.grar.display.element.AnimationDisplay;
 import com.knowledgeplayers.grar.display.GameManager;
 import nme.filters.DropShadowFilter;
 import nme.Lib;
@@ -48,11 +49,11 @@ class UiFactory {
      * @return the created button
      */
 
-    public static function createButton(buttonType:String, ref:String, tile:String, ?tileDown:String, ?tileOver:String, x:Float = 0, y:Float = 0, scale:Float = 1, ?icon:String, iconX:Float = 0, iconY:Float = 0, ?action:String, ?iconStatus:String, ?mirror:String, ?style:String, ?className:String):DefaultButton
+    public static function createButton(buttonType:String, ref:String, tile:String, x:Float = 0, y:Float = 0, scale:Float = 1, ?action:String, ?iconStatus:String, ?mirror:String, ?style:String,?className:String,?animations:Hash<AnimationDisplay>):DefaultButton
     {
         var creation:DefaultButton =
         switch(buttonType.toLowerCase()) {
-            case "text": new TextButton(tilesheet, tile, action, style);
+            case "text": new TextButton(tilesheet, tile, action, style,animations);
             case "event": new CustomEventButton(tilesheet, tile, action);
             case "anim": new AnimationButton(tilesheet, tile, action);
             case "menu": new MenuButton(tilesheet, tile, action, iconStatus);
@@ -67,12 +68,6 @@ class UiFactory {
             creation.mirror = 1;
         if(mirror == "vertical")
             creation.mirror = 2;
-        if(tileDown != null)
-            creation.setStateIcon(ButtonState.DOWN, tileDown);
-        if(tileOver != null)
-            creation.setStateIcon(ButtonState.OVER, tileOver);
-        if(icon != null)
-            creation.setIcon(new TileSprite(icon), new Point(iconX, iconY));
 
         return creation;
     }
@@ -100,22 +95,43 @@ class UiFactory {
 
     public static function createButtonFromXml(xml:Fast):DefaultButton
     {
-
+        var animations:Hash<AnimationDisplay> = new Hash<AnimationDisplay>();
         var x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
         var y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
         var scale = xml.has.scale ? Std.parseFloat(xml.att.scale) : 1;
         var action = xml.has.action ? xml.att.action : null;
-        var icon = xml.has.icon ? xml.att.icon : null;
-        var iconX = xml.has.iconX ? Std.parseFloat(xml.att.iconX) : 0;
-        var iconY = xml.has.iconY ? Std.parseFloat(xml.att.iconY) : 0;
         var iconStatus = xml.has.status ? xml.att.status : null;
-        var idOver = xml.has.idOver ? xml.att.idOver : null;
-        var idDown = xml.has.idDown ? xml.att.idDown : null;
         var mirror = xml.has.mirror ? xml.att.mirror : null;
         var style = xml.has.style ? xml.att.style : null;
         var className = xml.has.className ? xml.att.className : null;
 
-        return createButton(xml.att.type, xml.att.ref, xml.att.id, idDown, idOver, x, y, scale, icon, iconX, iconY, action, iconStatus, mirror, style, className);
+        for (node in xml.elements){
+            animations.set(node.att.id,createAnimationFromXml(node));
+        }
+
+        return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scale, action, iconStatus, mirror, style,className,animations);
+    }
+
+    /**
+    * Create an animation from an XML descriptor
+    * @param    xml : Fast descriptor
+    * @return a AnimationDisplay (sprite)
+    **/
+
+    public static function createAnimationFromXml(xml:Fast):AnimationDisplay{
+        var x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
+
+        var y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
+        var scaleX = xml.has.scaleX ? Std.parseFloat(xml.att.scaleX) : 1;
+        var scaleY = xml.has.scaleY ? Std.parseFloat(xml.att.scaleY) : 1;
+        var loop = xml.has.loop ? Std.parseFloat(xml.att.loop) : 0;
+        var alpha = xml.has.alpha ? Std.parseFloat(xml.att.alpha) : 0;
+
+
+        var animation:AnimationDisplay =new AnimationDisplay(xml.att.id,x,y,tilesheet,scaleX,scaleY,xml.att.type,loop,alpha);
+
+        return animation;
+
     }
 
     /**

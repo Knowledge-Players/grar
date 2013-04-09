@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.component.button;
 
+import com.knowledgeplayers.grar.display.element.AnimationDisplay;
+import nme.Lib;
+import aze.display.TileClip;
 import nme.text.TextFormatAlign;
 import nme.text.TextField;
 import nme.display.Sprite;
@@ -16,6 +19,7 @@ class TextButton extends CustomEventButton {
     private var text:String;
     private var textSprite:Sprite;
     private var styleSheet:String;
+    private var animations:Hash<AnimationDisplay>;
 
     /**
      * Constructor
@@ -25,14 +29,26 @@ class TextButton extends CustomEventButton {
      * @param	stylesheet : Style sheet for the text
      */
 
-    public function new(tilesheet:TilesheetEx, tile:String, ?eventName:String, ?_styleSheet:String)
+    public function new(tilesheet:TilesheetEx, tile:String, ?eventName:String, ?_styleSheet:String,?_animations:Hash<AnimationDisplay>)
     {
         super(tilesheet, tile, (eventName == null ? "next" : eventName));
+        animations = _animations;
         styleSheet = _styleSheet;
         if(eventName == null)
             propagateNativeEvent = true;
 
-        //setText(text);
+
+
+    }
+
+    private function setAnimations(_animations:Hash<AnimationDisplay>):Void{
+
+        for(key in _animations.keys()){
+                Lib.trace("set animations : "+key);
+                var anim:AnimationDisplay = cast(_animations.get(key),AnimationDisplay);
+                addChild(anim);
+                anim.init();
+            }
     }
 
     /**
@@ -100,5 +116,10 @@ class TextButton extends CustomEventButton {
 
         if(!contains(textSprite))
             addChild(textSprite);
+
+
+        if(animations != null)setAnimations(animations);
     }
+
+
 }

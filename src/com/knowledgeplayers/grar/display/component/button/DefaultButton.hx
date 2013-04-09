@@ -47,11 +47,6 @@ class DefaultButton extends Sprite {
     public var className (default, default):String;
 
     /**
-    * Icon to add over the button
-    **/
-    private var icon:TileSprite;
-
-    /**
      * Sprite containing the upstate
      */
     private var upState:TileSprite;
@@ -101,21 +96,6 @@ class DefaultButton extends Sprite {
         return activate;
     }
 
-    public function setStateIcon(state:ButtonState, tileId:String)
-    {
-
-        clip.currentFrame = 0;
-        layer.render();
-    }
-
-    public function setIcon(icon:TileSprite, iconPos:Point):TileSprite
-    {
-        icon.x = iconPos.x;
-        icon.y = iconPos.y;
-        layer.addChild(icon);
-        layer.render();
-        return this.icon = icon;
-    }
 
     public function setScale(scale:Float):Float
     {
