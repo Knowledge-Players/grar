@@ -26,7 +26,6 @@ class AnimationDisplay extends Sprite {
     public function init():Void{
 
         layer.addChild(clip);
-        //clip.currentFrame =0;
         addChild(layer.view);
 
         layer.render();
