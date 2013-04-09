@@ -51,8 +51,6 @@ class CustomEventButton extends DefaultButton {
                 addChild(anim);
                 animElement(key);
             }
-            anim.init();
-
         }
     }
 

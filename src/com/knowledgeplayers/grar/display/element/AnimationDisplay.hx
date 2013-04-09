@@ -21,9 +21,6 @@ class AnimationDisplay extends Sprite {
         clip.scaleX = _scaleX;
         clip.scaleY = _scaleY;
         clip.alpha = _alpha;
-    }
-
-    public function init():Void{
 
         layer.addChild(clip);
         addChild(layer.view);
@@ -31,10 +28,19 @@ class AnimationDisplay extends Sprite {
         layer.render();
     }
 
+
+    /**
+    * Play the animation with an Enter_Frame
+    **/
+
     public function animElement():Void{
 
         this.addEventListener(Event.ENTER_FRAME, loop);
     }
+
+    /**
+    * Stop the animation
+    **/
 
     public function stopElement():Void{
         this.removeEventListener(Event.ENTER_FRAME, loop);
