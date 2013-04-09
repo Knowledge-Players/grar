@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.contextual.InventoryDisplay;
 import com.knowledgeplayers.grar.display.GameManager;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
@@ -66,6 +67,7 @@ class PartDisplay extends KpDisplay {
     private var displayLoaded:Bool = false;
     private var currentItems:FastList<DisplayObject>;
     private var currentTextItem:TextItem;
+    private var inventory:InventoryDisplay;
 
     /**
      * Constructor
@@ -81,8 +83,6 @@ class PartDisplay extends KpDisplay {
         currentItems = new FastList<DisplayObject>();
 
         displayArea = this;
-
-        GameManager.instance.addEventListener(TokenEvent.ADD, onTokenAdded);
     }
 
     /**
@@ -198,9 +198,14 @@ class PartDisplay extends KpDisplay {
 
     // Private
 
-    private function onTokenAdded(e:TokenEvent):Void
+    override private function createElement(elemNode:Fast):Void
     {
-
+        if(elemNode.name.toLowerCase() == "inventory"){
+            inventory = new InventoryDisplay(elemNode);
+            inventory.init(part.tokens);
+        }
+        else
+            super.createElement(elemNode);
     }
 
     override private function createDisplay():Void
@@ -343,6 +348,9 @@ class PartDisplay extends KpDisplay {
         for(layer in layers){
             layer.render();
         }
+
+        if(inventory != null)
+            displayArea.addChild(inventory);
     }
 
     private function sortDisplayObjects(x:{obj:DisplayObject, z:Int}, y:{obj:DisplayObject, z:Int}):Int

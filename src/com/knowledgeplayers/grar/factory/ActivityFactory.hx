@@ -8,12 +8,12 @@ import com.knowledgeplayers.grar.structure.activity.quizz.Quizz;
 import com.knowledgeplayers.grar.structure.activity.scanner.Scanner;
 import com.knowledgeplayers.grar.structure.score.ScoreChart;
 import haxe.xml.Fast;
-import nme.Lib;
 
 /**
  * Factory for activities creation
  */
 class ActivityFactory {
+
     private function new()
     {
 
@@ -26,23 +26,22 @@ class ActivityFactory {
      * @return an newly created activity, or null if the given name doesn't correspond to a valid type
      */
 
-    public static function createActivity(activityType: String, name: String, ?content: String, ?perk: String, ?container: Part): Null<Activity>
+    public static function createActivity(activityType:String, name:String, ?content:String, ?tokenRef:String, ?perk:String, ?container:Part):Null<Activity>
     {
-        var creation: Activity = null;
+        var creation:Activity = null;
         switch (activityType.toLowerCase()) {
             case "quizz": creation = new Quizz(content);
             case "scanner": creation = new Scanner(content);
             case "folder": creation = new Folder(content);
             case "cards": creation = new Cards(content);
-            default: Lib.trace("Factory - " + activityType + " :  Unsupported activity");
+                throw "Factory - " + activityType + " :  Unsupported activity";
         }
 
-        if(creation != null){
-            ScoreChart.instance.subscribe(perk, creation);
-            creation.name = name;
-            if(container != null)
-                creation.container = container;
-        }
+        ScoreChart.instance.subscribe(perk, creation);
+        creation.name = name;
+        creation.token = tokenRef;
+        if(container != null)
+            creation.container = container;
 
         return creation;
     }
@@ -53,8 +52,8 @@ class ActivityFactory {
      * @return an newly created activity, or null if the given name doesn't correspond to a valid type
      */
 
-    public static function createActivityFromXml(xml: Fast, ?container: Part): Null<Activity>
+    public static function createActivityFromXml(xml:Fast, ?container:Part):Null<Activity>
     {
-        return createActivity(xml.att.type, xml.att.name, xml.att.content, xml.att.perk, container);
+        return createActivity(xml.att.type, xml.att.name, xml.att.content, xml.hasNode.Token ? xml.node.Token.att.ref : null, xml.att.perk, container);
     }
 }

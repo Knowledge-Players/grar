@@ -11,34 +11,39 @@ class Pattern implements PartElement {
     /**
      * Array of item composing the pattern
      */
-    public var patternContent (default, default): Array<TextItem>;
+    public var patternContent (default, default):Array<TextItem>;
 
     /**
      * Name of the pattern
      */
-    public var name (default, default): String;
+    public var name (default, default):String;
 
     /**
     * Current item index
-**/
-    public var itemIndex (default, default): Int;
+    **/
+    public var itemIndex (default, default):Int;
 
     /**
     * Id of the next pattern
-**/
-    public var nextPattern (default, default): String;
+    **/
+    public var nextPattern (default, default):String;
 
     /**
     * Buttons for this pattern
-**/
-    public var buttons (default, null): Hash<String>;
+    **/
+    public var buttons (default, null):Hash<String>;
+
+    /**
+    * Implements PartElement. Always null
+    **/
+    public var token (default, null):String;
 
     /**
     * Constructor
     * @param name : Name of the pattern
-**/
+    **/
 
-    public function new(name: String)
+    public function new(name:String)
     {
         this.name = name;
         patternContent = new Array<TextItem>();
@@ -51,10 +56,10 @@ class Pattern implements PartElement {
      * @param	xml : fast xml node with structure infos
      */
 
-    public function init(xml: Fast): Void
+    public function init(xml:Fast):Void
     {
         for(itemNode in xml.nodes.Text){
-            var item: TextItem = ItemFactory.createItemFromXml(itemNode);
+            var item:TextItem = ItemFactory.createItemFromXml(itemNode);
             patternContent.push(item);
 
         }
@@ -69,7 +74,7 @@ class Pattern implements PartElement {
      * @return the next item in the pattern, or null if the pattern reachs its end
      */
 
-    public function getNextItem(): Null<TextItem>
+    public function getNextItem():Null<TextItem>
     {
         if(itemIndex < patternContent.length){
             itemIndex++;
@@ -81,18 +86,18 @@ class Pattern implements PartElement {
 
     /**
     * Restart a pattern
-**/
+    **/
 
-    public function restart(): Void
+    public function restart():Void
     {
         itemIndex = 0;
     }
 
     /**
     * @return whether this pattern has choice or not
-**/
+    **/
 
-    public function hasChoices(): Bool
+    public function hasChoices():Bool
     {
         return false;
     }
@@ -101,42 +106,37 @@ class Pattern implements PartElement {
 
     /**
     * @return false
-**/
+    **/
 
-    public function isActivity(): Bool
+    public function isActivity():Bool
     {
         return false;
     }
 
     /**
     * @return false
-**/
+    **/
 
-    public function isText(): Bool
+    public function isText():Bool
     {
         return false;
     }
 
     /**
     * @return true
-**/
+    **/
 
-    public function isPattern(): Bool
+    public function isPattern():Bool
     {
         return true;
     }
 
     /**
     * @return false
-**/
+    **/
 
-    public function isPart(): Bool
+    public function isPart():Bool
     {
         return false;
     }
-
-    public function hasToken():Bool {
-        return false;
-    }
-
 }

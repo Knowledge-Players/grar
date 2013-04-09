@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import haxe.FastList;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import com.knowledgeplayers.grar.factory.ItemFactory;
 import com.knowledgeplayers.grar.structure.part.Pattern;
@@ -51,15 +52,14 @@ class StructurePart extends EventDispatcher, implements Part {
     public var isDone (default, default):Bool;
 
     /**
-     * Misc options for the part
-     * @todo Do something with the options
+     * Tokens in this part
      */
-    public var options (default, null):Hash<String>;
+    public var tokens (default, default):FastList<String>;
 
     /**
-     * Inventory specific to the part
+     * Implements PartElement. Always null
      */
-    public var inventory (default, null):Array<Token>;
+    public var token (default, default):String;
 
     /**
      * Sound playing during the part
@@ -81,13 +81,11 @@ class StructurePart extends EventDispatcher, implements Part {
     private var partIndex:Int = 0;
     private var elemIndex:Int = 0;
     private var soundLoopChannel:SoundChannel;
-    private var token:Token;
 
     public function new()
     {
         super();
-        options = new Hash<String>();
-        inventory = new Array<Token>();
+        tokens = new FastList<String>();
         elements = new Array<PartElement>();
     }
 
@@ -281,11 +279,6 @@ class StructurePart extends EventDispatcher, implements Part {
         return true;
     }
 
-    public function hasToken():Bool
-    {
-        return token != null;
-    }
-
     // Private
 
     private function parseContent(content:Xml):Void
@@ -308,6 +301,18 @@ class StructurePart extends EventDispatcher, implements Part {
         for(elem in elements){
             if(elem.isText() && cast(elem, TextItem).button == null)
                 cast(elem, TextItem).button = button;
+            if(elem.isPattern()){
+                nme.Lib.trace("Pattern " + cast(elem, Pattern).name);
+                for(item in cast(elem, Pattern).patternContent){
+                    nme.Lib.trace("  Item " + item.content);
+                    if(item.token != null){
+                        tokens.add(item.token);
+                        nme.Lib.trace("    has Token !");
+                    }
+                }
+            }
+            if(elem.token != null)
+                tokens.add(elem.token);
         }
         if(nbSubPartLoaded == nbSubPartTotal)
             fireLoaded();
@@ -329,15 +334,6 @@ class StructurePart extends EventDispatcher, implements Part {
             }
             for(partNode in xml.nodes.Part){
                 createPart(partNode);
-            }
-        }
-        if(xml.has.Options){
-            for(option in xml.att.options.split(";")){
-                if(option != ""){
-                    var key:String = StringTools.trim(option.split(":")[0]);
-                    var value:String = StringTools.trim(option.split(":")[1]);
-                    options.set(key, value);
-                }
             }
         }
     }

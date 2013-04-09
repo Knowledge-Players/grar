@@ -29,7 +29,7 @@ class LoadData extends EventDispatcher {
     private var nbDatas:Float = 0;
     private var nbXml:Float = 0;
     private var numXmlLoaded:Float = 0;
-    private var urlLoading: Array<String>;
+    private var urlLoading:Array<String>;
 
     /**
      * @return the instance of the loaderdatas
@@ -75,13 +75,14 @@ class LoadData extends EventDispatcher {
     * @param    name : Name of the wanted element
     * @return the element or null if it doesn't exist
     **/
+
     public function getElementDisplayInCache(_name:String):Null<DisplayObject>
     {
         // TODO Return BitmapData ?
         #if flash
             return cacheElementsDisplay.get(_name);
         #else
-            return new Bitmap(Assets.getBitmapData(_name));
+        return new Bitmap(Assets.getBitmapData(_name));
         #end
     }
 
@@ -112,6 +113,12 @@ class LoadData extends EventDispatcher {
                     loadDisplayXml(XmlLoader.getXml(e));
                 }, loadDisplayXml);
             }
+            if(elt.nodeName == "Structure" && elt.get("inventory") != null){
+                XmlLoader.load(elt.get("inventory"), function(e:Event)
+                {
+                    loadDisplayXml(XmlLoader.getXml(e));
+                }, loadDisplayXml);
+            }
             if(elt.get(_att) != null)
                 array.push(elt.get(_att));
             if(elt.firstChild() != null)
@@ -125,6 +132,7 @@ class LoadData extends EventDispatcher {
     * @param    ar : The array to clean
     * @return the array without duplicates
     **/
+
     private function removeDuplicates(array:Array<String>):Array<String>
     {
         var uniques = new Array<String>();
@@ -187,13 +195,12 @@ class LoadData extends EventDispatcher {
 
                     for(nI in nd.elements()){
                         if(nI.nodeName == "Img"){
-                        if(Std.string(nI.get("src")).charAt(0) != "0")
-                            imagesUrls.push(nI.get("src"));
-                    }
+                            if(Std.string(nI.get("src")).charAt(0) != "0")
+                                imagesUrls.push(nI.get("src"));
                         }
+                    }
                 };
             }
-
 
         }
 
@@ -227,19 +234,19 @@ class LoadData extends EventDispatcher {
                     mloader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
                     mloader.load(urlR);
                 #else
-                    numDataLoaded++;
-                    var urlR = new URLRequest(object);
-                    var path = urlR.url;
-                    var i: Int = 0;
-                    while(!StringTools.endsWith(path, urlLoading[i])){
-                        i++;
-                    }
-                    var elementDisplay = new Bitmap(Assets.getBitmapData(object));
+                numDataLoaded++;
+                var urlR = new URLRequest(object);
+                var path = urlR.url;
+                var i:Int = 0;
+                while(!StringTools.endsWith(path, urlLoading[i])){
+                    i++;
+                }
+                var elementDisplay = new Bitmap(Assets.getBitmapData(object));
 
-                    cacheElementsDisplay.set(urlLoading[i], elementDisplay);
-                    if(nbDatas == numDataLoaded){
-                        dispatchEvent(new Event("DATA_LOADED", true));
-                    }
+                cacheElementsDisplay.set(urlLoading[i], elementDisplay);
+                if(nbDatas == numDataLoaded){
+                    dispatchEvent(new Event("DATA_LOADED", true));
+                }
                 #end
             }
         }
@@ -254,7 +261,7 @@ class LoadData extends EventDispatcher {
     {
         numDataLoaded++;
         var path = event.currentTarget.url;
-        var i: Int = 0;
+        var i:Int = 0;
         while(!StringTools.endsWith(path, urlLoading[i])){
             i++;
         }
@@ -294,17 +301,14 @@ class SpriteSheetLoader extends EventDispatcher {
     private function parseXmlSprite(xmlSprite:Xml):Void
     {
 
-
         var fast = new Fast(xmlSprite).node.TextureAtlas;
-
-
 
         #if flash
             var elementDisplay = LoadData.instance.getElementDisplayInCache(fast.att.imagePath);
             spritesheet = new SparrowTilesheet(cast(elementDisplay, Bitmap).bitmapData, xmlSprite.toString());
         #else
 
-            spritesheet = new SparrowTilesheet(Assets.getBitmapData(fast.att.imagePath), xmlSprite.toString());
+        spritesheet = new SparrowTilesheet(Assets.getBitmapData(fast.att.imagePath), xmlSprite.toString());
 
         #end
 

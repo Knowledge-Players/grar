@@ -9,20 +9,21 @@ class RemarkableEvent extends TextItem {
     /**
      * Activity to start when this item is reached
      */
-    public var activity (default, default): Activity;
+    public var activity (default, default):Activity;
 
     /**
      * Constructor
      * @param	xml : fast xml node with structure infos
      */
 
-    public function new(?xml: Fast)
+    public function new(?xml:Fast)
     {
         super(xml);
         activity = ActivityFactory.createActivityFromXml(xml.node.Activity);
+        token = activity.token;
     }
 
-    override public function hasActivity(): Bool
+    override public function hasActivity():Bool
     {
         return true;
     }

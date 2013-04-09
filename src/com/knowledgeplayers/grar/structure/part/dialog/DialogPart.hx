@@ -37,8 +37,6 @@ class DialogPart extends StructurePart {
 
     override private function parseContent(content:Xml):Void
     {
-        super.parseContent(content);
-
         var partFast:Fast = new Fast(content).node.Part;
 
         for(patternNode in partFast.nodes.Pattern){
@@ -47,6 +45,7 @@ class DialogPart extends StructurePart {
             pattern.init(patternNode);
             elements.push(pattern);
         }
+        super.parseContent(content);
     }
 
 }

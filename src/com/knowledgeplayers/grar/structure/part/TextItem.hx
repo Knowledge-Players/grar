@@ -42,7 +42,7 @@ class TextItem implements PartElement {
     /**
     * Reference to the token in this item
     **/
-    public var token:String;
+    public var token(default, null):String;
 
     /**
      * Constructor
@@ -96,19 +96,10 @@ class TextItem implements PartElement {
     {
         return false;
     }
-    /**
-     * @return true if the item starts an activity
-     */
-
-    public function hasToken():Bool
-    {
-
-        return token != null;
-    }
 
     /**
     * @return true
-**/
+    **/
 
     public function isText():Bool
     {
@@ -117,7 +108,7 @@ class TextItem implements PartElement {
 
     /**
     * @return false
-**/
+    **/
 
     public function isActivity():Bool
     {
@@ -126,7 +117,7 @@ class TextItem implements PartElement {
 
     /**
     * @return false
-**/
+    **/
 
     public function isPattern():Bool
     {
@@ -135,7 +126,7 @@ class TextItem implements PartElement {
 
     /**
     * @return false
-**/
+    **/
 
     public function isPart():Bool
     {

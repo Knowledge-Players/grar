@@ -60,11 +60,14 @@ class Activity extends EventDispatcher, implements PartElement {
     public var controlMode (default, default):String;
 
     /**
+    * Token won in this activity
+    **/
+    public var token (default, default):String;
+
+    /**
      * True if the activity has been done
      */
     private var isEnded:Bool;
-
-    private var token:Token;
 
     /**
      * Constructor
@@ -145,10 +148,6 @@ class Activity extends EventDispatcher, implements PartElement {
         return false;
     }
 
-    public function hasToken():Bool {
-        return token != null;
-    }
-
     // Privates
 
     private function onLocaleComplete(e:LocaleEvent):Void
@@ -176,6 +175,8 @@ class Activity extends EventDispatcher, implements PartElement {
         else
             content = null;
         button = {ref: fast.node.Button.att.ref, content: content};
+        if(fast.hasNode.Token)
+            token = fast.node.Token.att.ref;
     }
 
     // Handlers

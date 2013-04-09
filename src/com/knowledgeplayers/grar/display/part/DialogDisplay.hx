@@ -68,6 +68,10 @@ class DialogDisplay extends PartDisplay {
     override private function startPattern(pattern:Pattern):Void
     {
         super.startPattern(pattern);
+        if(Std.is(pattern, ChoicePattern) && inventory != null)
+            inventory.visible = false;
+        else if(inventory != null)
+            inventory.visible = true;
 
         if(currentPattern != pattern)
             currentPattern = pattern;
@@ -84,7 +88,7 @@ class DialogDisplay extends PartDisplay {
             if(nextItem.hasActivity()){
                 nextActivity = cast(nextItem, RemarkableEvent).activity;
             }
-            if(nextItem.hasToken()){
+            if(nextItem.token != null){
                 GameManager.instance.activateToken(nextItem.token);
             }
         }
@@ -95,11 +99,6 @@ class DialogDisplay extends PartDisplay {
     }
 
     // Privates
-
-    override private function onTokenAdded(e:TokenEvent):Void
-    {
-        currentToken = e.token;
-    }
 
     override private function setButtonAction(button:CustomEventButton, action:String):Void
     {
