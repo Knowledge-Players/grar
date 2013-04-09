@@ -12,6 +12,7 @@ import com.knowledgeplayers.grar.util.LoadData;
  * Utility class for display
  */
 class DisplayUtils {
+
     private function new()
     {}
 
@@ -65,7 +66,7 @@ class DisplayUtils {
     * @param    alpha : Alpha of the color
     **/
 
-    public static function initSprite(sprite:Sprite, width:Float = 1, height:Float = 1, color:Int = 0, alpha: Float = 1):Void
+    public static function initSprite(sprite:Sprite, width:Float = 1, height:Float = 1, color:Int = 0, alpha:Float = 1):Void
     {
         sprite.graphics.beginFill(color, alpha);
         sprite.graphics.drawRect(0, 0, width, height);
@@ -76,7 +77,7 @@ class DisplayUtils {
     * @param    layer : Layer with all tiles
     * @param    tileId : Id of the tile to get
     * @return the bitmapData in the given tile
-**/
+    **/
 
     public static function getBitmapDataFromLayer(tilesheet:TilesheetEx, tileId:String):BitmapData
     {
@@ -84,7 +85,7 @@ class DisplayUtils {
         var tile = new TileSprite(tileId);
         tmpLayer.addChild(tile);
         tmpLayer.render();
-        var bmpData = new BitmapData(Math.round(tile.width), Math.round(tile.height));
+        var bmpData = new BitmapData(Math.round(tile.width), Math.round(tile.height), true, 0);
         var tmpSprite = new Sprite();
         tmpSprite.addChild(tmpLayer.view);
         tmpLayer.view.x = tile.width / 2;
