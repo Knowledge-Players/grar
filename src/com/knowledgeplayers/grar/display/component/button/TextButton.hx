@@ -19,7 +19,6 @@ class TextButton extends CustomEventButton {
     private var text:String;
     private var textSprite:Sprite;
     private var styleSheet:String;
-    private var animations:Hash<AnimationDisplay>;
 
     /**
      * Constructor
@@ -31,24 +30,11 @@ class TextButton extends CustomEventButton {
 
     public function new(tilesheet:TilesheetEx, tile:String, ?eventName:String, ?_styleSheet:String,?_animations:Hash<AnimationDisplay>)
     {
-        super(tilesheet, tile, (eventName == null ? "next" : eventName));
-        animations = _animations;
+        super(tilesheet, tile, (eventName == null ? "next" : eventName),_animations);
+
         styleSheet = _styleSheet;
         if(eventName == null)
             propagateNativeEvent = true;
-
-
-
-    }
-
-    private function setAnimations(_animations:Hash<AnimationDisplay>):Void{
-
-        for(key in _animations.keys()){
-                Lib.trace("set animations : "+key);
-                var anim:AnimationDisplay = cast(_animations.get(key),AnimationDisplay);
-                addChild(anim);
-                anim.init();
-            }
     }
 
     /**
@@ -118,7 +104,7 @@ class TextButton extends CustomEventButton {
             addChild(textSprite);
 
 
-        if(animations != null)setAnimations(animations);
+
     }
 
 

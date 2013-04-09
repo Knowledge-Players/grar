@@ -150,40 +150,23 @@ class DefaultButton extends Sprite {
 
     private function onOver(event:MouseEvent):Void
     {
+        clipOver();
 
-        if(clip.frames.length > 0){
-            clip.currentFrame = 1;
-        }
-
-        layer.render();
     }
 
     private function onOut(event:MouseEvent):Void
     {
-        if(clip.frames.length > 0){
-            clip.currentFrame = 0;
-        }
-
-        layer.render();
+        clipOut();
     }
 
     private function onClickDown(event:MouseEvent):Void
     {
-        if(clip.frames.length > 1){
-            clip.currentFrame = 2;
-        }
-        else{
-            clip.currentFrame = 0;
-        }
-        layer.render();
+        clipDown();
     }
 
     private function onClickUp(event:MouseEvent):Void
     {
-        if(clip.frames.length > 0){
-            clip.currentFrame = 0;
-        }
-        layer.render();
+        clipOut();
     }
 
     private function init():Void
@@ -204,6 +187,34 @@ class DefaultButton extends Sprite {
 			graphics.beginFill (0xFFFFFF, 0.01);
 			graphics.drawRect (-upState.width/2, -upState.height/2, upState.width, upState.height);
 		#end
+    }
+
+    public function clipOver():Void {
+
+        if(clip.frames.length > 0){
+            clip.currentFrame = 1;
+        }
+
+        layer.render();
+
+    }
+
+    public function clipOut():Void {
+        if(clip.frames.length > 0){
+            clip.currentFrame = 0;
+        }
+
+        layer.render();
+    }
+
+    public function clipDown():Void {
+        if(clip.frames.length > 1){
+            clip.currentFrame = 2;
+        }
+        else{
+            clip.currentFrame = 0;
+        }
+        layer.render();
     }
 
     private function removeAllEventsListeners(listener:MouseEvent -> Void):Void

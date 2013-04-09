@@ -54,7 +54,7 @@ class UiFactory {
         var creation:DefaultButton =
         switch(buttonType.toLowerCase()) {
             case "text": new TextButton(tilesheet, tile, action, style,animations);
-            case "event": new CustomEventButton(tilesheet, tile, action);
+            case "event": new CustomEventButton(tilesheet, tile, action,animations);
             case "anim": new AnimationButton(tilesheet, tile, action);
             case "menu": new MenuButton(tilesheet, tile, action, iconStatus);
             default: new DefaultButton(tilesheet, tile);
@@ -95,7 +95,8 @@ class UiFactory {
 
     public static function createButtonFromXml(xml:Fast):DefaultButton
     {
-        var animations:Hash<AnimationDisplay> = new Hash<AnimationDisplay>();
+        var animations:Hash<AnimationDisplay> =null;
+
         var x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
         var y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
         var scale = xml.has.scale ? Std.parseFloat(xml.att.scale) : 1;
@@ -105,10 +106,13 @@ class UiFactory {
         var style = xml.has.style ? xml.att.style : null;
         var className = xml.has.className ? xml.att.className : null;
 
-        for (node in xml.elements){
-            animations.set(node.att.id,createAnimationFromXml(node));
-        }
+        if(xml.hasNode.Animation){
 
+            animations = new Hash<AnimationDisplay>();
+            for (node in xml.elements){
+                animations.set(node.att.type,createAnimationFromXml(node));
+            }
+        }
         return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scale, action, iconStatus, mirror, style,className,animations);
     }
 
@@ -120,7 +124,6 @@ class UiFactory {
 
     public static function createAnimationFromXml(xml:Fast):AnimationDisplay{
         var x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
-
         var y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
         var scaleX = xml.has.scaleX ? Std.parseFloat(xml.att.scaleX) : 1;
         var scaleY = xml.has.scaleY ? Std.parseFloat(xml.att.scaleY) : 1;
