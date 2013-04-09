@@ -35,60 +35,29 @@ class AnimationButton extends CustomEventButton {
 
     public function new(tilesheet:TilesheetEx, tile:String, ?eventName:String)
     {
-        if(eventName == null){
-            this.eventType = "next";
+        super(tilesheet, tile, (eventName == null ? "next" : eventName));
+
+        if(eventName == null)
             propagateNativeEvent = true;
-        }
-        else
-            this.eventType = eventName;
-
-        super(tilesheet, tile, eventType);
-        addIcon();
     }
 
-    // Privates
 
-    private function addIcon():Void
-    {
-        // TODO use icon property
-        this.iconGroup = new TileGroup();
-        this.fondIcon = new TileSprite("btCircle");
-        this.arrowIcon = new TileClip("fleche_mc");
-        iconGroup.addChild(this.fondIcon);
-        iconGroup.addChild(this.arrowIcon);
-        layer.addChild(iconGroup);
-        iconGroup.x = 100;
-
-        layer.render();
-    }
 
     override private function onOver(event:MouseEvent):Void
     {
         super.onOver(event);
-        startAnimIcon();
+
     }
 
     override private function onOut(event:MouseEvent):Void
     {
         super.onOut(event);
-        endAnimIcon();
+
     }
 
     private function animRender(e:Event = null):Void
     {
         layer.render();
-    }
-
-    private function endAnimIcon():Void
-    {
-        this.removeEventListener(Event.ENTER_FRAME, animRender);
-        arrowIcon.currentFrame = 0;
-        layer.render();
-    }
-
-    private function startAnimIcon():Void
-    {
-        this.addEventListener(Event.ENTER_FRAME, animRender);
     }
 
 }
