@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.part;
 
+import nme.media.SoundChannel;
+import nme.net.URLRequest;
+import nme.media.Sound;
 import com.knowledgeplayers.grar.display.contextual.InventoryDisplay;
 import com.knowledgeplayers.grar.display.GameManager;
 import aze.display.TileSprite;
@@ -68,6 +71,8 @@ class PartDisplay extends KpDisplay {
     private var currentItems:FastList<DisplayObject>;
     private var currentTextItem:TextItem;
     private var inventory:InventoryDisplay;
+    private var itemSound:Sound;
+    private var itemSoundChannel:SoundChannel;
 
     /**
      * Constructor
@@ -81,7 +86,6 @@ class PartDisplay extends KpDisplay {
 
         resizeD = ResizeManager.getInstance();
         currentItems = new FastList<DisplayObject>();
-
         displayArea = this;
     }
 
@@ -151,6 +155,8 @@ class PartDisplay extends KpDisplay {
                 else{
                     setText(cast(currentElement, TextItem));
                 }
+
+                playSound(cast(currentElement, TextItem).sound);
             }
         }
 
@@ -197,6 +203,17 @@ class PartDisplay extends KpDisplay {
     }
 
     // Private
+
+    private function playSound(soundRef):Void
+    {
+        if(itemSoundChannel != null){
+            itemSoundChannel.stop();
+        }
+        if(soundRef != null){
+            itemSound = new Sound(new URLRequest(soundRef));
+            itemSoundChannel = itemSound.play();
+        }
+    }
 
     override private function createElement(elemNode:Fast):Void
     {

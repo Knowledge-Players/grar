@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import nme.net.URLRequest;
+import nme.media.Sound;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
@@ -84,7 +86,7 @@ class DialogDisplay extends PartDisplay {
         var nextItem = pattern.getNextItem();
         if(nextItem != null){
             setText(nextItem);
-
+            playSound(nextItem.sound);
             if(nextItem.hasActivity()){
                 nextActivity = cast(nextItem, RemarkableEvent).activity;
             }

@@ -45,6 +45,11 @@ class TextItem implements PartElement {
     public var token(default, null):String;
 
     /**
+    * Sound to play during this item
+    **/
+    public var sound (default, default):String;
+
+    /**
      * Constructor
      * @param	xml : fast xml node with structure info
      * @param	content : text of the item
@@ -68,6 +73,8 @@ class TextItem implements PartElement {
                 token = xml.node.Token.att.ref;
             if(xml.hasNode.Button)
                 button = {ref: xml.node.Button.att.ref, content: xml.node.Button.has.content ? xml.node.Button.att.content : null};
+            if(xml.hasNode.Sound)
+                sound = xml.node.Sound.att.src;
 
             for(item in xml.nodes.Item){
                 items.add(item.att.ref);

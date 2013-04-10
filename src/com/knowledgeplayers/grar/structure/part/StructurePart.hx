@@ -299,15 +299,15 @@ class StructurePart extends EventDispatcher, implements Part {
             }
         }
         for(elem in elements){
-            if(elem.isText() && cast(elem, TextItem).button == null)
-                cast(elem, TextItem).button = button;
+            if(elem.isText()){
+                var text = cast(elem, TextItem);
+                if(text.button == null)
+                    text.button = button;
+            }
             if(elem.isPattern()){
-                nme.Lib.trace("Pattern " + cast(elem, Pattern).name);
                 for(item in cast(elem, Pattern).patternContent){
-                    nme.Lib.trace("  Item " + item.content);
                     if(item.token != null){
                         tokens.add(item.token);
-                        nme.Lib.trace("    has Token !");
                     }
                 }
             }
@@ -326,6 +326,7 @@ class StructurePart extends EventDispatcher, implements Part {
         if(xml.has.display) display = xml.att.display;
 
         if(xml.hasNode.Sound)
+            // TODO use LoadData
             soundLoop = Assets.getSound(xml.node.Sound.att.content);
 
         if(xml.hasNode.Part){

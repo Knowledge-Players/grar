@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.util;
 
+import nme.media.Sound;
+import nme.display.BitmapData;
 import aze.display.TilesheetEx;
 import haxe.xml.Fast;
 import aze.display.SparrowTilesheet;
@@ -32,7 +34,7 @@ class LoadData extends EventDispatcher {
     private var urlLoading:Array<String>;
 
     /**
-     * @return the instance of the loaderdatas
+     * @return the instance of the LoadData
      */
 
     public static function getInstance():LoadData
@@ -62,7 +64,14 @@ class LoadData extends EventDispatcher {
         }
     }
 
-    public function loadSpritesheet(pName:String, src:String, listener:Event -> Void)
+    /**
+    * Load a spritesheet
+    * @param    pName : Name of the spritesheet
+    * @param    src : Path to the spritesheet
+    * @param    listener : Function to call when the loading is completed
+    **/
+
+    public function loadSpritesheet(pName:String, src:String, listener:Event -> Void):Void
     {
         var loader = new SpriteSheetLoader();
         loader.addEventListener(Event.COMPLETE, listener);
