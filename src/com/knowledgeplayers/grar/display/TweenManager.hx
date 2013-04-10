@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display;
 
+import Reflect;
+import haxe.FastList;
 import com.eclecticdesignstudio.motion.Actuate;
 import com.eclecticdesignstudio.motion.actuators.GenericActuator.IGenericActuator;
 import com.eclecticdesignstudio.motion.easing.Cubic;
@@ -17,6 +19,7 @@ import nme.Lib;
 class TweenManager {
 
     private static var transitions:Hash<Dynamic> = new Hash<Dynamic>();
+    //private static var ongoingTween: FastList<DisplayObject> = new FastList<DisplayObject>();
 
     /**
     * Apply the given transition to the given displayObject
@@ -53,11 +56,10 @@ class TweenManager {
     public static function fade(display:DisplayObject, ref:String):IGenericActuator
     {
         var fade = transitions.get(ref);
-        if(fade.alpha > 0)
-            display.alpha = 0;
-        else
-            display.alpha = 1;
-        return Actuate.tween(display, fade.duration, { alpha: fade.alpha }).ease(getEasing(fade));
+        var inOut = parseValue("alpha", fade.alpha, display);
+
+        display.alpha = inOut[0];
+        return Actuate.tween(display, fade.duration, { alpha: inOut[1] }).autoVisible(false).ease(getEasing(fade));
     }
 
     /**
@@ -70,7 +72,11 @@ class TweenManager {
     public static function wiggle(display:DisplayObject, ref:String):IGenericActuator
     {
         var wiggle = transitions.get(ref);
-        return Actuate.tween(display, wiggle.duration, {x: display.x + wiggle.xRange, y: display.y + wiggle.yRange}).repeat(wiggle.repeat).reflect();
+        var inOutX = parseValue("x", wiggle.x, display);
+        var inOutY = parseValue("y", wiggle.y, display);
+        display.x = inOutX[0];
+        display.y = inOutY[0];
+        return Actuate.tween(display, wiggle.duration, {x: inOutX[1], y: inOutY[1]}).repeat(wiggle.repeat).reflect();
     }
 
     /**
@@ -103,7 +109,12 @@ class TweenManager {
     public static function slide(display:DisplayObject, ref:String):IGenericActuator
     {
         var slide = transitions.get(ref);
-        return Actuate.tween(display, slide.duration, { x: slide.x, y: slide.y }).ease(getEasing(slide));
+
+        var inOutX = parseValue("x", slide.x, display);
+        var inOutY = parseValue("y", slide.y, display);
+        display.x = inOutX[0];
+        display.y = inOutY[0];
+        return Actuate.tween(display, slide.duration, {x: inOutX[1], y: inOutY[1]}).ease(getEasing(slide));
     }
 
     public static function blink(display:DisplayObject, ref:String):IGenericActuator
@@ -143,19 +154,19 @@ class TweenManager {
             }
             switch(child.name.toLowerCase()){
                 case "zoom":
-                    transition.x = Std.parseFloat(child.att.x);
-                    transition.y = Std.parseFloat(child.att.y);
+                    transition.x = child.att.x;
+                    transition.y = child.att.y;
                     transition.width = Std.parseFloat(child.att.width);
                     transition.height = Std.parseFloat(child.att.height);
                 case "wiggle":
                     transition.repeat = Std.parseInt(child.att.repeat);
-                    transition.xRange = Std.parseFloat(child.att.xRange);
-                    transition.yRange = Std.parseFloat(child.att.yRange);
+                    transition.x = child.att.x;
+                    transition.y = child.att.y;
                 case "fade":
-                    transition.alpha = Std.parseFloat(child.att.alpha);
+                    transition.alpha = child.att.alpha;
                 case "slide":
-                    transition.x = Std.parseFloat(child.att.x);
-                    transition.y = Std.parseFloat(child.att.y);
+                    transition.x = child.att.x;
+                    transition.y = child.att.y;
                 case "blink":
                     transition.color = Std.parseInt(child.att.color);
                     transition.repeat = Std.parseInt(child.att.repeat);
@@ -176,9 +187,40 @@ class TweenManager {
             easingType = "Linear";
             easingStyle = "EaseNone";
         }
-        var easingTest = Cubic.easeOut;
+        //var easingTest = Cubic.easeOut;
         var easing = Type.createEmptyInstance(Type.resolveClass("com.eclecticdesignstudio.motion.easing." + easingType + easingStyle));
         //var eas = Reflect.field(easing, easingStyle);
         return easing;
+    }
+
+    private static function parseValue(parameter:String, value:String, display:DisplayObject):Array<Float>
+    {
+        var inOut:Array<String> = value.split(":");
+        var output:Array<Float> = new Array<Float>();
+
+        var ereg:EReg = new EReg(parameter + "([+*/-])([0-9]+)", null);
+        for(val in inOut){
+            if(ereg.match(val)){
+                switch(ereg.matched(1)){
+                    case "+" : output.push(display.alpha + Std.parseFloat(ereg.matched(2)));
+                    case "-" : output.push(display.alpha - Std.parseFloat(ereg.matched(2)));
+                    case "*" : output.push(display.alpha * Std.parseFloat(ereg.matched(2)));
+                    case "/" : output.push(display.alpha / Std.parseFloat(ereg.matched(2)));
+                }
+            }
+            else if(val == parameter)
+                output.push(Reflect.field(display, parameter));
+            else
+                output.push(Std.parseFloat(val));
+        }
+
+        // Not a FROM .. TO form, returning the only value
+        if(output.length == 1){
+            output.push(output[0]);
+        }
+
+        nme.Lib.trace(output);
+
+        return output;
     }
 }

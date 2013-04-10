@@ -45,9 +45,20 @@ class InventoryDisplay extends Sprite {
     **/
     public var iconScale (default, default):Float;
 
+    /**
+    * Reference to the transition when tooltip appears
+    **/
+    public var transitionIn (default, default):String;
+
+    /**
+    * Reference to the transition when tooltip disappears
+    **/
+    public var transitionOut (default, default):String;
+
     private var tokens:FastList<String>;
     private var slots:Hash<Sprite>;
     private var tooltip:ScrollPanel;
+    private var tooltipOrigin:Point;
 
     /**
     * Constructor
@@ -65,8 +76,9 @@ class InventoryDisplay extends Sprite {
         iconScale = Std.parseFloat(icon.att.scale);
         iconPosition = new Point(Std.parseFloat(icon.att.x), Std.parseFloat(icon.att.y));
 
-        var tip = fast.node.Tooltip;
+        var tip:Fast = fast.node.Tooltip;
         tooltip = new ScrollPanel(Std.parseFloat(tip.att.width), Std.parseFloat(tip.att.height), tip.has.style ? tip.att.style : null);
+        tooltip.mouseEnabled = false;
         var spritesheet:TilesheetEx = null;
         if(tip.has.spritesheet){
             spritesheet = cast(parent, PartDisplay).spritesheets.get(tip.att.spritesheet);
@@ -74,6 +86,9 @@ class InventoryDisplay extends Sprite {
         tooltip.setBackground(tip.att.background, spritesheet);
         tooltip.x = Std.parseFloat(tip.att.x);
         tooltip.y = Std.parseFloat(tip.att.y);
+        tooltipOrigin = new Point(tooltip.x, tooltip.y);
+        transitionIn = tip.has.transitionIn ? tip.att.transitionIn : null;
+        transitionOut = tip.has.transitionOut ? tip.att.transitionOut : null;
 
         if(fast.has.src)
             slotBackground = cast(LoadData.instance.getElementDisplayInCache(fast.att.src), Bitmap).bitmapData;
@@ -129,21 +144,30 @@ class InventoryDisplay extends Sprite {
     private function onOverToken(e:MouseEvent):Void
     {
         var slot = cast(e.target, Sprite);
+        slot.removeEventListener(MouseEvent.ROLL_OVER, onOverToken);
         tooltip.x += slot.x;
         tooltip.y += slot.y;
         for(key in slots.keys()){
             if(slots.get(key) == slot)
                 tooltip.setContent(Localiser.instance.getItemContent(GameManager.instance.inventory.get(key).name));
         }
+        if(transitionIn != null)
+            TweenManager.applyTransition(tooltip, transitionIn);
         addChild(tooltip);
     }
 
     private function onOutToken(e:MouseEvent):Void
     {
         var slot = cast(e.target, Sprite);
-        tooltip.x -= slot.x;
-        tooltip.y -= slot.y;
-        if(contains(tooltip))
-            removeChild(tooltip);
+
+        if(transitionOut != null)
+            TweenManager.applyTransition(tooltip, transitionOut).onComplete(function()
+            {
+                if(contains(tooltip))
+                    removeChild(tooltip);
+                tooltip.x = tooltipOrigin.x;
+                tooltip.y = tooltipOrigin.y;
+                slot.addEventListener(MouseEvent.ROLL_OVER, onOverToken);
+            });
     }
 }
