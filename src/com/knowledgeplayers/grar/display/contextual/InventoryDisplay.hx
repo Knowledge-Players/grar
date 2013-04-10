@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
@@ -119,7 +120,8 @@ class InventoryDisplay extends Sprite {
             icon.x = iconPosition.x;
             icon.y = iconPosition.y;
             slot.addChild(icon);
-            slot.addEventListener(MouseEvent.MOUSE_OVER, onOverToken);
+            slot.mouseChildren = false;
+            slot.addEventListener(MouseEvent.ROLL_OVER, onOverToken);
             slot.addEventListener(MouseEvent.MOUSE_OUT, onOutToken);
         }
     }
@@ -131,13 +133,16 @@ class InventoryDisplay extends Sprite {
         tooltip.y += slot.y;
         for(key in slots.keys()){
             if(slots.get(key) == slot)
-                tooltip.setContent(GameManager.instance.inventory.get(key).name);
+                tooltip.setContent(Localiser.instance.getItemContent(GameManager.instance.inventory.get(key).name));
         }
         addChild(tooltip);
     }
 
     private function onOutToken(e:MouseEvent):Void
     {
+        var slot = cast(e.target, Sprite);
+        tooltip.x -= slot.x;
+        tooltip.y -= slot.y;
         if(contains(tooltip))
             removeChild(tooltip);
     }

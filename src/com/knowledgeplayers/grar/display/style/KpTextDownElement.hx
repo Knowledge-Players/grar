@@ -108,10 +108,10 @@ class KpTextDownElement {
 
     private function createTextField(content:String, ?styleName:String):StyledTextField
     {
-        var style = StyleParser.getStyle(styleName);
         var tf = new StyledTextField();
-        if(style != null)
-            tf.style = style;
+
+        var style = StyleParser.getStyle(styleName);
+        tf.style = style;
 
         styleName = StringTools.replace(styleName, "text", "");
 
@@ -129,7 +129,12 @@ class KpTextDownElement {
             content = regexIta.replace(content, regexIta.matched(1));
         }
 
-        tf.text = content;
+        if(style.getCase() == "upper")
+            tf.text = content.toUpperCase();
+        else if(style.getCase() == "lower")
+            tf.text = content.toLowerCase();
+        else
+            tf.text = content;
 
         tf.width = width;
         tf.wordWrap = true;

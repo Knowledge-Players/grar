@@ -142,7 +142,14 @@ class Style extends Hash<String> {
     public function getUnderline():Null<Bool>
     {
         return get("underline") == "true";
-    }/**
+    }
+
+    public function getCase():Null<String>
+    {
+        return get("case");
+    }
+
+    /**
     * @return an array with line leading in 0 and paragraph leading in 1
     **/
 
