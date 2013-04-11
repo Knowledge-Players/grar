@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.grar.structure.part.PartElement;
+import com.knowledgeplayers.grar.tracking.Trackable;
 import haxe.FastList;
 import com.knowledgeplayers.grar.display.GameManager;
 import com.eclecticdesignstudio.motion.Actuate;
@@ -33,328 +35,391 @@ import nme.net.URLLoader;
  * KP inmplentation of a game
  */
 class KpGame extends EventDispatcher, implements Game {
-    /**
+	/**
      * Connection mode
      */
-    public var mode (default, default):Mode;
+	public var mode (default, default):Mode;
 
-    /**
+	/**
      * Game title
      */
-    public var title (default, default):String;
+	public var title (default, default):String;
 
-    /**
+	/**
      * State of the game
      */
-    public var state (default, default):String;
+	public var state (default, default):String;
 
-    /**
+	/**
      * Global inventory
      */
-    public var inventory (default, null):Array<Token>;
+	public var inventory (default, null):Array<Token>;
 
-    /**
+	/**
     * Flag for the loading of UI
     **/
-    public var uiLoaded (default, default):Bool = false;
+	public var uiLoaded (default, default):Bool = false;
 
-    /**
+	/**
     * Reference for the layout
     **/
-    public var ref (default, default):String;
+	public var ref (default, default):String;
 
-    /**
+	/**
+    * Xml describing the menu
+    **/
+	public var menu (default, default):Xml;
+
+	/**
     * Index of the current part
     **/
-    private var partIndex:Int = 0;
-    private var structureXml:Fast;
-    private var languages:Hash<String>;
-    private var stateInfos:StateInfos;
-    private var flags:Hash<String>;
-    private var parts:IntHash<Part>;
-    private var connection:Connection;
-    private var nbPartsLoaded:Int = 0;
-    private var layoutLoaded:Bool = false;
-    private var numStyleSheet:Int = 0;
-    private var numStyleSheetLoaded:Int = 0;
-    private var activitiesWaiting:FastList<Xml>;
+	private var partIndex:Int = 0;
+	private var structureXml:Fast;
+	private var languages:Hash<String>;
+	private var stateInfos:StateInfos;
+	private var flags:Hash<String>;
+	private var parts:Hash<Part>;
+	private var connection:Connection;
+	private var nbPartsLoaded:Int = 0;
+	private var layoutLoaded:Bool = false;
+	private var numStyleSheet:Int = 0;
+	private var numStyleSheetLoaded:Int = 0;
+	private var activitiesWaiting:FastList<Xml>;
 
-    /**
+	/**
     * Constructor.
     * Register the game to the GameManager
     **/
 
-    public function new()
-    {
-        super();
-        languages = new Hash<String>();
-        flags = new Hash<String>();
-        parts = new IntHash<Part>();
-        inventory = new Array<Token>();
-        activitiesWaiting = new FastList<Xml>();
+	public function new()
+	{
+		super();
+		languages = new Hash<String>();
+		flags = new Hash<String>();
+		parts = new Hash<Part>();
+		inventory = new Array<Token>();
+		activitiesWaiting = new FastList<Xml>();
 
-        GameManager.instance.game = this;
+		GameManager.instance.game = this;
 
-        Lib.current.stage.addEventListener(Event.DEACTIVATE, onExit);
-        LayoutManager.instance.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+		Lib.current.stage.addEventListener(Event.DEACTIVATE, onExit);
+		LayoutManager.instance.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
 
-    }
+	}
 
-    /**
+	/**
      * Initialize the game with a xml structure
      * @param	xml : the structure
      */
 
-    public function init(xml:Xml):Void
-    {
-        structureXml = new Fast(xml);
+	public function init(xml:Xml):Void
+	{
+		structureXml = new Fast(xml);
 
-        #if flash
+		#if flash
             LoadData.getInstance().addEventListener("DATA_LOADED",onDisplayLoaded);
             LoadData.getInstance().loadDisplayXml(xml);
         #else
-        onDisplayLoaded();
-        #end
-    }
+		onDisplayLoaded();
+		#end
+	}
 
-    /**
+	/**
      * Start the game
      * @param	partId : the ID of the part to start.
      * @return 	the part with id partId or null if this part doesn't exist
      */
 
-    public function start(partId:Int = 0):Null<Part>
-    {
-        for(part in getAllParts()){
-            if(part.id == partId)
-                return part.start(true);
-        }
-        return null;
-    }
+	public function start(?partId:String):Null<Part>
+	{
+		for(part in getAllParts()){
+			if(partId == null || part.id == partId)
+				return part.start(true);
+		}
+		return null;
+	}
 
-    /**
+	/**
      * Add a part to the game at partIndex
-     * @param	partIndex : position of the part in the game
+     * @param	partId : ID of the part
      * @param	part : the part to add
      */
 
-    public function addPart(partIndex:Int, part:Part):Void
-    {
-        part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-        part.addEventListener(PartEvent.EXIT_PART, onPartComplete);
-        parts.set(partIndex, part);
-    }
+	public function addPart(partId:String, part:Part):Void
+	{
+		part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+		part.addEventListener(PartEvent.EXIT_PART, onPartComplete);
+		parts.set(partId, part);
+	}
 
-    /**
+	/**
      * Add a language to the game
      * @param	value : name of the language
      * @param	path : path to the localisation folder
      * @param	flagIconPath : path to the flag for this language
      */
 
-    public function addLanguage(value:String, path:String, flagIconPath:String):Void
-    {
-        Localiser.getInstance().localisations.set(value, path);
-        flags.set(value, flagIconPath);
-    }
+	public function addLanguage(value:String, path:String, flagIconPath:String):Void
+	{
+		Localiser.getInstance().localisations.set(value, path);
+		flags.set(value, flagIconPath);
+	}
 
-    /**
+	/**
      * @return a string-based representation of the game
      */
 
-    override public function toString():String
-    {
-        return title + " - " + mode + " - " + state + ". Parts: \n\t" + parts.toString();
-    }
+	override public function toString():String
+	{
+		return title + " - " + mode + " - " + state + ". Parts: \n\t" + parts.toString();
+	}
 
-    /**
+	/**
      * Start the tracking
      * @param	mode : tracking mode (SCORM/AICC)
      */
 
-    public function initTracking(?mode:Mode):Void
-    {
-        connection = new Connection();
-        if(mode != null)
-            this.mode = mode;
-        connection.initConnection(this.mode);
-        stateInfos = connection.revertTracking();
-        if(stateInfos.isEmpty()){
-            stateInfos.loadStateInfos(state);
-        }
-    }
+	public function initTracking(?mode:Mode):Void
+	{
+		connection = new Connection();
+		if(mode != null)
+			this.mode = mode;
+		connection.initConnection(this.mode);
+		stateInfos = connection.revertTracking();
+		if(stateInfos.isEmpty()){
+			stateInfos.loadStateInfos(state);
+		}
+		Localiser.instance.setCurrentLocale(stateInfos.currentLanguage);
+	}
 
-    /**
+	/**
      * Get the state of loading of the game
      * @return a float between 0 (nothing loaded) and 1 (everything's loaded)
      */
 
-    public function getLoadingCompletion():Float
-    {
-        return nbPartsLoaded / getAllParts().length;
-    }
+	public function getLoadingCompletion():Float
+	{
+		return nbPartsLoaded / getAllParts().length;
+	}
 
-    /**
+	/**
      * @return all the parts of the game
      */
 
-    public function getAllParts():Array<Part>
-    {
-        var array = new Array<Part>();
-        for(part in parts){
-            array = array.concat(part.getAllParts());
-        }
+	public function getAllParts():Array<Part>
+	{
+		var array = new Array<Part>();
+		for(part in parts){
+			array = array.concat(part.getAllParts());
+		}
 
-        return array;
-    }
+		return array;
+	}
 
-    /**
-    * @return all the activities of the game
+	/**
+    * @return all trackable items of the game
     **/
 
-    public function getAllActivities(_all:Bool = true):Array<Activity>
-    {
-        var activities = new Array<Activity>();
-        for(part in parts){
-            activities = activities.concat(part.getAllActivities(_all));
-        }
+	public function getAllItems():Array<PartElement>
+	{
+		var activities = new Array<PartElement>();
+		for(part in parts){
+			activities = activities.concat(part.getAllItems());
+		}
 
-        return activities;
-    }
+		return activities;
+	}
 
-    // Privates
+	/**
+    * @param    id : Id of the item
+    * @return the name of the item
+    **/
 
-    private function checkIntegrity():Void
-    {
-        if(stateInfos.checksum != getAllParts().length){
-            throw "Invalid checksum (" + getAllParts().length + " part(s) found instead of " + stateInfos.checksum + "). The structure file must be corrupt";
-        }
-    }
+	public function getItemName(id:String):Null<String>
+	{
+		if(parts.exists(id))
+			return parts.get(id).name;
+		else{
+			for(part in parts){
+				var name = part.getItemName(id);
+				if(name != null)
+					return name;
+			}
+			return null;
+		}
+	}
 
-    private function addPartFromXml(partIndex:Int, partXml:Fast):Void
-    {
-        var part:Part = PartFactory.createPartFromXml(partXml);
-        addPart(partIndex, part);
-        part.init(partXml);
-    }
+	// Privates
 
-    private function initLangs(xml:Xml):Void
-    {
-        var languagesXml:Fast = new Fast(xml);
-        for(lang in languagesXml.node.Langs.nodes.Lang){
-            addLanguage(lang.att.value, lang.att.folder, lang.att.pic);
-        }
-        Localiser.instance.setCurrentLocale(stateInfos.currentLanguage);
+	private function checkIntegrity():Void
+	{
+		if(stateInfos.checksum != getAllParts().length){
+			throw "Invalid checksum (" + getAllParts().length + " part(s) found instead of " + stateInfos.checksum + "). The structure file must be corrupt";
+		}
+	}
 
-        // Load Layout
-        LayoutManager.instance.parseXml(Xml.parse(Assets.getText(structureXml.node.Grar.node.Parameters.node.Layout.att.file)));
-    }
+	private function addPartFromXml(partIndex:String, partXml:Fast):Void
+	{
+		var part:Part = PartFactory.createPartFromXml(partXml);
+		addPart(partIndex, part);
+		part.init(partXml);
+	}
 
-    private function initActivities(xml:Xml):Void
-    {
-        if(numStyleSheetLoaded != numStyleSheet)
-            activitiesWaiting.add(xml);
-        else
-            ActivityManager.instance.getActivity(xml.firstElement().nodeName).parseContent(xml);
-    }
+	private function initLangs(xml:Xml):Void
+	{
+		var languagesXml:Fast = new Fast(xml);
+		for(lang in languagesXml.node.Langs.nodes.Lang){
+			addLanguage(lang.att.value, lang.att.folder, lang.att.pic);
+		}
+	}
 
-    // Handlers
+	private function initActivities(xml:Xml):Void
+	{
+		if(numStyleSheetLoaded != numStyleSheet)
+			activitiesWaiting.add(xml);
+		else
+			ActivityManager.instance.getActivity(xml.firstElement().nodeName).parseContent(xml);
+	}
 
-    private function onDisplayLoaded(e:Event = null):Void
-    {
-        var displayNode:Fast = structureXml.node.Grar.node.Display;
-        var parametersNode:Fast = structureXml.node.Grar.node.Parameters;
-        var displayNode:Fast = structureXml.node.Grar.node.Display;
+	// Handlers
 
-        mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
-        title = parametersNode.node.Title.innerData;
-        state = parametersNode.node.State.innerData;
+	private function onDisplayLoaded(e:Event = null):Void
+	{
+		var displayNode:Fast = structureXml.node.Grar.node.Display;
+		var parametersNode:Fast = structureXml.node.Grar.node.Parameters;
+		var displayNode:Fast = structureXml.node.Grar.node.Display;
 
-        // Start Tracking
-        initTracking();
+		mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
+		title = parametersNode.node.Title.innerData;
+		state = parametersNode.node.State.innerData;
 
-        // Load styles
-        for(stylesheet in displayNode.nodes.Style){
-            numStyleSheet++;
-            XmlLoader.load(stylesheet.att.file, function(e:Event)
-            {
-                onStyleLoaded(XmlLoader.getXml(e));
-            }, onStyleLoaded);
-        }
+		// Start Tracking
+		initTracking();
 
-        // Load Languages
-        XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
+		// Load styles
+		for(stylesheet in displayNode.nodes.Style){
+			numStyleSheet++;
+			XmlLoader.load(stylesheet.att.file, function(e:Event)
+			{
+				onStyleLoaded(XmlLoader.getXml(e));
+			}, onStyleLoaded);
+		}
 
-        // Load UI
-        UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
+		// Load Languages
+		XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
 
-        // Load Transition
-        if(displayNode.hasNode.Transitions)
-            TweenManager.loadTemplate(displayNode.node.Transitions.att.display);
+		// Load UI
+		UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
 
-        // Load Activities displays
-        for(activity in displayNode.nodes.Activity){
-            var activityXml = XmlLoader.load(activity.att.display, onActivityComplete, initActivities);
-        }
+		// Load Transition
+		if(displayNode.hasNode.Transitions)
+			TweenManager.loadTemplate(displayNode.node.Transitions.att.display);
 
-        // Load Parts
-        var structureNode:Fast = structureXml.node.Grar.node.Structure;
-        GameManager.instance.loadTokens(structureNode.att.inventory);
-        ref = structureNode.att.ref;
-        for(part in structureNode.nodes.Part){
-            addPartFromXml(Std.parseInt(part.att.id), part);
-        }
-    }
+		// Load Activities displays
+		for(activity in displayNode.nodes.Activity){
+			var activityXml = XmlLoader.load(activity.att.display, onActivityComplete, initActivities);
+		}
 
-    private function onStyleLoaded(styleSheet:Xml):Void
-    {
-        StyleParser.parse(styleSheet.toString());
-        numStyleSheetLoaded++;
-        if(numStyleSheet == numStyleSheetLoaded){
-            while(!activitiesWaiting.isEmpty())
-                initActivities(activitiesWaiting.pop());
-        }
-        checkLoading();
-    }
+		// Load Parts
+		var structureNode:Fast = structureXml.node.Grar.node.Structure;
+		GameManager.instance.loadTokens(structureNode.att.inventory);
+		if(structureNode.has.menu){
+			XmlLoader.load(structureNode.att.menu, function(e:Event)
+			{
+				menu = XmlLoader.getXml(e);
+			}, function(xml:Xml)
+			{
+				menu = xml;
+			});
+		}
+		ref = structureNode.att.ref;
+		for(part in structureNode.nodes.Part){
+			addPartFromXml(part.att.id, part);
+		}
+	}
 
-    private function onActivityComplete(event:Event):Void
-    {
-        var loader:URLLoader = cast(event.currentTarget, URLLoader);
-        initActivities(Xml.parse(loader.data));
-    }
+	private function createMenuXml(xml:Xml, part:Part, level:Int = 1):Void
+	{
+		var child = Xml.createElement("h" + level);
+		child.set("id", part.id);
+		xml.addChild(child);
+		for(elem in part.elements){
+			if(elem.isPart() && cast(elem, Part).hasParts()){
+				createMenuXml(child, cast(elem, Part), level++);
+			}
+			else if(Std.is(elem, Trackable)){
+				var item = Xml.createElement("item");
+				item.set("id", cast(elem, Trackable).id);
+				child.addChild(item);
+			}
+		}
+	}
 
-    private function onLanguagesComplete(event:Event):Void
-    {
-        var loader:URLLoader = cast(event.currentTarget, URLLoader);
-        initLangs(Xml.parse(loader.data));
-    }
+	private function onStyleLoaded(styleSheet:Xml):Void
+	{
+		StyleParser.parse(styleSheet.toString());
+		numStyleSheetLoaded++;
+		if(numStyleSheet == numStyleSheetLoaded){
+			while(!activitiesWaiting.isEmpty())
+				initActivities(activitiesWaiting.pop());
+		}
+		checkLoading();
+	}
 
-    private function onPartLoaded(event:PartEvent):Void
-    {
-        if(event.target == LayoutManager.instance)
-            layoutLoaded = true;
-        else
-            nbPartsLoaded++;
-        checkLoading();
-    }
+	private function onActivityComplete(event:Event):Void
+	{
+		var loader:URLLoader = cast(event.currentTarget, URLLoader);
+		initActivities(Xml.parse(loader.data));
+	}
 
-    private function checkLoading():Void
-    {
-        if(getLoadingCompletion() == 1 && uiLoaded && layoutLoaded && (numStyleSheet == numStyleSheetLoaded)){
-            checkIntegrity();
-            for(part in getAllParts())
-                part.isDone = stateInfos.activityCompletion[part.id];
-            dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
-        }
-    }
+	private function onLanguagesComplete(event:Event):Void
+	{
+		var loader:URLLoader = cast(event.currentTarget, URLLoader);
+		initLangs(Xml.parse(loader.data));
+	}
 
-    private function onPartComplete(event:PartEvent):Void
-    {
-        stateInfos.activityCompletion[cast(event.target, Part).id] = true;
-    }
+	private function onPartLoaded(event:PartEvent):Void
+	{
+		if(event.target == LayoutManager.instance)
+			layoutLoaded = true;
+		else
+			nbPartsLoaded++;
+		checkLoading();
+	}
 
-    private function onExit(e:Event):Void
-    {
-        Lib.exit();
-    }
+	private function checkLoading():Void
+	{
+		if(getLoadingCompletion() == 1 && uiLoaded && (numStyleSheet == numStyleSheetLoaded)){
+			checkIntegrity();
+			// Menu hasn't been set, creating the default
+			if(menu == null){
+				var menuXml = Xml.createElement("menu");
+				for(part in parts){
+					createMenuXml(menuXml, part);
+				}
+				menu = menuXml;
+			}
+			if(!layoutLoaded){
+				// Load Layout
+				LayoutManager.instance.parseXml(Xml.parse(Assets.getText(structureXml.node.Grar.node.Parameters.node.Layout.att.file)));
+			}
+			else{
+				// TODO review tracking
+				/*for(part in getAllParts())
+                    part.isDone = stateInfos.activityCompletion[part.id];*/
+				dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
+			}
+		}
+	}
+
+	private function onPartComplete(event:PartEvent):Void
+	{
+		// TODO review tracking
+		//stateInfos.activityCompletion[cast(event.target, Part).id] = true;
+	}
+
+	private function onExit(e:Event):Void
+	{
+		Lib.exit();
+	}
 }

@@ -30,246 +30,251 @@ import nme.events.Event;
  * Display of a game
  */
 class GameManager extends EventDispatcher {
-    /**
+	/**
     * Instance of the game manager
     **/
-    public static var instance (getInstance, null):GameManager;
+	public static var instance (getInstance, null):GameManager;
 
-    /**
+	/**
      * The game model
      */
-    public var game (default, default):Game;
+	public var game (default, default):Game;
 
-    /**
+	/**
      * Queue of parts managed in the game
      */
-    public var parts (default, null):FastList<PartDisplay>;
+	public var parts (default, null):FastList<PartDisplay>;
 
-    /**
+	/**
     * Inventory of the game
     **/
-    public var inventory (default, null):Hash<Token>;
+	public var inventory (default, null):Hash<Token>;
 
-    /**
+	/**
     * Notification display of a token
     **/
-    public var tokenNotif:TokenNotification;
+	public var tokenNotif:TokenNotification;
 
-    /**
+	/**
     * Tokens images
     **/
-    public var tokensImages (default, null):Hash<BitmapData>;
+	public var tokensImages (default, null):Hash<BitmapData>;
 
-    private var layout:Layout;
-    private var activityDisplay:ActivityDisplay;
-    private var navByMenu:Bool = false;
+	private var layout:Layout;
+	private var activityDisplay:ActivityDisplay;
+	private var navByMenu:Bool = false;
 
-    /**
+	/**
     * @return the instance of the singleton
     **/
 
-    public static function getInstance():GameManager
-    {
-        if(instance == null)
-            instance = new GameManager();
-        return instance;
-    }
+	public static function getInstance():GameManager
+	{
+		if(instance == null)
+			instance = new GameManager();
+		return instance;
+	}
 
-    /**
+	/**
     * Start the game
     * @param    game : The game to start
     * @param    layout : The layout to display
     **/
 
-    public function startGame(game:Game, layout:String = "default"):Void
-    {
-        this.game = game;
-        changeLayout(layout);
-        displayPartById(0);
-    }
+	public function startGame(game:Game, layout:String = "default"):Void
+	{
+		this.game = game;
+		changeLayout(layout);
+		displayPartById();
+	}
 
-    /**
+	/**
     * Activate a token of the inventory
     * @param    tokenName : Name of the token to activate
     **/
 
-    public function activateToken(tokenName:String):Void
-    {
-        inventory.get(tokenName).isActivated = true;
-        var tokenEvent = new TokenEvent(TokenEvent.ADD);
+	public function activateToken(tokenName:String):Void
+	{
+		inventory.get(tokenName).isActivated = true;
+		var tokenEvent = new TokenEvent(TokenEvent.ADD);
 
-        layout.zones.get(game.ref).addChild(tokenNotif);
-        tokenNotif.showNotification(tokenName);
+		layout.zones.get(game.ref).addChild(tokenNotif);
+		tokenNotif.showNotification(tokenName);
 
-        tokenEvent.token = inventory.get(tokenName);
-        dispatchEvent(tokenEvent);
-    }
+		tokenEvent.token = inventory.get(tokenName);
+		dispatchEvent(tokenEvent);
+	}
 
-    /**
+	/**
     * Load the tokens descriptor file
     * @param    path : Path to the file
     **/
 
-    public function loadTokens(path:String):Void
-    {
-        XmlLoader.load(path, function(e:Event)
-        {
-            parseTokens(XmlLoader.getXml(e));
-        }, parseTokens);
-    }
+	public function loadTokens(path:String):Void
+	{
+		XmlLoader.load(path, function(e:Event)
+		{
+			parseTokens(XmlLoader.getXml(e));
+		}, parseTokens);
+	}
 
-    /**
+	/**
     * Change the layout of the game
     **/
 
-    public function changeLayout(layout:String):Void
-    {
-        if(this.layout != null)
-            Lib.current.removeChild(this.layout.content);
-        this.layout = LayoutManager.instance.getLayout(layout);
-        Lib.current.addChild(this.layout.content);
-    }
+	public function changeLayout(layout:String):Void
+	{
+		if(this.layout != null)
+			Lib.current.removeChild(this.layout.content);
+		this.layout = LayoutManager.instance.getLayout(layout);
+		Lib.current.addChild(this.layout.content);
+	}
 
-    /**
+	/**
     * Display a graphic representation of the given part
     * @param part : The part to display
     **/
 
-    public function displayPart(part:Part):Void
-    {
-        // Display the new part
-        parts.add(DisplayFactory.createPartDisplay(part));
-        if(parts.first() == null)
-            dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
-        else{
-            parts.first().addEventListener(PartEvent.EXIT_PART, onExitPart);
-            parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-            parts.first().addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
-            parts.first().init();
-        }
-    }
+	public function displayPart(part:Part):Void
+	{
+		// Display the new part
+		parts.add(DisplayFactory.createPartDisplay(part));
+		if(parts.first() == null)
+			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+		else{
+			parts.first().addEventListener(PartEvent.EXIT_PART, onExitPart);
+			parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+			parts.first().addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
+			parts.first().init();
+		}
+	}
 
-    /**
+	/**
     * Displays an activity
     * @param    activity : Activity model to display
     **/
 
-    public function displayActivity(activity:Activity):Void
-    {
-        cleanup();
-        activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
-        var activityName:String = Type.getClassName(Type.getClass(activity));
-        activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
-        activityDisplay = ActivityManager.instance.getActivity(activityName);
-        activityDisplay.addEventListener(Event.COMPLETE, onActivityReady);
-        activityDisplay.model = activity;
+	public function displayActivity(activity:Activity):Void
+	{
+		cleanup();
+		activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
+		var activityName:String = Type.getClassName(Type.getClass(activity));
+		activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
+		activityDisplay = ActivityManager.instance.getActivity(activityName);
+		activityDisplay.addEventListener(Event.COMPLETE, onActivityReady);
+		activityDisplay.model = activity;
 
-    }
+	}
 
-    /**
+	/**
     * Display a graphic representation of the part with the given ID
     * @param id : The ID of the part to display
     **/
 
-    public function displayPartById(id:Int):Void
-    {
-        displayPart(game.start(id));
-    }
+	public function displayPartById(?id:String):Void
+	{
+		displayPart(game.start(id));
+	}
 
-    // Privates
+	public function getItemName(id:String):String
+	{
+		return game.getItemName(id) != null ? game.getItemName(id) : ActivityManager.instance.activities.get(id).name;
+	}
 
-    private function new()
-    {
-        super();
-        parts = new FastList<PartDisplay>();
-        inventory = new Hash<Token>();
-        tokensImages = new Hash<BitmapData>();
-        // Set Keyboard Manager
-        KeyboardManager.instance.game = this;
-    }
+	// Privates
 
-    private function parseTokens(tokens:Xml):Void
-    {
-        var tokenFast = new Fast(tokens.firstElement());
-        XmlLoader.load(tokenFast.att.display, function(e:Event)
-        {
-            parseDisplayTokens(XmlLoader.getXml(e));
-        }, parseDisplayTokens);
-        for(token in tokenFast.nodes.Token){
-            inventory.set(token.att.ref, new Token(token));
-        }
-    }
+	private function new()
+	{
+		super();
+		parts = new FastList<PartDisplay>();
+		inventory = new Hash<Token>();
+		tokensImages = new Hash<BitmapData>();
+		// Set Keyboard Manager
+		KeyboardManager.instance.game = this;
+	}
 
-    private function parseDisplayTokens(display:Xml):Void
-    {
-        var fast = new Fast(display.firstElement());
-        tokenNotif = new TokenNotification(fast.node.Hud);
-        for(token in fast.nodes.Token){
-            tokensImages.set(token.att.ref, cast(LoadData.instance.getElementDisplayInCache(token.att.src), Bitmap).bitmapData);
-        }
-    }
+	private function parseTokens(tokens:Xml):Void
+	{
+		var tokenFast = new Fast(tokens.firstElement());
+		XmlLoader.load(tokenFast.att.display, function(e:Event)
+		{
+			parseDisplayTokens(XmlLoader.getXml(e));
+		}, parseDisplayTokens);
+		for(token in tokenFast.nodes.Token){
+			inventory.set(token.att.ref, new Token(token));
+		}
+	}
 
-    // Handlers
+	private function parseDisplayTokens(display:Xml):Void
+	{
+		var fast = new Fast(display.firstElement());
+		tokenNotif = new TokenNotification(fast.node.Hud);
+		for(token in fast.nodes.Token){
+			tokensImages.set(token.att.ref, cast(LoadData.instance.getElementDisplayInCache(token.att.src), Bitmap).bitmapData);
+		}
+	}
 
-    private function onExitPart(event:Event):Void
-    {
-        parts.first().unLoad();
-        displayPartById(parts.pop().part.id + 1);
-    }
+	// Handlers
 
-    private function onPartLoaded(event:PartEvent):Void
-    {
-        var partDisplay = cast(event.target, PartDisplay);
-        partDisplay.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
-        partDisplay.startPart();
-        layout.zones.get(game.ref).addChild(partDisplay);
-    }
+	private function onExitPart(event:Event):Void
+	{
+		parts.first().unLoad();
+		displayPartById(parts.pop().part.id + 1);
+	}
 
-    private function onExitSubPart(event:PartEvent):Void
-    {
-        parts.first().unLoad();
-        layout.zones.get(game.ref).removeChild(parts.pop());
-        parts.first().visible = true;
-        parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-    }
+	private function onPartLoaded(event:PartEvent):Void
+	{
+		var partDisplay = cast(event.target, PartDisplay);
+		partDisplay.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
+		partDisplay.startPart();
+		layout.zones.get(game.ref).addChild(partDisplay);
+	}
 
-    public function onEnterSubPart(event:PartEvent):Void
-    {
-        parts.first().visible = false;
-        parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
-        parts.add(DisplayFactory.createPartDisplay(event.part));
-        parts.first().addEventListener(PartEvent.EXIT_PART, onExitSubPart);
-        parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-        parts.first().init();
-    }
+	private function onExitSubPart(event:PartEvent):Void
+	{
+		parts.first().unLoad();
+		layout.zones.get(game.ref).removeChild(parts.pop());
+		parts.first().visible = true;
+		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+	}
 
-    private function onActivityReady(e:Event):Void
-    {
-        activityDisplay.removeEventListener(Event.COMPLETE, onActivityReady);
-        layout.zones.get(game.ref).addChild(activityDisplay);
-        activityDisplay.startActivity();
-    }
+	public function onEnterSubPart(event:PartEvent):Void
+	{
+		parts.first().visible = false;
+		parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
+		parts.add(DisplayFactory.createPartDisplay(event.part));
+		parts.first().addEventListener(PartEvent.EXIT_PART, onExitSubPart);
+		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+		parts.first().init();
+	}
 
-    private function onActivityEnd(e:PartEvent):Void
-    {
-        e.target.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
-        if(activityDisplay != null && layout.zones.get(game.ref).contains(activityDisplay))
-            layout.zones.get(game.ref).removeChild(activityDisplay);
-        cleanup();
-        if(parts != null && !navByMenu){
-            parts.first().nextElement();
-        }
-        else
-            navByMenu = false;
-    }
+	private function onActivityReady(e:Event):Void
+	{
+		activityDisplay.removeEventListener(Event.COMPLETE, onActivityReady);
+		layout.zones.get(game.ref).addChild(activityDisplay);
+		activityDisplay.startActivity();
+	}
 
-    private function cleanup():Void
-    {
-        if(activityDisplay != null){
-            activityDisplay.model.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
-            activityDisplay.endActivity();
-            navByMenu = true;
-            activityDisplay = null;
-        }
-    }
+	private function onActivityEnd(e:PartEvent):Void
+	{
+		e.target.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
+		if(activityDisplay != null && layout.zones.get(game.ref).contains(activityDisplay))
+			layout.zones.get(game.ref).removeChild(activityDisplay);
+		cleanup();
+		if(parts != null && !navByMenu){
+			parts.first().nextElement();
+		}
+		else
+			navByMenu = false;
+	}
+
+	private function cleanup():Void
+	{
+		if(activityDisplay != null){
+			activityDisplay.model.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
+			activityDisplay.endActivity();
+			navByMenu = true;
+			activityDisplay = null;
+		}
+	}
 }

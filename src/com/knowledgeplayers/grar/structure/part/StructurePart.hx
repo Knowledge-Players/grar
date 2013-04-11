@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import com.knowledgeplayers.grar.tracking.Trackable;
 import haxe.FastList;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import com.knowledgeplayers.grar.factory.ItemFactory;
@@ -25,360 +26,366 @@ import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import com.knowledgeplayers.grar.factory.PatternFactory;
 
-class StructurePart extends EventDispatcher, implements Part {
-    /**
+class StructurePart extends EventDispatcher, implements Part, implements Trackable {
+	/**
      * Name of the part
      */
-    public var name (default, default):String;
+	public var name (default, default):String;
 
-    /**
+	/**
      * ID of the part
      */
-    public var id (default, default):Int;
+	public var id (default, default):String;
 
-    /**
+	/**
      * Path to the XML structure file
      */
-    public var file (default, null):String;
+	public var file (default, null):String;
 
-    /**
+	/**
      * Path to the XML display file
      */
-    public var display (default, default):String;
+	public var display (default, default):String;
 
-    /**
+	/**
      * True if the part is done
      */
-    public var isDone (default, default):Bool;
+	public var isDone (default, default):Bool;
 
-    /**
+	/**
      * Tokens in this part
      */
-    public var tokens (default, default):FastList<String>;
+	public var tokens (default, default):FastList<String>;
 
-    /**
+	/**
      * Implements PartElement. Always null
      */
-    public var token (default, default):String;
+	public var token (default, default):String;
 
-    /**
+	/**
      * Sound playing during the part
      */
-    public var soundLoop (default, default):Sound;
+	public var soundLoop (default, default):Sound;
 
-    /**
+	/**
     * Elements of the part
 **/
-    public var elements (default, null):Array<PartElement>;
+	public var elements (default, null):Array<PartElement>;
 
-    /**
+	/**
     * Button of the part
     **/
-    public var button (default, default):{ref:String, content:String};
+	public var button (default, default):{ref:String, content:String};
 
-    private var nbSubPartLoaded:Int = 0;
-    private var nbSubPartTotal:Int = 0;
-    private var partIndex:Int = 0;
-    private var elemIndex:Int = 0;
-    private var soundLoopChannel:SoundChannel;
+	private var nbSubPartLoaded:Int = 0;
+	private var nbSubPartTotal:Int = 0;
+	private var partIndex:Int = 0;
+	private var elemIndex:Int = 0;
+	private var soundLoopChannel:SoundChannel;
 
-    public function new()
-    {
-        super();
-        tokens = new FastList<String>();
-        elements = new Array<PartElement>();
-    }
+	public function new()
+	{
+		super();
+		tokens = new FastList<String>();
+		elements = new Array<PartElement>();
+	}
 
-    /**
+	/**
      * Initialise the part with an XML node
      * @param	xml : fast node with structure infos
      * @param	filePath : path to an XML structure file (set the file variable)
      */
 
-    public function init(xml:Fast, filePath:String = ""):Void
-    {
+	public function init(xml:Fast, filePath:String = ""):Void
+	{
 
-        file = filePath;
+		file = filePath;
 
-        if(xml != null){
-            parseXml(xml);
-        }
+		if(xml != null){
+			parseXml(xml);
+		}
 
-        if(file != ""){
-            XmlLoader.load(file, onLoadComplete, parseContent);
-        }
-        else
-            fireLoaded();
-    }
+		if(file != ""){
+			XmlLoader.load(file, onLoadComplete, parseContent);
+		}
+		else
+			fireLoaded();
+	}
 
-    /**
+	/**
      * Start the part if it hasn't been done
      * @param	forced : true to start the part even if it has already been done
      * @return this part, or null if it can't be start
      */
 
-    public function start(forced:Bool = false):Null<Part>
-    {
-        if(!isDone || forced){
-            enterPart();
-            return this;
-        }
-        else
-            return null;
-    }
+	public function start(forced:Bool = false):Null<Part>
+	{
+		if(!isDone || forced){
+			enterPart();
+			return this;
+		}
+		else
+			return null;
+	}
 
-    /**
+	/**
      * @return the next element in the part or null if the part is over
      */
 
-    public function getNextElement():Null<PartElement>
-    {
-        if(elemIndex < elements.length){
-            elemIndex++;
-            return elements[elemIndex - 1];
-        }
-        else{
-            exitPart();
-            return null;
-        }
-    }
+	public function getNextElement():Null<PartElement>
+	{
+		if(elemIndex < elements.length){
+			elemIndex++;
+			return elements[elemIndex - 1];
+		}
+		else{
+			exitPart();
+			return null;
+		}
+	}
 
-    /**
+	/**
      * Tell if this part has sub-part or not
      * @return true if it has sub-part
      */
 
-    public function hasParts():Bool
-    {
-        for(elem in elements){
-            if(elem.isPart())
-                return true;
-        }
-        return false;
-    }
+	public function hasParts():Bool
+	{
+		for(elem in elements){
+			if(elem.isPart())
+				return true;
+		}
+		return false;
+	}
 
-    /**
+	/**
      * @return all the sub-part of this part
      */
 
-    public function getAllParts():Array<Part>
-    {
-        var array = new Array<Part>();
-        if(elements.length > 0)
-            array.push(this);
-        if(hasParts()){
-            for(elem in elements){
-                if(elem.isPart())
-                    array = array.concat(cast(elem, Part).getAllParts());
-            }
-        }
-        return array;
-    }
+	public function getAllParts():Array<Part>
+	{
+		var array = new Array<Part>();
+		if(elements.length > 0)
+			array.push(this);
+		if(hasParts()){
+			for(elem in elements){
+				if(elem.isPart())
+					array = array.concat(cast(elem, Part).getAllParts());
+			}
+		}
+		return array;
+	}
 
-    /**
-    * @return all the activities of this part
+	/**
+    * @return all the trackable items of this part
     **/
 
-    public function getAllActivities(_all:Bool = false):Array<Activity>
-    {
-        var activities = new Array<Activity>();
+	public function getAllItems():Array<PartElement>
+	{
+		var items = new Array<PartElement>();
 
-        for(elem in elements){
-            if(elem.isPart()){
+		for(elem in elements){
+			if(elem.isPart()){
+				if(!cast(elem, Part).hasParts())
+					items.push(elem);
+				else
+					items = items.concat(cast(elem, Part).getAllItems());
+			}
+			if(elem.isActivity())
+				items.push(cast(elem, Activity));
+		}
+		return items;
+	}
 
-                activities = activities.concat(cast(elem, Part).getAllActivities(_all));
-            }
-            if(elem.isActivity())
-                activities.push(cast(elem, Activity));
-
-            if(_all){
-                if(elem.isPattern()){
-                    for(el in cast(elem, Pattern).patternContent){
-                        if(el.isText()){
-                            if(cast(el, TextItem).hasActivity()){
-
-                                activities.push(cast(el, RemarkableEvent).activity);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return activities;
-    }
-
-    /**
+	/**
      * @return a string-based representation of the part
      */
 
-    override public function toString():String
-    {
-        return "Part " + name + " " + file + " : " + elements.toString();
-    }
+	override public function toString():String
+	{
+		return "Part " + name + " " + file + " : " + elements.toString();
+	}
 
-    public function restart():Void
-    {
-        elemIndex = 0;
-    }
+	public function restart():Void
+	{
+		elemIndex = 0;
+	}
 
-    /**
+	/**
      * Tell if this part is a dialog
      * @return true if this part is a dialog
      */
 
-    public function isDialog():Bool
-    {
-        return false;
-    }
+	public function isDialog():Bool
+	{
+		return false;
+	}
 
-    /**
+	/**
      * Tell if this part is a strip
      * @return true if this part is a strip
      */
 
-    public function isStrip():Bool
-    {
-        return false;
-    }
+	public function isStrip():Bool
+	{
+		return false;
+	}
 
-    // Implements PartElement
+	// Implements PartElement
 
-    /**
+	/**
     * @return false
 **/
 
-    public function isActivity():Bool
-    {
-        return false;
-    }
+	public function isActivity():Bool
+	{
+		return false;
+	}
 
-    /**
+	/**
     * @return false
 **/
 
-    public function isText():Bool
-    {
-        return false;
-    }
+	public function isText():Bool
+	{
+		return false;
+	}
 
-    /**
+	/**
     * @return false
 **/
 
-    public function isPattern():Bool
-    {
-        return false;
-    }
+	public function isPattern():Bool
+	{
+		return false;
+	}
 
-    /**
+	/**
     * @return true
 **/
 
-    public function isPart():Bool
-    {
-        return true;
-    }
+	public function isPart():Bool
+	{
+		return true;
+	}
 
-    // Private
+	/**
+    * @param    id : Id of the item
+    * @return the name of the item
+    **/
 
-    private function parseContent(content:Xml):Void
-    {
-        var partFast:Fast = new Fast(content).node.Part;
+	public function getItemName(id:String):Null<String>
+	{
+		var name = null;
+		if(this.id == id)
+			name = this.name;
+		for(elem in elements){
+			if(elem.isPart()){
+				name = cast(elem, Part).getItemName(id);
+			}
+		}
+		return name;
+	}
 
-        for(child in partFast.elements){
-            switch(child.name.toLowerCase()){
-                case "text":
-                    elements.push(ItemFactory.createItemFromXml(child));
-                case "activity":
-                    elements.push(ActivityFactory.createActivityFromXml(child, this));
-                case "part":
-                    nbSubPartTotal++;
-                    createPart(child);
-                case "button":
-                    button = {ref: child.att.ref, content: child.has.content ? child.att.content : null};
-            }
-        }
-        for(elem in elements){
-            if(elem.isText()){
-                var text = cast(elem, TextItem);
-                if(text.button == null)
-                    text.button = button;
-            }
-            if(elem.isPattern()){
-                for(item in cast(elem, Pattern).patternContent){
-                    if(item.token != null){
-                        tokens.add(item.token);
-                    }
-                }
-            }
-            if(elem.token != null)
-                tokens.add(elem.token);
-        }
-        if(nbSubPartLoaded == nbSubPartTotal)
-            fireLoaded();
-    }
+	// Private
 
-    private function parseXml(xml:Fast):Void
-    {
-        id = Std.parseInt(xml.att.id);
-        if(xml.has.name) name = xml.att.name;
-        if(xml.has.file) file = xml.att.file;
-        if(xml.has.display) display = xml.att.display;
+	private function parseContent(content:Xml):Void
+	{
+		var partFast:Fast = new Fast(content).node.Part;
 
-        if(xml.hasNode.Sound)
-            // TODO use LoadData
-            soundLoop = Assets.getSound(xml.node.Sound.att.content);
+		for(child in partFast.elements){
+			switch(child.name.toLowerCase()){
+				case "text":
+					elements.push(ItemFactory.createItemFromXml(child));
+				case "activity":
+					elements.push(ActivityFactory.createActivityFromXml(child, this));
+				case "part":
+					nbSubPartTotal++;
+					createPart(child);
+				case "button":
+					button = {ref: child.att.ref, content: child.has.content ? child.att.content : null};
+			}
+		}
+		for(elem in elements){
+			if(elem.isText()){
+				var text = cast(elem, TextItem);
+				if(text.button == null)
+					text.button = button;
+			}
+			if(elem.isPattern()){
+				for(item in cast(elem, Pattern).patternContent){
+					if(item.token != null){
+						tokens.add(item.token);
+					}
+				}
+			}
+			if(elem.token != null)
+				tokens.add(elem.token);
+		}
+		if(nbSubPartLoaded == nbSubPartTotal)
+			fireLoaded();
+	}
 
-        if(xml.hasNode.Part){
-            for(partNode in xml.nodes.Part){
-                nbSubPartTotal++;
-            }
-            for(partNode in xml.nodes.Part){
-                createPart(partNode);
-            }
-        }
-    }
+	private function parseXml(xml:Fast):Void
+	{
+		id = xml.att.id;
+		if(xml.has.name) name = xml.att.name;
+		if(xml.has.file) file = xml.att.file;
+		if(xml.has.display) display = xml.att.display;
 
-    private function createPart(partNode:Fast):Void
-    {
-        var part:Part = PartFactory.createPartFromXml(partNode);
-        part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-        part.init(partNode);
-        elements.push(part);
-    }
+		if(xml.hasNode.Sound)
+			// TODO use LoadData
+			soundLoop = Assets.getSound(xml.node.Sound.att.content);
 
-    // Handlers
+		if(xml.hasNode.Part){
+			for(partNode in xml.nodes.Part){
+				nbSubPartTotal++;
+			}
+			for(partNode in xml.nodes.Part){
+				createPart(partNode);
+			}
+		}
+	}
 
-    private function onLoadComplete(event:Event):Void
-    {
-        parseContent(XmlLoader.getXml(event));
-    }
+	private function createPart(partNode:Fast):Void
+	{
+		var part:Part = PartFactory.createPartFromXml(partNode);
+		part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+		part.init(partNode);
+		elements.push(part);
+	}
 
-    private function enterPart():Void
-    {
-        if(soundLoop != null)
-            soundLoopChannel = soundLoop.play();
-    }
+	// Handlers
 
-    private function onPartLoaded(event:Event):Void
-    {
-        nbSubPartLoaded++;
-        if(nbSubPartLoaded == nbSubPartTotal){
-            fireLoaded();
-        }
-    }
+	private function onLoadComplete(event:Event):Void
+	{
+		parseContent(XmlLoader.getXml(event));
+	}
 
-    private function fireLoaded():Void
-    {
-        Lib.trace("part " + name + " loaded");
-        dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
-    }
+	private function enterPart():Void
+	{
+		if(soundLoop != null)
+			soundLoopChannel = soundLoop.play();
+	}
 
-    private function exitPart():Void
-    {
-        isDone = true;
-        if(soundLoopChannel != null)
-            soundLoopChannel.stop();
-        dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
-    }
+	private function onPartLoaded(event:Event):Void
+	{
+		nbSubPartLoaded++;
+		if(nbSubPartLoaded == nbSubPartTotal){
+			fireLoaded();
+		}
+	}
+
+	private function fireLoaded():Void
+	{
+		dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
+	}
+
+	private function exitPart():Void
+	{
+		isDone = true;
+		if(soundLoopChannel != null)
+			soundLoopChannel.stop();
+		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+	}
 }

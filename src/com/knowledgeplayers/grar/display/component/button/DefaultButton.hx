@@ -16,54 +16,54 @@ import nme.events.MouseEvent;
 
 class DefaultButton extends Sprite {
 
-    /**
+	/**
      * Layer of the button
      */
-    public var layer:TileLayer;
+	public var layer:TileLayer;
 
-    /**
+	/**
      * Switch to enable the button
      */
-    public var enabled (default, enable):Bool;
+	public var enabled (default, enable):Bool;
 
-    /**
+	/**
     * Reference of the button
     **/
-    public var ref (default, default):String;
+	public var ref (default, default):String;
 
-    /**
+	/**
     * Scale of the button
     **/
-    public var scale (default, setScale):Float;
+	public var scale (default, setScale):Float;
 
-    /**
+	/**
     * Mirror
     **/
-    public var mirror (default, setMirror):Int;
+	public var mirror (default, setMirror):Int;
 
-    /**
+	/**
     * Class of style for the button
     **/
-    public var className (default, default):String;
+	public var className (default, default):String;
 
-    /**
+	/**
      * Sprite containing the upstate
      */
-    private var upState:TileSprite;
+	private var upState:TileSprite;
 
-    /**
+	/**
      * Sprite containing the overstater
      */
-    private var overState:TileSprite;
+	private var overState:TileSprite;
 
-    /**
+	/**
      * Sprite containing the downstate
      */
-    private var downState:TileSprite;
+	private var downState:TileSprite;
 
-    private var clip:TileClip;
+	private var clip:TileClip;
 
-    /**
+	/**
      * Constructor. Downstate and overstate are automatically set if their tile are
      * name upstateName+"_pressed" and upstateName+"_over"
      * @param	tilesheet : UI Sheet
@@ -72,187 +72,195 @@ class DefaultButton extends Sprite {
      * @param	tileOver : Tile containing the overstate
      */
 
-    public function new(tilesheet:TilesheetEx, tile:String)
-    {
-        super();
+	public function new(tilesheet:TilesheetEx, tile:String)
+	{
+		super();
 
-        layer = new TileLayer(tilesheet);
-        clip = new TileClip(tile);
-        mouseChildren = false;
+		if(tilesheet != null && tile != ""){
+			layer = new TileLayer(tilesheet);
+			clip = new TileClip(tile);
+		}
+		mouseChildren = false;
 
-        init();
-    }
+		init();
+	}
 
-    /**
+	/**
      * Enable or disable the button
      * @param	activate : True to activate the button
      * @return true if the button is now activated
      */
 
-    public function enable(activate:Bool):Bool
-    {
-        enabled = buttonMode = mouseEnabled = activate;
+	public function enable(activate:Bool):Bool
+	{
+		enabled = buttonMode = mouseEnabled = activate;
 
-        return activate;
-    }
+		return activate;
+	}
 
+	public function setScale(scale:Float):Float
+	{
+		return scaleX = scaleY = this.scale = scale;
+	}
 
-    public function setScale(scale:Float):Float
-    {
-        return scaleX = scaleY = this.scale = scale;
-    }
+	public function setMirror(mirror:Int):Int
+	{
+		for(sprite in layer.children)
+			cast(sprite, TileSprite).mirror = mirror;
 
-    public function setMirror(mirror:Int):Int
-    {
-        for(sprite in layer.children)
-            cast(sprite, TileSprite).mirror = mirror;
+		layer.render();
+		return this.mirror = mirror;
+	}
 
-        layer.render();
-        return this.mirror = mirror;
-    }
+	// Abstract
 
-    // Abstract
+	private function onMouseOver(event:MouseEvent):Void
+	{
 
-    private function onMouseOver(event:MouseEvent):Void
-    {
+	}
 
-    }
+	private function onMouseOut(event:MouseEvent):Void
+	{}
 
-    private function onMouseOut(event:MouseEvent):Void
-    {}
+	private function onClick(event:MouseEvent):Void
+	{}
 
-    private function onClick(event:MouseEvent):Void
-    {}
+	private function onDblClick(event:MouseEvent):Void
+	{}
 
-    private function onDblClick(event:MouseEvent):Void
-    {}
+	private function open(event:MouseEvent):Void
+	{}
 
-    private function open(event:MouseEvent):Void
-    {}
+	private function close(event:MouseEvent):Void
+	{}
 
-    private function close(event:MouseEvent):Void
-    {}
+	// Private
 
-    // Private
+	private function setAllListeners(listener:MouseEvent -> Void):Void
+	{
+		removeAllEventsListeners(listener);
+		addEventListener(MouseEvent.MOUSE_OUT, listener);
+		addEventListener(MouseEvent.MOUSE_OVER, listener);
+		addEventListener(MouseEvent.ROLL_OVER, listener);
+		addEventListener(MouseEvent.ROLL_OUT, listener);
+		addEventListener(MouseEvent.CLICK, listener);
+		addEventListener(MouseEvent.DOUBLE_CLICK, listener);
+		addEventListener(MouseEvent.MOUSE_DOWN, listener);
+		addEventListener(MouseEvent.MOUSE_UP, listener);
+	}
 
-    private function setAllListeners(listener:MouseEvent -> Void):Void
-    {
-        removeAllEventsListeners(listener);
-        addEventListener(MouseEvent.MOUSE_OUT, listener);
-        addEventListener(MouseEvent.MOUSE_OVER, listener);
-        addEventListener(MouseEvent.ROLL_OVER, listener);
-        addEventListener(MouseEvent.ROLL_OUT, listener);
-        addEventListener(MouseEvent.CLICK, listener);
-        addEventListener(MouseEvent.DOUBLE_CLICK, listener);
-        addEventListener(MouseEvent.MOUSE_DOWN, listener);
-        addEventListener(MouseEvent.MOUSE_UP, listener);
-    }
+	private function onOver(event:MouseEvent):Void
+	{
+		clipOver();
 
-    private function onOver(event:MouseEvent):Void
-    {
-        clipOver();
+	}
 
-    }
+	private function onOut(event:MouseEvent):Void
+	{
+		clipOut();
+	}
 
-    private function onOut(event:MouseEvent):Void
-    {
-        clipOut();
-    }
+	private function onClickDown(event:MouseEvent):Void
+	{
+		clipDown();
+	}
 
-    private function onClickDown(event:MouseEvent):Void
-    {
-        clipDown();
-    }
+	private function onClickUp(event:MouseEvent):Void
+	{
+		clipOut();
+	}
 
-    private function onClickUp(event:MouseEvent):Void
-    {
-        clipOut();
-    }
+	private function init():Void
+	{
+		enabled = true;
 
-    private function init():Void
-    {
-        enabled = true;
+		setAllListeners(onMouseEvent);
 
-        layer.addChild(clip);
+		if(layer != null){
+			layer.addChild(clip);
+			addChild(layer.view);
+			layer.render();
+		}
 
-        setAllListeners(onMouseEvent);
-
-        addChild(layer.view);
-
-        layer.render();
-
-        // TODO Test if this is still necessary
-        // Hack for C++ hitArea (NME 3.4.4)
-        #if cpp
+		// TODO Test if this is still necessary
+		// Hack for C++ hitArea (NME 3.4.4)
+		#if cpp
 			graphics.beginFill (0xFFFFFF, 0.01);
 			graphics.drawRect (-upState.width/2, -upState.height/2, upState.width, upState.height);
 		#end
-    }
+	}
 
-    public function clipOver():Void {
+	public function clipOver():Void
+	{
+		if(layer != null){
+			if(clip.frames.length > 0){
+				clip.currentFrame = 1;
+			}
 
-        if(clip.frames.length > 0){
-            clip.currentFrame = 1;
-        }
+			layer.render();
+		}
+	}
 
-        layer.render();
+	public function clipOut():Void
+	{
+		if(layer != null){
+			if(clip.frames.length > 0){
+				clip.currentFrame = 0;
+			}
 
-    }
+			layer.render();
+		}
+	}
 
-    public function clipOut():Void {
-        if(clip.frames.length > 0){
-            clip.currentFrame = 0;
-        }
+	public function clipDown():Void
+	{
+		if(layer != null){
+			if(clip.frames.length > 1){
+				clip.currentFrame = 2;
+			}
+			else{
+				clip.currentFrame = 0;
+			}
+			layer.render();
+		}
+	}
 
-        layer.render();
-    }
+	private function removeAllEventsListeners(listener:MouseEvent -> Void):Void
+	{
+		removeEventListener(MouseEvent.MOUSE_OUT, listener);
+		removeEventListener(MouseEvent.MOUSE_OVER, listener);
+		removeEventListener(MouseEvent.ROLL_OVER, listener);
+		removeEventListener(MouseEvent.ROLL_OUT, listener);
+		removeEventListener(MouseEvent.CLICK, listener);
+		removeEventListener(MouseEvent.DOUBLE_CLICK, listener);
+		removeEventListener(MouseEvent.MOUSE_DOWN, listener);
+		removeEventListener(MouseEvent.MOUSE_UP, listener);
+	}
 
-    public function clipDown():Void {
-        if(clip.frames.length > 1){
-            clip.currentFrame = 2;
-        }
-        else{
-            clip.currentFrame = 0;
-        }
-        layer.render();
-    }
+	// Listener
 
-    private function removeAllEventsListeners(listener:MouseEvent -> Void):Void
-    {
-        removeEventListener(MouseEvent.MOUSE_OUT, listener);
-        removeEventListener(MouseEvent.MOUSE_OVER, listener);
-        removeEventListener(MouseEvent.ROLL_OVER, listener);
-        removeEventListener(MouseEvent.ROLL_OUT, listener);
-        removeEventListener(MouseEvent.CLICK, listener);
-        removeEventListener(MouseEvent.DOUBLE_CLICK, listener);
-        removeEventListener(MouseEvent.MOUSE_DOWN, listener);
-        removeEventListener(MouseEvent.MOUSE_UP, listener);
-    }
+	private function onMouseEvent(event:MouseEvent):Void
+	{
+		if(!enabled){
+			event.stopImmediatePropagation();
+			return;
+		}
 
-    // Listener
-
-    private function onMouseEvent(event:MouseEvent):Void
-    {
-        if(!enabled){
-            event.stopImmediatePropagation();
-            return;
-        }
-
-        switch (event.type) {
-            case MouseEvent.MOUSE_OUT: onOut(event);
-            case MouseEvent.MOUSE_OVER: onOver(event);
-            case MouseEvent.ROLL_OVER: onOver(event);
-            case MouseEvent.ROLL_OUT: onOut(event);
-            case MouseEvent.CLICK: onClick(event);
-            case MouseEvent.MOUSE_DOWN: onClickDown(event);
-            case MouseEvent.MOUSE_UP: onClickUp(event);
-            case MouseEvent.DOUBLE_CLICK: onDblClick(event);
-        }
-    }
+		switch (event.type) {
+			case MouseEvent.MOUSE_OUT: onOut(event);
+			case MouseEvent.MOUSE_OVER: onOver(event);
+			case MouseEvent.ROLL_OVER: onOver(event);
+			case MouseEvent.ROLL_OUT: onOut(event);
+			case MouseEvent.CLICK: onClick(event);
+			case MouseEvent.MOUSE_DOWN: onClickDown(event);
+			case MouseEvent.MOUSE_UP: onClickUp(event);
+			case MouseEvent.DOUBLE_CLICK: onDblClick(event);
+		}
+	}
 }
 
 enum ButtonState {
-    UP;
-    DOWN;
-    OVER;
+	UP;
+	DOWN;
+	OVER;
 }
