@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.display;
 
+import nme.media.SoundChannel;
+import nme.media.SoundTransform;
+import nme.net.URLRequest;
+import nme.media.Sound;
 import nme.display.Bitmap;
 import com.knowledgeplayers.grar.util.LoadData;
 import nme.display.BitmapData;
@@ -63,6 +67,11 @@ class GameManager extends EventDispatcher {
     private var layout:Layout;
     private var activityDisplay:ActivityDisplay;
     private var navByMenu:Bool = false;
+    private var nbVolume:Float=1;
+
+    private var controle:SoundTransform;
+    private var itemSound:Sound;
+    private var itemSoundChannel:SoundChannel;
 
     /**
     * @return the instance of the singleton
@@ -128,6 +137,42 @@ class GameManager extends EventDispatcher {
             Lib.current.removeChild(this.layout.content);
         this.layout = LayoutManager.instance.getLayout(layout);
         Lib.current.addChild(this.layout.content);
+    }
+
+
+    /**
+    * Change volume
+    **/
+
+    public function changeVolume(nb:Float=0):Void{
+        Lib.trace("nbVolume : "+nb);
+        nbVolume = nb;
+        if( itemSoundChannel != null){
+            controle = itemSoundChannel.soundTransform;
+            controle.volume = nbVolume;
+            itemSoundChannel.soundTransform = controle;
+        }
+
+    }
+
+    /**
+    * Play a sound
+    **/
+
+    public function playSound(soundRef):Void
+    {
+
+        if( itemSoundChannel != null){
+            itemSoundChannel.stop();
+        }
+        if(soundRef != null){
+            itemSound = new Sound(new URLRequest(soundRef));
+            itemSoundChannel = itemSound.play();
+            changeVolume(nbVolume);
+
+        }
+
+
     }
 
     /**

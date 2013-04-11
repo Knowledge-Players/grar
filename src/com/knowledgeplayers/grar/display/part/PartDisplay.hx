@@ -158,7 +158,7 @@ class PartDisplay extends KpDisplay {
                     setText(cast(currentElement, TextItem));
                 }
 
-                UiFactory.playSound(cast(currentElement, TextItem).sound);
+                GameManager.instance.playSound(cast(currentElement, TextItem).sound);
             }
         }
 

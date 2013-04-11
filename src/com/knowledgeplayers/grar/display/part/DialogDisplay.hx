@@ -87,7 +87,7 @@ class DialogDisplay extends PartDisplay {
         var nextItem = pattern.getNextItem();
         if(nextItem != null){
             setText(nextItem);
-            UiFactory.playSound(nextItem.sound);
+            GameManager.instance.playSound(nextItem.sound);
             if(nextItem.hasActivity()){
                 nextActivity = cast(nextItem, RemarkableEvent).activity;
             }

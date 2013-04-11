@@ -215,15 +215,15 @@ class Zone extends Sprite {
     private function activSound():Void{
 
         if(soundState){
-            UiFactory.changeVolume(0);
+            GameManager.instance.changeVolume(0);
             soundState = false;
         }
         else
         {
-            UiFactory.changeVolume(1);
+            GameManager.instance.changeVolume(1);
             soundState = true;
         }
-        //Lib.trace("--soundState-- "+soundState);
+
     }
 
     private function initSize(sizes:String, maxSize:Float):Array<Dynamic>
