@@ -1,6 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
 import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.media.SoundChannel;
 import nme.net.URLRequest;
 import nme.media.Sound;
@@ -72,7 +73,7 @@ class PartDisplay extends KpDisplay {
     private var currentItems:FastList<DisplayObject>;
     private var currentTextItem:TextItem;
     private var inventory:InventoryDisplay;
-    private var itemSound:Sound;
+
 
 
     /**
@@ -157,7 +158,7 @@ class PartDisplay extends KpDisplay {
                     setText(cast(currentElement, TextItem));
                 }
 
-                playSound(cast(currentElement, TextItem).sound);
+                UiFactory.playSound(cast(currentElement, TextItem).sound);
             }
         }
 
@@ -204,7 +205,7 @@ class PartDisplay extends KpDisplay {
     }
 
     // Private
-
+/*
     private function playSound(soundRef):Void
     {
 
@@ -213,11 +214,12 @@ class PartDisplay extends KpDisplay {
         }
         if(soundRef != null){
             itemSound = new Sound(new URLRequest(soundRef));
+            UiFactory.itemSoundChannel.
             UiFactory.itemSoundChannel = itemSound.play();
         }
 
 
-    }
+    }*/
 
     override private function createElement(elemNode:Fast):Void
     {

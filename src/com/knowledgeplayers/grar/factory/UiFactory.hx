@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.factory;
 
+import nme.media.Sound;
+import nme.net.URLRequest;
 import nme.media.SoundChannel;
 import nme.media.SoundTransform;
 import com.knowledgeplayers.grar.display.element.AnimationDisplay;
@@ -39,17 +41,37 @@ class UiFactory {
     public static var tilesheet (default, null):TilesheetEx;
     public static var itemSoundChannel(default, default):SoundChannel;
     private static var layerPath:String;
+    private static var nbVolume:Float=1;
 
     private static var controle:SoundTransform;
+    private static var itemSound:Sound;
 
     private function new()
     {}
 
     public static function changeVolume(nb:Float=0):Void{
-
+        Lib.trace("nbVolume : "+nb);
+        nbVolume = nb;
         controle = itemSoundChannel.soundTransform;
-        controle.volume = nb;
+        controle.volume = nbVolume;
         itemSoundChannel.soundTransform = controle;
+
+    }
+
+    public static function playSound(soundRef):Void
+    {
+
+        if( itemSoundChannel != null){
+            itemSoundChannel.stop();
+        }
+        if(soundRef != null){
+            itemSound = new Sound(new URLRequest(soundRef));
+            itemSoundChannel = itemSound.play();
+            changeVolume(nbVolume);
+
+        }
+
+
     }
     /**
      * Create a button
