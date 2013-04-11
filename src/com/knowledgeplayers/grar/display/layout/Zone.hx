@@ -28,6 +28,7 @@ class Zone extends Sprite {
     private var zoneHeight:Float;
     private var menu:MenuDisplay;
     private var layer:TileLayer;
+    private var soundState:Bool = true;
 
     public function new(_width:Float, _height:Float):Void
     {
@@ -206,8 +207,23 @@ class Zone extends Sprite {
     {
         switch(e.type){
             case "open_menu":TweenManager.applyTransition(menu, menu.transitionIn);
+            case "activ_sound": activSound();
         }
 
+    }
+
+    private function activSound():Void{
+
+        if(soundState){
+            UiFactory.changeVolume(0);
+            soundState = false;
+        }
+        else
+        {
+            UiFactory.changeVolume(1);
+            soundState = true;
+        }
+        //Lib.trace("--soundState-- "+soundState);
     }
 
     private function initSize(sizes:String, maxSize:Float):Array<Dynamic>

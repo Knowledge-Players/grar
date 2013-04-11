@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.factory;
 
+import nme.media.SoundChannel;
+import nme.media.SoundTransform;
 import com.knowledgeplayers.grar.display.element.AnimationDisplay;
 import com.knowledgeplayers.grar.display.GameManager;
 import nme.filters.DropShadowFilter;
@@ -35,12 +37,20 @@ class UiFactory {
     * Tilesheet containing UI elements
     **/
     public static var tilesheet (default, null):TilesheetEx;
-
+    public static var itemSoundChannel(default, default):SoundChannel;
     private static var layerPath:String;
+
+    private static var controle:SoundTransform;
 
     private function new()
     {}
 
+    public static function changeVolume(nb:Float=0):Void{
+
+        controle = itemSoundChannel.soundTransform;
+        controle.volume = nb;
+        itemSoundChannel.soundTransform = controle;
+    }
     /**
      * Create a button
      * @param	buttonType : Type of the button
