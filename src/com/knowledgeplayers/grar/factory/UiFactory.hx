@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.factory;
 
+import nme.media.Sound;
+import nme.net.URLRequest;
+import nme.media.SoundChannel;
+import nme.media.SoundTransform;
 import com.knowledgeplayers.grar.display.element.AnimationDisplay;
 import com.knowledgeplayers.grar.display.GameManager;
 import nme.filters.DropShadowFilter;
@@ -35,11 +39,12 @@ class UiFactory {
     * Tilesheet containing UI elements
     **/
     public static var tilesheet (default, null):TilesheetEx;
-
     private static var layerPath:String;
+
 
     private function new()
     {}
+
 
     /**
      * Create a button
