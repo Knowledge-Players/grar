@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.eclecticdesignstudio.motion.easing.Linear;
 import Reflect;
 import haxe.FastList;
 import com.eclecticdesignstudio.motion.Actuate;
@@ -37,10 +38,10 @@ class TweenManager {
 			return fade(display, ref);
 		else if(Reflect.hasField(transition, "width"))
 			return zoom(display, ref);
-		else if(Reflect.hasField(transition, "xRange"))
-			return wiggle(display, ref);
 		else if(Reflect.hasField(transition, "color"))
 			return blink(display, ref);
+		else if(Reflect.hasField(transition, "repeat"))
+			return wiggle(display, ref);
 		else
 			return slide(display, ref);
 	}
@@ -176,20 +177,14 @@ class TweenManager {
 
 	private static function getEasing(transition:Dynamic):IEasing
 	{
-		var easingType:String;
-		var easingStyle:String;
 		if(Reflect.hasField(transition, "easingType")){
-			easingType = transition.easingType.charAt(0).toUpperCase() + transition.easingType.substr(1).toLowerCase();
-			easingStyle = "Ease" + transition.easingStyle.charAt(0).toUpperCase() + transition.easingStyle.substr(1).toLowerCase();
+			var easingType = transition.easingType.charAt(0).toUpperCase() + transition.easingType.substr(1).toLowerCase();
+			var easingStyle = "Ease" + transition.easingStyle.charAt(0).toUpperCase() + transition.easingStyle.substr(1).toLowerCase();
+			return Type.createEmptyInstance(Type.resolveClass("com.eclecticdesignstudio.motion.easing." + easingType + easingStyle));
 		}
 		else{
-			easingType = "Linear";
-			easingStyle = "EaseNone";
+			return Linear.easeNone;
 		}
-		//var easingTest = Cubic.easeOut;
-		var easing = Type.createEmptyInstance(Type.resolveClass("com.eclecticdesignstudio.motion.easing." + easingType + easingStyle));
-		//var eas = Reflect.field(easing, easingStyle);
-		return easing;
 	}
 
 	private static function parseValue(parameter:String, value:String, display:DisplayObject):Array<Float>
@@ -201,10 +196,10 @@ class TweenManager {
 		for(val in inOut){
 			if(ereg.match(val)){
 				switch(ereg.matched(1)){
-					case "+" : output.push(display.alpha + Std.parseFloat(ereg.matched(2)));
-					case "-" : output.push(display.alpha - Std.parseFloat(ereg.matched(2)));
-					case "*" : output.push(display.alpha * Std.parseFloat(ereg.matched(2)));
-					case "/" : output.push(display.alpha / Std.parseFloat(ereg.matched(2)));
+					case "+" : output.push(Reflect.getProperty(display, parameter) + Std.parseFloat(ereg.matched(2)));
+					case "-" : output.push(Reflect.getProperty(display, parameter) - Std.parseFloat(ereg.matched(2)));
+					case "*" : output.push(Reflect.getProperty(display, parameter) * Std.parseFloat(ereg.matched(2)));
+					case "/" : output.push(Reflect.getProperty(display, parameter) / Std.parseFloat(ereg.matched(2)));
 				}
 			}
 			else if(val == parameter)
