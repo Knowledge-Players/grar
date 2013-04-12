@@ -189,7 +189,7 @@ class Zone extends Sprite {
         background.graphics.endFill();
 
         if(bkgNode.has.filter){
-            _container.filters = [UiFactory.createFilterFromXml(bkgNode)];
+            _container.filters = [FilterManager.applyFilter(bkgNode.att.filter)];
         }
 
         _container.addChild(background);

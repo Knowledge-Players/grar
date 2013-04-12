@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import com.knowledgeplayers.grar.display.FilterManager;
 import nme.media.Sound;
 import nme.net.URLRequest;
 import nme.media.SoundChannel;
@@ -175,28 +176,6 @@ class UiFactory {
         if(xml.has.background)
             text.setBackground(xml.att.background);
         return text;
-    }
-
-    /**
-    * Create a bitmap filter from an XML descriptor
-    * @param    xml : Fast descriptor
-    * @return a bitmap filter
-    **/
-    //TODO FILTERMANAGER
-
-    public static function createFilterFromXml(xml:Fast):BitmapFilter
-    {
-        var filterNode = Std.string(xml.att.filter).split(":");
-
-        var filter:BitmapFilter =
-        switch(Std.string(filterNode[0]).toLowerCase()){
-            case "dropshadow":
-                var params = Std.string(filterNode[1]).split(",");
-                new DropShadowFilter(Std.parseFloat(params[0]), Std.parseFloat(params[1]), Std.parseInt(params[2]), Std.parseFloat(params[3]), Std.parseFloat(params[4]), Std.parseFloat(params[5]));
-
-        }
-
-        return filter;
     }
 
     /**
