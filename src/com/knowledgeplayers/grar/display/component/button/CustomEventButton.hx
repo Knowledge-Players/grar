@@ -21,6 +21,10 @@ class CustomEventButton extends DefaultButton {
      */
     public var propagateNativeEvent (default, default):Bool = false;
 
+    public var activToggle:Bool =false;
+
+    private var toggle:Bool = true;
+
     /**
      * Constructor
      * @param	eventName : Name of the customed event to dispatch
@@ -55,23 +59,41 @@ class CustomEventButton extends DefaultButton {
     }
 
     override private function onOver(event:MouseEvent):Void{
-            super.clipOver();
-            if(animations!=null)animElement("over");
+
+            if(!activToggle){
+                super.clipOver();
+                if(animations!=null)animElement("over");
+            }
     }
     override private function onOut(event:MouseEvent):Void{
-            super.clipOut();
-            if(animations!=null)animElement("out");
+
+            if(!activToggle){
+                super.clipOut();
+                if(animations!=null)animElement("out");
+            }
     }
 
     override private function onClick(event:MouseEvent):Void
     {
         //if(animEnCours != null)removeChild(animEnCours);
+
+        if(activToggle) changeToggle();
         if(!propagateNativeEvent)
             event.stopImmediatePropagation();
 
         var e = new ButtonActionEvent(eventType);
         dispatchEvent(e);
+    }
 
+    private function changeToggle():Void{
+            if(toggle){
+                super.clipOver();
+                toggle = false;
+            }else
+            {
+                super.clipOut();
+                toggle = true;
+            }
     }
 
     private function animElement(_type:String):Void{

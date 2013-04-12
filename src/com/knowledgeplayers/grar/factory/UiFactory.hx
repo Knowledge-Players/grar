@@ -111,6 +111,7 @@ class UiFactory {
         var style = xml.has.style ? xml.att.style : null;
         var className = xml.has.className ? xml.att.className : null;
 
+
         if(xml.hasNode.Animation){
 
             animations = new Hash<AnimationDisplay>();
