@@ -37,7 +37,7 @@ class TextItem implements PartElement {
     /**
     * Graphicals items associated with this item
     **/
-    public var items (default, default):FastList<String>;
+    public var items (default, default):Array<{ref:String,transition:String}>;
 
     /**
     * Reference to the token in this item
@@ -57,7 +57,7 @@ class TextItem implements PartElement {
 
     public function new(?xml:Fast, content:String = "")
     {
-        items = new FastList<String>();
+        items = new Array<{ref:String,transition:String}>();
         if(xml != null){
             if(xml.has.content)
                 this.content = xml.att.content;
@@ -77,7 +77,13 @@ class TextItem implements PartElement {
                 sound = xml.node.Sound.att.src;
 
             for(item in xml.nodes.Item){
-                items.add(item.att.ref);
+                var transition:String=null;
+
+                if(item.has.transition){
+                    transition = item.att.transition;
+                }
+
+                items.push({ref:item.att.ref,transition:transition});
             }
         }
         else{
