@@ -132,17 +132,23 @@ class KpGame extends EventDispatcher, implements Game {
 
 	public function start(?partId:String):Null<Part>
 	{
-		if(partId == null)
-			return getAllParts()[++partIndex];
-		var i:Int = 0;
-		for(part in getAllParts()){
-			if(part.id == partId){
-				partIndex = i;
-				return part.start(true);
-			}
-			i++;
+		var nextPart:Part = null;
+		nme.Lib.trace("B index: " + partIndex);
+		if(partId == null && partIndex < getAllParts().length){
+			nextPart = getAllParts()[partIndex].start();
+			partIndex++;
 		}
-		return null;
+		else if(partId != null){
+			var i:Int = 0;
+			for(part in getAllParts()){
+				if(part.id == partId){
+					partIndex = i + 1;
+					nextPart = part.start(true);
+				}
+				i++;
+			}
+		}
+		return nextPart;
 	}
 
 	/**

@@ -287,6 +287,7 @@ class GameManager extends EventDispatcher {
 	{
 		parts.first().visible = false;
 		parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
+		game.start(event.part.id);
 		parts.add(DisplayFactory.createPartDisplay(event.part));
 		parts.first().addEventListener(PartEvent.EXIT_PART, onExitSubPart);
 		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
