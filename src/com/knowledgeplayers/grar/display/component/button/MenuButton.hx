@@ -98,7 +98,7 @@ class MenuButton extends TextButton {
 		hWidth += textSprite.width;
 		hitBox.width = hWidth;
 
-		textSprite.y = hitBox.y;
+		textSprite.y = hitBox.y-textSprite.height/2;
 
 	}
 
