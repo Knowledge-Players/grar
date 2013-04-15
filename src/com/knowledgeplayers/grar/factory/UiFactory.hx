@@ -55,14 +55,14 @@ class UiFactory {
      * @return the created button
      */
 
-    public static function createButton(buttonType:String, ref:String, tile:String, x:Float = 0, y:Float = 0, scale:Float = 1, ?action:String, ?iconStatus:String, ?mirror:String, ?style:String,?className:String,?animations:Hash<AnimationDisplay>):DefaultButton
+    public static function createButton(buttonType:String, ref:String, tile:String, x:Float = 0, y:Float = 0, scale:Float = 1, ?action:String, ?iconStatus:String, ?mirror:String, ?style:String,?className:String,?animations:Hash<AnimationDisplay>,?width:Float):DefaultButton
     {
         var creation:DefaultButton =
         switch(buttonType.toLowerCase()) {
             case "text": new TextButton(tilesheet, tile, action, style,animations);
             case "event": new CustomEventButton(tilesheet, tile, action,animations);
             case "anim": new AnimationButton(tilesheet, tile, action);
-            case "menu": new MenuButton(tilesheet, tile, action, iconStatus);
+            case "menu": new MenuButton(tilesheet, tile, action, iconStatus,width);
             default: new DefaultButton(tilesheet, tile);
         }
         creation.ref = ref;
@@ -111,6 +111,7 @@ class UiFactory {
         var mirror = xml.has.mirror ? xml.att.mirror : null;
         var style = xml.has.style ? xml.att.style : null;
         var className = xml.has.className ? xml.att.className : null;
+        var width = xml.has.width ? Std.parseFloat(xml.att.width) : 100;
 
 
         if(xml.hasNode.Animation){
@@ -120,7 +121,7 @@ class UiFactory {
                 animations.set(node.att.type,createAnimationFromXml(node));
             }
         }
-        return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scale, action, iconStatus, mirror, style,className,animations);
+        return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scale, action, iconStatus, mirror, style,className,animations,width);
     }
 
     /**

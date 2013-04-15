@@ -16,12 +16,12 @@ class MenuButton extends TextButton {
 	private var status:TileClip;
 	private var layerStatus:TileLayer;
 
-	public function new(tilesheet:TilesheetEx, tile:String, eventName:String, ?_status:String)
+	public function new(tilesheet:TilesheetEx, tile:String, eventName:String, ?_status:String,?width:Float)
 	{
 		super(tilesheet, tile, eventName);
 		//layer.view.visible = false;
 
-		hitBox = setHitBox(10, 10);
+		hitBox = setHitBox(width, 10);
 		hitBox.alpha = 0;
 		if(_status != ""){
 			layerStatus = new TileLayer(tilesheet);
@@ -90,16 +90,16 @@ class MenuButton extends TextButton {
 		var hWidth:Float = 0;
 		if(status != null){
 			textSprite.x = status.width;
-			status.y = hitBox.y + (status.height / 2);
+			status.y = textSprite.y + (textSprite.height / 2)+status.height;
 			layerStatus.render();
 			hWidth += status.width;
 		}
 
 		hWidth += textSprite.width;
-		hitBox.width = hWidth;
+		hitBox.width = hWidth+100;
 
 		textSprite.y = hitBox.y-textSprite.height/2;
-
+        textSprite.x= hitBox.x;
 	}
 
 }
