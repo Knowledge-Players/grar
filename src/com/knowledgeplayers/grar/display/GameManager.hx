@@ -261,7 +261,9 @@ class GameManager extends EventDispatcher {
 	private function onExitPart(event:Event):Void
 	{
 		parts.first().unLoad();
-		displayPartById(parts.pop().part.id);
+		parts.pop();
+		// Display next part
+		displayPartById();
 	}
 
 	private function onPartLoaded(event:PartEvent):Void
@@ -278,6 +280,7 @@ class GameManager extends EventDispatcher {
 		layout.zones.get(game.ref).removeChild(parts.pop());
 		parts.first().visible = true;
 		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+		parts.first().nextElement();
 	}
 
 	public function onEnterSubPart(event:PartEvent):Void

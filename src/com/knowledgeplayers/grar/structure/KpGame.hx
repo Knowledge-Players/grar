@@ -78,7 +78,7 @@ class KpGame extends EventDispatcher, implements Game {
 	private var languages:Hash<String>;
 	private var stateInfos:StateInfos;
 	private var flags:Hash<String>;
-	private var parts:Hash<Part>;
+	private var parts:Array<Part>;
 	private var connection:Connection;
 	private var nbPartsLoaded:Int = 0;
 	private var layoutLoaded:Bool = false;
@@ -96,7 +96,7 @@ class KpGame extends EventDispatcher, implements Game {
 		super();
 		languages = new Hash<String>();
 		flags = new Hash<String>();
-		parts = new Hash<Part>();
+		parts = new Array<Part>();
 		inventory = new Array<Token>();
 		activitiesWaiting = new FastList<Xml>();
 
@@ -132,9 +132,15 @@ class KpGame extends EventDispatcher, implements Game {
 
 	public function start(?partId:String):Null<Part>
 	{
+		if(partId == null)
+			return getAllParts()[++partIndex];
+		var i:Int = 0;
 		for(part in getAllParts()){
-			if(partId == null || part.id == partId)
+			if(part.id == partId){
+				partIndex = i;
 				return part.start(true);
+			}
+			i++;
 		}
 		return null;
 	}
@@ -149,7 +155,7 @@ class KpGame extends EventDispatcher, implements Game {
 	{
 		part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		part.addEventListener(PartEvent.EXIT_PART, onPartComplete);
-		parts.set(partId, part);
+		parts.push(part);
 	}
 
 	/**
@@ -237,16 +243,12 @@ class KpGame extends EventDispatcher, implements Game {
 
 	public function getItemName(id:String):Null<String>
 	{
-		if(parts.exists(id))
-			return parts.get(id).name;
-		else{
-			for(part in parts){
-				var name = part.getItemName(id);
-				if(name != null)
-					return name;
-			}
-			return null;
+		for(part in parts){
+			var name = part.getItemName(id);
+			if(name != null)
+				return name;
 		}
+		return null;
 	}
 
 	// Privates

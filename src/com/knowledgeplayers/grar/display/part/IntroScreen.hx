@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.factory.UiFactory;
+import nme.display.Bitmap;
+import aze.display.TilesheetEx;
 import haxe.Timer;
 import nme.events.Event;
 import nme.display.DisplayObject;
@@ -56,9 +59,16 @@ class IntroScreen extends Sprite {
 			addChild(content);
 		}
 		for(item in xml.nodes.Item){
-			var bitmap:DisplayObject = LoadData.instance.getElementDisplayInCache(item.att.ref);
-			bitmap.width = Std.parseFloat(item.att.width);
-			bitmap.height = Std.parseFloat(item.att.height);
+			var bitmap:DisplayObject;
+			if(item.has.src)
+				bitmap = LoadData.instance.getElementDisplayInCache(item.att.src);
+			else{
+				bitmap = new Bitmap(DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, item.att.id));
+			}
+			if(item.has.width)
+				bitmap.width = Std.parseFloat(item.att.width);
+			if(item.has.height)
+				bitmap.height = Std.parseFloat(item.att.height);
 			bitmap.x = Std.parseFloat(item.att.x);
 			bitmap.y = Std.parseFloat(item.att.y);
 			addChild(bitmap);

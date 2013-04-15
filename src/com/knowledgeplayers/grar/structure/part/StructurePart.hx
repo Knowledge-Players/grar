@@ -276,9 +276,9 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 
 	public function getItemName(id:String):Null<String>
 	{
-		var name = null;
 		if(this.id == id)
-			name = this.name;
+			return this.name;
+		var name = null;
 		for(elem in elements){
 			if(elem.isPart()){
 				name = cast(elem, Part).getItemName(id);
