@@ -50,6 +50,8 @@ class MenuDisplay extends Zone {
 	private var levelDisplays:Hash<Fast>;
 	private var xOffset:Float = 0;
 	private var yOffset:Float = 0;
+	private var yBase:Float = 0;
+	private var xBase:Float = 0;
 
 	public function new(_width:Float, _height:Float)
 	{
@@ -100,10 +102,20 @@ class MenuDisplay extends Zone {
 				case "button":createButton(child);
 			}
 		}
+        if(display.has.xBase)
+            xBase = Std.parseFloat(display.att.xBase);
+        if(display.has.yBase)
+            yBase = Std.parseFloat(display.att.yBase);
 
 		var menuXml = GameManager.instance.game.menu;
+
+        xOffset +=xBase;
+        yOffset +=yBase;
+
 		for(elem in menuXml.firstElement().elements()){
+
 			createMenuLevel(elem);
+           // Lib.trace("createMenu : "+elem);
 		}
 	}
 
@@ -115,21 +127,25 @@ class MenuDisplay extends Zone {
 			throw "Display not specified for tag " + level.nodeName;
 
 		var fast:Fast = levelDisplays.get(level.nodeName);
+
+
 		if(level.nodeName == "hr"){
 			addLine(fast);
 		}
 		else{
 			var button = addButton(fast.node.Button, GameManager.instance.getItemName(level.get("id")));
+
 			button.x += xOffset;
 			button.y += yOffset;
 			addChild(button);
-			nme.Lib.trace("button " + button.name + " " + button.x + ";" + button.y);
+			//Lib.trace("button " + button.name + " " + button.x + ";" + button.y+" -- "+button.height);
 			if(orientation == "vertical"){
-				yOffset += button.height + Std.parseFloat(fast.att.yOffset);
+				yOffset += button.height;
 			}
 			else{
 				xOffset += button.width + Std.parseFloat(fast.att.width);
 			}
+            //Lib.trace("yOffSet : "+yOffset);
 		}
 		for(elem in level.elements())
 			createMenuLevel(elem);
@@ -171,7 +187,7 @@ class MenuDisplay extends Zone {
 		line.graphics.lineTo(dest.x, dest.y);
 
 		line.x = Std.parseFloat(fast.att.x);
-		line.y = Std.parseFloat(fast.att.y);
+		line.y = Std.parseFloat(fast.att.y)+yOffset;
 
 		addChild(line);
 

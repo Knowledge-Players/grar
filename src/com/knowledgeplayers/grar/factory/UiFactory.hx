@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import com.knowledgeplayers.grar.display.FilterManager;
 import nme.media.Sound;
 import nme.net.URLRequest;
 import nme.media.SoundChannel;
@@ -54,14 +55,14 @@ class UiFactory {
      * @return the created button
      */
 
-    public static function createButton(buttonType:String, ref:String, tile:String, x:Float = 0, y:Float = 0, scale:Float = 1, ?action:String, ?iconStatus:String, ?mirror:String, ?style:String,?className:String,?animations:Hash<AnimationDisplay>):DefaultButton
+    public static function createButton(buttonType:String, ref:String, tile:String, x:Float = 0, y:Float = 0, scale:Float = 1, ?action:String, ?iconStatus:String, ?mirror:String, ?style:String,?className:String,?animations:Hash<AnimationDisplay>,?width:Float):DefaultButton
     {
         var creation:DefaultButton =
         switch(buttonType.toLowerCase()) {
             case "text": new TextButton(tilesheet, tile, action, style,animations);
             case "event": new CustomEventButton(tilesheet, tile, action,animations);
             case "anim": new AnimationButton(tilesheet, tile, action);
-            case "menu": new MenuButton(tilesheet, tile, action, iconStatus);
+            case "menu": new MenuButton(tilesheet, tile, action, iconStatus,width);
             default: new DefaultButton(tilesheet, tile);
         }
         creation.ref = ref;
@@ -110,6 +111,8 @@ class UiFactory {
         var mirror = xml.has.mirror ? xml.att.mirror : null;
         var style = xml.has.style ? xml.att.style : null;
         var className = xml.has.className ? xml.att.className : null;
+        var width = xml.has.width ? Std.parseFloat(xml.att.width) : 100;
+
 
         if(xml.hasNode.Animation){
 
@@ -118,7 +121,7 @@ class UiFactory {
                 animations.set(node.att.type,createAnimationFromXml(node));
             }
         }
-        return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scale, action, iconStatus, mirror, style,className,animations);
+        return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scale, action, iconStatus, mirror, style,className,animations,width);
     }
 
     /**
@@ -174,28 +177,6 @@ class UiFactory {
         if(xml.has.background)
             text.setBackground(xml.att.background);
         return text;
-    }
-
-    /**
-    * Create a bitmap filter from an XML descriptor
-    * @param    xml : Fast descriptor
-    * @return a bitmap filter
-    **/
-    //TODO FILTERMANAGER
-
-    public static function createFilterFromXml(xml:Fast):BitmapFilter
-    {
-        var filterNode = Std.string(xml.att.filter).split(":");
-
-        var filter:BitmapFilter =
-        switch(Std.string(filterNode[0]).toLowerCase()){
-            case "dropshadow":
-                var params = Std.string(filterNode[1]).split(",");
-                new DropShadowFilter(Std.parseFloat(params[0]), Std.parseFloat(params[1]), Std.parseInt(params[2]), Std.parseFloat(params[3]), Std.parseFloat(params[4]), Std.parseFloat(params[5]));
-
-        }
-
-        return filter;
     }
 
     /**

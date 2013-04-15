@@ -111,9 +111,17 @@ class Zone extends Sprite {
         var button:DefaultButton = null;
 
         button = UiFactory.createButtonFromXml(_child);
+
         if(_child.att.type == "event"){
             cast(button, CustomEventButton).addEventListener(_child.att.action, onActionEvent);
         }
+
+        if(_child.att.action == "sound_toggle"){
+            cast(button, CustomEventButton).activToggle = true;
+
+        }
+
+
         addChild(button);
 
         return button;
@@ -181,7 +189,7 @@ class Zone extends Sprite {
         background.graphics.endFill();
 
         if(bkgNode.has.filter){
-            _container.filters = [UiFactory.createFilterFromXml(bkgNode)];
+            _container.filters = [FilterManager.applyFilter(bkgNode.att.filter)];
         }
 
         _container.addChild(background);
@@ -207,12 +215,13 @@ class Zone extends Sprite {
     {
         switch(e.type){
             case "open_menu":TweenManager.applyTransition(menu, menu.transitionIn);
-            case "activ_sound": activSound();
+            case "sound_toggle": activSound(e);
         }
 
     }
 
-    private function activSound():Void{
+    private function activSound(e:Event):Void{
+
 
         if(soundState){
             GameManager.instance.changeVolume(0);

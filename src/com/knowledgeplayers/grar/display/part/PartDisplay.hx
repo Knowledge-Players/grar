@@ -443,8 +443,10 @@ class PartDisplay extends KpDisplay {
 			if(!Std.is(object.obj, ScrollPanel) && !Std.is(object.obj, CharacterDisplay)){
 				var exists = false;
 				for(item in currentTextItem.items){
-					if(key == item){
+					if(key == item.ref){
 						exists = true;
+                        if(item.transition != null)
+                           TweenManager.applyTransition(displays.get(item.ref).obj, item.transition);
 						currentItems.add(object.obj);
 					}
 				}
