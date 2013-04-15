@@ -125,6 +125,7 @@ class PartDisplay extends KpDisplay {
 		}
 
 		if(currentElement.isText()){
+
 			var groupKey = "";
 			if(textGroups != null){
 
@@ -148,16 +149,17 @@ class PartDisplay extends KpDisplay {
 						else{
 							textItem = cast(currentElement, TextItem);
 						}
-						setText(cast(textItem, TextItem), isFirst);
+						setupTextItem(cast(textItem, TextItem), isFirst);
 						isFirst = false;
 					}
 				}
 				else{
-					setText(cast(currentElement, TextItem));
+					setupTextItem(cast(currentElement, TextItem));
 				}
 
 				GameManager.instance.playSound(cast(currentElement, TextItem).sound);
 			}
+
 		}
 
 		else if(currentElement.isActivity()){
@@ -202,28 +204,15 @@ class PartDisplay extends KpDisplay {
 
 	}
 
-	// Private
-	/*
-    private function playSound(soundRef):Void
-    {
-
-        if( UiFactory.itemSoundChannel != null){
-            UiFactory.itemSoundChannel.stop();
-        }
-        if(soundRef != null){
-            itemSound = new Sound(new URLRequest(soundRef));
-            UiFactory.itemSoundChannel.
-            UiFactory.itemSoundChannel = itemSound.play();
-        }
-
-
-    }*/
-
 	override private function createElement(elemNode:Fast):Void
 	{
 		if(elemNode.name.toLowerCase() == "inventory"){
 			inventory = new InventoryDisplay(elemNode);
 			inventory.init(part.tokens);
+		}
+		else if(elemNode.name.toLowerCase() == "intro"){
+			displays.set(elemNode.att.ref, {obj: new IntroScreen(elemNode), z: zIndex});
+			zIndex++;
 		}
 		else
 			super.createElement(elemNode);
@@ -261,14 +250,17 @@ class PartDisplay extends KpDisplay {
 
 	private function displayBackground(background:String):Void
 	{
+		var sameBackground = true;
 		// Clean previous background
 		if(previousBackground != null && previousBackground.ref != background){
+			sameBackground = false;
 			if(previousBackground.bmp != null)
 				displayArea.removeChild(previousBackground.bmp);
 		}
-		// Add new background
-
-		if(background != null){
+		else if(previousBackground == null)
+			sameBackground = false;
+		// Add new background if different from previous one
+		if(!sameBackground && background != null){
 			var fastBkg = displaysFast.get(background);
 			var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(fastBkg.att.src), Bitmap).bitmapData);
 
@@ -310,7 +302,7 @@ class PartDisplay extends KpDisplay {
 			currentSpeaker = null;
 	}
 
-	private function setText(item:TextItem, ?isFirst:Bool = true):Void
+	private function setupTextItem(item:TextItem, ?isFirst:Bool = true):Void
 	{
 		currentTextItem = item;
 		displayBackground(item.background);
@@ -330,6 +322,24 @@ class PartDisplay extends KpDisplay {
 			}
 		}
 		setSpeaker(item.author, item.transition);
+
+		if(item.introScreen != null){
+			// The intro screen automatically removes itself after its duration
+			var intro = item.introScreen;
+			var introDisplay:IntroScreen = cast(displays.get(intro.ref).obj, IntroScreen);
+			introDisplay.setText(Localiser.instance.getItemContent(intro.content));
+			introDisplay.addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
+			{
+				setText(item, isFirst);
+			});
+			displayArea.addChild(introDisplay);
+		}
+		else
+			setText(item, isFirst);
+	}
+
+	private function setText(item:TextItem, ?isFirst:Bool = true):Void
+	{
 		var content = Localiser.getInstance().getItemContent(item.content);
 		if(item.ref != null){
 			cast(displays.get(item.ref).obj, ScrollPanel).setContent(content);
@@ -337,6 +347,7 @@ class PartDisplay extends KpDisplay {
 
 		if(!isFirst)
 			displayArea.addChild(cast(displays.get(item.ref).obj, ScrollPanel));
+
 		displayPart();
 	}
 

@@ -37,127 +37,127 @@ import nme.display.Bitmap;
 
 class DialogDisplay extends PartDisplay {
 
-    private var tokens:Hash<Sprite>;
-    private var displayedToken:Bitmap;
-    private var currentPattern:Pattern;
-    private var currentToken:Token;
-    private var nextActivity:Activity;
+	private var tokens:Hash<Sprite>;
+	private var displayedToken:Bitmap;
+	private var currentPattern:Pattern;
+	private var currentToken:Token;
+	private var nextActivity:Activity;
 
-    /**
+	/**
      * Constructor
      * @param	part : DialogPart to display
      */
 
-    public function new(part:DialogPart)
-    {
-        tokens = new Hash<Sprite>();
-        resizeD = ResizeManager.getInstance();
-        super(part);
+	public function new(part:DialogPart)
+	{
+		tokens = new Hash<Sprite>();
+		resizeD = ResizeManager.getInstance();
+		super(part);
 
-    }
+	}
 
-    // Private
+	// Private
 
-    override private function next(event:ButtonActionEvent):Void
-    {
-        if(nextActivity != null){
-            GameManager.instance.displayActivity(nextActivity);
-            nextActivity = null;
-        }
-        else
-            startPattern(currentPattern);
-    }
+	override private function next(event:ButtonActionEvent):Void
+	{
+		if(nextActivity != null){
+			GameManager.instance.displayActivity(nextActivity);
+			nextActivity = null;
+		}
+		else
+			startPattern(currentPattern);
+	}
 
-    override private function startPattern(pattern:Pattern):Void
-    {
-        super.startPattern(pattern);
-        if(Std.is(pattern, ChoicePattern) && inventory != null)
-            inventory.visible = false;
-        else if(inventory != null)
-            inventory.visible = true;
+	override private function startPattern(pattern:Pattern):Void
+	{
+		super.startPattern(pattern);
+		if(Std.is(pattern, ChoicePattern) && inventory != null)
+			inventory.visible = false;
+		else if(inventory != null)
+			inventory.visible = true;
 
-        if(currentPattern != pattern)
-            currentPattern = pattern;
+		if(currentPattern != pattern)
+			currentPattern = pattern;
 
-        if(displayedToken != null){
-            removeChild(displayedToken);
-            displayedToken = null;
-        }
+		if(displayedToken != null){
+			removeChild(displayedToken);
+			displayedToken = null;
+		}
 
-        var nextItem = pattern.getNextItem();
-        if(nextItem != null){
-            setText(nextItem);
-            GameManager.instance.playSound(nextItem.sound);
-            if(nextItem.hasActivity()){
-                nextActivity = cast(nextItem, RemarkableEvent).activity;
-            }
-            if(nextItem.token != null){
-                GameManager.instance.activateToken(nextItem.token);
-            }
-        }
-        else if(currentPattern.nextPattern != "")
-            goToPattern(currentPattern.nextPattern);
-        else
-            dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
-    }
+		var nextItem = pattern.getNextItem();
+		if(nextItem != null){
+			setupTextItem(nextItem);
+			GameManager.instance.playSound(nextItem.sound);
+			if(nextItem.hasActivity()){
+				nextActivity = cast(nextItem, RemarkableEvent).activity;
+			}
+			if(nextItem.token != null){
+				GameManager.instance.activateToken(nextItem.token);
+			}
+		}
+		else if(currentPattern.nextPattern != "")
+			goToPattern(currentPattern.nextPattern);
+		else
+			dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+	}
 
-    // Privates
+	// Privates
 
-    override private function setButtonAction(button:CustomEventButton, action:String):Void
-    {
-        super.setButtonAction(button, action);
-        if(action.toLowerCase() == ButtonActionEvent.GOTO){
-            button.addEventListener(action, onChoice);
-            button.addEventListener(MouseEvent.MOUSE_OVER, onOverChoice);
-            button.addEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
-        }
-    }
+	override private function setButtonAction(button:CustomEventButton, action:String):Void
+	{
+		super.setButtonAction(button, action);
+		if(action.toLowerCase() == ButtonActionEvent.GOTO){
+			button.addEventListener(action, onChoice);
+			button.addEventListener(MouseEvent.MOUSE_OVER, onOverChoice);
+			button.addEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
+		}
+	}
 
-    private function onChoice(ev:ButtonActionEvent):Void
-    {
-        var choice = cast(ev.target, DefaultButton);
-        var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
-        choice.removeEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
-        goToPattern(target);
-    }
+	private function onChoice(ev:ButtonActionEvent):Void
+	{
+		var choice = cast(ev.target, DefaultButton);
+		var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
+		choice.removeEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
+		goToPattern(target);
+	}
 
-    private function onOverChoice(e:MouseEvent):Void
-    {
-        //cpp n'aime pas e.target
-        var choiceButton = cast(e.currentTarget, DefaultButton);
-        var pattern = cast(currentPattern, ChoicePattern);
-        var choice:Choice = null;
-        for(key in pattern.choices.keys()){
-            if(choiceButton.ref == key)
-                choice = pattern.choices.get(key);
-        }
-        if(choice != null){
-            var tooltip = cast(displays.get(pattern.tooltipRef).obj, ScrollPanel);
-            var content = Localiser.instance.getItemContent(choice.toolTip);
-            tooltip.setContent(content);
-            var i:Int = 0;
-            while(!Std.is(displayArea.getChildAt(i), DefaultButton)){
-                i++;
-            }
-            displayArea.addChildAt(tooltip, i);
-        }
+	private function onOverChoice(e:MouseEvent):Void
+	{
+		//cpp n'aime pas e.target
+		var choiceButton = cast(e.currentTarget, DefaultButton);
+		var pattern = cast(currentPattern, ChoicePattern);
+		var choice:Choice = null;
+		for(key in pattern.choices.keys()){
+			if(choiceButton.ref == key)
+				choice = pattern.choices.get(key);
+		}
+		if(choice != null){
+			var tooltip = cast(displays.get(pattern.tooltipRef).obj, ScrollPanel);
+			var content = Localiser.instance.getItemContent(choice.toolTip);
+			tooltip.setContent(content);
+			var i:Int = 0;
+			while(!Std.is(displayArea.getChildAt(i), DefaultButton)){
+				i++;
+			}
+			displayArea.addChildAt(tooltip, i);
+		}
 
-    }
+	}
 
-    private function onOutChoice(e:MouseEvent):Void
-    {
-        var pattern = cast(currentPattern, ChoicePattern);
-        removeChild(displays.get(pattern.tooltipRef).obj);
-    }
+	private function onOutChoice(e:MouseEvent):Void
+	{
+		var pattern = cast(currentPattern, ChoicePattern);
+		removeChild(displays.get(pattern.tooltipRef).obj);
+	}
 
-    private function goToPattern(target:String):Void
-    {
+	private function goToPattern(target:String):Void
+	{
 
-        var i = 0;
-        while(!(part.elements[i].isPattern() && cast(part.elements[i], Pattern).name == target)){
-            i++;
-        }
+		var i = 0;
+		while(!(part.elements[i].isPattern() && cast(part.elements[i], Pattern).name == target)){
+			i++;
+		}
 
-        startPattern(cast(part.elements[i], Pattern));
-    }
+		startPattern(cast(part.elements[i], Pattern));
+	}
 }

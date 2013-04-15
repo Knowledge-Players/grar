@@ -145,14 +145,12 @@ class GameManager extends EventDispatcher {
 
 	public function changeVolume(nb:Float = 0):Void
 	{
-		Lib.trace("nbVolume : " + nb);
 		nbVolume = nb;
 		if(itemSoundChannel != null){
 			controle = itemSoundChannel.soundTransform;
 			controle.volume = nbVolume;
 			itemSoundChannel.soundTransform = controle;
 		}
-
 	}
 
 	/**

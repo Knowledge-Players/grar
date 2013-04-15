@@ -17,74 +17,74 @@ import nme.display.Sprite;
  */
 class StripDisplay extends PartDisplay {
 
-    private var boxesref:Array<String>;
-    private var currentBox:BoxPattern;
-    private var currentItem:TextItem;
-    private var boxIndex:Int = 0;
+	private var boxesref:Array<String>;
+	private var currentBox:BoxPattern;
+	private var currentItem:TextItem;
+	private var boxIndex:Int = 0;
 
-    public function new(part:StripPart)
-    {
-        super(part);
-        boxesref = new Array<String>();
-    }
+	public function new(part:StripPart)
+	{
+		super(part);
+		boxesref = new Array<String>();
+	}
 
-    // Private
+	// Private
 
-    override private function next(event:ButtonActionEvent):Void
-    {
-        startPattern(currentBox);
-    }
+	override private function next(event:ButtonActionEvent):Void
+	{
+		startPattern(currentBox);
+	}
 
-    override private function createElement(elemNode:Fast):Void
-    {
-        super.createElement(elemNode);
-        if(elemNode.name.toLowerCase() == "box"){
-            boxesref.push(elemNode.att.ref);
-            displaysFast.set(elemNode.att.ref, elemNode);
-        }
-    }
+	override private function createElement(elemNode:Fast):Void
+	{
+		super.createElement(elemNode);
+		if(elemNode.name.toLowerCase() == "box"){
+			boxesref.push(elemNode.att.ref);
+			displaysFast.set(elemNode.att.ref, elemNode);
+		}
+	}
 
-    override private function startPattern(pattern:Pattern):Void
-    {
-        super.startPattern(pattern);
+	override private function startPattern(pattern:Pattern):Void
+	{
+		super.startPattern(pattern);
 
-        currentBox = cast(pattern, BoxPattern);
+		currentBox = cast(pattern, BoxPattern);
 
-        var nextItem = pattern.getNextItem();
-        if(nextItem != null){
-            currentItem = nextItem;
-            displayArea = new Sprite();
-            setText(nextItem);
-        }
-        else
-            this.nextElement();
-    }
+		var nextItem = pattern.getNextItem();
+		if(nextItem != null){
+			currentItem = nextItem;
+			displayArea = new Sprite();
+			setupTextItem(nextItem);
+		}
+		else
+			this.nextElement();
+	}
 
-    override private function displayPart():Void
-    {
-        var array = new Array<{obj:DisplayObject, z:Int}>();
-        for(key in displays.keys()){
-            if(key == currentItem.ref || currentBox.buttons.exists(key) || key == currentItem.author)
-                array.push(displays.get(key));
+	override private function displayPart():Void
+	{
+		var array = new Array<{obj:DisplayObject, z:Int}>();
+		for(key in displays.keys()){
+			if(key == currentItem.ref || currentBox.buttons.exists(key) || key == currentItem.author)
+				array.push(displays.get(key));
 
-            if(currentBox.buttons.exists(key))
-                cast(displays.get(key).obj, TextButton).setText(Localiser.instance.getItemContent(currentBox.buttons.get(key)));
-        }
+			if(currentBox.buttons.exists(key))
+				cast(displays.get(key).obj, TextButton).setText(Localiser.instance.getItemContent(currentBox.buttons.get(key)));
+		}
 
-        for(obj in array){
-            displayArea.addChildAt(obj.obj, cast(Math.min(obj.z, numChildren), Int));
-        }
+		for(obj in array){
+			displayArea.addChildAt(obj.obj, cast(Math.min(obj.z, numChildren), Int));
+		}
 
-        var node = displaysFast.get(boxesref[boxIndex]);
-        displayArea.x = Std.parseFloat(node.att.x);
-        displayArea.y = Std.parseFloat(node.att.y);
-        var mask = new Sprite();
-        mask.graphics.beginFill(0);
-        mask.graphics.drawRect(displayArea.x, displayArea.y, Std.parseFloat(node.att.width), Std.parseFloat(node.att.height));
-        displayArea.mask = mask;
+		var node = displaysFast.get(boxesref[boxIndex]);
+		displayArea.x = Std.parseFloat(node.att.x);
+		displayArea.y = Std.parseFloat(node.att.y);
+		var mask = new Sprite();
+		mask.graphics.beginFill(0);
+		mask.graphics.drawRect(displayArea.x, displayArea.y, Std.parseFloat(node.att.width), Std.parseFloat(node.att.height));
+		displayArea.mask = mask;
 
-        boxIndex++;
+		boxIndex++;
 
-        addChild(displayArea);
-    }
+		addChild(displayArea);
+	}
 }
