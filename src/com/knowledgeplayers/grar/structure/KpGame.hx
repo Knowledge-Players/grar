@@ -390,7 +390,7 @@ class KpGame extends EventDispatcher, implements Game {
 	private function checkLoading():Void
 	{
 		if(getLoadingCompletion() == 1 && uiLoaded && (numStyleSheet == numStyleSheetLoaded)){
-			checkIntegrity();
+			//checkIntegrity();
 			// Menu hasn't been set, creating the default
 			if(menu == null){
 				var menuXml = Xml.createElement("menu");

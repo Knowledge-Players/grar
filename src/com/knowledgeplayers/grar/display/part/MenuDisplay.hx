@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.structure.part.PartElement;
 import nme.display.Shape;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.component.button.MenuButton;
@@ -45,8 +46,7 @@ class MenuDisplay extends Zone {
     **/
 	public var transitionOut:String;
 
-	private var parts:Array<Part>;
-	private var activities:Array<Activity>;
+
 	private var levelDisplays:Hash<Fast>;
 	private var xOffset:Float = 0;
 	private var yOffset:Float = 0;
@@ -151,29 +151,6 @@ class MenuDisplay extends Zone {
 			createMenuLevel(elem);
 	}
 
-	private function onClick(e:Event):Void
-	{
-		var target = cast(e.target, DefaultButton);
-		if(parts != null){
-			for(part in parts){
-				if(part.name == target.name){
-					GameManager.instance.displayPart(part);
-					break;
-				}
-			}
-		}
-		if(activities != null){
-			for(activity in activities){
-				if(activity.name == target.name){
-					GameManager.instance.displayActivity(activity);
-					break;
-				}
-			}
-		}
-
-		TweenManager.applyTransition(this, transitionOut);
-
-	}
 
 	private function addLine(fast:Fast):Void
 	{
@@ -201,11 +178,14 @@ class MenuDisplay extends Zone {
 		if(Std.is(button, TextButton))
 			cast(button, TextButton).setText(text);
 		if(Std.is(button, MenuButton))
-			cast(button, MenuButton).alignElements();
+        {
+            cast(button, MenuButton).alignElements();
+            cast(button, MenuButton).menuD = this;
+            cast(button, MenuButton).transitionOut = transitionOut;
+        }
+
 
 		button.name = text;
-
-		button.addEventListener(ButtonActionEvent.GOTO, onClick);
 
 		return button;
 	}

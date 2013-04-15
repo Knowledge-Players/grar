@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.button;
 
+import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import nme.events.MouseEvent;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import nme.Lib;
@@ -15,6 +16,8 @@ class MenuButton extends TextButton {
 	private var hitBox:Sprite;
 	private var status:TileClip;
 	private var layerStatus:TileLayer;
+    public var menuD:MenuDisplay;
+    public var transitionOut:String;
 
 	public function new(tilesheet:TilesheetEx, tile:String, eventName:String, ?_status:String,?width:Float)
 	{
@@ -79,6 +82,33 @@ class MenuButton extends TextButton {
 	{
 		hitBox.alpha = 0;
 	}
+
+
+    override   private function onClick(e: MouseEvent): Void
+    {
+
+        var target = cast(e.target, DefaultButton);
+        if(GameManager.instance.game.getAllParts() != null){
+            for(part in GameManager.instance.game.getAllParts()){
+                if(part.name == target.name){
+                    GameManager.instance.displayPart(part);
+                    break;
+                }
+            }
+        }
+        if( GameManager.instance.game.getAllItems() != null){
+            for(activity in  GameManager.instance.game.getAllItems()){
+               /* if(activity.name == target.name){
+                    GameManager.instance.displayActivity(activity);
+                    break;
+                }
+                */
+            }
+        }
+
+
+        TweenManager.applyTransition(menuD, transitionOut);
+    }
 	/**
 *  Align all elements of the Menu Button
 **/
@@ -96,10 +126,12 @@ class MenuButton extends TextButton {
 		}
 
 		hWidth += textSprite.width;
-		hitBox.width = hWidth+100;
+		//hitBox.width = hWidth;
 
 		textSprite.y = hitBox.y-textSprite.height/2;
         textSprite.x= hitBox.x;
+
+
 	}
 
 }
