@@ -101,6 +101,21 @@ class DialogDisplay extends PartDisplay {
 			dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 	}
 
+	/**
+	* Go to a specific pattern
+	* @param    target : Name of the pattern to go
+	**/
+
+	public function goToPattern(target:String):Void
+	{
+		var i = 0;
+		while(!(part.elements[i].isPattern() && cast(part.elements[i], Pattern).name == target)){
+			i++;
+		}
+
+		startPattern(cast(part.elements[i], Pattern));
+	}
+
 	// Privates
 
 	override private function setButtonAction(button:CustomEventButton, action:String):Void
@@ -148,16 +163,5 @@ class DialogDisplay extends PartDisplay {
 	{
 		var pattern = cast(currentPattern, ChoicePattern);
 		removeChild(displays.get(pattern.tooltipRef).obj);
-	}
-
-	private function goToPattern(target:String):Void
-	{
-
-		var i = 0;
-		while(!(part.elements[i].isPattern() && cast(part.elements[i], Pattern).name == target)){
-			i++;
-		}
-
-		startPattern(cast(part.elements[i], Pattern));
 	}
 }

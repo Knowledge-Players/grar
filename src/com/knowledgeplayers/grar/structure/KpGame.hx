@@ -133,7 +133,6 @@ class KpGame extends EventDispatcher, implements Game {
 	public function start(?partId:String):Null<Part>
 	{
 		var nextPart:Part = null;
-		nme.Lib.trace("B index: " + partIndex);
 		if(partId == null && partIndex < getAllParts().length){
 			nextPart = getAllParts()[partIndex].start();
 			partIndex++;

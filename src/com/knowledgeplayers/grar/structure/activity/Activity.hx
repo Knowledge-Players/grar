@@ -71,6 +71,13 @@ class Activity extends EventDispatcher, implements PartElement, implements Track
 	public var token (default, default):String;
 
 	/**
+	* Pattern to go when the activity is over
+	**/
+	public var nextPattern (default, default):String;
+
+	private var thresholds:Array<{score:Int, next:String}>;
+
+	/**
      * True if the activity has been done
      */
 	private var isEnded:Bool;
@@ -85,6 +92,7 @@ class Activity extends EventDispatcher, implements PartElement, implements Track
 		super();
 		this.content = content;
 		isEnded = false;
+		thresholds = new Array<{score:Int, next:String}>();
 	}
 
 	/**
@@ -114,8 +122,26 @@ class Activity extends EventDispatcher, implements PartElement, implements Track
 		if(!isEnded){
 			isEnded = true;
 			Localiser.instance.popLocale();
+			for(threshold in thresholds){
+				if(score >= threshold.score){
+					nextPattern = threshold.next;
+					break;
+				}
+			}
 			dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 		}
+	}
+
+	public function addTreshold(score:String, next:String):Void
+	{
+		thresholds.push({score: Std.parseInt(score), next: next});
+		thresholds.sort(function(x:{score:Int, next:String}, y:{score:Int, next:String}):Int
+		{
+			if(x.score > y.score)
+				return -1;
+			else
+				return 1;
+		});
 	}
 
 	/**

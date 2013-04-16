@@ -26,7 +26,7 @@ class ActivityFactory {
      * @return an newly created activity, or null if the given name doesn't correspond to a valid type
      */
 
-	public static function createActivity(activityType:String, id:String, name:String, ?content:String, ?tokenRef:String, ?perk:String, ?container:Part):Null<Activity>
+	public static function createActivity(activityType:String, id:String, name:String, ?content:String, ?tokenRef:String, ?tresholds:Array<{score:String, next:String}>, ?perk:String, ?container:Part):Null<Activity>
 	{
 		var creation:Activity = null;
 		switch (activityType.toLowerCase()) {
@@ -38,6 +38,10 @@ class ActivityFactory {
 		}
 
 		ScoreChart.instance.subscribe(perk, creation);
+		if(tresholds != null){
+			for(treshold in tresholds)
+				creation.addTreshold(treshold.score, treshold.next);
+		}
 		creation.name = name;
 		creation.id = id;
 		creation.token = tokenRef;
@@ -55,6 +59,9 @@ class ActivityFactory {
 
 	public static function createActivityFromXml(xml:Fast, ?container:Part):Null<Activity>
 	{
-		return createActivity(xml.att.type, xml.att.id, xml.att.name, xml.att.content, xml.hasNode.Token ? xml.node.Token.att.ref : null, xml.att.perk, container);
+		var tresholds = new Array<{score:String, next:String}>();
+		for(treshold in xml.nodes.Threshold)
+			tresholds.push({score: treshold.att.minValue, next: treshold.att.goTo});
+		return createActivity(xml.att.type, xml.att.id, xml.att.name, xml.att.content, xml.hasNode.Token ? xml.node.Token.att.ref : null, tresholds, xml.att.perk, container);
 	}
 }

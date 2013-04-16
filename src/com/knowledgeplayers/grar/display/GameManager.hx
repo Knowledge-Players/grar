@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
+import com.knowledgeplayers.grar.display.part.DialogDisplay;
 import nme.media.SoundChannel;
 import nme.media.SoundTransform;
 import nme.net.URLRequest;
@@ -303,15 +305,18 @@ class GameManager extends EventDispatcher {
 
 	private function onActivityEnd(e:PartEvent):Void
 	{
-		e.target.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
+		var activity:Activity = e.target;
+		activity.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
 		if(activityDisplay != null && layout.zones.get(game.ref).contains(activityDisplay))
 			layout.zones.get(game.ref).removeChild(activityDisplay);
 		cleanup();
-		if(parts != null && !navByMenu){
-			parts.first().nextElement();
+		if(parts != null){
+			if(activity.nextPattern == null)
+				parts.first().nextElement();
+			else if(Std.is(parts.first(), DialogDisplay))
+				cast(parts.first(), DialogDisplay).goToPattern(activity.nextPattern);
+
 		}
-		else
-			navByMenu = false;
 	}
 
 	private function cleanup():Void

@@ -342,7 +342,7 @@ class PartDisplay extends KpDisplay {
 	{
 		var content = Localiser.getInstance().getItemContent(item.content);
 		if(item.ref != null){
-			cast(displays.get(item.ref).obj, ScrollPanel).setContent(content);
+			cast(displays.get(item.ref).obj, ScrollPanel).setContent(item.content + " " + content);
 		}
 
 		if(!isFirst)
@@ -445,8 +445,8 @@ class PartDisplay extends KpDisplay {
 				for(item in currentTextItem.items){
 					if(key == item.ref){
 						exists = true;
-                        if(item.transition != null)
-                           TweenManager.applyTransition(displays.get(item.ref).obj, item.transition);
+						if(item.transition != null)
+							TweenManager.applyTransition(displays.get(item.ref).obj, item.transition);
 						currentItems.add(object.obj);
 					}
 				}
