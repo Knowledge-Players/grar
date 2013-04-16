@@ -37,17 +37,19 @@ class DisplayUtils {
     * @return the bitmap of the background if there was any
     **/
 
-	public static function setBackground(bkg:String, container:Sprite, width:Float = 0, height:Float = 0, alpha:Float = 1):Null<Bitmap>
+	public static function setBackground(bkg:String, container:Sprite, ?width:Float, ?height:Float, alpha:Float = 1, x:Float = 0, y:Float = 0):Null<Bitmap>
 	{
 
 		if(Std.parseInt(bkg) != null){
-			initSprite(container, width, height, Std.parseInt(bkg), alpha);
+			initSprite(container, width, height, Std.parseInt(bkg), alpha, x, y);
 			return null;
 		}
 		else{
 
 			var bitmap = new Bitmap();
 			bitmap = cast(LoadData.instance.getElementDisplayInCache(bkg), Bitmap);
+			bitmap.x = x;
+			bitmap.y = y;
 			if(width != 0)
 				bitmap.width = width;
 			if(height != 0)
@@ -66,10 +68,10 @@ class DisplayUtils {
     * @param    alpha : Alpha of the color
     **/
 
-	public static function initSprite(sprite:Sprite, width:Float = 1, height:Float = 1, color:Int = 0, alpha:Float = 1):Void
+	public static function initSprite(sprite:Sprite, width:Float = 1, height:Float = 1, color:Int = 0, alpha:Float = 1, x:Float = 0, y:Float = 0):Void
 	{
 		sprite.graphics.beginFill(color, alpha);
-		sprite.graphics.drawRect(0, 0, width, height);
+		sprite.graphics.drawRect(x, y, width, height);
 		sprite.graphics.endFill();
 	}
 
