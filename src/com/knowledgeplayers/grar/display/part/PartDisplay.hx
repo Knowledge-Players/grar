@@ -73,6 +73,7 @@ class PartDisplay extends KpDisplay {
 	private var inventory:InventoryDisplay;
 	private var itemSound:Sound;
 	private var itemSoundChannel:SoundChannel;
+	private var transitions:Array<{obj:DisplayObject, tween:String}>;
 
 	/**
      * Constructor
@@ -86,6 +87,7 @@ class PartDisplay extends KpDisplay {
 
 		resizeD = ResizeManager.getInstance();
 		currentItems = new FastList<DisplayObject>();
+		transitions = new Array<{obj:DisplayObject, tween:String}>();
 		displayArea = this;
 	}
 
@@ -268,11 +270,12 @@ class PartDisplay extends KpDisplay {
 
 			initDisplayObject(bkg, displaysFast.get(background));
 			if(bkg != null){
-				if(fastBkg.has.tween)
-					TweenManager.applyTransition(bkg, fastBkg.att.tween);
 				displayArea.addChildAt(bkg, 0);
 				resizeD.addDisplayObjects(bkg, displaysFast.get(background));
 			}
+
+			if(fastBkg.has.tween)
+				transitions.push({obj: bkg, tween: fastBkg.att.tween});
 
 			previousBackground = {ref: background, bmp: bkg};
 		}
@@ -295,7 +298,7 @@ class PartDisplay extends KpDisplay {
 					char.visible = true;
 				}
 				currentSpeaker = char;
-				TweenManager.applyTransition(currentSpeaker, transition);
+				transitions.push({obj: currentSpeaker, tween: transition});
 
 				currentSpeaker.visible = true;
 				if(!displays.exists(char.nameRef))
@@ -382,6 +385,10 @@ class PartDisplay extends KpDisplay {
 
 		for(layer in layers){
 			layer.render();
+		}
+
+		for(tween in transitions){
+			TweenManager.applyTransition(tween.obj, tween.tween);
 		}
 
 		if(inventory != null)
