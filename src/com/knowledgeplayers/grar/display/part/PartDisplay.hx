@@ -390,6 +390,7 @@ class PartDisplay extends KpDisplay {
 		for(tween in transitions){
 			TweenManager.applyTransition(tween.obj, tween.tween);
 		}
+		transitions = new Array<{obj:DisplayObject, tween:String}>();
 
 		if(inventory != null)
 			displayArea.addChild(inventory);
