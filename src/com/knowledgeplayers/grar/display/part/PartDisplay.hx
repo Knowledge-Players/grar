@@ -261,6 +261,8 @@ class PartDisplay extends KpDisplay {
 			sameBackground = false;
 		// Add new background if different from previous one
 		if(!sameBackground && background != null){
+			if(!displaysFast.exists(background))
+				throw "[PartDisplay] There is no background with ref " + background;
 			var fastBkg = displaysFast.get(background);
 			var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(fastBkg.att.src), Bitmap).bitmapData);
 
@@ -279,7 +281,8 @@ class PartDisplay extends KpDisplay {
 	private function setSpeaker(author:String, ?transition:String):Void
 	{
 		if(author != null && displays.exists(author)){
-
+			if(!displays.exists(author))
+				throw "[PartDisplay] There is no Character with ref " + author;
 			var char = cast(displays.get(author).obj, CharacterDisplay);
 
 			if(char != currentSpeaker){
@@ -295,11 +298,11 @@ class PartDisplay extends KpDisplay {
 				TweenManager.applyTransition(currentSpeaker, transition);
 
 				currentSpeaker.visible = true;
+				if(!displays.exists(char.nameRef))
+					throw "[PartDisplay] There is no TextArea with ref " + char.nameRef;
 				cast(displays.get(char.nameRef).obj, ScrollPanel).setContent(currentSpeaker.model.getName());
 			}
 		}
-		else
-			currentSpeaker = null;
 	}
 
 	private function setupTextItem(item:TextItem, ?isFirst:Bool = true):Void
@@ -342,7 +345,9 @@ class PartDisplay extends KpDisplay {
 	{
 		var content = Localiser.getInstance().getItemContent(item.content);
 		if(item.ref != null){
-			cast(displays.get(item.ref).obj, ScrollPanel).setContent(item.content + " " + content);
+			if(!displays.exists(item.ref))
+				throw "[PartDisplay] There is no TextArea with ref " + item.ref;
+			cast(displays.get(item.ref).obj, ScrollPanel).setContent(content + " " + item.content);
 		}
 
 		if(!isFirst)
