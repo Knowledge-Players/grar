@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import nme.events.Event;
 import com.knowledgeplayers.grar.util.LoadData;
 import nme.display.Bitmap;
 import com.knowledgeplayers.grar.factory.UiFactory;
@@ -35,6 +36,16 @@ class ScrollPanel extends Sprite {
 	**/
 	public var textTransition (default, default):String;
 
+	/**
+	* Transition when the panel appears
+	**/
+	public var transitionIn (default, default):String;
+
+	/**
+	* Transition when the panel disappears
+	**/
+	public var transitionOut (default, default):String;
+
 	private var scrollBar:ScrollBar;
 	private var maskWidth:Float;
 	private var maskHeight:Float;
@@ -60,7 +71,10 @@ class ScrollPanel extends Sprite {
 		maskHeight = height;
 		this.scrollLock = _scrollLock;
 		styleSheet = _styleSheet;
+		content = new Sprite();
 		addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
+		addEventListener(Event.ADDED_TO_STAGE, onAdded);
+		addEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
 	}
 
 	/**
@@ -79,7 +93,6 @@ class ScrollPanel extends Sprite {
 			StyleParser.currentStyleSheet = styleSheet;
 		}
 
-		content = new Sprite();
 		var offSetY:Float = 0;
 		var isFirst:Bool = true;
 
@@ -99,7 +112,6 @@ class ScrollPanel extends Sprite {
 
 		}
 
-		addChild(content);
 		var mask = new Sprite();
 		mask.graphics.beginFill(0x000000);
 		mask.graphics.drawRect(0, 0, maskWidth, maskHeight);
@@ -121,7 +133,8 @@ class ScrollPanel extends Sprite {
 		if(previousStyleSheet != null)
 			StyleParser.currentStyleSheet = previousStyleSheet;
 
-		TweenManager.applyTransition(content, textTransition);
+		if(transitionIn == null)
+			displayText();
 	}
 
 	public function setBackground(bkg:String, ?tilesheet:TilesheetEx):Void
@@ -161,9 +174,35 @@ class ScrollPanel extends Sprite {
 
 	private function clear()
 	{
+		content = new Sprite();
 		var max = Std.parseInt(background) != null ? 0 : 1;
 		while(numChildren > max)
 			removeChildAt(numChildren - 1);
+	}
+
+	private function displayText():Void
+	{
+		addChild(content);
+		TweenManager.applyTransition(content, textTransition);
+	}
+
+	private function moveCursor(delta:Float)
+	{
+		scrollBar.moveCursor(delta);
+	}
+
+	// Handlers
+
+	private function onAdded(e:Event)
+	{
+		var actuator = TweenManager.applyTransition(this, transitionIn);
+		if(actuator != null)
+			actuator.onComplete(displayText);
+	}
+
+	private function onRemoved(e:Event)
+	{
+		TweenManager.applyTransition(this, transitionOut);
 	}
 
 	private function onWheel(e:MouseEvent):Void
@@ -181,11 +220,6 @@ class ScrollPanel extends Sprite {
 			if(scrollBar != null)
 				moveCursor(e.delta);
 		}
-	}
-
-	private function moveCursor(delta:Float)
-	{
-		scrollBar.moveCursor(delta);
 	}
 
 }

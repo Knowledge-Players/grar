@@ -28,7 +28,7 @@ class TweenManager {
     * @return the actuator
     **/
 
-	public static function applyTransition(display:DisplayObject, ref:String):IGenericActuator
+	public static function applyTransition(display:DisplayObject, ref:String):Null<IGenericActuator>
 	{
 		var transition = transitions.get(ref);
 		if(transition == null)

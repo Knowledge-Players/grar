@@ -298,7 +298,6 @@ class PartDisplay extends KpDisplay {
 					char.visible = true;
 				}
 				currentSpeaker = char;
-				transitions.push({obj: currentSpeaker, tween: transition});
 
 				currentSpeaker.visible = true;
 				if(!displays.exists(char.nameRef))
@@ -306,6 +305,7 @@ class PartDisplay extends KpDisplay {
 				cast(displays.get(char.nameRef).obj, ScrollPanel).setContent(currentSpeaker.model.getName());
 			}
 		}
+		transitions.push({obj: currentSpeaker, tween: transition});
 	}
 
 	private function setupTextItem(item:TextItem, ?isFirst:Bool = true):Void
