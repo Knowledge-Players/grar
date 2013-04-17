@@ -456,10 +456,10 @@ class PartDisplay extends KpDisplay {
 			if(!Std.is(object.obj, ScrollPanel) && !Std.is(object.obj, CharacterDisplay)){
 				var exists = false;
 				for(item in currentTextItem.items){
-					if(key == item.ref){
+					if(key == item){
 						exists = true;
-						if(item.transition != null)
-							transitions.push({obj: displays.get(item.ref).obj, tween: item.transition});
+						if(displaysFast.get(item).has.tween)
+							transitions.push({obj: displays.get(item).obj, tween: displaysFast.get(item).att.tween});
 						currentItems.add(object.obj);
 					}
 				}
