@@ -20,7 +20,7 @@ class CharacterDisplay extends Sprite {
 	/**
     * Scale of the character
     **/
-	public var scale (default, setScale):Float;
+	public var scale (default, setScale):Float = 1;
 
 	/**
     * Model of the character
@@ -55,7 +55,7 @@ class CharacterDisplay extends Sprite {
 
 	public function setScale(scale:Float):Float
 	{
-		img.scale = scale;
+		this.scale = img.scale = scale;
 		layer.render();
 		return scale;
 	}

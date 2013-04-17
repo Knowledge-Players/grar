@@ -86,8 +86,8 @@ class TextItem implements PartElement {
 			for(item in xml.nodes.Item){
 				var transition:String = null;
 
-				if(item.has.transition){
-					transition = item.att.transition;
+				if(item.has.tween){
+					transition = item.att.tween;
 				}
 
 				items.push({ref:item.att.ref, transition:transition});

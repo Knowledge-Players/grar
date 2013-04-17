@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.display.element.CharacterDisplay;
 import com.eclecticdesignstudio.motion.easing.Linear;
 import Reflect;
 import haxe.FastList;
@@ -89,14 +90,18 @@ class TweenManager {
 	public static function zoom(display:DisplayObject, ref:String):IGenericActuator
 	{
 		var zoom = transitions.get(ref);
-		var mask = new Sprite();
-		mask.graphics.beginFill(0);
-		mask.graphics.drawRect(display.x, display.y, display.width, display.height);
-		mask.graphics.endFill();
-		display.mask = mask;
-		if(display.parent != null)
-			display.parent.addChild(mask);
-		return Actuate.tween(display, zoom.duration, {x: 2 * display.x - zoom.x, y: 2 * display.y - zoom.y, scaleX: display.width / zoom.width, scaleY: display.height / zoom.height}).ease(getEasing(zoom));
+
+		var inOutX = parseValue("x", zoom.x, display);
+		var inOutY = parseValue("y", zoom.y, display);
+		var inOutWidth = parseValue("width", zoom.width, display);
+		var inOutHeight = parseValue("height", zoom.height, display);
+
+		display.x = inOutX[0];
+		display.y = inOutY[0];
+		display.width = inOutWidth[0];
+		display.height = inOutHeight[0];
+
+		return Actuate.tween(display, zoom.duration, {x: inOutX[1], y: inOutY[1], width: inOutWidth[1], height: inOutHeight[1]}).ease(getEasing(zoom));
 	}
 
 	/**
@@ -156,8 +161,8 @@ class TweenManager {
 				case "zoom":
 					transition.x = child.att.x;
 					transition.y = child.att.y;
-					transition.width = Std.parseFloat(child.att.width);
-					transition.height = Std.parseFloat(child.att.height);
+					transition.width = child.att.width;
+					transition.height = child.att.height;
 				case "wiggle":
 					transition.repeat = Std.parseInt(child.att.repeat);
 					transition.x = child.att.x;
@@ -192,7 +197,7 @@ class TweenManager {
 		var inOut:Array<String> = value.split(":");
 		var output:Array<Float> = new Array<Float>();
 
-		var ereg:EReg = new EReg(parameter + "([+*/-])([0-9]+)", "i");
+		var ereg:EReg = new EReg(parameter + "([+*/-])([0-9]+\\.?[0-9]*)", "i");
 		for(val in inOut){
 			if(ereg.match(val)){
 				switch(ereg.matched(1)){

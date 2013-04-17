@@ -459,7 +459,7 @@ class PartDisplay extends KpDisplay {
 					if(key == item.ref){
 						exists = true;
 						if(item.transition != null)
-							TweenManager.applyTransition(displays.get(item.ref).obj, item.transition);
+							transitions.push({obj: displays.get(item.ref).obj, tween: item.transition});
 						currentItems.add(object.obj);
 					}
 				}
