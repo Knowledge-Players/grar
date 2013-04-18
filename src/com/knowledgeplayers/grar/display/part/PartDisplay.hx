@@ -305,8 +305,8 @@ class PartDisplay extends KpDisplay {
 					throw "[PartDisplay] There is no TextArea with ref " + char.nameRef;
 				cast(displays.get(char.nameRef).obj, ScrollPanel).setContent(currentSpeaker.model.getName());
 			}
-			else
-				currentSpeaker.reset();
+			/*else
+				currentSpeaker.reset();*/
 		}
 		transitions.push({obj: currentSpeaker, tween: transition});
 	}
@@ -314,11 +314,11 @@ class PartDisplay extends KpDisplay {
 	private function setupTextItem(item:TextItem, ?isFirst:Bool = true):Void
 	{
 		currentTextItem = item;
-		displayBackground(item.background);
 
 		var toRemove = new FastList<DisplayObject>();
 
 		if(isFirst){
+			displayBackground(item.background);
 			for(i in 0...numChildren){
 				if(Std.is(getChildAt(i), ScrollPanel))
 					toRemove.add(getChildAt(i));
@@ -385,6 +385,7 @@ class PartDisplay extends KpDisplay {
 
 		array.sort(sortDisplayObjects);
 		for(obj in array){
+			nme.Lib.trace("array: " + array);
 			displayArea.addChild(obj.obj);
 		}
 

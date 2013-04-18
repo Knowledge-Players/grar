@@ -154,7 +154,7 @@ class KpDisplay extends Sprite {
 		if(textNode.has.textTransition)
 			text.textTransition = textNode.att.textTransition;
 		if(background != null)
-			text.setBackground(background, spritesheet);
+			text.setBackground(background, spritesheet, textNode.has.alpha ? Std.parseFloat(textNode.att.alpha) : 1);
 		if(textNode.has.transitionIn)
 			text.transitionIn = textNode.att.transitionIn;
 		if(textNode.has.transitionOut)

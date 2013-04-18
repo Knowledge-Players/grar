@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.display.style.Style;
 import nme.events.Event;
 import com.knowledgeplayers.grar.util.LoadData;
@@ -120,9 +121,7 @@ class ScrollPanel extends Sprite {
 		}
 
 		var mask = new Sprite();
-		mask.graphics.beginFill(0x000000);
-		mask.graphics.drawRect(0, 0, maskWidth, maskHeight);
-		mask.graphics.endFill();
+		DisplayUtils.initSprite(mask, maskWidth, maskHeight);
 		this.mask = mask;
 		addChild(mask);
 
@@ -144,13 +143,11 @@ class ScrollPanel extends Sprite {
 			displayText();
 	}
 
-	public function setBackground(bkg:String, ?tilesheet:TilesheetEx):Void
+	public function setBackground(bkg:String, ?tilesheet:TilesheetEx, alpha:Float = 1):Void
 	{
 		background = bkg;
 		if(Std.parseInt(bkg) != null){
-			this.graphics.beginFill(Std.parseInt(bkg));
-			this.graphics.drawRect(0, 0, maskWidth, maskHeight);
-			this.graphics.endFill();
+			DisplayUtils.initSprite(this, maskWidth, maskHeight, Std.parseInt(bkg), alpha);
 		}
 		else if(background.indexOf(".") < 0){
 			if(tilesheet == null)
