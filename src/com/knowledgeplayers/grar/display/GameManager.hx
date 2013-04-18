@@ -278,8 +278,7 @@ class GameManager extends EventDispatcher {
 
 	private function onExitSubPart(event:PartEvent):Void
 	{
-		parts.first().unLoad();
-		layout.zones.get(game.ref).removeChild(parts.pop());
+		parts.pop().unLoad();
 		parts.first().visible = true;
 		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		parts.first().nextElement();

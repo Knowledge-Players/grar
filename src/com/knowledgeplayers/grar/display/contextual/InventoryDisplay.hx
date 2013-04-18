@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import nme.events.Event;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import aze.display.TilesheetEx;
@@ -48,10 +49,20 @@ class InventoryDisplay extends Sprite {
 	/**
     * Reference to the transition when tooltip appears
     **/
-	public var transitionIn (default, default):String;
+	public var tipTransitionIn (default, default):String;
 
 	/**
     * Reference to the transition when tooltip disappears
+    **/
+	public var tipTransitionOut (default, default):String;
+
+	/**
+    * Reference to the transition when inventory appears
+    **/
+	public var transitionIn (default, default):String;
+
+	/**
+    * Reference to the transition when inventory disappears
     **/
 	public var transitionOut (default, default):String;
 
@@ -71,6 +82,8 @@ class InventoryDisplay extends Sprite {
 		x = Std.parseFloat(fast.att.x);
 		y = Std.parseFloat(fast.att.y);
 		maxWidth = Std.parseFloat(fast.att.width);
+		transitionIn = fast.has.transitionIn ? fast.att.transitionIn : null;
+		transitionOut = fast.has.transitionOut ? fast.att.transitionOut : null;
 
 		var icon = fast.node.Icon;
 		iconScale = icon.has.scale ? Std.parseFloat(icon.att.scale) : 1;
@@ -87,8 +100,8 @@ class InventoryDisplay extends Sprite {
 		tooltip.x = Std.parseFloat(tip.att.x);
 		tooltip.y = Std.parseFloat(tip.att.y);
 		tooltipOrigin = new Point(tooltip.x, tooltip.y);
-		transitionIn = tip.has.transitionIn ? tip.att.transitionIn : null;
-		transitionOut = tip.has.transitionOut ? tip.att.transitionOut : null;
+		tipTransitionIn = tip.has.transitionIn ? tip.att.transitionIn : null;
+		tipTransitionOut = tip.has.transitionOut ? tip.att.transitionOut : null;
 
 		if(fast.has.src)
 			slotBackground = cast(LoadData.instance.getElementDisplayInCache(fast.att.src), Bitmap).bitmapData;
@@ -119,6 +132,15 @@ class InventoryDisplay extends Sprite {
 			addChild(slot);
 			slots.set(token, slot);
 		}
+
+		addEventListener(Event.ADDED_TO_STAGE, function(e:Event)
+		{
+			TweenManager.applyTransition(this, transitionIn);
+		});
+		addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
+		{
+			TweenManager.applyTransition(this, transitionOut);
+		});
 	}
 
 	// Handlers
@@ -151,8 +173,8 @@ class InventoryDisplay extends Sprite {
 			if(slots.get(key) == slot)
 				tooltip.setContent(Localiser.instance.getItemContent(GameManager.instance.inventory.get(key).name));
 		}
-		if(transitionIn != null)
-			TweenManager.applyTransition(tooltip, transitionIn);
+		if(tipTransitionIn != null)
+			TweenManager.applyTransition(tooltip, tipTransitionIn);
 		addChild(tooltip);
 	}
 
@@ -160,8 +182,8 @@ class InventoryDisplay extends Sprite {
 	{
 		var slot = cast(e.target, Sprite);
 
-		if(transitionOut != null)
-			TweenManager.applyTransition(tooltip, transitionOut).onComplete(function()
+		if(tipTransitionOut != null)
+			TweenManager.applyTransition(tooltip, tipTransitionOut).onComplete(function()
 			{
 				if(contains(tooltip))
 					removeChild(tooltip);

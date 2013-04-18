@@ -16,10 +16,9 @@ class MenuButton extends TextButton {
 	private var hitBox:Sprite;
 	private var status:TileClip;
 	private var layerStatus:TileLayer;
-    public var menuD:MenuDisplay;
-    public var transitionOut:String;
+	public var menuD:MenuDisplay;
 
-	public function new(tilesheet:TilesheetEx, tile:String, eventName:String, ?_status:String,?width:Float)
+	public function new(tilesheet:TilesheetEx, tile:String, eventName:String, ?_status:String, ?width:Float)
 	{
 		super(tilesheet, tile, eventName);
 		//layer.view.visible = false;
@@ -83,32 +82,30 @@ class MenuButton extends TextButton {
 		hitBox.alpha = 0;
 	}
 
+	override private function onClick(e:MouseEvent):Void
+	{
 
-    override   private function onClick(e: MouseEvent): Void
-    {
-
-        var target = cast(e.target, DefaultButton);
-        if(GameManager.instance.game.getAllParts() != null){
-            for(part in GameManager.instance.game.getAllParts()){
-                if(part.name == target.name){
-                    GameManager.instance.displayPart(part);
-                    break;
-                }
-            }
-        }
-        if( GameManager.instance.game.getAllItems() != null){
-            for(activity in  GameManager.instance.game.getAllItems()){
-               /* if(activity.name == target.name){
+		var target = cast(e.target, DefaultButton);
+		if(GameManager.instance.game.getAllParts() != null){
+			for(part in GameManager.instance.game.getAllParts()){
+				if(part.name == target.name){
+					GameManager.instance.displayPart(part);
+					break;
+				}
+			}
+		}
+		if(GameManager.instance.game.getAllItems() != null){
+			for(activity in GameManager.instance.game.getAllItems()){
+				/* if(activity.name == target.name){
                     GameManager.instance.displayActivity(activity);
                     break;
                 }
                 */
-            }
-        }
+			}
+		}
 
-
-        TweenManager.applyTransition(menuD, transitionOut);
-    }
+		TweenManager.applyTransition(menuD, transitionOut);
+	}
 	/**
 *  Align all elements of the Menu Button
 **/
@@ -120,7 +117,7 @@ class MenuButton extends TextButton {
 		var hWidth:Float = 0;
 		if(status != null){
 			textSprite.x = status.width;
-			status.y = textSprite.y + (textSprite.height / 2)+status.height;
+			status.y = textSprite.y + (textSprite.height / 2) + status.height;
 			layerStatus.render();
 			hWidth += status.width;
 		}
@@ -128,9 +125,8 @@ class MenuButton extends TextButton {
 		hWidth += textSprite.width;
 		//hitBox.width = hWidth;
 
-		textSprite.y = hitBox.y-textSprite.height/2;
-        textSprite.x= hitBox.x;
-
+		textSprite.y = hitBox.y - textSprite.height / 2;
+		textSprite.x = hitBox.x;
 
 	}
 

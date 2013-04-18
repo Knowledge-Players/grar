@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.button;
-import nme.Lib;
+
+import nme.events.Event;
 import aze.display.TileClip;
 import browser.Lib;
 import nme.geom.Point;
@@ -47,6 +48,16 @@ class DefaultButton extends Sprite {
 	public var className (default, default):String;
 
 	/**
+	* Transition when the button appears
+	**/
+	public var transitionIn (default, setTransitionIn):String;
+
+	/**
+	* Transition when the button disappears
+	**/
+	public var transitionOut (default, setTransitionOut):String;
+
+	/**
      * Sprite containing the upstate
      */
 	private var upState:TileSprite;
@@ -83,6 +94,25 @@ class DefaultButton extends Sprite {
 		mouseChildren = false;
 
 		init();
+	}
+
+	public function setTransitionIn(transition:String):String
+	{
+		addEventListener(Event.ADDED_TO_STAGE, function(e:Event)
+		{
+			TweenManager.applyTransition(this, transition);
+		});
+
+		return transitionIn = transition;
+	}
+
+	public function setTransitionOut(transition:String):String
+	{
+		addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
+		{
+			TweenManager.applyTransition(this, transition);
+		});
+		return transitionOut = transition;
 	}
 
 	/**

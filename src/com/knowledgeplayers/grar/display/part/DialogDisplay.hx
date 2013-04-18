@@ -113,6 +113,7 @@ class DialogDisplay extends PartDisplay {
 			i++;
 		}
 
+		cast(part.elements[i], Pattern).itemIndex = 0;
 		startPattern(cast(part.elements[i], Pattern));
 	}
 

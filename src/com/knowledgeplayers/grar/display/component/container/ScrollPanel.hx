@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.display.style.Style;
 import nme.events.Event;
 import com.knowledgeplayers.grar.util.LoadData;
 import nme.display.Bitmap;
@@ -97,8 +98,14 @@ class ScrollPanel extends Sprite {
 		var isFirst:Bool = true;
 
 		for(element in KpTextDownParser.parse(contentString)){
-			var padding = StyleParser.getStyle(element.style).getPadding();
-			var item = element.createSprite(maskWidth - padding[1] - padding[3]);
+			var style:Style = StyleParser.getStyle(element.style);
+			var padding = style.getPadding();
+			var iconOffset:Float = 0;
+			if(style.icon != null)
+				iconOffset += style.icon.width;
+			if(style.iconMargin != null)
+				iconOffset += style.iconMargin[1] + style.iconMargin[3];
+			var item = element.createSprite(maskWidth - padding[1] - padding[3] - iconOffset);
 
 			if(isFirst){
 				offSetY += padding[0];

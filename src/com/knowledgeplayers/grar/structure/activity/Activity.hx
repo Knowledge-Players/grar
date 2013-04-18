@@ -128,6 +128,7 @@ class Activity extends EventDispatcher, implements PartElement, implements Track
 					break;
 				}
 			}
+			nme.Lib.trace("score: " + score + " next: " + nextPattern);
 			dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 		}
 	}

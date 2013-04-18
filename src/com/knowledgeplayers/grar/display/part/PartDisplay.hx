@@ -112,6 +112,7 @@ class PartDisplay extends KpDisplay {
 	{
 		while(numChildren > 0)
 			removeChildAt(numChildren - 1);
+		parent.removeChild(this);
 	}
 
 	/**
@@ -304,6 +305,8 @@ class PartDisplay extends KpDisplay {
 					throw "[PartDisplay] There is no TextArea with ref " + char.nameRef;
 				cast(displays.get(char.nameRef).obj, ScrollPanel).setContent(currentSpeaker.model.getName());
 			}
+			else
+				currentSpeaker.reset();
 		}
 		transitions.push({obj: currentSpeaker, tween: transition});
 	}
@@ -350,7 +353,7 @@ class PartDisplay extends KpDisplay {
 		if(item.ref != null){
 			if(!displays.exists(item.ref))
 				throw "[PartDisplay] There is no TextArea with ref " + item.ref;
-			cast(displays.get(item.ref).obj, ScrollPanel).setContent(content + " " + item.content);
+			cast(displays.get(item.ref).obj, ScrollPanel).setContent(content);// + " " + item.content);
 		}
 
 		if(!isFirst)
@@ -367,6 +370,8 @@ class PartDisplay extends KpDisplay {
 			if(Std.is(getChildAt(i), DefaultButton))
 				toRemove.add(getChildAt(i));
 		}
+		if(inventory != null && displayArea.contains(inventory))
+			toRemove.add(inventory);
 		for(button in toRemove){
 			displayArea.removeChild(button);
 		}
