@@ -200,8 +200,15 @@ class ScrollPanel extends Sprite {
 	private function onAdded(e:Event)
 	{
 		var actuator = TweenManager.applyTransition(this, transitionIn);
-		if(actuator != null)
-			actuator.onComplete(displayText);
+        if(textTransition!=null){
+            if(actuator != null)
+                actuator.onComplete(displayText);
+        }
+        else
+        {
+            displayText();
+        }
+
 	}
 
 	private function onRemoved(e:Event)
