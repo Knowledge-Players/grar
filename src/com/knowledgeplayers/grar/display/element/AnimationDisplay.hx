@@ -11,7 +11,7 @@ class AnimationDisplay extends Sprite {
     private  var layer:TileLayer;
     private var clip:TileClip;
 
-    public function new(_id:String,_x:Float,_y:Float,_tileSheet:TilesheetEx,_scaleX:Float,_scaleY:Float,_type:String,_loop:Float,_alpha:Float){
+    public function new(_id:String,_x:Float,_y:Float,_tileSheet:TilesheetEx,_scaleX:Float,_scaleY:Float,_type:String,_loop:Float,_alpha:Float,mirror:String){
         super();
 
         layer = new TileLayer(_tileSheet);
@@ -22,6 +22,12 @@ class AnimationDisplay extends Sprite {
         clip.scaleY = _scaleY;
         clip.alpha = _alpha;
 
+        if(mirror != null){
+            clip.mirror = switch(mirror.toLowerCase()){
+                case "horizontal" : 1;
+                case "vertical" : 2;
+            }
+        }
         layer.addChild(clip);
         addChild(layer.view);
 

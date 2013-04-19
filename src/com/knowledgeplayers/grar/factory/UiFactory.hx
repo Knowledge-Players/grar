@@ -139,8 +139,9 @@ class UiFactory {
 		var scaleY = xml.has.scaleY ? Std.parseFloat(xml.att.scaleY) : 1;
 		var loop = xml.has.loop ? Std.parseFloat(xml.att.loop) : 0;
 		var alpha = xml.has.alpha ? Std.parseFloat(xml.att.alpha) : 0;
+		var mirror = xml.has.mirror ? xml.att.mirror : null;
 
-		var animation:AnimationDisplay = new AnimationDisplay(xml.att.id, x, y, tilesheet, scaleX, scaleY, xml.att.type, loop, alpha);
+		var animation:AnimationDisplay = new AnimationDisplay(xml.att.id, x, y, tilesheet, scaleX, scaleY, xml.att.type, loop, alpha,mirror);
 
 		return animation;
 
