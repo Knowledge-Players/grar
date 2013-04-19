@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
 import com.knowledgeplayers.grar.display.part.DialogDisplay;
 import nme.media.SoundChannel;
@@ -278,6 +279,7 @@ class GameManager extends EventDispatcher {
 
 	private function onExitSubPart(event:PartEvent):Void
 	{
+		Localiser.instance.popLocale();
 		parts.pop().unLoad();
 		parts.first().visible = true;
 		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
@@ -286,6 +288,7 @@ class GameManager extends EventDispatcher {
 
 	public function onEnterSubPart(event:PartEvent):Void
 	{
+		Localiser.instance.pushLocale();
 		parts.first().visible = false;
 		parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		game.start(event.part.id);
