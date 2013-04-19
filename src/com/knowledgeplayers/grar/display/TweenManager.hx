@@ -100,8 +100,10 @@ class TweenManager {
 		display.y = inOutY[0];
 		display.width = inOutWidth[0];
 		display.height = inOutHeight[0];
-
-		return Actuate.tween(display, zoom.duration, {x: inOutX[1], y: inOutY[1], width: inOutWidth[1], height: inOutHeight[1]}).ease(getEasing(zoom));
+		if(Reflect.hasField(display, "scale"))
+			return Actuate.tween(display, zoom.duration, {x: inOutX[1], y: inOutY[1], scale: inOutHeight[1] / inOutHeight[0]}).ease(getEasing(zoom));
+		else
+			return Actuate.tween(display, zoom.duration, {x: inOutX[1], y: inOutY[1], width: inOutWidth[1], height: inOutHeight[1]}).ease(getEasing(zoom));
 	}
 
 	/**
@@ -126,6 +128,11 @@ class TweenManager {
 	{
 		var blink = transitions.get(ref);
 		return Actuate.transform(display, blink.duration).color(blink.color).repeat(blink.repeat).reflect();
+	}
+
+	public static function stop(display:DisplayObject, properties:Dynamic, complete:Bool, sendEvent:Bool):Void
+	{
+		Actuate.stop(display, properties, complete, sendEvent);
 	}
 
 	/**

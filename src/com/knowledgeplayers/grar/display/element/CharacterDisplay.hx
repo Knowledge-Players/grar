@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.element;
 
+import nme.events.Event;
 import aze.display.TilesheetEx;
 import aze.display.TileLayer;
 import aze.display.TileSprite;
@@ -15,7 +16,7 @@ class CharacterDisplay extends Sprite {
 	/**
      * Starting point of the character
      */
-	public var origin:Point;
+	public var origin:{pos:Point, scale:Float};
 
 	/**
     * Scale of the character
@@ -51,6 +52,8 @@ class CharacterDisplay extends Sprite {
 		layer.addChild(img);
 		addChild(layer.view);
 		layer.render();
+
+		addEventListener(Event.REMOVED_FROM_STAGE, reset);
 	}
 
 	public function setScale(scale:Float):Float
@@ -58,6 +61,17 @@ class CharacterDisplay extends Sprite {
 		this.scale = img.scale = scale;
 		layer.render();
 		return scale;
+	}
+
+	public function reset(?e:Event):Void
+	{
+		nme.Lib.trace(model.ref);
+		nme.Lib.trace("B scale: " + scale + " pos: " + x + ";" + y);
+		scale = origin.scale;
+
+		x = origin.pos.x;
+		y = origin.pos.y;
+		nme.Lib.trace("A scale: " + scale + " pos: " + x + ";" + y);
 	}
 
 }

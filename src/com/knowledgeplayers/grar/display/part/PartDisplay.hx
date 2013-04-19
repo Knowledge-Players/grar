@@ -284,6 +284,8 @@ class PartDisplay extends KpDisplay {
 
 	private function setSpeaker(author:String, ?transition:String):Void
 	{
+		if(currentSpeaker != null)
+			TweenManager.stop(currentSpeaker, null, false, true);
 		if(author != null && displays.exists(author)){
 			if(!displays.exists(author))
 				throw "[PartDisplay] There is no Character with ref " + author;
@@ -305,8 +307,8 @@ class PartDisplay extends KpDisplay {
 					throw "[PartDisplay] There is no TextArea with ref " + char.nameRef;
 				cast(displays.get(char.nameRef).obj, ScrollPanel).setContent(currentSpeaker.model.getName());
 			}
-			/*else
-				currentSpeaker.reset();*/
+			else
+				currentSpeaker.reset();
 		}
 		transitions.push({obj: currentSpeaker, tween: transition});
 	}

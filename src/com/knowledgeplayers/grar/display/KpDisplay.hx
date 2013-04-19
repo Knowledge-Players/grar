@@ -180,7 +180,7 @@ class KpDisplay extends Sprite {
 		var mirror = character.has.mirror ? character.att.mirror : null;
 		var char:CharacterDisplay = new CharacterDisplay(spritesheets.get(character.att.spritesheet), character.att.id, new Character(character.att.ref), mirror);
 		char.visible = false;
-		char.origin = new Point(Std.parseFloat(character.att.x), Std.parseFloat(character.att.y));
+		char.origin = {pos: new Point(Std.parseFloat(character.att.x), Std.parseFloat(character.att.y)), scale: Std.parseFloat(character.att.scale)};
 		char.nameRef = character.att.nameRef;
 		if(character.has.scale)
 			char.scale = Std.parseFloat(character.att.scale);
