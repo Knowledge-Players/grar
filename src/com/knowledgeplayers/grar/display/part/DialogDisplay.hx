@@ -162,7 +162,9 @@ class DialogDisplay extends PartDisplay {
 
 	private function onOutChoice(e:MouseEvent):Void
 	{
+    //TODO voir pourquoi on doit faire un doubon de bouton ds le xml pour éviter le bug de rollOut du tooltip
+
 		var pattern = cast(currentPattern, ChoicePattern);
-		removeChild(displays.get(pattern.tooltipRef).obj);
+        displayArea.removeChild(displays.get(pattern.tooltipRef).obj);
 	}
 }
