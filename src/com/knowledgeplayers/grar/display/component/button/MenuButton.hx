@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.button;
 
+import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import nme.events.MouseEvent;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
@@ -41,9 +42,7 @@ class MenuButton extends TextButton {
 
 		var _hitBox = new Sprite();
 
-		_hitBox.graphics.beginFill(0xFFFFFF, 1);
-		_hitBox.graphics.drawRect(0, 0, _w, _h);
-		_hitBox.graphics.endFill();
+		DisplayUtils.initSprite(_hitBox, _w, _h, 0xFFFFFF, 1);
 
 		addChild(_hitBox);
 
@@ -84,7 +83,7 @@ class MenuButton extends TextButton {
 
 	override private function onClick(e:MouseEvent):Void
 	{
-
+		// TODO Utiliser getAllItems
 		var target = cast(e.target, DefaultButton);
 		if(GameManager.instance.game.getAllParts() != null){
 			for(part in GameManager.instance.game.getAllParts()){
@@ -94,17 +93,17 @@ class MenuButton extends TextButton {
 				}
 			}
 		}
-		if(GameManager.instance.game.getAllItems() != null){
+		/*if(GameManager.instance.game.getAllItems() != null){
 			for(activity in GameManager.instance.game.getAllItems()){
-				/* if(activity.name == target.name){
+				 if(activity.name == target.name){
                     GameManager.instance.displayActivity(activity);
                     break;
                 }
-                */
-			}
-		}
 
-		TweenManager.applyTransition(menuD, transitionOut);
+			}
+		}*/
+
+		TweenManager.applyTransition(menuD, menuD.transitionOut);
 	}
 	/**
 *  Align all elements of the Menu Button

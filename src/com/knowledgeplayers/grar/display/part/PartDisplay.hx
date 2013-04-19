@@ -385,7 +385,6 @@ class PartDisplay extends KpDisplay {
 
 		array.sort(sortDisplayObjects);
 		for(obj in array){
-			nme.Lib.trace("array: " + array);
 			displayArea.addChild(obj.obj);
 		}
 
