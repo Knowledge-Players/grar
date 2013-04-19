@@ -65,13 +65,12 @@ class CharacterDisplay extends Sprite {
 
 	public function reset(?e:Event):Void
 	{
-		nme.Lib.trace(model.ref);
-		nme.Lib.trace("B scale: " + scale + " pos: " + x + ";" + y);
+
 		scale = origin.scale;
 
 		x = origin.pos.x;
 		y = origin.pos.y;
-		nme.Lib.trace("A scale: " + scale + " pos: " + x + ";" + y);
+
 	}
 
 }
