@@ -179,7 +179,8 @@ class ScrollPanel extends Sprite {
 	private function clear()
 	{
 		content = new Sprite();
-		var max = Std.parseInt(background) != null ? 0 : 1;
+		var reg:EReg = ~/[a-zA-Z]*/;
+		var max = (background != null && reg.match(background)) ? 1 : 0;
 		while(numChildren > max)
 			removeChildAt(numChildren - 1);
 	}
@@ -200,14 +201,13 @@ class ScrollPanel extends Sprite {
 	private function onAdded(e:Event)
 	{
 		var actuator = TweenManager.applyTransition(this, transitionIn);
-        if(textTransition!=null){
-            if(actuator != null)
-                actuator.onComplete(displayText);
-        }
-        else
-        {
-            displayText();
-        }
+		if(textTransition != null){
+			if(actuator != null)
+				actuator.onComplete(displayText);
+		}
+		else{
+			displayText();
+		}
 
 	}
 

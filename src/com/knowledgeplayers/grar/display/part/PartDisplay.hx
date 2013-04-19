@@ -309,8 +309,13 @@ class PartDisplay extends KpDisplay {
 			}
 			else
 				currentSpeaker.reset();
+
+			transitions.push({obj: currentSpeaker, tween: transition});
 		}
-		transitions.push({obj: currentSpeaker, tween: transition});
+		else if(currentSpeaker != null && displayArea.contains(currentSpeaker)){
+			displayArea.removeChild(currentSpeaker);
+			currentSpeaker = null;
+		}
 	}
 
 	private function setupTextItem(item:TextItem, ?isFirst:Bool = true):Void
@@ -399,7 +404,7 @@ class PartDisplay extends KpDisplay {
 		}
 		transitions = new Array<{obj:DisplayObject, tween:String}>();
 
-		if(inventory != null)
+		if(inventory != null && currentSpeaker != null)
 			displayArea.addChild(inventory);
 	}
 
