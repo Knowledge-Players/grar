@@ -88,7 +88,7 @@ class MenuButton extends TextButton {
 		if(GameManager.instance.game.getAllParts() != null){
 			for(part in GameManager.instance.game.getAllParts()){
 				if(part.name == target.name){
-					GameManager.instance.displayPart(part);
+					GameManager.instance.displayPart(part, true);
 					break;
 				}
 			}

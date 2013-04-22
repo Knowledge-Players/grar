@@ -101,18 +101,15 @@ class PartDisplay extends KpDisplay {
 
 		XmlLoader.load(part.display, onLoadComplete, parseContent);
 		Localiser.instance.addEventListener(LocaleEvent.LOCALE_LOADED, onLocaleLoaded);
+		Localiser.instance.pushLocale();
 		Localiser.instance.setLayoutFile(part.file);
 	}
 
-	/**
-     * Unload the display from the scene
-     */
-
-	public function unLoad():Void
+	public function exitPart():Void
 	{
-		while(numChildren > 0)
-			removeChildAt(numChildren - 1);
-		parent.removeChild(this);
+		unLoad();
+		Localiser.instance.popLocale();
+		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 	}
 
 	/**
@@ -123,7 +120,7 @@ class PartDisplay extends KpDisplay {
 	{
 		currentElement = part.getNextElement();
 		if(currentElement == null){
-			dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+			exitPart();
 			return;
 		}
 
@@ -205,6 +202,19 @@ class PartDisplay extends KpDisplay {
 		if(displayFast.has.transitionOut)
 			transitionOut = displayFast.att.transitionOut;
 
+	}
+
+	// Privates
+
+	/**
+     * Unload the display from the scene
+     */
+
+	private function unLoad():Void
+	{
+		while(numChildren > 0)
+			removeChildAt(numChildren - 1);
+		parent.removeChild(this);
 	}
 
 	override private function createElement(elemNode:Fast):Void

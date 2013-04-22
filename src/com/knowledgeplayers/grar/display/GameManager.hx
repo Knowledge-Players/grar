@@ -60,7 +60,7 @@ class GameManager extends EventDispatcher {
 	/**
     * Notification display of a token
     **/
-	public var tokenNotif:TokenNotification;
+	public var tokenNotification:TokenNotification;
 
 	/**
     * Tokens images
@@ -72,7 +72,7 @@ class GameManager extends EventDispatcher {
 	private var navByMenu:Bool = false;
 	private var nbVolume:Float = 1;
 
-	private var controle:SoundTransform;
+	private var soundControl:SoundTransform;
 	private var itemSound:Sound;
 	private var itemSoundChannel:SoundChannel;
 
@@ -110,8 +110,8 @@ class GameManager extends EventDispatcher {
 		inventory.get(tokenName).isActivated = true;
 		var tokenEvent = new TokenEvent(TokenEvent.ADD);
 
-		layout.zones.get(game.ref).addChild(tokenNotif);
-		tokenNotif.showNotification(tokenName);
+		layout.zones.get(game.ref).addChild(tokenNotification);
+		tokenNotification.showNotification(tokenName);
 
 		tokenEvent.token = inventory.get(tokenName);
 		dispatchEvent(tokenEvent);
@@ -150,9 +150,9 @@ class GameManager extends EventDispatcher {
 	{
 		nbVolume = nb;
 		if(itemSoundChannel != null){
-			controle = itemSoundChannel.soundTransform;
-			controle.volume = nbVolume;
-			itemSoundChannel.soundTransform = controle;
+			soundControl = itemSoundChannel.soundTransform;
+			soundControl.volume = nbVolume;
+			itemSoundChannel.soundTransform = soundControl;
 		}
 	}
 
@@ -177,11 +177,17 @@ class GameManager extends EventDispatcher {
 
 	/**
     * Display a graphic representation of the given part
-    * @param part : The part to display
+    * @param    part : The part to display
+    * @param    interrupt : Stop current part to display the new one
     **/
 
-	public function displayPart(part:Part):Void
+	public function displayPart(part:Part, interrupt:Bool = false):Void
 	{
+		if(interrupt){
+			var oldPart = parts.pop();
+			oldPart.removeEventListener(PartEvent.EXIT_PART, onExitPart);
+			oldPart.exitPart();
+		}
 		// Display the new part
 		parts.add(DisplayFactory.createPartDisplay(part));
 		if(parts.first() == null)
@@ -253,7 +259,7 @@ class GameManager extends EventDispatcher {
 	private function parseDisplayTokens(display:Xml):Void
 	{
 		var fast = new Fast(display.firstElement());
-		tokenNotif = new TokenNotification(fast.node.Hud);
+		tokenNotification = new TokenNotification(fast.node.Hud);
 		for(token in fast.nodes.Token){
 			tokensImages.set(token.att.ref, cast(LoadData.instance.getElementDisplayInCache(token.att.src), Bitmap).bitmapData);
 		}
@@ -263,7 +269,6 @@ class GameManager extends EventDispatcher {
 
 	private function onExitPart(event:Event):Void
 	{
-		parts.first().unLoad();
 		parts.pop();
 		// Display next part
 		displayPartById();
@@ -279,8 +284,6 @@ class GameManager extends EventDispatcher {
 
 	private function onExitSubPart(event:PartEvent):Void
 	{
-		Localiser.instance.popLocale();
-		parts.pop().unLoad();
 		parts.first().visible = true;
 		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		parts.first().nextElement();
@@ -288,14 +291,9 @@ class GameManager extends EventDispatcher {
 
 	public function onEnterSubPart(event:PartEvent):Void
 	{
-		Localiser.instance.pushLocale();
 		parts.first().visible = false;
 		parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
-		game.start(event.part.id);
-		parts.add(DisplayFactory.createPartDisplay(event.part));
-		parts.first().addEventListener(PartEvent.EXIT_PART, onExitSubPart);
-		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-		parts.first().init();
+		displayPartById(event.part.id);
 	}
 
 	private function onActivityReady(e:Event):Void
