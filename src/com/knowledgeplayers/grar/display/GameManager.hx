@@ -65,7 +65,7 @@ class GameManager extends EventDispatcher {
 	/**
     * Tokens images
     **/
-	public var tokensImages (default, null):Hash<BitmapData>;
+	public var tokensImages (default, null):Hash<{small:BitmapData, large:BitmapData}>;
 
 	private var layout:Layout;
 	private var activityDisplay:ActivityDisplay;
@@ -239,7 +239,7 @@ class GameManager extends EventDispatcher {
 		super();
 		parts = new FastList<PartDisplay>();
 		inventory = new Hash<Token>();
-		tokensImages = new Hash<BitmapData>();
+		tokensImages = new Hash<{small:BitmapData, large:BitmapData}>();
 		// Set Keyboard Manager
 		KeyboardManager.instance.game = this;
 	}
@@ -261,7 +261,8 @@ class GameManager extends EventDispatcher {
 		var fast = new Fast(display.firstElement());
 		tokenNotification = new TokenNotification(fast.node.Hud);
 		for(token in fast.nodes.Token){
-			tokensImages.set(token.att.ref, cast(LoadData.instance.getElementDisplayInCache(token.att.src), Bitmap).bitmapData);
+			// TODO dynamic extension
+			tokensImages.set(token.att.ref, {small:cast(LoadData.instance.getElementDisplayInCache(token.att.src + "_small.jpg"), Bitmap).bitmapData, large: cast(LoadData.instance.getElementDisplayInCache(token.att.src + "_large.jpg"), Bitmap).bitmapData});
 		}
 	}
 

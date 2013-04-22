@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
+import com.knowledgeplayers.grar.display.component.button.TextButton;
+import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import nme.events.Event;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
@@ -70,6 +73,12 @@ class InventoryDisplay extends Sprite {
 	private var slots:Hash<Sprite>;
 	private var tooltip:ScrollPanel;
 	private var tooltipOrigin:Point;
+	// Fullscreen display
+	private var contentToken:ScrollPanel;
+	private var closeButton:DefaultButton;
+	private var largeImage:Bitmap;
+	private var background:Sprite;
+	private var title:ScrollPanel;
 
 	/**
     * Constructor
@@ -113,6 +122,40 @@ class InventoryDisplay extends Sprite {
 			slotBackgroundUnlocked = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, fast.att.idUnlocked);
 
 		slots = new Hash<Sprite>();
+
+		if(fast.hasNode.Fullscreen){
+			var fullscreen:Fast = fast.node.Fullscreen;
+			if(fullscreen.hasNode.Text){
+				var text:Fast = fullscreen.node.Text;
+				contentToken = new ScrollPanel(Std.parseFloat(text.att.width), Std.parseFloat(text.att.height), text.has.style ? text.att.style : null);
+				contentToken.x = Std.parseFloat(text.att.x);
+				contentToken.y = Std.parseFloat(text.att.y);
+			}
+			if(fullscreen.hasNode.Title){
+				var t:Fast = fullscreen.node.Title;
+				title = new ScrollPanel(Std.parseFloat(t.att.width), Std.parseFloat(t.att.height), t.has.style ? t.att.style : null);
+				title.x = Std.parseFloat(t.att.x);
+				title.y = Std.parseFloat(t.att.y);
+			}
+			if(fullscreen.hasNode.Item){
+				var img:Fast = fullscreen.node.Item;
+				largeImage = new Bitmap();
+				largeImage.scaleX = largeImage.scaleY = Std.parseFloat(img.att.scale);
+				largeImage.x = Std.parseFloat(img.att.x);
+				largeImage.y = Std.parseFloat(img.att.y);
+			}
+			closeButton = UiFactory.createButtonFromXml(fullscreen.node.Button);
+			if(Std.is(closeButton, TextButton))
+				// TODO baaaaaaahh
+				cast(closeButton, TextButton).setText(Localiser.instance.getItemContent("closeFS"));
+			if(fullscreen.node.Button.att.action == "close")
+				closeButton.addEventListener("close", closeFullscreen);
+			if(fullscreen.hasNode.Background){
+				var bkg:Fast = fullscreen.node.Background;
+				background = new Sprite();
+				DisplayUtils.initSprite(background, Std.parseFloat(bkg.att.width), Std.parseFloat(bkg.att.height), Std.parseInt(bkg.att.color), Std.parseFloat(bkg.att.alpha));
+			}
+		}
 		GameManager.instance.addEventListener(TokenEvent.ADD, onTokenActivated);
 	}
 
@@ -152,7 +195,7 @@ class InventoryDisplay extends Sprite {
 			while(slot.numChildren > 0)
 				slot.removeChildAt(slot.numChildren - 1);
 			slot.addChild(new Bitmap(slotBackgroundUnlocked));
-			var icon = new Bitmap(GameManager.instance.tokensImages.get(e.token.ref));
+			var icon = new Bitmap(GameManager.instance.tokensImages.get(e.token.ref).small);
 			icon.scaleX = icon.scaleY = iconScale;
 			icon.x = iconPosition.x;
 			icon.y = iconPosition.y;
@@ -160,7 +203,35 @@ class InventoryDisplay extends Sprite {
 			slot.mouseChildren = false;
 			slot.addEventListener(MouseEvent.ROLL_OVER, onOverToken);
 			slot.addEventListener(MouseEvent.MOUSE_OUT, onOutToken);
+			slot.addEventListener(MouseEvent.CLICK, onClickToken);
 		}
+	}
+
+	private function onClickToken(e:MouseEvent):Void
+	{
+		parent.addChild(background);
+		var slot = cast(e.target, Sprite);
+		var tokenName:String = null;
+		for(key in slots.keys()){
+			if(slots.get(key) == slot)
+				tokenName = key;
+			contentToken.setContent(Localiser.instance.getItemContent(GameManager.instance.inventory.get(tokenName).content));
+			largeImage.bitmapData = GameManager.instance.tokensImages.get(tokenName).large;
+			title.setContent(Localiser.instance.getItemContent(GameManager.instance.inventory.get(tokenName).name));
+		}
+		parent.addChild(largeImage);
+		parent.addChild(closeButton);
+		parent.addChild(contentToken);
+		parent.addChild(title);
+	}
+
+	private function closeFullscreen(e:ButtonActionEvent):Void
+	{
+		parent.removeChild(background);
+		parent.removeChild(largeImage);
+		parent.removeChild(closeButton);
+		parent.removeChild(contentToken);
+		parent.removeChild(title);
 	}
 
 	private function onOverToken(e:MouseEvent):Void

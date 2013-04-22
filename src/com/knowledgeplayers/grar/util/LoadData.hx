@@ -176,9 +176,15 @@ class LoadData extends EventDispatcher {
 				if(nd.nodeName != "SubTexture"){
 					if(nd.exists("src")){
 						if(Std.string(nd.get("src")).indexOf(".xml") == -1){
-							if(Std.string(nd.get("src")).charAt(0) != "0")
-								imagesUrls.push(nd.get("src"));
-
+							if(Std.string(nd.get("src")).charAt(0) != "0"){
+								// TODO Pas beau
+								if(nd.nodeName == "Token"){
+									imagesUrls.push(nd.get("src") + "_small.jpg");
+									imagesUrls.push(nd.get("src") + "_large.jpg");
+								}
+								else
+									imagesUrls.push(nd.get("src"));
+							}
 						}
 						else{
 							XmlLoader.load(nd.get("src"), function(e:Event)
