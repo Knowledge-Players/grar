@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import nme.Assets;
 import com.knowledgeplayers.grar.display.FilterManager;
 import nme.media.Sound;
 import nme.net.URLRequest;
@@ -141,7 +142,7 @@ class UiFactory {
 		var alpha = xml.has.alpha ? Std.parseFloat(xml.att.alpha) : 0;
 		var mirror = xml.has.mirror ? xml.att.mirror : null;
 
-		var animation:AnimationDisplay = new AnimationDisplay(xml.att.id, x, y, tilesheet, scaleX, scaleY, xml.att.type, loop, alpha,mirror);
+		var animation:AnimationDisplay = new AnimationDisplay(xml.att.id, x, y, tilesheet, scaleX, scaleY, xml.att.type, loop, alpha, mirror);
 
 		return animation;
 
@@ -202,13 +203,12 @@ class UiFactory {
 
 	private static function onXmlLoaded(e:Event = null):Void
 	{
-
 		#if flash
         tilesheet = e.target.spritesheet;
         #else
 		tilesheet = new SparrowTilesheet(Assets.getBitmapData(layerPath + ".png"), Assets.getText(layerPath + ".xml"));
 		#end
-		GameManager.instance.game.uiLoaded = true;
+		GameManager.instance.setUiLoaded(true);
 	}
 
 }

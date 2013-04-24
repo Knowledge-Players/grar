@@ -277,7 +277,7 @@ class PartDisplay extends KpDisplay {
 			if(!displaysFast.exists(background))
 				throw "[PartDisplay] There is no background with ref " + background;
 			var fastBkg = displaysFast.get(background);
-			var bkg = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(fastBkg.att.src), Bitmap).bitmapData);
+			var bkg:DisplayObject = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(fastBkg.att.src), Bitmap).bitmapData);
 
 			initDisplayObject(bkg, displaysFast.get(background));
 			if(bkg != null){
@@ -288,7 +288,7 @@ class PartDisplay extends KpDisplay {
 			if(fastBkg.has.tween)
 				transitions.push({obj: bkg, tween: fastBkg.att.tween});
 
-			previousBackground = {ref: background, bmp: bkg};
+			previousBackground = {ref: background, bmp: cast(bkg, Bitmap)};
 		}
 	}
 

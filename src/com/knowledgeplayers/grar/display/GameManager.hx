@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.display.style.StyleParser;
+import com.knowledgeplayers.grar.event.DisplayEvent;
+import com.knowledgeplayers.grar.event.DisplayEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
 import com.knowledgeplayers.grar.display.part.DialogDisplay;
@@ -230,6 +233,16 @@ class GameManager extends EventDispatcher {
 	public function getItemName(id:String):String
 	{
 		return game.getItemName(id) != null ? game.getItemName(id) : ActivityManager.instance.activities.get(id).name;
+	}
+
+	public function setUiLoaded(loaded:Bool):Void
+	{
+		game.uiLoaded = loaded;
+		// No listener yet
+		/*if(loaded)
+			dispatchEvent(new DisplayEvent(DisplayEvent.LOADED));*/
+		if(loaded)
+			StyleParser.loadIcons();
 	}
 
 	// Privates

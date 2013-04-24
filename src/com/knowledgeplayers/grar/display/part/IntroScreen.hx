@@ -90,12 +90,12 @@ class IntroScreen extends Sprite {
 		if(transitionOut != null)
 			TweenManager.applyTransition(this, transitionOut).onComplete(function()
 			{
-				//visible = false;
-				parent.removeChild(this);
+				if(parent != null)
+					parent.removeChild(this);
 			});
 		else{
-			visible = false;
-			parent.removeChild(this);
+			if(parent != null)
+				parent.removeChild(this);
 		}
 	}
 

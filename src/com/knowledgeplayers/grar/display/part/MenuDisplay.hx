@@ -46,7 +46,6 @@ class MenuDisplay extends Zone {
     **/
 	public var transitionOut:String;
 
-
 	private var levelDisplays:Hash<Fast>;
 	private var xOffset:Float = 0;
 	private var yOffset:Float = 0;
@@ -102,20 +101,20 @@ class MenuDisplay extends Zone {
 				case "button":createButton(child);
 			}
 		}
-        if(display.has.xBase)
-            xBase = Std.parseFloat(display.att.xBase);
-        if(display.has.yBase)
-            yBase = Std.parseFloat(display.att.yBase);
+		if(display.has.xBase)
+			xBase = Std.parseFloat(display.att.xBase);
+		if(display.has.yBase)
+			yBase = Std.parseFloat(display.att.yBase);
 
 		var menuXml = GameManager.instance.game.menu;
 
-        xOffset +=xBase;
-        yOffset +=yBase;
+		xOffset += xBase;
+		yOffset += yBase;
 
 		for(elem in menuXml.firstElement().elements()){
 
 			createMenuLevel(elem);
-           // Lib.trace("createMenu : "+elem);
+			// Lib.trace("createMenu : "+elem);
 		}
 	}
 
@@ -128,7 +127,6 @@ class MenuDisplay extends Zone {
 
 		var fast:Fast = levelDisplays.get(level.nodeName);
 
-
 		if(level.nodeName == "hr"){
 			addLine(fast);
 		}
@@ -138,19 +136,16 @@ class MenuDisplay extends Zone {
 			button.x += xOffset;
 			button.y += yOffset;
 			addChild(button);
-			//Lib.trace("button " + button.name + " " + button.x + ";" + button.y+" -- "+button.height);
 			if(orientation == "vertical"){
 				yOffset += button.height;
 			}
 			else{
 				xOffset += button.width + Std.parseFloat(fast.att.width);
 			}
-            //Lib.trace("yOffSet : "+yOffset);
 		}
 		for(elem in level.elements())
 			createMenuLevel(elem);
 	}
-
 
 	private function addLine(fast:Fast):Void
 	{
@@ -164,7 +159,7 @@ class MenuDisplay extends Zone {
 		line.graphics.lineTo(dest.x, dest.y);
 
 		line.x = Std.parseFloat(fast.att.x);
-		line.y = Std.parseFloat(fast.att.y)+yOffset;
+		line.y = Std.parseFloat(fast.att.y) + yOffset;
 
 		addChild(line);
 
@@ -177,13 +172,11 @@ class MenuDisplay extends Zone {
 
 		if(Std.is(button, TextButton))
 			cast(button, TextButton).setText(text);
-		if(Std.is(button, MenuButton))
-        {
-            cast(button, MenuButton).alignElements();
-            cast(button, MenuButton).menuD = this;
-            cast(button, MenuButton).transitionOut = transitionOut;
-        }
-
+		if(Std.is(button, MenuButton)){
+			cast(button, MenuButton).alignElements();
+			cast(button, MenuButton).menuD = this;
+			cast(button, MenuButton).transitionOut = transitionOut;
+		}
 
 		button.name = text;
 

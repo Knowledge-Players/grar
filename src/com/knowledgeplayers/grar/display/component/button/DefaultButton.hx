@@ -2,7 +2,6 @@ package com.knowledgeplayers.grar.display.component.button;
 
 import nme.events.Event;
 import aze.display.TileClip;
-import browser.Lib;
 import nme.geom.Point;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
@@ -57,30 +56,12 @@ class DefaultButton extends Sprite {
 	**/
 	public var transitionOut (default, setTransitionOut):String;
 
-	/**
-     * Sprite containing the upstate
-     */
-	private var upState:TileSprite;
-
-	/**
-     * Sprite containing the overstater
-     */
-	private var overState:TileSprite;
-
-	/**
-     * Sprite containing the downstate
-     */
-	private var downState:TileSprite;
-
 	private var clip:TileClip;
 
 	/**
-     * Constructor. Downstate and overstate are automatically set if their tile are
-     * name upstateName+"_pressed" and upstateName+"_over"
+     * Constructor.
      * @param	tilesheet : UI Sheet
      * @param	tile : Tile containing the upstate
-     * @param	tilePressed : Tile containing the downstate
-     * @param	tileOver : Tile containing the overstate
      */
 
 	public function new(tilesheet:TilesheetEx, tile:String)
@@ -212,11 +193,11 @@ class DefaultButton extends Sprite {
 			layer.render();
 		}
 
-		// TODO Test if this is still necessary
-		// Hack for C++ hitArea (NME 3.4.4)
+		// Hack for C++ hitArea (NME 3.5.5)
 		#if cpp
 			graphics.beginFill (0xFFFFFF, 0.01);
-			graphics.drawRect (-upState.width/2, -upState.height/2, upState.width, upState.height);
+			graphics.drawRect (-width/2, -height/2, width, height);
+			graphics.endFill();
 		#end
 	}
 

@@ -210,7 +210,9 @@ class KpGame extends EventDispatcher, implements Game {
 
 	public function getLoadingCompletion():Float
 	{
-		return nbPartsLoaded / getAllParts().length;
+		// TODO crawl XML to know how many parts there is
+		//return nbPartsLoaded / getAllParts().length;
+		return nbPartsLoaded / stateInfos.checksum;
 	}
 
 	/**
@@ -364,7 +366,7 @@ class KpGame extends EventDispatcher, implements Game {
 
 	private function onStyleLoaded(styleSheet:Xml):Void
 	{
-		StyleParser.parse(styleSheet.toString());
+		StyleParser.parse(styleSheet);
 		numStyleSheetLoaded++;
 		if(numStyleSheet == numStyleSheetLoaded){
 			while(!activitiesWaiting.isEmpty())
