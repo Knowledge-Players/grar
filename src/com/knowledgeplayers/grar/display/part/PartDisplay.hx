@@ -351,6 +351,16 @@ class PartDisplay extends KpDisplay {
 
 		if(item.introScreen != null){
 			// The intro screen automatically removes itself after its duration
+            for(i in 0...numChildren){
+                if(Std.is(getChildAt(i), DefaultButton))
+                    toRemove.add(getChildAt(i));
+            }
+            if(inventory != null && displayArea.contains(inventory))
+                toRemove.add(inventory);
+            for(obj in toRemove){
+                if(displayArea.contains(obj))
+                    displayArea.removeChild(obj);
+            }
 			var intro = item.introScreen;
 			var introDisplay:IntroScreen = cast(displays.get(intro.ref).obj, IntroScreen);
 			introDisplay.setText(Localiser.instance.getItemContent(intro.content));

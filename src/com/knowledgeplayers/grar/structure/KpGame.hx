@@ -192,7 +192,8 @@ class KpGame extends EventDispatcher, implements Game {
 
 	public function initTracking(?mode:Mode):Void
 	{
-		connection = new Connection();
+
+        connection = new Connection();
 		if(mode != null)
 			this.mode = mode;
 		connection.initConnection(this.mode);
@@ -200,7 +201,7 @@ class KpGame extends EventDispatcher, implements Game {
 		if(stateInfos.isEmpty()){
 			stateInfos.loadStateInfos(state);
 		}
-		Localiser.instance.setCurrentLocale(stateInfos.currentLanguage);
+		Localiser.instance.setCurrentLocale("en");
 	}
 
 	/**
@@ -211,8 +212,10 @@ class KpGame extends EventDispatcher, implements Game {
 	public function getLoadingCompletion():Float
 	{
 		// TODO crawl XML to know how many parts there is
+
 		//return nbPartsLoaded / getAllParts().length;
-		return nbPartsLoaded / stateInfos.checksum;
+
+	    return nbPartsLoaded / stateInfos.checksum;
 	}
 
 	/**
