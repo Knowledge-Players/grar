@@ -58,17 +58,19 @@ class CustomEventButton extends DefaultButton {
         for(key in _animations.keys()){
 
             var anim:AnimationDisplay = cast(_animations.get(key),AnimationDisplay);
+            Lib.trace("anim : "+anim);
             if(activToggle)
             {
                 if(key == "over")
                 {
                     toggleActived = toggleOn = anim;
+                    addChild(toggleActived);
                 }if(key == "out")
                 {
                     toggleOff= anim;
                 }
 
-                addChild(toggleActived);
+                //
 
             }else if(key != "over")
             {
