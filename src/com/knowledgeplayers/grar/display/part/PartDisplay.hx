@@ -350,7 +350,20 @@ class PartDisplay extends KpDisplay {
 		setSpeaker(item.author, item.transition);
 
 		if(item.introScreen != null){
-			// The intro screen automatically removes itself after its duration
+
+
+            for(i in 0...numChildren){
+                if(Std.is(getChildAt(i), DefaultButton))
+                    toRemove.add(getChildAt(i));
+            }
+            if(inventory != null && displayArea.contains(inventory))
+                toRemove.add(inventory);
+            for(obj in toRemove){
+                if(displayArea.contains(obj))
+                    displayArea.removeChild(obj);
+            }
+
+            // The intro screen automatically removes itself after its duration
 			var intro = item.introScreen;
 			var introDisplay:IntroScreen = cast(displays.get(intro.ref).obj, IntroScreen);
 			introDisplay.setText(Localiser.instance.getItemContent(intro.content));
@@ -480,9 +493,17 @@ class PartDisplay extends KpDisplay {
 				for(item in currentTextItem.items){
 					if(key == item){
 						exists = true;
-						if(displaysFast.get(item).has.tween)
-							transitions.push({obj: displays.get(item).obj, tween: displaysFast.get(item).att.tween});
-						currentItems.add(object.obj);
+
+						if(displaysFast.get(item).has.tween){
+                        //TODO Possibilité de passer l'Item en CharacterDisplay
+                            cast(displays.get(item).obj,Sprite).x = Std.parseFloat(displaysFast.get(item).att.x);
+                            cast(displays.get(item).obj,Sprite).y = Std.parseFloat(displaysFast.get(item).att.y);
+
+                            transitions.push({obj: displays.get(item).obj, tween: displaysFast.get(item).att.tween});
+                        }
+
+
+						    currentItems.add(object.obj);
 					}
 				}
 				return exists;
@@ -491,6 +512,7 @@ class PartDisplay extends KpDisplay {
 
 		return true;
 	}
+
 
 	// Handlers
 

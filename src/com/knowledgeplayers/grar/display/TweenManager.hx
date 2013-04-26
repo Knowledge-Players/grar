@@ -29,23 +29,39 @@ class TweenManager {
     * @return the actuator
     **/
 
-	public static function applyTransition(display:DisplayObject, ref:String):Null<IGenericActuator>
+	public static function applyTransition(display:DisplayObject, refs:String):Null<IGenericActuator>
 	{
-		var transition = transitions.get(ref);
-		if(transition == null)
-			return null;
+        var transition:IGenericActuator = null;
+        if (refs != null)
+        {
 
-		if(Reflect.hasField(transition, "alpha"))
-			return fade(display, ref);
-		else if(Reflect.hasField(transition, "width"))
-			return zoom(display, ref);
-		else if(Reflect.hasField(transition, "color"))
-			return blink(display, ref);
-		else if(Reflect.hasField(transition, "repeat"))
-			return wiggle(display, ref);
-		else
-			return slide(display, ref);
+            var arrayRef:Array<String> = refs.split(",");
+            for( i in 0...arrayRef.length ){
+               transition = startTransition(display,arrayRef[i]);
+            }
+
+        }
+
+        return transition;
 	}
+
+    private static function startTransition(display:DisplayObject,ref:String):Null<IGenericActuator>
+    {
+        var transition = transitions.get(ref);
+        if(transition == null)
+        return null;
+
+        if(Reflect.hasField(transition, "alpha"))
+        return fade(display, ref);
+        else if(Reflect.hasField(transition, "width"))
+        return zoom(display, ref);
+        else if(Reflect.hasField(transition, "color"))
+        return blink(display, ref);
+        else if(Reflect.hasField(transition, "repeat"))
+        return wiggle(display, ref);
+        else
+        return slide(display, ref);
+    }
 
 	/**
      * Get a fade in effect for the object

@@ -119,11 +119,6 @@ class Zone extends Sprite {
 			cast(button, CustomEventButton).addEventListener(_child.att.action, onActionEvent);
 		}
 
-		if(_child.att.action == "sound_toggle"){
-			cast(button, CustomEventButton).activToggle = true;
-
-		}
-
 		addChild(button);
 
 		return button;

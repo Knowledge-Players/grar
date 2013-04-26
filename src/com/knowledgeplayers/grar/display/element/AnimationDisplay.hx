@@ -53,10 +53,18 @@ class AnimationDisplay extends Sprite {
         clip.currentFrame = 0;
         layer.render();
     }
-
+    /*
+     Goto the frame you want;
+     */
+    public function goto(_frame:Int):Void{
+        clip.currentFrame = _frame;
+        layer.render();
+    }
 
     private function loop(e:Event):Void{
         clip.play();
         layer.render();
     }
+
+
 }
