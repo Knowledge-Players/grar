@@ -1,6 +1,8 @@
 package com.knowledgeplayers.grar.display.style;
+
+import nme.display.Bitmap;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.util.DisplayUtils;
-import com.knowledgeplayers.grar.util.LoadData;
 import nme.text.TextFieldAutoSize;
 import nme.display.Bitmap;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
@@ -8,6 +10,7 @@ import nme.display.DisplayObject;
 import nme.display.DisplayObjectContainer;
 import com.knowledgeplayers.grar.display.text.UrlField;
 import nme.display.Sprite;
+
 class KpTextDownElement {
 
 	public var content (default, default):String;
@@ -30,7 +33,7 @@ class KpTextDownElement {
 		// Image Style
 		var regexImg:EReg = ~/!\[(.+)\]\((.+)\)!/;
 		if(regexImg.match(content)){
-			var img = LoadData.instance.getElementDisplayInCache(regexImg.matched(2));
+			var img = new Bitmap(AssetsStorage.getBitmapData(regexImg.matched(2)));
 			content = regexImg.replace(content, "");
 			if(regexImg.matchedLeft() != "")
 				concatObjects(output, createTextField(regexImg.matchedLeft(), styleName));

@@ -1,9 +1,9 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.display.style.Style;
 import nme.events.Event;
-import com.knowledgeplayers.grar.util.LoadData;
 import nme.display.Bitmap;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
@@ -160,8 +160,8 @@ class ScrollPanel extends Sprite {
 			tile.y += tile.height / 2;
 			layer.render();
 		}
-		else if(LoadData.getInstance().getElementDisplayInCache(background) != null){
-			var bkg:Bitmap = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(background), Bitmap).bitmapData);
+		else if(AssetsStorage.hasAsset(background)){
+			var bkg:Bitmap = new Bitmap(AssetsStorage.getBitmapData(background));
 			bkg.width = maskWidth;
 			bkg.height = maskHeight;
 

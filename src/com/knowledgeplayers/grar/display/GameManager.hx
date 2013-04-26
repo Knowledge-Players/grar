@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.event.DisplayEvent;
 import com.knowledgeplayers.grar.event.DisplayEvent;
@@ -11,7 +12,6 @@ import nme.media.SoundTransform;
 import nme.net.URLRequest;
 import nme.media.Sound;
 import nme.display.Bitmap;
-import com.knowledgeplayers.grar.util.LoadData;
 import nme.display.BitmapData;
 import com.knowledgeplayers.grar.display.element.TokenNotification;
 import nme.Lib;
@@ -235,16 +235,6 @@ class GameManager extends EventDispatcher {
 		return game.getItemName(id) != null ? game.getItemName(id) : ActivityManager.instance.activities.get(id).name;
 	}
 
-	public function setUiLoaded(loaded:Bool):Void
-	{
-		game.uiLoaded = loaded;
-		// No listener yet
-		/*if(loaded)
-			dispatchEvent(new DisplayEvent(DisplayEvent.LOADED));*/
-		if(loaded)
-			StyleParser.loadIcons();
-	}
-
 	// Privates
 
 	private function new()
@@ -275,7 +265,7 @@ class GameManager extends EventDispatcher {
 		tokenNotification = new TokenNotification(fast.node.Hud);
 		for(token in fast.nodes.Token){
 			// TODO dynamic extension
-			tokensImages.set(token.att.ref, {small:cast(LoadData.instance.getElementDisplayInCache(token.att.src + "_small.jpg"), Bitmap).bitmapData, large: cast(LoadData.instance.getElementDisplayInCache(token.att.src + "_large.jpg"), Bitmap).bitmapData});
+			tokensImages.set(token.att.ref, {small:AssetsStorage.getBitmapData(token.att.src + "_small"), large: AssetsStorage.getBitmapData(token.att.src + "_large")});
 		}
 	}
 

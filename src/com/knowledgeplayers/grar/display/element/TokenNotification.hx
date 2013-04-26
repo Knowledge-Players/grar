@@ -10,7 +10,6 @@ import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.display.Bitmap;
-import com.knowledgeplayers.grar.util.LoadData;
 import nme.Lib;
 import haxe.xml.Fast;
 import aze.display.TileSprite;

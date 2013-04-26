@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import nme.media.SoundChannel;
 import nme.net.URLRequest;
 import nme.media.Sound;
@@ -30,7 +31,6 @@ import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.structure.part.TextItem;
-import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import com.knowledgeplayers.grar.display.TweenManager;
 import haxe.FastList;
@@ -277,7 +277,7 @@ class PartDisplay extends KpDisplay {
 			if(!displaysFast.exists(background))
 				throw "[PartDisplay] There is no background with ref " + background;
 			var fastBkg = displaysFast.get(background);
-			var bkg:DisplayObject = new Bitmap(cast(LoadData.getInstance().getElementDisplayInCache(fastBkg.att.src), Bitmap).bitmapData);
+			var bkg:DisplayObject = new Bitmap(AssetsStorage.getBitmapData(fastBkg.att.src));
 
 			initDisplayObject(bkg, displaysFast.get(background));
 			if(bkg != null){

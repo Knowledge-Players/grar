@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import nme.Assets;
 import com.knowledgeplayers.grar.display.FilterManager;
 import nme.media.Sound;
@@ -24,7 +25,6 @@ import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.component.button.MenuButton;
 import com.knowledgeplayers.grar.display.component.ScrollBar;
-import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;
 import nme.display.Bitmap;
@@ -184,31 +184,12 @@ class UiFactory {
 
 	/**
      * Set the spritesheet file containing all the UI images
-     * @param	pathToXml : path to the XML file
+     * @param	id : ID of the Spritesheet in the assets
      */
 
-	public static function setSpriteSheet(pathToXml:String):Void
+	public static function setSpriteSheet(id:String):Void
 	{
-		layerPath = pathToXml.substr(0, pathToXml.indexOf("."));
-
-		//XmlLoader.load(layerPath + ".xml", onXmlLoaded, parseContent);
-		#if flash
-            LoadData.instance.loadSpritesheet("ui", layerPath + ".xml", onXmlLoaded);
-
-        #else
-		onXmlLoaded();
-		#end
-
-	}
-
-	private static function onXmlLoaded(e:Event = null):Void
-	{
-		#if flash
-        tilesheet = e.target.spritesheet;
-        #else
-		tilesheet = new SparrowTilesheet(Assets.getBitmapData(layerPath + ".png"), Assets.getText(layerPath + ".xml"));
-		#end
-		GameManager.instance.setUiLoaded(true);
+		tilesheet = AssetsStorage.getSpritesheet(id);
 	}
 
 }

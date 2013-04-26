@@ -23,7 +23,6 @@ import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.tracking.Connection;
 import com.knowledgeplayers.grar.tracking.StateInfos;
-import com.knowledgeplayers.grar.util.LoadData;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;
 import nme.events.Event;
@@ -54,11 +53,6 @@ class KpGame extends EventDispatcher, implements Game {
      * Global inventory
      */
 	public var inventory (default, null):Array<Token>;
-
-	/**
-    * Flag for the loading of UI
-    **/
-	public var uiLoaded (default, default):Bool = false;
 
 	/**
     * Reference for the layout
@@ -116,12 +110,57 @@ class KpGame extends EventDispatcher, implements Game {
 	{
 		structureXml = new Fast(xml);
 
-		#if flash
-            LoadData.getInstance().addEventListener("DATA_LOADED",onDisplayLoaded);
-            LoadData.getInstance().loadDisplayXml(xml);
-        #else
-		onDisplayLoaded();
-		#end
+		var displayNode:Fast = structureXml.node.Grar.node.Display;
+		var parametersNode:Fast = structureXml.node.Grar.node.Parameters;
+		var displayNode:Fast = structureXml.node.Grar.node.Display;
+
+		mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
+		title = parametersNode.node.Title.innerData;
+		state = parametersNode.node.State.innerData;
+
+		// Start Tracking
+		initTracking();
+
+		// Load styles
+		for(stylesheet in displayNode.nodes.Style){
+			numStyleSheet++;
+			XmlLoader.load(stylesheet.att.file, function(e:Event)
+			{
+				onStyleLoaded(XmlLoader.getXml(e));
+			}, onStyleLoaded);
+		}
+
+		// Load Languages
+		XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
+
+		// Load UI
+		UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
+
+		// Load Transition
+		if(displayNode.hasNode.Transitions)
+			TweenManager.loadTemplate(displayNode.node.Transitions.att.display);
+
+		// Load Activities displays
+		for(activity in displayNode.nodes.Activity){
+			var activityXml = XmlLoader.load(activity.att.display, onActivityComplete, initActivities);
+		}
+
+		// Load Parts
+		var structureNode:Fast = structureXml.node.Grar.node.Structure;
+		GameManager.instance.loadTokens(structureNode.att.inventory);
+		if(structureNode.has.menu){
+			XmlLoader.load(structureNode.att.menu, function(e:Event)
+			{
+				menu = XmlLoader.getXml(e);
+			}, function(xml:Xml)
+			{
+				menu = xml;
+			});
+		}
+		ref = structureNode.att.ref;
+		for(part in structureNode.nodes.Part){
+			addPartFromXml(part.att.id, part);
+		}
 	}
 
 	/**
@@ -212,7 +251,8 @@ class KpGame extends EventDispatcher, implements Game {
 	{
 		// TODO crawl XML to know how many parts there is
 		//return nbPartsLoaded / getAllParts().length;
-		return nbPartsLoaded / stateInfos.checksum;
+		//return nbPartsLoaded / stateInfos.checksum;
+		return nbPartsLoaded / parts.length;
 	}
 
 	/**
@@ -272,6 +312,7 @@ class KpGame extends EventDispatcher, implements Game {
 		var part:Part = PartFactory.createPartFromXml(partXml);
 		addPart(partIndex, part);
 		part.init(partXml);
+		nme.Lib.trace("part: " + part.name);
 	}
 
 	private function initLangs(xml:Xml):Void
@@ -291,61 +332,6 @@ class KpGame extends EventDispatcher, implements Game {
 	}
 
 	// Handlers
-
-	private function onDisplayLoaded(e:Event = null):Void
-	{
-		var displayNode:Fast = structureXml.node.Grar.node.Display;
-		var parametersNode:Fast = structureXml.node.Grar.node.Parameters;
-		var displayNode:Fast = structureXml.node.Grar.node.Display;
-
-		mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
-		title = parametersNode.node.Title.innerData;
-		state = parametersNode.node.State.innerData;
-
-		// Start Tracking
-		initTracking();
-
-		// Load styles
-		for(stylesheet in displayNode.nodes.Style){
-			numStyleSheet++;
-			XmlLoader.load(stylesheet.att.file, function(e:Event)
-			{
-				onStyleLoaded(XmlLoader.getXml(e));
-			}, onStyleLoaded);
-		}
-
-		// Load Languages
-		XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
-
-		// Load UI
-		UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
-
-		// Load Transition
-		if(displayNode.hasNode.Transitions)
-			TweenManager.loadTemplate(displayNode.node.Transitions.att.display);
-
-		// Load Activities displays
-		for(activity in displayNode.nodes.Activity){
-			var activityXml = XmlLoader.load(activity.att.display, onActivityComplete, initActivities);
-		}
-
-		// Load Parts
-		var structureNode:Fast = structureXml.node.Grar.node.Structure;
-		GameManager.instance.loadTokens(structureNode.att.inventory);
-		if(structureNode.has.menu){
-			XmlLoader.load(structureNode.att.menu, function(e:Event)
-			{
-				menu = XmlLoader.getXml(e);
-			}, function(xml:Xml)
-			{
-				menu = xml;
-			});
-		}
-		ref = structureNode.att.ref;
-		for(part in structureNode.nodes.Part){
-			addPartFromXml(part.att.id, part);
-		}
-	}
 
 	private function createMenuXml(xml:Xml, part:Part, level:Int = 1):Void
 	{
@@ -391,14 +377,17 @@ class KpGame extends EventDispatcher, implements Game {
 	{
 		if(event.target == LayoutManager.instance)
 			layoutLoaded = true;
-		else
+		else{
 			nbPartsLoaded++;
+			nme.Lib.trace("part loaded: " + event.part.name);
+		}
 		checkLoading();
 	}
 
 	private function checkLoading():Void
 	{
-		if(getLoadingCompletion() == 1 && uiLoaded && (numStyleSheet == numStyleSheetLoaded)){
+		nme.Lib.trace("nbPartLoaded: " + nbPartsLoaded);
+		if(getLoadingCompletion() == 1 && (numStyleSheet == numStyleSheetLoaded)){
 			//checkIntegrity();
 			// Menu hasn't been set, creating the default
 			if(menu == null){

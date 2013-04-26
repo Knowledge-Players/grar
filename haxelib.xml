@@ -1,11 +1,12 @@
-<project name="grar" url="https://github.com/Knowledge-Players/grar.git" license="MIT">
+<project name="grar" url="https://github.com/Knowledge-Players/grar" license="MIT">
     <user name="knowledge-players"/>
     <tag v="flash"/>
     <tag v="nme"/>
     <tag v="cpp"/>
     <description>GRAR is a powerful framework designed for training applications</description>
     <version name="0.5">New activities, more stable</version>
-	<depends name="nme"/>
-	<depends name="actuate"/>
-	<depends name="tilelayer"/>
+    <depends name="nme"/>
+    <depends name="actuate"/>
+    <depends name="tilelayer"/>
+    <depends name="ExAM"/>
 </project>

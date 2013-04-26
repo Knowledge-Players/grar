@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
@@ -15,7 +16,6 @@ import haxe.FastList;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.display.Bitmap;
-import com.knowledgeplayers.grar.util.LoadData;
 import nme.display.BitmapData;
 import haxe.xml.Fast;
 import nme.display.Sprite;
@@ -113,11 +113,11 @@ class InventoryDisplay extends Sprite {
 		tipTransitionOut = tip.has.transitionOut ? tip.att.transitionOut : null;
 
 		if(fast.has.src)
-			slotBackground = cast(LoadData.instance.getElementDisplayInCache(fast.att.src), Bitmap).bitmapData;
+			slotBackground = AssetsStorage.getBitmapData(fast.att.src);
 		else
 			slotBackground = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, fast.att.id);
 		if(fast.has.srcUnlocked)
-			slotBackgroundUnlocked = cast(LoadData.instance.getElementDisplayInCache(fast.att.srcUnlocked), Bitmap).bitmapData;
+			slotBackgroundUnlocked = AssetsStorage.getBitmapData(fast.att.srcUnlocked);
 		else if(fast.has.idUnlocked)
 			slotBackgroundUnlocked = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, fast.att.idUnlocked);
 

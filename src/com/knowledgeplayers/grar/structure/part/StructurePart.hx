@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.tracking.Trackable;
 import haxe.FastList;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
@@ -334,8 +335,7 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 		if(xml.has.display) display = xml.att.display;
 
 		if(xml.hasNode.Sound)
-			// TODO use LoadData
-			soundLoop = Assets.getSound(xml.node.Sound.att.content);
+			soundLoop = AssetsStorage.getSound(xml.node.Sound.att.content);
 
 		if(xml.hasNode.Part){
 			for(partNode in xml.nodes.Part){
@@ -351,6 +351,7 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 	{
 		var part:Part = PartFactory.createPartFromXml(partNode);
 		part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+		nme.Lib.trace("part: " + part.name);
 		part.init(partNode);
 		elements.push(part);
 	}
@@ -368,9 +369,10 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 			soundLoopChannel = soundLoop.play();
 	}
 
-	private function onPartLoaded(event:Event):Void
+	private function onPartLoaded(event:PartEvent):Void
 	{
 		nbSubPartLoaded++;
+		nme.Lib.trace(nbSubPartLoaded + "/" + nbSubPartTotal);
 		if(nbSubPartLoaded == nbSubPartTotal){
 			fireLoaded();
 		}
@@ -378,7 +380,10 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 
 	private function fireLoaded():Void
 	{
-		dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
+		nme.Lib.trace(name + "fires loaded");
+		var ev = new PartEvent(PartEvent.PART_LOADED);
+		ev.part = this;
+		dispatchEvent(ev);
 	}
 
 	private function exitPart():Void

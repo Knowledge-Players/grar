@@ -1,12 +1,13 @@
 package com.knowledgeplayers.grar.util;
 
+import nme.display.Bitmap;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import aze.display.TilesheetEx;
 import nme.display.BitmapData;
 import nme.display.Bitmap;
 import nme.display.Sprite;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
-import com.knowledgeplayers.grar.util.LoadData;
 
 /**
  * Utility class for display
@@ -45,9 +46,7 @@ class DisplayUtils {
 			return null;
 		}
 		else{
-
-			var bitmap = new Bitmap();
-			bitmap = cast(LoadData.instance.getElementDisplayInCache(bkg), Bitmap);
+			var bitmap = new Bitmap(AssetsStorage.getBitmapData(bkg));
 			bitmap.x = x;
 			bitmap.y = y;
 			if(width != 0)

@@ -1,6 +1,7 @@
 package com.knowledgeplayers.grar.display.style;
 
-import com.knowledgeplayers.grar.util.LoadData;
+import nme.display.Bitmap;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import haxe.xml.Fast;
@@ -16,7 +17,6 @@ class StyleParser {
 	public static var currentStyleSheet:String;
 
 	private static var styles = new Hash<Hash<Style>>();
-	private static var iconsToLoad = new Array<{style:Style, icon:String}>();
 
 	/**
      * Parse the style file
@@ -36,13 +36,10 @@ class StyleParser {
 			for(child in styleNode.elements){
 				if(child.name.toLowerCase() == "icon"){
 					if(child.att.value.indexOf(".") < 0){
-						if(GameManager.instance.game.uiLoaded)
-							style.icon = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, child.att.value);
-						else
-							iconsToLoad.push({style: style, icon: child.att.value});
+						style.icon = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, child.att.value);
 					}
 					else
-						style.icon = cast(LoadData.instance.getElementDisplayInCache(child.att.value), Bitmap).bitmapData;
+						style.icon = AssetsStorage.getBitmapData(child.att.value);
 					style.iconPosition = child.att.position.toLowerCase();
 					style.setIconMargin(child.att.margin);
 				}
@@ -52,7 +49,7 @@ class StyleParser {
 						style.background.opaqueBackground = Std.parseInt(child.att.value);
 					}
 					else
-						style.background = cast(LoadData.instance.getElementDisplayInCache(child.att.value), Bitmap);
+						style.background = new Bitmap(AssetsStorage.getBitmapData(child.att.value));
 				}
 				else
 					style.addRule(child.name, child.att.value);
@@ -80,13 +77,6 @@ class StyleParser {
 			return styles.get(currentStyleSheet).get(name + "text");
 		else
 			return styles.get(currentStyleSheet).get(name);
-	}
-
-	public static function loadIcons():Void
-	{
-		for(style in iconsToLoad){
-			style.style.icon = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, style.icon);
-		}
 	}
 
 }
