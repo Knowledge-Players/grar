@@ -54,12 +54,12 @@ class UiFactory {
      * @return the created button
      */
 
-	public static function createButton(buttonType:String, ref:String, tile:String, x:Float = 0, y:Float = 0, scale:Float = 1, ?action:String, ?iconStatus:String, ?mirror:String, ?style:String, ?className:String, ?animations:Hash<AnimationDisplay>, ?width:Float, ?transitionIn:String, ?transitionOut:String):DefaultButton
+	public static function createButton(buttonType:String, ref:String, tile:String, x:Float = 0, y:Float = 0, scale:Float = 1, ?action:String, ?iconStatus:String, ?mirror:String, ?style:String, ?className:String, ?animations:Hash<AnimationDisplay>, ?width:Float, ?transitionIn:String, ?transitionOut:String,?toggle:String):DefaultButton
 	{
 		var creation:DefaultButton =
 		switch(buttonType.toLowerCase()) {
-			case "text": new TextButton(tilesheet, tile, action, style, animations);
-			case "event": new CustomEventButton(tilesheet, tile, action, animations);
+			case "text": new TextButton(tilesheet, tile, action, style, animations,toggle);
+			case "event": new CustomEventButton(tilesheet, tile, action, animations,toggle);
 			case "anim": new AnimationButton(tilesheet, tile, action);
 			case "menu": new MenuButton(tilesheet, tile, action, iconStatus, width);
 			default: new DefaultButton(tilesheet, tile);
@@ -115,6 +115,7 @@ class UiFactory {
 		var width = xml.has.width ? Std.parseFloat(xml.att.width) : 100;
 		var transitionIn = xml.has.transitionIn ? xml.att.transitionIn : null;
 		var transitionOut = xml.has.transitionOut ? xml.att.transitionOut : null;
+		var toggle = xml.has.toggle ? xml.att.toggle : "false";
 
 		if(xml.hasNode.Animation){
 
@@ -123,7 +124,7 @@ class UiFactory {
 				animations.set(node.att.type, createAnimationFromXml(node));
 			}
 		}
-		return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scale, action, iconStatus, mirror, style, className, animations, width, transitionIn, transitionOut);
+		return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scale, action, iconStatus, mirror, style, className, animations, width, transitionIn, transitionOut,toggle);
 	}
 
 	/**

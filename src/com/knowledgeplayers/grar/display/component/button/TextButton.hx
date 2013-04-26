@@ -28,7 +28,7 @@ class TextButton extends CustomEventButton {
      * @param	stylesheet : Style sheet for the text
      */
 
-	public function new(tilesheet:TilesheetEx, tile:String, ?eventName:String, ?_styleSheet:String, ?_animations:Hash<AnimationDisplay>)
+	public function new(tilesheet:TilesheetEx, tile:String, ?eventName:String, ?_styleSheet:String, ?_animations:Hash<AnimationDisplay>,?toggle:String)
 	{
 		super(tilesheet, tile, (eventName == null ? "next" : eventName), _animations);
 

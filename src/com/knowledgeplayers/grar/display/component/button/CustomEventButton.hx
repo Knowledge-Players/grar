@@ -25,6 +25,10 @@ class CustomEventButton extends DefaultButton {
 
     private var toggle:Bool = true;
 
+    private var toggleOn:AnimationDisplay;
+    private var toggleOff:AnimationDisplay;
+    private var toggleActived:AnimationDisplay;
+
     /**
      * Constructor
      * @param	eventName : Name of the customed event to dispatch
@@ -35,12 +39,16 @@ class CustomEventButton extends DefaultButton {
     private var animations:Hash<AnimationDisplay>;
     private var animEnCours:AnimationDisplay;
 
-    public function new(tilesheet:TilesheetEx, tile:String, eventName:String,?_animations:Hash<AnimationDisplay>)
+    public function new(tilesheet:TilesheetEx, tile:String, eventName:String,?_animations:Hash<AnimationDisplay>,?_toggle:String)
     {
         super(tilesheet, tile);
         this.eventType = eventName.toLowerCase();
         animations = _animations;
         animEnCours =null;
+        if(_toggle =="true")
+        {
+            activToggle = true;
+        }
 
         if(animations != null)setAnimations(animations);
     }
@@ -50,7 +58,19 @@ class CustomEventButton extends DefaultButton {
         for(key in _animations.keys()){
 
             var anim:AnimationDisplay = cast(_animations.get(key),AnimationDisplay);
-            if(key != "over")
+            if(activToggle)
+            {
+                if(key == "over")
+                {
+                    toggleActived = toggleOn = anim;
+                }if(key == "out")
+                {
+                    toggleOff= anim;
+                }
+
+                addChild(toggleActived);
+
+            }else if(key != "over")
             {
                 addChild(anim);
                 animElement(key);
@@ -64,6 +84,9 @@ class CustomEventButton extends DefaultButton {
                 super.clipOver();
                 if(animations!=null)animElement("over");
             }
+        else{
+                toggleActived.goto(1);
+            }
     }
     override private function onOut(event:MouseEvent):Void{
 
@@ -71,11 +94,15 @@ class CustomEventButton extends DefaultButton {
                 super.clipOut();
                 if(animations!=null)animElement("out");
             }
+        else
+            {
+                toggleActived.goto(0);
+            }
     }
 
     override private function onClick(event:MouseEvent):Void
     {
-        //if(animEnCours != null)removeChild(animEnCours);
+
 
         if(activToggle) changeToggle();
         if(!propagateNativeEvent)
@@ -86,14 +113,22 @@ class CustomEventButton extends DefaultButton {
     }
 
     private function changeToggle():Void{
-            if(toggle){
-                super.clipOver();
-                toggle = false;
-            }else
-            {
-                super.clipOut();
-                toggle = true;
-            }
+
+        removeChild(toggleActived);
+        if(toggle){
+            //super.clipOver();
+
+            toggleActived = toggleOff;
+            toggle = false;
+        }else
+        {
+            //super.clipOut();
+            toggleActived = toggleOn;
+            toggle = true;
+        }
+        addChild(toggleActived);
+        toggleActived.goto(0);
+
     }
 
     private function animElement(_type:String):Void{
