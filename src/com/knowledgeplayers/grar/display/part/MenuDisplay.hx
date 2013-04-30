@@ -3,16 +3,12 @@ package com.knowledgeplayers.grar.display.part;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import nme.display.Shape;
 import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.display.component.button.MenuButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.display.layout.Zone;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.events.Event;
 import nme.filters.DropShadowFilter;
-import com.knowledgeplayers.grar.display.component.button.AnimationButton;
-import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
-import com.knowledgeplayers.grar.display.component.button.TextButton;
 import haxe.FastList;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import nme.Lib;
@@ -170,13 +166,8 @@ class MenuDisplay extends Zone {
 		var button:DefaultButton = null;
 		button = UiFactory.createButtonFromXml(fast);
 
-		if(Std.is(button, TextButton))
-			cast(button, TextButton).setText(text);
-		if(Std.is(button, MenuButton)){
-			cast(button, MenuButton).alignElements();
-			cast(button, MenuButton).menuD = this;
-			cast(button, MenuButton).transitionOut = transitionOut;
-		}
+		button.setText(text);
+		button.transitionOut = transitionOut;
 
 		button.name = text;
 

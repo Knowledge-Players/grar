@@ -55,6 +55,7 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 
 	/**
      * Tokens in this part
+     * @todo Do something with the options
      */
 	public var tokens (default, default):FastList<String>;
 
@@ -76,7 +77,7 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 	/**
     * Button of the part
     **/
-	public var button (default, default):{ref:String, content:String};
+	public var button (default, default):{ref:String, content:Hash<String>};
 
 	private var nbSubPartLoaded:Int = 0;
 	private var nbSubPartTotal:Int = 0;
@@ -304,7 +305,14 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 					nbSubPartTotal++;
 					createPart(child);
 				case "button":
-					button = {ref: child.att.ref, content: child.has.content ? child.att.content : null};
+					var content = new Hash<String>();
+					if(child.has.content){
+						var contentString:String = child.att.content.substr(1, child.att.content.length - 2);
+						var contents = contentString.split(",");
+						for(c in contents)
+							content.set(c.split(":")[0], c.split(":")[1]);
+					}
+					button = {ref: child.att.ref, content: content};
 			}
 		}
 		for(elem in elements){
@@ -351,7 +359,6 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 	{
 		var part:Part = PartFactory.createPartFromXml(partNode);
 		part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-		nme.Lib.trace("part: " + part.name);
 		part.init(partNode);
 		elements.push(part);
 	}
@@ -372,7 +379,6 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 	private function onPartLoaded(event:PartEvent):Void
 	{
 		nbSubPartLoaded++;
-		nme.Lib.trace(nbSubPartLoaded + "/" + nbSubPartTotal);
 		if(nbSubPartLoaded == nbSubPartTotal){
 			fireLoaded();
 		}
@@ -380,7 +386,6 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 
 	private function fireLoaded():Void
 	{
-		nme.Lib.trace(name + "fires loaded");
 		var ev = new PartEvent(PartEvent.PART_LOADED);
 		ev.part = this;
 		dispatchEvent(ev);

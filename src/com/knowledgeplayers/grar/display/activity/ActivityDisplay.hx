@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.activity;
 
+import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.localisation.Localiser;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import nme.events.MouseEvent;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import aze.display.TilesheetEx;
@@ -88,6 +91,7 @@ class ActivityDisplay extends KpDisplay {
 
 	private function displayActivity():Void
 	{
+		// Background
 		if(model.background != null){
 			var bkg = displaysFast.get(model.background);
 			var width:Float = bkg.has.width ? Std.parseFloat(bkg.att.width) : null;
@@ -97,6 +101,17 @@ class ActivityDisplay extends KpDisplay {
 			var y:Float = bkg.has.y ? Std.parseFloat(bkg.att.y) : null;
 			DisplayUtils.setBackground(bkg.att.src, this, width, height, alpha, x, y);
 		}
+
+		// Instructions
+		var localizedText = Localiser.instance.getItemContent(model.instructionContent);
+		cast(displays.get(model.ref).obj, ScrollPanel).setContent(localizedText);
+		addChild(displays.get(model.ref).obj);
+
+		// Button
+		for(key in model.button.content.keys())
+			cast(displays.get(model.button.ref).obj, DefaultButton).setText(Localiser.instance.getItemContent(model.button.content.get(key)), key);
+		displays.get(model.button.ref).obj.addEventListener(MouseEvent.CLICK, onValidate);
+		addChild(displays.get(model.button.ref).obj);
 	}
 
 	private function unLoad(keepLayer:Int = 0):Void

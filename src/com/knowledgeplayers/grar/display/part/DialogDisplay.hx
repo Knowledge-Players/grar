@@ -18,7 +18,6 @@ import com.knowledgeplayers.grar.display.element.TokenNotification;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import nme.display.Sprite;
-import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
@@ -119,7 +118,7 @@ class DialogDisplay extends PartDisplay {
 
 	// Privates
 
-	override private function setButtonAction(button:CustomEventButton, action:String):Void
+	override private function setButtonAction(button:DefaultButton, action:String):Void
 	{
 		super.setButtonAction(button, action);
 		if(action.toLowerCase() == ButtonActionEvent.GOTO){
@@ -162,9 +161,9 @@ class DialogDisplay extends PartDisplay {
 
 	private function onOutChoice(e:MouseEvent):Void
 	{
-    //TODO voir pourquoi on doit faire un doubon de bouton ds le xml pour éviter le bug de rollOut du tooltip
+		//TODO voir pourquoi on doit faire un doubon de bouton ds le xml pour éviter le bug de rollOut du tooltip
 
 		var pattern = cast(currentPattern, ChoicePattern);
-        displayArea.removeChild(displays.get(pattern.tooltipRef).obj);
+		displayArea.removeChild(displays.get(pattern.tooltipRef).obj);
 	}
 }

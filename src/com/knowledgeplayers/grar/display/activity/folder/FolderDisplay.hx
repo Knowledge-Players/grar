@@ -1,12 +1,9 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
-import nme.display.Bitmap;
-import nme.display.Bitmap;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.display.BitmapData;
 import com.knowledgeplayers.grar.util.DisplayUtils;
-import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
@@ -91,16 +88,6 @@ class FolderDisplay extends ActivityDisplay {
 		for(target in folder.targets){
 			addChildAt(displays.get(target).obj, cast(Math.min(displays.get(target).z, numChildren), Int));
 		}
-		// Instructions
-		var localizedText = Localiser.instance.getItemContent(folder.instructionContent);
-		cast(displays.get(folder.ref).obj, ScrollPanel).setContent(localizedText);
-		addChild(displays.get(folder.ref).obj);
-
-		// Button
-		if(folder.button.content != null)
-			cast(displays.get(folder.button.ref).obj, TextButton).setText(Localiser.instance.getItemContent(folder.button.content));
-		displays.get(folder.button.ref).obj.addEventListener(MouseEvent.CLICK, onValidate);
-		addChild(displays.get(folder.button.ref).obj);
 	}
 
 	override private function onModelComplete(e:LocaleEvent):Void

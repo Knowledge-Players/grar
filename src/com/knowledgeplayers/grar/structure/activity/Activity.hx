@@ -42,7 +42,7 @@ class Activity extends EventDispatcher, implements PartElement, implements Track
 	/**
     * Reference of the button which will validate the activity
     **/
-	public var button (default, default):{ref:String, content:String};
+	public var button (default, default):{ref:String, content:Hash<String>};
 
 	/**
     * Reference to the background for the activity
@@ -128,7 +128,6 @@ class Activity extends EventDispatcher, implements PartElement, implements Track
 					break;
 				}
 			}
-			nme.Lib.trace("score: " + score + " next: " + nextPattern);
 			dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 		}
 	}
@@ -202,11 +201,13 @@ class Activity extends EventDispatcher, implements PartElement, implements Track
 			controlMode = fast.att.controlMode.toLowerCase();
 		else
 			controlMode = "auto";
-		var content;
-		if(fast.node.Button.has.content)
-			content = fast.node.Button.att.content;
-		else
-			content = null;
+		var content = new Hash<String>();
+		if(fast.node.Button.has.content){
+			var contentString:String = fast.node.Button.att.content.substr(1, fast.node.Button.att.content.length - 2);
+			var contents = contentString.split(",");
+			for(c in contents)
+				content.set(c.split(":")[0], c.split(":")[1]);
+		}
 		button = {ref: fast.node.Button.att.ref, content: content};
 		if(fast.hasNode.Token)
 			token = fast.node.Token.att.ref;

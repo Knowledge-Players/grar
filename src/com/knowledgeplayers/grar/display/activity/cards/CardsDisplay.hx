@@ -4,7 +4,6 @@ import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.display.component.button.TextButton;
 import nme.Lib;
 import aze.display.TileClip;
 import aze.display.TileLayer;
@@ -86,17 +85,6 @@ class CardsDisplay extends ActivityDisplay {
 	override private function displayActivity():Void
 	{
 		super.displayActivity();
-
-		// Instructions
-		var localizedText = Localiser.instance.getItemContent(model.instructionContent);
-		cast(displays.get(model.ref).obj, ScrollPanel).setContent(localizedText);
-		addChild(displays.get(model.ref).obj);
-
-		// Button
-		if(model.button.content != null)
-			cast(displays.get(model.button.ref).obj, TextButton).setText(Localiser.instance.getItemContent(model.button.content));
-		displays.get(model.button.ref).obj.addEventListener(MouseEvent.CLICK, onValidate);
-		addChild(displays.get(model.button.ref).obj);
 	}
 
 	override private function onModelComplete(e:LocaleEvent):Void

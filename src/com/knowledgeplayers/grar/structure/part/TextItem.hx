@@ -27,7 +27,7 @@ class TextItem implements PartElement {
 	/**
     * ID of the button that will appear with this item
     **/
-	public var button (default, default):{ref:String, content:String};
+	public var button (default, default):{ref:String, content:Hash<String>};
 
 	/**
     * Unique ref that will match the display
@@ -76,8 +76,16 @@ class TextItem implements PartElement {
 				background = xml.att.background;
 			if(xml.hasNode.Token)
 				token = xml.node.Token.att.ref;
-			if(xml.hasNode.Button)
-				button = {ref: xml.node.Button.att.ref, content: xml.node.Button.has.content ? xml.node.Button.att.content : null};
+			if(xml.hasNode.Button){
+				var content = new Hash<String>();
+				if(xml.node.Button.has.content){
+					var contentString:String = xml.node.Button.att.content.substr(1, xml.node.Button.att.content.length - 2);
+					var contents = contentString.split(",");
+					for(c in contents)
+						content.set(c.split(":")[0], c.split(":")[1]);
+				}
+				button = {ref: xml.node.Button.att.ref, content: content};
+			}
 			if(xml.hasNode.Sound)
 				sound = xml.node.Sound.att.src;
 			if(xml.hasNode.Intro)

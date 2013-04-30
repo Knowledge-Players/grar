@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.display.component.button;
 
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
+import haxe.FastList;
+import nme.display.DisplayObject;
 import nme.events.Event;
 import aze.display.TileClip;
 import nme.geom.Point;
@@ -56,6 +60,25 @@ class DefaultButton extends Sprite {
 	**/
 	public var transitionOut (default, setTransitionOut):String;
 
+	/**
+    * Different states of the button
+    **/
+	public var states (default, null):Hash<Hash<{dpo:DisplayObject, z:Int}>>;
+
+	/**
+     * Type of the event to dispatch
+     */
+	public var eventType (default, default):String;
+
+	/**
+     * Control whether or not the native event (CLICK) must be propagated
+     */
+	public var propagateNativeEvent (default, default):Bool = false;
+
+	private var toggle:String = "active";
+
+	private var currentState:String;
+
 	private var clip:TileClip;
 
 	/**
@@ -64,14 +87,14 @@ class DefaultButton extends Sprite {
      * @param	tile : Tile containing the upstate
      */
 
-	public function new(tilesheet:TilesheetEx, tile:String)
+	public function new(pStates:Hash<Hash<{dpo:DisplayObject, z:Int}>>, action:String = "next")
 	{
 		super();
 
-		if(tilesheet != null && tile != ""){
-			layer = new TileLayer(tilesheet);
-			clip = new TileClip(tile);
-		}
+		states = pStates;
+
+		eventType = action.toLowerCase();
+
 		mouseChildren = false;
 
 		init();
@@ -134,7 +157,13 @@ class DefaultButton extends Sprite {
 	{}
 
 	private function onClick(event:MouseEvent):Void
-	{}
+	{
+		if(!propagateNativeEvent)
+			event.stopImmediatePropagation();
+
+		var e = new ButtonActionEvent(eventType);
+		dispatchEvent(e);
+	}
 
 	private function onDblClick(event:MouseEvent):Void
 	{}
@@ -162,23 +191,22 @@ class DefaultButton extends Sprite {
 
 	private function onOver(event:MouseEvent):Void
 	{
-		clipOver();
-
+		renderState("over");
 	}
 
 	private function onOut(event:MouseEvent):Void
 	{
-		clipOut();
+		renderState("out");
 	}
 
 	private function onClickDown(event:MouseEvent):Void
 	{
-		clipDown();
+		renderState("press");
 	}
 
 	private function onClickUp(event:MouseEvent):Void
 	{
-		clipOut();
+		renderState("out");
 	}
 
 	private function init():Void
@@ -187,11 +215,7 @@ class DefaultButton extends Sprite {
 
 		setAllListeners(onMouseEvent);
 
-		if(layer != null){
-			layer.addChild(clip);
-			addChild(layer.view);
-			layer.render();
-		}
+		renderState("out");
 
 		// Hack for C++ hitArea (NME 3.5.5)
 		#if cpp
@@ -201,39 +225,77 @@ class DefaultButton extends Sprite {
 		#end
 	}
 
-	public function clipOver():Void
+	private function renderState(state:String)
 	{
-		if(layer != null){
-			if(clip.frames.length > 0){
-				clip.currentFrame = 1;
+		var changeState = false;
+		var list:Hash<{dpo:DisplayObject, z:Int}>;
+		if(states.exists(toggle + "_" + state)){
+			list = states.get(toggle + "_" + state);
+			if(currentState != toggle + "_" + state){
+				currentState = toggle + "_" + state;
+				changeState = true;
+			}
+		}
+		else if(states.exists(toggle + "_" + "out")){
+			list = states.get(toggle + "_" + "out");
+			if(currentState != toggle + "_" + "out"){
+				currentState = toggle + "_" + "out";
+				changeState = true;
+			}
+		}
+		else if(states.exists("active" + "_" + state)){
+			list = states.get("active" + "_" + state);
+			if(currentState != "active" + "_" + state){
+				currentState = "active" + "_" + state;
+				changeState = true;
+			}
+		}
+		else{
+			list = states.get("active_out");
+			if(currentState != "active_out"){
+				currentState = "active_out";
+				changeState = true;
+			}
+		}
+		if(changeState){
+			var array = new Array<{dpo:DisplayObject, z:Int}>();
+
+			if(list == null)
+				throw "There is no information for state \"" + currentState + "\" for button \"" + ref + "\".";
+			for(elem in list){
+				array.push(elem);
 			}
 
-			layer.render();
+			array.sort(sortDisplayObjects);
+			for(obj in array){
+				addChild(obj.dpo);
+			}
 		}
 	}
 
-	public function clipOut():Void
+	public function setText(pContent:String, ?pKey:String):Void
 	{
-		if(layer != null){
-			if(clip.frames.length > 0){
-				clip.currentFrame = 0;
+		for(state in states){
+			if(pKey != null && state.exists(pKey)){
+				cast(state.get(pKey), ScrollPanel).setContent(pContent);
 			}
-
-			layer.render();
+			else if(pKey == null){
+				for(elem in state){
+					if(Std.is(elem, ScrollPanel))
+						cast(elem, ScrollPanel).setContent(pContent);
+				}
+			}
 		}
 	}
 
-	public function clipDown():Void
+	private function sortDisplayObjects(x:{dpo:DisplayObject, z:Int}, y:{dpo:DisplayObject, z:Int}):Int
 	{
-		if(layer != null){
-			if(clip.frames.length > 1){
-				clip.currentFrame = 2;
-			}
-			else{
-				clip.currentFrame = 0;
-			}
-			layer.render();
-		}
+		if(x.z < y.z)
+			return -1;
+		else if(x.z > y.z)
+			return 1;
+		else
+			return 0;
 	}
 
 	private function removeAllEventsListeners(listener:MouseEvent -> Void):Void

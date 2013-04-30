@@ -312,7 +312,6 @@ class KpGame extends EventDispatcher, implements Game {
 		var part:Part = PartFactory.createPartFromXml(partXml);
 		addPart(partIndex, part);
 		part.init(partXml);
-		nme.Lib.trace("part: " + part.name);
 	}
 
 	private function initLangs(xml:Xml):Void
@@ -379,14 +378,12 @@ class KpGame extends EventDispatcher, implements Game {
 			layoutLoaded = true;
 		else{
 			nbPartsLoaded++;
-			nme.Lib.trace("part loaded: " + event.part.name);
 		}
 		checkLoading();
 	}
 
 	private function checkLoading():Void
 	{
-		nme.Lib.trace("nbPartLoaded: " + nbPartsLoaded);
 		if(getLoadingCompletion() == 1 && (numStyleSheet == numStyleSheetLoaded)){
 			//checkIntegrity();
 			// Menu hasn't been set, creating the default

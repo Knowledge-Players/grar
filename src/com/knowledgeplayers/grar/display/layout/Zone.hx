@@ -9,7 +9,6 @@ import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import aze.display.TileSprite;
 import com.eclecticdesignstudio.motion.easing.Quart;
 import com.eclecticdesignstudio.motion.Actuate;
-import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import nme.events.Event;
 import com.knowledgeplayers.grar.display.component.ProgressBar;
@@ -114,11 +113,9 @@ class Zone extends Sprite {
 		var button:DefaultButton = null;
 
 		button = UiFactory.createButtonFromXml(_child);
-
-		if(_child.att.type == "event"){
-			cast(button, CustomEventButton).addEventListener(_child.att.action, onActionEvent);
+		if(_child.has.action){
+			button.addEventListener(_child.att.action, onActionEvent);
 		}
-
 		addChild(button);
 
 		return button;

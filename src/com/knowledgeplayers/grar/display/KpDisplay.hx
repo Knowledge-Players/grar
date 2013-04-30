@@ -14,7 +14,6 @@ import nme.geom.Point;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import com.knowledgeplayers.grar.display.element.CharacterDisplay;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import aze.display.TileSprite;
 import nme.display.Bitmap;
@@ -131,7 +130,7 @@ class KpDisplay extends Sprite {
 		var button:DefaultButton = UiFactory.createButtonFromXml(buttonNode);
 
 		if(buttonNode.has.action)
-			setButtonAction(cast(button, CustomEventButton), buttonNode.att.action);
+			setButtonAction(button, buttonNode.att.action);
 		addElement(button, buttonNode);
 	}
 
@@ -220,7 +219,7 @@ class KpDisplay extends Sprite {
 			display.scaleY = Std.parseFloat(node.att.scaleY);
 	}
 
-	private function setButtonAction(button:CustomEventButton, action:String):Void
+	private function setButtonAction(button:DefaultButton, action:String):Void
 	{}
 
 	private function new()

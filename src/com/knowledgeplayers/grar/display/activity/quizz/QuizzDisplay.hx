@@ -3,7 +3,6 @@ package com.knowledgeplayers.grar.display.activity.quizz;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
-import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.event.LocaleEvent;
@@ -83,10 +82,6 @@ class QuizzDisplay extends ActivityDisplay {
 	{
 
 		super.displayActivity();
-		if(quizz.button.content != null)
-			cast(displays.get(quizz.button.ref).obj, TextButton).setText(Localiser.instance.getItemContent(quizz.button.content));
-		displays.get(quizz.button.ref).obj.addEventListener(MouseEvent.CLICK, onValidate);
-		addChild(displays.get(quizz.button.ref).obj);
 	}
 
 	// Private
@@ -132,16 +127,15 @@ class QuizzDisplay extends ActivityDisplay {
 
 	private function updateButtonText():Void
 	{
-		if(Std.is(displays.get(quizz.button.ref).obj, TextButton)){
-			var stateId:String = null;
-			switch(quizz.state){
-				case EMPTY: stateId = "";
-				case VALIDATED: stateId = "_correct";
-				case CORRECTED: stateId = "_next";
-			}
-
-			cast(displays.get(quizz.button.ref).obj, TextButton).setText(Localiser.instance.getItemContent(quizz.button.content + stateId));
+		var stateId:String = null;
+		switch(quizz.state){
+			case EMPTY: stateId = "";
+			case VALIDATED: stateId = "_correct";
+			case CORRECTED: stateId = "_next";
 		}
+
+		for(key in quizz.button.content.keys())
+			cast(displays.get(quizz.button.ref).obj, DefaultButton).setText(Localiser.instance.getItemContent(quizz.button.content.get(key) + stateId), key);
 	}
 
 	override private function onValidate(e:MouseEvent):Void

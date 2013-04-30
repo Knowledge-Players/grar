@@ -15,7 +15,7 @@ interface Part implements IEventDispatcher, implements PartElement {
 	public var display (default, default):String;
 	public var isDone (default, default):Bool;
 
-	public var button (default, default):{ref:String, content:String};
+	public var button (default, default):{ref:String, content:Hash<String>};
 	public var elements (default, null):Array<PartElement>;
 	public var token (default, null):String;
 	public var tokens (default, null):FastList<String>;

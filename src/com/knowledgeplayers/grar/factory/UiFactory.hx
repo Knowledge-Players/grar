@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.factory;
 
+import aze.display.TileLayer;
+import nme.display.DisplayObject;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import nme.Assets;
 import com.knowledgeplayers.grar.display.FilterManager;
@@ -19,11 +21,7 @@ import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import aze.display.TileSprite;
 import aze.display.SparrowTilesheet;
 import aze.display.TilesheetEx;
-import com.knowledgeplayers.grar.display.component.button.AnimationButton;
-import com.knowledgeplayers.grar.display.component.button.CustomEventButton;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
-import com.knowledgeplayers.grar.display.component.button.TextButton;
-import com.knowledgeplayers.grar.display.component.button.MenuButton;
 import com.knowledgeplayers.grar.display.component.ScrollBar;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;
@@ -54,27 +52,15 @@ class UiFactory {
      * @return the created button
      */
 
-	public static function createButton(buttonType:String, ref:String, tile:String, x:Float = 0, y:Float = 0, scale:Float = 1, ?action:String, ?iconStatus:String, ?mirror:String, ?style:String, ?className:String, ?animations:Hash<AnimationDisplay>, ?width:Float, ?transitionIn:String, ?transitionOut:String,?toggle:String):DefaultButton
+	public static function createButton(ref:String, x:Float = 0, y:Float = 0, states:Hash<Hash<{dpo:DisplayObject, z:Int}>>, ?action:String, ?transitionIn:String, ?transitionOut:String):DefaultButton
 	{
-		var creation:DefaultButton =
-		switch(buttonType.toLowerCase()) {
-			case "text": new TextButton(tilesheet, tile, action, style, animations,toggle);
-			case "event": new CustomEventButton(tilesheet, tile, action, animations,toggle);
-			case "anim": new AnimationButton(tilesheet, tile, action);
-			case "menu": new MenuButton(tilesheet, tile, action, iconStatus, width);
-			default: new DefaultButton(tilesheet, tile);
-		}
+		var creation:DefaultButton = new DefaultButton(states, action);
+
 		creation.ref = ref;
 		creation.transitionIn = transitionIn;
 		creation.transitionOut = transitionOut;
 		creation.x = x;
 		creation.y = y;
-		creation.scale = scale;
-		creation.className = className != null ? className : "text";
-		if(mirror == "horizontal")
-			creation.mirror = 1;
-		if(mirror == "vertical")
-			creation.mirror = 2;
 
 		return creation;
 	}
@@ -102,29 +88,52 @@ class UiFactory {
 
 	public static function createButtonFromXml(xml:Fast):DefaultButton
 	{
-		var animations:Hash<AnimationDisplay> = null;
 
 		var x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
 		var y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
-		var scale = xml.has.scale ? Std.parseFloat(xml.att.scale) : 1;
 		var action = xml.has.action ? xml.att.action : null;
-		var iconStatus = xml.has.status ? xml.att.status : null;
-		var mirror = xml.has.mirror ? xml.att.mirror : null;
-		var style = xml.has.style ? xml.att.style : null;
-		var className = xml.has.className ? xml.att.className : null;
-		var width = xml.has.width ? Std.parseFloat(xml.att.width) : 100;
+
 		var transitionIn = xml.has.transitionIn ? xml.att.transitionIn : null;
 		var transitionOut = xml.has.transitionOut ? xml.att.transitionOut : null;
-		var toggle = xml.has.toggle ? xml.att.toggle : "false";
 
-		if(xml.hasNode.Animation){
+		var states = new Hash<Hash<{dpo:DisplayObject, z:Int}>>();
 
-			animations = new Hash<AnimationDisplay>();
-			for(node in xml.elements){
-				animations.set(node.att.type, createAnimationFromXml(node));
+		if(xml.hasNode.active){
+			for(state in xml.node.active.elements){
+				if(states.exists("active_out") || state.name == "out"){
+					states.set("active_" + state.name, createStates(state));
+				}
 			}
 		}
-		return createButton(xml.att.type, xml.att.ref, xml.att.id, x, y, scale, action, iconStatus, mirror, style, className, animations, width, transitionIn, transitionOut,toggle);
+		if(xml.hasNode.inactive){
+			for(state in xml.node.inactive.elements){
+				if(states.exists("inactive_out") || state.name == "out"){
+					states.set("inactive_" + state.name, createStates(state));
+				}
+			}
+		}
+
+		return createButton(xml.att.ref, x, y, states, action, transitionIn, transitionOut);
+	}
+
+	private static function createStates(node:Fast):Hash<{dpo:DisplayObject, z:Int}>
+	{
+		var list = new Hash<{dpo:DisplayObject, z:Int}>();
+		var zIndex = 0;
+		for(elem in node.elements){
+			switch (elem.name.toLowerCase()) {
+				case "item":
+					var layer = new TileLayer(tilesheet);
+					layer.addChild(createImageFromXml(elem));
+					layer.render();
+					list.set(elem.att.ref, {dpo:layer.view, z:zIndex});
+				case "text": list.set(elem.att.ref, {dpo:createTextFromXml(elem), z:zIndex});
+
+				case "animation":list.set(elem.att.ref, {dpo:createAnimationFromXml(elem), z:zIndex});
+			}
+			zIndex++;
+		}
+		return list;
 	}
 
 	/**
@@ -143,7 +152,7 @@ class UiFactory {
 		var alpha = xml.has.alpha ? Std.parseFloat(xml.att.alpha) : 0;
 		var mirror = xml.has.mirror ? xml.att.mirror : null;
 
-		var animation:AnimationDisplay = new AnimationDisplay(xml.att.id, x, y, tilesheet, scaleX, scaleY, xml.att.type, loop, alpha, mirror);
+		var animation:AnimationDisplay = new AnimationDisplay(xml.att.id, x, y, tilesheet, scaleX, scaleY, loop, alpha, mirror);
 
 		return animation;
 

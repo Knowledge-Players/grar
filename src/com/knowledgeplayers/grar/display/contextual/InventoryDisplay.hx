@@ -2,7 +2,6 @@ package com.knowledgeplayers.grar.display.contextual;
 
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import com.knowledgeplayers.grar.display.component.button.TextButton;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import nme.events.Event;
 import com.knowledgeplayers.grar.localisation.Localiser;
@@ -145,9 +144,8 @@ class InventoryDisplay extends Sprite {
 				largeImage.y = Std.parseFloat(img.att.y);
 			}
 			closeButton = UiFactory.createButtonFromXml(fullscreen.node.Button);
-			if(Std.is(closeButton, TextButton))
-				// TODO baaaaaaahh
-				cast(closeButton, TextButton).setText(Localiser.instance.getItemContent("closeFS"));
+			// TODO Use locale key
+			closeButton.setText(Localiser.instance.getItemContent("closeFS"));
 			if(fullscreen.node.Button.att.action == "close")
 				closeButton.addEventListener("close", closeFullscreen);
 			if(fullscreen.hasNode.Background){
