@@ -79,6 +79,9 @@ class InventoryDisplay extends Sprite {
 	private var background:Sprite;
 	private var title:ScrollPanel;
 
+    private var fullScreenTransitionIn:String;
+    private var fullScreenTransitionOut:String;
+
 	/**
     * Constructor
     * @param    fast : Fast XML
@@ -123,7 +126,11 @@ class InventoryDisplay extends Sprite {
 		slots = new Hash<Sprite>();
 
 		if(fast.hasNode.Fullscreen){
+
 			var fullscreen:Fast = fast.node.Fullscreen;
+            fullScreenTransitionIn =fullscreen.has.transitionIn ? fullscreen.att.transitionIn:null;
+            fullScreenTransitionOut =fullscreen.has.transitionOut ? fullscreen.att.transitionOut : null;
+
 			if(fullscreen.hasNode.Text){
 				var text:Fast = fullscreen.node.Text;
 				contentToken = new ScrollPanel(Std.parseFloat(text.att.width), Std.parseFloat(text.att.height), text.has.style ? text.att.style : null);
@@ -221,16 +228,41 @@ class InventoryDisplay extends Sprite {
 		parent.addChild(closeButton);
 		parent.addChild(contentToken);
 		parent.addChild(title);
+        if (fullScreenTransitionIn!= null){
+        TweenManager.applyTransition(largeImage,fullScreenTransitionIn);
+        TweenManager.applyTransition(background,fullScreenTransitionIn);
+        TweenManager.applyTransition(closeButton,fullScreenTransitionIn);
+        TweenManager.applyTransition(contentToken,fullScreenTransitionIn);
+        TweenManager.applyTransition(title,fullScreenTransitionIn);
+
+        }
+
+
 	}
 
 	private function closeFullscreen(e:ButtonActionEvent):Void
 	{
-		parent.removeChild(background);
-		parent.removeChild(largeImage);
-		parent.removeChild(closeButton);
-		parent.removeChild(contentToken);
-		parent.removeChild(title);
+        if (fullScreenTransitionOut!= null){
+            TweenManager.applyTransition(largeImage,fullScreenTransitionOut);
+            TweenManager.applyTransition(background,fullScreenTransitionOut);
+            TweenManager.applyTransition(closeButton,fullScreenTransitionOut);
+            TweenManager.applyTransition(contentToken,fullScreenTransitionOut);
+            TweenManager.applyTransition(title,fullScreenTransitionOut).onComplete(removeElements);
+
+        }
+        else
+        {
+            removeElements();
+        }
 	}
+
+    private function removeElements():Void{
+        parent.removeChild(background);
+        parent.removeChild(largeImage);
+        parent.removeChild(closeButton);
+        parent.removeChild(contentToken);
+        parent.removeChild(title);
+    }
 
 	private function onOverToken(e:MouseEvent):Void
 	{

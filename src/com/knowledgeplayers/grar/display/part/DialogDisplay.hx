@@ -125,13 +125,18 @@ class DialogDisplay extends PartDisplay {
 			button.addEventListener(action, onChoice);
 			button.addEventListener(MouseEvent.MOUSE_OVER, onOverChoice);
 			button.addEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
+
 		}
+
+
 	}
 
 	private function onChoice(ev:ButtonActionEvent):Void
 	{
 		var choice = cast(ev.target, DefaultButton);
 		var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
+        cast(currentPattern, ChoicePattern).choices.get(choice.ref).viewed = true;
+
 		choice.removeEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
 		goToPattern(target);
 	}
@@ -155,6 +160,7 @@ class DialogDisplay extends PartDisplay {
 				i++;
 			}
 			displayArea.addChildAt(tooltip, i);
+            TweenManager.applyTransition(tooltip,"fadeIn");
 		}
 
 	}

@@ -23,6 +23,7 @@ class ChoicePattern extends Pattern
     **/
     public var tooltipRef (default, default):String;
 
+
     /**
     * Constructor
     * @param    name : Name of the pattern
@@ -39,7 +40,7 @@ class ChoicePattern extends Pattern
         tooltipRef = xml.att.toolTip;
 
         for(choiceNode in xml.nodes.Choice){
-            var choice = {ref: choiceNode.att.ref, content: choiceNode.att.content, toolTip: choiceNode.att.toolTip, goTo: choiceNode.att.goTo};
+            var choice = {ref: choiceNode.att.ref, content: choiceNode.att.content, toolTip: choiceNode.att.toolTip, goTo: choiceNode.att.goTo, viewed:false};
             choices.set(choiceNode.att.ref, choice);
         }
     }
@@ -64,4 +65,5 @@ typedef Choice = {
     var content: String;
     var toolTip: String;
     var goTo: String;
+    var viewed:Bool;
 }

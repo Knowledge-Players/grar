@@ -56,7 +56,9 @@ class ProgressBar extends Sprite{
             layerProgressBar.addChild(icon);
             icon.currentFrame = 1;
             icon.x =posX;
-            icon.y =-5;
+            icon.y =-8;
+            icon.scaleX = 1.2;
+            icon.scaleY = 1.2;
 
             posX+=barWidth/3;
         }

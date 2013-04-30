@@ -61,11 +61,12 @@ class Zone extends Sprite {
 			for(element in _zone.elements){
 				switch(element.name.toLowerCase()){
 					case "background": createBackground(element);
+                    case "menu":createMenu(element);
 					case "image": createImage(element);
 					case "text":createText(element);
 					case "button": createButton(element);
 					case "progressbar": createProgressBar(element);
-					case "menu":createMenu(element);
+
 				}
 			}
 
@@ -150,6 +151,7 @@ class Zone extends Sprite {
 		var textF = UiFactory.createTextFromXml(element);
 
 		var keyText:String = element.att.content;
+        Lib.trace("keyText : "+keyText);
 		textF.setContent(Localiser.instance.getItemContent(keyText));
 
 		addChild(textF);
