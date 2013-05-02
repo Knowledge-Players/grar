@@ -70,9 +70,10 @@ class GameManager extends EventDispatcher {
     **/
 	public var tokensImages (default, null):Hash<{small:BitmapData, large:BitmapData}>;
 
+	public var menuLoaded (default, setMenuLoaded):Bool = false;
+
 	private var layout:Layout;
 	private var activityDisplay:ActivityDisplay;
-	private var navByMenu:Bool = false;
 	private var nbVolume:Float = 1;
 
 	private var soundControl:SoundTransform;
@@ -100,7 +101,9 @@ class GameManager extends EventDispatcher {
 	{
 		this.game = game;
 		changeLayout(layout);
-		displayPartById();
+		if(menuLoaded){
+			displayPartById();
+		}
 	}
 
 	/**
@@ -131,6 +134,12 @@ class GameManager extends EventDispatcher {
 		{
 			parseTokens(XmlLoader.getXml(e));
 		}, parseTokens);
+	}
+
+	public function setMenuLoaded(loaded:Bool):Bool
+	{
+		displayPartById();
+		return menuLoaded = loaded;
 	}
 
 	/**
@@ -328,7 +337,6 @@ class GameManager extends EventDispatcher {
 		if(activityDisplay != null){
 			activityDisplay.model.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
 			activityDisplay.endActivity();
-			navByMenu = true;
 			activityDisplay = null;
 		}
 	}

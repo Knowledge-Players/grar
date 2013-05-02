@@ -41,6 +41,9 @@ class CharacterDisplay extends Sprite {
 		super();
 		this.model = model;
 
+		if(spritesheet == null)
+			throw "[CharacterDisplay] Spritesheet is null for character \"" + model.getName() + "\".";
+
 		layer = new TileLayer(spritesheet);
 		img = new TileSprite(tileId);
 		if(mirror != null){

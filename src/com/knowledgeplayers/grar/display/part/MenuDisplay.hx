@@ -112,6 +112,8 @@ class MenuDisplay extends Zone {
 			createMenuLevel(elem);
 			// Lib.trace("createMenu : "+elem);
 		}
+
+		GameManager.instance.menuLoaded = true;
 	}
 
 	// Private
@@ -167,10 +169,36 @@ class MenuDisplay extends Zone {
 		button = UiFactory.createButtonFromXml(fast);
 
 		button.setText(text);
+		button.addEventListener(ButtonActionEvent.GOTO, onClick);
 		button.transitionOut = transitionOut;
 
 		button.name = text;
 
 		return button;
+	}
+
+	private function onClick(e:ButtonActionEvent):Void
+	{
+		// TODO Utiliser getAllItems
+		var target = cast(e.target, DefaultButton);
+		if(GameManager.instance.game.getAllParts() != null){
+			for(part in GameManager.instance.game.getAllParts()){
+				if(part.name == target.name){
+					GameManager.instance.displayPart(part, true);
+					break;
+				}
+			}
+		}
+		/*if(GameManager.instance.game.getAllItems() != null){
+		for(activity in GameManager.instance.game.getAllItems()){
+		if(activity.name == target.name){
+		GameManager.instance.displayActivity(activity);
+		break;
+		}
+
+		}
+		}*/
+
+		TweenManager.applyTransition(this, transitionOut);
 	}
 }

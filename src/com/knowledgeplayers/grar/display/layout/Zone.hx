@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.layout;
 
+import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.localisation.Localiser;
@@ -61,7 +62,7 @@ class Zone extends Sprite {
 			for(element in _zone.elements){
 				switch(element.name.toLowerCase()){
 					case "background": createBackground(element);
-                    case "menu":createMenu(element);
+					case "menu":createMenu(element);
 					case "image": createImage(element);
 					case "text":createText(element);
 					case "button": createButton(element);
@@ -151,7 +152,6 @@ class Zone extends Sprite {
 		var textF = UiFactory.createTextFromXml(element);
 
 		var keyText:String = element.att.content;
-        Lib.trace("keyText : "+keyText);
 		textF.setContent(Localiser.instance.getItemContent(keyText));
 
 		addChild(textF);
@@ -210,7 +210,7 @@ class Zone extends Sprite {
 	public function onActionEvent(e:Event):Void
 	{
 		switch(e.type){
-			case "open_menu":TweenManager.applyTransition(menu, menu.transitionIn);
+			case "open_menu": TweenManager.applyTransition(menu, menu.transitionIn);
 			case "sound_toggle": activSound(e);
 		}
 

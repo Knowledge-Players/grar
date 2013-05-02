@@ -185,6 +185,7 @@ class PartDisplay extends KpDisplay {
 
 	public function startPart():Void
 	{
+		GameManager.instance.game.start(part.id);
 		TweenManager.applyTransition(this, transitionIn);
 		nextElement();
 	}
