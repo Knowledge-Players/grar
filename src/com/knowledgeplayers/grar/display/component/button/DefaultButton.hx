@@ -277,12 +277,12 @@ class DefaultButton extends Sprite {
 	{
 		for(state in states){
 			if(pKey != null && state.exists(pKey)){
-				cast(state.get(pKey), ScrollPanel).setContent(pContent);
+				cast(state.get(pKey).dpo, ScrollPanel).setContent(pContent);
 			}
 			else if(pKey == null){
 				for(elem in state){
-					if(Std.is(elem, ScrollPanel))
-						cast(elem, ScrollPanel).setContent(pContent);
+					if(Std.is(elem.dpo, ScrollPanel))
+						cast(elem.dpo, ScrollPanel).setContent(pContent);
 				}
 			}
 		}

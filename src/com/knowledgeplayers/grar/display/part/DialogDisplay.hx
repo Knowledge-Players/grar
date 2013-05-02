@@ -128,14 +128,13 @@ class DialogDisplay extends PartDisplay {
 
 		}
 
-
 	}
 
 	private function onChoice(ev:ButtonActionEvent):Void
 	{
 		var choice = cast(ev.target, DefaultButton);
 		var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
-        cast(currentPattern, ChoicePattern).choices.get(choice.ref).viewed = true;
+		cast(currentPattern, ChoicePattern).choices.get(choice.ref).viewed = true;
 
 		choice.removeEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
 		goToPattern(target);
@@ -151,7 +150,9 @@ class DialogDisplay extends PartDisplay {
 			if(choiceButton.ref == key)
 				choice = pattern.choices.get(key);
 		}
-		if(choice != null){
+		if(choice != null && pattern.tooltipRef != null && choice.toolTip != null){
+			if(!displays.exists(pattern.tooltipRef))
+				throw "[DialogDisplay] There is no ToolTip with ref " + pattern.tooltipRef;
 			var tooltip = cast(displays.get(pattern.tooltipRef).obj, ScrollPanel);
 			var content = Localiser.instance.getItemContent(choice.toolTip);
 			tooltip.setContent(content);
@@ -160,16 +161,19 @@ class DialogDisplay extends PartDisplay {
 				i++;
 			}
 			displayArea.addChildAt(tooltip, i);
-            TweenManager.applyTransition(tooltip,"fadeIn");
+			TweenManager.applyTransition(tooltip, "fadeIn");
 		}
-
+		else{
+			removeEventListener(MouseEvent.MOUSE_OVER, onOverChoice);
+			removeEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
+		}
 	}
 
 	private function onOutChoice(e:MouseEvent):Void
 	{
 		//TODO voir pourquoi on doit faire un doubon de bouton ds le xml pour éviter le bug de rollOut du tooltip
-
 		var pattern = cast(currentPattern, ChoicePattern);
-		displayArea.removeChild(displays.get(pattern.tooltipRef).obj);
+		if(pattern.tooltipRef != null)
+			displayArea.removeChild(displays.get(pattern.tooltipRef).obj);
 	}
 }

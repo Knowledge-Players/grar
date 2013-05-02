@@ -33,13 +33,15 @@ class AnimationDisplay extends Sprite {
 		addChild(layer.view);
 
 		layer.render();
+
+		addEventListener(Event.ADDED_TO_STAGE, animElement);
 	}
 
 	/**
     * Play the animation with an Enter_Frame
     **/
 
-	public function animElement():Void
+	public function animElement(?e:Event):Void
 	{
 
 		this.addEventListener(Event.ENTER_FRAME, loop);

@@ -66,11 +66,14 @@ class Pattern implements PartElement {
 		for(child in xml.elements){
 			if(child.name.toLowerCase() == "button" || child.name.toLowerCase() == "choice"){
 				var content = new Hash<String>();
-				if(child.has.content){
+				if(child.att.content.indexOf("{") == 0){
 					var contentString:String = child.att.content.substr(1, child.att.content.length - 2);
 					var contents = contentString.split(",");
 					for(c in contents)
 						content.set(c.split(":")[0], c.split(":")[1]);
+				}
+				else{
+					content.set(child.att.content, child.att.content);
 				}
 				buttons.set(child.att.ref, content);
 			}

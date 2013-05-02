@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.quizz;
 
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
@@ -78,12 +79,6 @@ class QuizzDisplay extends ActivityDisplay {
 		updateButtonText();
 	}
 
-	override private function displayActivity():Void
-	{
-
-		super.displayActivity();
-	}
-
 	// Private
 
 	override private function onModelComplete(e:LocaleEvent):Void
@@ -138,7 +133,7 @@ class QuizzDisplay extends ActivityDisplay {
 			cast(displays.get(quizz.button.ref).obj, DefaultButton).setText(Localiser.instance.getItemContent(quizz.button.content.get(key) + stateId), key);
 	}
 
-	override private function onValidate(e:MouseEvent):Void
+	override private function onValidate(e:ButtonActionEvent):Void
 	{
 		if(quizz.controlMode == "auto"){
 			switch(quizz.state) {

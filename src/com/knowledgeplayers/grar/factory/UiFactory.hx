@@ -171,6 +171,8 @@ class UiFactory {
 		image.y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
 		image.scaleX = xml.has.scaleX ? Std.parseFloat(xml.att.scaleX) : 1;
 		image.scaleY = xml.has.scaleY ? Std.parseFloat(xml.att.scaleY) : 1;
+		if(xml.has.mirror)
+			image.mirror = xml.att.mirror == "horizontal" ? 1 : 2;
 
 		return image;
 	}
@@ -183,7 +185,7 @@ class UiFactory {
 
 	public static function createTextFromXml(xml:Fast):ScrollPanel
 	{
-		var text = new ScrollPanel(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height));
+		var text = new ScrollPanel(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), xml.has.style ? xml.att.style : null);
 		text.x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
 		text.y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
 

@@ -203,10 +203,14 @@ class Activity extends EventDispatcher, implements PartElement, implements Track
 			controlMode = "auto";
 		var content = new Hash<String>();
 		if(fast.node.Button.has.content){
-			var contentString:String = fast.node.Button.att.content.substr(1, fast.node.Button.att.content.length - 2);
-			var contents = contentString.split(",");
-			for(c in contents)
-				content.set(c.split(":")[0], c.split(":")[1]);
+			if(fast.node.Button.att.content.indexOf("{") == 0){
+				var contentString:String = fast.node.Button.att.content.substr(1, fast.node.Button.att.content.length - 2);
+				var contents = contentString.split(",");
+				for(c in contents)
+					content.set(c.split(":")[0], c.split(":")[1]);
+			}
+			else
+				content.set(fast.node.Button.att.content, fast.node.Button.att.content);
 		}
 		button = {ref: fast.node.Button.att.ref, content: content};
 		if(fast.hasNode.Token)

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity;
 
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
@@ -110,7 +111,6 @@ class ActivityDisplay extends KpDisplay {
 		// Button
 		for(key in model.button.content.keys())
 			cast(displays.get(model.button.ref).obj, DefaultButton).setText(Localiser.instance.getItemContent(model.button.content.get(key)), key);
-		displays.get(model.button.ref).obj.addEventListener(MouseEvent.CLICK, onValidate);
 		addChild(displays.get(model.button.ref).obj);
 	}
 
@@ -123,6 +123,13 @@ class ActivityDisplay extends KpDisplay {
 	private function new()
 	{
 		super();
+	}
+
+	override private function setButtonAction(button:DefaultButton, action:String):Void
+	{
+		if(action.toLowerCase() == ButtonActionEvent.NEXT){
+			button.addEventListener(ButtonActionEvent.NEXT, onValidate);
+		}
 	}
 
 	// Handlers
@@ -148,7 +155,7 @@ class ActivityDisplay extends KpDisplay {
 		dispatchEvent(new Event(Event.COMPLETE));
 	}
 
-	private function onValidate(e:MouseEvent):Void
+	private function onValidate(e:ButtonActionEvent):Void
 	{
 		// Override in subclass
 	}

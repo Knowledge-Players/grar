@@ -449,7 +449,7 @@ class PartDisplay extends KpDisplay {
 				var pattern = cast(currentElement, Pattern);
 				if(pattern.buttons.exists(key)){
 					for(contentKey in pattern.buttons.get(key).keys()){
-						cast(displays.get(key).obj, DefaultButton).setText(contentKey, Localiser.instance.getItemContent(pattern.buttons.get(key).get(contentKey)));
+						cast(displays.get(key).obj, DefaultButton).setText(Localiser.instance.getItemContent(pattern.buttons.get(key).get(contentKey)), contentKey);
 					}
 					return true;
 				}
@@ -465,7 +465,7 @@ class PartDisplay extends KpDisplay {
 
 				if(button.ref == key){
 					for(contentKey in button.content.keys()){
-						cast(displays.get(key).obj, DefaultButton).setText(contentKey, Localiser.instance.getItemContent(button.content.get(contentKey)));
+						cast(displays.get(key).obj, DefaultButton).setText(Localiser.instance.getItemContent(button.content.get(contentKey)), contentKey);
 					}
 
 					return true;

@@ -55,7 +55,6 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 
 	/**
      * Tokens in this part
-     * @todo Do something with the options
      */
 	public var tokens (default, default):FastList<String>;
 
@@ -307,7 +306,7 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 				case "button":
 					var content = new Hash<String>();
 					if(child.has.content){
-						var contentString:String = child.att.content.substr(1, child.att.content.length - 2);
+						var contentString:String = child.att.content.indexOf("{") == 0 ? child.att.content.substr(1, child.att.content.length - 2) : child.att.content;
 						var contents = contentString.split(",");
 						for(c in contents)
 							content.set(c.split(":")[0], c.split(":")[1]);

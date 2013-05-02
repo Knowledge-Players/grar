@@ -79,10 +79,14 @@ class TextItem implements PartElement {
 			if(xml.hasNode.Button){
 				var content = new Hash<String>();
 				if(xml.node.Button.has.content){
-					var contentString:String = xml.node.Button.att.content.substr(1, xml.node.Button.att.content.length - 2);
-					var contents = contentString.split(",");
-					for(c in contents)
-						content.set(c.split(":")[0], c.split(":")[1]);
+					if(xml.node.Button.att.content.indexOf("{") == 0){
+						var contentString:String = xml.node.Button.att.content.substr(1, xml.node.Button.att.content.length - 2);
+						var contents = contentString.split(",");
+						for(c in contents)
+							content.set(c.split(":")[0], c.split(":")[1]);
+					}
+					else
+						content.set(xml.node.Button.att.content, xml.node.Button.att.content);
 				}
 				button = {ref: xml.node.Button.att.ref, content: content};
 			}

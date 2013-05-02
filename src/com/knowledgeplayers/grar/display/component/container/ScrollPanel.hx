@@ -100,6 +100,8 @@ class ScrollPanel extends Sprite {
 
 		for(element in KpTextDownParser.parse(contentString)){
 			var style:Style = StyleParser.getStyle(element.style);
+			if(style == null)
+				throw "[ScrollPanel] There is no style \"" + element.style + "\" in style sheet \"" + styleSheet + "\".";
 			var padding = style.getPadding();
 			var iconOffset:Float = 0;
 			if(style.icon != null)

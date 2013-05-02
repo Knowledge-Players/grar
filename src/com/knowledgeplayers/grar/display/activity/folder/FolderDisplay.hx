@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.display.BitmapData;
@@ -222,7 +223,7 @@ class FolderDisplay extends ActivityDisplay {
 
 	// Handlers
 
-	override private function onValidate(e:MouseEvent):Void
+	override private function onValidate(e:ButtonActionEvent):Void
 	{
 		if(cast(model, Folder).controlMode == "auto")
 			// TODO faire le next
