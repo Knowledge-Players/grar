@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.event.GameEvent;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import nme.media.SoundChannel;
 import nme.net.URLRequest;
@@ -59,11 +60,11 @@ class PartDisplay extends KpDisplay {
     **/
 	public var transitionOut (default, default):String;
 
+	private var currentElement:PartElement;
 	private var resizeD:ResizeManager;
 	private var currentSpeaker:CharacterDisplay;
 	private var previousBackground:{ref:String, bmp:Bitmap};
 	private var displayArea:Sprite;
-	private var currentElement:PartElement;
 	private var localeLoaded:Bool = false;
 	private var displayLoaded:Bool = false;
 	private var currentItems:FastList<DisplayObject>;
@@ -107,20 +108,25 @@ class PartDisplay extends KpDisplay {
 	{
 		unLoad();
 		Localiser.instance.popLocale();
+		part.end();
 		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 	}
 
 	/**
+	* @param    startIndex : Next element after this index
     * @return the TextItem in the part or null if there is an activity or the part is over
     **/
 
-	public function nextElement():Void
+	public function nextElement(startIndex:Int = -1):Void
 	{
-		currentElement = part.getNextElement();
+		currentElement = part.getNextElement(startIndex);
+
 		if(currentElement == null){
 			exitPart();
 			return;
 		}
+		if(currentElement.endScreen)
+			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
 
 		if(currentElement.isText()){
 			var groupKey = "";
@@ -181,13 +187,14 @@ class PartDisplay extends KpDisplay {
 
 	/**
     * Start the part
+    * @param    startPosition : Start at this position
     **/
 
-	public function startPart():Void
+	public function startPart(startPosition:Int = -1):Void
 	{
 		GameManager.instance.game.start(part.id);
 		TweenManager.applyTransition(this, transitionIn);
-		nextElement();
+		nextElement(startPosition);
 	}
 
 	override public function parseContent(content:Xml):Void
@@ -211,7 +218,8 @@ class PartDisplay extends KpDisplay {
 	{
 		while(numChildren > 0)
 			removeChildAt(numChildren - 1);
-		parent.removeChild(this);
+		if(parent != null)
+			parent.removeChild(this);
 	}
 
 	override private function createElement(elemNode:Fast):Void
@@ -237,8 +245,11 @@ class PartDisplay extends KpDisplay {
 
 	private function checkPartLoaded():Void
 	{
-		if(localeLoaded && displayLoaded)
-			dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
+		if(localeLoaded && displayLoaded){
+			var event = new PartEvent(PartEvent.PART_LOADED);
+			event.part = part;
+			dispatchEvent(event);
+		}
 	}
 
 	private function next(event:ButtonActionEvent):Void

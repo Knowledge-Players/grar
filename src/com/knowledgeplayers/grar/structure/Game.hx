@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.grar.tracking.Trackable;
+import com.knowledgeplayers.grar.tracking.StateInfos;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.tracking.Connection.Mode;
 import com.knowledgeplayers.grar.structure.part.Part;
@@ -12,6 +14,7 @@ interface Game implements IEventDispatcher {
 	public var inventory (default, null):Array<Token>;
 	public var ref (default, default):String;
 	public var menu (default, default):Xml;
+	public var stateInfos (default, null):StateInfos;
 
 	public function start(?partId:String):Null<Part>;
 
@@ -21,7 +24,7 @@ interface Game implements IEventDispatcher {
 
 	public function getAllParts():Array<Part>;
 
-	public function getAllItems():Array<PartElement>;
+	public function getAllItems():Array<Trackable>;
 
 	public function addLanguage(value:String, path:String, flagIconPath:String):Void;
 

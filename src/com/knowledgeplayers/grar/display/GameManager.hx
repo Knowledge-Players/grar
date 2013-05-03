@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.event.DisplayEvent;
@@ -79,6 +80,7 @@ class GameManager extends EventDispatcher {
 	private var soundControl:SoundTransform;
 	private var itemSound:Sound;
 	private var itemSoundChannel:SoundChannel;
+	private var startIndex:Int;
 
 	/**
     * @return the instance of the singleton
@@ -193,7 +195,7 @@ class GameManager extends EventDispatcher {
     * @param    interrupt : Stop current part to display the new one
     **/
 
-	public function displayPart(part:Part, interrupt:Bool = false):Void
+	public function displayPart(part:Part, interrupt:Bool = false, startPosition:Int = -1):Void
 	{
 		if(interrupt){
 			var oldPart = parts.pop();
@@ -202,14 +204,16 @@ class GameManager extends EventDispatcher {
 		}
 		// Display the new part
 		parts.add(DisplayFactory.createPartDisplay(part));
-		if(parts.first() == null)
+		startIndex = startPosition;
+		parts.first().addEventListener(PartEvent.EXIT_PART, onExitPart);
+		parts.first().addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
+		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+		parts.first().addEventListener(GameEvent.GAME_OVER, function(e:GameEvent)
+		{
+			// e.clone doesn't work. Why ?
 			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
-		else{
-			parts.first().addEventListener(PartEvent.EXIT_PART, onExitPart);
-			parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-			parts.first().addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
-			parts.first().init();
-		}
+		});
+		parts.first().init();
 	}
 
 	/**
@@ -234,14 +238,20 @@ class GameManager extends EventDispatcher {
     * @param id : The ID of the part to display
     **/
 
-	public function displayPartById(?id:String):Void
+	public function displayPartById(?id:String, interrupt:Bool = false):Void
 	{
-		displayPart(game.start(id));
+
+		displayPart(game.start(id), interrupt);
 	}
 
 	public function getItemName(id:String):String
 	{
-		return game.getItemName(id) != null ? game.getItemName(id) : ActivityManager.instance.activities.get(id).name;
+		if(game.getItemName(id) != null)
+			return game.getItemName(id);
+		else if(ActivityManager.instance.activities.get(id) != null)
+			return ActivityManager.instance.activities.get(id).name;
+		else
+			throw "[GameManager] Unable to find the name of item \"" + id + "\".";
 	}
 
 	// Privates
@@ -282,28 +292,37 @@ class GameManager extends EventDispatcher {
 
 	private function onExitPart(event:Event):Void
 	{
-		parts.pop();
-		// Display next part
-		displayPartById();
+		finishPart(cast(event.target.part, Part).id);
+		var finishedPart = parts.pop();
+		/*finishedPart.removeEventListener(PartEvent.EXIT_PART, onExitPart);
+		finishedPart.exitPart();*/
+		if(finishedPart.part.parent == null)
+			displayPartById();
+		else if(!parts.isEmpty() && parts.first().part == finishedPart.part.parent){
+			parts.first().visible = true;
+			parts.first().nextElement();
+		}
+		else{
+			displayPart(finishedPart.part.parent, false, finishedPart.part.parent.getElementIndex(finishedPart.part));
+		}
 	}
 
 	private function onPartLoaded(event:PartEvent):Void
 	{
+		setBookmark(event.part.id);
 		var partDisplay = cast(event.target, PartDisplay);
 		partDisplay.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
-		partDisplay.startPart();
+		partDisplay.startPart(startIndex);
 		layout.zones.get(game.ref).addChild(partDisplay);
-	}
 
-	private function onExitSubPart(event:PartEvent):Void
-	{
-		parts.first().visible = true;
-		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-		parts.first().nextElement();
+		var event = new PartEvent(PartEvent.ENTER_PART);
+		event.partId = partDisplay.part.id;
+		dispatchEvent(event);
 	}
 
 	public function onEnterSubPart(event:PartEvent):Void
 	{
+		setBookmark(event.part.id);
 		parts.first().visible = false;
 		parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		displayPartById(event.part.id);
@@ -311,6 +330,7 @@ class GameManager extends EventDispatcher {
 
 	private function onActivityReady(e:Event):Void
 	{
+		setBookmark(e.target.model.id);
 		activityDisplay.removeEventListener(Event.COMPLETE, onActivityReady);
 		layout.zones.get(game.ref).addChild(activityDisplay);
 		activityDisplay.startActivity();
@@ -339,5 +359,22 @@ class GameManager extends EventDispatcher {
 			activityDisplay.endActivity();
 			activityDisplay = null;
 		}
+	}
+
+	private function finishPart(partId:String):Void
+	{
+		game.stateInfos.setPartFinished(partId);
+		var event = new PartEvent(PartEvent.EXIT_PART);
+		event.partId = partId;
+		dispatchEvent(event);
+	}
+
+	private function setBookmark(partId:String):Void
+	{
+		var i = 0;
+		while(i < game.getAllItems().length && game.getAllItems()[i].id != partId){
+			i++;
+		}
+		game.stateInfos.bookmark = i;
 	}
 }

@@ -38,6 +38,8 @@ class Pattern implements PartElement {
     **/
 	public var token (default, null):String;
 
+	public var endScreen (default, null):Bool = false;
+
 	/**
     * Constructor
     * @param name : Name of the pattern

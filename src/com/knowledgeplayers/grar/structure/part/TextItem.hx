@@ -54,6 +54,8 @@ class TextItem implements PartElement {
 	**/
 	public var introScreen (default, default):{ref:String, content:String};
 
+	public var endScreen (default, null):Bool = false;
+
 	/**
      * Constructor
      * @param	xml : fast xml node with structure info
@@ -94,6 +96,8 @@ class TextItem implements PartElement {
 				sound = xml.node.Sound.att.src;
 			if(xml.hasNode.Intro)
 				introScreen = {ref: xml.node.Intro.att.ref, content: xml.node.Intro.att.content};
+			if(xml.has.endScreen)
+				endScreen = xml.att.endScreen == "true";
 
 			for(item in xml.nodes.Item){
 				items.add(item.att.ref);

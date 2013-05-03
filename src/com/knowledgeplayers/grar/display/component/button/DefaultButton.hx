@@ -146,6 +146,16 @@ class DefaultButton extends Sprite {
 		return this.mirror = mirror;
 	}
 
+	/**
+	* Define if the button is in state active or inactive
+	**/
+
+	public function setToggle(toggle:Bool):Void
+	{
+		this.toggle = toggle ? "active" : "inactive";
+		renderState("out");
+	}
+
 	// Abstract
 
 	private function onMouseOver(event:MouseEvent):Void

@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.event.PartEvent;
+import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import nme.display.Shape;
 import com.knowledgeplayers.grar.localisation.Localiser;
@@ -45,12 +47,17 @@ class MenuDisplay extends Zone {
 	private var levelDisplays:Hash<Fast>;
 	private var xOffset:Float = 0;
 	private var yOffset:Float = 0;
+	// TODO examiner x&y Base
 	private var yBase:Float = 0;
 	private var xBase:Float = 0;
+
+	private var buttons:Hash<DefaultButton>;
 
 	public function new(_width:Float, _height:Float)
 	{
 		super(_width, _height);
+		buttons = new Hash<DefaultButton>();
+		GameManager.instance.addEventListener(PartEvent.EXIT_PART, onFinishPart);
 	}
 
 	/**
@@ -130,6 +137,7 @@ class MenuDisplay extends Zone {
 		}
 		else{
 			var button = addButton(fast.node.Button, GameManager.instance.getItemName(level.get("id")));
+			buttons.set(level.get("id"), button);
 
 			button.x += xOffset;
 			button.y += yOffset;
@@ -179,26 +187,18 @@ class MenuDisplay extends Zone {
 
 	private function onClick(e:ButtonActionEvent):Void
 	{
-		// TODO Utiliser getAllItems
 		var target = cast(e.target, DefaultButton);
-		if(GameManager.instance.game.getAllParts() != null){
-			for(part in GameManager.instance.game.getAllParts()){
-				if(part.name == target.name){
-					GameManager.instance.displayPart(part, true);
-					break;
-				}
-			}
+		for(key in buttons.keys()){
+			if(buttons.get(key) == target)
+				GameManager.instance.displayPartById(key, true);
 		}
-		/*if(GameManager.instance.game.getAllItems() != null){
-		for(activity in GameManager.instance.game.getAllItems()){
-		if(activity.name == target.name){
-		GameManager.instance.displayActivity(activity);
-		break;
-		}
-
-		}
-		}*/
 
 		TweenManager.applyTransition(this, transitionOut);
+	}
+
+	private function onFinishPart(e:PartEvent):Void
+	{
+		var button:DefaultButton = buttons.get(e.partId);
+		button.setToggle(false);
 	}
 }

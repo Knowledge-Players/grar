@@ -126,8 +126,6 @@ class Localiser extends EventDispatcher {
 		if(!stashedLocale.isEmpty()){
 			localisation = stashedLocale.pop();
 		}
-		else
-			throw "The localiser has no stashed locale";
 	}
 
 	/**

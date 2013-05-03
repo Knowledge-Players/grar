@@ -65,12 +65,16 @@ class KpGame extends EventDispatcher, implements Game {
 	public var menu (default, default):Xml;
 
 	/**
+	* Tracking infos
+	**/
+	public var stateInfos (default, null):StateInfos;
+
+	/**
     * Index of the current part
     **/
 	private var partIndex:Int = 0;
 	private var structureXml:Fast;
 	private var languages:Hash<String>;
-	private var stateInfos:StateInfos;
 	private var flags:Hash<String>;
 	private var parts:Array<Part>;
 	private var connection:Connection;
@@ -117,9 +121,6 @@ class KpGame extends EventDispatcher, implements Game {
 		mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
 		title = parametersNode.node.Title.innerData;
 		state = parametersNode.node.State.innerData;
-
-		// Start Tracking
-		initTracking();
 
 		// Load styles
 		for(stylesheet in displayNode.nodes.Style){
@@ -181,7 +182,7 @@ class KpGame extends EventDispatcher, implements Game {
 			for(part in getAllParts()){
 				if(part.id == partId){
 					partIndex = i + 1;
-					nextPart = part.start(true);
+					nextPart = part.start();
 				}
 				i++;
 			}
@@ -198,7 +199,6 @@ class KpGame extends EventDispatcher, implements Game {
 	public function addPart(partId:String, part:Part):Void
 	{
 		part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-		part.addEventListener(PartEvent.EXIT_PART, onPartComplete);
 		parts.push(part);
 	}
 
@@ -273,9 +273,9 @@ class KpGame extends EventDispatcher, implements Game {
     * @return all trackable items of the game
     **/
 
-	public function getAllItems():Array<PartElement>
+	public function getAllItems():Array<Trackable>
 	{
-		var activities = new Array<PartElement>();
+		var activities = new Array<Trackable>();
 		for(part in parts){
 			activities = activities.concat(part.getAllItems());
 		}
@@ -395,22 +395,17 @@ class KpGame extends EventDispatcher, implements Game {
 				menu = menuXml;
 			}
 			if(!layoutLoaded){
+				// Start Tracking
+				initTracking();
+				for(part in getAllParts())
+					part.isDone = stateInfos.isPartFinished(part.id);
 				// Load Layout
 				LayoutManager.instance.parseXml(Xml.parse(Assets.getText(structureXml.node.Grar.node.Parameters.node.Layout.att.file)));
 			}
 			else{
-				// TODO review tracking
-				/*for(part in getAllParts())
-                    part.isDone = stateInfos.activityCompletion[part.id];*/
 				dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
 			}
 		}
-	}
-
-	private function onPartComplete(event:PartEvent):Void
-	{
-		// TODO review tracking
-		//stateInfos.activityCompletion[cast(event.target, Part).id] = true;
 	}
 
 	private function onExit(e:Event):Void

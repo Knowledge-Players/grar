@@ -49,6 +49,11 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 	public var display (default, default):String;
 
 	/**
+	* Parent of this part
+	**/
+	public var parent (default, default):Part;
+
+	/**
      * True if the part is done
      */
 	public var isDone (default, default):Bool;
@@ -77,6 +82,8 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
     * Button of the part
     **/
 	public var button (default, default):{ref:String, content:Hash<String>};
+
+	public var endScreen (default, null):Bool = false;
 
 	private var nbSubPartLoaded:Int = 0;
 	private var nbSubPartTotal:Int = 0;
@@ -119,30 +126,53 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
      * @return this part, or null if it can't be start
      */
 
-	public function start(forced:Bool = false):Null<Part>
+	public function start():Null<Part>
 	{
-		if(!isDone || forced){
-			enterPart();
-			return this;
-		}
-		else
-			return null;
+		enterPart();
+		return this;
 	}
 
 	/**
-     * @return the next element in the part or null if the part is over
-     */
+	* End the part
+	**/
 
-	public function getNextElement():Null<PartElement>
+	public function end():Void
 	{
+		isDone = true;
+		if(soundLoopChannel != null)
+			soundLoopChannel.stop();
+	}
+	/**
+	* @param    startIndex : Next element after this position
+    * @return the next element in the part or null if the part is over
+    */
+
+	public function getNextElement(startIndex:Int = -1):Null<PartElement>
+	{
+		if(startIndex > -1)
+			elemIndex = startIndex;
 		if(elemIndex < elements.length){
 			elemIndex++;
 			return elements[elemIndex - 1];
 		}
 		else{
-			exitPart();
 			return null;
 		}
+	}
+
+	/**
+	* Get the position in this element in the part
+	* @param    element : Element to find
+	* @return the position of this element
+	**/
+
+	public function getElementIndex(element:PartElement):Int
+	{
+		var i = 0;
+		while(i < elements.length && elements[i] != element)
+			i++;
+
+		return i == elements.length ? -1 : i + 1;
 	}
 
 	/**
@@ -181,19 +211,21 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
     * @return all the trackable items of this part
     **/
 
-	public function getAllItems():Array<PartElement>
+	public function getAllItems():Array<Trackable>
 	{
-		var items = new Array<PartElement>();
+		var items = new Array<Trackable>();
 
 		for(elem in elements){
-			if(elem.isPart()){
-				if(!cast(elem, Part).hasParts())
-					items.push(elem);
-				else
-					items = items.concat(cast(elem, Part).getAllItems());
+			if(Std.is(elem, Trackable)){
+				if(elem.isPart()){
+					if(!cast(elem, Part).hasParts())
+						items.push(cast(elem, Trackable));
+					else
+						items = items.concat(cast(elem, Part).getAllItems());
+				}
+				if(elem.isActivity())
+					items.push(cast(elem, Activity));
 			}
-			if(elem.isActivity())
-				items.push(cast(elem, Activity));
 		}
 		return items;
 	}
@@ -359,6 +391,7 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 		var part:Part = PartFactory.createPartFromXml(partNode);
 		part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		part.init(partNode);
+		part.parent = this;
 		elements.push(part);
 	}
 
@@ -388,13 +421,5 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 		var ev = new PartEvent(PartEvent.PART_LOADED);
 		ev.part = this;
 		dispatchEvent(ev);
-	}
-
-	private function exitPart():Void
-	{
-		isDone = true;
-		if(soundLoopChannel != null)
-			soundLoopChannel.stop();
-		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 	}
 }

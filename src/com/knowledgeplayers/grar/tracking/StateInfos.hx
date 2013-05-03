@@ -1,52 +1,84 @@
 package com.knowledgeplayers.grar.tracking;
 
-class StateInfos 
-{
-	public var currentLanguage (default, default): String;
-	public var currentActivity (default, default): String;
-	public var activityCompletion (default, default): Array<Bool>;
-	public var checksum (default, default): Int;
+import com.knowledgeplayers.grar.structure.part.PartElement;
+import com.knowledgeplayers.grar.structure.part.Part;
+import com.knowledgeplayers.grar.display.GameManager;
+
+class StateInfos {
+	public var currentLanguage (default, default):String;
+	public var bookmark (default, default):Int = -1;
+	public var checksum (default, default):Int;
+
+	private var completion:Hash<Bool>;
+	private var completionOrdered:Array<String>;
+	private var allItem:Array<Trackable>;
 
 	public function new()
 	{
-		activityCompletion = new Array<Bool>();
+		completion = new Hash<Bool>();
+		completionOrdered = new Array<String>();
+		allItem = GameManager.instance.game.getAllItems();
 	}
 
-	public function loadStateInfos(state: String) : Void
+	public function loadStateInfos(state:String):Void
 	{
-		var stateInfosArray: Array<String> = state.split("@");
+		var stateInfosArray:Array<String> = state.split("@");
 		currentLanguage = stateInfosArray[0];
-		currentActivity = stateInfosArray[1];
-		
-		var activities:Array<String> = stateInfosArray[2].split("-");
-		for(activity in activities) {
-			activityCompletion.push(activity == "1");
+		bookmark = Std.parseInt(stateInfosArray[1]);
+
+		var trackable:Array<String> = stateInfosArray[2].split("-");
+		for(i in 0...trackable.length){
+			completion.set(allItem[i].id, trackable[i] == "1");
+			completionOrdered.push(allItem[i].id);
 		}
 
 		checksum = Std.parseInt(stateInfosArray[3]);
 	}
 
-	public function saveStateInfos() : String
+	public function saveStateInfos():String
 	{
-		var stringBuf: StringBuf = new StringBuf();
+		var stringBuf:StringBuf = new StringBuf();
 		stringBuf.add(currentLanguage);
 		stringBuf.add("@");
-		stringBuf.add(currentActivity);
+		stringBuf.add(bookmark);
 		stringBuf.add("@");
-		stringBuf.add(activityCompletion.join("-"));
+		stringBuf.add(completionString());
 		stringBuf.add("@");
 		stringBuf.add(checksum);
 
 		return stringBuf.toString();
 	}
-	
-	public function isEmpty() : Bool 
+
+	public function setPartFinished(partId:String):Void
 	{
-		return (currentLanguage == null && currentActivity == null && activityCompletion.length == 0);
+		completion.set(partId, true);
 	}
 
-	public function toString() : String
+	public function isPartFinished(partId:String):Bool
+	{
+		return completion.get(partId);
+	}
+
+	public function isEmpty():Bool
+	{
+		return (currentLanguage == null && bookmark == -1 && completionOrdered.length == 0);
+	}
+
+	public function toString():String
 	{
 		return saveStateInfos();
+	}
+
+	// Privates
+
+	private function completionString():String
+	{
+		var buffer = new StringBuf();
+		for(i in 0...completionOrdered.length){
+			buffer.add(completion.get(completionOrdered[i]));
+			if(i != completionOrdered.length - 1)
+				buffer.add("-");
+		}
+		return buffer.toString();
 	}
 }

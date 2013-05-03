@@ -75,6 +75,8 @@ class Activity extends EventDispatcher, implements PartElement, implements Track
 	**/
 	public var nextPattern (default, default):String;
 
+	public var endScreen (default, null):Bool = false;
+
 	private var thresholds:Array<{score:Int, next:String}>;
 
 	/**
