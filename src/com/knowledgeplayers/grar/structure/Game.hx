@@ -3,7 +3,7 @@ package com.knowledgeplayers.grar.structure;
 import com.knowledgeplayers.grar.tracking.Trackable;
 import com.knowledgeplayers.grar.tracking.StateInfos;
 import com.knowledgeplayers.grar.structure.part.PartElement;
-import com.knowledgeplayers.grar.tracking.Connection.Mode;
+import com.knowledgeplayers.grar.tracking.Connection;
 import com.knowledgeplayers.grar.structure.part.Part;
 import nme.events.IEventDispatcher;
 
@@ -15,6 +15,7 @@ interface Game implements IEventDispatcher {
 	public var ref (default, default):String;
 	public var menu (default, default):Xml;
 	public var stateInfos (default, null):StateInfos;
+	public var connection (default, null):Connection;
 
 	public function start(?partId:String):Null<Part>;
 

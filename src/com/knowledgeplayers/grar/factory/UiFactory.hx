@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import com.knowledgeplayers.grar.display.TweenManager;
 import aze.display.TileLayer;
 import nme.display.DisplayObject;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
@@ -126,6 +127,8 @@ class UiFactory {
 					var layer = new TileLayer(tilesheet);
 					layer.addChild(createImageFromXml(elem));
 					layer.render();
+					if(elem.has.transform)
+						TweenManager.applyTransition(layer.view, elem.att.transform);
 					list.set(elem.att.ref, {dpo:layer.view, z:zIndex});
 				case "text": list.set(elem.att.ref, {dpo:createTextFromXml(elem), z:zIndex});
 

@@ -31,37 +31,38 @@ class TweenManager {
 
 	public static function applyTransition(display:DisplayObject, refs:String):Null<IGenericActuator>
 	{
-        var transition:IGenericActuator = null;
-        if (refs != null)
-        {
+		var transition:IGenericActuator = null;
+		if(refs != null){
 
-            var arrayRef:Array<String> = refs.split(",");
-            for( i in 0...arrayRef.length ){
-               transition = startTransition(display,arrayRef[i]);
-            }
+			var arrayRef:Array<String> = refs.split(",");
+			for(i in 0...arrayRef.length){
+				transition = startTransition(display, arrayRef[i]);
+			}
 
-        }
+		}
 
-        return transition;
+		return transition;
 	}
 
-    private static function startTransition(display:DisplayObject,ref:String):Null<IGenericActuator>
-    {
-        var transition = transitions.get(ref);
-        if(transition == null)
-        return null;
+	private static function startTransition(display:DisplayObject, ref:String):Null<IGenericActuator>
+	{
+		var transition = transitions.get(ref);
+		if(transition == null)
+			return null;
 
-        if(Reflect.hasField(transition, "alpha"))
-        return fade(display, ref);
-        else if(Reflect.hasField(transition, "width"))
-        return zoom(display, ref);
-        else if(Reflect.hasField(transition, "color"))
-        return blink(display, ref);
-        else if(Reflect.hasField(transition, "repeat"))
-        return wiggle(display, ref);
-        else
-        return slide(display, ref);
-    }
+		if(Reflect.hasField(transition, "alpha"))
+			return fade(display, ref);
+		else if(Reflect.hasField(transition, "width"))
+			return zoom(display, ref);
+		else if(Reflect.hasField(transition, "color") && Reflect.hasField(transition, "repeat"))
+			return blink(display, ref);
+		else if(Reflect.hasField(transition, "color"))
+			return transform(display, ref);
+		else if(Reflect.hasField(transition, "repeat"))
+			return wiggle(display, ref);
+		else
+			return slide(display, ref);
+	}
 
 	/**
      * Get a fade in effect for the object
@@ -140,6 +141,12 @@ class TweenManager {
 		return Actuate.tween(display, slide.duration, {x: inOutX[1], y: inOutY[1]}).ease(getEasing(slide));
 	}
 
+	public static function transform(display:DisplayObject, ref:String):IGenericActuator
+	{
+		var transform = transitions.get(ref);
+		return Actuate.transform(display, transform.duration).color(transform.color).ease(getEasing(transform));
+	}
+
 	public static function blink(display:DisplayObject, ref:String):IGenericActuator
 	{
 		var blink = transitions.get(ref);
@@ -198,6 +205,8 @@ class TweenManager {
 				case "blink":
 					transition.color = Std.parseInt(child.att.color);
 					transition.repeat = Std.parseInt(child.att.repeat);
+				case "transform":
+					transition.color = Std.parseInt(child.att.color);
 			}
 			transitions.set(child.att.ref, transition);
 		}

@@ -9,13 +9,13 @@ class StateInfos {
 	public var bookmark (default, default):Int = -1;
 	public var checksum (default, default):Int;
 
-	private var completion:Hash<Bool>;
+	private var completion:Hash<Int>;
 	private var completionOrdered:Array<String>;
 	private var allItem:Array<Trackable>;
 
 	public function new()
 	{
-		completion = new Hash<Bool>();
+		completion = new Hash<Int>();
 		completionOrdered = new Array<String>();
 		allItem = GameManager.instance.game.getAllItems();
 	}
@@ -28,7 +28,7 @@ class StateInfos {
 
 		var trackable:Array<String> = stateInfosArray[2].split("-");
 		for(i in 0...trackable.length){
-			completion.set(allItem[i].id, trackable[i] == "1");
+			completion.set(allItem[i].id, Std.parseInt(trackable[i]));
 			completionOrdered.push(allItem[i].id);
 		}
 
@@ -51,12 +51,12 @@ class StateInfos {
 
 	public function setPartFinished(partId:String):Void
 	{
-		completion.set(partId, true);
+		completion.set(partId, 1);
 	}
 
 	public function isPartFinished(partId:String):Bool
 	{
-		return completion.get(partId);
+		return completion.get(partId) == 1;
 	}
 
 	public function isEmpty():Bool

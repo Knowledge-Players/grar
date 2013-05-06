@@ -104,7 +104,7 @@ class GameManager extends EventDispatcher {
 		this.game = game;
 		changeLayout(layout);
 		if(menuLoaded){
-			displayPartById();
+			launchGame();
 		}
 	}
 
@@ -140,7 +140,7 @@ class GameManager extends EventDispatcher {
 
 	public function setMenuLoaded(loaded:Bool):Bool
 	{
-		displayPartById();
+		launchGame();
 		return menuLoaded = loaded;
 	}
 
@@ -240,7 +240,6 @@ class GameManager extends EventDispatcher {
 
 	public function displayPartById(?id:String, interrupt:Bool = false):Void
 	{
-
 		displayPart(game.start(id), interrupt);
 	}
 
@@ -255,6 +254,15 @@ class GameManager extends EventDispatcher {
 	}
 
 	// Privates
+
+	private function launchGame():Void
+	{
+		var startingPart:String = null;
+		if(game.stateInfos.bookmark != -1)
+			startingPart = game.getAllParts()[game.stateInfos.bookmark].id;
+
+		displayPartById(startingPart);
+	}
 
 	private function new()
 	{
@@ -294,8 +302,6 @@ class GameManager extends EventDispatcher {
 	{
 		finishPart(cast(event.target.part, Part).id);
 		var finishedPart = parts.pop();
-		/*finishedPart.removeEventListener(PartEvent.EXIT_PART, onExitPart);
-		finishedPart.exitPart();*/
 		if(finishedPart.part.parent == null)
 			displayPartById();
 		else if(!parts.isEmpty() && parts.first().part == finishedPart.part.parent){
@@ -309,7 +315,7 @@ class GameManager extends EventDispatcher {
 
 	private function onPartLoaded(event:PartEvent):Void
 	{
-		setBookmark(event.part.id);
+		setBookmark(event.partId);
 		var partDisplay = cast(event.target, PartDisplay);
 		partDisplay.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		partDisplay.startPart(startIndex);
@@ -322,7 +328,6 @@ class GameManager extends EventDispatcher {
 
 	public function onEnterSubPart(event:PartEvent):Void
 	{
-		setBookmark(event.part.id);
 		parts.first().visible = false;
 		parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		displayPartById(event.part.id);
@@ -330,7 +335,6 @@ class GameManager extends EventDispatcher {
 
 	private function onActivityReady(e:Event):Void
 	{
-		setBookmark(e.target.model.id);
 		activityDisplay.removeEventListener(Event.COMPLETE, onActivityReady);
 		layout.zones.get(game.ref).addChild(activityDisplay);
 		activityDisplay.startActivity();
@@ -372,9 +376,10 @@ class GameManager extends EventDispatcher {
 	private function setBookmark(partId:String):Void
 	{
 		var i = 0;
-		while(i < game.getAllItems().length && game.getAllItems()[i].id != partId){
+		while(i < game.getAllParts().length && game.getAllParts()[i].id != partId){
 			i++;
 		}
 		game.stateInfos.bookmark = i;
+		game.connection.computeTracking(game.stateInfos);* /
 	}
 }
