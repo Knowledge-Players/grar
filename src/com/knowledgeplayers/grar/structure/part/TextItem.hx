@@ -99,8 +99,9 @@ class TextItem implements PartElement {
 			if(xml.has.endScreen)
 				endScreen = xml.att.endScreen == "true";
 
-			for(item in xml.nodes.Item){
-				items.add(item.att.ref);
+			for(item in xml.elements){
+				if(item.name.toLowerCase() == "item" || item.name.toLowerCase() == "character")
+					items.add(item.att.ref);
 			}
 		}
 		else{

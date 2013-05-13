@@ -70,6 +70,11 @@ class KpGame extends EventDispatcher, implements Game {
 	public var stateInfos (default, null):StateInfos;
 
 	/**
+	* Connection with the LMS
+	**/
+	public var connection (default, null):Connection;
+
+	/**
     * Index of the current part
     **/
 	private var partIndex:Int = 0;
@@ -77,7 +82,6 @@ class KpGame extends EventDispatcher, implements Game {
 	private var languages:Hash<String>;
 	private var flags:Hash<String>;
 	private var parts:Array<Part>;
-	private var connection:Connection;
 	private var nbPartsLoaded:Int = 0;
 	private var layoutLoaded:Bool = false;
 	private var numStyleSheet:Int = 0;
@@ -174,8 +178,11 @@ class KpGame extends EventDispatcher, implements Game {
 	{
 		var nextPart:Part = null;
 		if(partId == null && partIndex < getAllParts().length){
-			nextPart = getAllParts()[partIndex].start();
-			partIndex++;
+			do{
+				nextPart = getAllParts()[partIndex].start();
+				partIndex++;
+			}
+			while(nextPart.isDone);
 		}
 		else if(partId != null){
 			var i:Int = 0;

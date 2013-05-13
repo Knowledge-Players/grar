@@ -380,6 +380,6 @@ class GameManager extends EventDispatcher {
 			i++;
 		}
 		game.stateInfos.bookmark = i;
-		game.connection.computeTracking(game.stateInfos);* /
+		game.connection.computeTracking(game.stateInfos);
 	}
 }

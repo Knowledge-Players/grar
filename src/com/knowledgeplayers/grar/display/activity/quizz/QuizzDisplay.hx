@@ -162,7 +162,7 @@ class QuizzDisplay extends ActivityDisplay {
 		var content = Localiser.getInstance().getItemContent(quizz.getCurrentQuestion().content);
 		cast(displays.get(quizz.getCurrentQuestion().ref).obj, ScrollPanel).setContent(content);
 		setState(QuizzState.EMPTY);
-		displayRound();
+		//displayRound();
 	}
 
 	private function setState(state:QuizzState):Void
