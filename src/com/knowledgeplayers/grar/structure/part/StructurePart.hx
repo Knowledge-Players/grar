@@ -90,6 +90,7 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 	private var partIndex:Int = 0;
 	private var elemIndex:Int = 0;
 	private var soundLoopChannel:SoundChannel;
+	private var loaded:Bool = false;
 
 	public function new()
 	{
@@ -104,7 +105,7 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
      * @param	filePath : path to an XML structure file (set the file variable)
      */
 
-	public function init(xml:Fast, filePath:String = ""):Void
+	public function init(xml:Fast, ?filePath:String):Void
 	{
 
 		file = filePath;
@@ -113,8 +114,15 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 			parseXml(xml);
 		}
 
-		if(file != ""){
+		if(display == null)
+			display = parent.display;
+
+		if(file != null){
 			XmlLoader.load(file, onLoadComplete, parseContent);
+		}
+		else if(xml.elements.hasNext()){
+			parseContent(xml.x);
+			file = parent.file;
 		}
 		else
 			fireLoaded();
@@ -324,7 +332,9 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 
 	private function parseContent(content:Xml):Void
 	{
-		var partFast:Fast = new Fast(content).node.Part;
+		var partFast:Fast = new Fast(content);
+		if(partFast.hasNode.Part)
+			partFast = partFast.node.Part;
 
 		for(child in partFast.elements){
 			switch(child.name.toLowerCase()){
@@ -362,6 +372,7 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 			if(elem.token != null)
 				tokens.add(elem.token);
 		}
+		loaded = true;
 		if(nbSubPartLoaded == nbSubPartTotal)
 			fireLoaded();
 	}
@@ -390,8 +401,8 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 	{
 		var part:Part = PartFactory.createPartFromXml(partNode);
 		part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-		part.init(partNode);
 		part.parent = this;
+		part.init(partNode);
 		elements.push(part);
 	}
 
@@ -411,13 +422,14 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 	private function onPartLoaded(event:PartEvent):Void
 	{
 		nbSubPartLoaded++;
-		if(nbSubPartLoaded == nbSubPartTotal){
+		if(nbSubPartLoaded == nbSubPartTotal && loaded){
 			fireLoaded();
 		}
 	}
 
 	private function fireLoaded():Void
 	{
+		nme.Lib.trace("Loaded: " + name);
 		var ev = new PartEvent(PartEvent.PART_LOADED);
 		ev.part = this;
 		dispatchEvent(ev);

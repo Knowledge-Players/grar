@@ -505,7 +505,6 @@ class PartDisplay extends KpDisplay {
 						exists = true;
 
 						if(displaysFast.get(item).has.tween){
-							//TODO Possibilité de passer l'Item en CharacterDisplay
 							cast(displays.get(item).obj, Sprite).x = Std.parseFloat(displaysFast.get(item).att.x);
 							cast(displays.get(item).obj, Sprite).y = Std.parseFloat(displaysFast.get(item).att.y);
 
