@@ -83,6 +83,8 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
     **/
 	public var button (default, default):{ref:String, content:Hash<String>};
 
+	public var next (default, default):String;
+
 	public var endScreen (default, null):Bool = false;
 
 	private var nbSubPartLoaded:Int = 0;
@@ -134,10 +136,14 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
      * @return this part, or null if it can't be start
      */
 
-	public function start():Null<Part>
+	public function start(forced:Bool = false):Null<Part>
 	{
-		enterPart();
-		return this;
+		if(elemIndex == elements.length && !forced)
+			return null;
+		else{
+			enterPart();
+			return this;
+		}
 	}
 
 	/**
@@ -336,6 +342,9 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 		if(partFast.hasNode.Part)
 			partFast = partFast.node.Part;
 
+		if(partFast.has.next)
+			next = partFast.att.next;
+
 		for(child in partFast.elements){
 			switch(child.name.toLowerCase()){
 				case "text":
@@ -383,6 +392,7 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 		if(xml.has.name) name = xml.att.name;
 		if(xml.has.file) file = xml.att.file;
 		if(xml.has.display) display = xml.att.display;
+		if(xml.has.next) next = xml.att.next;
 
 		if(xml.hasNode.Sound)
 			soundLoop = AssetsStorage.getSound(xml.node.Sound.att.content);
@@ -429,7 +439,6 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 
 	private function fireLoaded():Void
 	{
-		nme.Lib.trace("Loaded: " + name);
 		var ev = new PartEvent(PartEvent.PART_LOADED);
 		ev.part = this;
 		dispatchEvent(ev);

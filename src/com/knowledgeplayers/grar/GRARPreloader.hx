@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar;
 
-import nme.display.MovieClip;
+import format.display.MovieClip;
 import nme.Lib;
 import nme.Assets;
 import nme.text.TextFormat;
@@ -32,7 +32,6 @@ class GRARPreloader extends NMEPreloader {
 	private var assetsLoaded:Bool;
 	private var text:TextField;
 	private var state:Int = 0;
-	private var nbFrame:Int = 0;
 
 	public function new()
 	{
@@ -40,6 +39,11 @@ class GRARPreloader extends NMEPreloader {
 		super();
 		while(numChildren > 0)
 			removeChildAt(numChildren - 1);
+
+		// Black background
+		/*graphics.beginFill(0);
+		graphics.drawRect(0,0,nme.Lib.stage.stageWidth, nme.Lib.stage.stageHeight);
+		graphics.endFill();*/
 
 		//assets loader and pass it to storage after load complete
 		loader = new AssetsLoader();
@@ -51,43 +55,23 @@ class GRARPreloader extends NMEPreloader {
 		config.addEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
 		config.addEventListener(SecurityErrorEvent.SECURITY_ERROR, loadErrorHandler);
 		config.load();
-
-		text = new TextField();
-		text.defaultTextFormat = new TextFormat(Assets.getFont("fonts/Myriad Pro/MyriadPro-BoldCond.ttf").fontName, 20);
-		text.x = Lib.current.stage.stageWidth / 2;
-		text.y = Lib.current.stage.stageHeight / 2;
-		addChild(text);
 	}
 
 	override public function onLoaded()
 	{
 		if(assetsLoaded){
-			Lib.current.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
 			super.onLoaded();
+			cast(getChildAt(0), MovieClip).stop();
+			removeChildAt(0);
 		}
-		else
-			Lib.current.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-	}
-
-	override public function onUpdate(bytesLoaded:Int, bytesTotal:Int)
-	{
-		if(state == 0)
-			text.text = "Loading";
-		else if(state == 1)
-			text.text = "Loading.";
-		else if(state == 2)
-			text.text = "Loading..";
-		else if(state == 3)
-			text.text = "Loading...";
-
-	}
-
-	private function onEnterFrame(e:Event):Void
-	{
-		nbFrame++;
-		if(nbFrame % 8 == 0) state++;
-		if(state == 4) state = 0;
-		onUpdate(0, 0);
+		else{
+			// Loader icon
+			var icon = Assets.getMovieClip("loadingCircular:loading");
+			icon.x = Lib.current.stage.stageWidth / 2 - icon.width / 2;
+			icon.y = Lib.current.stage.stageHeight / 2 - icon.height / 2;
+			//icon.stop();
+			addChild(icon);
+		}
 	}
 
 	/**

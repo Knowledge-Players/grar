@@ -36,10 +36,7 @@ import nme.display.Bitmap;
 
 class DialogDisplay extends PartDisplay {
 
-	private var tokens:Hash<Sprite>;
-	private var displayedToken:Bitmap;
 	private var currentPattern:Pattern;
-	private var currentToken:Token;
 	private var nextActivity:Activity;
 
 	/**
@@ -49,10 +46,7 @@ class DialogDisplay extends PartDisplay {
 
 	public function new(part:DialogPart)
 	{
-		tokens = new Hash<Sprite>();
-		resizeD = ResizeManager.getInstance();
 		super(part);
-
 	}
 
 	// Private
@@ -78,17 +72,12 @@ class DialogDisplay extends PartDisplay {
 		if(currentPattern != pattern)
 			currentPattern = pattern;
 
-		if(displayedToken != null){
-			removeChild(displayedToken);
-			displayedToken = null;
-		}
-
 		var nextItem = pattern.getNextItem();
 		if(nextItem != null){
 			setupTextItem(nextItem);
 			GameManager.instance.playSound(nextItem.sound);
 			if(nextItem.hasActivity()){
-				nextActivity = cast(nextItem, RemarkableEvent).activity;
+				nextActivity = cast(nextItem, RemarkableEvent).getActivity();
 			}
 			if(nextItem.token != null){
 				GameManager.instance.activateToken(nextItem.token);
@@ -126,9 +115,7 @@ class DialogDisplay extends PartDisplay {
 			button.addEventListener(action, onChoice);
 			button.addEventListener(MouseEvent.MOUSE_OVER, onOverChoice);
 			button.addEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
-
 		}
-
 	}
 
 	private function onChoice(ev:ButtonActionEvent):Void

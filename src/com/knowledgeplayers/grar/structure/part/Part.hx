@@ -14,6 +14,7 @@ interface Part implements IEventDispatcher, implements PartElement, implements T
 	public var display (default, default):String;
 	public var isDone (default, default):Bool;
 	public var parent (default, default):Part;
+	public var next (default, default):String;
 
 	public var button (default, default):{ref:String, content:Hash<String>};
 	public var elements (default, null):Array<PartElement>;
@@ -21,9 +22,9 @@ interface Part implements IEventDispatcher, implements PartElement, implements T
 	public var tokens (default, null):FastList<String>;
 	public var soundLoop (default, default):Sound;
 
-	public function init(xml:Fast, filePath:String = ""):Void;
+	public function init(xml:Fast, ?filePath:String):Void;
 
-	public function start():Null<Part>;
+	public function start(forced:Bool = false):Null<Part>;
 
 	public function end():Void;
 

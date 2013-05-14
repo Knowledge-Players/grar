@@ -106,9 +106,9 @@ class PartDisplay extends KpDisplay {
 
 	public function exitPart():Void
 	{
+		part.end();
 		unLoad();
 		Localiser.instance.popLocale();
-		part.end();
 		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 	}
 
@@ -192,7 +192,7 @@ class PartDisplay extends KpDisplay {
 
 	public function startPart(startPosition:Int = -1):Void
 	{
-		GameManager.instance.game.start(part.id);
+		//GameManager.instance.game.start(part.id);
 		TweenManager.applyTransition(this, transitionIn);
 		nextElement(startPosition);
 	}
@@ -216,10 +216,31 @@ class PartDisplay extends KpDisplay {
 
 	private function unLoad():Void
 	{
-		while(numChildren > 0)
-			removeChildAt(numChildren - 1);
+		while(displayArea.numChildren > 0){
+			var child = getChildAt(displayArea.numChildren - 1);
+			removeChild(child);
+			child = null;
+		}
+		while(numChildren > 0){
+			var child = getChildAt(numChildren - 1);
+			removeChild(child);
+			child = null;
+		}
 		if(parent != null)
 			parent.removeChild(this);
+		currentElement = null;
+		currentSpeaker = null;
+		previousBackground = null;
+		for(item in currentItems)
+			item = null;
+		currentItems = null;
+		currentTextItem = null;
+		inventory = null;
+		itemSound = null;
+		itemSoundChannel = null;
+		for(transition in transitions)
+			transition = null;
+		transitions = null;
 	}
 
 	override private function createElement(elemNode:Fast):Void
@@ -310,7 +331,6 @@ class PartDisplay extends KpDisplay {
 			var char = cast(displays.get(author).obj, CharacterDisplay);
 
 			if(char != currentSpeaker){
-
 				if(currentSpeaker != null && !Std.is(this, StripDisplay)){
 					displayArea.removeChild(currentSpeaker);
 				}
@@ -343,7 +363,9 @@ class PartDisplay extends KpDisplay {
 		var toRemove = new FastList<DisplayObject>();
 
 		if(isFirst){
+
 			displayBackground(item.background);
+
 			for(i in 0...numChildren){
 				if(Std.is(getChildAt(i), ScrollPanel))
 					toRemove.add(getChildAt(i));
@@ -354,7 +376,9 @@ class PartDisplay extends KpDisplay {
 				if(displayArea.contains(obj))
 					displayArea.removeChild(obj);
 			}
+
 		}
+
 		setSpeaker(item.author, item.transition);
 
 		if(item.introScreen != null){
@@ -378,6 +402,7 @@ class PartDisplay extends KpDisplay {
 			{
 				setText(item, isFirst);
 			});
+
 			displayArea.addChild(introDisplay);
 		}
 		else
@@ -431,6 +456,7 @@ class PartDisplay extends KpDisplay {
 
 		for(tween in transitions){
 			TweenManager.applyTransition(tween.obj, tween.tween);
+			tween = null;
 		}
 		transitions = new Array<{obj:DisplayObject, tween:String}>();
 

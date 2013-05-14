@@ -90,13 +90,18 @@ class IntroScreen extends Sprite {
 		if(transitionOut != null)
 			TweenManager.applyTransition(this, transitionOut).onComplete(function()
 			{
-				if(parent != null)
-					parent.removeChild(this);
+				dispose();
 			});
 		else{
-			if(parent != null)
-				parent.removeChild(this);
+			dispose();
 		}
+	}
+
+	private function dispose():Void
+	{
+		content = new ScrollPanel(content.width, content.height, content.scrollLock, content.styleSheet);
+		if(parent != null)
+			parent.removeChild(this);
 	}
 
 	// Handlers

@@ -291,8 +291,7 @@ class GameManager extends EventDispatcher {
 		var fast = new Fast(display.firstElement());
 		tokenNotification = new TokenNotification(fast.node.Hud);
 		for(token in fast.nodes.Token){
-			// TODO dynamic extension
-			tokensImages.set(token.att.ref, {small:AssetsStorage.getBitmapData(token.att.src + "_small"), large: AssetsStorage.getBitmapData(token.att.src + "_large")});
+			tokensImages.set(token.att.ref, {small:AssetsStorage.getBitmapData(token.att.src.substr(0, token.att.src.indexOf(","))), large: AssetsStorage.getBitmapData(token.att.src.substr(token.att.src.indexOf(",") + 1))});
 		}
 	}
 
@@ -303,7 +302,7 @@ class GameManager extends EventDispatcher {
 		finishPart(cast(event.target.part, Part).id);
 		var finishedPart = parts.pop();
 		if(finishedPart.part.parent == null)
-			displayPartById();
+			displayPartById(finishedPart.part.next);
 		else if(!parts.isEmpty() && parts.first().part == finishedPart.part.parent){
 			parts.first().visible = true;
 			parts.first().nextElement();

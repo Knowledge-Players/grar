@@ -82,6 +82,7 @@ class KpGame extends EventDispatcher, implements Game {
 	private var languages:Hash<String>;
 	private var flags:Hash<String>;
 	private var parts:Array<Part>;
+	private var numParts:Int = 0;
 	private var nbPartsLoaded:Int = 0;
 	private var layoutLoaded:Bool = false;
 	private var numStyleSheet:Int = 0;
@@ -126,6 +127,9 @@ class KpGame extends EventDispatcher, implements Game {
 		title = parametersNode.node.Title.innerData;
 		state = parametersNode.node.State.innerData;
 
+		// Load UI
+		UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
+
 		// Load styles
 		for(stylesheet in displayNode.nodes.Style){
 			numStyleSheet++;
@@ -137,9 +141,6 @@ class KpGame extends EventDispatcher, implements Game {
 
 		// Load Languages
 		XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
-
-		// Load UI
-		UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
 
 		// Load Transition
 		if(displayNode.hasNode.Transitions)
@@ -163,6 +164,11 @@ class KpGame extends EventDispatcher, implements Game {
 			});
 		}
 		ref = structureNode.att.ref;
+		// Count parts
+		for(part in structureNode.nodes.Part){
+			numParts++;
+		}
+		// Load them
 		for(part in structureNode.nodes.Part){
 			addPartFromXml(part.att.id, part);
 		}
@@ -177,22 +183,27 @@ class KpGame extends EventDispatcher, implements Game {
 	public function start(?partId:String):Null<Part>
 	{
 		var nextPart:Part = null;
-		if(partId == null && partIndex < getAllParts().length){
+		if(partId == null){
 			do{
-				nextPart = getAllParts()[partIndex].start();
+				nextPart = parts[partIndex].start();
 				partIndex++;
 			}
-			while(nextPart.isDone);
+			while(nextPart == null && partIndex < parts.length);
 		}
 		else if(partId != null){
 			var i:Int = 0;
-			for(part in getAllParts()){
-				if(part.id == partId){
-					partIndex = i + 1;
-					nextPart = part.start();
-				}
+			while(i < getAllParts().length && getAllParts()[i].id != partId){
 				i++;
 			}
+			nextPart = getAllParts()[i].start(true);
+			var j = 0;
+			var k = 0;
+			while(j <= i){
+				if(getAllParts()[j] == parts[k] && j > 0)
+					k++;
+				j++;
+			}
+			partIndex = k + 1;
 		}
 		return nextPart;
 	}
@@ -256,10 +267,7 @@ class KpGame extends EventDispatcher, implements Game {
 
 	public function getLoadingCompletion():Float
 	{
-		// TODO crawl XML to know how many parts there is
-		//return nbPartsLoaded / getAllParts().length;
-		//return nbPartsLoaded / stateInfos.checksum;
-		return nbPartsLoaded / parts.length;
+		return nbPartsLoaded / numParts;
 	}
 
 	/**
@@ -297,12 +305,26 @@ class KpGame extends EventDispatcher, implements Game {
 
 	public function getItemName(id:String):Null<String>
 	{
-		for(part in parts){
-			var name = part.getItemName(id);
-			if(name != null)
-				return name;
+		var i = 0;
+		var name:String = null;
+		while(i < parts.length && name == null){
+			name = parts[i].getItemName(id);
+			i++;
 		}
-		return null;
+		return name;
+	}
+
+	/**
+	* @param    id : Id of the part
+	* @return the part with the given id
+	**/
+
+	public function getPart(id:String):Null<Part>
+	{
+		var i = 0;
+		while(i < getAllParts().length && getAllParts()[i].id != id)
+			i++;
+		return i == getAllParts().length ? null : getAllParts()[i];
 	}
 
 	// Privates

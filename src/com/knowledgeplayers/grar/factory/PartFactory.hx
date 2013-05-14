@@ -29,7 +29,7 @@ class PartFactory {
 			case "dialog": creation = new DialogPart();
 			case "strip" : creation = new StripPart();
 			default: creation = new StructurePart();
-				nme.Lib.trace(partType + ": Unsupported part type. Creating a default Part instead.");
+			//nme.Lib.trace(partType + ": Unsupported part type. Creating a default Part instead.");
 		}
 
 		return creation;

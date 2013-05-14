@@ -28,8 +28,10 @@ class StateInfos {
 
 		var trackable:Array<String> = stateInfosArray[2].split("-");
 		for(i in 0...trackable.length){
-			completion.set(allItem[i].id, Std.parseInt(trackable[i]));
-			completionOrdered.push(allItem[i].id);
+			if(i < allItem.length){
+				completion.set(allItem[i].id, Std.parseInt(trackable[i]));
+				completionOrdered.push(allItem[i].id);
+			}
 		}
 
 		checksum = Std.parseInt(stateInfosArray[3]);

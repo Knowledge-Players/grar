@@ -36,4 +36,6 @@ interface Game implements IEventDispatcher {
 	public function toString():String;
 
 	public function getItemName(id:String):Null<String>;
+
+	public function getPart(id:String):Null<Part>;
 }
