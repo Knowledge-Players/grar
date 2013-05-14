@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.structure.part.dialog.pattern;
 
-import com.knowledgeplayers.grar.factory.ItemFactory;
 import haxe.xml.Fast;
 
 /**

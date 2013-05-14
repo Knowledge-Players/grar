@@ -1,16 +1,14 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
-import com.knowledgeplayers.grar.display.style.StyleParser;
-import com.knowledgeplayers.grar.structure.activity.folder.FolderElement;
-import com.knowledgeplayers.grar.structure.activity.folder.Folder;
-import nme.Lib;
-import nme.display.Bitmap;
-import nme.display.BitmapData;
 import com.eclecticdesignstudio.motion.Actuate;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
+import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.localisation.Localiser;
+import com.knowledgeplayers.grar.structure.activity.folder.Folder;
+import com.knowledgeplayers.grar.structure.activity.folder.FolderElement;
 import nme.display.Bitmap;
+import nme.display.BitmapData;
 import nme.display.SimpleButton;
 import nme.display.Sprite;
 import nme.events.Event;

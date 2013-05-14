@@ -1,12 +1,9 @@
 package com.knowledgeplayers.grar.structure.part.dialog.pattern;
 
-import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
-import com.knowledgeplayers.grar.structure.part.TextItem;
-import com.knowledgeplayers.grar.factory.ItemFactory;
-import nme.Lib;
-
+import com.knowledgeplayers.grar.structure.part.Pattern;
 import haxe.xml.Fast;
+
 
 class ActivityPattern extends Pattern {
     /**

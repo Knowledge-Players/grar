@@ -1,16 +1,15 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.utils.assets.AssetsStorage;
-import com.knowledgeplayers.grar.factory.UiFactory;
-import nme.display.Bitmap;
-import aze.display.TilesheetEx;
-import haxe.Timer;
-import nme.events.Event;
-import nme.display.DisplayObject;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import haxe.xml.Fast;
+import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.util.DisplayUtils;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
+import haxe.Timer;
+import haxe.xml.Fast;
+import nme.display.Bitmap;
+import nme.display.DisplayObject;
 import nme.display.Sprite;
+import nme.events.Event;
 
 class IntroScreen extends Sprite {
 

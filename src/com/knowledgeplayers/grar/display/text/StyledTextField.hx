@@ -2,10 +2,9 @@ package com.knowledgeplayers.grar.display.text;
 
 import com.knowledgeplayers.grar.display.style.Style;
 import com.knowledgeplayers.grar.display.style.StyleParser;
-import nme.events.MouseEvent;
-
-import nme.text.TextFormat;
 import nme.text.TextField;
+import nme.text.TextFormat;
+
 
 /**
  * Textfield with embedded style

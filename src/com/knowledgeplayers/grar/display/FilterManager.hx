@@ -2,8 +2,8 @@ package com.knowledgeplayers.grar.display;
 /**
  * Manage the most frequently used filters
  */
-import nme.filters.DropShadowFilter;
 import nme.filters.BitmapFilter;
+import nme.filters.DropShadowFilter;
 class FilterManager {
 
     /**

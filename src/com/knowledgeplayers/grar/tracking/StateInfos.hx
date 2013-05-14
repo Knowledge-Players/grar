@@ -1,7 +1,5 @@
 package com.knowledgeplayers.grar.tracking;
 
-import com.knowledgeplayers.grar.structure.part.PartElement;
-import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.display.GameManager;
 
 class StateInfos {

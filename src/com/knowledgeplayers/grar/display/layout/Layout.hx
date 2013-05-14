@@ -1,9 +1,8 @@
 package com.knowledgeplayers.grar.display.layout;
 
 import com.knowledgeplayers.grar.event.LayoutEvent;
-import nme.events.Event;
-import nme.Lib;
 import haxe.xml.Fast;
+import nme.Lib;
 
 /**
 * Layout of the application

@@ -1,9 +1,8 @@
 package com.knowledgeplayers.grar.display.style;
 
-import nme.display.Bitmap;
-import com.knowledgeplayers.utils.assets.AssetsStorage;
-import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.util.DisplayUtils;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
 import nme.display.Bitmap;
 

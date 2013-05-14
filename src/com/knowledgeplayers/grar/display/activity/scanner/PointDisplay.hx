@@ -1,9 +1,8 @@
 package com.knowledgeplayers.grar.display.activity.scanner;
 
-import com.knowledgeplayers.utils.assets.AssetsStorage;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.scanner.ScannerPoint;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import nme.display.Bitmap;
 import nme.display.Sprite;
 import nme.events.MouseEvent;

@@ -1,10 +1,10 @@
 package com.knowledgeplayers.grar.display.element;
 
-import nme.events.Event;
 import aze.display.TileClip;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import nme.display.Sprite;
+import nme.events.Event;
 
 class AnimationDisplay extends Sprite {
 

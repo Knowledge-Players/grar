@@ -1,11 +1,11 @@
 package com.knowledgeplayers.grar.display.element;
 
-import nme.events.Event;
-import aze.display.TilesheetEx;
 import aze.display.TileLayer;
+import aze.display.TilesheetEx;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import nme.display.Sprite;
+import nme.events.Event;
 import nme.geom.Point;
 
 /**

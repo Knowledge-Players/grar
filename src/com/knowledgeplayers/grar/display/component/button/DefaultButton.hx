@@ -1,16 +1,13 @@
 package com.knowledgeplayers.grar.display.component.button;
 
+import aze.display.TileClip;
+import aze.display.TileLayer;
+import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import haxe.FastList;
 import nme.display.DisplayObject;
-import nme.events.Event;
-import aze.display.TileClip;
-import nme.geom.Point;
-import aze.display.TileLayer;
-import aze.display.TilesheetEx;
-import aze.display.TileSprite;
 import nme.display.Sprite;
+import nme.events.Event;
 import nme.events.MouseEvent;
 
 /**

@@ -1,19 +1,14 @@
 package com.knowledgeplayers.grar.display;
 
-import com.knowledgeplayers.grar.display.element.CharacterDisplay;
-import com.eclecticdesignstudio.motion.easing.Linear;
-import Reflect;
-import haxe.FastList;
 import com.eclecticdesignstudio.motion.Actuate;
 import com.eclecticdesignstudio.motion.actuators.GenericActuator.IGenericActuator;
-import com.eclecticdesignstudio.motion.easing.Cubic;
 import com.eclecticdesignstudio.motion.easing.IEasing;
+import com.eclecticdesignstudio.motion.easing.Linear;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;
 import nme.display.DisplayObject;
-import nme.display.Sprite;
 import nme.events.Event;
-import nme.Lib;
+import Reflect;
 
 /**
  * Manage the most frequently used tweens

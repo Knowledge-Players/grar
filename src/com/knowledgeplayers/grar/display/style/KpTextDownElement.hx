@@ -1,15 +1,14 @@
 package com.knowledgeplayers.grar.display.style;
 
-import nme.display.Bitmap;
-import com.knowledgeplayers.utils.assets.AssetsStorage;
-import com.knowledgeplayers.grar.util.DisplayUtils;
-import nme.text.TextFieldAutoSize;
-import nme.display.Bitmap;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
+import com.knowledgeplayers.grar.display.text.UrlField;
+import com.knowledgeplayers.grar.util.DisplayUtils;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
+import nme.display.Bitmap;
 import nme.display.DisplayObject;
 import nme.display.DisplayObjectContainer;
-import com.knowledgeplayers.grar.display.text.UrlField;
 import nme.display.Sprite;
+import nme.text.TextFieldAutoSize;
 
 class KpTextDownElement {
 

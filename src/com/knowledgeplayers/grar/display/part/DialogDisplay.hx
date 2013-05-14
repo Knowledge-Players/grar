@@ -1,34 +1,17 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.factory.UiFactory;
-import nme.net.URLRequest;
-import nme.media.Sound;
-import com.knowledgeplayers.grar.factory.UiFactory;
-import com.knowledgeplayers.grar.display.GameManager;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import haxe.FastList;
-import nme.Lib;
-import com.knowledgeplayers.grar.structure.Token;
-import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.structure.part.TextItem;
-import nme.events.MouseEvent;
-import com.knowledgeplayers.grar.display.element.TokenNotification;
-import com.knowledgeplayers.grar.event.PartEvent;
-import com.knowledgeplayers.grar.structure.activity.Activity;
-import nme.display.Sprite;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
+import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import com.knowledgeplayers.grar.event.TokenEvent;
+import com.knowledgeplayers.grar.localisation.Localiser;
+import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import com.knowledgeplayers.grar.structure.part.dialog.pattern.ChoicePattern;
 import com.knowledgeplayers.grar.structure.part.Pattern;
-import haxe.xml.Fast;
-import nme.Assets;
-import nme.display.Bitmap;
+import nme.events.MouseEvent;
 
 /**
  * Display of a dialog

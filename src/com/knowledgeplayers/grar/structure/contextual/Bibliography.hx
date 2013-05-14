@@ -3,7 +3,6 @@ import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.FastList;
 import haxe.xml.Fast;
 import nme.events.Event;
-import nme.Lib;
 
 /**
  * Glossary will be accessible in all your game to provide books and articles references

@@ -1,45 +1,32 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.event.GameEvent;
-import com.knowledgeplayers.utils.assets.AssetsStorage;
-import nme.media.SoundChannel;
-import nme.net.URLRequest;
-import nme.media.Sound;
-import com.knowledgeplayers.grar.display.contextual.InventoryDisplay;
-import com.knowledgeplayers.grar.display.GameManager;
-import aze.display.TileSprite;
-import aze.display.TileLayer;
-import aze.display.SparrowTilesheet;
-import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
-import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
+import com.knowledgeplayers.grar.display.contextual.InventoryDisplay;
 import com.knowledgeplayers.grar.display.element.CharacterDisplay;
+import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.ResizeManager;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.TweenManager;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
+import com.knowledgeplayers.grar.event.GameEvent;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
-import com.knowledgeplayers.grar.event.TokenEvent;
-import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.Activity;
-import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.util.XmlLoader;
-import com.knowledgeplayers.grar.display.TweenManager;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.FastList;
 import haxe.xml.Fast;
 import nme.display.Bitmap;
 import nme.display.DisplayObject;
 import nme.display.Sprite;
 import nme.events.Event;
-import nme.geom.Point;
-import nme.Lib;
+import nme.media.Sound;
+import nme.media.SoundChannel;
 
 /**
  * Display of a part

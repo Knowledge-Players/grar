@@ -1,11 +1,8 @@
 package com.knowledgeplayers.grar.util;
 
 import com.eclecticdesignstudio.motion.Actuate;
-import nme.display.Bitmap;
 import nme.display.DisplayObject;
-import nme.display.Sprite;
 import nme.geom.Point;
-import nme.Lib;
 
 /**
  * Manage a grid to place object

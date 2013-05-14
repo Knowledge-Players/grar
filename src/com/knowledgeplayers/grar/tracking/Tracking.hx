@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.tracking;
 
-import nme.events.EventDispatcher;
 import nme.events.Event;
+import nme.events.EventDispatcher;
 
 class Tracking implements ITracking{
 

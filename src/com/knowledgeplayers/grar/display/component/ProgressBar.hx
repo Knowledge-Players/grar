@@ -1,14 +1,12 @@
 package com.knowledgeplayers.grar.display.component;
 
-import com.knowledgeplayers.grar.event.GameEvent;
-import com.knowledgeplayers.grar.tracking.Trackable;
-import com.knowledgeplayers.grar.event.PartEvent;
-import aze.display.TileSprite;
-import com.knowledgeplayers.grar.factory.UiFactory;
-import aze.display.TileLayer;
 import aze.display.TileClip;
+import aze.display.TileLayer;
+import com.knowledgeplayers.grar.event.GameEvent;
+import com.knowledgeplayers.grar.event.PartEvent;
+import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.tracking.Trackable;
 import haxe.xml.Fast;
-import com.knowledgeplayers.grar.structure.Game;
 import nme.display.Sprite;
 
 class ProgressBar extends Sprite {

@@ -1,11 +1,11 @@
 package com.knowledgeplayers.grar.factory;
 
-import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.activity.cards.Cards;
 import com.knowledgeplayers.grar.structure.activity.folder.Folder;
 import com.knowledgeplayers.grar.structure.activity.quizz.Quizz;
 import com.knowledgeplayers.grar.structure.activity.scanner.Scanner;
+import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.score.ScoreChart;
 import haxe.xml.Fast;
 

@@ -1,21 +1,15 @@
 package com.knowledgeplayers.grar.display.element;
 
-import haxe.Timer;
-import nme.geom.Point;
-import nme.display.Bitmap;
-import nme.display.BitmapData;
-import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import nme.Assets;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.factory.UiFactory;
-import nme.display.Bitmap;
-import nme.Lib;
-import haxe.xml.Fast;
-import aze.display.TileSprite;
 import aze.display.TileLayer;
-import aze.display.TilesheetEx;
+import aze.display.TileSprite;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
+import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.localisation.Localiser;
+import haxe.Timer;
+import haxe.xml.Fast;
+import nme.display.Bitmap;
 import nme.display.Sprite;
+import nme.geom.Point;
 
 /**
  * Graphic representation of a token of the game

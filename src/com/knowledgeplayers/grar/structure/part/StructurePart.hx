@@ -1,31 +1,23 @@
 package com.knowledgeplayers.grar.structure.part;
 
-import com.knowledgeplayers.utils.assets.AssetsStorage;
-import com.knowledgeplayers.grar.tracking.Trackable;
-import haxe.FastList;
-import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
+import com.knowledgeplayers.grar.event.PartEvent;
+import com.knowledgeplayers.grar.factory.ActivityFactory;
 import com.knowledgeplayers.grar.factory.ItemFactory;
-import com.knowledgeplayers.grar.structure.part.Pattern;
-import haxe.unit.TestCase;
-import com.knowledgeplayers.grar.structure.part.dialog.Character;
-import com.knowledgeplayers.grar.event.TokenEvent;
 import com.knowledgeplayers.grar.factory.PartFactory;
+import com.knowledgeplayers.grar.structure.activity.Activity;
+import com.knowledgeplayers.grar.structure.part.Pattern;
+import com.knowledgeplayers.grar.structure.part.TextItem;
+import com.knowledgeplayers.grar.tracking.Trackable;
+import com.knowledgeplayers.grar.util.XmlLoader;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
+import haxe.FastList;
 import haxe.xml.Fast;
-import nme.Assets;
+import nme.events.Event;
 import nme.events.EventDispatcher;
-import nme.Lib;
 import nme.media.Sound;
 import nme.media.SoundChannel;
 
-import nme.events.Event;
 
-import com.knowledgeplayers.grar.event.PartEvent;
-import com.knowledgeplayers.grar.structure.activity.Activity;
-import com.knowledgeplayers.grar.structure.part.TextItem;
-import com.knowledgeplayers.grar.factory.ActivityFactory;
-import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.util.XmlLoader;
-import com.knowledgeplayers.grar.factory.PatternFactory;
 
 class StructurePart extends EventDispatcher, implements Part, implements Trackable {
 	/**

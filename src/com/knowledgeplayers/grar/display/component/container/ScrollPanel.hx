@@ -1,17 +1,17 @@
 package com.knowledgeplayers.grar.display.component.container;
 
-import com.knowledgeplayers.utils.assets.AssetsStorage;
-import com.knowledgeplayers.grar.util.DisplayUtils;
-import com.knowledgeplayers.grar.display.style.Style;
-import nme.events.Event;
-import nme.display.Bitmap;
-import com.knowledgeplayers.grar.factory.UiFactory;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import com.knowledgeplayers.grar.display.style.StyleParser;
-import aze.display.TileSprite;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
+import aze.display.TileSprite;
+import com.knowledgeplayers.grar.display.style.KpTextDownParser;
+import com.knowledgeplayers.grar.display.style.Style;
+import com.knowledgeplayers.grar.display.style.StyleParser;
+import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.util.DisplayUtils;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
+import nme.display.Bitmap;
 import nme.display.Sprite;
+import nme.events.Event;
 import nme.events.MouseEvent;
 
 /**

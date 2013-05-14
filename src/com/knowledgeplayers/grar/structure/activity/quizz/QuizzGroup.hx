@@ -1,5 +1,4 @@
 package com.knowledgeplayers.grar.structure.activity.quizz;
-import Math;
 import haxe.xml.Fast;
 
 /**

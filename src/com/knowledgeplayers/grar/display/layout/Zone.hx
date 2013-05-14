@@ -1,26 +1,20 @@
 package com.knowledgeplayers.grar.display.layout;
 
-import com.knowledgeplayers.grar.event.LocaleEvent;
-import com.knowledgeplayers.grar.event.PartEvent;
-import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.util.XmlLoader;
-import com.knowledgeplayers.grar.factory.UiFactory;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
+import aze.display.TileLayer;
 import aze.display.TileSprite;
-import com.eclecticdesignstudio.motion.easing.Quart;
-import com.eclecticdesignstudio.motion.Actuate;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
-import nme.events.Event;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.component.ProgressBar;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;
-import aze.display.TileLayer;
-import com.knowledgeplayers.grar.factory.UiFactory;
-import com.knowledgeplayers.grar.util.DisplayUtils;
-import nme.Lib;
 import com.knowledgeplayers.grar.event.LayoutEvent;
-import nme.display.Sprite;
+import com.knowledgeplayers.grar.event.PartEvent;
+import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.localisation.Localiser;
+import com.knowledgeplayers.grar.util.DisplayUtils;
 import haxe.xml.Fast;
+import nme.display.Sprite;
+import nme.events.Event;
+import nme.Lib;
 
 class Zone extends Sprite {
 	public var ref:String;

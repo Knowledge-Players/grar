@@ -1,23 +1,23 @@
 package com.knowledgeplayers.grar.display.contextual;
 
-import com.knowledgeplayers.utils.assets.AssetsStorage;
-import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import com.knowledgeplayers.grar.display.component.button.DefaultButton;
-import nme.events.Event;
-import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.display.part.PartDisplay;
 import aze.display.TilesheetEx;
+import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import nme.events.MouseEvent;
-import nme.geom.Point;
+import com.knowledgeplayers.grar.display.part.PartDisplay;
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.event.TokenEvent;
-import haxe.FastList;
-import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.localisation.Localiser;
+import com.knowledgeplayers.grar.util.DisplayUtils;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
+import haxe.FastList;
+import haxe.xml.Fast;
 import nme.display.Bitmap;
 import nme.display.BitmapData;
-import haxe.xml.Fast;
 import nme.display.Sprite;
+import nme.events.Event;
+import nme.events.MouseEvent;
+import nme.geom.Point;
 
 /**
 * View of an inventory

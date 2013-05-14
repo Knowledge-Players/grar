@@ -1,8 +1,5 @@
 package com.knowledgeplayers.grar.structure.part;
 
-import nme.Lib;
-import com.knowledgeplayers.grar.factory.UiFactory;
-import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.factory.ItemFactory;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;

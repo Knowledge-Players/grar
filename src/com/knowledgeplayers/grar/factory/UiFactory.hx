@@ -1,33 +1,16 @@
 package com.knowledgeplayers.grar.factory;
 
-import com.knowledgeplayers.grar.display.TweenManager;
 import aze.display.TileLayer;
-import nme.display.DisplayObject;
-import com.knowledgeplayers.utils.assets.AssetsStorage;
-import nme.Assets;
-import com.knowledgeplayers.grar.display.FilterManager;
-import nme.media.Sound;
-import nme.net.URLRequest;
-import nme.media.SoundChannel;
-import nme.media.SoundTransform;
-import com.knowledgeplayers.grar.display.element.AnimationDisplay;
-import com.knowledgeplayers.grar.display.GameManager;
-import nme.filters.DropShadowFilter;
-import nme.Lib;
-import nme.filters.BitmapFilter;
-import nme.geom.Point;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import nme.events.EventDispatcher;
-import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import aze.display.TileSprite;
-import aze.display.SparrowTilesheet;
 import aze.display.TilesheetEx;
+import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.component.ScrollBar;
-import com.knowledgeplayers.grar.util.XmlLoader;
+import com.knowledgeplayers.grar.display.element.AnimationDisplay;
+import com.knowledgeplayers.grar.display.TweenManager;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
-import nme.display.Bitmap;
-import nme.events.Event;
+import nme.display.DisplayObject;
 import String;
 
 /**

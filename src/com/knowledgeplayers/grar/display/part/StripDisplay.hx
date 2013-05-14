@@ -1,9 +1,9 @@
 package com.knowledgeplayers.grar.display.part;
 
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
-import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
+import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
 import com.knowledgeplayers.grar.structure.part.strip.StripPart;

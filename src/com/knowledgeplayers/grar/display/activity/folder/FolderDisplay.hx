@@ -1,28 +1,23 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
-import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import com.knowledgeplayers.utils.assets.AssetsStorage;
-import com.knowledgeplayers.grar.factory.UiFactory;
-import nme.display.BitmapData;
-import com.knowledgeplayers.grar.util.DisplayUtils;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import nme.display.BitmapData;
-import aze.display.TileSprite;
 import aze.display.TileLayer;
-import nme.Lib;
-import com.eclecticdesignstudio.motion.Actuate;
+import aze.display.TileSprite;
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.event.LocaleEvent;
+import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.structure.activity.folder.Folder;
+import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.util.Grid;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
 import nme.display.Bitmap;
+import nme.display.BitmapData;
 import nme.display.DisplayObject;
 import nme.display.SimpleButton;
 import nme.display.Sprite;
 import nme.events.MouseEvent;
 import nme.geom.Point;
+import nme.Lib;
 
 /**
 * Display of the folder activity

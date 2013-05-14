@@ -1,22 +1,16 @@
 package com.knowledgeplayers.grar.display.activity.quizz;
 
-import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.event.LocaleEvent;
-import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.activity.quizz.Quizz;
 import haxe.xml.Fast;
-import nme.display.Bitmap;
 import nme.display.BitmapData;
 import nme.display.DisplayObject;
-import nme.events.MouseEvent;
-import Std;
 
 /**
 * Display for quizz activity. Since all quizz in a game must look alike,

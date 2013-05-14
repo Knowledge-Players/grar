@@ -1,9 +1,8 @@
 package com.knowledgeplayers.grar.structure.activity.folder;
 
-import Math;
-import nme.events.Event;
-import haxe.xml.Fast;
 import com.knowledgeplayers.grar.util.XmlLoader;
+import haxe.xml.Fast;
+import Math;
 
 /**
 * Folder activity

@@ -5,8 +5,6 @@ import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.structure.activity.scanner.Scanner;
 import haxe.xml.Fast;
-import nme.display.Bitmap;
-import nme.display.Sprite;
 
 class ScannerDisplay extends ActivityDisplay {
 

@@ -1,13 +1,11 @@
 package com.knowledgeplayers.grar.display.component;
-import aze.display.TilesheetEx;
-import nme.display.DisplayObject;
-import com.knowledgeplayers.grar.util.ScaleNineGrid;
-import nme.Lib;
-import nme.events.Event;
 import aze.display.TileGroup;
-import aze.display.TileSprite;
 import aze.display.TileLayer;
+import aze.display.TilesheetEx;
+import aze.display.TileSprite;
+import com.knowledgeplayers.grar.util.ScaleNineGrid;
 import nme.display.Sprite;
+import nme.events.Event;
 class ScaleNine extends Sprite {
 
     private var spriteSheet:TilesheetEx;

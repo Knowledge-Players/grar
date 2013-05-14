@@ -1,12 +1,10 @@
 package com.knowledgeplayers.grar.display.style;
 
 import Array;
-import nme.text.TextFormatAlign;
+import nme.Assets;
 import nme.display.Bitmap;
 import nme.display.BitmapData;
-import nme.display.Graphics;
 import nme.text.Font;
-import nme.Assets;
 
 /**
  * Style of a text

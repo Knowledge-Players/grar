@@ -1,14 +1,9 @@
 package com.knowledgeplayers.grar.structure.part.strip;
 
 import com.knowledgeplayers.grar.factory.PatternFactory;
-import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
-import com.knowledgeplayers.grar.structure.part.StructurePart;
-import nme.events.EventDispatcher;
 import com.knowledgeplayers.grar.structure.part.Part;
+import com.knowledgeplayers.grar.structure.part.StructurePart;
 import haxe.xml.Fast;
-import com.knowledgeplayers.grar.structure.activity.Activity;
-import com.knowledgeplayers.grar.util.XmlLoader;
-import nme.events.Event;
 
 class StripPart extends StructurePart {
 

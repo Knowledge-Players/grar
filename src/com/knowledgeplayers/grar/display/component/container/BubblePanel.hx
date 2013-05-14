@@ -1,20 +1,11 @@
 package com.knowledgeplayers.grar.display.component.container;
 
-import nme.text.TextFormatAlign;
-import aze.display.TileSprite;
-import aze.display.TileLayer;
 import aze.display.TilesheetEx;
-import nme.geom.Rectangle;
-import nme.events.Event;
-import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.display.style.StyleParser;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import nme.Lib;
-import nme.Assets;
-import nme.display.Bitmap;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.display.Sprite;
-import nme.events.MouseEvent;
+import nme.events.Event;
+import nme.text.TextFormatAlign;
 
 /**
  * Display text in a bubble

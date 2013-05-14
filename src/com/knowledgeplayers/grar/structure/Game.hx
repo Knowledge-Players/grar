@@ -1,10 +1,9 @@
 package com.knowledgeplayers.grar.structure;
 
-import com.knowledgeplayers.grar.tracking.Trackable;
-import com.knowledgeplayers.grar.tracking.StateInfos;
-import com.knowledgeplayers.grar.structure.part.PartElement;
-import com.knowledgeplayers.grar.tracking.Connection;
 import com.knowledgeplayers.grar.structure.part.Part;
+import com.knowledgeplayers.grar.tracking.Connection;
+import com.knowledgeplayers.grar.tracking.StateInfos;
+import com.knowledgeplayers.grar.tracking.Trackable;
 import nme.events.IEventDispatcher;
 
 interface Game implements IEventDispatcher {

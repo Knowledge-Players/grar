@@ -1,18 +1,12 @@
 package com.knowledgeplayers.grar.display;
 
-import com.knowledgeplayers.grar.event.PartEvent;
-import nme.events.EventDispatcher;
-import com.knowledgeplayers.grar.event.LocaleEvent;
-import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.structure.Game;
-import nme.events.Event;
-import nme.text.TextField;
-import nme.display.Stage;
 import com.knowledgeplayers.grar.display.layout.Layout;
+import com.knowledgeplayers.grar.event.LocaleEvent;
+import com.knowledgeplayers.grar.event.PartEvent;
+import com.knowledgeplayers.grar.localisation.Localiser;
 import haxe.xml.Fast;
-import nme.Lib;
-import com.knowledgeplayers.grar.util.XmlLoader;
-import nme.display.Sprite;
+import nme.events.Event;
+import nme.events.EventDispatcher;
 
 class LayoutManager extends EventDispatcher {
     /**

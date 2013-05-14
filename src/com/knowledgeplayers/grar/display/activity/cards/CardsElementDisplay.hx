@@ -1,7 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.cards;
 
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import nme.display.Sprite;
 import nme.events.MouseEvent;

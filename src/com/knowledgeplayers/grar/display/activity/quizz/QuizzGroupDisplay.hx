@@ -1,20 +1,14 @@
 package com.knowledgeplayers.grar.display.activity.quizz;
 
-import Std;
-import Std;
-import Std;
-import Std;
-import nme.Lib;
-import nme.display.BitmapData;
 import aze.display.TileLayer;
-import aze.display.TileSprite;
 import com.knowledgeplayers.grar.factory.UiFactory;
-import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.structure.activity.quizz.QuizzGroup;
+import com.knowledgeplayers.grar.util.DisplayUtils;
 import haxe.xml.Fast;
 import nme.display.Bitmap;
+import nme.display.BitmapData;
 import nme.display.Sprite;
-import com.knowledgeplayers.grar.util.DisplayUtils;
+import Std;
 
 /**
  * Display for a group of answer in a quizz

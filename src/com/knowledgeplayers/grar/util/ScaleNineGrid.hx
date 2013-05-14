@@ -1,7 +1,5 @@
 package com.knowledgeplayers.grar.util;
-import nme.Lib;
 import aze.display.TileSprite;
-import nme.display.DisplayObject;
 class ScaleNineGrid extends Grid{
 
 

@@ -1,12 +1,9 @@
 package com.knowledgeplayers.grar.structure.activity.quizz;
 
-import com.knowledgeplayers.grar.event.PartEvent;
-import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.activity.quizz.QuizzGroup;
 import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;
-import nme.events.Event;
 
 /**
  * Structure of the quizz activity

@@ -9,8 +9,6 @@ import nme.net.URLRequest;
 import nme.net.URLRequestMethod;
 import nme.net.URLVariables;
 import nme.utils.Timer;
-import nme.text.TextField;
-import nme.text.TextFieldAutoSize;
 
 class AiccTracking extends Tracking
 {

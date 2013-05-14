@@ -1,13 +1,11 @@
 package com.knowledgeplayers.grar.localisation;
 
-import haxe.FastList;
-import nme.Lib;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.localisation.Localisation;
-import nme.events.Event;
+import haxe.FastList;
 import nme.events.EventDispatcher;
+import nme.Lib;
 
-import haxe.xml.Fast;
 
 /**
  * Singleton manager of the localisation

@@ -1,9 +1,7 @@
 package com.knowledgeplayers.grar.structure.activity.cards;
 
-import nme.events.Event;
-import haxe.xml.Fast;
 import com.knowledgeplayers.grar.util.XmlLoader;
-import nme.Lib;
+import haxe.xml.Fast;
 
 /**
 * Folder activity

@@ -1,12 +1,9 @@
 package com.knowledgeplayers.grar.structure.activity.scanner;
 
-import nme.Lib;
-import haxe.PosInfos;
-import haxe.xml.Fast;
-import nme.events.Event;
 import com.knowledgeplayers.grar.util.XmlLoader;
-import nme.geom.Point;
 import haxe.FastList;
+import haxe.xml.Fast;
+import nme.geom.Point;
 class Scanner extends Activity {
     public var pointsMap (default, null): FastList<ScannerPoint>;
     public var pointVisible (default, default): Bool;

@@ -2,9 +2,6 @@ package com.knowledgeplayers.grar.structure.part;
 
 import com.knowledgeplayers.grar.tracking.Trackable;
 import haxe.FastList;
-import com.knowledgeplayers.grar.structure.part.Pattern;
-import com.knowledgeplayers.grar.structure.part.dialog.Character;
-import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
 import nme.events.IEventDispatcher;
 import nme.media.Sound;

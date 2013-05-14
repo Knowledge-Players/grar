@@ -1,29 +1,14 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.event.PartEvent;
-import com.knowledgeplayers.grar.display.GameManager;
-import com.knowledgeplayers.grar.structure.part.PartElement;
-import nme.display.Shape;
-import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import com.knowledgeplayers.grar.display.layout.Zone;
-import com.knowledgeplayers.grar.factory.UiFactory;
-import nme.events.Event;
-import nme.filters.DropShadowFilter;
-import haxe.FastList;
-import com.knowledgeplayers.grar.structure.activity.Activity;
-import nme.Lib;
-import aze.display.TileSprite;
-import com.knowledgeplayers.grar.factory.UiFactory;
-import aze.display.TileLayer;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.GameManager;
+import com.knowledgeplayers.grar.display.layout.Zone;
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
+import com.knowledgeplayers.grar.event.PartEvent;
+import com.knowledgeplayers.grar.factory.UiFactory;
 import haxe.xml.Fast;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import com.knowledgeplayers.grar.structure.Game;
-import com.knowledgeplayers.grar.structure.part.Part;
-import nme.display.Sprite;
-import nme.events.MouseEvent;
+import nme.display.Shape;
+import nme.events.Event;
 
 /**
  * Display of a menu

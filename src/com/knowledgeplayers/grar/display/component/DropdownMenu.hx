@@ -4,7 +4,6 @@ import haxe.FastList;
 import nme.display.Sprite;
 import nme.events.Event;
 import nme.events.MouseEvent;
-import nme.Lib;
 
 /**
  * Drop down menu component

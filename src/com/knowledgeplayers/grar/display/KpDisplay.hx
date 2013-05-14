@@ -1,24 +1,20 @@
 package com.knowledgeplayers.grar.display;
 
-import com.knowledgeplayers.utils.assets.AssetsStorage;
-import aze.display.SparrowTilesheet;
-import nme.Assets;
-import nme.Lib;
-import nme.events.Event;
-import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import com.knowledgeplayers.grar.factory.UiFactory;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
-import nme.display.DisplayObject;
-import nme.geom.Point;
-import com.knowledgeplayers.grar.structure.part.dialog.Character;
-import com.knowledgeplayers.grar.display.element.CharacterDisplay;
-import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import aze.display.TileSprite;
-import nme.display.Bitmap;
+import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
+import com.knowledgeplayers.grar.display.element.CharacterDisplay;
+import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.structure.part.dialog.Character;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
+import nme.Assets;
+import nme.display.Bitmap;
+import nme.display.DisplayObject;
 import nme.display.Sprite;
+import nme.geom.Point;
 
 class KpDisplay extends Sprite {
 	/**
