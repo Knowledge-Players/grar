@@ -5,6 +5,9 @@ import nme.Assets;
 import nme.display.Bitmap;
 import nme.display.BitmapData;
 import nme.text.Font;
+#if flash
+import nme.text.TextFormatAlign;
+#end
 
 /**
  * Style of a text
