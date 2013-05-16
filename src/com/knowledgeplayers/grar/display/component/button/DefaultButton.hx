@@ -265,6 +265,13 @@ class DefaultButton extends Sprite {
 			}
 		}
 		if(changeState){
+            //clearState()
+
+            while (numChildren>0) {
+                removeChildAt(numChildren-1);
+            }
+
+
 			var array = new Array<{dpo:DisplayObject, z:Int}>();
 
 			if(list == null)
