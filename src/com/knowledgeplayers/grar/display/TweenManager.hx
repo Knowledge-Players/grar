@@ -21,7 +21,6 @@ import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;
 import nme.display.DisplayObject;
 import nme.events.Event;
-import Reflect;
 
 /**
  * Manage the most frequently used tweens
@@ -226,7 +225,7 @@ class TweenManager {
 			var easingType = transition.easingType.charAt(0).toUpperCase() + transition.easingType.substr(1).toLowerCase();
 			var easingStyle = "Ease" + transition.easingStyle.charAt(0).toUpperCase() + transition.easingStyle.substr(1).toLowerCase();
 
-			return Type.createEmptyInstance(Type.resolveClass("com.eclecticdesignstudio.motion.easing." +easingType+easingStyle));
+			return Type.createEmptyInstance(Type.resolveClass("com.eclecticdesignstudio.motion.easing." + easingType + easingStyle));
 		}
 		else{
 			return Linear.easeNone;

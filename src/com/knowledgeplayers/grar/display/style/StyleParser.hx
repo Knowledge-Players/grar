@@ -6,6 +6,8 @@ import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
 import nme.display.Bitmap;
 
+typedef StyleSheet = Hash<Style>
+
 /**
  * Parser and manager of the styles
  */
@@ -15,7 +17,12 @@ class StyleParser {
     **/
 	public static var currentStyleSheet:String;
 
-	private static var styles = new Hash<Hash<Style>>();
+	/**
+	* Current locale of the app
+	**/
+	public static var currentLocale:String;
+
+	private static var styles = new Hash<Hash<StyleSheet>>();
 
 	/**
      * Parse the style file
@@ -24,7 +31,7 @@ class StyleParser {
 
 	public static function parse(xmlContent:Xml):Void
 	{
-		var stylesheet = new Hash<Style>();
+		var stylesheet = new StyleSheet();
 		var xml:Fast = new Fast(xmlContent).node.stylesheet;
 		var name = xml.att.name;
 		for(styleNode in xml.nodes.style){
@@ -55,9 +62,11 @@ class StyleParser {
 			}
 			stylesheet.set(styleNode.att.name, style);
 		}
-		if(Lambda.count(styles) == 0)
+		if(styles.get(currentLocale) == null)
+			styles.set(currentLocale, new Hash<StyleSheet>());
+		if(Lambda.count(styles.get(currentLocale)) == 0)
 			currentStyleSheet = name;
-		styles.set(name, stylesheet);
+		styles.get(currentLocale).set(name, stylesheet);
 	}
 
 	/**
@@ -71,11 +80,11 @@ class StyleParser {
 		if(Lambda.count(styles) == 0)
 			throw "No style here. Have you parse a style file ?";
 		if(name == null)
-			return styles.get(currentStyleSheet).get("text");
+			return styles.get(currentLocale).get(currentStyleSheet).get("text");
 		if(StringTools.endsWith(name, "-"))
-			return styles.get(currentStyleSheet).get(name + "text");
+			return styles.get(currentLocale).get(currentStyleSheet).get(name + "text");
 		else
-			return styles.get(currentStyleSheet).get(name);
+			return styles.get(currentLocale).get(currentStyleSheet).get(name);
 	}
 
 }

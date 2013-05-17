@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.LayoutManager;
@@ -120,16 +121,23 @@ class KpGame extends EventDispatcher, implements Game {
 		title = parametersNode.node.Title.innerData;
 		state = parametersNode.node.State.innerData;
 
+		// Start Tracking
+		initTracking();
+
 		// Load UI
 		UiFactory.setSpriteSheet(displayNode.node.Ui.att.display);
 
 		// Load styles
 		for(stylesheet in displayNode.nodes.Style){
-			numStyleSheet++;
-			XmlLoader.load(stylesheet.att.file, function(e:Event)
-			{
-				onStyleLoaded(XmlLoader.getXml(e));
-			}, onStyleLoaded);
+			var fullPath = stylesheet.att.file.split("/");
+
+			var localePath:StringBuf = new StringBuf();
+			for(i in 0...fullPath.length - 1){
+				localePath.add(fullPath[i] + "/");
+			}
+			localePath.add(Localiser.instance.currentLocale + "/");
+			localePath.add(fullPath[fullPath.length - 1]);
+			StyleParser.parse(AssetsStorage.getXml(localePath.toString()));
 		}
 
 		// Load Languages
@@ -417,8 +425,6 @@ class KpGame extends EventDispatcher, implements Game {
 				menu = menuXml;
 			}
 			if(!layoutLoaded){
-				// Start Tracking
-				initTracking();
 				for(part in getAllParts())
 					part.isDone = stateInfos.isPartFinished(part.id);
 				// Load Layout

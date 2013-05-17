@@ -1,11 +1,11 @@
 package com.knowledgeplayers.grar.localisation;
 
+import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.localisation.Localisation;
 import haxe.FastList;
 import nme.events.EventDispatcher;
 import nme.Lib;
-
 
 /**
  * Singleton manager of the localisation
@@ -77,6 +77,7 @@ class Localiser extends EventDispatcher {
 	public function setCurrentLocale(locale:String):String
 	{
 		currentLocale = locale;
+		StyleParser.currentLocale = currentLocale;
 		return currentLocale;
 	}
 
