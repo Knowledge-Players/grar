@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.component.button;
 
+import nme.Lib;
+import com.eclecticdesignstudio.motion.Actuate;
 import aze.display.TileClip;
 import aze.display.TileLayer;
 import aze.display.TileSprite;
@@ -60,7 +62,7 @@ class DefaultButton extends Sprite {
 	/**
     * Different states of the button
     **/
-	public var states (default, null):Hash<Hash<{dpo:DisplayObject, z:Int}>>;
+	public var states (default, null):Hash<Hash<{dpo:DisplayObject, z:Int,trans:String}>>;
 
 	/**
      * Type of the event to dispatch
@@ -84,7 +86,7 @@ class DefaultButton extends Sprite {
      * @param	tile : Tile containing the upstate
      */
 
-	public function new(pStates:Hash<Hash<{dpo:DisplayObject, z:Int}>>, action:String = "next")
+	public function new(pStates:Hash<Hash<{dpo:DisplayObject, z:Int,trans:String}>>, action:String = "next")
 	{
 		super();
 
@@ -235,7 +237,7 @@ class DefaultButton extends Sprite {
 	private function renderState(state:String)
 	{
 		var changeState = false;
-		var list:Hash<{dpo:DisplayObject, z:Int}>;
+		var list:Hash<{dpo:DisplayObject, z:Int,trans:String}>;
 		if(states.exists(toggle + "_" + state)){
 			list = states.get(toggle + "_" + state);
 			if(currentState != toggle + "_" + state){
@@ -268,11 +270,12 @@ class DefaultButton extends Sprite {
             //clearState()
 
             while (numChildren>0) {
+
                 removeChildAt(numChildren-1);
             }
 
 
-			var array = new Array<{dpo:DisplayObject, z:Int}>();
+			var array = new Array<{dpo:DisplayObject, z:Int,trans:String}>();
 
 			if(list == null)
 				throw "There is no information for state \"" + currentState + "\" for button \"" + ref + "\".";
@@ -283,7 +286,15 @@ class DefaultButton extends Sprite {
 			array.sort(sortDisplayObjects);
 			for(obj in array){
 				addChild(obj.dpo);
+
+                if(obj.trans != "--"){
+                    TweenManager.resetTransform(obj.dpo);
+                    TweenManager.applyTransition(obj.dpo, obj.trans);
+
+                }
+
 			}
+
 		}
 	}
 
@@ -302,7 +313,7 @@ class DefaultButton extends Sprite {
 		}
 	}
 
-	private function sortDisplayObjects(x:{dpo:DisplayObject, z:Int}, y:{dpo:DisplayObject, z:Int}):Int
+	private function sortDisplayObjects(x:{dpo:DisplayObject, z:Int,trans:String}, y:{dpo:DisplayObject, z:Int,trans:String}):Int
 	{
 		if(x.z < y.z)
 			return -1;

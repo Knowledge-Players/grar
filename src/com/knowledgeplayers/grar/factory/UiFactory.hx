@@ -36,7 +36,7 @@ class UiFactory {
      * @return the created button
      */
 
-	public static function createButton(ref:String, x:Float = 0, y:Float = 0, states:Hash<Hash<{dpo:DisplayObject, z:Int}>>, ?action:String, ?transitionIn:String, ?transitionOut:String):DefaultButton
+	public static function createButton(ref:String, x:Float = 0, y:Float = 0, states:Hash<Hash<{dpo:DisplayObject, z:Int,trans:String}>>, ?action:String, ?transitionIn:String, ?transitionOut:String):DefaultButton
 	{
 		var creation:DefaultButton = new DefaultButton(states, action);
 
@@ -80,7 +80,7 @@ class UiFactory {
 		var transitionIn = xml.has.transitionIn ? xml.att.transitionIn : null;
 		var transitionOut = xml.has.transitionOut ? xml.att.transitionOut : null;
 
-		var states = new Hash<Hash<{dpo:DisplayObject, z:Int}>>();
+		var states = new Hash<Hash<{dpo:DisplayObject, z:Int,trans:String}>>();
 
 		if(xml.hasNode.active){
 			for(state in xml.node.active.elements){
@@ -100,22 +100,26 @@ class UiFactory {
 		return createButton(xml.att.ref, x, y, states, action, transitionIn, transitionOut);
 	}
 
-	private static function createStates(node:Fast):Hash<{dpo:DisplayObject, z:Int}>
+	private static function createStates(node:Fast):Hash<{dpo:DisplayObject, z:Int,trans:String}>
 	{
-		var list = new Hash<{dpo:DisplayObject, z:Int}>();
+		var list = new Hash<{dpo:DisplayObject, z:Int,trans:String}>();
 		var zIndex = 0;
+        var trans:String="--";
 		for(elem in node.elements){
 			switch (elem.name.toLowerCase()) {
 				case "item":
 					var layer = new TileLayer(tilesheet);
 					layer.addChild(createImageFromXml(elem));
-					layer.render();
-					if(elem.has.transform)
-						TweenManager.applyTransition(layer.view, elem.att.transform);
-					list.set(elem.att.ref, {dpo:layer.view, z:zIndex});
-				case "text": list.set(elem.att.ref, {dpo:createTextFromXml(elem), z:zIndex});
+                    layer.render();
 
-				case "animation":list.set(elem.att.ref, {dpo:createAnimationFromXml(elem), z:zIndex});
+					if(elem.has.transform)
+						//TweenManager.applyTransition(layer.view, elem.att.transform);
+                        trans = elem.att.transform;
+					list.set(elem.att.ref, {dpo:layer.view, z:zIndex,trans:trans});
+
+				case "text": list.set(elem.att.ref, {dpo:createTextFromXml(elem), z:zIndex,trans:trans});
+
+				case "animation":list.set(elem.att.ref, {dpo:createAnimationFromXml(elem), z:zIndex,trans:trans});
 			}
 			zIndex++;
 		}
