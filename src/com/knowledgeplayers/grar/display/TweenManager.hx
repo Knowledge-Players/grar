@@ -1,9 +1,22 @@
 package com.knowledgeplayers.grar.display;
 
+import com.eclecticdesignstudio.motion.easing.Cubic;
+import nme.Lib;
 import com.eclecticdesignstudio.motion.Actuate;
 import com.eclecticdesignstudio.motion.actuators.GenericActuator.IGenericActuator;
+
 import com.eclecticdesignstudio.motion.easing.IEasing;
+
 import com.eclecticdesignstudio.motion.easing.Linear;
+import com.eclecticdesignstudio.motion.easing.Cubic;
+import com.eclecticdesignstudio.motion.easing.Back;
+import com.eclecticdesignstudio.motion.easing.Bounce;
+import com.eclecticdesignstudio.motion.easing.Elastic;
+import com.eclecticdesignstudio.motion.easing.Quad;
+import com.eclecticdesignstudio.motion.easing.Quart;
+import com.eclecticdesignstudio.motion.easing.Quint;
+import com.eclecticdesignstudio.motion.easing.Sine;
+
 import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;
 import nme.display.DisplayObject;
@@ -212,10 +225,12 @@ class TweenManager {
 		if(Reflect.hasField(transition, "easingType")){
 			var easingType = transition.easingType.charAt(0).toUpperCase() + transition.easingType.substr(1).toLowerCase();
 			var easingStyle = "Ease" + transition.easingStyle.charAt(0).toUpperCase() + transition.easingStyle.substr(1).toLowerCase();
-			return Type.createEmptyInstance(Type.resolveClass("com.eclecticdesignstudio.motion.easing." + easingType + easingStyle));
+
+			return Type.createEmptyInstance(Type.resolveClass("com.eclecticdesignstudio.motion.easing." +easingType+easingStyle));
 		}
 		else{
 			return Linear.easeNone;
+
 		}
 	}
 
