@@ -287,7 +287,7 @@ class DefaultButton extends Sprite {
 			for(obj in array){
 				addChild(obj.dpo);
 
-                if(obj.trans != "--"){
+                if(obj.trans != ""){
                     TweenManager.resetTransform(obj.dpo);
                     TweenManager.applyTransition(obj.dpo, obj.trans);
 
