@@ -104,7 +104,7 @@ class UiFactory {
 	{
 		var list = new Hash<{dpo:DisplayObject, z:Int,trans:String}>();
 		var zIndex = 0;
-        var trans:String="--";
+        var trans:String="";
 		for(elem in node.elements){
 			switch (elem.name.toLowerCase()) {
 				case "item":
@@ -114,7 +114,7 @@ class UiFactory {
 
 					if(elem.has.transform)
 						//TweenManager.applyTransition(layer.view, elem.att.transform);
-                        trans = elem.att.transform;
+                    trans = elem.att.transform;
 					list.set(elem.att.ref, {dpo:layer.view, z:zIndex,trans:trans});
 
 				case "text": list.set(elem.att.ref, {dpo:createTextFromXml(elem), z:zIndex,trans:trans});
