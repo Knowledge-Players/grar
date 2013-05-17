@@ -54,4 +54,3 @@ import com.knowledgeplayers.grar.tracking.ScormTracking;
 import com.knowledgeplayers.grar.tracking.StateInfos;
 import com.knowledgeplayers.grar.tracking.Tracking;
 import com.knowledgeplayers.grar.util.DisplayUtils;
-import com.knowledgeplayers.grar.util.XmlLoader;

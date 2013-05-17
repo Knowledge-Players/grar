@@ -1,6 +1,7 @@
 package com.knowledgeplayers.grar.structure;
 
 import com.knowledgeplayers.utils.assets.AssetsStorage;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.LayoutManager;
@@ -15,7 +16,6 @@ import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.tracking.Connection;
 import com.knowledgeplayers.grar.tracking.StateInfos;
 import com.knowledgeplayers.grar.tracking.Trackable;
-import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.FastList;
 import haxe.xml.Fast;
 import nme.Assets;
@@ -141,7 +141,7 @@ class KpGame extends EventDispatcher, implements Game {
 		}
 
 		// Load Languages
-		XmlLoader.load(parametersNode.node.Languages.att.file, onLanguagesComplete, initLangs);
+		initLangs(AssetsStorage.getXml(parametersNode.node.Languages.att.file));
 
 		// Load Transition
 		if(displayNode.hasNode.Transitions)
@@ -149,20 +149,14 @@ class KpGame extends EventDispatcher, implements Game {
 
 		// Load Activities displays
 		for(activity in displayNode.nodes.Activity){
-			var activityXml = XmlLoader.load(activity.att.display, onActivityComplete, initActivities);
+			initActivities(AssetsStorage.getXml(activity.att.display));
 		}
 
 		// Load Parts
 		var structureNode:Fast = structureXml.node.Grar.node.Structure;
 		GameManager.instance.loadTokens(structureNode.att.inventory);
 		if(structureNode.has.menu){
-			XmlLoader.load(structureNode.att.menu, function(e:Event)
-			{
-				menu = XmlLoader.getXml(e);
-			}, function(xml:Xml)
-			{
-				menu = xml;
-			});
+			menu = AssetsStorage.getXml(structureNode.att.menu);
 		}
 		ref = structureNode.att.ref;
 		// Count parts
@@ -388,18 +382,6 @@ class KpGame extends EventDispatcher, implements Game {
 				initActivities(activitiesWaiting.pop());
 		}
 		checkLoading();
-	}
-
-	private function onActivityComplete(event:Event):Void
-	{
-		var loader:URLLoader = cast(event.currentTarget, URLLoader);
-		initActivities(Xml.parse(loader.data));
-	}
-
-	private function onLanguagesComplete(event:Event):Void
-	{
-		var loader:URLLoader = cast(event.currentTarget, URLLoader);
-		initLangs(Xml.parse(loader.data));
 	}
 
 	private function onPartLoaded(event:PartEvent):Void

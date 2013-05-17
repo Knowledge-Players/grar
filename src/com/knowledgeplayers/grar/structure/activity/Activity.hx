@@ -1,12 +1,12 @@
 package com.knowledgeplayers.grar.structure.activity;
 
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.tracking.Trackable;
-import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;
 import nme.events.Event;
 import nme.events.EventDispatcher;
@@ -94,6 +94,8 @@ class Activity extends EventDispatcher, implements PartElement, implements Track
 		this.content = content;
 		isEnded = false;
 		thresholds = new Array<{score:Int, next:String}>();
+
+		parseContent(AssetsStorage.getXml(content));
 	}
 
 	/**
@@ -216,12 +218,5 @@ class Activity extends EventDispatcher, implements PartElement, implements Track
 		button = {ref: fast.node.Button.att.ref, content: content};
 		if(fast.hasNode.Token)
 			token = fast.node.Token.att.ref;
-	}
-
-	// Handlers
-
-	private function onLoadComplete(event:Event):Void
-	{
-		parseContent(XmlLoader.getXml(event));
 	}
 }

@@ -8,7 +8,6 @@ import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.tracking.Trackable;
-import com.knowledgeplayers.grar.util.XmlLoader;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.FastList;
 import haxe.xml.Fast;
@@ -16,8 +15,6 @@ import nme.events.Event;
 import nme.events.EventDispatcher;
 import nme.media.Sound;
 import nme.media.SoundChannel;
-
-
 
 class StructurePart extends EventDispatcher, implements Part, implements Trackable {
 	/**
@@ -112,7 +109,7 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 			display = parent.display;
 
 		if(file != null){
-			XmlLoader.load(file, onLoadComplete, parseContent);
+			parseContent(AssetsStorage.getXml(file));
 		}
 		else if(xml.elements.hasNext()){
 			parseContent(xml.x);
@@ -409,11 +406,6 @@ class StructurePart extends EventDispatcher, implements Part, implements Trackab
 	}
 
 	// Handlers
-
-	private function onLoadComplete(event:Event):Void
-	{
-		parseContent(XmlLoader.getXml(event));
-	}
 
 	private function enterPart():Void
 	{

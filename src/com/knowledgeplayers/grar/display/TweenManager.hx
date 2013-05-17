@@ -1,8 +1,8 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import nme.geom.ColorTransform;
 import com.eclecticdesignstudio.motion.easing.Cubic;
-import nme.Lib;
 import com.eclecticdesignstudio.motion.Actuate;
 import com.eclecticdesignstudio.motion.actuators.GenericActuator.IGenericActuator;
 
@@ -18,7 +18,6 @@ import com.eclecticdesignstudio.motion.easing.Quart;
 import com.eclecticdesignstudio.motion.easing.Quint;
 import com.eclecticdesignstudio.motion.easing.Sine;
 
-import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;
 import nme.display.DisplayObject;
 import nme.events.Event;
@@ -155,20 +154,19 @@ class TweenManager {
 
 		return Actuate.transform(display, transform.duration).color(transform.color).ease(getEasing(transform));
 	}
-    public static function resetTransform(display:DisplayObject):Void
+
+	public static function resetTransform(display:DisplayObject):Void
 	{
 		var myTransform = new ColorTransform();
 
-        myTransform.redMultiplier = 1;
-        myTransform.greenMultiplier = 1;
-        myTransform.blueMultiplier = 1;
-        myTransform.redOffset = 0;
-        myTransform.greenOffset = 0;
-        myTransform.blueOffset = 0;
+		myTransform.redMultiplier = 1;
+		myTransform.greenMultiplier = 1;
+		myTransform.blueMultiplier = 1;
+		myTransform.redOffset = 0;
+		myTransform.greenOffset = 0;
+		myTransform.blueOffset = 0;
 
-        display.transform.colorTransform = myTransform;
-
-
+		display.transform.colorTransform = myTransform;
 
 	}
 
@@ -191,16 +189,11 @@ class TweenManager {
 	public static function loadTemplate(file:String):Void
 	{
 
-		XmlLoader.load(file, onTemplateLoaded, parseXml);
+		parseXml(AssetsStorage.getXml(file));
 
 	}
 
 	// Private
-
-	private static function onTemplateLoaded(ev:Event):Void
-	{
-		parseXml(XmlLoader.getXml(ev));
-	}
 
 	private static function parseXml(xml:Xml):Void
 	{

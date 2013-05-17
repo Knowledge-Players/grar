@@ -2,7 +2,6 @@ package com.knowledgeplayers.grar.structure.activity.quizz;
 
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.activity.quizz.QuizzGroup;
-import com.knowledgeplayers.grar.util.XmlLoader;
 import haxe.xml.Fast;
 
 /**
@@ -35,12 +34,11 @@ class Quizz extends Activity {
 
 	public function new(?content:String)
 	{
-		super(content);
 		answers = new Array<QuizzGroup>();
 		questions = new Array<{ref:String, content:String}>();
 		groupRefs = new Array<String>();
 
-		XmlLoader.load(content, onLoadComplete, parseContent);
+		super(content);
 	}
 
 	override public function startActivity():Void

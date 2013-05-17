@@ -17,7 +17,6 @@ import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.structure.part.TextItem;
-import com.knowledgeplayers.grar.util.XmlLoader;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.FastList;
 import haxe.xml.Fast;
@@ -84,8 +83,7 @@ class PartDisplay extends KpDisplay {
 
 	public function init():Void
 	{
-
-		XmlLoader.load(part.display, onLoadComplete, parseContent);
+		parseContent(AssetsStorage.getXml(part.display));
 		Localiser.instance.addEventListener(LocaleEvent.LOCALE_LOADED, onLocaleLoaded);
 		Localiser.instance.pushLocale();
 		Localiser.instance.setLayoutFile(part.file);
@@ -535,11 +533,6 @@ class PartDisplay extends KpDisplay {
 	}
 
 	// Handlers
-
-	private function onLoadComplete(event:Event):Void
-	{
-		parseContent(XmlLoader.getXml(event));
-	}
 
 	private function onLocaleLoaded(ev:LocaleEvent):Void
 	{

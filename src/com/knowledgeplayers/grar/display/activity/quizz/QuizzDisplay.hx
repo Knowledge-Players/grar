@@ -61,7 +61,8 @@ class QuizzDisplay extends ActivityDisplay {
 
 	override public function setModel(model:Activity):Activity
 	{
-		return quizz = cast(super.setModel(model), Quizz);
+		quizz = cast(model, Quizz);
+		return super.setModel(model);
 	}
 
 	override public function startActivity():Void

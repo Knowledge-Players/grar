@@ -16,7 +16,6 @@ import com.knowledgeplayers.grar.structure.Game;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.Token;
 import com.knowledgeplayers.grar.util.KeyboardManager;
-import com.knowledgeplayers.grar.util.XmlLoader;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.FastList;
 import haxe.xml.Fast;
@@ -124,10 +123,7 @@ class GameManager extends EventDispatcher {
 
 	public function loadTokens(path:String):Void
 	{
-		XmlLoader.load(path, function(e:Event)
-		{
-			parseTokens(XmlLoader.getXml(e));
-		}, parseTokens);
+		parseTokens(AssetsStorage.getXml(path));
 	}
 
 	public function setMenuLoaded(loaded:Bool):Bool
@@ -269,10 +265,7 @@ class GameManager extends EventDispatcher {
 	private function parseTokens(tokens:Xml):Void
 	{
 		var tokenFast = new Fast(tokens.firstElement());
-		XmlLoader.load(tokenFast.att.display, function(e:Event)
-		{
-			parseDisplayTokens(XmlLoader.getXml(e));
-		}, parseDisplayTokens);
+		parseDisplayTokens(AssetsStorage.getXml(tokenFast.att.display));
 		for(token in tokenFast.nodes.Token){
 			inventory.set(token.att.ref, new Token(token));
 		}
