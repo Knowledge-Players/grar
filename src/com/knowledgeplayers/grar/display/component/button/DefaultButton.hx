@@ -62,7 +62,7 @@ class DefaultButton extends Sprite {
 	/**
     * Different states of the button
     **/
-	public var states (default, null):Hash<Hash<{dpo:DisplayObject, z:Int,trans:String}>>;
+	public var states (default, null):Hash<Hash<{dpo:DisplayObject, z:Int, trans:String}>>;
 
 	/**
      * Type of the event to dispatch
@@ -86,7 +86,7 @@ class DefaultButton extends Sprite {
      * @param	tile : Tile containing the upstate
      */
 
-	public function new(pStates:Hash<Hash<{dpo:DisplayObject, z:Int,trans:String}>>, action:String = "next")
+	public function new(pStates:Hash<Hash<{dpo:DisplayObject, z:Int, trans:String}>>, action:String = "next")
 	{
 		super();
 
@@ -237,7 +237,7 @@ class DefaultButton extends Sprite {
 	private function renderState(state:String)
 	{
 		var changeState = false;
-		var list:Hash<{dpo:DisplayObject, z:Int,trans:String}>;
+		var list:Hash<{dpo:DisplayObject, z:Int, trans:String}>;
 		if(states.exists(toggle + "_" + state)){
 			list = states.get(toggle + "_" + state);
 			if(currentState != toggle + "_" + state){
@@ -267,15 +267,14 @@ class DefaultButton extends Sprite {
 			}
 		}
 		if(changeState){
-            //clearState()
+			//clearState()
 
-            while (numChildren>0) {
+			while(numChildren > 0){
 
-                removeChildAt(numChildren-1);
-            }
+				removeChildAt(numChildren - 1);
+			}
 
-
-			var array = new Array<{dpo:DisplayObject, z:Int,trans:String}>();
+			var array = new Array<{dpo:DisplayObject, z:Int, trans:String}>();
 
 			if(list == null)
 				throw "There is no information for state \"" + currentState + "\" for button \"" + ref + "\".";
@@ -285,13 +284,12 @@ class DefaultButton extends Sprite {
 
 			array.sort(sortDisplayObjects);
 			for(obj in array){
+				if(obj.trans != ""){
+					TweenManager.resetTransform(obj.dpo);
+					TweenManager.applyTransition(obj.dpo, obj.trans);
+
+				}
 				addChild(obj.dpo);
-
-                if(obj.trans != ""){
-                    TweenManager.resetTransform(obj.dpo);
-                    TweenManager.applyTransition(obj.dpo, obj.trans);
-
-                }
 
 			}
 
@@ -313,7 +311,7 @@ class DefaultButton extends Sprite {
 		}
 	}
 
-	private function sortDisplayObjects(x:{dpo:DisplayObject, z:Int,trans:String}, y:{dpo:DisplayObject, z:Int,trans:String}):Int
+	private function sortDisplayObjects(x:{dpo:DisplayObject, z:Int, trans:String}, y:{dpo:DisplayObject, z:Int, trans:String}):Int
 	{
 		if(x.z < y.z)
 			return -1;

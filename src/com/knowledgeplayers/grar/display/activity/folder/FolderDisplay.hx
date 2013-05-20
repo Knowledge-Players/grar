@@ -50,7 +50,7 @@ class FolderDisplay extends ActivityDisplay {
     **/
 	public var targetSpritesheet (default, default):Bool = false;
 
-	private var elementTemplate:{background:BitmapData, width:Float, height:Float, buttonIcon:BitmapData, buttonPos:Point};
+	private var elementTemplate:{background:BitmapData, width:Float, height:Float, filters:String, buttonIcon:BitmapData, buttonPos:Point};
 
 	private var elementsArray:Array<FolderElementDisplay>;
 
@@ -91,7 +91,7 @@ class FolderDisplay extends ActivityDisplay {
 	{
 		for(elem in cast(model, Folder).elements){
 			var elementDisplay:FolderElementDisplay;
-			elementDisplay = new FolderElementDisplay(elem, elementTemplate.width, elementTemplate.height, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
+			elementDisplay = new FolderElementDisplay(elem, elementTemplate.width, elementTemplate.height, elementTemplate.filters, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
 			elementsArray.push(elementDisplay);
 			grids.get("drag").add(elementDisplay, false);
 			addChild(elementDisplay);
@@ -191,7 +191,7 @@ class FolderDisplay extends ActivityDisplay {
 						buttonIcon = AssetsStorage.getBitmapData(elemNode.att.buttonIcon);
 					buttonPos = new Point(Std.parseFloat(elemNode.att.buttonX), Std.parseFloat(elemNode.att.buttonY));
 				}
-				elementTemplate = {background: background, width: Std.parseFloat(elemNode.att.width), height: Std.parseFloat(elemNode.att.height), buttonIcon: buttonIcon, buttonPos: buttonPos};
+				elementTemplate = {background: background, width: Std.parseFloat(elemNode.att.width), height: Std.parseFloat(elemNode.att.height), filters: elemNode.att.filters, buttonIcon: buttonIcon, buttonPos: buttonPos};
 
 			case "grid" :
 				var cellWidth = elemNode.has.cellWidth ? Std.parseFloat(elemNode.att.cellWidth) : 0;
@@ -220,10 +220,7 @@ class FolderDisplay extends ActivityDisplay {
 
 	override private function onValidate(e:ButtonActionEvent):Void
 	{
-		if(cast(model, Folder).controlMode == "auto")
-			// TODO faire le next
-			Lib.trace("next");
-		else
+		if(cast(model, Folder).controlMode != "auto")
 			cast(model, Folder).validate();
 		endActivity();
 	}

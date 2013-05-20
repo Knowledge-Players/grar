@@ -106,8 +106,6 @@ class Activity extends EventDispatcher, implements PartElement, implements Track
 	{
 		Localiser.instance.pushLocale();
 		Localiser.instance.setLayoutFile(content);
-
-		dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import nme.display.Sprite;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import aze.display.TileSprite;
@@ -36,7 +37,7 @@ class UiFactory {
      * @return the created button
      */
 
-	public static function createButton(ref:String, x:Float = 0, y:Float = 0, states:Hash<Hash<{dpo:DisplayObject, z:Int,trans:String}>>, ?action:String, ?transitionIn:String, ?transitionOut:String):DefaultButton
+	public static function createButton(ref:String, x:Float = 0, y:Float = 0, states:Hash<Hash<{dpo:DisplayObject, z:Int, trans:String}>>, ?action:String, ?transitionIn:String, ?transitionOut:String):DefaultButton
 	{
 		var creation:DefaultButton = new DefaultButton(states, action);
 
@@ -80,7 +81,7 @@ class UiFactory {
 		var transitionIn = xml.has.transitionIn ? xml.att.transitionIn : null;
 		var transitionOut = xml.has.transitionOut ? xml.att.transitionOut : null;
 
-		var states = new Hash<Hash<{dpo:DisplayObject, z:Int,trans:String}>>();
+		var states = new Hash<Hash<{dpo:DisplayObject, z:Int, trans:String}>>();
 
 		if(xml.hasNode.active){
 			for(state in xml.node.active.elements){
@@ -100,26 +101,26 @@ class UiFactory {
 		return createButton(xml.att.ref, x, y, states, action, transitionIn, transitionOut);
 	}
 
-	private static function createStates(node:Fast):Hash<{dpo:DisplayObject, z:Int,trans:String}>
+	private static function createStates(node:Fast):Hash<{dpo:DisplayObject, z:Int, trans:String}>
 	{
-		var list = new Hash<{dpo:DisplayObject, z:Int,trans:String}>();
+		var list = new Hash<{dpo:DisplayObject, z:Int, trans:String}>();
 		var zIndex = 0;
-        var trans:String="";
+		var trans:String = "";
 		for(elem in node.elements){
 			switch (elem.name.toLowerCase()) {
 				case "item":
 					var layer = new TileLayer(tilesheet);
 					layer.addChild(createImageFromXml(elem));
-                    layer.render();
+					layer.render();
 
 					if(elem.has.transform)
 						//TweenManager.applyTransition(layer.view, elem.att.transform);
-                    trans = elem.att.transform;
-					list.set(elem.att.ref, {dpo:layer.view, z:zIndex,trans:trans});
+						trans = elem.att.transform;
+					list.set(elem.att.ref, {dpo:layer.view, z:zIndex, trans:trans});
 
-				case "text": list.set(elem.att.ref, {dpo:createTextFromXml(elem), z:zIndex,trans:trans});
+				case "text": list.set(elem.att.ref, {dpo:createTextFromXml(elem), z:zIndex, trans:trans});
 
-				case "animation":list.set(elem.att.ref, {dpo:createAnimationFromXml(elem), z:zIndex,trans:trans});
+				case "animation":list.set(elem.att.ref, {dpo:createAnimationFromXml(elem), z:zIndex, trans:trans});
 			}
 			zIndex++;
 		}
@@ -182,6 +183,31 @@ class UiFactory {
 		if(xml.has.background)
 			text.setBackground(xml.att.background);
 		return text;
+	}
+
+	/**
+    * Create a sprite from an XML descriptor
+    * @param    xml : Fast descriptor
+    * @return a sprite
+    **/
+
+	public static function createSpriteFormXml(xml:Fast):Sprite
+	{
+		var background = new Sprite();
+
+		var color:Int;
+
+		var _alpha = xml.has.alpha ? Std.parseFloat(xml.att.alpha) : 1;
+
+		if(xml.has.color)
+			color = Std.parseInt(xml.att.color);
+		else
+			color = Std.parseInt("0xFFFFFF");
+		background.graphics.beginFill(color, _alpha);
+		background.graphics.drawRect(Std.parseFloat(xml.att.x), Std.parseFloat(xml.att.y), Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height));
+		background.graphics.endFill();
+
+		return background;
 	}
 
 	/**

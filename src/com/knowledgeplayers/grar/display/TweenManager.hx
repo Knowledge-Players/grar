@@ -188,16 +188,7 @@ class TweenManager {
 
 	public static function loadTemplate(file:String):Void
 	{
-
-		parseXml(AssetsStorage.getXml(file));
-
-	}
-
-	// Private
-
-	private static function parseXml(xml:Xml):Void
-	{
-		var root = new Fast(xml).node.Transitions;
+		var root = new Fast(AssetsStorage.getXml(file)).node.Transitions;
 		for(child in root.elements){
 			var transition:Dynamic = {};
 			transition.duration = Std.parseFloat(child.att.duration);
@@ -229,6 +220,8 @@ class TweenManager {
 			transitions.set(child.att.ref, transition);
 		}
 	}
+
+	// Private
 
 	private static function getEasing(transition:Dynamic):IEasing
 	{

@@ -22,6 +22,11 @@ class ChoicePattern extends Pattern {
 	public var tooltipRef (default, default):String;
 
 	/**
+    * Reference to the tooltip transition
+    **/
+	public var tooltipTransition (default, default):String;
+
+	/**
     * Constructor
     * @param    name : Name of the pattern
     **/
@@ -36,6 +41,7 @@ class ChoicePattern extends Pattern {
 	{
 		super.init(xml);
 		tooltipRef = xml.has.toolTip ? xml.att.toolTip != "" ? xml.att.toolTip : null : null;
+		tooltipTransition = xml.has.toolTipTransition ? xml.att.toolTipTransition != "" ? xml.att.toolTipTransition : null : null;
 
 		for(choiceNode in xml.nodes.Choice){
 			var tooltip = choiceNode.has.toolTip ? choiceNode.att.toolTip != "" ? choiceNode.att.toolTip : null : null ;

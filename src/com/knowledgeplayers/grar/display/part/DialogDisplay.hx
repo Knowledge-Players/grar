@@ -136,8 +136,8 @@ class DialogDisplay extends PartDisplay {
 			while(!Std.is(displayArea.getChildAt(i), DefaultButton)){
 				i++;
 			}
-			// TODO ref en dur
-			TweenManager.applyTransition(tooltip, "fadeIn");
+
+			TweenManager.applyTransition(tooltip, pattern.tooltipTransition);
 			displayArea.addChildAt(tooltip, i);
 		}
 		else{

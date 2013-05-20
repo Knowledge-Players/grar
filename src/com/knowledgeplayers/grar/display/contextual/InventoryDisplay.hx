@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import com.knowledgeplayers.grar.structure.Token;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
@@ -79,8 +80,8 @@ class InventoryDisplay extends Sprite {
 	private var background:Sprite;
 	private var title:ScrollPanel;
 
-    private var fullScreenTransitionIn:String;
-    private var fullScreenTransitionOut:String;
+	private var fullScreenTransitionIn:String;
+	private var fullScreenTransitionOut:String;
 
 	/**
     * Constructor
@@ -128,8 +129,8 @@ class InventoryDisplay extends Sprite {
 		if(fast.hasNode.Fullscreen){
 
 			var fullscreen:Fast = fast.node.Fullscreen;
-            fullScreenTransitionIn =fullscreen.has.transitionIn ? fullscreen.att.transitionIn:null;
-            fullScreenTransitionOut =fullscreen.has.transitionOut ? fullscreen.att.transitionOut : null;
+			fullScreenTransitionIn = fullscreen.has.transitionIn ? fullscreen.att.transitionIn : null;
+			fullScreenTransitionOut = fullscreen.has.transitionOut ? fullscreen.att.transitionOut : null;
 
 			if(fullscreen.hasNode.Text){
 				var text:Fast = fullscreen.node.Text;
@@ -151,8 +152,6 @@ class InventoryDisplay extends Sprite {
 				largeImage.y = Std.parseFloat(img.att.y);
 			}
 			closeButton = UiFactory.createButtonFromXml(fullscreen.node.Button);
-			// TODO Use locale key
-			closeButton.setText(Localiser.instance.getItemContent("closeFS"));
 			if(fullscreen.node.Button.att.action == "close")
 				closeButton.addEventListener("close", closeFullscreen);
 			if(fullscreen.hasNode.Background){
@@ -220,49 +219,50 @@ class InventoryDisplay extends Sprite {
 		for(key in slots.keys()){
 			if(slots.get(key) == slot)
 				tokenName = key;
-			contentToken.setContent(Localiser.instance.getItemContent(GameManager.instance.inventory.get(tokenName).content));
+			var token:Token = GameManager.instance.inventory.get(tokenName);
+			contentToken.setContent(Localiser.instance.getItemContent(token.content));
 			largeImage.bitmapData = GameManager.instance.tokensImages.get(tokenName).large;
-			title.setContent(Localiser.instance.getItemContent(GameManager.instance.inventory.get(tokenName).name));
+			title.setContent(Localiser.instance.getItemContent(token.name));
+			closeButton.setText(Localiser.instance.getItemContent(token.fullScreenContent));
 		}
 		parent.addChild(largeImage);
 		parent.addChild(closeButton);
 		parent.addChild(contentToken);
 		parent.addChild(title);
-        if (fullScreenTransitionIn!= null){
-        TweenManager.applyTransition(largeImage,fullScreenTransitionIn);
-        TweenManager.applyTransition(background,fullScreenTransitionIn);
-        TweenManager.applyTransition(closeButton,fullScreenTransitionIn);
-        TweenManager.applyTransition(contentToken,fullScreenTransitionIn);
-        TweenManager.applyTransition(title,fullScreenTransitionIn);
+		if(fullScreenTransitionIn != null){
+			TweenManager.applyTransition(largeImage, fullScreenTransitionIn);
+			TweenManager.applyTransition(background, fullScreenTransitionIn);
+			TweenManager.applyTransition(closeButton, fullScreenTransitionIn);
+			TweenManager.applyTransition(contentToken, fullScreenTransitionIn);
+			TweenManager.applyTransition(title, fullScreenTransitionIn);
 
-        }
-
+		}
 
 	}
 
 	private function closeFullscreen(e:ButtonActionEvent):Void
 	{
-        if (fullScreenTransitionOut!= null){
-            TweenManager.applyTransition(largeImage,fullScreenTransitionOut);
-            TweenManager.applyTransition(background,fullScreenTransitionOut);
-            TweenManager.applyTransition(closeButton,fullScreenTransitionOut);
-            TweenManager.applyTransition(contentToken,fullScreenTransitionOut);
-            TweenManager.applyTransition(title,fullScreenTransitionOut).onComplete(removeElements);
+		if(fullScreenTransitionOut != null){
+			TweenManager.applyTransition(largeImage, fullScreenTransitionOut);
+			TweenManager.applyTransition(background, fullScreenTransitionOut);
+			TweenManager.applyTransition(closeButton, fullScreenTransitionOut);
+			TweenManager.applyTransition(contentToken, fullScreenTransitionOut);
+			TweenManager.applyTransition(title, fullScreenTransitionOut).onComplete(removeElements);
 
-        }
-        else
-        {
-            removeElements();
-        }
+		}
+		else{
+			removeElements();
+		}
 	}
 
-    private function removeElements():Void{
-        parent.removeChild(background);
-        parent.removeChild(largeImage);
-        parent.removeChild(closeButton);
-        parent.removeChild(contentToken);
-        parent.removeChild(title);
-    }
+	private function removeElements():Void
+	{
+		parent.removeChild(background);
+		parent.removeChild(largeImage);
+		parent.removeChild(closeButton);
+		parent.removeChild(contentToken);
+		parent.removeChild(title);
+	}
 
 	private function onOverToken(e:MouseEvent):Void
 	{

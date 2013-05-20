@@ -156,33 +156,16 @@ class Zone extends Sprite {
 
 	public function createBackground(bkgNode:Fast, ?_container:Sprite):Sprite
 	{
-
-		//TODO Créer un Ui.createBackgroundFromXml ?
-
 		if(_container == null){
 			_container = new Sprite();
 			addChild(_container);
 		}
 
-		var background = new Sprite();
-
-		var color:Int;
-
-		var _alpha = bkgNode.has.alpha ? Std.parseFloat(bkgNode.att.alpha) : 1;
-
-		if(bkgNode.has.color)
-			color = Std.parseInt(bkgNode.att.color);
-		else
-			color = Std.parseInt("0xFFFFFF");
-		background.graphics.beginFill(color, _alpha);
-		background.graphics.drawRect(Std.parseFloat(bkgNode.att.x), Std.parseFloat(bkgNode.att.y), Std.parseFloat(bkgNode.att.width), Std.parseFloat(bkgNode.att.height));
-		background.graphics.endFill();
-
 		if(bkgNode.has.filter){
-			_container.filters = [FilterManager.applyFilter(bkgNode.att.filter)];
+			_container.filters = [FilterManager.getFilter(bkgNode.att.filter)];
 		}
 
-		_container.addChild(background);
+		_container.addChild(UiFactory.createSpriteFormXml(bkgNode));
 
 		return _container;
 

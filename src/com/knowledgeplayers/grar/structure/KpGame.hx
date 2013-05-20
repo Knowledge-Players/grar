@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.grar.display.FilterManager;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
@@ -146,6 +147,10 @@ class KpGame extends EventDispatcher, implements Game {
 		// Load Transition
 		if(displayNode.hasNode.Transitions)
 			TweenManager.loadTemplate(displayNode.node.Transitions.att.display);
+
+		// Load filters
+		if(displayNode.hasNode.Filters)
+			FilterManager.loadTemplate(displayNode.node.Filters.att.display);
 
 		// Load Activities displays
 		for(activity in displayNode.nodes.Activity){

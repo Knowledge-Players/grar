@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import nme.filters.BitmapFilter;
+import StringTools;
 import com.eclecticdesignstudio.motion.Actuate;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
@@ -13,7 +15,6 @@ import nme.display.SimpleButton;
 import nme.display.Sprite;
 import nme.events.Event;
 import nme.events.MouseEvent;
-import nme.filters.DropShadowFilter;
 import nme.geom.Point;
 
 /**
@@ -35,7 +36,7 @@ class FolderElementDisplay extends Sprite {
 **/
 	public var origin (default, default):Point;
 
-	private var shadows:Hash<DropShadowFilter>;
+	private var shadows:Hash<BitmapFilter>;
 	private var originWidth:Float;
 	private var originHeight:Float;
 	private var stylesheet:String;
@@ -46,7 +47,7 @@ class FolderElementDisplay extends Sprite {
     * @param height : Height of the element
 **/
 
-	public function new(model:FolderElement, width:Float, height:Float, background:BitmapData, ?buttonIcon:BitmapData, ?buttonPos:Point, ?stylesheet:String)
+	public function new(model:FolderElement, width:Float, height:Float, filters:String, background:BitmapData, ?buttonIcon:BitmapData, ?buttonPos:Point, ?stylesheet:String)
 	{
 		super();
 		this.model = model;
@@ -56,10 +57,15 @@ class FolderElementDisplay extends Sprite {
 		text = new ScrollPanel(width, height);
 		buttonMode = true;
 
-		shadows = new Hash<DropShadowFilter>();
-		// TODO filter manager
-		shadows.set("down", new DropShadowFilter(10, 45, 0x000000, 0.3, 10, 10));
-		shadows.set("up", new DropShadowFilter(15, 45, 0x000000, 0.2, 10, 10));
+		shadows = new Hash<BitmapFilter>();
+		// Remove both {} and split on comma
+		var filtersArray:Array<String> = filters.substr(1, filters.length - 2).split(",");
+		var filtersHash:Hash<String> = new Hash<String>();
+		for(filter in filtersArray){
+			filtersHash.set(StringTools.trim(filter.split(":")[0]), StringTools.trim(filter.split(":")[1]));
+		}
+		shadows.set("down", FilterManager.getFilter(filtersHash.get("down")));
+		shadows.set("up", FilterManager.getFilter(filtersHash.get("up")));
 
 		var localizedText = Localiser.instance.getItemContent(model.content + "_front");
 		text.setContent(localizedText);
@@ -67,7 +73,7 @@ class FolderElementDisplay extends Sprite {
 		text.x = bkg.width / 2 - text.width / 2;
 		text.y = bkg.height / 2 - text.height / 2;
 		addChildAt(bkg, 0);
-		filters = [shadows.get("down")];
+		this.filters = [shadows.get("down")];
 
 		addChild(text);
 
