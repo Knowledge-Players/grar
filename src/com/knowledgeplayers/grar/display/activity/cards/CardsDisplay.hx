@@ -1,11 +1,12 @@
 package com.knowledgeplayers.grar.display.activity.cards;
 
+import com.knowledgeplayers.grar.structure.activity.Activity;
 import aze.display.TileClip;
 import aze.display.TileLayer;
 import com.eclecticdesignstudio.motion.Actuate;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.style.StyleParser;
-import com.knowledgeplayers.grar.event.LocaleEvent;
+
 import com.knowledgeplayers.grar.structure.activity.cards.Cards;
 import com.knowledgeplayers.grar.util.Grid;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
@@ -84,7 +85,7 @@ class CardsDisplay extends ActivityDisplay {
 		super.displayActivity();
 	}
 
-	override private function onModelComplete(e:LocaleEvent):Void
+	override public function setModel(model:Activity):Activity
 	{
 		for(i in 0...cast(model, Cards).elements.length){
 			var elementDisplay = new CardsElementDisplay(cast(model, Cards).elements[i].content, grids.get("dispatch").cellSize.width, grids.get("dispatch").cellSize.height, elementBackground);
@@ -95,9 +96,7 @@ class CardsDisplay extends ActivityDisplay {
 
 		// TODO Container
 		//grids.get("dispatch").alignContainer(grids.get("dispatch").container, background);
-
-		super.onModelComplete(e);
-
+		return super.setModel(model);
 	}
 
 	override private function createElement(elemNode:Fast):Void

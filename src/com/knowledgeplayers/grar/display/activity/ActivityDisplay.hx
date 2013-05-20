@@ -3,7 +3,7 @@ package com.knowledgeplayers.grar.display.activity;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import com.knowledgeplayers.grar.event.LocaleEvent;
+
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.util.DisplayUtils;
@@ -38,9 +38,7 @@ class ActivityDisplay extends KpDisplay {
 	public function setModel(model:Activity):Activity
 	{
 		this.model = model;
-		this.model.addEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
 		this.model.loadActivity();
-
 		return model;
 	}
 
@@ -50,6 +48,15 @@ class ActivityDisplay extends KpDisplay {
 
 	public function startActivity():Void
 	{
+		addEventListener(Event.ADDED_TO_STAGE, function(e:Event)
+		{
+			TweenManager.applyTransition(this, transitionIn);
+		});
+		addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
+		{
+			TweenManager.applyTransition(this, transitionOut);
+		});
+
 		model.startActivity();
 		displayActivity();
 	}
@@ -132,22 +139,6 @@ class ActivityDisplay extends KpDisplay {
 	private function onUnload(ev:Event):Void
 	{
 		// Override in subclass
-	}
-
-	private function onModelComplete(e:LocaleEvent):Void
-	{
-		model.removeEventListener(LocaleEvent.LOCALE_LOADED, onModelComplete);
-
-		addEventListener(Event.ADDED_TO_STAGE, function(e:Event)
-		{
-			TweenManager.applyTransition(this, transitionIn);
-		});
-		addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
-		{
-			TweenManager.applyTransition(this, transitionOut);
-		});
-
-		dispatchEvent(new Event(Event.COMPLETE));
 	}
 
 	private function onValidate(e:ButtonActionEvent):Void

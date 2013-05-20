@@ -4,7 +4,7 @@ import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import com.knowledgeplayers.grar.event.LocaleEvent;
+
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.activity.quizz.Quizz;
@@ -69,18 +69,13 @@ class QuizzDisplay extends ActivityDisplay {
 	{
 		super.startActivity();
 
+		updateRound();
 		displayRound();
 
 		updateButtonText();
 	}
 
 	// Private
-
-	override private function onModelComplete(e:LocaleEvent):Void
-	{
-		updateRound();
-		super.onModelComplete(e);
-	}
 
 	private function displayRound():Void
 	{

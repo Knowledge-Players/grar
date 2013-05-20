@@ -1,8 +1,9 @@
 package com.knowledgeplayers.grar.display.activity.scanner;
 
+import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.display.activity.scanner.PointDisplay.PointStyle;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.event.LocaleEvent;
+
 import com.knowledgeplayers.grar.structure.activity.scanner.Scanner;
 import haxe.xml.Fast;
 
@@ -35,7 +36,7 @@ class ScannerDisplay extends ActivityDisplay {
 
 	// Private
 
-	override private function onModelComplete(e:LocaleEvent):Void
+	override public function setModel(model:Activity):Activity
 	{
 		for(point in cast(model, Scanner).pointsMap){
 			var pointDisplay = new PointDisplay(pointStyles.get(point.ref), point);
@@ -44,7 +45,7 @@ class ScannerDisplay extends ActivityDisplay {
 			pointDisplay.alpha = cast(model, Scanner).pointVisible ? 1 : 0;
 			addChild(pointDisplay);
 		}
-		super.onModelComplete(e);
+		return super.setModel(model);
 	}
 
 	override private function createElement(elemNode:Fast):Void

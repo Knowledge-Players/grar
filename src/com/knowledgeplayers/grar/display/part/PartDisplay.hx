@@ -9,7 +9,7 @@ import com.knowledgeplayers.grar.display.ResizeManager;
 import com.knowledgeplayers.grar.display.TweenManager;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.event.GameEvent;
-import com.knowledgeplayers.grar.event.LocaleEvent;
+
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.Activity;
@@ -84,9 +84,15 @@ class PartDisplay extends KpDisplay {
 	public function init():Void
 	{
 		parseContent(AssetsStorage.getXml(part.display));
-		Localiser.instance.addEventListener(LocaleEvent.LOCALE_LOADED, onLocaleLoaded);
 		Localiser.instance.pushLocale();
 		Localiser.instance.setLayoutFile(part.file);
+
+		if(currentElement != null && currentElement.isPattern())
+			startPattern(cast(currentElement, Pattern));
+		else{
+			localeLoaded = true;
+			checkPartLoaded();
+		}
 	}
 
 	public function exitPart():Void
@@ -154,12 +160,12 @@ class PartDisplay extends KpDisplay {
 		}
 
 		else if(currentElement.isPattern()){
-			if(Localiser.instance.layoutPath != part.file){
+			/*if(Localiser.instance.layoutPath != part.file){
 				Localiser.instance.addEventListener(LocaleEvent.LOCALE_LOADED, onLocaleLoaded);
 				Localiser.instance.setLayoutFile(part.file);
 			}
-			else
-				startPattern(cast(currentElement, Pattern));
+			else*/
+			startPattern(cast(currentElement, Pattern));
 		}
 
 		else if(currentElement.isPart()){
@@ -530,18 +536,5 @@ class PartDisplay extends KpDisplay {
 		}
 
 		return true;
-	}
-
-	// Handlers
-
-	private function onLocaleLoaded(ev:LocaleEvent):Void
-	{
-		Localiser.instance.removeEventListener(LocaleEvent.LOCALE_LOADED, onLocaleLoaded);
-		if(currentElement != null && currentElement.isPattern())
-			startPattern(cast(currentElement, Pattern));
-		else{
-			localeLoaded = true;
-			checkPartLoaded();
-		}
 	}
 }

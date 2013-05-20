@@ -21,7 +21,6 @@ import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.display.text.UrlField;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.event.GameEvent;
-import com.knowledgeplayers.grar.event.LocaleEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.event.TokenEvent;
 import com.knowledgeplayers.grar.factory.ActivityFactory;

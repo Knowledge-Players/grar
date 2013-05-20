@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.localisation;
 
 import com.knowledgeplayers.utils.assets.AssetsStorage;
-import com.knowledgeplayers.grar.event.LocaleEvent;
+
 import haxe.xml.Fast;
 import nme.events.Event;
 import nme.events.EventDispatcher;
@@ -56,7 +56,6 @@ class Localisation extends EventDispatcher {
 			parseExcelContent(content);
 		else
 			parseXmlContent(content);
-		dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));
 	}
 
 	private function parseXmlContent(content:Xml):Void

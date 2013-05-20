@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.structure.activity;
 
 import com.knowledgeplayers.utils.assets.AssetsStorage;
-import com.knowledgeplayers.grar.event.LocaleEvent;
+
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.part.Part;
@@ -104,9 +104,10 @@ class Activity extends EventDispatcher, implements PartElement, implements Track
 
 	public function loadActivity():Void
 	{
-		Localiser.instance.addEventListener(LocaleEvent.LOCALE_LOADED, onLocaleComplete);
 		Localiser.instance.pushLocale();
 		Localiser.instance.setLayoutFile(content);
+
+		dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));
 	}
 
 	/**
@@ -184,12 +185,6 @@ class Activity extends EventDispatcher, implements PartElement, implements Track
 	}
 
 	// Privates
-
-	private function onLocaleComplete(e:LocaleEvent):Void
-	{
-		Localiser.instance.removeEventListener(LocaleEvent.LOCALE_LOADED, onLocaleComplete);
-		dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));
-	}
 
 	private function parseContent(content:Xml):Void
 	{

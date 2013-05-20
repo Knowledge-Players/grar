@@ -1,9 +1,10 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.structure.activity.Activity;
 import aze.display.TileLayer;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import com.knowledgeplayers.grar.event.LocaleEvent;
+
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.structure.activity.folder.Folder;
 import com.knowledgeplayers.grar.util.DisplayUtils;
@@ -86,7 +87,7 @@ class FolderDisplay extends ActivityDisplay {
 		}
 	}
 
-	override private function onModelComplete(e:LocaleEvent):Void
+	override public function setModel(model:Activity):Activity
 	{
 		for(elem in cast(model, Folder).elements){
 			var elementDisplay:FolderElementDisplay;
@@ -95,8 +96,7 @@ class FolderDisplay extends ActivityDisplay {
 			grids.get("drag").add(elementDisplay, false);
 			addChild(elementDisplay);
 		}
-
-		super.onModelComplete(e);
+		return super.setModel(model);
 	}
 
 	override private function createElement(elemNode:Fast):Void

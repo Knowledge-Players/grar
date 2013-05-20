@@ -216,8 +216,10 @@ class GameManager extends EventDispatcher {
 		var activityName:String = Type.getClassName(Type.getClass(activity));
 		activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
 		activityDisplay = ActivityManager.instance.getActivity(activityName);
-		activityDisplay.addEventListener(Event.COMPLETE, onActivityReady);
 		activityDisplay.model = activity;
+
+		layout.zones.get(game.ref).addChild(activityDisplay);
+		activityDisplay.startActivity();
 
 	}
 
@@ -315,13 +317,6 @@ class GameManager extends EventDispatcher {
 		parts.first().visible = false;
 		parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		displayPartById(event.part.id);
-	}
-
-	private function onActivityReady(e:Event):Void
-	{
-		activityDisplay.removeEventListener(Event.COMPLETE, onActivityReady);
-		layout.zones.get(game.ref).addChild(activityDisplay);
-		activityDisplay.startActivity();
 	}
 
 	private function onActivityEnd(e:PartEvent):Void

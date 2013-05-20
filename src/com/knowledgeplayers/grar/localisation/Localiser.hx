@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.localisation;
 
 import com.knowledgeplayers.grar.display.style.StyleParser;
-import com.knowledgeplayers.grar.event.LocaleEvent;
+
 import com.knowledgeplayers.grar.localisation.Localisation;
 import haxe.FastList;
 import nme.events.EventDispatcher;
@@ -112,7 +112,6 @@ class Localiser extends EventDispatcher {
 		localePath.add(currentLocale + "/");
 		localePath.add(fullPath[fullPath.length - 1]);
 		localisation = new Localisation(currentLocale);
-		localisation.addEventListener(LocaleEvent.LOCALE_LOADED, onLocaleComplete);
 		localisation.setLocaleFile(localePath.toString());
 	}
 
@@ -134,12 +133,5 @@ class Localiser extends EventDispatcher {
 	public function pushLocale():Void
 	{
 		stashedLocale.add(localisation);
-	}
-
-	// Private
-
-	private function onLocaleComplete(e:LocaleEvent):Void
-	{
-		dispatchEvent(new LocaleEvent(LocaleEvent.LOCALE_LOADED));
 	}
 }
