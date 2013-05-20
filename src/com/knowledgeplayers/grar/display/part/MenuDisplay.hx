@@ -32,7 +32,8 @@ class MenuDisplay extends Zone {
 	private var levelDisplays:Hash<Fast>;
 	private var xOffset:Float = 0;
 	private var yOffset:Float = 0;
-	// TODO examiner x&y Base
+
+	// grid origin for elements in the menu (buttons)
 	private var yBase:Float = 0;
 	private var xBase:Float = 0;
 

@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.display;
 
-import com.knowledgeplayers.utils.assets.AssetsStorage;
 import nme.geom.ColorTransform;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.eclecticdesignstudio.motion.easing.Cubic;
 import com.eclecticdesignstudio.motion.Actuate;
 import com.eclecticdesignstudio.motion.actuators.GenericActuator.IGenericActuator;
@@ -157,17 +157,7 @@ class TweenManager {
 
 	public static function resetTransform(display:DisplayObject):Void
 	{
-		var myTransform = new ColorTransform();
-
-		myTransform.redMultiplier = 1;
-		myTransform.greenMultiplier = 1;
-		myTransform.blueMultiplier = 1;
-		myTransform.redOffset = 0;
-		myTransform.greenOffset = 0;
-		myTransform.blueOffset = 0;
-
-		display.transform.colorTransform = myTransform;
-
+		display.transform.colorTransform = new ColorTransform(1, 1, 1, 1, 0, 0, 0, 0);
 	}
 
 	public static function blink(display:DisplayObject, ref:String):IGenericActuator

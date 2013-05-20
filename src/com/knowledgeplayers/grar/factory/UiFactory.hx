@@ -114,7 +114,6 @@ class UiFactory {
 					layer.render();
 
 					if(elem.has.transform)
-						//TweenManager.applyTransition(layer.view, elem.att.transform);
 						trans = elem.att.transform;
 					list.set(elem.att.ref, {dpo:layer.view, z:zIndex, trans:trans});
 
@@ -123,6 +122,7 @@ class UiFactory {
 				case "animation":list.set(elem.att.ref, {dpo:createAnimationFromXml(elem), z:zIndex, trans:trans});
 			}
 			zIndex++;
+			trans = "";
 		}
 		return list;
 	}
