@@ -110,7 +110,7 @@ class UiFactory {
 			switch (elem.name.toLowerCase()) {
 				case "item":
 					var layer = new TileLayer(tilesheet);
-					layer.addChild(createImageFromXml(elem));
+					layer.addChild(createImageFromXml(elem, layer));
 					layer.render();
 
 					if(elem.has.transform)
@@ -155,9 +155,9 @@ class UiFactory {
     * @return a tilesprite
     **/
 
-	public static function createImageFromXml(xml:Fast):TileSprite
+	public static function createImageFromXml(xml:Fast, layer:TileLayer):TileSprite
 	{
-		var image = new TileSprite(xml.att.id);
+		var image = new TileSprite(layer, xml.att.id);
 		image.x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
 		image.y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
 		image.scaleX = xml.has.scaleX ? Std.parseFloat(xml.att.scaleX) : 1;

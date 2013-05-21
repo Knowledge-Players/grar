@@ -59,7 +59,7 @@ class ProgressBar extends Sprite {
 		var xPos:Float = barWidth / (2 * allItems.length);
 		var isFirst = true;
 		for(item in allItems){
-			var icon = new TileClip(prefix + "_" + item.id);
+			var icon = new TileClip(layerProgressBar, prefix + "_" + item.id);
 			icons.set(item.id, icon);
 			icon.x = xPos;
 			icon.y = -8;

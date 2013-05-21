@@ -155,7 +155,7 @@ class ScrollPanel extends Sprite {
 			if(tilesheet == null)
 				tilesheet = UiFactory.tilesheet;
 			var layer = new TileLayer(tilesheet);
-			var tile = new TileSprite(background);
+			var tile = new TileSprite(layer, background);
 			layer.addChild(tile);
 			addChildAt(layer.view, 0);
 			tile.x += tile.width / 2;

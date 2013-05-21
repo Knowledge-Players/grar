@@ -113,7 +113,7 @@ class FolderDisplay extends ActivityDisplay {
 						layer = new TileLayer(spritesheets.get(elemNode.att.spritesheet));
 					else
 						layer = new TileLayer(UiFactory.tilesheet);
-					layer.addChild(new TileSprite(elemNode.att.id));
+					layer.addChild(new TileSprite(layer, elemNode.att.id));
 					target = layer.view;
 					cast(target, Sprite).mouseChildren = false;
 					layer.render();
@@ -134,7 +134,7 @@ class FolderDisplay extends ActivityDisplay {
 						layer = new TileLayer(spritesheets.get(elemNode.att.spritesheet));
 					else
 						layer = new TileLayer(UiFactory.tilesheet);
-					layer.addChild(new TileSprite(elemNode.att.id));
+					layer.addChild(new TileSprite(layer, elemNode.att.id));
 					popUpSprite.addChild(layer.view);
 					layer.render();
 				}

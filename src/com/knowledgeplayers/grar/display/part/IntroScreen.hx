@@ -98,7 +98,6 @@ class IntroScreen extends Sprite {
 
 	private function dispose():Void
 	{
-		content = new ScrollPanel(content.width, content.height, content.scrollLock, content.styleSheet);
 		if(parent != null)
 			parent.removeChild(this);
 	}

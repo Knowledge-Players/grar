@@ -16,7 +16,7 @@ class AnimationDisplay extends Sprite {
 		super();
 
 		layer = new TileLayer(_tileSheet);
-		clip = new TileClip(_id);
+		clip = new TileClip(layer, _id);
 		clip.x = _x;
 		clip.y = _y;
 		clip.scaleX = _scaleX;
