@@ -15,6 +15,9 @@ class KpTextDownElement {
 	public var content (default, default):String;
 	public var style (default, default):String;
 	public var bullet (default, default):String;
+    public var lineHeight (default,default):Float;
+    public var numLines (default,default):Int;
+    public var lineWidth (default,default):Float;
 
 	private var width:Float;
 
@@ -173,7 +176,9 @@ class KpTextDownElement {
 			var position = matched.pos - charOffset;
 			tf.setPartialStyle(StyleParser.getStyle(styleName + "italic"), position, position + matched.len - 2);
 		}
-
+        lineHeight = tf.textHeight/tf.numLines;
+        numLines = tf.numLines;
+        lineWidth = tf.width;
 		return tf;
 	}
 

@@ -98,6 +98,14 @@ class ScrollPanel extends Sprite {
 		var offSetY:Float = 0;
 		var isFirst:Bool = true;
 
+        var mask = new Sprite();
+
+        if (scrollLock) {
+            DisplayUtils.initSprite(mask, 1, 1);
+        } else {
+            DisplayUtils.initSprite(mask, maskWidth, maskHeight);
+        }
+
 		for(element in KpTextDownParser.parse(contentString)){
 			var style:Style = StyleParser.getStyle(element.style);
 			if(style == null)
@@ -117,14 +125,22 @@ class ScrollPanel extends Sprite {
 			item.x = padding[3];
 			item.y = offSetY;
 			offSetY += item.height + StyleParser.getStyle(element.style).getLeading()[1];
+            if (scrollLock) {
+                for (i in 0...element.numLines) {
+                    var m = new Sprite();
+                    m.y = item.y + (i*element.lineHeight);
+                    m.x = item.x;
+                    DisplayUtils.initSprite(m, element.lineWidth, element.lineHeight+2);
+                    mask.addChild(m);
+                }
 
+            }
 			content.addChild(item);
 
 		}
 
-		var mask = new Sprite();
-		DisplayUtils.initSprite(mask, maskWidth, maskHeight);
-		this.mask = mask;
+
+		content.mask = mask;
 		addChild(mask);
 
 		if(maskHeight < content.height && !scrollLock){
@@ -190,7 +206,11 @@ class ScrollPanel extends Sprite {
 	private function displayText():Void
 	{
 		addChild(content);
-		TweenManager.applyTransition(content, textTransition);
+
+
+
+		//TweenManager.applyTransition(content, textTransition);
+        TweenManager.applyTransition(content.mask, textTransition);
 	}
 
 	private function moveCursor(delta:Float)

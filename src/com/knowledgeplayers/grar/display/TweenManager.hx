@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display;
 
+import nme.display.Sprite;
+import browser.display.DisplayObjectContainer;
 import nme.geom.ColorTransform;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.eclecticdesignstudio.motion.easing.Cubic;
@@ -67,9 +69,36 @@ class TweenManager {
 			return transform(display, ref);
 		else if(Reflect.hasField(transition, "repeat"))
 			return wiggle(display, ref);
+        else if(Reflect.hasField(transition, "shutterTransitions"))
+            return discover(display, ref, 0);
 		else
 			return slide(display, ref);
 	}
+
+
+    /**
+     * Get a discover in effect for the object
+     * @param	display : Target of the tween
+     * @param   ref : The name of the fade transition to applied
+     * @return the actuator
+     **/
+
+    public static function discover(display:DisplayObject, ref:String, it:Int):IGenericActuator
+    {
+        if (it < cast(display, Sprite).numChildren) {
+            for (i in 0...cast(display, Sprite).numChildren) {
+                if (i >= it) {
+                    cast(display, Sprite).getChildAt(i).scaleX = 0;
+                }
+            }
+            var shutter = transitions.get(ref);
+
+
+            return Actuate.tween( cast(display, Sprite).getChildAt(it), shutter.duration, { scaleX : 1 }).ease(Linear.easeNone).onComplete(discover,[display, ref, it+1]);
+        } else {
+            return null;
+        }
+    }
 
 	/**
      * Get a fade in effect for the object
@@ -206,6 +235,9 @@ class TweenManager {
 					transition.repeat = Std.parseInt(child.att.repeat);
 				case "transform":
 					transition.color = Std.parseInt(child.att.color);
+                case "mask":
+                    transition.shutterTransitions = Std.parseInt(child.att.shutterTransitions);
+                    transition.shutterChaining = Std.parseInt(child.att.shutterChaining);
 			}
 			transitions.set(child.att.ref, transition);
 		}
