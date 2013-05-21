@@ -267,10 +267,8 @@ class DefaultButton extends Sprite {
 			}
 		}
 		if(changeState){
-			//clearState()
-
+			// Clear state
 			while(numChildren > 0){
-
 				removeChildAt(numChildren - 1);
 			}
 

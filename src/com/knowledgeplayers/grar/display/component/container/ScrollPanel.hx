@@ -181,8 +181,7 @@ class ScrollPanel extends Sprite {
 	private function clear()
 	{
 		content = new Sprite();
-		var reg:EReg = ~/[a-zA-Z]*/;
-		var max = (background != null && reg.match(background)) ? 1 : 0;
+		var max = (background != null && background != "") ? 1 : 0;
 		while(numChildren > max)
 			removeChildAt(numChildren - 1);
 	}
