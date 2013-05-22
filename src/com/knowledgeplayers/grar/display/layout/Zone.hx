@@ -29,7 +29,6 @@ class Zone extends Sprite {
 	public function new(_width:Float, _height:Float):Void
 	{
 		super();
-		//DisplayUtils.initSprite(this, width, height);
 
 		zoneWidth = _width;
 		zoneHeight = _height;
@@ -41,7 +40,6 @@ class Zone extends Sprite {
 
 		if(_zone.has.text){
 			Lib.trace(Localiser.instance.currentLocale);
-			//XmlLoader.load();
 		}
 		if(_zone.has.bgColor)
 			DisplayUtils.initSprite(this, zoneWidth, zoneHeight, Std.parseInt(_zone.att.bgColor));
@@ -119,7 +117,7 @@ class Zone extends Sprite {
 
 	public function createImage(imageNode:Fast):TileSprite
 	{
-		var image = UiFactory.createImageFromXml(imageNode);
+		var image = UiFactory.createImageFromXml(imageNode, layer);
 		layer.addChild(image);
 
 		return image;
@@ -188,21 +186,22 @@ class Zone extends Sprite {
 	{
 		switch(e.type){
 			case "open_menu": TweenManager.applyTransition(menu, menu.transitionIn);
-			case "sound_toggle": activSound(e);
+			case "sound_toggle": activeSound(e);
 		}
-
 	}
 
-	private function activSound(e:Event):Void
+	private function activeSound(e:Event):Void
 	{
-
+		var button:DefaultButton = Std.is(e.target, DefaultButton) ? cast(e.target, DefaultButton) : null;
 		if(soundState){
 			GameManager.instance.changeVolume(0);
 			soundState = false;
+			if(button != null) button.setToggle(false);
 		}
 		else{
 			GameManager.instance.changeVolume(1);
 			soundState = true;
+			if(button != null) button.setToggle(true);
 		}
 
 	}

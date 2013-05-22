@@ -45,7 +45,7 @@ class CharacterDisplay extends Sprite {
 			throw "[CharacterDisplay] Spritesheet is null for character \"" + model.getName() + "\".";
 
 		layer = new TileLayer(spritesheet);
-		img = new TileSprite(tileId);
+		img = new TileSprite(layer, tileId);
 		if(mirror != null){
 			img.mirror = switch(mirror.toLowerCase()){
 				case "horizontal" : 1;

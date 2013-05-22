@@ -120,7 +120,7 @@ class CardsDisplay extends ActivityDisplay {
 			case "animationelement" :
 				var tilesheet = spritesheets.get(elemNode.att.spritesheet);
 				flipLayer = new TileLayer(tilesheet);
-				flipClip = new TileClip(elemNode.att.id);
+				flipClip = new TileClip(flipLayer, elemNode.att.id);
 				flipClip.loop = false;
 				flipLayer.addChild(flipClip);
 				addChild(flipLayer.view);

@@ -14,7 +14,6 @@ import nme.events.MouseEvent;
 
 /**
  * Custom base button class
- * @author jbrichardet
  */
 
 class DefaultButton extends Sprite {
@@ -267,10 +266,8 @@ class DefaultButton extends Sprite {
 			}
 		}
 		if(changeState){
-			//clearState()
-
+			// Clear state
 			while(numChildren > 0){
-
 				removeChildAt(numChildren - 1);
 			}
 
@@ -353,10 +350,4 @@ class DefaultButton extends Sprite {
 			case MouseEvent.DOUBLE_CLICK: onDblClick(event);
 		}
 	}
-}
-
-enum ButtonState {
-	UP;
-	DOWN;
-	OVER;
 }

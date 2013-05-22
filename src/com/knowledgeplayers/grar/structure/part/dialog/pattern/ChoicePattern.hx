@@ -45,7 +45,7 @@ class ChoicePattern extends Pattern {
 
 		for(choiceNode in xml.nodes.Choice){
 			var tooltip = choiceNode.has.toolTip ? choiceNode.att.toolTip != "" ? choiceNode.att.toolTip : null : null ;
-			var choice = {ref: choiceNode.att.ref, content: choiceNode.att.content, toolTip: tooltip, goTo: choiceNode.att.goTo, viewed:false};
+			var choice = {ref: choiceNode.att.ref, toolTip: tooltip, goTo: choiceNode.att.goTo, viewed:false};
 			choices.set(choiceNode.att.ref, choice);
 		}
 	}
@@ -68,7 +68,6 @@ class ChoicePattern extends Pattern {
 
 typedef Choice = {
 	var ref:String;
-	var content:String;
 	var toolTip:String;
 	var goTo:String;
 	var viewed:Bool;

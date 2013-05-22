@@ -92,27 +92,28 @@ class KpDisplay extends Sprite {
 		}
 		else{
 			var spritesheet;
-			var itemTile = new TileSprite(itemNode.att.id);
+			var itemTile;
+			if(itemNode.has.spritesheet){
+				itemTile = new TileSprite(layers.get(itemNode.att.spritesheet), itemNode.att.id);
+				layers.get(itemNode.att.spritesheet).addChild(itemTile);
+				spritesheet = itemNode.att.spritesheet;
+			}
+			else{
+				spritesheet = "ui";
+				if(!layers.exists("ui")){
+					var layer = new TileLayer(UiFactory.tilesheet);
+					layers.set("ui", layer);
+				}
+				itemTile = new TileSprite(layers.get("ui"), itemNode.att.id);
+				layers.get("ui").addChild(itemTile);
+			}
+
 			if(itemNode.has.scale)
 				itemTile.scale = Std.parseFloat(itemNode.att.scale);
 			if(itemNode.has.mirror){
 				itemTile.mirror = switch(itemNode.att.mirror.toLowerCase()){
 					case "horizontal": 1;
 					case "vertical": 2;
-				}
-			}
-			if(itemNode.has.spritesheet){
-				layers.get(itemNode.att.spritesheet).addChild(itemTile);
-				spritesheet = itemNode.att.spritesheet;
-			}
-			else{
-				spritesheet = "ui";
-				if(layers.exists("ui"))
-					layers.get("ui").addChild(itemTile);
-				else{
-					var layer = new TileLayer(UiFactory.tilesheet);
-					layer.addChild(itemTile);
-					layers.set("ui", layer);
 				}
 			}
 

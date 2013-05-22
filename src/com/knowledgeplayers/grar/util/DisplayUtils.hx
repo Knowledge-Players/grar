@@ -82,7 +82,7 @@ class DisplayUtils {
 	public static function getBitmapDataFromLayer(tilesheet:TilesheetEx, tileId:String):BitmapData
 	{
 		var tmpLayer = new TileLayer(tilesheet);
-		var tile = new TileSprite(tileId);
+		var tile = new TileSprite(tmpLayer, tileId);
 		tmpLayer.addChild(tile);
 		tmpLayer.render();
 		var bmpData = new BitmapData(Math.round(tile.width), Math.round(tile.height), true, 0);

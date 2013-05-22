@@ -66,7 +66,7 @@ class TokenNotification extends Sprite {
 		this.x = Std.parseFloat(fast.att.x);
 		this.y = Std.parseFloat(fast.att.y);
 		layer = new TileLayer(UiFactory.tilesheet);
-		img = new TileSprite(fast.att.id);
+		img = new TileSprite(layer, fast.att.id);
 		img.scale = Std.parseFloat(fast.att.scale);
 		showToken = fast.att.transitionIn;
 		hideToken = fast.att.transitionOut;
