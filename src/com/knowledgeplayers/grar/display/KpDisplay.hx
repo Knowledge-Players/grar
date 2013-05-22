@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import nme.Lib;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import aze.display.TileSprite;
@@ -140,8 +141,7 @@ class KpDisplay extends Sprite {
 
 		var scrollable = textNode.has.scrollable ? textNode.att.scrollable == "true" : true;
 		var styleSheet = textNode.has.style ? textNode.att.style : null;
-
-		var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height), scrollable, styleSheet);
+		var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height), !scrollable, styleSheet);
 		if(textNode.has.textTransition)
 			text.textTransition = textNode.att.textTransition;
 		if(background != null)
