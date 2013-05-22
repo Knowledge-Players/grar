@@ -85,16 +85,50 @@ class TweenManager {
 
     public static function discover(display:DisplayObject, ref:String, it:Int):IGenericActuator
     {
+
         if (it < cast(display, Sprite).numChildren) {
+
             for (i in 0...cast(display, Sprite).numChildren) {
                 if (i >= it) {
                     cast(display, Sprite).getChildAt(i).scaleX = 0;
+                    cast(display, Sprite).getChildAt(i).scaleY = 0;
                 }
             }
+
             var shutter = transitions.get(ref);
 
+            var type = shutter.shutterTransitions[Std.int(it%shutter.shutterTransitions.length)];
 
-            return Actuate.tween( cast(display, Sprite).getChildAt(it), shutter.duration, { scaleX : 1 }).ease(Linear.easeNone).onComplete(discover,[display, ref, it+1]);
+            var msk =  cast(display, Sprite).getChildAt(it);
+
+            switch (type.toLowerCase()) {
+                case "left" :
+                    msk.scaleY = 1;
+                    return Actuate.tween( msk, shutter.duration, { scaleX : 1 }).ease(Linear.easeNone).onComplete(discover,[display, ref, it+1]);
+                case "right" :
+                    msk.scaleY = 1;
+                    msk.scaleX = 1;
+                    msk.x = msk.width;
+                    msk.scaleX = 0;
+                    return Actuate.tween( msk, shutter.duration, { x : 0, scaleX : 1 }).ease(Linear.easeNone).onComplete(discover,[display, ref, it+1]);
+                case "up" :
+                    msk.scaleX = 1;
+                    return Actuate.tween( msk, shutter.duration, { scaleY : 1 }).ease(Linear.easeNone).onComplete(discover,[display, ref, it+1]);
+                case "down" :
+                    msk.scaleX = 1;
+                    msk.scaleY = 1;
+                    var h = msk.height;
+                    msk.y += msk.height;
+                    msk.scaleY = 0;
+                    return Actuate.tween( msk, shutter.duration, { y : msk.y-h, scaleY : 1 }).ease(Linear.easeNone).onComplete(discover,[display, ref, it+1]);
+                default :
+                return null;
+
+            }
+
+
+
+
         } else {
             return null;
         }
@@ -236,8 +270,8 @@ class TweenManager {
 				case "transform":
 					transition.color = Std.parseInt(child.att.color);
                 case "mask":
-                    transition.shutterTransitions = Std.parseInt(child.att.shutterTransitions);
-                    transition.shutterChaining = Std.parseInt(child.att.shutterChaining);
+                    transition.shutterTransitions = child.att.shutterTransitions.split(",");
+                    transition.shutterChaining = child.att.shutterChaining;
 			}
 			transitions.set(child.att.ref, transition);
 		}
