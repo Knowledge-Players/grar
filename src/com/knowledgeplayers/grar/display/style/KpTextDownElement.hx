@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.style;
 
+import Array;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.display.text.UrlField;
 import com.knowledgeplayers.grar.util.DisplayUtils;
@@ -15,9 +16,9 @@ class KpTextDownElement {
 	public var content (default, default):String;
 	public var style (default, default):String;
 	public var bullet (default, default):String;
-    public var lineHeight (default,default):Float;
-    public var numLines (default,default):Int;
-    public var lineWidth (default,default):Float;
+	public var lineHeight (default, default):Float;
+	public var numLines (default, default):Int;
+	public var lineWidth (default, default):Float;
 
 	private var width:Float;
 
@@ -36,7 +37,7 @@ class KpTextDownElement {
 		var regexImg:EReg = ~/!\[(.+)\]\((.+)\)!/;
 		if(regexImg.match(content)){
 			var img = new Bitmap(AssetsStorage.getBitmapData(regexImg.matched(2)));
-			content = regexImg.replace(content, "");
+			content = regexImg.replace(content, " ");
 			if(regexImg.matchedLeft() != "")
 				concatObjects(output, createTextField(regexImg.matchedLeft(), styleName));
 			concatObjects(output, img);
@@ -114,25 +115,48 @@ class KpTextDownElement {
 	private function createTextField(content:String, ?styleName:String):StyledTextField
 	{
 		var tf = new StyledTextField();
+		var modificators = new Array<{match:{pos:Int, len:Int}, offset:Int, style:String}>();
 
 		var style:Style = StyleParser.getStyle(styleName);
 		tf.style = style;
 
 		styleName = StringTools.replace(styleName, "text", "");
+		if(styleName != "")
+			styleName += styleName.charAt(styleName.length - 1) == "-" ? "" : "-";
 
 		var regexBold:EReg = ~/\*([^*]+)\*/;
-		var boldPos = new Array<{pos:Int, len:Int}>();
 		while(regexBold.match(content)){
-			boldPos.push(regexBold.matchedPos());
+			var boldPos:{pos:Int, len:Int};
+			boldPos = regexBold.matchedPos();
 			content = regexBold.replace(content, regexBold.matched(1));
+			modificators.push({match: boldPos, offset: 2, style: styleName + "bold"});
 		}
 
-		var regexIta:EReg = ~/_([^_]+)_/;
-		var italicPos = new Array<{pos:Int, len:Int}>();
+		var regexIta:EReg = ~/_([^_\]\[]+)_/;
 		while(regexIta.match(content)){
-			italicPos.push(regexIta.matchedPos());
+			var italicPos:{pos:Int, len:Int};
+			italicPos = regexIta.matchedPos();
 			content = regexIta.replace(content, regexIta.matched(1));
+			modificators.push({match: italicPos, offset: 2, style: styleName + "italic"});
 		}
+
+		// Custom Style
+		var regexStyle:EReg = ~/\[(.+)\](.+)\[\/(.+)\]/;
+		while(regexStyle.match(content)){
+			var customPos:{pos:Int, len:Int};
+			customPos = regexStyle.matchedPos();
+			content = regexStyle.replace(content, regexStyle.matched(2));
+			var offset = ((regexStyle.matched(1).length + 2) * 2) + 1;
+			modificators.push({match: customPos, offset: offset, style: regexStyle.matched(1)});
+		}
+
+		modificators.sort(function(x, y):Int
+		{
+			if(x.match.pos > y.match.pos)
+				return 1;
+			else
+				return -1;
+		});
 
 		if(style.getCase() == "upper")
 			tf.text = content.toUpperCase();
@@ -154,14 +178,23 @@ class KpTextDownElement {
 		#end
 		tf.height += style.getPadding()[2];
 
-		if(styleName != "")
-			styleName += styleName.charAt(styleName.length - 1) == "-" ? "" : "-";
-		for(matched in boldPos){
+		var offset:Int = 0;
+		for(mod in modificators){
+			var position = mod.match.pos - offset;
+			offset += mod.offset;
+			tf.setPartialStyle(StyleParser.getStyle(mod.style), position, position + mod.match.len - mod.offset);
+		}
+
+		/*for(matched in boldPos){
 			// If there was italic before, position has changed
 			var charOffset:Int = 0;
-			for(italicMatch in italicPos){
-				if(italicMatch.pos < matched.pos)
-					charOffset += 2;
+			for(pos in modificators){
+				if(pos.array != boldPos){
+					for(match in pos.array){
+						if(match.pos < matched.pos)
+							charOffset += pos.offset;
+					}
+				}
 			}
 			var position = matched.pos - charOffset;
 			// Shift by 2 because we deleted asteriks
@@ -169,16 +202,20 @@ class KpTextDownElement {
 		}
 		for(matched in italicPos){
 			var charOffset:Int = 0;
-			for(boldMatch in boldPos){
-				if(boldMatch.pos < matched.pos)
-					charOffset += 2;
+			for(pos in modificators){
+				if(pos.array != italicPos){
+					for(match in pos.array){
+						if(match.pos < matched.pos)
+							charOffset += pos.offset;
+					}
+				}
 			}
 			var position = matched.pos - charOffset;
 			tf.setPartialStyle(StyleParser.getStyle(styleName + "italic"), position, position + matched.len - 2);
-		}
-        lineHeight = tf.textHeight/tf.numLines;
-        numLines = tf.numLines;
-        lineWidth = tf.width;
+		}*/
+		lineHeight = tf.textHeight / tf.numLines;
+		numLines = tf.numLines;
+		lineWidth = tf.width;
 		return tf;
 	}
 

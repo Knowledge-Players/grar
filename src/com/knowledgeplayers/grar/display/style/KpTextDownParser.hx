@@ -74,8 +74,9 @@ class KpTextDownParser {
 			substring = substring.substr(2);
 		}
 
-		// Custom Style
-		var regexStyle:EReg = ~/\[(.+)\](.+)\[\/(.+)\]/;
+		// TODO Don't use, remove when not used anymore
+		// Custom Style on the whole line
+		var regexStyle:EReg = ~/^\[(.+)\](.+)\[\/(.+)\]$/;
 		if(regexStyle.match(substring)){
 			styleName = regexStyle.matched(1);
 			substring = regexStyle.replace(substring, "$2");
