@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar;
 
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.utils.assets.AssetsConfig;
 import com.knowledgeplayers.utils.assets.AssetsLoader;
 import com.knowledgeplayers.utils.assets.interfaces.IAsset;
@@ -63,9 +64,8 @@ class GRARPreloader extends NMEPreloader {
 		else{
 			// Loader icon
 			var icon = Assets.getMovieClip("loadingCircular:loading");
-			icon.x = Lib.current.stage.stageWidth / 2 - icon.width / 2;
-			icon.y = Lib.current.stage.stageHeight / 2 - icon.height / 2;
-			//icon.stop();
+			icon.x = Lib.current.stage.stageWidth / 2;
+			icon.y = Lib.current.stage.stageHeight / 2;
 			addChild(icon);
 		}
 	}

@@ -69,70 +69,67 @@ class TweenManager {
 			return transform(display, ref);
 		else if(Reflect.hasField(transition, "repeat"))
 			return wiggle(display, ref);
-        else if(Reflect.hasField(transition, "shutterTransitions"))
-            return discover(display, ref, 0);
+		else if(Reflect.hasField(transition, "shutterTransitions"))
+			return discover(display, ref, 0);
 		else
 			return slide(display, ref);
 	}
 
-
-    /**
+	/**
      * Get a discover in effect for the object
      * @param	display : Target of the tween
      * @param   ref : The name of the fade transition to applied
      * @return the actuator
      **/
 
-    public static function discover(display:DisplayObject, ref:String, it:Int):IGenericActuator
-    {
+	public static function discover(display:DisplayObject, ref:String, it:Int):IGenericActuator
+	{
 
-        if (it < cast(display, Sprite).numChildren) {
+		if(it < cast(display, Sprite).numChildren){
 
-            for (i in 0...cast(display, Sprite).numChildren) {
-                if (i >= it) {
-                    cast(display, Sprite).getChildAt(i).scaleX = 0;
-                    cast(display, Sprite).getChildAt(i).scaleY = 0;
-                }
-            }
+			for(i in 0...cast(display, Sprite).numChildren){
+				if(i >= it){
+					cast(display, Sprite).getChildAt(i).scaleX = 0;
+					cast(display, Sprite).getChildAt(i).scaleY = 0;
+				}
+			}
 
-            var shutter = transitions.get(ref);
+			var shutter = transitions.get(ref);
 
-            var type = shutter.shutterTransitions[Std.int(it%shutter.shutterTransitions.length)];
+			var type = shutter.shutterTransitions[Std.int(it % shutter.shutterTransitions.length)];
 
-            var msk =  cast(display, Sprite).getChildAt(it);
+			var msk = cast(display, Sprite).getChildAt(it);
 
-            switch (type.toLowerCase()) {
-                case "left" :
-                    msk.scaleY = 1;
-                    return Actuate.tween( msk, shutter.duration, { scaleX : 1 }).ease(Linear.easeNone).onComplete(discover,[display, ref, it+1]);
-                case "right" :
-                    msk.scaleY = 1;
-                    msk.scaleX = 1;
-                    msk.x = msk.width;
-                    msk.scaleX = 0;
-                    return Actuate.tween( msk, shutter.duration, { x : 0, scaleX : 1 }).ease(Linear.easeNone).onComplete(discover,[display, ref, it+1]);
-                case "up" :
-                    msk.scaleX = 1;
-                    return Actuate.tween( msk, shutter.duration, { scaleY : 1 }).ease(Linear.easeNone).onComplete(discover,[display, ref, it+1]);
-                case "down" :
-                    msk.scaleX = 1;
-                    msk.scaleY = 1;
-                    var h = msk.height;
-                    msk.y += msk.height;
-                    msk.scaleY = 0;
-                    return Actuate.tween( msk, shutter.duration, { y : msk.y-h, scaleY : 1 }).ease(Linear.easeNone).onComplete(discover,[display, ref, it+1]);
-                default :
-                return null;
+			switch (type.toLowerCase()) {
+				case "left" :
+					msk.scaleY = 1;
+					return Actuate.tween(msk, shutter.duration, { scaleX : 1 }).ease(Linear.easeNone).onComplete(discover, [display, ref, it + 1]);
+				case "right" :
+					msk.scaleY = 1;
+					msk.scaleX = 1;
+					msk.x = msk.width;
+					msk.scaleX = 0;
+					return Actuate.tween(msk, shutter.duration, { x : 0, scaleX : 1 }).ease(Linear.easeNone).onComplete(discover, [display, ref, it + 1]);
+				case "up" :
+					msk.scaleX = 1;
+					return Actuate.tween(msk, shutter.duration, { scaleY : 1 }).ease(Linear.easeNone).onComplete(discover, [display, ref, it + 1]);
+				case "down" :
+					msk.scaleX = 1;
+					msk.scaleY = 1;
+					var h = msk.height;
+					msk.y += msk.height;
+					msk.scaleY = 0;
+					return Actuate.tween(msk, shutter.duration, { y : msk.y - h, scaleY : 1 }).ease(Linear.easeNone).onComplete(discover, [display, ref, it + 1]);
+				default :
+					return null;
 
-            }
+			}
 
-
-
-
-        } else {
-            return null;
-        }
-    }
+		}
+		else{
+			return null;
+		}
+	}
 
 	/**
      * Get a fade in effect for the object
@@ -164,7 +161,8 @@ class TweenManager {
 		var inOutY = parseValue("y", wiggle.y, display);
 		display.x = inOutX[0];
 		display.y = inOutY[0];
-		return Actuate.tween(display, wiggle.duration, {x: inOutX[1], y: inOutY[1]}).repeat(wiggle.repeat).reflect();
+		var repeat = wiggle.repeat % 2 == 0 ? wiggle.repeat + 1 : wiggle.repeat;
+		return Actuate.tween(display, wiggle.duration, {x: inOutX[1], y: inOutY[1]}).repeat(repeat).reflect();
 	}
 
 	/**
@@ -226,7 +224,8 @@ class TweenManager {
 	public static function blink(display:DisplayObject, ref:String):IGenericActuator
 	{
 		var blink = transitions.get(ref);
-		return Actuate.transform(display, blink.duration).color(blink.color).repeat(blink.repeat).reflect();
+		var repeat = blink.repeat % 2 == 0 ? blink.repeat + 1 : blink.repeat;
+		return Actuate.transform(display, blink.duration).color(blink.color).repeat(repeat).reflect();
 	}
 
 	public static function stop(display:DisplayObject, properties:Dynamic, complete:Bool, sendEvent:Bool):Void
@@ -269,9 +268,9 @@ class TweenManager {
 					transition.repeat = Std.parseInt(child.att.repeat);
 				case "transform":
 					transition.color = Std.parseInt(child.att.color);
-                case "mask":
-                    transition.shutterTransitions = child.att.shutterTransitions.split(",");
-                    transition.shutterChaining = child.att.shutterChaining;
+				case "mask":
+					transition.shutterTransitions = child.att.shutterTransitions.split(",");
+					transition.shutterChaining = child.att.shutterChaining;
 			}
 			transitions.set(child.att.ref, transition);
 		}

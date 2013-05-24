@@ -50,6 +50,11 @@ class InventoryDisplay extends Sprite {
 	public var iconScale (default, default):Float;
 
 	/**
+    * Transition when the token icon appears
+    **/
+	public var iconTransition (default, default):String;
+
+	/**
     * Reference to the transition when tooltip appears
     **/
 	public var tipTransitionIn (default, default):String;
@@ -100,6 +105,7 @@ class InventoryDisplay extends Sprite {
 		var icon = fast.node.Icon;
 		iconScale = icon.has.scale ? Std.parseFloat(icon.att.scale) : 1;
 		iconPosition = new Point(Std.parseFloat(icon.att.x), Std.parseFloat(icon.att.y));
+		iconTransition = icon.att.transitionIn;
 
 		var tip:Fast = fast.node.Tooltip;
 		tooltip = new ScrollPanel(Std.parseFloat(tip.att.width), Std.parseFloat(tip.att.height), tip.has.style ? tip.att.style : null);
@@ -204,6 +210,7 @@ class InventoryDisplay extends Sprite {
 			icon.x = iconPosition.x;
 			icon.y = iconPosition.y;
 			slot.addChild(icon);
+			TweenManager.applyTransition(icon, iconTransition);
 			slot.mouseChildren = false;
 			slot.addEventListener(MouseEvent.ROLL_OVER, onOverToken);
 			slot.addEventListener(MouseEvent.MOUSE_OUT, onOutToken);
