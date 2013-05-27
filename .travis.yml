@@ -29,6 +29,8 @@ before_install:
   #- haxelib run nme rebuild tools
   #- haxelib run nme rebuild linux
   #- mkdir bin
+before_script:
+  - cd test
 
 script:
-  - test/runTests.sh
+  - ./runTests.sh
