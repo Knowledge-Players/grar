@@ -1,8 +1,8 @@
-package com.knowledgeplayers.grar.display.activity.quizz;
+package com.knowledgeplayers.grar.display.activity.quiz;
 
 import aze.display.TileLayer;
 import com.knowledgeplayers.grar.factory.UiFactory;
-import com.knowledgeplayers.grar.structure.activity.quizz.QuizzGroup;
+import com.knowledgeplayers.grar.structure.activity.quiz.QuizGroup;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import haxe.xml.Fast;
 import nme.display.Bitmap;
@@ -11,15 +11,15 @@ import nme.display.Sprite;
 import Std;
 
 /**
- * Display for a group of answer in a quizz
+ * Display for a group of answer in a quiz
  */
-class QuizzGroupDisplay extends Sprite {
+class QuizGroupDisplay extends Sprite {
 	/**
      * Model to display
      */
-	public var model (default, setModel):QuizzGroup;
+	public var model (default, setModel):QuizGroup;
 
-	private var items:Array<QuizzItemDisplay>;
+	private var items:Array<QuizItemDisplay>;
 	private var xOffset:Float;
 	private var yOffset:Float;
 	private var itemTemplates:Hash<Fast>;
@@ -32,7 +32,7 @@ class QuizzGroupDisplay extends Sprite {
 	public function new(xOffset:Float = 0, yOffset:Float = 0, width:Float = 0, height:Float = 0, ?separator:BitmapData, ?xml:Fast)
 	{
 		super();
-		items = new Array<QuizzItemDisplay>();
+		items = new Array<QuizItemDisplay>();
 		itemTemplates = new Hash<Fast>();
 		if(xml == null){
 			this.xOffset = xOffset;
@@ -49,7 +49,7 @@ class QuizzGroupDisplay extends Sprite {
 			if(xml.hasNode.Separator){
 				var layer:TileLayer;
 				if(xml.node.Separator.has.spritesheet)
-					layer = new TileLayer(QuizzDisplay.instance.spritesheets.get(xml.node.Separator.att.spritesheet));
+					layer = new TileLayer(QuizDisplay.instance.spritesheets.get(xml.node.Separator.att.spritesheet));
 				else
 					layer = new TileLayer(UiFactory.tilesheet);
 				this.separator = DisplayUtils.getBitmapDataFromLayer(layer.tilesheet, xml.node.Separator.att.id);
@@ -67,7 +67,7 @@ class QuizzGroupDisplay extends Sprite {
      * @return the model
      */
 
-	public function setModel(model:QuizzGroup):QuizzGroup
+	public function setModel(model:QuizGroup):QuizGroup
 	{
 		graphics.clear();
 		this.model = model;
@@ -106,7 +106,7 @@ class QuizzGroupDisplay extends Sprite {
 		unloadItems();
 		for(item in model.items){
 			var itemTemplate = itemTemplates.get(item.ref);
-			var itemDisplay = new QuizzItemDisplay(item, itemTemplate);
+			var itemDisplay = new QuizItemDisplay(item, itemTemplate);
 			itemDisplay.y = totalYOffset;
 			itemDisplay.x = xOffset;
 			totalYOffset += itemDisplay.height + yOffset / 2;

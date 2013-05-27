@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.util;
 
+import com.knowledgeplayers.grar.display.TweenManager;
+import Lambda;
+import com.knowledgeplayers.grar.display.part.DialogDisplay;
+import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
 import com.knowledgeplayers.grar.display.GameManager;
 import nme.events.KeyboardEvent;
 import nme.Lib;
@@ -9,9 +13,7 @@ import nme.ui.Keyboard;
  * Utility class to manage Keyboard inputs
  */
 class KeyboardManager {
-	public static var instance (getInstance, null):KeyboardManager;
-
-	public var game (default, default):GameManager;
+	/*public static var instance (getInstance, null):KeyboardManager;
 
 	public static function getInstance():KeyboardManager
 	{
@@ -23,9 +25,9 @@ class KeyboardManager {
 	private function new()
 	{
 		init();
-	}
+	}*/
 
-	private function init():Void
+	public static function init():Void
 	{
 		Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 		Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
@@ -33,27 +35,30 @@ class KeyboardManager {
 
 	// Handlers
 
-	private function keyDownHandler(ev:KeyboardEvent):Void
+	private static function keyDownHandler(e:KeyboardEvent):Void
 	{
-		// TODO review shortcuts
-		/*if(ev.charCode < 58 && ev.charCode > 47){
-            // charCode - 49 map 0 to 1, 1 to 2, etc
-            game.displayPartById(ev.charCode - 49);
-            return;
-        }*/
-
-		switch(ev.keyCode){
-			//case Keyboard.SPACE: game.currentPart.activityDisplay.showDebrief();
-			case Keyboard.TAB: // Défiler DynBubble;
-			case Keyboard.RIGHT: if(game.parts != null)
-				game.parts.first().nextElement();
-			case Keyboard.D: for(part in game.game.getAllParts()){
-				part.isDone = true;
+		switch(e.keyCode){
+			case Keyboard.SPACE: if(GameManager.instance.activityDisplay != null){
+				var activity = GameManager.instance.activityDisplay.model;
+				activity.score = e.altKey ? 0 : 100;
+				activity.endActivity();
+			}
+			case Keyboard.S: TweenManager.fastForwardDiscover();
+			case Keyboard.RIGHT: if(GameManager.instance.parts != null && !GameManager.instance.parts.isEmpty() && !GameManager.instance.parts.first().introScreenOn){
+				var part = GameManager.instance.parts.first();
+				if(Std.is(part, DialogDisplay) && Lambda.count(cast(part, DialogDisplay).currentPattern.buttons) == 1){
+					part.next(null);
+				}
+				else if(!Std.is(part, DialogDisplay))
+					part.next(null);
+			}
+			case Keyboard.D: for(part in GameManager.instance.game.getAllParts()){
+				GameManager.instance.finishPart(part.id);
 			}
 		}
 	}
 
-	private function keyUpHandler(ev:KeyboardEvent):Void
+	private static function keyUpHandler(ev:KeyboardEvent):Void
 	{
 
 	}

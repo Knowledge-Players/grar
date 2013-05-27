@@ -1,18 +1,18 @@
-package com.knowledgeplayers.grar.structure.activity.quizz;
+package com.knowledgeplayers.grar.structure.activity.quiz;
 
 import com.knowledgeplayers.grar.structure.activity.Activity;
-import com.knowledgeplayers.grar.structure.activity.quizz.QuizzGroup;
+import com.knowledgeplayers.grar.structure.activity.quiz.QuizGroup;
 import haxe.xml.Fast;
 
 /**
- * Structure of the quizz activity
+ * Structure of the quiz activity
  * @author jbrichardet
  */
-class Quizz extends Activity {
+class Quiz extends Activity {
 	/**
      * Group of answers for each rounds
      */
-	public var answers (default, null):Array<QuizzGroup>;
+	public var answers (default, null):Array<QuizGroup>;
 
 	/**
      * Questions for each rounds
@@ -20,7 +20,7 @@ class Quizz extends Activity {
 	public var questions (default, null):Array<{ref:String, content:String}>;
 
 	/**
-     * State of correction of the quizz
+     * State of correction of the quiz
      */
 	public var state (default, default):QuizzState;
 
@@ -34,7 +34,7 @@ class Quizz extends Activity {
 
 	public function new(?content:String)
 	{
-		answers = new Array<QuizzGroup>();
+		answers = new Array<QuizGroup>();
 		questions = new Array<{ref:String, content:String}>();
 		groupRefs = new Array<String>();
 
@@ -59,7 +59,7 @@ class Quizz extends Activity {
      * @return the answers being proposed
      */
 
-	public function getCurrentAnswers():QuizzGroup
+	public function getCurrentAnswers():QuizGroup
 	{
 		return answers[roundIndex];
 	}
@@ -74,8 +74,8 @@ class Quizz extends Activity {
 	}
 
 	/**
-     * Validate the quizz
-     * @return true if the quizz is over
+     * Validate the quiz
+     * @return true if the quiz is over
      */
 
 	public function validate():Bool
@@ -102,7 +102,7 @@ class Quizz extends Activity {
 		for(round in quizz.nodes.Round){
 			groupRefs.push(round.att.groupRef);
 			questions.push({ref: round.node.Question.att.ref, content: round.node.Question.att.content});
-			var group = new QuizzGroup();
+			var group = new QuizGroup();
 			for(answer in round.nodes.Answer){
 				group.addXmlItem(answer);
 			}
@@ -114,7 +114,7 @@ class Quizz extends Activity {
 }
 
 /**
- * Possible state of the quizz
+ * Possible state of the quiz
  */
 enum QuizzState {
 	EMPTY;

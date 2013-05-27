@@ -1,7 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
 import nme.display.Sprite;
-import browser.display.DisplayObjectContainer;
 import nme.geom.ColorTransform;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.eclecticdesignstudio.motion.easing.Cubic;
@@ -30,6 +29,7 @@ import nme.events.Event;
 class TweenManager {
 
 	private static var transitions:Hash<Dynamic> = new Hash<Dynamic>();
+	private static var discovering:{display:Sprite, ref:String};
 
 	/**
     * Apply the given transition to the given displayObject
@@ -87,6 +87,8 @@ class TweenManager {
 
 		if(it < cast(display, Sprite).numChildren){
 
+			discovering = {display: cast(display, Sprite), ref: ref};
+
 			for(i in 0...cast(display, Sprite).numChildren){
 				if(i >= it){
 					cast(display, Sprite).getChildAt(i).scaleX = 0;
@@ -127,8 +129,25 @@ class TweenManager {
 
 		}
 		else{
+			// Element is scrollable. Can't use discover
+			discovering = null;
+			for(i in 0...cast(display, Sprite).numChildren){
+				cast(display, Sprite).getChildAt(i).scaleX = 1;
+				cast(display, Sprite).getChildAt(i).scaleY = 1;
+			}
 			return null;
 		}
+	}
+
+	public static function fastForwardDiscover():Void
+	{
+		if(discovering != null){
+			for(i in 0...discovering.display.numChildren)
+				stop(discovering.display.getChildAt(i), null, true);
+		}
+		// Double if to prevent discovering from being null after a key press during the execution
+		if(discovering != null)
+			discover(discovering.display, discovering.ref, discovering.display.numChildren);
 	}
 
 	/**
@@ -228,9 +247,9 @@ class TweenManager {
 		return Actuate.transform(display, blink.duration).color(blink.color).repeat(repeat).reflect();
 	}
 
-	public static function stop(display:DisplayObject, properties:Dynamic, complete:Bool, sendEvent:Bool):Void
+	public static function stop(target:Dynamic, properties:Dynamic = null, complete:Bool = false, sendEvent:Bool = true):Void
 	{
-		Actuate.stop(display, properties, complete, sendEvent);
+		Actuate.stop(target, properties, complete, sendEvent);
 	}
 
 	/**

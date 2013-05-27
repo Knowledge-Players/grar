@@ -185,34 +185,6 @@ class KpTextDownElement {
 			tf.setPartialStyle(StyleParser.getStyle(mod.style), position, position + mod.match.len - mod.offset);
 		}
 
-		/*for(matched in boldPos){
-			// If there was italic before, position has changed
-			var charOffset:Int = 0;
-			for(pos in modificators){
-				if(pos.array != boldPos){
-					for(match in pos.array){
-						if(match.pos < matched.pos)
-							charOffset += pos.offset;
-					}
-				}
-			}
-			var position = matched.pos - charOffset;
-			// Shift by 2 because we deleted asteriks
-			tf.setPartialStyle(StyleParser.getStyle(styleName + "bold"), position, position + matched.len - 2);
-		}
-		for(matched in italicPos){
-			var charOffset:Int = 0;
-			for(pos in modificators){
-				if(pos.array != italicPos){
-					for(match in pos.array){
-						if(match.pos < matched.pos)
-							charOffset += pos.offset;
-					}
-				}
-			}
-			var position = matched.pos - charOffset;
-			tf.setPartialStyle(StyleParser.getStyle(styleName + "italic"), position, position + matched.len - 2);
-		}*/
 		lineHeight = tf.textHeight / tf.numLines;
 		numLines = tf.numLines;
 		lineWidth = tf.width;

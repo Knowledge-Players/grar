@@ -28,12 +28,12 @@ class StripDisplay extends PartDisplay {
 		boxesref = new Array<String>();
 	}
 
-	// Private
-
-	override private function next(event:ButtonActionEvent):Void
+	override public function next(event:ButtonActionEvent):Void
 	{
 		startPattern(currentBox);
 	}
+
+	// Private
 
 	override private function createElement(elemNode:Fast):Void
 	{

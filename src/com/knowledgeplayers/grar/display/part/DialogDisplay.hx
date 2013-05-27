@@ -19,7 +19,11 @@ import nme.events.MouseEvent;
 
 class DialogDisplay extends PartDisplay {
 
-	private var currentPattern:Pattern;
+	/**
+	* Pattern playing
+	**/
+	public var currentPattern:Pattern;
+
 	private var nextActivity:Activity;
 
 	/**
@@ -32,9 +36,7 @@ class DialogDisplay extends PartDisplay {
 		super(part);
 	}
 
-	// Private
-
-	override private function next(event:ButtonActionEvent):Void
+	override public function next(event:ButtonActionEvent):Void
 	{
 		if(nextActivity != null){
 			GameManager.instance.displayActivity(nextActivity);
@@ -43,6 +45,8 @@ class DialogDisplay extends PartDisplay {
 		else
 			startPattern(currentPattern);
 	}
+
+	// Private
 
 	override private function startPattern(pattern:Pattern):Void
 	{
@@ -116,7 +120,6 @@ class DialogDisplay extends PartDisplay {
 
 	private function onOverChoice(e:MouseEvent):Void
 	{
-		//cpp n'aime pas e.target
 		var choiceButton = cast(e.currentTarget, DefaultButton);
 		var pattern = cast(currentPattern, ChoicePattern);
 		var choice:Choice = null;

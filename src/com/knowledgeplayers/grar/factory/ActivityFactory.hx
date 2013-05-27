@@ -3,7 +3,7 @@ package com.knowledgeplayers.grar.factory;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.activity.cards.Cards;
 import com.knowledgeplayers.grar.structure.activity.folder.Folder;
-import com.knowledgeplayers.grar.structure.activity.quizz.Quizz;
+import com.knowledgeplayers.grar.structure.activity.quiz.Quiz;
 import com.knowledgeplayers.grar.structure.activity.scanner.Scanner;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.score.ScoreChart;
@@ -30,7 +30,7 @@ class ActivityFactory {
 	{
 		var creation:Activity = null;
 		switch (activityType.toLowerCase()) {
-			case "quizz": creation = new Quizz(content);
+			case "quiz": creation = new Quiz(content);
 			case "scanner": creation = new Scanner(content);
 			case "folder": creation = new Folder(content);
 			case "cards": creation = new Cards(content);

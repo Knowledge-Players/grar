@@ -134,23 +134,7 @@ class KpDisplay extends Sprite {
 
 	private function createText(textNode:Fast):Void
 	{
-		var background:String = textNode.has.background ? textNode.att.background : null;
-		var spritesheet = null;
-		if(background != null && background.indexOf(".") < 0 && textNode.has.spritesheet)
-			spritesheet = spritesheets.get(textNode.att.spritesheet);
-
-		var scrollable = textNode.has.scrollable ? textNode.att.scrollable == "true" : true;
-		var styleSheet = textNode.has.style ? textNode.att.style : null;
-		var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height), !scrollable, styleSheet);
-		if(textNode.has.textTransition)
-			text.textTransition = textNode.att.textTransition;
-		if(background != null)
-			text.setBackground(background, spritesheet, textNode.has.alpha ? Std.parseFloat(textNode.att.alpha) : 1);
-		if(textNode.has.transitionIn)
-			text.transitionIn = textNode.att.transitionIn;
-		if(textNode.has.transitionOut)
-			text.transitionOut = textNode.att.transitionOut;
-		addElement(text, textNode);
+		addElement(UiFactory.createTextFromXml(textNode, spritesheets), textNode);
 	}
 
 	private function createTextGroup(textNode:Fast):Void

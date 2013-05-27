@@ -46,6 +46,8 @@ class PartDisplay extends KpDisplay {
     **/
 	public var transitionOut (default, default):String;
 
+	public var introScreenOn (default, null):Bool = false;
+
 	private var currentElement:PartElement;
 	private var resizeD:ResizeManager;
 	private var currentSpeaker:CharacterDisplay;
@@ -160,11 +162,6 @@ class PartDisplay extends KpDisplay {
 		}
 
 		else if(currentElement.isPattern()){
-			/*if(Localiser.instance.layoutPath != part.file){
-				Localiser.instance.addEventListener(LocaleEvent.LOCALE_LOADED, onLocaleLoaded);
-				Localiser.instance.setLayoutFile(part.file);
-			}
-			else*/
 			startPattern(cast(currentElement, Pattern));
 		}
 
@@ -183,7 +180,6 @@ class PartDisplay extends KpDisplay {
 
 	public function startPart(startPosition:Int = -1):Void
 	{
-		//GameManager.instance.game.start(part.id);
 		TweenManager.applyTransition(this, transitionIn);
 		nextElement(startPosition);
 	}
@@ -197,6 +193,11 @@ class PartDisplay extends KpDisplay {
 		if(displayFast.has.transitionOut)
 			transitionOut = displayFast.att.transitionOut;
 
+	}
+
+	public function next(event:ButtonActionEvent):Void
+	{
+		nextElement();
 	}
 
 	// Privates
@@ -262,11 +263,6 @@ class PartDisplay extends KpDisplay {
 			event.part = part;
 			dispatchEvent(event);
 		}
-	}
-
-	private function next(event:ButtonActionEvent):Void
-	{
-		nextElement();
 	}
 
 	private function startPattern(pattern:Pattern):Void
@@ -371,7 +367,6 @@ class PartDisplay extends KpDisplay {
 		}
 
 		setSpeaker(item.author, item.transition);
-
 		if(item.introScreen != null){
 
 			for(i in 0...numChildren){
@@ -391,9 +386,10 @@ class PartDisplay extends KpDisplay {
 			introDisplay.setText(Localiser.instance.getItemContent(intro.content));
 			introDisplay.addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
 			{
+				introScreenOn = false;
 				setText(item, isFirst);
 			});
-
+			introScreenOn = true;
 			displayArea.addChild(introDisplay);
 		}
 		else

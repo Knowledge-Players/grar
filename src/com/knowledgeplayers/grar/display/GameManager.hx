@@ -64,8 +64,12 @@ class GameManager extends EventDispatcher {
 
 	public var menuLoaded (default, setMenuLoaded):Bool = false;
 
+	/**
+	* Current activity display
+	**/
+	public var activityDisplay (default, null):ActivityDisplay;
+
 	private var layout:Layout;
-	private var activityDisplay:ActivityDisplay;
 	private var nbVolume:Float = 1;
 
 	private var soundControl:SoundTransform;
@@ -233,6 +237,10 @@ class GameManager extends EventDispatcher {
 		displayPart(game.start(id), interrupt);
 	}
 
+	/**
+	* Get the name link to this ID
+	**/
+
 	public function getItemName(id:String):String
 	{
 		if(game.getItemName(id) != null)
@@ -241,6 +249,18 @@ class GameManager extends EventDispatcher {
 			return ActivityManager.instance.activities.get(id).name;
 		else
 			throw "[GameManager] Unable to find the name of item \"" + id + "\".";
+	}
+
+	/**
+	* End a part. Update internal state accordingly
+	**/
+
+	public function finishPart(partId:String):Void
+	{
+		game.stateInfos.setPartFinished(partId);
+		var event = new PartEvent(PartEvent.EXIT_PART);
+		event.partId = partId;
+		dispatchEvent(event);
 	}
 
 	// Privates
@@ -260,8 +280,7 @@ class GameManager extends EventDispatcher {
 		parts = new FastList<PartDisplay>();
 		inventory = new Hash<Token>();
 		tokensImages = new Hash<{small:BitmapData, large:BitmapData}>();
-		// Set Keyboard Manager
-		KeyboardManager.instance.game = this;
+		KeyboardManager.init();
 	}
 
 	private function parseTokens(tokens:Xml):Void
@@ -342,14 +361,6 @@ class GameManager extends EventDispatcher {
 			activityDisplay.endActivity();
 			activityDisplay = null;
 		}
-	}
-
-	private function finishPart(partId:String):Void
-	{
-		game.stateInfos.setPartFinished(partId);
-		var event = new PartEvent(PartEvent.EXIT_PART);
-		event.partId = partId;
-		dispatchEvent(event);
 	}
 
 	private function setBookmark(partId:String):Void

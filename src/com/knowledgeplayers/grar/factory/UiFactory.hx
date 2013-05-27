@@ -174,14 +174,28 @@ class UiFactory {
     * @return a textfield
     **/
 
-	public static function createTextFromXml(xml:Fast):ScrollPanel
+	public static function createTextFromXml(textNode:Fast, ?spritesheets:Hash<TilesheetEx>):ScrollPanel
 	{
-		var text = new ScrollPanel(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), xml.has.style ? xml.att.style : null);
-		text.x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
-		text.y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
+		var background:String = textNode.has.background ? textNode.att.background : null;
+		var spritesheet = null;
+		if(background != null && background.indexOf(".") < 0 && textNode.has.spritesheet && spritesheets != null)
+			spritesheet = spritesheets.get(textNode.att.spritesheet);
 
-		if(xml.has.background)
-			text.setBackground(xml.att.background);
+		var scrollable = textNode.has.scrollable ? textNode.att.scrollable == "true" : true;
+		var styleSheet = textNode.has.style ? textNode.att.style : null;
+		var text = new ScrollPanel(Std.parseFloat(textNode.att.width), Std.parseFloat(textNode.att.height), !scrollable, styleSheet);
+		if(textNode.has.textTransition)
+			text.textTransition = textNode.att.textTransition;
+		if(background != null)
+			text.setBackground(background, spritesheet, textNode.has.alpha ? Std.parseFloat(textNode.att.alpha) : 1);
+		if(textNode.has.transitionIn)
+			text.transitionIn = textNode.att.transitionIn;
+		if(textNode.has.transitionOut)
+			text.transitionOut = textNode.att.transitionOut;
+
+		text.x = textNode.has.x ? Std.parseFloat(textNode.att.x) : 0;
+		text.y = textNode.has.y ? Std.parseFloat(textNode.att.y) : 0;
+
 		return text;
 	}
 
