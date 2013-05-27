@@ -2,7 +2,7 @@ package com.knowledgeplayers.grar.display.activity.folder;
 
 import nme.filters.BitmapFilter;
 import StringTools;
-import com.eclecticdesignstudio.motion.Actuate;
+import motion.Actuate;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.style.StyleParser;

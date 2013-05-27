@@ -1,23 +1,24 @@
 package com.knowledgeplayers.grar.display;
 
+import motion.actuators.GenericActuator.IGenericActuator;
 import nme.display.Sprite;
 import nme.geom.ColorTransform;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
-import com.eclecticdesignstudio.motion.easing.Cubic;
-import com.eclecticdesignstudio.motion.Actuate;
-import com.eclecticdesignstudio.motion.actuators.GenericActuator.IGenericActuator;
+import motion.easing.Cubic;
+import motion.Actuate;
+import motion.actuators.GenericActuator;
 
-import com.eclecticdesignstudio.motion.easing.IEasing;
+import motion.easing.IEasing;
 
-import com.eclecticdesignstudio.motion.easing.Linear;
-import com.eclecticdesignstudio.motion.easing.Cubic;
-import com.eclecticdesignstudio.motion.easing.Back;
-import com.eclecticdesignstudio.motion.easing.Bounce;
-import com.eclecticdesignstudio.motion.easing.Elastic;
-import com.eclecticdesignstudio.motion.easing.Quad;
-import com.eclecticdesignstudio.motion.easing.Quart;
-import com.eclecticdesignstudio.motion.easing.Quint;
-import com.eclecticdesignstudio.motion.easing.Sine;
+import motion.easing.Linear;
+import motion.easing.Cubic;
+import motion.easing.Back;
+import motion.easing.Bounce;
+import motion.easing.Elastic;
+import motion.easing.Quad;
+import motion.easing.Quart;
+import motion.easing.Quint;
+import motion.easing.Sine;
 
 import haxe.xml.Fast;
 import nme.display.DisplayObject;
@@ -303,7 +304,7 @@ class TweenManager {
 			var easingType = transition.easingType.charAt(0).toUpperCase() + transition.easingType.substr(1).toLowerCase();
 			var easingStyle = "Ease" + transition.easingStyle.charAt(0).toUpperCase() + transition.easingStyle.substr(1).toLowerCase();
 
-			return Type.createEmptyInstance(Type.resolveClass("com.eclecticdesignstudio.motion.easing." + easingType + easingStyle));
+			return Type.createEmptyInstance(Type.resolveClass("motion.easing." + easingType + easingStyle));
 		}
 		else{
 			return Linear.easeNone;

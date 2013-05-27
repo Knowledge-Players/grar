@@ -3,7 +3,7 @@ package com.knowledgeplayers.grar.display.activity.cards;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import aze.display.TileClip;
 import aze.display.TileLayer;
-import com.eclecticdesignstudio.motion.Actuate;
+import motion.Actuate;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.style.StyleParser;
 

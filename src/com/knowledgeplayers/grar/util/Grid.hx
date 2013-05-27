@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.util;
 
-import com.eclecticdesignstudio.motion.Actuate;
+import motion.Actuate;
 import nme.display.DisplayObject;
 import nme.geom.Point;
 

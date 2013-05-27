@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.display.component.button;
 
 import nme.Lib;
-import com.eclecticdesignstudio.motion.Actuate;
+import motion.Actuate;
 import aze.display.TileClip;
 import aze.display.TileLayer;
 import aze.display.TileSprite;
