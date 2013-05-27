@@ -11,7 +11,7 @@ before_install:
   - haxelib setup ~/haxelib
   - haxelib git munit https://github.com/massiveinteractive/MassiveUnit.git src
   - haxelib git mockatoo https://github.com/misprintt/mockatoo.git src
-  - haxelib install actuate
+  - haxelib git actuate https://github.com/jgranick/actuate.git
   - haxelib git hamcrest https://github.com/mikestead/hamcrest-haxe.git src
   - haxelib git tilelayer https://github.com/elsassph/nme-tilelayer.git haxelib
   
