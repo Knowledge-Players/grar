@@ -1,0 +1,34 @@
+language: c++
+
+before_install:
+  - sudo apt-get install python-software-properties -y # for the next command
+  - sudo add-apt-repository ppa:eyecreate/haxe -y
+  - sudo apt-get update
+  - sudo apt-get install haxe -y --force-yes
+  - sudo apt-get install gcc-multilib g++-multilib -y # since VM is 64bit but hxcpp builds 32bit by default
+  - sudo apt-get install mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev -y # for nme
+  - mkdir ~/haxelib
+  - haxelib setup ~/haxelib
+  - haxelib git munit https://github.com/massiveinteractive/MassiveUnit.git src
+  - haxelib git mockatoo https://github.com/misprintt/mockatoo.git src
+  - haxelib git actuate https://github.com/jgranick/actuate.git
+  - haxelib git hamcrest https://github.com/mikestead/hamcrest-haxe.git src
+  - haxelib git tilelayer https://github.com/elsassph/nme-tilelayer.git haxelib
+  - wget http://lib.haxe.org/files/3.0/nme-3,5,6.zip
+  - haxelib local nme-3,5,6.zip
+  - wget http://lib.haxe.org/files/3.0/hxcpp-3,0,2.zip
+  - haxelib local hxcpp-3,0,2.zip
+  # NME dev
+  #- haxelib dev nme $(pwd)
+  #- haxelib git nmedev https://github.com/haxenme/nmedev.git
+  #- haxelib git swf https://github.com/haxenme/swf.git
+  #- haxelib git xfl https://github.com/haxenme/xfl.git
+  #- haxelib git svg https://github.com/haxenme/svg.git
+  #- haxelib git hxcpp https://github.com/haxe-mirrors/hxcpp.git
+  #- haxelib git format https://github.com/haxe-mirrors/hxformat.git
+  #- haxelib run nme rebuild tools
+  #- haxelib run nme rebuild linux
+  #- mkdir bin
+
+script:
+  - test/runTests.sh
