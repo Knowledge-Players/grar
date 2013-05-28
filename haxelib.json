@@ -1,0 +1,16 @@
+{
+    "name": "grar",
+    "url": "http://knowledge-players.github.io/grar/",
+    "license": "MIT",
+    "tags": [ "cpp", "flash" ],
+    "description": "GRAR is a powerful engine designed for training applications. Create an e-learning app just with XML",
+    "version": "1.0.0",
+    "releasenote": "Finalized for v1, support Haxe3",
+    "contributors": [ "JbIPS", "kevglx", "vincenet" ],
+    "dependencies": {
+        "nme": "",
+        "actuate": "",
+        "tilelayer": "",
+        "ExAM": ""
+    }
+}
