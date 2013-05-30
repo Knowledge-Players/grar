@@ -192,6 +192,7 @@ class UiFactory {
 			text.transitionIn = textNode.att.transitionIn;
 		if(textNode.has.transitionOut)
 			text.transitionOut = textNode.att.transitionOut;
+		text.textAlpha = textNode.has.textAlpha ? Std.parseFloat(textNode.att.textAlpha) : 1;
 
 		text.x = textNode.has.x ? Std.parseFloat(textNode.att.x) : 0;
 		text.y = textNode.has.y ? Std.parseFloat(textNode.att.y) : 0;

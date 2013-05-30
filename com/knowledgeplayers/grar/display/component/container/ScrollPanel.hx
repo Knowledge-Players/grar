@@ -48,6 +48,11 @@ class ScrollPanel extends Sprite {
 	**/
 	public var transitionOut (default, default):String;
 
+	/**
+	* Alpha of the text only
+	**/
+	public var textAlpha (default, set_textAlpha):Float = 1;
+
 	private var scrollBar:ScrollBar;
 	private var maskWidth:Float;
 	private var maskHeight:Float;
@@ -137,7 +142,7 @@ class ScrollPanel extends Sprite {
 
 			}
 			content.addChild(item);
-
+			content.alpha = textAlpha;
 		}
 
 		content.mask = mask;
@@ -185,6 +190,12 @@ class ScrollPanel extends Sprite {
 
 			this.addChildAt(bkg, 0);
 		}
+	}
+
+	public function set_textAlpha(alpha:Float):Float
+	{
+		content.alpha = alpha;
+		return textAlpha = alpha;
 	}
 
 	// Private
