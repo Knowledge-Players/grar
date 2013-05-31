@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import nme.Lib;
+import nme.display.DisplayObject;
 import com.knowledgeplayers.grar.structure.Token;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
@@ -84,9 +86,14 @@ class InventoryDisplay extends Sprite {
 	private var largeImage:Bitmap;
 	private var background:Sprite;
 	private var title:ScrollPanel;
+    private var imgSlot:Sprite;
 
 	private var fullScreenTransitionIn:String;
 	private var fullScreenTransitionOut:String;
+    private var iconPage:Bitmap;
+
+
+
 
 	/**
     * Constructor
@@ -96,6 +103,7 @@ class InventoryDisplay extends Sprite {
 	public function new(?fast:Fast)
 	{
 		super();
+
 		x = Std.parseFloat(fast.att.x);
 		y = Std.parseFloat(fast.att.y);
 		maxWidth = Std.parseFloat(fast.att.width);
@@ -132,6 +140,7 @@ class InventoryDisplay extends Sprite {
 
 		slots = new Map<String, Sprite>();
 
+
 		if(fast.hasNode.Fullscreen){
 
 			var fullscreen:Fast = fast.node.Fullscreen;
@@ -151,12 +160,14 @@ class InventoryDisplay extends Sprite {
 				title.y = Std.parseFloat(t.att.y);
 			}
 			if(fullscreen.hasNode.Item){
+
 				var img:Fast = fullscreen.node.Item;
 				largeImage = new Bitmap();
 				largeImage.scaleX = largeImage.scaleY = Std.parseFloat(img.att.scale);
 				largeImage.x = Std.parseFloat(img.att.x);
 				largeImage.y = Std.parseFloat(img.att.y);
 			}
+
 			closeButton = UiFactory.createButtonFromXml(fullscreen.node.Button);
 			if(fullscreen.node.Button.att.action == "close")
 				closeButton.addEventListener("close", closeFullscreen);
@@ -210,11 +221,18 @@ class InventoryDisplay extends Sprite {
 			icon.x = iconPosition.x;
 			icon.y = iconPosition.y;
 			slot.addChild(icon);
+
+            iconPage = new Bitmap(GameManager.instance.tokensImages.get(e.token.ref).small);
+            iconPage.scaleX = iconPage.scaleY = iconScale;
+            iconPage.x = iconPosition.x;
+            iconPage.y = iconPosition.y;
+
 			TweenManager.applyTransition(icon, iconTransition);
 			slot.mouseChildren = false;
 			slot.addEventListener(MouseEvent.ROLL_OVER, onOverToken);
 			slot.addEventListener(MouseEvent.MOUSE_OUT, onOutToken);
 			slot.addEventListener(MouseEvent.CLICK, onClickToken);
+
 		}
 	}
 
@@ -232,16 +250,26 @@ class InventoryDisplay extends Sprite {
 			title.setContent(Localiser.instance.getItemContent(token.name));
 			closeButton.setText(Localiser.instance.getItemContent(token.fullScreenContent));
 		}
+        imgSlot = new Sprite();
+
+        //imgSlot.addChild(new Bitmap(slotBackgroundUnlocked));
+        imgSlot.addChild(iconPage);
+
 		parent.addChild(largeImage);
 		parent.addChild(closeButton);
 		parent.addChild(contentToken);
 		parent.addChild(title);
+        parent.addChild(imgSlot);
+
+        imgSlot.x = 200;
+        imgSlot.y = 0;
 		if(fullScreenTransitionIn != null){
 			TweenManager.applyTransition(largeImage, fullScreenTransitionIn);
 			TweenManager.applyTransition(background, fullScreenTransitionIn);
 			TweenManager.applyTransition(closeButton, fullScreenTransitionIn);
 			TweenManager.applyTransition(contentToken, fullScreenTransitionIn);
 			TweenManager.applyTransition(title, fullScreenTransitionIn);
+			TweenManager.applyTransition(imgSlot, fullScreenTransitionIn);
 
 		}
 
@@ -254,6 +282,7 @@ class InventoryDisplay extends Sprite {
 			TweenManager.applyTransition(background, fullScreenTransitionOut);
 			TweenManager.applyTransition(closeButton, fullScreenTransitionOut);
 			TweenManager.applyTransition(contentToken, fullScreenTransitionOut);
+			TweenManager.applyTransition(imgSlot, fullScreenTransitionOut);
 			TweenManager.applyTransition(title, fullScreenTransitionOut).onComplete(removeElements);
 
 		}
@@ -269,6 +298,8 @@ class InventoryDisplay extends Sprite {
 		parent.removeChild(closeButton);
 		parent.removeChild(contentToken);
 		parent.removeChild(title);
+        parent.removeChild(imgSlot);
+
 	}
 
 	private function onOverToken(e:MouseEvent):Void
