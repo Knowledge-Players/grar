@@ -315,10 +315,11 @@ public function getItemName(id:String):Null<String>
 if(this.id == id)
 return this.name;
 var name = null;
-for(elem in elements){
-if(elem.isPart()){
-name = cast(elem, Part).getItemName(id);
-}
+var i = 0;
+while(i < elements.length && name == null){
+if(elements[i].isPart())
+name = cast(elements[i], Part).getItemName(id);
+i++;
 }
 return name;
 }
