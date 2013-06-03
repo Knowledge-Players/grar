@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Grar>
+    <Parameters>
+        <!-- LMS mode : AICC/SCORM -->
+        <Mode>SCORM</Mode>
+        <!-- Module title -->
+        <Title>MyApp</Title>
+        <!-- State of the local save -->
+        <State>en@0@0@1</State>
+        <!-- Layout file for the app -->
+        <Layout file=""/>
+        <!-- Paths to the langages files -->
+        <Languages file=""xml/lang.xml""/>
+    </Parameters>
+    <!-- List of static displays -->
+    <Display>
+        <Activity display=""/>
+        <Style file=""/>
+        <Ui display=""/>
+    </Display>
+    <!-- Structure of the application -->
+    <Structure ref="main" inventory="" menu="">
+        <Part id="intro" name="part1" type="" file=""/>
+    </Structure>
+</Grar>

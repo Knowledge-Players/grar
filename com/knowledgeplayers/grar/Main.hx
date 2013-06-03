@@ -7,6 +7,7 @@ import nme.Assets;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.structure.Game;
 import com.knowledgeplayers.grar.structure.KpGame;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 import nme.Lib;
 
 class Main {
@@ -32,8 +33,7 @@ class Main {
 		game = new KpGame();
 
 		game.addEventListener(PartEvent.PART_LOADED, onLoadingComplete);
-		game.init(Xml.parse(Assets.getText("structure.xml")));
-
+		game.init(AssetsStorage.getXml("structure.xml"));
 	}
 
 	private function onLoadingComplete(e:PartEvent):Void
