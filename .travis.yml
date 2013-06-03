@@ -9,16 +9,10 @@ before_install:
   - sudo apt-get install mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev -y # for nme
   - mkdir ~/haxelib
   - haxelib setup ~/haxelib
-  - haxelib git munit https://github.com/massiveinteractive/MassiveUnit.git src
-  - haxelib git mockatoo https://github.com/misprintt/mockatoo.git src
-  - haxelib git mcover https://github.com/massiveinteractive/MassiveCover.git src
   - haxelib git actuate https://github.com/jgranick/actuate.git
-  - haxelib git hamcrest https://github.com/mikestead/hamcrest-haxe.git src
-  - haxelib git tilelayer https://github.com/elsassph/nme-tilelayer.git haxelib
+  - haxelib git tilelayer https://github.com/JbIPS/nme-tilelayer.git haxelib
   - wget http://lib.haxe.org/files/3.0/nme-3,5,6.zip
   - haxelib local nme-3,5,6.zip
-  - wget http://lib.haxe.org/files/3.0/hxcpp-3,0,2.zip
-  - haxelib local hxcpp-3,0,2.zip
 
 script:
   - haxe build.hxml
