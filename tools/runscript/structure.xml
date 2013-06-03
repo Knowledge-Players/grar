@@ -4,13 +4,13 @@
         <!-- LMS mode : AICC/SCORM -->
         <Mode>SCORM</Mode>
         <!-- Module title -->
-        <Title>MyApp</Title>
+        <Title></Title>
         <!-- State of the local save -->
         <State>en@0@0@1</State>
         <!-- Layout file for the app -->
         <Layout file=""/>
         <!-- Paths to the langages files -->
-        <Languages file=""xml/lang.xml""/>
+        <Languages file=""/>
     </Parameters>
     <!-- List of static displays -->
     <Display>
