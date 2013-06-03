@@ -46,7 +46,7 @@ class RunScript{
 			bkgColor = Std.parseInt(args[5]);
 		}
 		if(args.length > 7){
-			fonts = FileSystem.fullPath(args[6]);
+			fonts = args[6];
 		}
 		if(args.length > 8){
 			loader = FileSystem.fullPath(args[7]);
