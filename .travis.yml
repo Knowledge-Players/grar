@@ -14,7 +14,7 @@ before_install:
   - haxelib local master.zip
   - wget http://lib.haxe.org/files/3.0/nme-3,5,6.zip
   - haxelib local nme-3,5,6.zip
-  - haxelib install ExAM
+  - haxelib install exam
 
 script:
   - haxe build.hxml
