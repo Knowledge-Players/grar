@@ -76,6 +76,13 @@ class DisplayUtils {
 		sprite.graphics.endFill();
 	}
 
+	public static function maskSprite(sprite: Sprite, maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0):Void
+	{
+		var mask = new Sprite();
+		initSprite(mask, maskWidth, maskHeight, 0, 1, maskX == 0 ? sprite.x : maskX, maskY == 0 ? sprite.y : maskY);
+		sprite.mask = mask;
+	}
+
 	/**
     * @param    layer : Layer with all tiles
     * @param    tileId : Id of the tile to get

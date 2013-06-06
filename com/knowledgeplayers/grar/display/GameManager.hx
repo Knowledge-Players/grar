@@ -62,7 +62,7 @@ class GameManager extends EventDispatcher {
     **/
 	public var tokensImages (default, null):Map<String, {small:BitmapData, large:BitmapData}>;
 
-	public var menuLoaded (default, set_menuLoaded):Bool = false;
+	public var menuLoaded (default, set_menuLoaded):Bool = true;
 
 	/**
 	* Current activity display
@@ -307,8 +307,12 @@ class GameManager extends EventDispatcher {
 	{
 		finishPart(cast(event.target.part, Part).id);
 		var finishedPart = parts.pop();
-		if(finishedPart.part.parent == null)
-			displayPartById(finishedPart.part.next);
+		if(finishedPart.part.parent == null){
+			if(finishedPart.part.next != null)
+				displayPartById(finishedPart.part.next);
+			else
+				dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+		}
 		else if(!parts.isEmpty() && parts.first().part == finishedPart.part.parent){
 			parts.first().visible = true;
 			parts.first().nextElement();
@@ -322,8 +326,10 @@ class GameManager extends EventDispatcher {
 	{
 		setBookmark(event.partId);
 		var partDisplay = cast(event.target, PartDisplay);
+
 		partDisplay.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		partDisplay.startPart(startIndex);
+
 		layout.zones.get(game.ref).addChild(partDisplay);
 
 		var event = new PartEvent(PartEvent.ENTER_PART);

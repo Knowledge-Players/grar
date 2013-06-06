@@ -8,7 +8,6 @@ import nme.events.IEventDispatcher;
 
 interface Game extends IEventDispatcher {
 	public var mode (default, default):Mode;
-	public var title (default, default):String;
 	public var state (default, default):String;
 	public var inventory (default, null):Array<Token>;
 	public var ref (default, default):String;

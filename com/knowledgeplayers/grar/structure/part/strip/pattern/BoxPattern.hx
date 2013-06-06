@@ -4,6 +4,8 @@ import com.knowledgeplayers.grar.structure.part.Pattern;
 
 class BoxPattern extends Pattern {
 
+	public var background (default, default):String;
+
 	/**
     * Constructor
     * @param name : Name of the pattern

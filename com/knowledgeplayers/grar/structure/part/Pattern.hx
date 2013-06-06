@@ -13,6 +13,7 @@ class Pattern implements PartElement {
 	/**
      * Name of the pattern
      */
+	// TODO change to id
 	public var name (default, default):String;
 
 	/**

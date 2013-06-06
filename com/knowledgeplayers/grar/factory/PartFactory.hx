@@ -28,8 +28,8 @@ class PartFactory {
 		switch(partType.toLowerCase()) {
 			case "dialog": creation = new DialogPart();
 			case "strip" : creation = new StripPart();
-			default: creation = new StructurePart();
-			//nme.Lib.trace(partType + ": Unsupported part type. Creating a default Part instead.");
+			case "" : creation = new StructurePart();
+			default: throw "[PartFactory] Unsupported part type '$partType.";
 		}
 
 		return creation;

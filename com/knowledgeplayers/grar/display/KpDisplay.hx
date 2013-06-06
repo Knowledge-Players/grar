@@ -95,20 +95,20 @@ class KpDisplay extends Sprite {
 			var spritesheet;
 			var itemTile;
 			if(itemNode.has.spritesheet){
-				itemTile = new TileSprite(layers.get(itemNode.att.spritesheet), itemNode.att.id);
-				layers.get(itemNode.att.spritesheet).addChild(itemTile);
 				spritesheet = itemNode.att.spritesheet;
 			}
 			else{
 				spritesheet = "ui";
-				if(!layers.exists("ui")){
+				if(!layers.exists(spritesheet)){
 					var layer = new TileLayer(UiFactory.tilesheet);
-					layers.set("ui", layer);
+					layers.set(spritesheet, layer);
 				}
-				itemTile = new TileSprite(layers.get("ui"), itemNode.att.id);
-				layers.get("ui").addChild(itemTile);
 			}
-
+			itemTile = new TileSprite(layers.get(spritesheet), itemNode.att.id);
+			if(itemNode.has.x)
+				itemTile.x = Std.parseFloat(itemNode.att.x);
+			if(itemNode.has.y)
+				itemTile.y = Std.parseFloat(itemNode.att.y);
 			if(itemNode.has.scale)
 				itemTile.scale = Std.parseFloat(itemNode.att.scale);
 			if(itemNode.has.mirror){
@@ -119,7 +119,14 @@ class KpDisplay extends Sprite {
 				}
 			}
 
-			addElement(layers.get(spritesheet).view, itemNode);
+			itemTile.visible = false;
+			layers.get(spritesheet).addChild(itemTile);
+
+			if(!displays.exists(spritesheet))
+				displays.set(spritesheet, {obj: layers.get(spritesheet).view, z: zIndex++});
+
+			displaysFast.set(itemNode.att.id, itemNode);
+			//addElement(layers.get(spritesheet).view, itemNode);
 		}
 
 	}
@@ -156,10 +163,11 @@ class KpDisplay extends Sprite {
 		var mirror = character.has.mirror ? character.att.mirror : null;
 		var char:CharacterDisplay = new CharacterDisplay(spritesheets.get(character.att.spritesheet), character.att.id, new Character(character.att.ref), mirror);
 		char.visible = false;
-		char.origin = {pos: new Point(Std.parseFloat(character.att.x), Std.parseFloat(character.att.y)), scale: Std.parseFloat(character.att.scale)};
-		char.nameRef = character.att.nameRef;
+		if(character.has.nameRef)
+			char.nameRef = character.att.nameRef;
 		if(character.has.scale)
 			char.scale = Std.parseFloat(character.att.scale);
+		char.origin = {pos: new Point(Std.parseFloat(character.att.x), Std.parseFloat(character.att.y)), scale: char.scale};
 		addElement(char, character);
 
 	}

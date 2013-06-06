@@ -25,12 +25,13 @@ class PatternFactory {
      * @return the pattern or null if the type is not supported
      */
 
-	public static function createPattern(patternType:String, patternName:String):Null<Pattern>
+	public static function createPattern(patternType:String, patternName:String, ?background: String):Null<Pattern>
 	{
 		var creation:Pattern = null;
 		switch(patternType.toLowerCase()) {
 			case "link": creation = new Pattern(patternName);
 			case "box": creation = new BoxPattern(patternName);
+						cast(creation, BoxPattern).background = background;
 			case "choice": creation = new ChoicePattern(patternName);
 			case "activity": creation = new ActivityPattern(patternName);
 			default: Lib.trace(patternType + ": Unsupported pattern type");
@@ -48,6 +49,6 @@ class PatternFactory {
 
 	public static function createPatternFromXml(xml:Fast):Null<Pattern>
 	{
-		return createPattern(xml.att.type, xml.att.id);
+		return createPattern(xml.att.type, xml.att.id, xml.has.background ? xml.att.background: null);
 	}
 }

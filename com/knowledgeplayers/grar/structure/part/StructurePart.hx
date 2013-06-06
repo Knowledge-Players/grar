@@ -152,15 +152,15 @@ soundLoopChannel.stop();
 
 public function getNextElement(startIndex:Int = - 1):Null<PartElement>
 {
-if(startIndex > - 1)
-elemIndex = startIndex;
-if(elemIndex < elements.length){
-elemIndex++;
-return elements[elemIndex - 1];
-}
-else{
-return null;
-}
+	if(startIndex > - 1)
+		elemIndex = startIndex;
+	if(elemIndex < elements.length){
+		elemIndex++;
+		return elements[elemIndex - 1];
+	}
+	else{
+		return null;
+	}
 }
 
 /**
@@ -334,7 +334,6 @@ partFast = partFast.node.Part;
 
 if(partFast.has.next)
 next = partFast.att.next;
-
 for(child in partFast.elements){
 switch(child.name.toLowerCase()){
 case "text":

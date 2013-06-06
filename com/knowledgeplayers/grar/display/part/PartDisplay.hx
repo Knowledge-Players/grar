@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import aze.display.TileSprite;
+import aze.display.TileLayer;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.contextual.InventoryDisplay;
@@ -92,6 +94,7 @@ class PartDisplay extends KpDisplay {
 		if(currentElement != null && currentElement.isPattern())
 			startPattern(cast(currentElement, Pattern));
 		else{
+
 			localeLoaded = true;
 			checkPartLoaded();
 		}
@@ -162,6 +165,7 @@ class PartDisplay extends KpDisplay {
 		}
 
 		else if(currentElement.isPattern()){
+
 			startPattern(cast(currentElement, Pattern));
 		}
 
@@ -181,6 +185,7 @@ class PartDisplay extends KpDisplay {
 	public function startPart(startPosition:Int = -1):Void
 	{
 		TweenManager.applyTransition(this, transitionIn);
+
 		nextElement(startPosition);
 	}
 
@@ -198,6 +203,22 @@ class PartDisplay extends KpDisplay {
 	public function next(event:ButtonActionEvent):Void
 	{
 		nextElement();
+	}
+
+	/**
+	* Go to a specific pattern
+	* @param    target : Name of the pattern to go
+	**/
+
+	public function goToPattern(target:String):Void
+	{
+		var i = 0;
+		while(!(part.elements[i].isPattern() && cast(part.elements[i], Pattern).name == target)){
+			i++;
+		}
+
+		cast(part.elements[i], Pattern).itemIndex = 0;
+		startPattern(cast(part.elements[i], Pattern));
 	}
 
 	// Privates
@@ -281,7 +302,7 @@ class PartDisplay extends KpDisplay {
 	{
 		var sameBackground = true;
 		// Clean previous background
-		if(previousBackground != null && previousBackground.ref != background){
+		if(previousBackground != null && background != null && previousBackground.ref != background){
 			sameBackground = false;
 			if(previousBackground.bmp != null)
 				displayArea.removeChild(previousBackground.bmp);
@@ -328,9 +349,10 @@ class PartDisplay extends KpDisplay {
 				currentSpeaker = char;
 
 				currentSpeaker.visible = true;
-				if(!displays.exists(char.nameRef))
+				if(char.nameRef != null && displays.exists(char.nameRef))
+					cast(displays.get(char.nameRef).obj, ScrollPanel).setContent(currentSpeaker.model.getName());
+				else if(char.nameRef != null)
 					throw "[PartDisplay] There is no TextArea with ref " + char.nameRef;
-				cast(displays.get(char.nameRef).obj, ScrollPanel).setContent(currentSpeaker.model.getName());
 			}
 			else
 				currentSpeaker.reset();
@@ -396,7 +418,7 @@ class PartDisplay extends KpDisplay {
 			setText(item, isFirst);
 	}
 
-	private function setText(item:TextItem, ?isFirst:Bool = true):Void
+	private function setText(item:TextItem, isFirst:Bool = true):Void
 	{
 		var content = Localiser.get_instance().getItemContent(item.content);
 		if(item.ref != null){
@@ -505,25 +527,46 @@ class PartDisplay extends KpDisplay {
 		if(Std.is(object.obj, CharacterDisplay) && object.obj != currentSpeaker)
 			return false;
 
-		// If the text area is not referenced by the current text item
 		if(currentTextItem != null){
 			if(currentSpeaker != null && Std.is(object.obj, ScrollPanel) && key == currentSpeaker.nameRef)
 				return true;
 			if(Std.is(object.obj, ScrollPanel) && key != currentTextItem.ref)
 				return false;
+			if(Std.is(object.obj, TileLayer)){
+				var layer = cast(object.obj, TileLayer);
+				var mustAdd = false;
+				for(item in currentTextItem.items){
+					for(tile in layer.children){
+						trace("tile: "+cast(tile, TileSprite).tile);
+						if(Std.is(tile, TileSprite) && cast(tile, TileSprite).tile == item){
+							addItem(item);
+							tile.visible = true;
+							mustAdd = true;
+						}
+					}
+				}
+				return mustAdd;
+			}
 			if(!Std.is(object.obj, ScrollPanel) && !Std.is(object.obj, CharacterDisplay)){
 				var exists = false;
+				for(layer in layers){
+					if(object.obj == layer.view){
+						for(item in currentTextItem.items){
+							for(tile in layer.children){
+								if(Std.is(tile, TileSprite) && cast(tile, TileSprite).tile == item){
+									addItem(item);
+									tile.visible = true;
+									exists = true;
+								}
+							}
+						}
+						return exists;
+					}
+				}
 				for(item in currentTextItem.items){
 					if(key == item){
 						exists = true;
-
-						if(displaysFast.get(item).has.tween){
-							cast(displays.get(item).obj, Sprite).x = Std.parseFloat(displaysFast.get(item).att.x);
-							cast(displays.get(item).obj, Sprite).y = Std.parseFloat(displaysFast.get(item).att.y);
-
-							transitions.push({obj: displays.get(item).obj, tween: displaysFast.get(item).att.tween});
-						}
-
+						addItem(item);
 						currentItems.add(object.obj);
 					}
 				}
@@ -532,5 +575,11 @@ class PartDisplay extends KpDisplay {
 		}
 
 		return true;
+	}
+
+	private inline function addItem(item: String){
+		if(displaysFast.get(item).has.tween){
+			transitions.push({obj: displays.get(item).obj, tween: displaysFast.get(item).att.tween});
+		}
 	}
 }

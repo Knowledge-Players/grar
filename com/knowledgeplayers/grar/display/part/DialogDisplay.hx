@@ -77,22 +77,6 @@ class DialogDisplay extends PartDisplay {
 		}
 	}
 
-	/**
-	* Go to a specific pattern
-	* @param    target : Name of the pattern to go
-	**/
-
-	public function goToPattern(target:String):Void
-	{
-		var i = 0;
-		while(!(part.elements[i].isPattern() && cast(part.elements[i], Pattern).name == target)){
-			i++;
-		}
-
-		cast(part.elements[i], Pattern).itemIndex = 0;
-		startPattern(cast(part.elements[i], Pattern));
-	}
-
 	// Privates
 
 	override private function setButtonAction(button:DefaultButton, action:String):Void

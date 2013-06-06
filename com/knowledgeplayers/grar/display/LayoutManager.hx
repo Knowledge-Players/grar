@@ -48,7 +48,8 @@ class LayoutManager extends EventDispatcher {
 
 	public function loadInterfaceXml(_xml:Fast):Void
 	{
-		Localiser.instance.setLocalisationFile(_xml.att.text);
+		if(_xml.has.text)
+			Localiser.instance.setLocalisationFile(_xml.att.text);
 
 		for(lay in layoutNode.elements){
 

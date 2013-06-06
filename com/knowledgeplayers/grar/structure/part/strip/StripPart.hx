@@ -10,7 +10,6 @@ class StripPart extends StructurePart {
 	public function new()
 	{
 		super();
-
 	}
 
 	/**
@@ -27,8 +26,6 @@ class StripPart extends StructurePart {
 
 	override private function parseContent(content:Xml):Void
 	{
-		super.parseContent(content);
-
 		var partFast:Fast = new Fast(content).node.Part;
 
 		for(patternNode in partFast.nodes.Pattern){
@@ -36,6 +33,7 @@ class StripPart extends StructurePart {
 			pattern.init(patternNode);
 			elements.push(pattern);
 		}
+		super.parseContent(content);
 	}
 
 }

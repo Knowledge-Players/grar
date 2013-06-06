@@ -171,7 +171,7 @@ class Zone extends Sprite {
 
 	public function createMenu(element:Fast):Void
 	{
-
+		GameManager.instance.menuLoaded = false;
 		menu = new MenuDisplay(Std.parseFloat(element.att.width), Std.parseFloat(element.att.height));
 		menuXml = element;
 		menu.transitionIn = element.att.transitionIn;
