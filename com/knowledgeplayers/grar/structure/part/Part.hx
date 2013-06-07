@@ -13,7 +13,7 @@ public var isDone (default, default):Bool;
 public var parent (default, default):Part;
 public var next (default, default):String;
 
-public var button (default, default):{ref:String, content:Map<String, String>};
+public var button (default, default):Map<String, Map<String, String>>;
 public var elements (default, null):Array<PartElement>;
 public var token (default, null):String;
 public var tokens (default, null):GenericStack<String>;

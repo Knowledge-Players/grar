@@ -70,7 +70,7 @@ class StructurePart extends EventDispatcher implements Part implements Trackable
 		/**
 	    * Button of the part
 	    **/
-	public var button (default, default):{ref:String, content:Map<String, String>};
+	public var button (default, default):Map<String, Map<String, String>>;
 
 	public var next (default, default):String;
 
@@ -88,6 +88,7 @@ class StructurePart extends EventDispatcher implements Part implements Trackable
 		super();
 		tokens = new GenericStack<String>();
 		elements = new Array<PartElement>();
+		button = new Map<String, Map<String, String>>();
 	}
 
 		/**
@@ -354,14 +355,14 @@ class StructurePart extends EventDispatcher implements Part implements Trackable
 						else
 							content.set(child.att.content, child.att.content);
 					}
-					button = {ref: child.att.ref, content: content};
+					button.set(child.att.ref, content);
 			}
 		}
 		for(elem in elements){
 			if(elem.isText()){
 				var text = cast(elem, TextItem);
 				if(text.button == null)
-				text.button = button;
+					text.button = button;
 			}
 			if(elem.isPattern()){
 				for(item in cast(elem, Pattern).patternContent){

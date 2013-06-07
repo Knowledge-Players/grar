@@ -111,9 +111,12 @@ class ActivityDisplay extends KpDisplay {
 		addChild(displays.get(model.ref).obj);
 
 		// Button
-		for(key in model.button.content.keys())
-			cast(displays.get(model.button.ref).obj, DefaultButton).setText(Localiser.instance.getItemContent(model.button.content.get(key)), key);
-		addChild(displays.get(model.button.ref).obj);
+		for(buttonKey in model.button.keys()){
+			for(contentKey in model.button.get(buttonKey).keys()){
+				cast(displays.get(buttonKey).obj, DefaultButton).setText(Localiser.instance.getItemContent(model.button.get(buttonKey).get(contentKey)), contentKey);
+			}
+			addChild(displays.get(buttonKey).obj);
+		}
 	}
 
 	private function unLoad(keepLayer:Int = 0):Void

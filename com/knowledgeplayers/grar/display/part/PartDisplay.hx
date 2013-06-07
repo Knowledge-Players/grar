@@ -492,36 +492,23 @@ class PartDisplay extends KpDisplay {
 			return false;
 
 		if(Std.is(object.obj, DefaultButton)){
-			if(currentElement.isPattern()){
-				var pattern = cast(currentElement, Pattern);
-				if(pattern.buttons.exists(key)){
-					for(contentKey in pattern.buttons.get(key).keys()){
-						cast(displays.get(key).obj, DefaultButton).setText(Localiser.instance.getItemContent(pattern.buttons.get(key).get(contentKey)), contentKey);
-					}
-					return true;
-				}
-				else
-					return false;
-			}
-			else{
-				var button = null;
-				if(currentElement.isText())
-					button = cast(currentElement, TextItem).button;
-				else if(currentElement.isActivity())
-					button = cast(currentElement, Activity).button;
 
-				if(button.ref == key){
-					for(contentKey in button.content.keys()){
-						cast(displays.get(key).obj, DefaultButton).setText(Localiser.instance.getItemContent(button.content.get(contentKey)), contentKey);
-					}
+			var button: Map<String, Map<String, String>> = null;
+			if(currentElement.isText())
+				button = cast(currentElement, TextItem).button;
+			else if(currentElement.isActivity())
+				button = cast(currentElement, Activity).button;
+			if(currentElement.isPattern())
+				button = cast(currentElement, Pattern).buttons;
 
-					return true;
+			if(button.exists(key)){
+				for(contentKey in button.get(key).keys()){
+					cast(displays.get(key).obj, DefaultButton).setText(Localiser.instance.getItemContent(button.get(key).get(contentKey)), contentKey);
 				}
-				else if(button.ref == key)
-					return true;
-				else
-					return false;
+				return true;
 			}
+			else
+				return false;
 		}
 		// If the character is not the current speaker
 		if(Std.is(object.obj, CharacterDisplay) && object.obj != currentSpeaker)

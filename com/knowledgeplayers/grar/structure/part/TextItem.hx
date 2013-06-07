@@ -27,7 +27,7 @@ class TextItem implements PartElement {
 	/**
     * ID of the button that will appear with this item
     **/
-	public var button (default, default):{ref:String, content:Map<String, String>};
+	public var button (default, default): Map<String, Map<String, String>>;
 
 	/**
     * Unique ref that will match the display
@@ -79,18 +79,20 @@ class TextItem implements PartElement {
 			if(xml.hasNode.Token)
 				token = xml.node.Token.att.ref;
 			if(xml.hasNode.Button){
+				button = new Map<String, Map<String, String>>();
 				var content = new Map<String, String>();
-				if(xml.node.Button.has.content){
-					if(xml.node.Button.att.content.indexOf("{") == 0){
-						var contentString:String = xml.node.Button.att.content.substr(1, xml.node.Button.att.content.length - 2);
+				var child = xml.node.Button;
+				if(child.has.content){
+					if(child.att.content.indexOf("{") == 0){
+						var contentString:String = child.att.content.substr(1, child.att.content.length - 2);
 						var contents = contentString.split(",");
 						for(c in contents)
-							content.set(c.split(":")[0], c.split(":")[1]);
+							content.set(StringTools.trim(c.split(":")[0]), StringTools.trim(c.split(":")[1]));
 					}
 					else
-						content.set(xml.node.Button.att.content, xml.node.Button.att.content);
+						content.set(child.att.content, child.att.content);
 				}
-				button = {ref: xml.node.Button.att.ref, content: content};
+				button.set(child.att.ref, content);
 			}
 			if(xml.hasNode.Sound)
 				sound = xml.node.Sound.att.src;

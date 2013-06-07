@@ -119,8 +119,11 @@ class QuizDisplay extends ActivityDisplay {
 			case CORRECTED: stateId = "_next";
 		}
 
-		for(key in quiz.button.content.keys())
-			cast(displays.get(quiz.button.ref).obj, DefaultButton).setText(Localiser.instance.getItemContent(quiz.button.content.get(key) + stateId), key);
+		for(buttonKey in quiz.button.keys()){
+			for(contentKey in quiz.button.get(buttonKey).keys()){
+				cast(displays.get(buttonKey).obj, DefaultButton).setText(Localiser.instance.getItemContent(quiz.button.get(buttonKey).get(contentKey) + stateId), contentKey);
+			}
+		}
 	}
 
 	override private function onValidate(e:ButtonActionEvent):Void
