@@ -1,7 +1,7 @@
 -main com.knowledgeplayers.grar.Main
 -lib nme
 -lib tilelayer
--lib Exam
+-lib ExAM
 -lib actuate
 -swf main.swf
 -swf-version 11
