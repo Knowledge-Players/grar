@@ -37,7 +37,7 @@ class UiFactory {
      * @return the created button
      */
 
-	public static function createButton(ref:String, x:Float = 0, y:Float = 0, states:Map<String, Map<String, {dpo:DisplayObject, z:Int, trans:String}>>, ?action:String, ?transitionIn:String, ?transitionOut:String):DefaultButton
+	public static function createButton(ref:String, x:Float = 0, y:Float = 0, states:Map<String, Map<String, {dpo:DisplayObject, z:Int, trans:String}>>, ?action:String, toggle: String = "false", ?transitionIn:String, ?transitionOut:String):DefaultButton
 	{
 		var creation:DefaultButton = new DefaultButton(states, action);
 
@@ -46,6 +46,7 @@ class UiFactory {
 		creation.transitionOut = transitionOut;
 		creation.x = x;
 		creation.y = y;
+		if(toggle == "true") creation.enableToggle();
 
 		return creation;
 	}
@@ -98,7 +99,7 @@ class UiFactory {
 			}
 		}
 
-		return createButton(xml.att.ref, x, y, states, action, transitionIn, transitionOut);
+		return createButton(xml.att.ref, x, y, states, action, xml.has.toggle?xml.att.toggle:"false", transitionIn, transitionOut);
 	}
 
 	private static function createStates(node:Fast):Map<String, {dpo:DisplayObject, z:Int, trans:String}>

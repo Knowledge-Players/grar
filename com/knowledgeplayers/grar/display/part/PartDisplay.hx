@@ -298,6 +298,11 @@ class PartDisplay extends KpDisplay {
 		}
 	}
 
+	private function toggle(e:ButtonActionEvent):Void
+	{
+
+	}
+
 	private function displayBackground(background:String):Void
 	{
 		var sameBackground = true;

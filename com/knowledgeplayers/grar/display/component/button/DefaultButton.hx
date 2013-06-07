@@ -154,6 +154,18 @@ class DefaultButton extends Sprite {
 		renderState("out");
 	}
 
+	public function enableToggle(enable:Bool = true):Void
+	{
+		if(enable){
+			addEventListener(MouseEvent.CLICK, onToggle);
+			propagateNativeEvent = true;
+		}
+		else{
+			if(hasEventListener(MouseEvent.CLICK))
+				removeEventListener(MouseEvent.CLICK, onToggle);
+		}
+	}
+
 	// Abstract
 
 	private function onMouseOver(event:MouseEvent):Void
@@ -349,5 +361,10 @@ class DefaultButton extends Sprite {
 			case MouseEvent.MOUSE_UP: onClickUp(event);
 			case MouseEvent.DOUBLE_CLICK: onDblClick(event);
 		}
+	}
+
+	private inline function onToggle(e: MouseEvent):Void
+	{
+		setToggle(toggle != "active");
 	}
 }

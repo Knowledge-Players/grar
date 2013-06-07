@@ -10,12 +10,17 @@ class ButtonActionEvent extends Event {
 	/**
      * Move to the next item
      */
-	public static var NEXT (default, null):String = "next";
+	public static inline var NEXT:String = "next";
 
 	/**
      * Move to a specific pattern
      */
-	public static var GOTO (default, null):String = "goto";
+	public static inline var GOTO:String = "goto";
+
+	/**
+	* Toggle the state
+	**/
+	public static inline var TOGGLE: String = "toggle";
 
 	public function new(type:String, bubbles:Bool = false, cancelable:Bool = false)
 	{
