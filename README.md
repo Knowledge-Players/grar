@@ -1,4 +1,4 @@
-GRAR
+GRAR [![Build Status](https://travis-ci.org/Knowledge-Players/grar.png?branch=master)](https://travis-ci.org/Knowledge-Players/grar)
 ====
 
 GRAR is a powerful framework to design training applications. Since it has been develop with NME, GRAR can produce application for your desktop or your mobile, and soon for your browser !
