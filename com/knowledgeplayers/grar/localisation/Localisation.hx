@@ -50,6 +50,11 @@ class Localisation extends EventDispatcher {
 		return tradHash.get(key);
 	}
 
+	override public function toString():String
+	{
+		return name+" "+tradHash.toString();
+	}
+
 	private function parseContent(content:Xml):Void
 	{
 		if(content.firstElement().nodeName == "Workbook")
