@@ -70,13 +70,10 @@ class KpTextDownElement {
 			}
 			if(!hasIcon && content != "")
 				concatObjects(output, createTextField(content, styleName));
-		}
-		else if(content != ""){
-			concatObjects(output, createTextField(content, styleName));
-		}
-		else{
-			var height = StyleParser.getStyle().getSize();
-			DisplayUtils.initSprite(output, 1, height, 0, 0.001);
+			else if(content == ""){
+				var height = StyleParser.getStyle().getSize();
+				DisplayUtils.initSprite(output, 1, height, 0, 0.001);
+			}
 		}
 
 		return output;
