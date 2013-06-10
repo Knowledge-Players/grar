@@ -117,10 +117,23 @@ class Zone extends Sprite {
 
 	public function createImage(imageNode:Fast):TileSprite
 	{
-		var image = UiFactory.createImageFromXml(imageNode, layer);
-		layer.addChild(image);
+		var itemTile = new TileSprite(layer, imageNode.att.id);
+		if(imageNode.has.x)
+			itemTile.x = Std.parseFloat(imageNode.att.x);
+		if(imageNode.has.y)
+			itemTile.y = Std.parseFloat(imageNode.att.y);
+		if(imageNode.has.scale)
+			itemTile.scale = Std.parseFloat(imageNode.att.scale);
+		if(imageNode.has.mirror){
+			itemTile.mirror = switch(imageNode.att.mirror.toLowerCase()){
+				case "horizontal": 1;
+				case "vertical": 2;
+				case _ : throw '[KpDisplay] Unsupported mirror $imageNode.att.mirror';
+			}
+		}
+		layer.addChild(itemTile);
 
-		return image;
+		return itemTile;
 
 	}
 

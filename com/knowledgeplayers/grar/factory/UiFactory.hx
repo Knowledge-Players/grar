@@ -1,5 +1,10 @@
 package com.knowledgeplayers.grar.factory;
 
+import nme.filters.DropShadowFilter;
+import com.knowledgeplayers.grar.util.DisplayUtils;
+import com.knowledgeplayers.grar.display.FilterManager;
+import nme.filters.BitmapFilter;
+import nme.display.Bitmap;
 import nme.display.Sprite;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
@@ -12,7 +17,9 @@ import com.knowledgeplayers.grar.display.TweenManager;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
 import nme.display.DisplayObject;
-import String;
+#if !flash
+	import nme.Assets;
+#end
 
 /**
  * Factory to create UI components
@@ -110,13 +117,12 @@ class UiFactory {
 		for(elem in node.elements){
 			switch (elem.name.toLowerCase()) {
 				case "item":
-					var layer = new TileLayer(tilesheet);
-					layer.addChild(createImageFromXml(elem, layer));
-					layer.render();
+					var layers = new Map<String, TileLayer>();
+					layers.set("layer", new TileLayer(tilesheet));
 
 					if(elem.has.transform)
 						trans = elem.att.transform;
-					list.set(elem.att.ref, {dpo:layer.view, z:zIndex, trans:trans});
+					list.set(elem.att.ref, {dpo:createImageFromXml(elem, layers), z:zIndex, trans:trans});
 
 				case "text": list.set(elem.att.ref, {dpo:createTextFromXml(elem), z:zIndex, trans:trans});
 
@@ -156,17 +162,65 @@ class UiFactory {
     * @return a tilesprite
     **/
 
-	public static function createImageFromXml(xml:Fast, layer:TileLayer):TileSprite
+	public static function createImageFromXml(xml:Fast, layers:Map<String, TileLayer>, ?tilesheets: Map<String, TilesheetEx>, visible:Bool = true):DisplayObject
 	{
-		var image = new TileSprite(layer, xml.att.id);
-		image.x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
-		image.y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
-		image.scaleX = xml.has.scaleX ? Std.parseFloat(xml.att.scaleX) : 1;
-		image.scaleY = xml.has.scaleY ? Std.parseFloat(xml.att.scaleY) : 1;
-		if(xml.has.mirror)
-			image.mirror = xml.att.mirror == "horizontal" ? 1 : 2;
+		if(xml.has.src){
+			var itemBmp:Bitmap = new Bitmap();
+			#if flash
+             itemBmp = new Bitmap(AssetsStorage.getBitmapData(xml.att.src));
+            #else
+			itemBmp = new Bitmap(Assets.getBitmapData(xml.att.src));
+			#end
+			return itemBmp;
+		}
+		else if(xml.has.filters){
+			var bmp = new Bitmap(DisplayUtils.getBitmapDataFromLayer(xml.has.spritesheet?tilesheets.get(xml.att.spritesheet):UiFactory.tilesheet, xml.att.id));
+			var filters = new Array<BitmapFilter>();
+			for(filter in xml.att.filters.split(","))
+				filters.push(FilterManager.getFilter(filter));
 
-		return image;
+			bmp.filters = filters;
+			if(xml.has.x)
+				bmp.x = Std.parseFloat(xml.att.x);
+			if(xml.has.y)
+				bmp.y = Std.parseFloat(xml.att.y);
+			if(xml.has.scale)
+				bmp.scaleX = bmp.scaleY = Std.parseFloat(xml.att.scale);
+			return bmp;
+		}
+		else{
+			var spritesheet;
+			var itemTile;
+			if(xml.has.spritesheet){
+				spritesheet = xml.att.spritesheet;
+			}
+			else{
+				spritesheet = "ui";
+				if(!layers.exists(spritesheet)){
+					var layer = new TileLayer(UiFactory.tilesheet);
+					layers.set(spritesheet, layer);
+				}
+			}
+			itemTile = new TileSprite(layers.get(spritesheet), xml.att.id);
+			if(xml.has.x)
+				itemTile.x = Std.parseFloat(xml.att.x);
+			if(xml.has.y)
+				itemTile.y = Std.parseFloat(xml.att.y);
+			if(xml.has.scale)
+				itemTile.scale = Std.parseFloat(xml.att.scale);
+			if(xml.has.mirror){
+				itemTile.mirror = switch(xml.att.mirror.toLowerCase()){
+					case "horizontal": 1;
+					case "vertical": 2;
+					case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
+				}
+			}
+
+			itemTile.visible = visible;
+			layers.get(spritesheet).addChild(itemTile);
+			layers.get(spritesheet).render();
+			return layers.get(spritesheet).view;
+		}
 	}
 
 	/**

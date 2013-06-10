@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display;
 
+import nme.filters.BitmapFilter;
+import com.knowledgeplayers.grar.util.DisplayUtils;
 import nme.Lib;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
@@ -81,54 +83,16 @@ class KpDisplay extends Sprite {
 
 	private function createItem(itemNode:Fast):Void
 	{
-		if(itemNode.has.src){
-			var itemBmp:Bitmap = new Bitmap();
-			#if flash
-             itemBmp = new Bitmap(AssetsStorage.getBitmapData(itemNode.att.src));
-            #else
-			itemBmp = new Bitmap(Assets.getBitmapData(itemNode.att.src));
-			#end
-			addElement(itemBmp, itemNode);
-
-		}
+		if(itemNode.has.src || itemNode.has.filters)
+			addElement(UiFactory.createImageFromXml(itemNode, layers, spritesheets, false), itemNode);
 		else{
-			var spritesheet;
-			var itemTile;
-			if(itemNode.has.spritesheet){
-				spritesheet = itemNode.att.spritesheet;
-			}
-			else{
-				spritesheet = "ui";
-				if(!layers.exists(spritesheet)){
-					var layer = new TileLayer(UiFactory.tilesheet);
-					layers.set(spritesheet, layer);
-				}
-			}
-			itemTile = new TileSprite(layers.get(spritesheet), itemNode.att.id);
-			if(itemNode.has.x)
-				itemTile.x = Std.parseFloat(itemNode.att.x);
-			if(itemNode.has.y)
-				itemTile.y = Std.parseFloat(itemNode.att.y);
-			if(itemNode.has.scale)
-				itemTile.scale = Std.parseFloat(itemNode.att.scale);
-			if(itemNode.has.mirror){
-				itemTile.mirror = switch(itemNode.att.mirror.toLowerCase()){
-					case "horizontal": 1;
-					case "vertical": 2;
-					case _ : throw '[KpDisplay] Unsupported mirror $itemNode.att.mirror';
-				}
-			}
-
-			itemTile.visible = false;
-			layers.get(spritesheet).addChild(itemTile);
-
+			UiFactory.createImageFromXml(itemNode, layers, spritesheets, false);
+			var spritesheet = itemNode.has.spritesheet?itemNode.att.spritesheet:"ui";
 			if(!displays.exists(spritesheet))
 				displays.set(spritesheet, {obj: layers.get(spritesheet).view, z: zIndex++});
 
 			displaysFast.set(itemNode.att.id, itemNode);
-			//addElement(layers.get(spritesheet).view, itemNode);
 		}
-
 	}
 
 	private function createButton(buttonNode:Fast):Void
