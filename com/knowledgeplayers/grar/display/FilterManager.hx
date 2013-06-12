@@ -2,7 +2,6 @@ package com.knowledgeplayers.grar.display;
 /**
  * Manage the most frequently used filters
  */
-import Reflect;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
 import nme.filters.BitmapFilter;

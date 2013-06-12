@@ -20,16 +20,6 @@ class ActivityDisplay extends KpDisplay {
 	public var model(default, set_model):Activity;
 
 	/**
-	* Transition when the activity appears
-	**/
-	public var transitionIn (default, default):String;
-
-	/**
-	* Transition when the activity disappears
-	**/
-	public var transitionOut (default, default):String;
-
-	/**
     * Setter for the model
     * @param model : the model to set
     * @return the model
@@ -78,16 +68,6 @@ class ActivityDisplay extends KpDisplay {
 	public function showDebrief():Void
 	{
 		Lib.trace("Debrief!");
-	}
-
-	override public function parseContent(content:Xml):Void
-	{
-		super.parseContent(content);
-
-		if(displayFast.has.transitionIn)
-			transitionIn = displayFast.att.transitionIn;
-		if(displayFast.has.transitionOut)
-			transitionOut = displayFast.att.transitionOut;
 	}
 
 	// Private

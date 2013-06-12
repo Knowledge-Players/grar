@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.GameManager;
+import com.knowledgeplayers.grar.structure.contextual.Notebook;
+import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
 import com.knowledgeplayers.grar.display.component.button.DefaultButton;
@@ -37,16 +40,6 @@ class PartDisplay extends KpDisplay {
      * Part model to display
      */
 	public var part:Part;
-
-	/**
-    * Transition to play at the beginning of the part
-    **/
-	public var transitionIn (default, default):String;
-
-	/**
-    * Transition to play at the end of the part
-    **/
-	public var transitionOut (default, default):String;
 
 	public var introScreenOn (default, null):Bool = false;
 
@@ -189,17 +182,6 @@ class PartDisplay extends KpDisplay {
 		nextElement(startPosition);
 	}
 
-	override public function parseContent(content:Xml):Void
-	{
-		super.parseContent(content);
-
-		if(displayFast.has.transitionIn)
-			transitionIn = displayFast.att.transitionIn;
-		if(displayFast.has.transitionOut)
-			transitionOut = displayFast.att.transitionOut;
-
-	}
-
 	public function next(event:ButtonActionEvent):Void
 	{
 		nextElement();
@@ -296,11 +278,17 @@ class PartDisplay extends KpDisplay {
 		if(action.toLowerCase() == ButtonActionEvent.NEXT){
 			button.addEventListener(ButtonActionEvent.NEXT, next);
 		}
-	}
-
-	private function toggle(e:ButtonActionEvent):Void
-	{
-
+		if(action.toLowerCase() == "open_notebook"){
+			button.addEventListener("open_notebook", function(e){
+				NotebookDisplay.instance.model = Notebook.instance;
+				GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
+			});
+		}
+		if(action.toLowerCase() == ButtonActionEvent.GOTO){
+			button.addEventListener(action, function(e){
+				nextElement(part.getElementIndex(part.buttonTargets.get(button.ref))-1);
+			});
+		}
 	}
 
 	private function displayBackground(background:String):Void
@@ -384,13 +372,17 @@ class PartDisplay extends KpDisplay {
 				if(Std.is(getChildAt(i), ScrollPanel))
 					toRemove.add(getChildAt(i));
 			}
-			for(item in currentItems)
+			for(item in currentItems){
 				toRemove.add(item);
+			}
 			for(obj in toRemove){
 				if(displayArea.contains(obj))
 					displayArea.removeChild(obj);
 			}
 
+			for(tile in layers.get("ui").children){
+				tile.visible = false;
+			}
 		}
 
 		setSpeaker(item.author, item.transition);
@@ -429,7 +421,7 @@ class PartDisplay extends KpDisplay {
 		if(item.ref != null){
 			if(!displays.exists(item.ref))
 				throw "[PartDisplay] There is no TextArea with ref " + item.ref;
-			cast(displays.get(item.ref).obj, ScrollPanel).setContent(content);// + " " + item.content);
+			cast(displays.get(item.ref).obj, ScrollPanel).setContent(content);
 		}
 
 		if(!isFirst)
@@ -495,7 +487,6 @@ class PartDisplay extends KpDisplay {
 		// If the object is already displayed
 		if(contains(object.obj))
 			return false;
-
 		if(Std.is(object.obj, DefaultButton)){
 
 			var button: Map<String, Map<String, String>> = null;
@@ -520,6 +511,7 @@ class PartDisplay extends KpDisplay {
 			return false;
 
 		if(currentTextItem != null){
+
 			if(currentSpeaker != null && Std.is(object.obj, ScrollPanel) && key == currentSpeaker.nameRef)
 				return true;
 			if(Std.is(object.obj, ScrollPanel) && key != currentTextItem.ref)
@@ -529,7 +521,6 @@ class PartDisplay extends KpDisplay {
 				var mustAdd = false;
 				for(item in currentTextItem.items){
 					for(tile in layer.children){
-						trace("tile: "+cast(tile, TileSprite).tile);
 						if(Std.is(tile, TileSprite) && cast(tile, TileSprite).tile == item){
 							addItem(item);
 							tile.visible = true;
@@ -552,6 +543,7 @@ class PartDisplay extends KpDisplay {
 								}
 							}
 						}
+
 						return exists;
 					}
 				}
@@ -562,14 +554,16 @@ class PartDisplay extends KpDisplay {
 						currentItems.add(object.obj);
 					}
 				}
+
 				return exists;
 			}
 		}
-
 		return true;
 	}
 
 	private inline function addItem(item: String){
+		/*trace(item);
+		trace(displaysFast.get(item));*/
 		if(displaysFast.get(item).has.tween){
 			transitions.push({obj: displays.get(item).obj, tween: displaysFast.get(item).att.tween});
 		}

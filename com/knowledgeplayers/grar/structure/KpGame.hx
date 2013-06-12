@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.grar.structure.contextual.Notebook;
 import com.knowledgeplayers.grar.display.FilterManager;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
@@ -7,6 +8,7 @@ import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.LayoutManager;
 import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.display.TweenManager;
+import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.factory.PartFactory;
 import com.knowledgeplayers.grar.factory.UiFactory;
@@ -22,7 +24,6 @@ import nme.Assets;
 import nme.events.Event;
 import nme.events.EventDispatcher;
 import nme.Lib;
-import nme.net.URLLoader;
 
 /**
  * KP inmplentation of a game
@@ -147,8 +148,19 @@ class KpGame extends EventDispatcher implements Game {
             initActivities(AssetsStorage.getXml(activity.att.display));
         }
 
+		// Load contextual
+		var structureNode:Fast = structureXml.node.Grar.node.Structure;
+		for(contextual in structureNode.nodes.Contextual){
+			var display = AssetsStorage.getXml(contextual.att.display);
+			switch(contextual.att.type.toLowerCase()){
+				case "notebook": Notebook.instance.init(contextual.att.file);
+								NotebookDisplay.instance.parseContent(display);
+				/*case "glossary": Glossary.instance.fillWithXml(content);
+				case "bibliography": Bibliography.instance.fillWithXml(content);*/
+			}
+		}
+
         // Load Parts
-        var structureNode:Fast = structureXml.node.Grar.node.Structure;
         if(structureNode.has.inventory)
             GameManager.instance.loadTokens(structureNode.att.inventory);
         if(structureNode.has.menu){

@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.factory;
 
+import nme.geom.Matrix;
+import nme.display.BitmapData;
 import nme.filters.DropShadowFilter;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.display.FilterManager;
@@ -44,7 +46,7 @@ class UiFactory {
      * @return the created button
      */
 
-	public static function createButton(ref:String, x:Float = 0, y:Float = 0, states:Map<String, Map<String, {dpo:DisplayObject, z:Int, trans:String}>>, ?action:String, toggle: String = "false", ?transitionIn:String, ?transitionOut:String):DefaultButton
+	public static function createButton(ref:String, x:Float = 0, y:Float = 0, rotation: Float = 0, states:Map<String, Map<String, {dpo:DisplayObject, z:Int, trans:String}>>, ?action:String, toggle: String = "false", ?transitionIn:String, ?transitionOut:String):DefaultButton
 	{
 		var creation:DefaultButton = new DefaultButton(states, action);
 
@@ -53,6 +55,7 @@ class UiFactory {
 		creation.transitionOut = transitionOut;
 		creation.x = x;
 		creation.y = y;
+		creation.rotation = rotation;
 		if(toggle == "true") creation.enableToggle();
 
 		return creation;
@@ -84,6 +87,7 @@ class UiFactory {
 
 		var x = xml.has.x ? Std.parseFloat(xml.att.x) : 0;
 		var y = xml.has.y ? Std.parseFloat(xml.att.y) : 0;
+		var rotation = xml.has.rotation ? Std.parseFloat(xml.att.rotation) : 0;
 		var action = xml.has.action ? xml.att.action : null;
 
 		var transitionIn = xml.has.transitionIn ? xml.att.transitionIn : null;
@@ -106,7 +110,7 @@ class UiFactory {
 			}
 		}
 
-		return createButton(xml.att.ref, x, y, states, action, xml.has.toggle?xml.att.toggle:"false", transitionIn, transitionOut);
+		return createButton(xml.att.ref, x, y, rotation, states, action, xml.has.toggle?xml.att.toggle:"false", transitionIn, transitionOut);
 	}
 
 	private static function createStates(node:Fast):Map<String, {dpo:DisplayObject, z:Int, trans:String}>
@@ -164,6 +168,8 @@ class UiFactory {
 
 	public static function createImageFromXml(xml:Fast, layers:Map<String, TileLayer>, ?tilesheets: Map<String, TilesheetEx>, visible:Bool = true):DisplayObject
 	{
+		if(!xml.has.ref)
+			throw "Items must have a ref attribute: "+xml;
 		if(xml.has.src){
 			var itemBmp:Bitmap = new Bitmap();
 			#if flash
@@ -171,22 +177,44 @@ class UiFactory {
             #else
 			itemBmp = new Bitmap(Assets.getBitmapData(xml.att.src));
 			#end
+			if(xml.has.x)
+				itemBmp.x = Std.parseFloat(xml.att.x);
+			if(xml.has.y)
+				itemBmp.y = Std.parseFloat(xml.att.y);
+			if(xml.has.scale)
+				itemBmp.scaleX = itemBmp.scaleY = Std.parseFloat(xml.att.scale);
+			if(xml.has.mirror){
+				itemBmp.bitmapData = switch(xml.att.mirror.toLowerCase()){
+					case "horizontal": flipBitmapData(itemBmp.bitmapData);
+					case "vertical": flipBitmapData(itemBmp.bitmapData, "y");
+					case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
+				}
+			}
 			return itemBmp;
 		}
-		else if(xml.has.filters){
+		else if(xml.has.filters || xml.has.tween){
 			var bmp = new Bitmap(DisplayUtils.getBitmapDataFromLayer(xml.has.spritesheet?tilesheets.get(xml.att.spritesheet):UiFactory.tilesheet, xml.att.id));
-			var filters = new Array<BitmapFilter>();
-			for(filter in xml.att.filters.split(","))
-				filters.push(FilterManager.getFilter(filter));
-
-			bmp.filters = filters;
+			if(xml.has.filters){
+				var filters = new Array<BitmapFilter>();
+				for(filter in xml.att.filters.split(","))
+					filters.push(FilterManager.getFilter(filter));
+				bmp.filters = filters;
+			}
 			if(xml.has.x)
 				bmp.x = Std.parseFloat(xml.att.x);
 			if(xml.has.y)
 				bmp.y = Std.parseFloat(xml.att.y);
 			if(xml.has.scale)
 				bmp.scaleX = bmp.scaleY = Std.parseFloat(xml.att.scale);
+			if(xml.has.mirror){
+				bmp.bitmapData = switch(xml.att.mirror.toLowerCase()){
+					case "horizontal": flipBitmapData(bmp.bitmapData);
+					case "vertical": flipBitmapData(bmp.bitmapData, "y");
+					case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
+				}
+			}
 			return bmp;
+
 		}
 		else{
 			var spritesheet;
@@ -289,5 +317,19 @@ class UiFactory {
 	{
 		tilesheet = AssetsStorage.getSpritesheet(id);
 	}
+
+	private static function flipBitmapData(original:BitmapData, axis:String = "x"):BitmapData
+	{
+		var flipped:BitmapData = new BitmapData(original.width, original.height, true, 0);
+		var matrix:Matrix;
+		if(axis == "x"){
+			matrix = new Matrix( - 1, 0, 0, 1, original.width, 0);
+		} else {
+			matrix = new Matrix( 1, 0, 0, - 1, 0, original.height);
+		}
+			flipped.draw(original, matrix, null, null, null, true);
+		return flipped;
+	}
+
 
 }

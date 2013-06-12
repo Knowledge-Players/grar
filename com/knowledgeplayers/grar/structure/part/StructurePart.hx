@@ -76,6 +76,9 @@ class StructurePart extends EventDispatcher implements Part implements Trackable
 
 	public var endScreen (default, null):Bool = false;
 
+	// TODO reengineer buttons
+	public var buttonTargets (default, null): Map<String, PartElement>;
+
 	private var nbSubPartLoaded:Int = 0;
 	private var nbSubPartTotal:Int = 0;
 	private var partIndex:Int = 0;
@@ -89,6 +92,7 @@ class StructurePart extends EventDispatcher implements Part implements Trackable
 		tokens = new GenericStack<String>();
 		elements = new Array<PartElement>();
 		button = new Map<String, Map<String, String>>();
+		buttonTargets = new Map<String, PartElement>();
 	}
 
 		/**
@@ -356,6 +360,14 @@ class StructurePart extends EventDispatcher implements Part implements Trackable
 							content.set(child.att.content, child.att.content);
 					}
 					button.set(child.att.ref, content);
+					if(child.has.goTo){
+						var i = 0;
+						while((!elements[i].isText() || cast(elements[i], TextItem).content != child.att.goTo) && i < elements.length){
+							i++;
+						}
+						if(i != elements.length)
+							buttonTargets.set(child.att.ref, elements[i]);
+					}
 			}
 		}
 		for(elem in elements){

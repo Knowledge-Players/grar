@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.display.contextual.ContextualDisplay;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.display.element.TokenNotification;
@@ -76,8 +77,9 @@ class GameManager extends EventDispatcher {
 	private var itemSound:Sound;
 	private var itemSoundChannel:SoundChannel;
 	private var startIndex:Int;
+	private var previousLayout: String;
 
-	/**
+		/**
     * @return the instance of the singleton
     **/
 
@@ -142,6 +144,7 @@ class GameManager extends EventDispatcher {
 
 	public function changeLayout(layout:String):Void
 	{
+		previousLayout = this.layout == null ? "default" : this.layout.name;
 		if(this.layout != null)
 			Lib.current.removeChild(this.layout.content);
 		this.layout = LayoutManager.instance.getLayout(layout);
@@ -235,6 +238,19 @@ class GameManager extends EventDispatcher {
 	public function displayPartById(?id:String, interrupt:Bool = false):Void
 	{
 		displayPart(game.start(id), interrupt);
+	}
+
+	public function displayContextual(contextual:ContextualDisplay, ?layout: String):Void
+	{
+		if(layout != null)
+			changeLayout(layout);
+		if(!this.layout.zones.get(game.ref).contains(cast(contextual, KpDisplay)))
+			this.layout.zones.get(game.ref).addChild(cast(contextual, KpDisplay));
+	}
+
+	public function hideContextual(contextual:ContextualDisplay):Void
+	{
+		changeLayout(previousLayout);
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import nme.filters.BitmapFilter;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import nme.Lib;
@@ -25,6 +26,16 @@ class KpDisplay extends Sprite {
     **/
 	public var spritesheets:Map<String, TilesheetEx>;
 
+	/**
+    * Transition to play at the beginning of the part
+    **/
+	public var transitionIn (default, default):String;
+
+	/**
+    * Transition to play at the end of the part
+    **/
+	public var transitionOut (default, default):String;
+
 	private var displays:Map<String, {obj:DisplayObject, z:Int}>;
 	private var displaysFast:Map<String, Fast>;
 	private var zIndex:Int = 0;
@@ -48,6 +59,11 @@ class KpDisplay extends Sprite {
 			layers.set(child.att.id, layer);
 		}
 		createDisplay();
+
+		if(displayFast.has.transitionIn)
+			transitionIn = displayFast.att.transitionIn;
+		if(displayFast.has.transitionOut)
+			transitionOut = displayFast.att.transitionOut;
 
 		ResizeManager.instance.onResize();
 	}
@@ -83,8 +99,9 @@ class KpDisplay extends Sprite {
 
 	private function createItem(itemNode:Fast):Void
 	{
-		if(itemNode.has.src || itemNode.has.filters)
+		if(itemNode.has.src || itemNode.has.filters || itemNode.has.tween){
 			addElement(UiFactory.createImageFromXml(itemNode, layers, spritesheets, false), itemNode);
+		}
 		else{
 			UiFactory.createImageFromXml(itemNode, layers, spritesheets, false);
 			var spritesheet = itemNode.has.spritesheet?itemNode.att.spritesheet:"ui";
