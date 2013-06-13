@@ -183,6 +183,12 @@ class UiFactory {
 				itemBmp.y = Std.parseFloat(xml.att.y);
 			if(xml.has.scale)
 				itemBmp.scaleX = itemBmp.scaleY = Std.parseFloat(xml.att.scale);
+			else{
+				if(xml.has.scaleX)
+					itemBmp.scaleX = Std.parseFloat(xml.att.scaleX);
+				if(xml.has.scaleY)
+					itemBmp.scaleY = Std.parseFloat(xml.att.scaleY);
+			}
 			if(xml.has.mirror){
 				itemBmp.bitmapData = switch(xml.att.mirror.toLowerCase()){
 					case "horizontal": flipBitmapData(itemBmp.bitmapData);
@@ -204,14 +210,29 @@ class UiFactory {
 				bmp.x = Std.parseFloat(xml.att.x);
 			if(xml.has.y)
 				bmp.y = Std.parseFloat(xml.att.y);
-			if(xml.has.scale)
-				bmp.scaleX = bmp.scaleY = Std.parseFloat(xml.att.scale);
 			if(xml.has.mirror){
 				bmp.bitmapData = switch(xml.att.mirror.toLowerCase()){
 					case "horizontal": flipBitmapData(bmp.bitmapData);
 					case "vertical": flipBitmapData(bmp.bitmapData, "y");
 					case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
 				}
+			}
+			if(xml.has.scale || xml.has.scaleX || xml.has.scaleY){
+				var scaleX: Float = 1;
+				var scaleY: Float = 1;
+				if(xml.has.scale)
+					scaleX = scaleY = Std.parseFloat(xml.att.scale);
+				else{
+					if(xml.has.scaleX)
+						scaleX = Std.parseFloat(xml.att.scaleX);
+					if(xml.has.scaleY)
+						scaleY = Std.parseFloat(xml.att.scaleY);
+				}
+				var matrix:Matrix = new Matrix();
+				matrix.scale(scaleX, scaleY);
+				var rescale:BitmapData = new BitmapData(Math.round(bmp.bitmapData.width * scaleX), Math.round(bmp.bitmapData.height * scaleY), true, 0x000000);
+				rescale.draw(bmp.bitmapData, matrix, null, null, null, true);
+				bmp.bitmapData = rescale;
 			}
 			return bmp;
 

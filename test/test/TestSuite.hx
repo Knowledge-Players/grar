@@ -2,19 +2,24 @@ import massive.munit.TestSuite;
 
 import ExampleTest;
 import KPGameTest;
+import TextItemTest;
+import UtilsTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
  * Refer to munit command line tool for more information (haxelib run munit)
  */
 
-class TestSuite extends massive.munit.TestSuite {
+class TestSuite extends massive.munit.TestSuite
+{		
 
-    public function new()
-    {
-        super();
+	public function new()
+	{
+		super();
 
-        add(ExampleTest);
-        add(KPGameTest);
-    }
+		add(ExampleTest);
+		add(KPGameTest);
+		add(TextItemTest);
+		add(UtilsTest);
+	}
 }

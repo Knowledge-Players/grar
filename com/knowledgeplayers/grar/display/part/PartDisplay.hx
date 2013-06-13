@@ -360,6 +360,9 @@ class PartDisplay extends KpDisplay {
 
 	private function setupTextItem(item:TextItem, ?isFirst:Bool = true):Void
 	{
+		if(item == null)
+			return;
+
 		currentTextItem = item;
 
 		var toRemove = new GenericStack<DisplayObject>();

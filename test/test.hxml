@@ -5,10 +5,16 @@
 -lib nme
 -lib actuate
 -lib tilelayer
+-lib ExAM
 -lib mockatoo
--cp ../src
+-lib tink_macros
+-cp src
 
 -cp test
 -swf-version 11
 -swf build/flash.swf
 -D utest
+
+-lib mcover
+-D MCOVER
+--macro mcover.MCover.coverage(['com.knowledgeplayers.grar.structure'], ['src'], null)

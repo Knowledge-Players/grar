@@ -1,2 +1,2 @@
 #!/bin/bash
-haxelib run munit test -coverage
+haxelib run munit test # -coverage

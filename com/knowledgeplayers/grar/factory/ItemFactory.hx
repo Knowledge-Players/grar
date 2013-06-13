@@ -43,6 +43,6 @@ class ItemFactory {
 
 	public static function createItemFromXml(xml:Fast):Null<TextItem>
 	{
-		return createItem(xml.att.type, xml);
+		return createItem(xml.has.type?xml.att.type:"", xml);
 	}
 }
