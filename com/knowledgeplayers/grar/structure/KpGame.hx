@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure;
 
+import nme.errors.Error;
 import com.knowledgeplayers.grar.structure.contextual.Notebook;
 import com.knowledgeplayers.grar.display.FilterManager;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
@@ -250,7 +251,12 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         connection = new Connection();
         if(mode != null)
             this.mode = mode;
-        connection.initConnection(this.mode);
+	    try{
+            connection.initConnection(this.mode);
+	    }catch(e: Dynamic){
+	        nme.Lib.trace("[KpGame] Cannot initialize connection with LMS. Setting connection to local.");
+		    connection.initConnection(Mode.AUTO);
+	    }
         stateInfos = connection.revertTracking();
         if(stateInfos.isEmpty()){
             stateInfos.loadStateInfos(state);
