@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.localisation.Localiser;
+import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.contextual.ContextualDisplay;
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.activity.ActivityManager;
@@ -264,9 +266,9 @@ class GameManager extends EventDispatcher {
 	public function getItemName(id:String):String
 	{
 		if(game.getItemName(id) != null)
-			return game.getItemName(id);
+			return Localiser.instance.getItemContent(game.getItemName(id));
 		else if(ActivityManager.instance.activities.get(id) != null)
-			return ActivityManager.instance.activities.get(id).name;
+			return Localiser.instance.getItemContent(ActivityManager.instance.activities.get(id).name);
 		else
 			throw "[GameManager] Unable to find the name of item \"" + id + "\".";
 	}
