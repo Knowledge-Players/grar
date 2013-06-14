@@ -101,9 +101,6 @@ class StripDisplay extends PartDisplay {
 		layer.addChild(sprite);
 		layer.render();
 		boxContainer.addChild(layer.view);
-		var x = Std.parseFloat(box.att.x) - Std.parseFloat(box.att.width)/2;
-		var y = Std.parseFloat(box.att.y) - Std.parseFloat(box.att.height)/2;
-		DisplayUtils.maskSprite(boxContainer, Std.parseFloat(box.att.width), Std.parseFloat(box.att.height), x, y);
 		if(box.hasNode.Text){
 			var textNode: Fast = box.node.Text;
 			createText(textNode);
@@ -115,6 +112,11 @@ class StripDisplay extends PartDisplay {
 		}
 
 		displayArea.addChild(boxContainer);
+
+		var x = Std.parseFloat(box.att.x) - Std.parseFloat(box.att.width)/2;
+		var y = Std.parseFloat(box.att.y) - Std.parseFloat(box.att.height)/2;
+		DisplayUtils.maskSprite(boxContainer, Std.parseFloat(box.att.width), Std.parseFloat(box.att.height), x, y);
+
 		var actuator = null;
 		if(box.has.transitionIn)
 			actuator = TweenManager.applyTransition(boxContainer, box.att.transitionIn);

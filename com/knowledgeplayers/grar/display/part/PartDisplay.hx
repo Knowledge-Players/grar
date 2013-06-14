@@ -74,15 +74,22 @@ class PartDisplay extends KpDisplay {
 	}
 
 	/**
-    * Initialize the part display. Dispatch a PartEvent.PART_LOADED
-    * when ready.
+    * Initialize the part display.
     **/
 
 	public function init():Void
 	{
-		parseContent(AssetsStorage.getXml(part.display));
-		Localiser.instance.pushLocale();
-		Localiser.instance.set_layoutPath(part.file);
+		if(part.display != null)
+			parseContent(AssetsStorage.getXml(part.display));
+		else
+			displayLoaded = true;
+
+		if(part.file != null){
+			Localiser.instance.pushLocale();
+			Localiser.instance.set_layoutPath(part.file);
+		}
+		else
+			localeLoaded = true;
 
 		if(currentElement != null && currentElement.isPattern())
 			startPattern(cast(currentElement, Pattern));
@@ -97,7 +104,8 @@ class PartDisplay extends KpDisplay {
 	{
 		part.end();
 		unLoad();
-		Localiser.instance.popLocale();
+		if(part.file != null)
+			Localiser.instance.popLocale();
 		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 	}
 

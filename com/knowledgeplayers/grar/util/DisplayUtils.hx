@@ -68,6 +68,8 @@ class DisplayUtils {
 	{
 		var mask = new Sprite();
 		initSprite(mask, maskWidth, maskHeight, 0, 1, maskX == 0 ? sprite.x : maskX, maskY == 0 ? sprite.y : maskY);
+		if(sprite.parent != null)
+			sprite.parent.addChild(mask);
 		sprite.mask = mask;
 	}
 

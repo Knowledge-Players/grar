@@ -26,11 +26,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 	**/
 	public var model (default, set_model): Notebook;
 
-	/**
-	* Layout for this display
-	**/
-	public var layout (default, default):String;
-
 	private var noteTemplate: Fast;
 	private var noteMap: Map<DefaultButton, String>;
 

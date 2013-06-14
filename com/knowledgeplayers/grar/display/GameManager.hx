@@ -144,11 +144,15 @@ class GameManager extends EventDispatcher {
 
 	public function changeLayout(layout:String):Void
 	{
-		previousLayout = this.layout == null ? "default" : this.layout.name;
-		if(this.layout != null)
-			Lib.current.removeChild(this.layout.content);
-		this.layout = LayoutManager.instance.getLayout(layout);
-		Lib.current.addChild(this.layout.content);
+		if(layout == null)
+			layout = "default";
+		if(this.layout == null || layout != this.layout.name){
+			previousLayout = this.layout == null ? "default" : this.layout.name;
+			if(this.layout != null)
+				Lib.current.removeChild(this.layout.content);
+			this.layout = LayoutManager.instance.getLayout(layout);
+			Lib.current.addChild(this.layout.content);
+		}
 	}
 
 	/**
@@ -345,7 +349,8 @@ class GameManager extends EventDispatcher {
 
 		partDisplay.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		partDisplay.startPart(startIndex);
-
+		if(partDisplay.visible)
+			changeLayout(partDisplay.layout);
 		layout.zones.get(game.ref).addChild(partDisplay);
 
 		var event = new PartEvent(PartEvent.ENTER_PART);

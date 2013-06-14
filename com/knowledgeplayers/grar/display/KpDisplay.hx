@@ -36,6 +36,11 @@ class KpDisplay extends Sprite {
     **/
 	public var transitionOut (default, default):String;
 
+	/**
+	* Layout where to display this widget
+	**/
+	public var layout (default, default):String;
+
 	private var displays:Map<String, {obj:DisplayObject, z:Int}>;
 	private var displaysFast:Map<String, Fast>;
 	private var zIndex:Int = 0;
@@ -64,6 +69,8 @@ class KpDisplay extends Sprite {
 			transitionIn = displayFast.att.transitionIn;
 		if(displayFast.has.transitionOut)
 			transitionOut = displayFast.att.transitionOut;
+		if(displayFast.has.layout)
+			layout = displayFast.att.layout;
 
 		ResizeManager.instance.onResize();
 	}

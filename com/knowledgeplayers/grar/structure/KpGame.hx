@@ -28,7 +28,7 @@ import nme.Lib;
 /**
  * KP inmplentation of a game
  */
-class KpGame extends EventDispatcher implements Game {
+class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements Game #end{
 	/**
      * Connection mode
      */

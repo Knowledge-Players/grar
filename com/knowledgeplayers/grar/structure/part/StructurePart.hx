@@ -16,7 +16,7 @@ import nme.events.EventDispatcher;
 import nme.media.Sound;
 import nme.media.SoundChannel;
 
-class StructurePart extends EventDispatcher implements Part implements Trackable {
+class StructurePart extends EventDispatcher #if haxe3 implements Part implements Trackable #else ,implements Part ,implements Trackable #end {
 	/**
      * Name of the part
      */
@@ -109,7 +109,7 @@ class StructurePart extends EventDispatcher implements Part implements Trackable
 			parseXml(xml);
 		}
 
-		if(display == null)
+		if(display == null && parent != null)
 			display = parent.display;
 
 		if(file != null){
@@ -117,7 +117,8 @@ class StructurePart extends EventDispatcher implements Part implements Trackable
 		}
 		else if(xml.elements.hasNext()){
 			parseContent(xml.x);
-			file = parent.file;
+			if(parent != null)
+				file = parent.file;
 		}
 		else
 			fireLoaded();
