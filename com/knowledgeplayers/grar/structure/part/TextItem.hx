@@ -37,7 +37,7 @@ class TextItem implements PartElement {
 	/**
     * Graphicals items associated with this item
     **/
-	public var items (default, default):GenericStack<String>;
+	public var images (default, default):GenericStack<String>;
 
 	/**
     * Reference to the token in this item
@@ -64,7 +64,7 @@ class TextItem implements PartElement {
 
 	public function new(?xml:Fast, content:String = "")
 	{
-		items = new GenericStack<String>();
+		images = new GenericStack<String>();
 		if(xml != null){
 			if(xml.has.content)
 				this.content = xml.att.content;
@@ -101,9 +101,9 @@ class TextItem implements PartElement {
 			if(xml.has.endScreen)
 				endScreen = xml.att.endScreen == "true";
 
-			for(item in xml.elements){
-				if(item.name.toLowerCase() == "item" || item.name.toLowerCase() == "character")
-					items.add(item.att.ref);
+			for(elem in xml.elements){
+				if(elem.name.toLowerCase() == "image" || elem.name.toLowerCase() == "character")
+					images.add(elem.att.ref);
 			}
 		}
 		else{

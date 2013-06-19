@@ -6,7 +6,7 @@ import com.knowledgeplayers.grar.factory.UiFactory;
 import haxe.xml.Fast;
 import nme.display.DisplayObject;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.util.DisplayUtils;
@@ -56,29 +56,23 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			Localiser.instance.layoutPath = model.file;
 			// Display bkg
 			if(model.background != null){
-				var bkg = displaysFast.get(model.background);
-				var width:Float = bkg.has.width ? Std.parseFloat(bkg.att.width) : 0;
-				var height:Float = bkg.has.height ? Std.parseFloat(bkg.att.height) : 0;
-				var alpha:Float = bkg.has.alpha ? Std.parseFloat(bkg.att.alpha) : 1;
-				var x:Float = bkg.has.x ? Std.parseFloat(bkg.att.x) : 0;
-				var y:Float = bkg.has.y ? Std.parseFloat(bkg.att.y) : 0;
-				DisplayUtils.setBackground(bkg.att.src, this, width, height, alpha, x, y);
+				addChildAt(displays.get(model.background), 0);
 			}
 
 			for(item in model.items){
 				if(displays.exists(item))
-					addChild(displays.get(item).obj);
+					addChild(displays.get(item));
 				else
 					throw '[NotebookDisplay] There is no item with ref "$item."';
 			}
 
 			// Display title
-			var title: ScrollPanel = cast(displays.get(model.title.ref).obj, ScrollPanel);
+			var title: ScrollPanel = cast(displays.get(model.title.ref), ScrollPanel);
 			title.setContent(Localiser.instance.getItemContent(model.title.content));
 			addChild(title);
 
 			// Display button
-			var button: DefaultButton = cast(displays.get(model.closeButton.ref).obj, DefaultButton);
+			var button: DefaultButton = cast(displays.get(model.closeButton.ref), DefaultButton);
 			button.setText(Localiser.instance.getItemContent(model.closeButton.content));
 			button.addEventListener("close", function(e){
 				GameManager.instance.hideContextual(this);
@@ -91,7 +85,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				var icon: Xml = findIcon(noteTemplate.x);
 				if(icon != null)
 					icon.set("src", note.icon);
-				var button: DefaultButton = UiFactory.createButtonFromXml(noteTemplate);
+				var button: DefaultButton = new DefaultButton(noteTemplate);
 				button.y += offsetY;
 				offsetY += button.height + Std.parseFloat(noteTemplate.att.offsetY);
 				button.setText(Localiser.instance.getItemContent(note.title), "title");
@@ -132,7 +126,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 
 	private function onSelectNote(e: Event):Void
 	{
-		var panel = cast(displays.get(model.contentRef).obj, ScrollPanel);
+		var panel = cast(displays.get(model.contentRef), ScrollPanel);
 		panel.setContent(Localiser.instance.getItemContent(noteMap.get(e.target)));
 		if(!contains(panel))
 			addChild(panel);

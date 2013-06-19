@@ -2,7 +2,7 @@ package com.knowledgeplayers.grar.display.layout;
 
 import aze.display.TileLayer;
 import aze.display.TileSprite;
-import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.component.ProgressBar;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;
@@ -104,9 +104,7 @@ class Zone extends Sprite {
 	public function createButton(_child:Fast):DefaultButton
 	{
 
-		var button:DefaultButton = null;
-
-		button = UiFactory.createButtonFromXml(_child);
+		var button:DefaultButton = new DefaultButton(_child);
 		if(_child.has.action){
 			button.addEventListener(_child.att.action, onActionEvent);
 		}
@@ -154,7 +152,7 @@ class Zone extends Sprite {
 	private function createText(element:Fast):ScrollPanel
 	{
 
-		var textF = UiFactory.createTextFromXml(element);
+		var textF = new ScrollPanel(element);
 
 		var keyText:String = element.att.content;
 		textF.setContent(Localiser.instance.getItemContent(keyText));
@@ -176,7 +174,9 @@ class Zone extends Sprite {
 			_container.filters = [FilterManager.getFilter(bkgNode.att.filter)];
 		}
 
-		_container.addChild(UiFactory.createSpriteFormXml(bkgNode));
+		var bkg = new Sprite();
+		DisplayUtils.initSprite(bkg, Std.parseFloat(bkgNode.att.width), Std.parseFloat(bkgNode.att.height), Std.parseInt(bkgNode.att.color), Std.parseFloat(bkgNode.att.alpha), Std.parseFloat(bkgNode.att.x), Std.parseFloat(bkgNode.att.y));
+		_container.addChild(bkg);
 
 		return _container;
 

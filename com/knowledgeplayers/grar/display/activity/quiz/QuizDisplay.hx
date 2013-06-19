@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.quiz;
 
 import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
-import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 
@@ -79,7 +79,7 @@ class QuizDisplay extends ActivityDisplay {
 
 	private function displayRound():Void
 	{
-		addChild(displays.get(quiz.getCurrentQuestion().ref).obj);
+		addChild(displays.get(quiz.getCurrentQuestion().ref));
 		addChild(quizGroups.get(quiz.getCurrentGroup()));
 
 		resizeD.onResize();
@@ -121,7 +121,7 @@ class QuizDisplay extends ActivityDisplay {
 
 		for(buttonKey in quiz.button.keys()){
 			for(contentKey in quiz.button.get(buttonKey).keys()){
-				cast(displays.get(buttonKey).obj, DefaultButton).setText(Localiser.instance.getItemContent(quiz.button.get(buttonKey).get(contentKey) + stateId), contentKey);
+				cast(displays.get(buttonKey), DefaultButton).setText(Localiser.instance.getItemContent(quiz.button.get(buttonKey).get(contentKey) + stateId), contentKey);
 			}
 		}
 	}
@@ -153,7 +153,7 @@ class QuizDisplay extends ActivityDisplay {
 	{
 		quizGroups.get(quiz.getCurrentGroup()).model = quiz.getCurrentAnswers();
 		var content = Localiser.get_instance().getItemContent(quiz.getCurrentQuestion().content);
-		cast(displays.get(quiz.getCurrentQuestion().ref).obj, ScrollPanel).setContent(content);
+		cast(displays.get(quiz.getCurrentQuestion().ref), ScrollPanel).setContent(content);
 		setState(QuizzState.EMPTY);
 	}
 

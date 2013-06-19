@@ -1,51 +1,45 @@
 package com.knowledgeplayers.grar.display.element;
 
+import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
+import haxe.xml.Fast;
+import com.knowledgeplayers.grar.display.component.Widget;
 import aze.display.TileClip;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import nme.display.Sprite;
 import nme.events.Event;
 
-class AnimationDisplay extends Sprite {
-
-	private var layer:TileLayer;
+class AnimationDisplay extends WidgetContainer
+{
 	private var clip:TileClip;
+	private var loop: Int;
 
-	public function new(_id:String, _x:Float, _y:Float, _tileSheet:TilesheetEx, _scaleX:Float, _scaleY:Float, _loop:Float, _alpha:Float, mirror:String)
+	public function new(?xml: Fast, ?_id:String, ?_tileSheet:TilesheetEx, _loop:Int = 0)
 	{
-		super();
+		super(xml);
 
-		layer = new TileLayer(_tileSheet);
-		clip = new TileClip(layer, _id);
-		clip.x = _x;
-		clip.y = _y;
-		clip.scaleX = _scaleX;
-		clip.scaleY = _scaleY;
-		clip.alpha = _alpha;
-
-		if(mirror != null){
-			clip.mirror = switch(mirror.toLowerCase()){
-				case "horizontal" : 1;
-				case "vertical" : 2;
-				case _ : throw '[AnimationDisplay] Unsupported mirror $mirror';
-			}
+		if(_tileSheet != null)
+			tilesheet = _tileSheet;
+		if(_id != null){
+			clip = new TileClip(layer, _id);
+			layer.addChild(clip);
+			layer.render();
 		}
-		layer.addChild(clip);
-		addChild(layer.view);
+		loop = _loop;
 
-		layer.render();
-
-		addEventListener(Event.ADDED_TO_STAGE, animElement);
+		addEventListener(Event.ADDED_TO_STAGE, animate);
 	}
 
 	/**
     * Play the animation with an Enter_Frame
     **/
 
-	public function animElement(?e:Event):Void
+	public function animate(?e:Event):Void
 	{
-
-		this.addEventListener(Event.ENTER_FRAME, loop);
+		clip.play();
+		clip.loop = false;
+		clip.onComplete = onAnimationEnd;
+		layer.render();
 	}
 
 	/**
@@ -54,7 +48,7 @@ class AnimationDisplay extends Sprite {
 
 	public function stopElement():Void
 	{
-		this.removeEventListener(Event.ENTER_FRAME, loop);
+		clip.stop();
 		clip.currentFrame = 0;
 		layer.render();
 	}
@@ -68,10 +62,13 @@ class AnimationDisplay extends Sprite {
 		layer.render();
 	}
 
-	private function loop(e:Event):Void
+	private function onAnimationEnd(clip:TileClip):Void
 	{
-		clip.play();
-		layer.render();
+		loop--;
+		if(loop > 0){
+			clip.currentFrame = 0;
+			clip.play();
+			layer.render();
+		}
 	}
-
 }

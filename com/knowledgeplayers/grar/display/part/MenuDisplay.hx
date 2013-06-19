@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.layout.Zone;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
@@ -159,8 +159,7 @@ class MenuDisplay extends Zone {
 
 	private function addButton(fast:Fast, text:String):DefaultButton
 	{
-		var button:DefaultButton = null;
-		button = UiFactory.createButtonFromXml(fast);
+		var button:DefaultButton = new DefaultButton(fast);
 
 		button.setText(text);
 		button.addEventListener(ButtonActionEvent.GOTO, onClick);

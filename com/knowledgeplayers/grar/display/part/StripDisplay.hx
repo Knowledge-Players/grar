@@ -1,12 +1,13 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.component.container.BoxDisplay;
 import Lambda;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
-import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
@@ -23,7 +24,7 @@ import nme.display.Sprite;
  */
 class StripDisplay extends PartDisplay {
 
-	private var boxes:Map<String, Fast>;
+	private var boxes:Map<String, BoxDisplay>;
 	private var currentBox:BoxPattern;
 	private var currentItem:TextItem;
 	private var boxIndex:Int = 0;
@@ -32,7 +33,7 @@ class StripDisplay extends PartDisplay {
 	{
 		super(part);
 
-		boxes = new Map<String, Fast>();
+		boxes = new Map<String, BoxDisplay>();
 	}
 
 	override public function next(event:ButtonActionEvent):Void
@@ -46,7 +47,7 @@ class StripDisplay extends PartDisplay {
 	{
 		super.createElement(elemNode);
 		if(elemNode.name.toLowerCase() == "box"){
-			boxes.set(elemNode.att.ref, elemNode);
+			boxes.set(elemNode.att.ref, new BoxDisplay(elemNode, spritesheets.get(elemNode.att.spritesheet)));
 		}
 	}
 
@@ -92,39 +93,30 @@ class StripDisplay extends PartDisplay {
 
 	override private function displayPart():Void
 	{
-		var boxContainer = new Sprite();
-		var box: Fast = boxes.get(currentBox.name);
-		var layer = new TileLayer(spritesheets.get(box.att.spritesheet));
-		var sprite = new TileSprite(layer, box.att.id);
-		sprite.x = Std.parseFloat(box.att.x);
-		sprite.y = Std.parseFloat(box.att.y);
-		layer.addChild(sprite);
-		layer.render();
-		boxContainer.addChild(layer.view);
-		if(box.hasNode.Text){
-			var textNode: Fast = box.node.Text;
-			createText(textNode);
-			var text = cast(displays.get(textNode.att.ref).obj, ScrollPanel);
-			text.setContent(Localiser.instance.getItemContent(currentItem.content));
-			text.x += Std.parseFloat(box.att.x);
-			text.y += Std.parseFloat(box.att.y);
-			boxContainer.addChild(text);
+		var box: BoxDisplay = boxes.get(currentBox.name);
+		if(!box.textFields.exists(currentItem.ref))
+			throw "[StripDisplay] There is no TextField with ref \""+currentItem.ref+"\"";
+		else
+			box.textFields.get(currentItem.ref).setContent(Localiser.instance.getItemContent(currentItem.content));
+		var tfCount = 1;
+		while(tfCount < Lambda.count(box.textFields)){
+			var nextItem = currentBox.getNextItem();
+			if(nextItem != null){
+				currentItem = nextItem;
+				box.textFields.get(currentItem.ref).setContent(Localiser.instance.getItemContent(currentItem.content));
+			}
+			tfCount++;
 		}
-
-		displayArea.addChild(boxContainer);
-
-		var x = Std.parseFloat(box.att.x) - Std.parseFloat(box.att.width)/2;
-		var y = Std.parseFloat(box.att.y) - Std.parseFloat(box.att.height)/2;
-		DisplayUtils.maskSprite(boxContainer, Std.parseFloat(box.att.width), Std.parseFloat(box.att.height), x, y);
-
-		var actuator = null;
-		if(box.has.transitionIn)
-			actuator = TweenManager.applyTransition(boxContainer, box.att.transitionIn);
-		if(Lambda.count(currentBox.buttons) == 0)
-			actuator.onComplete(onBoxVisible);
+		if(Lambda.count(currentBox.buttons) == 0){
+			box.onComplete = onBoxVisible;
+			addChild(box);
+		}
 		else{
+			addChild(box);
 			for(key in currentBox.buttons.keys()){
-				displayArea.addChild(displays.get(key).obj);
+				if(!displays.exists(key))
+					throw "[StripDisplay] There is no Button with ref \""+key+"\"";
+				addChild(displays.get(key));
 			}
 		}
 	}

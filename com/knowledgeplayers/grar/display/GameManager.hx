@@ -354,7 +354,6 @@ class GameManager extends EventDispatcher {
 		if(partDisplay.visible)
 			changeLayout(partDisplay.layout);
 		layout.zones.get(game.ref).addChild(partDisplay);
-
 		var event = new PartEvent(PartEvent.ENTER_PART);
 		event.partId = partDisplay.part.id;
 		dispatchEvent(event);

@@ -1,5 +1,6 @@
-package com.knowledgeplayers.grar.display.element;
+package com.knowledgeplayers.grar.display.component;
 
+import haxe.xml.Fast;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import aze.display.TileSprite;
@@ -12,16 +13,11 @@ import nme.geom.Point;
  * Graphic representation of a character of the game
  */
 
-class CharacterDisplay extends Sprite {
+class CharacterDisplay extends Widget {
 	/**
      * Starting point of the character
      */
-	public var origin:{pos:Point, scale:Float};
-
-	/**
-    * Scale of the character
-    **/
-	public var scale (default, set_scale):Float = 1;
+	//public var origin:{pos:Point, scale:Float};
 
 	/**
     * Model of the character
@@ -36,9 +32,9 @@ class CharacterDisplay extends Sprite {
 	private var layer:TileLayer;
 	private var img:TileSprite;
 
-	public function new(spritesheet:TilesheetEx, tileId:String, ?model:Character, ?mirror:String)
+	public function new(?xml: Fast, spritesheet:TilesheetEx, tileId:String, ?model:Character, ?mirror:String)
 	{
-		super();
+		super(xml);
 		this.model = model;
 
 		if(spritesheet == null)
@@ -56,25 +52,13 @@ class CharacterDisplay extends Sprite {
 		layer.addChild(img);
 		addChild(layer.view);
 		layer.render();
-
-		addEventListener(Event.REMOVED_FROM_STAGE, reset);
 	}
 
-	public function set_scale(scale:Float):Float
+	override public function set_scale(scale:Float):Float
 	{
 		this.scale = img.scale = scale;
 		layer.render();
 		return scale;
-	}
-
-	public function reset(?e:Event):Void
-	{
-
-		scale = origin.scale;
-
-		x = origin.pos.x;
-		y = origin.pos.y;
-
 	}
 
 }

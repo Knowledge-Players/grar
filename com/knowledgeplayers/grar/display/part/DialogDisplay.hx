@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
@@ -114,18 +114,18 @@ class DialogDisplay extends PartDisplay {
 		if(choice != null && pattern.tooltipRef != null && choice.toolTip != null){
 			if(!displays.exists(pattern.tooltipRef))
 				throw "[DialogDisplay] There is no ToolTip with ref " + pattern.tooltipRef;
-			var tooltip = cast(displays.get(pattern.tooltipRef).obj, ScrollPanel);
-			if(displayArea.contains(tooltip))
-				displayArea.removeChild(tooltip);
+			var tooltip = cast(displays.get(pattern.tooltipRef), ScrollPanel);
+			if(contains(tooltip))
+				removeChild(tooltip);
 			var content = Localiser.instance.getItemContent(choice.toolTip);
 			tooltip.setContent(content);
 			var i:Int = 0;
-			while(!Std.is(displayArea.getChildAt(i), DefaultButton)){
+			while(!Std.is(getChildAt(i), DefaultButton)){
 				i++;
 			}
 
 			TweenManager.applyTransition(tooltip, pattern.tooltipTransition);
-			displayArea.addChildAt(tooltip, i);
+			addChildAt(tooltip, i);
 		}
 		else{
 			removeEventListener(MouseEvent.MOUSE_OVER, onOverChoice);
@@ -137,6 +137,6 @@ class DialogDisplay extends PartDisplay {
 	{
 		var pattern = cast(currentPattern, ChoicePattern);
 		if(pattern.tooltipRef != null)
-			displayArea.removeChild(displays.get(pattern.tooltipRef).obj);
+			removeChild(displays.get(pattern.tooltipRef));
 	}
 }

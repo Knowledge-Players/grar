@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.display.activity;
 
-import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 
@@ -76,26 +76,20 @@ class ActivityDisplay extends KpDisplay {
 	{
 		// Background
 		if(model.background != null){
-			var bkg = displaysFast.get(model.background);
-			var width:Float = bkg.has.width ? Std.parseFloat(bkg.att.width) : 0;
-			var height:Float = bkg.has.height ? Std.parseFloat(bkg.att.height) : 0;
-			var alpha:Float = bkg.has.alpha ? Std.parseFloat(bkg.att.alpha) : 1;
-			var x:Float = bkg.has.x ? Std.parseFloat(bkg.att.x) : 0;
-			var y:Float = bkg.has.y ? Std.parseFloat(bkg.att.y) : 0;
-			DisplayUtils.setBackground(bkg.att.src, this, width, height, alpha, x, y);
+			addChildAt(displays.get(model.background), 0);
 		}
 
 		// Instructions
 		var localizedText = Localiser.instance.getItemContent(model.instructionContent);
-		cast(displays.get(model.ref).obj, ScrollPanel).setContent(localizedText);
-		addChild(displays.get(model.ref).obj);
+		cast(displays.get(model.ref), ScrollPanel).setContent(localizedText);
+		addChild(displays.get(model.ref));
 
 		// Button
 		for(buttonKey in model.button.keys()){
 			for(contentKey in model.button.get(buttonKey).keys()){
-				cast(displays.get(buttonKey).obj, DefaultButton).setText(Localiser.instance.getItemContent(model.button.get(buttonKey).get(contentKey)), contentKey);
+				cast(displays.get(buttonKey), DefaultButton).setText(Localiser.instance.getItemContent(model.button.get(buttonKey).get(contentKey)), contentKey);
 			}
-			addChild(displays.get(buttonKey).obj);
+			addChild(displays.get(buttonKey));
 		}
 	}
 

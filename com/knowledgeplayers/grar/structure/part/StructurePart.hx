@@ -362,12 +362,16 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 					}
 					button.set(child.att.ref, content);
 					if(child.has.goTo){
-						var i = 0;
-						while((!elements[i].isText() || cast(elements[i], TextItem).content != child.att.goTo) && i < elements.length){
-							i++;
+						if(child.att.goTo == "")
+							buttonTargets.set(child.att.ref, null);
+						else{
+							var i = 0;
+							while((!elements[i].isText() || cast(elements[i], TextItem).content != child.att.goTo) && i < elements.length){
+								i++;
+							}
+							if(i != elements.length)
+								buttonTargets.set(child.att.ref, elements[i]);
 						}
-						if(i != elements.length)
-							buttonTargets.set(child.att.ref, elements[i]);
 					}
 			}
 		}

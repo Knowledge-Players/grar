@@ -1,10 +1,11 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import com.knowledgeplayers.grar.display.component.Widget;
 import nme.Lib;
 import nme.display.DisplayObject;
 import com.knowledgeplayers.grar.structure.Token;
 import aze.display.TilesheetEx;
-import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
@@ -25,7 +26,7 @@ import nme.geom.Point;
 /**
 * View of an inventory
 **/
-class InventoryDisplay extends Sprite {
+class InventoryDisplay extends Widget {
 	/**
     * BitmapData for the slots when they're locked
     **/
@@ -66,16 +67,6 @@ class InventoryDisplay extends Sprite {
     **/
 	public var tipTransitionOut (default, default):String;
 
-	/**
-    * Reference to the transition when inventory appears
-    **/
-	public var transitionIn (default, default):String;
-
-	/**
-    * Reference to the transition when inventory disappears
-    **/
-	public var transitionOut (default, default):String;
-
 	private var tokens:GenericStack<String>;
 	private var slots:Map<String, Sprite>;
 	private var tooltip:ScrollPanel;
@@ -102,13 +93,9 @@ class InventoryDisplay extends Sprite {
 
 	public function new(?fast:Fast)
 	{
-		super();
+		super(fast);
 
-		x = Std.parseFloat(fast.att.x);
-		y = Std.parseFloat(fast.att.y);
 		maxWidth = Std.parseFloat(fast.att.width);
-		transitionIn = fast.has.transitionIn ? fast.att.transitionIn : null;
-		transitionOut = fast.has.transitionOut ? fast.att.transitionOut : null;
 
 		var icon = fast.node.Icon;
 		iconScale = icon.has.scale ? Std.parseFloat(icon.att.scale) : 1;
@@ -116,13 +103,8 @@ class InventoryDisplay extends Sprite {
 		iconTransition = icon.att.transitionIn;
 
 		var tip:Fast = fast.node.Tooltip;
-		tooltip = new ScrollPanel(Std.parseFloat(tip.att.width), Std.parseFloat(tip.att.height), tip.has.style ? tip.att.style : null);
+		tooltip = new ScrollPanel(tip);
 		tooltip.mouseEnabled = false;
-		var spritesheet:TilesheetEx = null;
-		if(tip.has.spritesheet){
-			spritesheet = cast(parent, PartDisplay).spritesheets.get(tip.att.spritesheet);
-		}
-		tooltip.setBackground(tip.att.background, spritesheet);
 		tooltip.x = Std.parseFloat(tip.att.x);
 		tooltip.y = Std.parseFloat(tip.att.y);
 		tooltipOrigin = new Point(tooltip.x, tooltip.y);
@@ -168,7 +150,7 @@ class InventoryDisplay extends Sprite {
 				largeImage.y = Std.parseFloat(img.att.y);
 			}
 
-			closeButton = UiFactory.createButtonFromXml(fullscreen.node.Button);
+			closeButton = new DefaultButton(fullscreen.node.Button);
 			if(fullscreen.node.Button.att.action == "close")
 				closeButton.addEventListener("close", closeFullscreen);
 			if(fullscreen.hasNode.Background){

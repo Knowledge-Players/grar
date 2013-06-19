@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.display;
 
+import nme.events.Event;
+import com.knowledgeplayers.grar.display.component.TileImage;
+import com.knowledgeplayers.grar.display.component.Widget;
+import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import nme.filters.BitmapFilter;
 import com.knowledgeplayers.grar.util.DisplayUtils;
@@ -7,9 +11,9 @@ import nme.Lib;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import aze.display.TileSprite;
-import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.display.element.CharacterDisplay;
+import com.knowledgeplayers.grar.display.component.CharacterDisplay;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
@@ -41,8 +45,8 @@ class KpDisplay extends Sprite {
 	**/
 	public var layout (default, default):String;
 
-	private var displays:Map<String, {obj:DisplayObject, z:Int}>;
-	private var displaysFast:Map<String, Fast>;
+	private var displays:Map<String, Widget>;
+	//private var displaysFast:Map<String, Fast>;
 	private var zIndex:Int = 0;
 	private var textGroups:Map<String, Map<String, {obj:Fast, z:Int}>>;
 	private var layers:Map<String, TileLayer>;
@@ -61,6 +65,9 @@ class KpDisplay extends Sprite {
 		for(child in displayFast.nodes.SpriteSheet){
 			spritesheets.set(child.att.id, AssetsStorage.getSpritesheet(child.att.src));
 			var layer = new TileLayer(AssetsStorage.getSpritesheet(child.att.src));
+			addEventListener(Event.ENTER_FRAME, function(e){
+				layer.render();
+			});
 			layers.set(child.att.id, layer);
 		}
 		createDisplay();
@@ -88,8 +95,7 @@ class KpDisplay extends Sprite {
 	{
 
 		switch(elemNode.name.toLowerCase()){
-			case "background": createBackground(elemNode);
-			case "item": createItem(elemNode);
+			case "background" | "image": createImage(elemNode);
 			case "character": createCharacter(elemNode);
 			case "button": createButton(elemNode);
 			case "text": createText(elemNode);
@@ -98,30 +104,27 @@ class KpDisplay extends Sprite {
 
 	}
 
-	private function createBackground(bkgNode:Fast):Void
+	private function createImage(itemNode:Fast):Void
 	{
-		displaysFast.set(bkgNode.att.ref, bkgNode);
-		zIndex++;
-	}
-
-	private function createItem(itemNode:Fast):Void
-	{
-		if(itemNode.has.src || itemNode.has.filters || itemNode.has.tween){
-			addElement(UiFactory.createImageFromXml(itemNode, layers, spritesheets, false), itemNode);
+		var spritesheet = itemNode.has.spritesheet?itemNode.att.spritesheet:"ui";
+		if(itemNode.has.src || itemNode.has.filters){
+			addElement(new Image(itemNode, spritesheets.get(spritesheet)), itemNode);
 		}
 		else{
-			UiFactory.createImageFromXml(itemNode, layers, spritesheets, false);
-			var spritesheet = itemNode.has.spritesheet?itemNode.att.spritesheet:"ui";
-			if(!displays.exists(spritesheet))
-				displays.set(spritesheet, {obj: layers.get(spritesheet).view, z: zIndex++});
-
-			displaysFast.set(itemNode.att.id, itemNode);
+			if(!layers.exists(spritesheet)){
+				var layer = new TileLayer(UiFactory.tilesheet);
+				addEventListener(Event.ENTER_FRAME, function(e){
+					layer.render();
+				});
+				layers.set(spritesheet, layer);
+			}
+			addElement(new TileImage(itemNode, layers.get(spritesheet), false), itemNode);
 		}
 	}
 
 	private function createButton(buttonNode:Fast):Void
 	{
-		var button:DefaultButton = UiFactory.createButtonFromXml(buttonNode);
+		var button:DefaultButton = new DefaultButton(buttonNode);
 
 		if(buttonNode.has.action)
 			setButtonAction(button, buttonNode.att.action);
@@ -130,7 +133,7 @@ class KpDisplay extends Sprite {
 
 	private function createText(textNode:Fast):Void
 	{
-		addElement(UiFactory.createTextFromXml(textNode, spritesheets), textNode);
+		addElement(new ScrollPanel(textNode), textNode);
 	}
 
 	private function createTextGroup(textNode:Fast):Void
@@ -155,46 +158,25 @@ class KpDisplay extends Sprite {
 			char.nameRef = character.att.nameRef;
 		if(character.has.scale)
 			char.scale = Std.parseFloat(character.att.scale);
-		char.origin = {pos: new Point(Std.parseFloat(character.att.x), Std.parseFloat(character.att.y)), scale: char.scale};
 		addElement(char, character);
 
 	}
 
-	private function addElement(elem:DisplayObject, node:Fast, initObject:Bool = true):Void
+	private function addElement(elem:Widget, node:Fast):Void
 	{
-		if(initObject)
-			initDisplayObject(elem, node);
+		elem.z = zIndex;
 		if(node.has.id && !node.has.ref){
-			displays.set(node.att.id, {obj: elem, z: zIndex});
-			displaysFast.set(node.att.id, node);
+			displays.set(node.att.id, elem);
 		}
 		else if(!node.has.ref){
-			displays.set(node.att.src, {obj: elem, z: zIndex});
-			displaysFast.set(node.att.src, node);
+			displays.set(node.att.src, elem);
 		}
 		else{
-			displays.set(node.att.ref, {obj: elem, z: zIndex});
-			displaysFast.set(node.att.ref, node);
+			displays.set(node.att.ref, elem);
 		}
+
 		ResizeManager.instance.addDisplayObjects(elem, node);
 		zIndex++;
-	}
-
-	private function initDisplayObject(display:DisplayObject, node:Fast, ?transition:String):Void
-	{
-		if(node.has.x)
-			display.x = Std.parseFloat(node.att.x);
-		if(node.has.y)
-			display.y = Std.parseFloat(node.att.y);
-
-		if(node.has.width)
-			display.width = Std.parseFloat(node.att.width);
-		else if(node.has.scaleX)
-			display.scaleX = Std.parseFloat(node.att.scaleX);
-		if(node.has.height)
-			display.height = Std.parseFloat(node.att.height);
-		else if(node.has.scaleY)
-			display.scaleY = Std.parseFloat(node.att.scaleY);
 	}
 
 	private function setButtonAction(button:DefaultButton, action:String):Void
@@ -203,8 +185,7 @@ class KpDisplay extends Sprite {
 	private function new()
 	{
 		super();
-		displays = new Map<String, {obj:DisplayObject, z:Int}>();
-		displaysFast = new Map<String, Fast>();
+		displays = new Map<String, Widget>();
 		spritesheets = new Map<String, TilesheetEx>();
 		textGroups = new Map<String, Map<String, {obj:Fast, z:Int}>>();
 		layers = new Map<String, TileLayer>();

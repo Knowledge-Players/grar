@@ -55,13 +55,9 @@ class TokenNotification extends Sprite {
 		super();
 
 		var title:Fast = fast.node.Title;
-		titleArea = new ScrollPanel(Std.parseFloat(title.att.width), Std.parseFloat(title.att.height), title.has.scrollable ? title.att.scrollable == "true" : true, title.has.stylesheet ? title.att.stylesheet : null);
-		titleArea.x = Std.parseFloat(title.att.x);
-		titleArea.y = Std.parseFloat(title.att.y);
+		titleArea = new ScrollPanel(title);
 		var tokenName:Fast = fast.node.TokenName;
-		tokenArea = new ScrollPanel(Std.parseFloat(tokenName.att.width), Std.parseFloat(tokenName.att.height), tokenName.has.scrollable ? tokenName.att.scrollable == "true" : true, tokenName.has.stylesheet ? tokenName.att.stylesheet : null);
-		tokenArea.x = Std.parseFloat(tokenName.att.x);
-		tokenArea.y = Std.parseFloat(tokenName.att.y);
+		tokenArea = new ScrollPanel(tokenName);
 
 		this.x = Std.parseFloat(fast.att.x);
 		this.y = Std.parseFloat(fast.att.y);

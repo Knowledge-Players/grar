@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.cards;
 
+import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import aze.display.TileClip;
 import aze.display.TileLayer;
@@ -104,8 +105,8 @@ class CardsDisplay extends ActivityDisplay {
 		super.createElement(elemNode);
 		switch(elemNode.name.toLowerCase()){
 			case "target" :
-				var target = {obj: new Bitmap(AssetsStorage.getBitmapData(elemNode.att.src)), ref: elemNode.att.ref};
-				addElement(target.obj, elemNode);
+				var target = new Image(elemNode);
+				addElement(target, elemNode);
 			case "popup" :
 				var pop:Bitmap = new Bitmap(AssetsStorage.getBitmapData(elemNode.att.background));
 				popUp.addChild(pop);

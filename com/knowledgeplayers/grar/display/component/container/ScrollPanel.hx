@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import haxe.xml.Fast;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import aze.display.TileSprite;
@@ -17,51 +18,14 @@ import nme.events.MouseEvent;
 /**
  * ScrollPanel to manage text overflow, with auto scrollbar
  */
-class ScrollPanel extends Sprite {
-	/**
-     * Text in the panel
-     */
-	private var content (default, null):Sprite;
-
-	/**
-    * If true, the text won't scroll even if it's bigger than the panel
-    **/
-	public var scrollLock (default, default):Bool;
+class ScrollPanel extends WidgetContainer {
 
 	/**
     * Style sheet used for this panel
     **/
 	public var styleSheet (default, default):String;
 
-	/**
-	* Transition when the text appears
-	**/
-	public var textTransition (default, default):String;
-
-	/**
-	* Transition when the panel appears
-	**/
-	public var transitionIn (default, default):String;
-
-	/**
-	* Transition when the panel disappears
-	**/
-	public var transitionOut (default, default):String;
-
-	/**
-	* Alpha of the text only
-	**/
-	public var textAlpha (default, set_textAlpha):Float = 1;
-
-	private var scrollBar:ScrollBar;
-	private var maskWidth:Float;
-	private var maskHeight:Float;
-	private var scrollable:Bool;
-
-	/**
-    * Background of the panel. It can be only a color or a reference to a Bitmap,
-    **/
-	private var background:String;
+	private var scrollNeeded:Bool;
 
 	/**
      * Constructor
@@ -71,17 +35,18 @@ class ScrollPanel extends Sprite {
      * @param   styleSheet : Style sheet used for this panel
      */
 
-	public function new(width:Float, height:Float, ?_scrollLock:Bool = false, ?_styleSheet:String)
+	public function new(?xml: Fast, ?width:Float, ?height:Float, ?_styleSheet:String)
 	{
-		super();
-		maskWidth = width;
-		maskHeight = height;
-		this.scrollLock = _scrollLock;
-		styleSheet = _styleSheet;
-		content = new Sprite();
-		addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
-		addEventListener(Event.ADDED_TO_STAGE, onAdded);
-		addEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
+		super(xml);
+		if(xml != null){
+			styleSheet = xml.has.styleSheet ? xml.att.styleSheet : null;
+		}
+		if(_styleSheet != null)
+			styleSheet = _styleSheet;
+		if(width != null)
+			this.width = width;
+		if(height != null)
+			this.height = height;
 	}
 
 	/**
@@ -105,7 +70,7 @@ class ScrollPanel extends Sprite {
 
 		var mask = new Sprite();
 
-		if(scrollLock){
+		if(scrollable){
 			DisplayUtils.initSprite(mask, 1, 1);
 		}
 		else{
@@ -131,7 +96,7 @@ class ScrollPanel extends Sprite {
 			item.x = padding[3];
 			item.y = offSetY;
 			offSetY += item.height + StyleParser.getStyle(element.style).getLeading()[1];
-			if(scrollLock){
+			if(scrollable){
 				for(i in 0...element.numLines){
 					var m = new Sprite();
 					m.y = item.y + (i * element.lineHeight);
@@ -142,125 +107,47 @@ class ScrollPanel extends Sprite {
 
 			}
 			content.addChild(item);
-			content.alpha = textAlpha;
+			content.alpha = contentAlpha;
 		}
 
-		content.mask = mask;
+		addChild(content);
 		addChild(mask);
+		content.mask = mask;
 
-		if(maskHeight < content.height && !scrollLock){
+		if(maskHeight < content.height && scrollable){
 			scrollBar = UiFactory.createScrollBar(18, maskHeight, maskHeight / content.height, "scrollbar", "cursor");
 			scrollBar.x = maskWidth - scrollBar.width;
 			addChild(scrollBar);
 			scrollBar.scrolled = scrollToRatio;
-			scrollable = true;
+			scrollNeeded = true;
 		}
 		else{
-			scrollable = false;
+			scrollNeeded = false;
 		}
 
 		if(previousStyleSheet != null)
 			StyleParser.currentStyleSheet = previousStyleSheet;
-
-		if(transitionIn == null)
-			displayText();
 	}
 
-	public function setBackground(bkg:String, ?tilesheet:TilesheetEx, alpha:Float = 1):Void
+	override public function set_transitionIn(transition:String):String
 	{
-		background = bkg;
-		if(Std.parseInt(bkg) != null){
-			DisplayUtils.initSprite(this, maskWidth, maskHeight, Std.parseInt(bkg), alpha);
-		}
-		else if(background.indexOf(".") < 0){
-			if(tilesheet == null)
-				tilesheet = UiFactory.tilesheet;
-			var layer = new TileLayer(tilesheet);
-			var tile = new TileSprite(layer, background);
-			layer.addChild(tile);
-			addChildAt(layer.view, 0);
-			tile.x += tile.width / 2;
-			tile.y += tile.height / 2;
-			layer.render();
-		}
-		else if(AssetsStorage.hasAsset(background)){
-			var bkg:Bitmap = new Bitmap(AssetsStorage.getBitmapData(background));
-			bkg.width = maskWidth;
-			bkg.height = maskHeight;
-
-			this.addChildAt(bkg, 0);
-		}
-	}
-
-	public function set_textAlpha(alpha:Float):Float
-	{
-		content.alpha = alpha;
-		return textAlpha = alpha;
-	}
-
-	// Private
-
-	private function scrollToRatio(position:Float)
-	{
-		content.y = -position * content.height;
-	}
-
-	private function clear()
-	{
-		content = new Sprite();
-		var max = (background != null && background != "") ? 1 : 0;
-		while(numChildren > max)
-			removeChildAt(numChildren - 1);
-	}
-
-	private function displayText():Void
-	{
-		addChild(content);
-
-		//TweenManager.applyTransition(content, textTransition);
-		TweenManager.applyTransition(content.mask, textTransition);
-	}
-
-	private function moveCursor(delta:Float)
-	{
-		scrollBar.moveCursor(delta);
-	}
-
-	// Handlers
-
-	private function onAdded(e:Event)
-	{
-		var actuator = TweenManager.applyTransition(this, transitionIn);
-		if(textTransition != null){
-			if(actuator != null)
-				actuator.onComplete(displayText);
-		}
-		else{
-			displayText();
-		}
-
-	}
-
-	private function onRemoved(e:Event)
-	{
-		TweenManager.applyTransition(this, transitionOut);
-	}
-
-	private function onWheel(e:MouseEvent):Void
-	{
-		if(scrollable){
-			if(e.delta > 0 && content.y + e.delta > 0){
-				content.y = 0;
-			}
-			else if(e.delta < 0 && content.y + e.delta < -(content.height - maskHeight)){
-				content.y = -(content.height - maskHeight);
+		addEventListener(Event.ADDED_TO_STAGE, function(e:Event)
+		{
+			var actuator = TweenManager.applyTransition(this, transition);
+			if(contentTransition != null){
+				if(actuator != null)
+					actuator.onComplete(displayContent);
 			}
 			else{
-				content.y += e.delta;
+				displayContent();
 			}
-			if(scrollBar != null)
-				moveCursor(e.delta);
-		}
+		});
+
+		return transitionIn = transition;
+	}
+
+	override public function maskSprite(sprite: Sprite, maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0):Void
+	{
 	}
 
 }

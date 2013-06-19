@@ -1,5 +1,11 @@
-package com.knowledgeplayers.grar.display.component.button;
+package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.display.element.AnimationDisplay;
+import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
+import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.factory.UiFactory;
+import haxe.xml.Fast;
 import nme.Lib;
 import motion.Actuate;
 import aze.display.TileClip;
@@ -16,12 +22,7 @@ import nme.events.MouseEvent;
  * Custom base button class
  */
 
-class DefaultButton extends Sprite {
-
-	/**
-     * Layer of the button
-     */
-	public var layer:TileLayer;
+class DefaultButton extends WidgetContainer {
 
 	/**
      * Switch to enable the button
@@ -29,39 +30,14 @@ class DefaultButton extends Sprite {
 	public var enabled (default, set_enabled):Bool;
 
 	/**
-    * Reference of the button
-    **/
-	public var ref (default, default):String;
-
-	/**
-    * Scale of the button
-    **/
-	public var scale (default, set_scale):Float;
-
-	/**
-    * Mirror
-    **/
-	public var mirror (default, set_mirror):Int;
-
-	/**
     * Class of style for the button
     **/
 	public var className (default, default):String;
 
 	/**
-	* Transition when the button appears
-	**/
-	public var transitionIn (default, set_transitionIn):String;
-
-	/**
-	* Transition when the button disappears
-	**/
-	public var transitionOut (default, set_transitionOut):String;
-
-	/**
     * Different states of the button
     **/
-	public var states (default, null):Map<String, Map<String, {dpo:DisplayObject, z:Int, trans:String}>>;
+	public var states (default, null):Map<String, Map<String, Widget>>;
 
 	/**
      * Type of the event to dispatch
@@ -85,36 +61,41 @@ class DefaultButton extends Sprite {
      * @param	tile : Tile containing the upstate
      */
 
-	public function new(pStates:Map<String, Map<String, {dpo:DisplayObject, z:Int, trans:String}>>, action:String = "next")
+	public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>, action:String = "next")
 	{
-		super();
+		super(xml);
 
-		states = pStates;
+		if(pStates != null)
+			states = pStates;
+		else
+			states = new Map<String, Map<String, Widget>>();
 
-		eventType = action.toLowerCase();
+		if(xml != null){
+			if(xml.hasNode.active){
+				for(state in xml.node.active.elements){
+					if(states.exists("active_out") || state.name == "out"){
+						states.set("active_" + state.name, createStates(state));
+					}
+				}
+			}
+			if(xml.hasNode.inactive){
+				for(state in xml.node.inactive.elements){
+					if(states.exists("inactive_out") || state.name == "out"){
+						states.set("inactive_" + state.name, createStates(state));
+					}
+				}
+			}
+
+			if(xml.has.action)
+				eventType = xml.att.action.toLowerCase();
+		}
+
+		if(eventType == null)
+			eventType = action.toLowerCase();
 
 		mouseChildren = false;
 
 		init();
-	}
-
-	public function set_transitionIn(transition:String):String
-	{
-		addEventListener(Event.ADDED_TO_STAGE, function(e:Event)
-		{
-			TweenManager.applyTransition(this, transition);
-		});
-
-		return transitionIn = transition;
-	}
-
-	public function set_transitionOut(transition:String):String
-	{
-		addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
-		{
-			TweenManager.applyTransition(this, transition);
-		});
-		return transitionOut = transition;
 	}
 
 	/**
@@ -130,12 +111,7 @@ class DefaultButton extends Sprite {
 		return activate;
 	}
 
-	public function set_scale(scale:Float):Float
-	{
-		return scaleX = scaleY = this.scale = scale;
-	}
-
-	public function set_mirror(mirror:Int):Int
+	override public function set_mirror(mirror:Int):Int
 	{
 		for(sprite in layer.children)
 			cast(sprite, TileSprite).mirror = mirror;
@@ -180,7 +156,6 @@ class DefaultButton extends Sprite {
 	{
 		if(!propagateNativeEvent)
 			event.stopImmediatePropagation();
-
 		var e = new ButtonActionEvent(eventType);
 		dispatchEvent(e);
 	}
@@ -248,7 +223,7 @@ class DefaultButton extends Sprite {
 	private function renderState(state:String)
 	{
 		var changeState = false;
-		var list:Map<String, {dpo:DisplayObject, z:Int, trans:String}>;
+		var list:Map<String, Widget>;
 		if(states.exists(toggle + "_" + state)){
 			list = states.get(toggle + "_" + state);
 			if(currentState != toggle + "_" + state){
@@ -279,29 +254,40 @@ class DefaultButton extends Sprite {
 		}
 		if(changeState){
 			// Clear state
-			while(numChildren > 0){
-				removeChildAt(numChildren - 1);
+			while(content.numChildren > 0){
+				content.removeChildAt(content.numChildren - 1);
 			}
-
-			var array = new Array<{dpo:DisplayObject, z:Int, trans:String}>();
 
 			if(list == null)
 				throw "There is no information for state \"" + currentState + "\" for button \"" + ref + "\".";
-			for(elem in list){
-				array.push(elem);
+
+			var array = new Array<Widget>();
+			for(key in list.keys()){
+				if(list.get(key) != null)
+					array.push(list.get(key));
+				else{
+					for(child in layer.children){
+						if(Std.is(child, TileSprite) && cast(child, TileSprite).tile == key){
+							cast(child, TileSprite).visible = true;
+						}
+						else
+							cast(child, TileSprite).visible = false;
+					}
+				}
 			}
+			content.addChild(layer.view);
 
 			array.sort(sortDisplayObjects);
 			for(obj in array){
-				if(obj.trans != ""){
-					TweenManager.resetTransform(obj.dpo);
-					TweenManager.applyTransition(obj.dpo, obj.trans);
+				if(obj.transformation != ""){
+					TweenManager.resetTransform(obj);
+					TweenManager.applyTransition(obj, obj.transformation);
 
 				}
-				addChild(obj.dpo);
-
+				addChild(obj);
 			}
 
+			render();
 		}
 	}
 
@@ -309,18 +295,18 @@ class DefaultButton extends Sprite {
 	{
 		for(state in states){
 			if(pKey != null && state.exists(pKey)){
-				cast(state.get(pKey).dpo, ScrollPanel).setContent(pContent);
+				cast(state.get(pKey), ScrollPanel).setContent(pContent);
 			}
 			else if(pKey == null){
 				for(elem in state){
-					if(Std.is(elem.dpo, ScrollPanel))
-						cast(elem.dpo, ScrollPanel).setContent(pContent);
+					if(Std.is(elem, ScrollPanel))
+						cast(elem, ScrollPanel).setContent(pContent);
 				}
 			}
 		}
 	}
 
-	private function sortDisplayObjects(x:{dpo:DisplayObject, z:Int, trans:String}, y:{dpo:DisplayObject, z:Int, trans:String}):Int
+	private function sortDisplayObjects(x:Widget, y:Widget):Int
 	{
 		if(x.z < y.z)
 			return -1;
@@ -340,6 +326,35 @@ class DefaultButton extends Sprite {
 		removeEventListener(MouseEvent.DOUBLE_CLICK, listener);
 		removeEventListener(MouseEvent.MOUSE_DOWN, listener);
 		removeEventListener(MouseEvent.MOUSE_UP, listener);
+	}
+
+	private function createStates(node:Fast):Map<String, Widget>
+	{
+		var list = new Map<String, Widget>();
+		var zIndex = 0;
+		var trans:String = "";
+		for(elem in node.elements){
+			switch (elem.name.toLowerCase()) {
+				case "image":
+					if(elem.has.transform)
+						trans = elem.att.transform;
+					UiFactory.addImageToLayer(elem, layer, false);
+					list.set(elem.att.tile, null);
+
+				case "text": var text = new ScrollPanel(elem);
+					text.z = zIndex;
+					text.transformation = trans;
+					list.set(elem.att.ref, text);
+
+				case "animation": var anim = new AnimationDisplay(elem);
+					anim.z = zIndex;
+					anim.transformation = trans;
+					list.set(elem.att.ref, anim);
+			}
+			zIndex++;
+			trans = "";
+		}
+		return list;
 	}
 
 	// Listener

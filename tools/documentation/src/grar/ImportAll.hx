@@ -8,7 +8,7 @@ import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
 import com.knowledgeplayers.grar.display.activity.quiz.QuizDisplay;
 import com.knowledgeplayers.grar.display.activity.quiz.QuizGroupDisplay;
 import com.knowledgeplayers.grar.display.activity.quiz.QuizItemDisplay;
-import com.knowledgeplayers.grar.display.component.button.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.ScrollBar;
 import com.knowledgeplayers.grar.display.part.DialogDisplay;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;

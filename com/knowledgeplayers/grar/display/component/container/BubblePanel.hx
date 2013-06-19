@@ -8,6 +8,7 @@ import nme.events.Event;
 import nme.text.TextFormatAlign;
 
 /**
+ * @deprecated
  * Display text in a bubble
  */
 
@@ -87,15 +88,15 @@ class BubblePanel extends ScrollPanel {
 		this.mask = mask;
 		addChild(mask);
 
-		if(maskHeight < content.height && !scrollLock){
+		if(maskHeight < content.height && !scrollable){
 			scrollBar = UiFactory.createScrollBar(18, maskHeight, maskHeight / content.height, "scrollbar", "cursor");
 			scrollBar.x = maskWidth - scrollBar.width;
 			addChild(scrollBar);
 			scrollBar.scrolled = scrollToRatio;
-			scrollable = true;
+			scrollNeeded = true;
 		}
 		else{
-			scrollable = false;
+			scrollNeeded = false;
 		}
 
 		if(previousStyleSheet != null)

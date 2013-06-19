@@ -39,7 +39,7 @@ class TweenManager {
     * @return the actuator
     **/
 
-	public static function applyTransition(display:DisplayObject, refs:String):Null<IGenericActuator>
+	public static function applyTransition(display:Dynamic, refs:String):Null<IGenericActuator>
 	{
 		var transition:IGenericActuator = null;
 		if(refs != null){
@@ -54,7 +54,7 @@ class TweenManager {
 		return transition;
 	}
 
-	private static function startTransition(display:DisplayObject, ref:String):Null<IGenericActuator>
+	private static function startTransition(display:Dynamic, ref:String):Null<IGenericActuator>
 	{
 		var transition = transitions.get(ref);
 		if(transition == null)
@@ -83,7 +83,7 @@ class TweenManager {
      * @return the actuator
      **/
 
-	public static function discover(display:DisplayObject, ref:String, it:Int):IGenericActuator
+	public static function discover(display:Dynamic, ref:String, it:Int):IGenericActuator
 	{
 
 		if(it < cast(display, Sprite).numChildren){
@@ -158,7 +158,7 @@ class TweenManager {
      * @return the actuator
      **/
 
-	public static function fade(display:DisplayObject, ref:String):IGenericActuator
+	public static function fade(display:Dynamic, ref:String):IGenericActuator
 	{
 		var fade = transitions.get(ref);
 		var inOut = parseValue("alpha", fade.alpha, display);
@@ -174,7 +174,7 @@ class TweenManager {
     * @return the actuator
     **/
 
-	public static function wiggle(display:DisplayObject, ref:String):IGenericActuator
+	public static function wiggle(display:Dynamic, ref:String):IGenericActuator
 	{
 		var wiggle = transitions.get(ref);
 		var inOutX = parseValue("x", wiggle.x, display);
@@ -192,7 +192,7 @@ class TweenManager {
     * @return the actuator
     **/
 
-	public static function zoom(display:DisplayObject, ref:String):IGenericActuator
+	public static function zoom(display:Dynamic, ref:String):IGenericActuator
 	{
 		var zoom = transitions.get(ref);
 
@@ -218,7 +218,7 @@ class TweenManager {
      * @return the actuator
      */
 
-	public static function slide(display:DisplayObject, ref:String):IGenericActuator
+	public static function slide(display:Dynamic, ref:String):IGenericActuator
 	{
 		var slide = transitions.get(ref);
 
@@ -229,19 +229,19 @@ class TweenManager {
 		return Actuate.tween(display, slide.duration, {x: inOutX[1], y: inOutY[1]}).ease(getEasing(slide));
 	}
 
-	public static function transform(display:DisplayObject, ref:String):IGenericActuator
+	public static function transform(display:Dynamic, ref:String):IGenericActuator
 	{
 		var transform = transitions.get(ref);
 
 		return Actuate.transform(display, transform.duration).color(transform.color).ease(getEasing(transform));
 	}
 
-	public static function resetTransform(display:DisplayObject):Void
+	public static function resetTransform(display:Dynamic):Void
 	{
 		display.transform.colorTransform = new ColorTransform(1, 1, 1, 1, 0, 0, 0, 0);
 	}
 
-	public static function blink(display:DisplayObject, ref:String):IGenericActuator
+	public static function blink(display:Dynamic, ref:String):IGenericActuator
 	{
 		var blink = transitions.get(ref);
 		var repeat = blink.repeat % 2 == 0 ? blink.repeat + 1 : blink.repeat;
@@ -312,7 +312,7 @@ class TweenManager {
 		}
 	}
 
-	private static function parseValue(parameter:String, value:String, display:DisplayObject):Array<Float>
+	private static function parseValue(parameter:String, value:String, display:Dynamic):Array<Float>
 	{
 		var inOut:Array<String> = value.split(":");
 		var output:Array<Float> = new Array<Float>();

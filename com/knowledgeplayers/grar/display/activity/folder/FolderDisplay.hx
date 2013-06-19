@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.display.component.Widget;
+import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import aze.display.TileLayer;
 import aze.display.TileSprite;
@@ -83,7 +85,7 @@ class FolderDisplay extends ActivityDisplay {
 		var folder = cast(model, Folder);
 		// Targets
 		for(target in folder.targets){
-			addChildAt(displays.get(target).obj, cast(Math.min(displays.get(target).z, numChildren), Int));
+			addChildAt(displays.get(target), cast(Math.min(displays.get(target).z, numChildren), Int));
 		}
 	}
 
@@ -104,39 +106,34 @@ class FolderDisplay extends ActivityDisplay {
 		super.createElement(elemNode);
 		switch(elemNode.name.toLowerCase()){
 			case "target" :
-				var target:DisplayObject;
-				if(elemNode.has.src)
-					target = new Bitmap(AssetsStorage.getBitmapData(elemNode.att.src));
-				else{
+				var target:Widget = new Image(elemNode);
+				if(!elemNode.has.src){
 					var layer:TileLayer = null;
 					if(elemNode.has.spritesheet)
 						layer = new TileLayer(spritesheets.get(elemNode.att.spritesheet));
 					else
 						layer = new TileLayer(UiFactory.tilesheet);
-					layer.addChild(new TileSprite(layer, elemNode.att.id));
-					target = layer.view;
+					UiFactory.addImageToLayer(elemNode, layer, true);
+					target = new Image();
+					target.addChild(layer.view);
 					cast(target, Sprite).mouseChildren = false;
-					layer.render();
 					targetSpritesheet = true;
 				}
 				addElement(target, elemNode);
 				targets.push({obj: target, name: elemNode.att.ref, elem: null});
 
 			case "popup" :
-				var popUpSprite = new Sprite();
+				var popUpSprite = new Image(elemNode);
 				var titlePos = new Point(0, 0);
 				var contentPos = titlePos;
-				if(elemNode.has.src)
-					popUpSprite.addChild(new Bitmap(AssetsStorage.getBitmapData(elemNode.att.src)));
-				else{
+				if(!elemNode.has.src){
 					var layer:TileLayer = null;
 					if(elemNode.has.spritesheet)
 						layer = new TileLayer(spritesheets.get(elemNode.att.spritesheet));
 					else
 						layer = new TileLayer(UiFactory.tilesheet);
-					layer.addChild(new TileSprite(layer, elemNode.att.id));
+					UiFactory.addImageToLayer(elemNode, layer);
 					popUpSprite.addChild(layer.view);
-					layer.render();
 				}
 				if(elemNode.has.buttonIcon){
 					var buttonIcon:BitmapData;
