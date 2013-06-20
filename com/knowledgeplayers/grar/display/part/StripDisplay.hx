@@ -43,6 +43,19 @@ class StripDisplay extends PartDisplay {
 
 	// Private
 
+	override private function createDisplay():Void
+	{
+		super.createDisplay();
+
+		for(elem in part.elements){
+			if(elem.isText()){
+				addChild(displays.get(cast(elem, TextItem).ref));
+				for(image in cast(elem, TextItem).images)
+					addChild(displays.get(image));
+			}
+		}
+	}
+
 	override private function createElement(elemNode:Fast):Void
 	{
 		super.createElement(elemNode);
@@ -79,6 +92,12 @@ class StripDisplay extends PartDisplay {
 
 	override private function setText(item:TextItem, isFirst:Bool = true):Void
 	{
+		for(elem in part.elements){
+			if(elem.isText()){
+				var textItem = cast(elem, TextItem);
+				cast(displays.get(textItem.ref), ScrollPanel).setContent(Localiser.instance.getItemContent(textItem.content));
+			}
+		}
 		displayPart();
 	}
 
