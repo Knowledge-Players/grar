@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.component;
 
+import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
+import com.knowledgeplayers.grar.display.part.PartDisplay;
 import nme.events.Event;
 import motion.actuators.GenericActuator.IGenericActuator;
 import aze.display.TilesheetEx;
@@ -45,19 +47,28 @@ class TileImage extends Image{
 	public function set_visible(visible:Bool):Void
 	{
 		tileSprite.visible = visible;
+		var actuator: IGenericActuator = null;
 		if(visible){
 			origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY};
-			var actuator: IGenericActuator = TweenManager.applyTransition(tileSprite, transitionIn);
+			actuator = TweenManager.applyTransition(tileSprite, transitionIn);
 			if(actuator != null && onComplete != null)
 				actuator.onComplete(onComplete);
 		}
 		else{
-			var actuator: IGenericActuator = TweenManager.applyTransition(tileSprite, transitionOut);
+			actuator = TweenManager.applyTransition(tileSprite, transitionOut);
 			if(actuator != null)
 				actuator.onComplete(reset);
 			else
 				reset();
 		}
+		if(actuator != null)
+			actuator.onUpdate(function(){
+				// TODO unify
+				if(Std.is(parent, KpDisplay))
+					cast(parent, KpDisplay).renderLayers.set(tileSprite.layer, true);
+				if(Std.is(parent, WidgetContainer))
+					cast(parent, WidgetContainer).renderNeeded = true;
+			});
 	}
 
 	override public function set_transitionIn(transition:String):String

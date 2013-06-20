@@ -266,37 +266,28 @@ class DefaultButton extends WidgetContainer {
 			while(content.numChildren > 0){
 				content.removeChildAt(content.numChildren - 1);
 			}
+			for(child in layer.children)
+				child.visible = false;
 
 			if(list == null)
 				throw "There is no information for state \"" + currentState + "\" for button \"" + ref + "\".";
 
 			var array = new Array<Widget>();
 			for(key in list.keys()){
-				if(list.get(key) != null)
+				if(!Std.is(list.get(key), TileImage))
 					array.push(list.get(key));
 				else{
-					for(child in layer.children){
-						if(Std.is(child, TileSprite) && cast(child, TileSprite).tile == key){
-							cast(child, TileSprite).visible = true;
-						}
-						else
-							cast(child, TileSprite).visible = false;
-					}
+					cast(list.get(key), TileImage).set_visible(true);
 				}
 			}
 			content.addChild(layer.view);
 
 			array.sort(sortDisplayObjects);
 			for(obj in array){
-				if(obj.transformation != ""){
-					TweenManager.resetTransform(obj);
-					TweenManager.applyTransition(obj, obj.transformation);
-
-				}
 				addChild(obj);
 			}
 
-			render();
+			renderNeeded = true;
 		}
 	}
 
@@ -341,27 +332,21 @@ class DefaultButton extends WidgetContainer {
 	{
 		var list = new Map<String, Widget>();
 		var zIndex = 0;
-		var trans:String = "";
 		for(elem in node.elements){
 			switch (elem.name.toLowerCase()) {
 				case "image":
-					if(elem.has.transform)
-						trans = elem.att.transform;
-					UiFactory.addImageToLayer(elem, layer, false);
-					list.set(elem.att.tile, null);
+					var img = new TileImage(elem, layer, false);
+					list.set(elem.att.tile, img);
 
 				case "text": var text = new ScrollPanel(elem);
 					text.z = zIndex;
-					text.transformation = trans;
 					list.set(elem.att.ref, text);
 
 				case "animation": var anim = new AnimationDisplay(elem);
 					anim.z = zIndex;
-					anim.transformation = trans;
 					list.set(elem.att.ref, anim);
 			}
 			zIndex++;
-			trans = "";
 		}
 		return list;
 	}

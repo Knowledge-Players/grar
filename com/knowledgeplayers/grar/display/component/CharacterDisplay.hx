@@ -14,10 +14,6 @@ import nme.geom.Point;
  */
 
 class CharacterDisplay extends Widget {
-	/**
-     * Starting point of the character
-     */
-	//public var origin:{pos:Point, scale:Float};
 
 	/**
     * Model of the character

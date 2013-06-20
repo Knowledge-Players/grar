@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.layout;
 
+import com.knowledgeplayers.grar.display.component.TileImage;
+import com.knowledgeplayers.grar.display.component.Image;
+import nme.events.MouseEvent;
 import aze.display.TileLayer;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
@@ -16,7 +19,11 @@ import nme.display.Sprite;
 import nme.events.Event;
 import nme.Lib;
 
-class Zone extends Sprite {
+/**
+* Graphic zone in the layout
+* //TODO extends WidgetContainer
+**/
+class Zone extends KpDisplay {
 	public var ref:String;
 
 	private var zoneWidth:Float;
@@ -52,27 +59,19 @@ class Zone extends Sprite {
 			dispatchEvent(new LayoutEvent(LayoutEvent.NEW_ZONE, ref, this));
 			addChild(layer.view);
 			for(element in _zone.elements){
-				switch(element.name.toLowerCase()){
-					case "background": createBackground(element);
-					case "menu":createMenu(element);
-					case "image": createImage(element);
-					case "text":createText(element);
-					case "button": createButton(element);
-					case "progressbar": createProgressBar(element);
-
-				}
+				createElement(element);
 			}
 
 			layer.render();
 
 		}
 		else if(_zone.has.rows){
-			var heights = initSize(_zone.att.rows, height);
+			var heights = initSize(_zone.att.rows, zoneHeight);
 			var yOffset:Float = 0;
 			var i = 0;
 			for(row in _zone.nodes.Row){
 				var zone = new Zone(zoneWidth, heights[i]);
-				zone.x = x;
+				zone.x = 0;
 				zone.y = yOffset;
 				zone.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
 				zone.init(row);
@@ -82,13 +81,13 @@ class Zone extends Sprite {
 			}
 		}
 		else if(_zone.has.columns){
-			var widths = initSize(_zone.att.columns, width);
+			var widths = initSize(_zone.att.columns, zoneWidth);
 			var xOffset:Float = 0;
 			var j = 0;
 			for(column in _zone.nodes.Column){
 				var zone = new Zone(widths[j], zoneHeight);
 				zone.x = xOffset;
-				zone.y = y;
+				zone.y = 0;
 				zone.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
 				zone.init(column);
 				xOffset += zone.zoneWidth;
@@ -99,40 +98,6 @@ class Zone extends Sprite {
 		else{
 			Lib.trace("[Zone] This zone is empty. Are you sure your XML is correct ?");
 		}
-	}
-
-	public function createButton(_child:Fast):DefaultButton
-	{
-
-		var button:DefaultButton = new DefaultButton(_child);
-		if(_child.has.action){
-			button.addEventListener(_child.att.action, onActionEvent);
-		}
-		addChild(button);
-
-		return button;
-	}
-
-	public function createImage(imageNode:Fast):TileSprite
-	{
-		var itemTile = new TileSprite(layer, imageNode.att.id);
-		if(imageNode.has.x)
-			itemTile.x = Std.parseFloat(imageNode.att.x);
-		if(imageNode.has.y)
-			itemTile.y = Std.parseFloat(imageNode.att.y);
-		if(imageNode.has.scale)
-			itemTile.scale = Std.parseFloat(imageNode.att.scale);
-		if(imageNode.has.mirror){
-			itemTile.mirror = switch(imageNode.att.mirror.toLowerCase()){
-				case "horizontal": 1;
-				case "vertical": 2;
-				case _ : throw '[KpDisplay] Unsupported mirror $imageNode.att.mirror';
-			}
-		}
-		layer.addChild(itemTile);
-
-		return itemTile;
-
 	}
 
 	private function createHeader():Void
@@ -147,39 +112,6 @@ class Zone extends Sprite {
 		addChild(progress);
 
 		return progress;
-	}
-
-	private function createText(element:Fast):ScrollPanel
-	{
-
-		var textF = new ScrollPanel(element);
-
-		var keyText:String = element.att.content;
-		textF.setContent(Localiser.instance.getItemContent(keyText));
-
-		addChild(textF);
-
-		return textF;
-
-	}
-
-	public function createBackground(bkgNode:Fast, ?_container:Sprite):Sprite
-	{
-		if(_container == null){
-			_container = new Sprite();
-			addChild(_container);
-		}
-
-		if(bkgNode.has.filter){
-			_container.filters = [FilterManager.getFilter(bkgNode.att.filter)];
-		}
-
-		var bkg = new Sprite();
-		DisplayUtils.initSprite(bkg, Std.parseFloat(bkgNode.att.width), Std.parseFloat(bkgNode.att.height), Std.parseInt(bkgNode.att.color), Std.parseFloat(bkgNode.att.alpha), Std.parseFloat(bkgNode.att.x), Std.parseFloat(bkgNode.att.y));
-		_container.addChild(bkg);
-
-		return _container;
-
 	}
 
 	public function createMenu(element:Fast):Void
@@ -240,6 +172,32 @@ class Zone extends Sprite {
 			sizeArray[starPosition] = maxSize;
 
 		return sizeArray;
+	}
+
+	override private function createElement(elemNode:Fast):Void
+	{
+		super.createElement(elemNode);
+		switch(elemNode.name.toLowerCase()){
+			case "menu":createMenu(elemNode);
+			case "progressbar": createProgressBar(elemNode);
+		}
+
+		for(widget in displays){
+			addChild(widget);
+		}
+	}
+
+	override private function createImage(itemNode:Fast):Void
+	{
+		if(itemNode.has.src || itemNode.has.filters){
+			addElement(new Image(itemNode, layer.tilesheet), itemNode);
+		}
+		else{
+			var tile = new TileImage(itemNode, layer);
+			tile.tileSprite.x += tile.tileSprite.width/2;
+			tile.tileSprite.y += tile.tileSprite.height/2;
+			addElement(tile, itemNode);
+		}
 	}
 
 	// Handlers

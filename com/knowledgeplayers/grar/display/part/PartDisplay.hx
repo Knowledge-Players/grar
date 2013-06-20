@@ -202,9 +202,11 @@ class PartDisplay extends KpDisplay {
 	public function goToPattern(target:String):Void
 	{
 		var i = 0;
-		while(!(part.elements[i].isPattern() && cast(part.elements[i], Pattern).name == target)){
+		while(i < part.elements.length && !(part.elements[i].isPattern() && cast(part.elements[i], Pattern).name == target)){
 			i++;
 		}
+		if(i == part.elements.length)
+			throw "[PartDisplay] There is no pattern with ref \""+target+"\"";
 
 		cast(part.elements[i], Pattern).itemIndex = 0;
 		startPattern(cast(part.elements[i], Pattern));

@@ -155,6 +155,8 @@ class Widget extends Sprite{
 
 			if(xml.has.rotation)
 				rotation = Std.parseFloat(xml.att.rotation);
+			if(xml.has.transformation)
+				transformation = xml.att.transformation;
 		}
 	}
 

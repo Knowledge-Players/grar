@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import nme.events.Event;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.display.Sprite;
 import nme.events.MouseEvent;
@@ -56,6 +57,8 @@ class WidgetContainer extends Widget{
      * Content root
      */
 	public var content (default, default):Sprite;
+
+	public var renderNeeded: Bool = false;
 
 	private var scrollBar:ScrollBar;
 	private var layer: TileLayer;
@@ -151,6 +154,7 @@ class WidgetContainer extends Widget{
 			setBackground(xml.has.background ? xml.att.background:null, xml.has.alpha ? Std.parseFloat(xml.att.alpha) : 1);
 		}
 		addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
+		addEventListener(Event.ENTER_FRAME, checkRender);
 		super(xml);
 	}
 
@@ -168,7 +172,7 @@ class WidgetContainer extends Widget{
 	{
 		maskSprite(content, maskWidth, maskHeight);
 
-		TweenManager.applyTransition(content.mask, contentTransition);
+		TweenManager.applyTransition(content, contentTransition);
 	}
 
 	private function render():Void
@@ -196,6 +200,14 @@ class WidgetContainer extends Widget{
 			}
 			if(scrollBar != null)
 				moveCursor(e.delta);
+		}
+	}
+
+	private function checkRender(e:Event):Void
+	{
+		if(renderNeeded){
+			render();
+			renderNeeded = false;
 		}
 	}
 }

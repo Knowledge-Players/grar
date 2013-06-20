@@ -20,15 +20,6 @@ class MenuDisplay extends Zone {
     **/
 	public var orientation (default, set_orientation):String;
 
-	/**
-    * transition open menu
-    **/
-	public var transitionIn:String;
-	/**
-    * transition close menu
-    **/
-	public var transitionOut:String;
-
 	private var levelDisplays:Map<String, Fast>;
 	private var xOffset:Float = 0;
 	private var yOffset:Float = 0;
@@ -83,12 +74,7 @@ class MenuDisplay extends Zone {
 		}
 
 		for(child in display.elements){
-			switch(child.name.toLowerCase()){
-				case "background":createBackground(child);
-				case "image": createImage(child);
-				case "text":createText(child);
-				case "button":createButton(child);
-			}
+			createElement(child);
 		}
 		if(display.has.xBase)
 			xBase = Std.parseFloat(display.att.xBase);

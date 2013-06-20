@@ -47,8 +47,9 @@ class KpDisplay extends Sprite {
 	**/
 	public var layout (default, default):String;
 
+	public var renderLayers (default, null):Map<TileLayer, Bool>;
+
 	private var displays:Map<String, Widget>;
-	//private var displaysFast:Map<String, Fast>;
 	private var zIndex:Int = 0;
 	private var layers:Map<String, TileLayer>;
 	private var displayFast:Fast;
@@ -68,9 +69,6 @@ class KpDisplay extends Sprite {
 		for(child in displayFast.nodes.SpriteSheet){
 			spritesheets.set(child.att.id, AssetsStorage.getSpritesheet(child.att.src));
 			var layer = new TileLayer(AssetsStorage.getSpritesheet(child.att.src));
-			addEventListener(Event.ENTER_FRAME, function(e){
-				layer.render();
-			});
 			layers.set(child.att.id, layer);
 		}
 		createDisplay();
@@ -116,9 +114,6 @@ class KpDisplay extends Sprite {
 		else{
 			if(!layers.exists(spritesheet)){
 				var layer = new TileLayer(UiFactory.tilesheet);
-				addEventListener(Event.ENTER_FRAME, function(e){
-					layer.render();
-				});
 				layers.set(spritesheet, layer);
 			}
 			addElement(new TileImage(itemNode, layers.get(spritesheet), false), itemNode);
@@ -198,11 +193,20 @@ class KpDisplay extends Sprite {
 	private function onButtonToggle(e:ButtonActionEvent):Void
 	{
 		var button = cast(e.target, DefaultButton);
-		trace(button.toggle);
 		if(button.toggle == "inactive"){
 			for(b in buttonGroups.get(button.group)){
 				if(b != button)
 					b.setToggle(true);
+			}
+		}
+	}
+
+	private function checkRender(e:Event):Void
+	{
+		for(layer in renderLayers.keys()){
+			if(renderLayers.get(layer)){
+				layer.render();
+				renderLayers.set(layer, false);
 			}
 		}
 	}
@@ -215,5 +219,8 @@ class KpDisplay extends Sprite {
 		textGroups = new Map<String, Map<String, {obj:Fast, z:Int}>>();
 		buttonGroups = new Map<String, GenericStack<DefaultButton>>();
 		layers = new Map<String, TileLayer>();
+		renderLayers = new Map<TileLayer, Bool>();
+
+		addEventListener(Event.ENTER_FRAME, checkRender);
 	}
 }
