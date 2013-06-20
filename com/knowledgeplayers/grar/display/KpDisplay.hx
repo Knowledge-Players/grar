@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
+import haxe.ds.GenericStack;
 import nme.events.Event;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.display.component.Widget;
@@ -48,12 +50,13 @@ class KpDisplay extends Sprite {
 	private var displays:Map<String, Widget>;
 	//private var displaysFast:Map<String, Fast>;
 	private var zIndex:Int = 0;
-	private var textGroups:Map<String, Map<String, {obj:Fast, z:Int}>>;
 	private var layers:Map<String, TileLayer>;
 	private var displayFast:Fast;
 	private var totalSpriteSheets:Int = 0;
+	private var textGroups:Map<String, Map<String, {obj:Fast, z:Int}>>;
+	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
 
-	/**
+		/**
     * Parse the content of a display XML
     * @param    content : Content of the XML
     **/
@@ -128,6 +131,16 @@ class KpDisplay extends Sprite {
 
 		if(buttonNode.has.action)
 			setButtonAction(button, buttonNode.att.action);
+		if(buttonNode.has.group){
+			if(buttonGroups.exists(buttonNode.att.group.toLowerCase()))
+				buttonGroups.get(buttonNode.att.group.toLowerCase()).add(button);
+			else{
+				var stack = new GenericStack<DefaultButton>();
+				stack.add(button);
+				buttonGroups.set(buttonNode.att.group.toLowerCase(), stack);
+			}
+		}
+		button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 		addElement(button, buttonNode);
 	}
 
@@ -182,12 +195,25 @@ class KpDisplay extends Sprite {
 	private function setButtonAction(button:DefaultButton, action:String):Void
 	{}
 
+	private function onButtonToggle(e:ButtonActionEvent):Void
+	{
+		var button = cast(e.target, DefaultButton);
+		trace(button.toggle);
+		if(button.toggle == "inactive"){
+			for(b in buttonGroups.get(button.group)){
+				if(b != button)
+					b.setToggle(true);
+			}
+		}
+	}
+
 	private function new()
 	{
 		super();
 		displays = new Map<String, Widget>();
 		spritesheets = new Map<String, TilesheetEx>();
 		textGroups = new Map<String, Map<String, {obj:Fast, z:Int}>>();
+		buttonGroups = new Map<String, GenericStack<DefaultButton>>();
 		layers = new Map<String, TileLayer>();
 	}
 }

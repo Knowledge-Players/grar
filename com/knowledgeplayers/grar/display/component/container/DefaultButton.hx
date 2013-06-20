@@ -49,7 +49,12 @@ class DefaultButton extends WidgetContainer {
      */
 	public var propagateNativeEvent (default, default):Bool = false;
 
-	private var toggle:String = "active";
+	/**
+	* Group of buttons containing it
+	**/
+	public var group (default, default):String;
+
+	public var toggle (default, null):String = "active";
 
 	private var currentState:String;
 
@@ -88,6 +93,10 @@ class DefaultButton extends WidgetContainer {
 
 			if(xml.has.action)
 				eventType = xml.att.action.toLowerCase();
+			if(xml.has.toggle)
+				enableToggle(xml.att.toggle == "true");
+			if(xml.has.group)
+				group = xml.att.group.toLowerCase();
 		}
 
 		if(eventType == null)
@@ -381,5 +390,6 @@ class DefaultButton extends WidgetContainer {
 	private inline function onToggle(e: MouseEvent):Void
 	{
 		setToggle(toggle != "active");
+		dispatchEvent(new ButtonActionEvent(ButtonActionEvent.TOGGLE));
 	}
 }
