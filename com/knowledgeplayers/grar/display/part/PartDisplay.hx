@@ -189,7 +189,7 @@ class PartDisplay extends KpDisplay {
 		nextElement(startPosition);
 	}
 
-	public function next(event:ButtonActionEvent):Void
+	public function next(?target: DefaultButton):Void
 	{
 		nextElement();
 	}
@@ -284,21 +284,21 @@ class PartDisplay extends KpDisplay {
 	override private function setButtonAction(button:DefaultButton, action:String):Void
 	{
 		if(action.toLowerCase() == ButtonActionEvent.NEXT){
-			button.addEventListener(ButtonActionEvent.NEXT, next);
+			button.buttonAction = next;
 		}
 		else if(action.toLowerCase() == "open_notebook"){
-			button.addEventListener("open_notebook", function(e){
+			button.buttonAction = function(?target: DefaultButton){
 				NotebookDisplay.instance.model = Notebook.instance;
 				GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
-			});
+			};
 		}
 		else if(action.toLowerCase() == ButtonActionEvent.GOTO){
-			button.addEventListener(action, function(e){
+			button.buttonAction = function(?target: DefaultButton){
 				if(part.buttonTargets.get(button.ref) == null)
 					exitPart();
 				else
 					nextElement(part.getElementIndex(part.buttonTargets.get(button.ref))-1);
-			});
+			};
 		}
 	}
 

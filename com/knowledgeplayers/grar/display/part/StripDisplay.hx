@@ -36,7 +36,7 @@ class StripDisplay extends PartDisplay {
 		boxes = new Map<String, BoxDisplay>();
 	}
 
-	override public function next(event:ButtonActionEvent):Void
+	override public function next(?target: DefaultButton):Void
 	{
 		startPattern(currentBox);
 	}

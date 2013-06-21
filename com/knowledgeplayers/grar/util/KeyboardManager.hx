@@ -13,19 +13,6 @@ import nme.ui.Keyboard;
  * Utility class to manage Keyboard inputs
  */
 class KeyboardManager {
-	/*public static var instance (get_instance, null):KeyboardManager;
-
-	public static function get_instance():KeyboardManager
-	{
-		if(instance == null)
-			instance = new KeyboardManager();
-		return instance;
-	}
-
-	private function new()
-	{
-		init();
-	}*/
 
 	public static function init():Void
 	{
@@ -47,10 +34,10 @@ class KeyboardManager {
 			case Keyboard.RIGHT: if(GameManager.instance.parts != null && !GameManager.instance.parts.isEmpty() && !GameManager.instance.parts.first().introScreenOn){
 				var part = GameManager.instance.parts.first();
 				if(Std.is(part, DialogDisplay) && Lambda.count(cast(part, DialogDisplay).currentPattern.buttons) == 1){
-					part.next(null);
+					part.next();
 				}
 				else if(!Std.is(part, DialogDisplay))
-					part.next(null);
+					part.next();
 			}
 			case Keyboard.D: for(part in GameManager.instance.game.getAllParts()){
 				GameManager.instance.finishPart(part.id);

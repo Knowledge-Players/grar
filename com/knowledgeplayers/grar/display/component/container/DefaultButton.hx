@@ -40,11 +40,6 @@ class DefaultButton extends WidgetContainer {
 	public var states (default, null):Map<String, Map<String, Widget>>;
 
 	/**
-     * Type of the event to dispatch
-     */
-	public var eventType (default, default):String;
-
-	/**
      * Control whether or not the native event (CLICK) must be propagated
      */
 	public var propagateNativeEvent (default, default):Bool = false;
@@ -61,12 +56,17 @@ class DefaultButton extends WidgetContainer {
 	private var clip:TileClip;
 
 	/**
+     * Action to execute on click
+     */
+	public dynamic function buttonAction(?target: DefaultButton): Void{}
+
+	/**
      * Constructor.
      * @param	tilesheet : UI Sheet
      * @param	tile : Tile containing the upstate
      */
 
-	public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>, action:String = "next")
+	public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>)
 	{
 		super(xml);
 
@@ -91,16 +91,11 @@ class DefaultButton extends WidgetContainer {
 				}
 			}
 
-			if(xml.has.action)
-				eventType = xml.att.action.toLowerCase();
 			if(xml.has.toggle)
 				enableToggle(xml.att.toggle == "true");
 			if(xml.has.group)
 				group = xml.att.group.toLowerCase();
 		}
-
-		if(eventType == null)
-			eventType = action.toLowerCase();
 
 		mouseChildren = false;
 
@@ -163,10 +158,7 @@ class DefaultButton extends WidgetContainer {
 
 	private function onClick(event:MouseEvent):Void
 	{
-		if(!propagateNativeEvent)
-			event.stopImmediatePropagation();
-		var e = new ButtonActionEvent(eventType);
-		dispatchEvent(e);
+		buttonAction(this);
 	}
 
 	private function onDblClick(event:MouseEvent):Void

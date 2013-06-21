@@ -36,7 +36,7 @@ class DialogDisplay extends PartDisplay {
 		super(part);
 	}
 
-	override public function next(event:ButtonActionEvent):Void
+	override public function next(?target: DefaultButton):Void
 	{
 		if(nextActivity != null){
 			GameManager.instance.displayActivity(nextActivity);
@@ -83,15 +83,14 @@ class DialogDisplay extends PartDisplay {
 	{
 		super.setButtonAction(button, action);
 		if(action.toLowerCase() == ButtonActionEvent.GOTO){
-			button.addEventListener(action, onChoice);
+			button.buttonAction = onChoice;
 			button.addEventListener(MouseEvent.MOUSE_OVER, onOverChoice);
 			button.addEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
 		}
 	}
 
-	private function onChoice(ev:ButtonActionEvent):Void
+	private function onChoice(?choice: DefaultButton):Void
 	{
-		var choice = cast(ev.target, DefaultButton);
 		var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
 		cast(currentPattern, ChoicePattern).choices.get(choice.ref).viewed = true;
 
@@ -102,7 +101,7 @@ class DialogDisplay extends PartDisplay {
 		goToPattern(target);
 	}
 
-	private function onOverChoice(e:MouseEvent):Void
+	private function onOverChoice(e:ButtonActionEvent):Void
 	{
 		var choiceButton = cast(e.currentTarget, DefaultButton);
 		var pattern = cast(currentPattern, ChoicePattern);
