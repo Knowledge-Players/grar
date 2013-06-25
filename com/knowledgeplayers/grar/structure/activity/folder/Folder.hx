@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.activity.folder;
 
+import nme.Lib;
 import haxe.xml.Fast;
 
 /**
@@ -26,6 +27,7 @@ class Folder extends Activity {
 		elements = new Map<String, FolderElement>();
 		targets = new Array<String>();
 		super(content);
+
 	}
 
 	public function validate():Void
@@ -45,12 +47,14 @@ class Folder extends Activity {
 		super.parseContent(xml);
 		var fast = new Fast(xml.firstElement());
 		for(element in fast.nodes.Element){
+
+
 			var elem = new FolderElement(element.att.content, element.att.ref);
 			if(element.has.target){
 				elem.target = element.att.target;
 				targets.push(element.att.target);
 			}
-			elements.set(elem.ref, elem);
+			elements.set(elem.content, elem);
 		}
 	}
 }

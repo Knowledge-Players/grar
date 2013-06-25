@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.structure.activity.Activity;
@@ -40,7 +41,7 @@ class FolderDisplay extends ActivityDisplay {
 	/**
     * PopUp where additional text will be displayed
     **/
-	public var popUp (default, default):{sprite:Sprite, titlePos:Point, contentPos:Point};
+	public var popUp:WidgetContainer;
 
 	/**
     * Grid to organize drag & drop display
@@ -52,7 +53,7 @@ class FolderDisplay extends ActivityDisplay {
     **/
 	public var targetSpritesheet (default, default):Bool = false;
 
-	private var elementTemplate:{background:BitmapData, width:Float, height:Float, filters:String, buttonIcon:BitmapData, buttonPos:Point};
+	private var elementTemplate:Fast;
 
 	private var elementsArray:Array<FolderElementDisplay>;
 
@@ -91,14 +92,19 @@ class FolderDisplay extends ActivityDisplay {
 
 	override public function set_model(model:Activity):Activity
 	{
-		for(elem in cast(model, Folder).elements){
+
+        var model = super.set_model(model);
+        for(elem in cast(model, Folder).elements){
+
 			var elementDisplay:FolderElementDisplay;
-			elementDisplay = new FolderElementDisplay(elem, elementTemplate.width, elementTemplate.height, elementTemplate.filters, elementTemplate.background, elementTemplate.buttonIcon, elementTemplate.buttonPos);
+
+			elementDisplay = new FolderElementDisplay(elementTemplate,elem);
 			elementsArray.push(elementDisplay);
 			grids.get("drag").add(elementDisplay, false);
 			addChild(elementDisplay);
 		}
-		return super.set_model(model);
+
+		return model;
 	}
 
 	override private function createElement(elemNode:Fast):Void
@@ -123,7 +129,7 @@ class FolderDisplay extends ActivityDisplay {
 				targets.push({obj: target, name: elemNode.att.ref, elem: null});
 
 			case "popup" :
-				var popUpSprite = new Image(elemNode);
+				/*var popUpSprite = new Image(elemNode);
 				var titlePos = new Point(0, 0);
 				var contentPos = titlePos;
 				if(!elemNode.has.src){
@@ -165,30 +171,10 @@ class FolderDisplay extends ActivityDisplay {
 				addElement(popUpSprite, elemNode);
 				addChild(popUpSprite);
 				popUp = {sprite: popUpSprite, titlePos: titlePos, contentPos: contentPos};
-
+                */
 			case "element" :
-				var background:BitmapData;
-				var buttonIcon = null;
-				var buttonPos = null;
-				if(elemNode.has.src)
-					background = AssetsStorage.getBitmapData(elemNode.att.src);
-				else if(elemNode.has.spritesheet){
-					background = DisplayUtils.getBitmapDataFromLayer(spritesheets.get(elemNode.att.spritesheet), elemNode.att.id);
-				}
-				else
-					background = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, elemNode.att.id);
-				if(elemNode.has.buttonIcon){
-					if(elemNode.att.buttonIcon.indexOf(".") < 0){
-						if(elemNode.has.spritesheet)
-							buttonIcon = DisplayUtils.getBitmapDataFromLayer(spritesheets.get(elemNode.att.spritesheet), elemNode.att.buttonIcon);
-						else
-							buttonIcon = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, elemNode.att.buttonIcon);
-					}
-					else
-						buttonIcon = AssetsStorage.getBitmapData(elemNode.att.buttonIcon);
-					buttonPos = new Point(Std.parseFloat(elemNode.att.buttonX), Std.parseFloat(elemNode.att.buttonY));
-				}
-				elementTemplate = {background: background, width: Std.parseFloat(elemNode.att.width), height: Std.parseFloat(elemNode.att.height), filters: elemNode.att.filters, buttonIcon: buttonIcon, buttonPos: buttonPos};
+
+				elementTemplate = elemNode;
 
 			case "grid" :
 				var cellWidth = elemNode.has.cellWidth ? Std.parseFloat(elemNode.att.cellWidth) : 0;
@@ -224,7 +210,7 @@ class FolderDisplay extends ActivityDisplay {
 
 	private function onClosePopUp(ev:MouseEvent):Void
 	{
-		popUp.sprite.removeChildAt(popUp.sprite.numChildren - 1);
-		popUp.sprite.visible = false;
+		//popUp.sprite.removeChildAt(popUp.sprite.numChildren - 1);
+		//popUp.sprite.visible = false;
 	}
 }
