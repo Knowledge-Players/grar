@@ -21,10 +21,6 @@ class TileImage extends Image{
 		super(xml);
 
 		tileSprite = new TileSprite(layer, xml.att.tile);
-		if(xml.has.x)
-			tileSprite.x = Std.parseFloat(xml.att.x);
-		if(xml.has.y)
-			tileSprite.y = Std.parseFloat(xml.att.y);
 		if(xml.has.scale)
 			tileSprite.scale = Std.parseFloat(xml.att.scale);
 		if(xml.has.scaleX)
@@ -38,6 +34,10 @@ class TileImage extends Image{
 				case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
 			}
 		}
+		if(xml.has.x)
+			tileSprite.x = Std.parseFloat(xml.att.x) + tileSprite.width/2;
+		if(xml.has.y)
+			tileSprite.y = Std.parseFloat(xml.att.y)+ tileSprite.height/2;
 
 		tileSprite.visible = visible;
 		layer.addChild(tileSprite);

@@ -194,8 +194,8 @@ class Zone extends KpDisplay {
 		}
 		else{
 			var tile = new TileImage(itemNode, layer);
-			tile.tileSprite.x += tile.tileSprite.width/2;
-			tile.tileSprite.y += tile.tileSprite.height/2;
+			/*tile.tileSprite.x += tile.tileSprite.width/2;
+			tile.tileSprite.y += tile.tileSprite.height/2;*/
 			addElement(tile, itemNode);
 		}
 	}
