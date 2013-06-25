@@ -106,11 +106,12 @@ class Localiser extends EventDispatcher {
 		var fullPath = path.split("/");
 
 		var localePath:StringBuf = new StringBuf();
-		for(i in 0...fullPath.length - 1){
+		localePath.add(fullPath[0] + "/");
+		localePath.add(currentLocale + "/");
+		for(i in 1...fullPath.length-1){
 			localePath.add(fullPath[i] + "/");
 		}
-		localePath.add(currentLocale + "/");
-		localePath.add(fullPath[fullPath.length - 1]);
+		localePath.add(fullPath[fullPath.length-1]);
 		localisation = new Localisation(currentLocale);
 		localisation.setLocaleFile(localePath.toString());
 	}
