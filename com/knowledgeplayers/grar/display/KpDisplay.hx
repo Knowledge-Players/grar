@@ -94,7 +94,6 @@ class KpDisplay extends Sprite {
 
 	private function createElement(elemNode:Fast):Void
 	{
-
 		switch(elemNode.name.toLowerCase()){
 			case "background" | "image": createImage(elemNode);
 			case "character": createCharacter(elemNode);
@@ -102,7 +101,6 @@ class KpDisplay extends Sprite {
 			case "text": createText(elemNode);
 			case "textgroup":createTextGroup(elemNode);
 		}
-
 	}
 
 	private function createImage(itemNode:Fast):Void

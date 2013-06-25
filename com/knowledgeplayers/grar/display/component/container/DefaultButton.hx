@@ -40,11 +40,6 @@ class DefaultButton extends WidgetContainer {
 	public var states (default, null):Map<String, Map<String, Widget>>;
 
 	/**
-     * Control whether or not the native event (CLICK) must be propagated
-     */
-	public var propagateNativeEvent (default, default):Bool = false;
-
-	/**
 	* Group of buttons containing it
 	**/
 	public var group (default, default):String;
@@ -138,7 +133,6 @@ class DefaultButton extends WidgetContainer {
 	{
 		if(enable){
 			addEventListener(MouseEvent.CLICK, onToggle);
-			propagateNativeEvent = true;
 		}
 		else{
 			if(hasEventListener(MouseEvent.CLICK))

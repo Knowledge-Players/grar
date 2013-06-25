@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
+import haxe.ds.GenericStack;
 import nme.events.Event;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.display.Sprite;
@@ -62,6 +64,9 @@ class WidgetContainer extends Widget{
 
 	private var scrollBar:ScrollBar;
 	private var layer: TileLayer;
+	private var displays: Map<String, Widget>;
+	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
+	private var zIndex: Int = 0;
 
 	public function set_contentAlpha(alpha: Float):Float
 	{
@@ -133,6 +138,9 @@ class WidgetContainer extends Widget{
 	private function new(?xml: Fast, ?tilesheet: TilesheetEx)
 	{
 		content = new Sprite();
+		displays = new Map<String, Widget>();
+		buttonGroups = new Map<String, GenericStack<DefaultButton>>();
+
 		addChild(content);
 		if(xml != null){
 			maskWidth = xml.has.width ? Std.parseFloat(xml.att.width) : 1;
@@ -152,6 +160,9 @@ class WidgetContainer extends Widget{
 			content.addChild(layer.view);
 
 			setBackground(xml.has.background ? xml.att.background:null, xml.has.alpha ? Std.parseFloat(xml.att.alpha) : 1);
+			for(child in xml.elements){
+				createElement(child);
+			}
 		}
 		addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
 		addEventListener(Event.ENTER_FRAME, checkRender);
@@ -184,6 +195,46 @@ class WidgetContainer extends Widget{
 		layer.render();
 	}
 
+	public function createElement(elemNode:Fast):Void
+	{
+		switch(elemNode.name.toLowerCase()){
+			case "background" | "image": addElement(new TileImage(elemNode, layer));
+			case "button": createButton(elemNode);
+			case "text": addElement(new ScrollPanel(elemNode));
+		}
+	}
+	private function addElement(elem:Widget):Void
+	{
+		elem.z = zIndex;
+		displays.set(elem.ref, elem);
+
+		//ResizeManager.instance.addDisplayObjects(elem, node);
+		zIndex++;
+		addChild(elem);
+	}
+
+	private function createButton(buttonNode:Fast):Void
+	{
+		var button:DefaultButton = new DefaultButton(buttonNode);
+
+		if(buttonNode.has.action)
+			setButtonAction(button, buttonNode.att.action);
+		if(buttonNode.has.group){
+			if(buttonGroups.exists(buttonNode.att.group.toLowerCase()))
+				buttonGroups.get(buttonNode.att.group.toLowerCase()).add(button);
+			else{
+				var stack = new GenericStack<DefaultButton>();
+				stack.add(button);
+				buttonGroups.set(buttonNode.att.group.toLowerCase(), stack);
+			}
+		}
+		button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+		addElement(button);
+	}
+
+	private function setButtonAction(button:DefaultButton, action:String):Void
+	{}
+
 	// Handlers
 
 	private function onWheel(e:MouseEvent):Void
@@ -208,6 +259,17 @@ class WidgetContainer extends Widget{
 		if(renderNeeded){
 			render();
 			renderNeeded = false;
+		}
+	}
+
+	private function onButtonToggle(e:ButtonActionEvent):Void
+	{
+		var button = cast(e.target, DefaultButton);
+		if(button.toggle == "inactive"){
+			for(b in buttonGroups.get(button.group)){
+				if(b != button)
+					b.setToggle(true);
+			}
 		}
 	}
 }
