@@ -41,7 +41,7 @@ class FolderDisplay extends ActivityDisplay {
 	/**
     * PopUp where additional text will be displayed
     **/
-	public var popUp:WidgetContainer;
+	public var popUpContainer:Sprite;
 
 	/**
     * Grid to organize drag & drop display
@@ -58,6 +58,8 @@ class FolderDisplay extends ActivityDisplay {
 	private var elementsArray:Array<FolderElementDisplay>;
 
 	private var background:Bitmap;
+
+    public var popUp:PopupElementDisplay;
 
 	/**
     * @return the instance
@@ -96,9 +98,7 @@ class FolderDisplay extends ActivityDisplay {
         var model = super.set_model(model);
         for(elem in cast(model, Folder).elements){
 
-			var elementDisplay:FolderElementDisplay;
-
-			elementDisplay = new FolderElementDisplay(elementTemplate,elem);
+			var elementDisplay:FolderElementDisplay = new FolderElementDisplay(elementTemplate,elem);
 			elementsArray.push(elementDisplay);
 			grids.get("drag").add(elementDisplay, false);
 			addChild(elementDisplay);
@@ -129,49 +129,11 @@ class FolderDisplay extends ActivityDisplay {
 				targets.push({obj: target, name: elemNode.att.ref, elem: null});
 
 			case "popup" :
-				/*var popUpSprite = new Image(elemNode);
-				var titlePos = new Point(0, 0);
-				var contentPos = titlePos;
-				if(!elemNode.has.src){
-					var layer:TileLayer = null;
-					if(elemNode.has.spritesheet)
-						layer = new TileLayer(spritesheets.get(elemNode.att.spritesheet));
-					else
-						layer = new TileLayer(UiFactory.tilesheet);
-					UiFactory.addImageToLayer(elemNode, layer);
-					popUpSprite.addChild(layer.view);
-				}
-				if(elemNode.has.buttonIcon){
-					var buttonIcon:BitmapData;
-					if(elemNode.att.buttonIcon.indexOf(".") < 0){
-						if(elemNode.has.spritesheet)
-							buttonIcon = DisplayUtils.getBitmapDataFromLayer(spritesheets.get(elemNode.att.spritesheet), elemNode.att.buttonIcon);
-						else
-							buttonIcon = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, elemNode.att.buttonIcon);
-					}
-					else
-						buttonIcon = AssetsStorage.getBitmapData(elemNode.att.buttonIcon);
-					var icon = new Bitmap(buttonIcon);
-					var button = new SimpleButton(icon, icon, icon, icon);
-					button.x = Std.parseFloat(elemNode.att.buttonX);
-					button.y = Std.parseFloat(elemNode.att.buttonY);
-					button.addEventListener(MouseEvent.CLICK, onClosePopUp);
-					popUpSprite.addChild(button);
-				}
-				if(elemNode.has.titlePos){
-					var pos = elemNode.att.titlePos.split(";");
-					titlePos = new Point(Std.parseFloat(pos[0]), Std.parseFloat(pos[1]));
-				}
-				if(elemNode.has.contentPos){
-					var pos = elemNode.att.contentPos.split(";");
-					contentPos = new Point(Std.parseFloat(pos[0]), Std.parseFloat(pos[1]));
-				}
-				popUpSprite.visible = false;
-				popUpSprite.alpha = 0;
-				addElement(popUpSprite, elemNode);
-				addChild(popUpSprite);
-				popUp = {sprite: popUpSprite, titlePos: titlePos, contentPos: contentPos};
-                */
+
+                var pop = new PopupElementDisplay(elemNode);
+
+				popUp = pop;
+
 			case "element" :
 
 				elementTemplate = elemNode;

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import aze.display.TilesheetEx;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
@@ -34,8 +35,6 @@ class FolderElementDisplay extends WidgetContainer {
 	private var originWidth:Float;
 	private var originHeight:Float;
 	private var stylesheet:String;
-
-
 	/**
     * Constructor
     * @param content : Text of the element
@@ -54,6 +53,8 @@ class FolderElementDisplay extends WidgetContainer {
 
 		buttonMode = true;
 
+
+
 		//shadows = new Map<String, BitmapFilter>();
 		// Remove both {} and split on comma
 		/*var filtersArray:Array<String> = filters.substr(1, filters.length - 2).split(",");
@@ -63,6 +64,7 @@ class FolderElementDisplay extends WidgetContainer {
 		}*/
 		//shadows.set("down", FilterManager.getFilter(filtersHash.get("down")));
 		//shadows.set("up", FilterManager.getFilter(filtersHash.get("up")));
+
 
         var text = cast(displays.get(model.ref),ScrollPanel);
 
@@ -75,7 +77,19 @@ class FolderElementDisplay extends WidgetContainer {
 		addEventListener(MouseEvent.MOUSE_DOWN, onDown);
 		addEventListener(MouseEvent.MOUSE_UP, onUp);
 		addEventListener(Event.ADDED_TO_STAGE, onAdd);
+
 	}
+
+    override private function setButtonAction(button:DefaultButton, action:String):Void {
+            if (action =="flip")
+            {
+            button.buttonAction = onPlusClick;
+            }
+
+    }
+
+
+
 
 	public function blockElement():Void
 	{
@@ -157,27 +171,20 @@ class FolderElementDisplay extends WidgetContainer {
 		//filters = [shadows.get("down")];
 	}
 
-	private function onPlusClick(ev:MouseEvent):Void
+	private function onPlusClick(?_target:DefaultButton):Void
 	{
-		var popUp = cast(parent, FolderDisplay).popUp;
-		/*if(!popUp.sprite.visible){
-			var localizedText = Localiser.instance.getItemContent(model.content);
 
-			var content = createSprite(localizedText, popUp.sprite.width);
-			content.x = popUp.contentPos.x;
-			content.y = popUp.contentPos.y;
-			popUp.sprite.addChild(content);
-			localizedText = Localiser.instance.getItemContent(model.content + "_title");
-			var title = createSprite(localizedText, popUp.sprite.width);
-			title.x = popUp.titlePos.x;
-			title.y = popUp.titlePos.y;
-			popUp.sprite.addChild(title);
+        trace("click onPlusClick");
+       var popUp = cast(parent, FolderDisplay).popUp;
+        //var text = cast(displays.get(popUp.ref),ScrollPanel);
 
-			parent.setChildIndex(popUp.sprite, parent.numChildren - 1);
-			popUp.sprite.visible = true;
-			Actuate.tween(popUp.sprite, 0.5, {alpha: 1});
-		}*/
-	}
+        //var localizedText = Localiser.instance.getItemContent(model.content + "_front");
+        //activity.addChild(popup);
+        parent.addChild(popUp);
+
+
+
+    }
 
 	private function createSprite(text:String, width:Float):Sprite
 	{
