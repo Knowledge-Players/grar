@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.display.component.container.PopupDisplay;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.Image;
@@ -59,7 +60,7 @@ class FolderDisplay extends ActivityDisplay {
 
 	private var background:Bitmap;
 
-    public var popUp:PopupElementDisplay;
+    public var popUp:PopupDisplay;
 
 	/**
     * @return the instance
@@ -130,7 +131,7 @@ class FolderDisplay extends ActivityDisplay {
 
 			case "popup" :
 
-                var pop = new PopupElementDisplay(elemNode);
+                var pop = new PopupDisplay(elemNode);
 
 				popUp = pop;
 
