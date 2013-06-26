@@ -175,12 +175,11 @@ class FolderElementDisplay extends WidgetContainer {
 
 	private function onPlusClick(?_target:DefaultButton):Void
 	{
-        if(popUp == null)
-        {
+
             popUp = cast(parent, FolderDisplay).popUp;
             popUp.init(model.content);
             parent.addChild(popUp);
-        }
+
     }
 
 	private function createSprite(text:String, width:Float):Sprite

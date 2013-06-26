@@ -53,8 +53,8 @@ class PopupDisplay extends WidgetContainer {
     }
 
     private function onClosePopup(?_target:DefaultButton):Void{
-            trace("close popup");
-
+           // trace("close popup");
+            parent.removeChild(this);
     }
 
 
