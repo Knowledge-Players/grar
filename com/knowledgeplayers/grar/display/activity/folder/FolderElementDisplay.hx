@@ -1,5 +1,10 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.display.component.container.PopupDisplay;
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
+import aze.display.TilesheetEx;
+import haxe.xml.Fast;
+import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import nme.filters.BitmapFilter;
 import StringTools;
 import motion.Actuate;
@@ -20,26 +25,18 @@ import nme.geom.Point;
 /**
 * Display of an element in a folder activity
 **/
-class FolderElementDisplay extends Sprite {
-	/**
-    * Text of the element
-**/
-	public var text (default, null):ScrollPanel;
+class FolderElementDisplay extends WidgetContainer {
 
 	/**
     * Model
     **/
 	public var model (default, null):FolderElement;
 
-	/**
-    * Origin before the drag
-**/
-	public var origin (default, default):Point;
-
 	private var shadows:Map<String, BitmapFilter>;
 	private var originWidth:Float;
 	private var originHeight:Float;
 	private var stylesheet:String;
+    private var popUp:PopupDisplay;
 	/**
     * Constructor
     * @param content : Text of the element
@@ -47,49 +44,54 @@ class FolderElementDisplay extends Sprite {
     * @param height : Height of the element
 **/
 
-	public function new(model:FolderElement, width:Float, height:Float, filters:String, background:BitmapData, ?buttonIcon:BitmapData, ?buttonPos:Point, ?stylesheet:String)
+	public function new(?xml: Fast, ?tilesheet: TilesheetEx,?model:FolderElement)
 	{
-		super();
+		super(xml,tilesheet);
 		this.model = model;
 		originWidth = width;
 		originHeight = height;
-		this.stylesheet = stylesheet;
-		text = new ScrollPanel(width, height);
+
+		//this.stylesheet = stylesheet;
+
 		buttonMode = true;
 
-		shadows = new Map<String, BitmapFilter>();
+
+
+		//shadows = new Map<String, BitmapFilter>();
 		// Remove both {} and split on comma
-		var filtersArray:Array<String> = filters.substr(1, filters.length - 2).split(",");
+		/*var filtersArray:Array<String> = filters.substr(1, filters.length - 2).split(",");
 		var filtersHash:Map<String, String> = new Map<String, String>();
 		for(filter in filtersArray){
 			filtersHash.set(StringTools.trim(filter.split(":")[0]), StringTools.trim(filter.split(":")[1]));
-		}
-		shadows.set("down", FilterManager.getFilter(filtersHash.get("down")));
-		shadows.set("up", FilterManager.getFilter(filtersHash.get("up")));
+		}*/
+		//shadows.set("down", FilterManager.getFilter(filtersHash.get("down")));
+		//shadows.set("up", FilterManager.getFilter(filtersHash.get("up")));
+
+
+        var text = cast(displays.get(model.ref),ScrollPanel);
 
 		var localizedText = Localiser.instance.getItemContent(model.content + "_front");
+
 		text.setContent(localizedText);
-		var bkg = new Bitmap(background);
-		text.x = bkg.width / 2 - text.width / 2;
-		text.y = bkg.height / 2 - text.height / 2;
-		addChildAt(bkg, 0);
-		this.filters = [shadows.get("down")];
 
-		addChild(text);
-
-		if(buttonIcon != null){
-			var icon = new Bitmap(buttonIcon);
-			var button = new SimpleButton(icon, icon, icon, icon);
-			button.addEventListener(MouseEvent.CLICK, onPlusClick);
-			button.x = buttonPos.x;
-			button.y = buttonPos.y;
-			addChild(button);
-		}
+		//this.filters = [shadows.get("down")];
 
 		addEventListener(MouseEvent.MOUSE_DOWN, onDown);
 		addEventListener(MouseEvent.MOUSE_UP, onUp);
 		addEventListener(Event.ADDED_TO_STAGE, onAdd);
+
 	}
+
+    override private function setButtonAction(button:DefaultButton, action:String):Void {
+            if (action =="flip")
+            {
+            button.buttonAction = onPlusClick;
+            }
+
+    }
+
+
+
 
 	public function blockElement():Void
 	{
@@ -98,7 +100,7 @@ class FolderElementDisplay extends Sprite {
 		buttonMode = false;
 	}
 
-	public function reset():Void
+	/*public function reset():Void
 	{
 		width = originWidth;
 		height = originHeight;
@@ -107,21 +109,21 @@ class FolderElementDisplay extends Sprite {
 		if(!hasEventListener(MouseEvent.MOUSE_UP))
 			addEventListener(MouseEvent.MOUSE_UP, onUp);
 		buttonMode = true;
-	}
+	}*/
 
 	// Handler
 
 	private function onAdd(ev:Event):Void
 	{
-		origin = new Point(x, y);
+		//origin = new Point(x, y);
 	}
 
 	private function onDown(e:MouseEvent):Void
 	{
-		origin.x = x;
-		origin.y = y;
+		//origin.x = x;
+		//origin.y = y;
 		parent.setChildIndex(this, parent.numChildren - 1);
-		filters = [shadows.get("up")];
+		//filters = [shadows.get("up")];
 		startDrag();
 	}
 
@@ -168,30 +170,17 @@ class FolderElementDisplay extends Sprite {
 			}
 			currentTarget.elem = this;
 		}
-		filters = [shadows.get("down")];
+		//filters = [shadows.get("down")];
 	}
 
-	private function onPlusClick(ev:MouseEvent):Void
+	private function onPlusClick(?_target:DefaultButton):Void
 	{
-		var popUp = cast(parent, FolderDisplay).popUp;
-		if(!popUp.sprite.visible){
-			var localizedText = Localiser.instance.getItemContent(model.content);
 
-			var content = createSprite(localizedText, popUp.sprite.width);
-			content.x = popUp.contentPos.x;
-			content.y = popUp.contentPos.y;
-			popUp.sprite.addChild(content);
-			localizedText = Localiser.instance.getItemContent(model.content + "_title");
-			var title = createSprite(localizedText, popUp.sprite.width);
-			title.x = popUp.titlePos.x;
-			title.y = popUp.titlePos.y;
-			popUp.sprite.addChild(title);
+            popUp = cast(parent, FolderDisplay).popUp;
+            popUp.init(model.content);
+            parent.addChild(popUp);
 
-			parent.setChildIndex(popUp.sprite, parent.numChildren - 1);
-			popUp.sprite.visible = true;
-			Actuate.tween(popUp.sprite, 0.5, {alpha: 1});
-		}
-	}
+    }
 
 	private function createSprite(text:String, width:Float):Sprite
 	{
