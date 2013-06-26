@@ -171,9 +171,9 @@ class FolderDisplay extends ActivityDisplay {
 		endActivity();
 	}
 
-	private function onClosePopUp(ev:MouseEvent):Void
+	/*private function onClosePopUp(ev:MouseEvent):Void
 	{
-		//popUp.sprite.removeChildAt(popUp.sprite.numChildren - 1);
-		//popUp.sprite.visible = false;
-	}
+		popUp.sprite.removeChildAt(popUp.sprite.numChildren - 1);
+		popUp.sprite.visible = false;
+	}*/
 }

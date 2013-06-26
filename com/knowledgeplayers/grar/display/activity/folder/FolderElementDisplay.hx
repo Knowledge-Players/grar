@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.display.component.container.PopupDisplay;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import aze.display.TilesheetEx;
 import haxe.xml.Fast;
@@ -35,6 +36,7 @@ class FolderElementDisplay extends WidgetContainer {
 	private var originWidth:Float;
 	private var originHeight:Float;
 	private var stylesheet:String;
+    private var popUp:PopupDisplay;
 	/**
     * Constructor
     * @param content : Text of the element
@@ -173,17 +175,12 @@ class FolderElementDisplay extends WidgetContainer {
 
 	private function onPlusClick(?_target:DefaultButton):Void
 	{
-
-        trace("click onPlusClick");
-       var popUp = cast(parent, FolderDisplay).popUp;
-        //var text = cast(displays.get(popUp.ref),ScrollPanel);
-
-        //var localizedText = Localiser.instance.getItemContent(model.content + "_front");
-        //activity.addChild(popup);
-        parent.addChild(popUp);
-
-
-
+        if(popUp == null)
+        {
+            popUp = cast(parent, FolderDisplay).popUp;
+            popUp.init(model.content);
+            parent.addChild(popUp);
+        }
     }
 
 	private function createSprite(text:String, width:Float):Sprite
