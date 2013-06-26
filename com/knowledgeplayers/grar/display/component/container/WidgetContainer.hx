@@ -210,7 +210,7 @@ class WidgetContainer extends Widget{
 
 		//ResizeManager.instance.addDisplayObjects(elem, node);
 		zIndex++;
-		addChild(elem);
+		content.addChild(elem);
 	}
 
 	private function createButton(buttonNode:Fast):Void
@@ -265,7 +265,7 @@ class WidgetContainer extends Widget{
 	private function onButtonToggle(e:ButtonActionEvent):Void
 	{
 		var button = cast(e.target, DefaultButton);
-		if(button.toggle == "inactive"){
+		if(button.toggle == "inactive" && button.group != null){
 			for(b in buttonGroups.get(button.group)){
 				if(b != button)
 					b.setToggle(true);

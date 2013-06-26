@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.localisation.Localiser;
 import haxe.xml.Fast;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
@@ -25,6 +26,11 @@ class ScrollPanel extends WidgetContainer {
     **/
 	public var styleSheet (default, default):String;
 
+	/**
+	* Used to force a style on this scrollpanel
+	**/
+	public var style (default, default):String;
+
 	private var scrollNeeded:Bool;
 
 	/**
@@ -40,6 +46,9 @@ class ScrollPanel extends WidgetContainer {
 		super(xml);
 		if(xml != null){
 			styleSheet = xml.has.styleSheet ? xml.att.styleSheet : null;
+			style = xml.has.style ? xml.att.style : null;
+			if(xml.has.content)
+				setContent(Localiser.instance.getItemContent(xml.att.content));
 		}
 		if(_styleSheet != null)
 			styleSheet = _styleSheet;
@@ -78,6 +87,8 @@ class ScrollPanel extends WidgetContainer {
 		}
 
 		for(element in KpTextDownParser.parse(contentString)){
+			if(style != null)
+				element.style = style;
 			var style:Style = StyleParser.getStyle(element.style);
 			if(style == null)
 				throw "[ScrollPanel] There is no style \"" + element.style + "\" in style sheet \"" + StyleParser.currentStyleSheet + "\".";
@@ -95,7 +106,7 @@ class ScrollPanel extends WidgetContainer {
 			}
 			item.x = padding[3];
 			item.y = offSetY;
-			offSetY += item.height + StyleParser.getStyle(element.style).getLeading()[1];
+			offSetY += item.height + style.getLeading()[1];
 			if(scrollable){
 				for(i in 0...element.numLines){
 					var m = new Sprite();

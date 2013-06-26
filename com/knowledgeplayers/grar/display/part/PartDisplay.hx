@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.Image;
@@ -479,6 +480,9 @@ class PartDisplay extends KpDisplay {
 	private function mustBeDisplayed(key:String):Bool
 	{
 		var object = displays.get(key);
+		if(Std.is(object, VideoPlayer)){
+			return true;
+		}
 
 		// If the object is already displayed
 		if(!Std.is(object, Image) && contains(object)){

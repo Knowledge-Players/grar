@@ -109,6 +109,11 @@ class Widget extends Sprite{
 		return transitionOut = transition;
 	}
 
+	public function set_visible(visible:Bool):Bool
+	{
+		return this.visible = visible;
+	}
+
 	public function initSize():Void
 	{
 		if(width != 0)

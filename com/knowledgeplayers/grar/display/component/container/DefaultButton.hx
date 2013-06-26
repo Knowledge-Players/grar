@@ -93,6 +93,7 @@ class DefaultButton extends WidgetContainer {
 		}
 
 		mouseChildren = false;
+		useHandCursor = buttonMode = true;
 
 		init();
 	}

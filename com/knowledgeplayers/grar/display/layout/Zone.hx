@@ -46,7 +46,7 @@ class Zone extends KpDisplay {
 	{
 
 		if(_zone.has.text){
-			Lib.trace(Localiser.instance.currentLocale);
+			trace(Localiser.instance.currentLocale);
 		}
 		if(_zone.has.bgColor)
 			DisplayUtils.initSprite(this, zoneWidth, zoneHeight, Std.parseInt(_zone.att.bgColor));
@@ -98,11 +98,6 @@ class Zone extends KpDisplay {
 		else{
 			Lib.trace("[Zone] This zone is empty. Are you sure your XML is correct ?");
 		}
-	}
-
-	private function createHeader():Void
-	{
-
 	}
 
 	private function createProgressBar(element:Fast):ProgressBar
@@ -187,6 +182,13 @@ class Zone extends KpDisplay {
 		}
 	}
 
+	/*override private function createText(textNode:Fast):Void
+	{
+		var text = new ScrollPanel(textNode);
+		text.setContent(Localiser.instance.getItemContent(textNode.att.content));
+		addElement(text, textNode);
+	}*/
+
 	override private function createImage(itemNode:Fast):Void
 	{
 		if(itemNode.has.src || itemNode.has.filters){
@@ -194,8 +196,6 @@ class Zone extends KpDisplay {
 		}
 		else{
 			var tile = new TileImage(itemNode, layer);
-			/*tile.tileSprite.x += tile.tileSprite.width/2;
-			tile.tileSprite.y += tile.tileSprite.height/2;*/
 			addElement(tile, itemNode);
 		}
 	}

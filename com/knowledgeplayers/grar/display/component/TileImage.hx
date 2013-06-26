@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.component;
 
+import com.knowledgeplayers.grar.factory.UiFactory;
+import nme.display.DisplayObject;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import nme.events.Event;
@@ -15,6 +17,8 @@ import aze.display.TileSprite;
 class TileImage extends Image{
 
 	public var tileSprite (default, null): TileSprite;
+
+	private var tilesheet: TilesheetEx;
 
 	public function new(xml: Fast, layer: TileLayer, visible: Bool = true)
 	{
@@ -40,11 +44,27 @@ class TileImage extends Image{
 			tileSprite.y = Std.parseFloat(xml.att.y)+ tileSprite.height/2;
 
 		tileSprite.visible = visible;
+		tilesheet = layer.tilesheet;
 		layer.addChild(tileSprite);
 		layer.render();
 	}
 
-	public function set_visible(visible:Bool):Void
+	#if !flash override #end public function set_x(x:Float):Float
+	{
+		return tileSprite.x = x;
+	}
+
+	#if !flash override #end public function get_x():Float
+	{
+		return tileSprite.x;
+	}
+
+	#if !flash override #end public function set_y(y:Float):Float
+	{
+		return tileSprite.y = y;
+	}
+
+	override public function set_visible(visible:Bool):Bool
 	{
 		tileSprite.visible = visible;
 		var actuator: IGenericActuator = null;
@@ -69,6 +89,20 @@ class TileImage extends Image{
 				if(Std.is(parent, WidgetContainer))
 					cast(parent, WidgetContainer).renderNeeded = true;
 			});
+		return visible;
+	}
+
+	public function getMask():DisplayObject
+	{
+		var layer = new TileLayer(tilesheet);
+		var tile = new TileSprite(layer, tileSprite.tile);
+		layer.addChild(tile);
+		layer.render();
+		layer.view.x = tileSprite.x;
+		layer.view.y = tileSprite.y;
+		tileSprite.visible = false;
+		tileSprite.layer.render();
+		return layer.view;
 	}
 
 	override public function set_transitionIn(transition:String):String

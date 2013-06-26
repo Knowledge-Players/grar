@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import haxe.ds.GenericStack;
 import nme.events.Event;
@@ -100,6 +101,9 @@ class KpDisplay extends Sprite {
 			case "button": createButton(elemNode);
 			case "text": createText(elemNode);
 			case "textgroup":createTextGroup(elemNode);
+			case "video": var video = new VideoPlayer(elemNode);
+							addElement(video, elemNode);
+							video.setVideo("video/01_Golden_Rules_Introduction.f4v");
 		}
 	}
 
