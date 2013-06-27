@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import nme.events.Event;
 import com.knowledgeplayers.grar.display.activity.folder.FolderDisplay;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.structure.activity.folder.FolderElement;
@@ -54,9 +55,13 @@ class PopupDisplay extends WidgetContainer {
 
     private function onClosePopup(?_target:DefaultButton):Void{
            // trace("close popup");
-            parent.removeChild(this);
+       TweenManager.applyTransition(this, transitionOut).onComplete(removePopup);
+
+
     }
 
-
+    private function removePopup():Void{
+        parent.removeChild(this);
+    }
 
 }
