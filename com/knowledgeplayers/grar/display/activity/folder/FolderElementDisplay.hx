@@ -133,9 +133,11 @@ class FolderElementDisplay extends WidgetContainer {
 		var i:Int = 1;
 		var outOfBound = false;
 		var currentTarget = folder.targets[0];
+
 		while(!hitTestObject(currentTarget.obj) && !outOfBound){
+
 			if(i < folder.targets.length)
-				currentTarget = folder.targets[i]
+				currentTarget = folder.targets[i];
 			else
 				outOfBound = true;
 			i++;
@@ -147,22 +149,29 @@ class FolderElementDisplay extends WidgetContainer {
 		else{
 			if(folder.grids.exists("drop"))
 				folder.grids.get("drop").add(this, false);
+
 			else if(!folder.targetSpritesheet){
+
 				x = currentTarget.obj.x;
 				y = currentTarget.obj.y;
 				width = currentTarget.obj.width;
 				height = currentTarget.obj.height;
+
 			}
 			else{
 				width = currentTarget.obj.width;
 				height = currentTarget.obj.height;
 				x = currentTarget.obj.x - width / 2;
 				y = currentTarget.obj.y - height / 2;
+
 			}
 			stopDrag();
+
 			model.currentTarget = currentTarget.name;
 			if(cast(folder.model, Folder).controlMode == "auto")
-				blockElement();
+            {	blockElement();
+
+            }
 			else if(currentTarget.elem != null){
 				Actuate.tween(currentTarget.elem, 0.5, {x: origin.x, y: origin.y});
 				currentTarget.elem.reset();
