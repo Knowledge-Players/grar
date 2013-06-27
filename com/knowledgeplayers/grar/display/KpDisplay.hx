@@ -161,13 +161,9 @@ class KpDisplay extends Sprite {
 
 	private function createCharacter(character:Fast)
 	{
-		var mirror = character.has.mirror ? character.att.mirror : null;
-		var char:CharacterDisplay = new CharacterDisplay(spritesheets.get(character.att.spritesheet), character.att.id, new Character(character.att.ref), mirror);
-		char.visible = false;
+		var char:CharacterDisplay = new CharacterDisplay(character, layers.get(character.att.spritesheet), new Character(character.att.ref));
 		if(character.has.nameRef)
 			char.nameRef = character.att.nameRef;
-		if(character.has.scale)
-			char.scale = Std.parseFloat(character.att.scale);
 		addElement(char, character);
 
 	}

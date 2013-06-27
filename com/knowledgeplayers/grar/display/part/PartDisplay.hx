@@ -344,11 +344,10 @@ class PartDisplay extends KpDisplay {
 				}
 				else{
 					char.alpha = 1;
-					char.visible = true;
+					char.set_visible(true);
 				}
 				currentSpeaker = char;
-
-				currentSpeaker.visible = true;
+				currentSpeaker.set_visible(true);
 				if(char.nameRef != null && displays.exists(char.nameRef))
 					cast(displays.get(char.nameRef), ScrollPanel).setContent(currentSpeaker.model.getName());
 				else if(char.nameRef != null)
@@ -512,6 +511,8 @@ class PartDisplay extends KpDisplay {
 		// If the character is not the current speaker
 		if(Std.is(object, CharacterDisplay) && object != currentSpeaker)
 			return false;
+		else if(Std.is(object, CharacterDisplay))
+			return true;
 
 		if(currentTextItem != null){
 
