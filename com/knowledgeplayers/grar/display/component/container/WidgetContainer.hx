@@ -83,8 +83,10 @@ class WidgetContainer extends Widget{
 				var tile = new TileSprite(layer, bkg);
 				tile.alpha = alpha;
 				layer.addChild(tile);
-				tile.x += tile.width / 2;
-				tile.y += tile.height / 2;
+				tile.scaleX = maskWidth / tile.width;
+				tile.scaleY = maskHeight / tile.height;
+				tile.x = tile.width / 2;
+				tile.y = tile.height / 2;
 				layer.render();
 			}
 			else if(AssetsStorage.hasAsset(bkg)){
@@ -114,6 +116,11 @@ class WidgetContainer extends Widget{
 	{
 		removeChild(content);
 		content = new Sprite();
+		/*for(child in layer)
+			child.visible = false
+		layer.render();*/
+		content.addChild(layer.view);
+
 		var max = (background != null && background != "") ? 1 : 0;
 		while(numChildren > max)
 			removeChildAt(numChildren - 1);

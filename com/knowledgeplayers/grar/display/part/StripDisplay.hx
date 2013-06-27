@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.display.component.container.BoxDisplay;
 import Lambda;
 import com.knowledgeplayers.grar.util.DisplayUtils;
@@ -144,5 +145,16 @@ class StripDisplay extends PartDisplay {
 	{
 		if(Lambda.count(currentBox.buttons) == 0 && currentBox.nextPattern != "")
 			goToPattern(currentBox.nextPattern);
+	}
+
+	override private function createImage(itemNode:Fast):Void
+	{
+		var spritesheet = itemNode.has.spritesheet?itemNode.att.spritesheet:"ui";
+		if(itemNode.name.toLowerCase() == "background"){
+			addChild(new Image(itemNode, spritesheets.get(spritesheet)));
+		}
+		else{
+			super.createImage(itemNode);
+		}
 	}
 }

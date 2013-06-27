@@ -81,14 +81,9 @@ class TileImage extends Image{
 			else
 				reset();
 		}
+		renderNeeded();
 		if(actuator != null)
-			actuator.onUpdate(function(){
-				// TODO unify
-				if(Std.is(parent, KpDisplay))
-					cast(parent, KpDisplay).renderLayers.set(tileSprite.layer, true);
-				if(Std.is(parent, WidgetContainer))
-					cast(parent, WidgetContainer).renderNeeded = true;
-			});
+			actuator.onUpdate(renderNeeded);
 		return visible;
 	}
 
@@ -125,6 +120,22 @@ class TileImage extends Image{
 	{
 		for(field in Reflect.fields(origin)){
 			Reflect.setProperty(tileSprite, field, Reflect.field(origin, field));
+		}
+	}
+
+	private function renderNeeded(?e: Event): Void
+	{
+		if(parent == null)
+			addEventListener(Event.ADDED_TO_STAGE, renderNeeded);
+		else if(hasEventListener(Event.ADDED_TO_STAGE))
+			removeEventListener(Event.ADDED_TO_STAGE, renderNeeded);
+
+		// TODO unify
+		if(Std.is(parent, KpDisplay)){
+			cast(parent, KpDisplay).renderLayers.set(tileSprite.layer, true);
+		}
+		if(Std.is(parent, WidgetContainer)){
+			cast(parent, WidgetContainer).renderNeeded = true;
 		}
 	}
 

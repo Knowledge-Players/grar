@@ -271,7 +271,7 @@ class DefaultButton extends WidgetContainer {
 
 			array.sort(sortDisplayObjects);
 			for(obj in array){
-				addChild(obj);
+				content.addChild(obj);
 			}
 
 			renderNeeded = true;

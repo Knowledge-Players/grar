@@ -305,25 +305,27 @@ class PartDisplay extends KpDisplay {
 
 	private function displayBackground(background:String):Void
 	{
-		var sameBackground = true;
-		// Clean previous background
-		if(previousBackground != null && background != null && previousBackground.ref != background){
-			sameBackground = false;
-			if(previousBackground.bmp != null)
-				removeChild(previousBackground.bmp);
-		}
-		else if(previousBackground == null)
-			sameBackground = false;
-		// Add new background if different from previous one
-		if(!sameBackground && background != null){
-			if(!displays.exists(background))
-				throw "[PartDisplay] There is no background with ref " + background;
-			var bkg:Image = cast(displays.get(background), Image);
-			if(bkg != null){
-				addChildAt(bkg, 0);
+		if(background != null && background != ""){
+			var sameBackground = true;
+			// Clean previous background
+			if(previousBackground != null && previousBackground.ref != background){
+				sameBackground = false;
+				if(previousBackground.bmp != null)
+					removeChild(previousBackground.bmp);
 			}
+			else if(previousBackground == null)
+				sameBackground = false;
+			// Add new background if different from previous one
+			if(!sameBackground){
+				if(!displays.exists(background))
+					throw '[PartDisplay] There is no background with ref "$background"';
+				var bkg:Image = cast(displays.get(background), Image);
+				if(bkg != null){
+					addChildAt(bkg, 0);
+				}
 
-			previousBackground = {ref: background, bmp: cast(bkg, Image)};
+				previousBackground = {ref: background, bmp: cast(bkg, Image)};
+			}
 		}
 	}
 
@@ -453,14 +455,14 @@ class PartDisplay extends KpDisplay {
 				array.push(displays.get(key));
 		}
 
-		array.sort(sortDisplayObjects);
-		for(obj in array){
-			addChild(obj);
-		}
-
 		for(layer in layers){
 			if(!contains(layer.view))
 				addChild(layer.view);
+		}
+
+		array.sort(sortDisplayObjects);
+		for(obj in array){
+			addChild(obj);
 		}
 
 		if(inventory != null && currentSpeaker != null)
@@ -524,6 +526,7 @@ class PartDisplay extends KpDisplay {
 						exists = true;
 						if(Std.is(object, TileImage)){
 							currentItems.add(object);
+
 							cast(object, TileImage).set_visible(true);
 						}
 						else
