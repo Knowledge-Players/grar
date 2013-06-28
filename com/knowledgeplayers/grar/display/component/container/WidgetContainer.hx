@@ -63,6 +63,7 @@ class WidgetContainer extends Widget{
 	public var renderNeeded: Bool = false;
 
 	private var scrollBar:ScrollBar;
+	private var scrollNeeded:Bool;
 	private var layer: TileLayer;
 	private var displays: Map<String, Widget>;
 	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
@@ -189,6 +190,18 @@ class WidgetContainer extends Widget{
 	private function displayContent():Void
 	{
 		maskSprite(content, maskWidth, maskHeight);
+
+
+		if(maskHeight < content.height && scrollable){
+			scrollBar = UiFactory.createScrollBar(18, maskHeight, maskHeight / content.height, "scrollbar", "cursor");
+			scrollBar.x = maskWidth - scrollBar.width;
+			addChild(scrollBar);
+			scrollBar.scrolled = scrollToRatio;
+			scrollNeeded = true;
+		}
+		else{
+			scrollNeeded = false;
+		}
 
 		TweenManager.applyTransition(content, contentTransition);
 	}

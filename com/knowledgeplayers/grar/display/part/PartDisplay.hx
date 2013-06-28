@@ -98,6 +98,14 @@ class PartDisplay extends KpDisplay {
 			localeLoaded = true;
 			checkPartLoaded();
 		}
+
+		/*for(key in layers.keys()){
+			if(key != "ui"){
+				addChild(layers.get(key).view);
+			}
+		}
+		if(layers.exists("ui"))
+			addChild(layers.get("ui").view);*/
 	}
 
 	public function exitPart():Void
@@ -383,8 +391,6 @@ class PartDisplay extends KpDisplay {
 			for(obj in toRemove){
 				if(contains(obj))
 					removeChild(obj);
-				if(Std.is(obj, TileImage))
-					cast(obj, TileImage).set_visible(false);
 			}
 		}
 
@@ -452,11 +458,6 @@ class PartDisplay extends KpDisplay {
 		for(key in displays.keys()){
 			if(mustBeDisplayed(key))
 				array.push(displays.get(key));
-		}
-
-		for(layer in layers){
-			if(!contains(layer.view))
-				addChild(layer.view);
 		}
 
 		array.sort(sortDisplayObjects);

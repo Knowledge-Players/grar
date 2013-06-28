@@ -31,8 +31,6 @@ class ScrollPanel extends WidgetContainer {
 	**/
 	public var style (default, default):String;
 
-	private var scrollNeeded:Bool;
-
 	/**
      * Constructor
      * @param	width : Width of the displayed content
@@ -124,17 +122,6 @@ class ScrollPanel extends WidgetContainer {
 		addChild(content);
 		addChild(mask);
 		content.mask = mask;
-
-		if(maskHeight < content.height && scrollable){
-			scrollBar = UiFactory.createScrollBar(18, maskHeight, maskHeight / content.height, "scrollbar", "cursor");
-			scrollBar.x = maskWidth - scrollBar.width;
-			addChild(scrollBar);
-			scrollBar.scrolled = scrollToRatio;
-			scrollNeeded = true;
-		}
-		else{
-			scrollNeeded = false;
-		}
 
 		if(previousStyleSheet != null)
 			StyleParser.currentStyleSheet = previousStyleSheet;

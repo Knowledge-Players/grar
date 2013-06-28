@@ -71,7 +71,10 @@ class KpDisplay extends Sprite {
 			spritesheets.set(child.att.id, AssetsStorage.getSpritesheet(child.att.src));
 			var layer = new TileLayer(AssetsStorage.getSpritesheet(child.att.src));
 			layers.set(child.att.id, layer);
+			addChild(layer.view);
 		}
+		addChild(new TileLayer(UiFactory.tilesheet).view);
+
 		createDisplay();
 
 		if(displayFast.has.transitionIn)

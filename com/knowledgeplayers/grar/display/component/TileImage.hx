@@ -47,6 +47,8 @@ class TileImage extends Image{
 		tilesheet = layer.tilesheet;
 		layer.addChild(tileSprite);
 		layer.render();
+
+		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 	}
 
 	#if !flash override #end public function set_x(x:Float):Float
@@ -137,6 +139,11 @@ class TileImage extends Image{
 		if(Std.is(parent, WidgetContainer)){
 			cast(parent, WidgetContainer).renderNeeded = true;
 		}
+	}
+
+	private function onRemove(e:Event):Void
+	{
+		set_visible(false);
 	}
 
 }
