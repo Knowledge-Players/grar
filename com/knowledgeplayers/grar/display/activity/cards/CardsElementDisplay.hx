@@ -1,5 +1,10 @@
 package com.knowledgeplayers.grar.display.activity.cards;
 
+import com.knowledgeplayers.grar.structure.activity.cards.CardsElement;import com.knowledgeplayers.grar.display.component.container.PopupDisplay;
+import com.knowledgeplayers.grar.structure.activity.cards.CardsElement;
+import aze.display.TilesheetEx;
+import haxe.xml.Fast;
+import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import nme.display.Sprite;
@@ -8,35 +13,28 @@ import nme.events.MouseEvent;
 /**
 * Display of an element in a folder activity
 **/
-class CardsElementDisplay extends Sprite {
-	/**
-    * Text of the element
-**/
-	public var text (default, null):ScrollPanel;
+class CardsElementDisplay extends WidgetContainer {
 
-	/**
-    * Content ID
-**/
-	public var content (default, null):String;
+/**
+    * Model
+    **/
+    public var model (default, null):CardsElement;
 
-	/**
-    * Constructor
-    * @param content : Text of the element
-    * @param width : Width of the element
-    * @param height : Height of the element
-**/
+    private var popUp:PopupDisplay;
 
-	public function new(content:String, width:Float, height:Float, background:String)
+	public function new(?xml: Fast, ?tilesheet: TilesheetEx,?model:CardsElement)
 	{
-		super();
-		this.content = content;
-		text = new ScrollPanel(width, height);
+		super(xml,tilesheet);
 		buttonMode = true;
+        this.model = model;
+      //  trace('ref : '+model.ref);
+      //  trace('model.content  : '+model.content );
+        var text = cast(displays.get(model.ref),ScrollPanel);
 
-		var localizedText = Localiser.instance.getItemContent(content + "_title");
-		text.setContent(localizedText);
-		text.setBackground(background);
-		addChild(text);
+        var localizedText = Localiser.instance.getItemContent(model.content + "_front");
+      //  trace("localizedTrxt : "+localizedText);
+
+        text.setContent(localizedText);
 
 		addEventListener(MouseEvent.CLICK, onClick);
 	}
@@ -50,7 +48,15 @@ class CardsElementDisplay extends Sprite {
 	private function onClick(e:MouseEvent):Void
 	{
 		var cd = cast(parent, CardsDisplay);
-		var localizedText = Localiser.instance.getItemContent(content);
-		cd.clickCard(this, localizedText);
+        model.viewed = true;
+		//var localizedText = Localiser.instance.getItemContent(content);
+		//cd.clickCard(this, localizedText);
+
+        popUp = cd.popUp;
+        popUp.init(model.content);
+        parent.addChild(popUp);
+        cd.checkElement();
+
 	}
+
 }

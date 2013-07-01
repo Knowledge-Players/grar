@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.cards;
 
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.PopupDisplay;
 import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import aze.display.TileClip;
@@ -7,6 +9,7 @@ import aze.display.TileLayer;
 import motion.Actuate;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.style.StyleParser;
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
 
 import com.knowledgeplayers.grar.structure.activity.cards.Cards;
 import com.knowledgeplayers.grar.util.Grid;
@@ -27,10 +30,7 @@ class CardsDisplay extends ActivityDisplay {
     **/
 	public static var instance (get_instance, null):CardsDisplay;
 
-	/**
-    * PopUp where additional text will be displayed
-    **/
-	public var popUp (default, default):Sprite;
+
 
 	/**
     * Grid to dispatch cards
@@ -51,6 +51,20 @@ class CardsDisplay extends ActivityDisplay {
 
 	private var elementBackground:String;
 	private var elementsArray:Array<CardsElementDisplay>;
+    private var elementTemplate:Fast;
+    public var popUp:PopupDisplay;
+
+    private var btNext:DefaultButton;
+
+
+
+    private function new()
+    {
+        super();
+        grids = new Map<String, Grid>();
+        elementsArray = new Array<CardsElementDisplay>();
+    }
+
 
 	/**
     * @return the instance
@@ -67,7 +81,7 @@ class CardsDisplay extends ActivityDisplay {
     *
     **/
 
-	public function clickCard(pCard:CardsElementDisplay, pText:String)
+	/*public function clickCard(pCard:CardsElementDisplay, pText:String)
 	{
 		nextCard = pCard;
 		nextText = pText;
@@ -77,7 +91,7 @@ class CardsDisplay extends ActivityDisplay {
 		else{
 			launchCard();
 		}
-	}
+	}*/
 
 	// Private
 
@@ -87,17 +101,20 @@ class CardsDisplay extends ActivityDisplay {
 	}
 
 	override public function set_model(model:Activity):Activity
-	{
-		for(i in 0...cast(model, Cards).elements.length){
-			var elementDisplay = new CardsElementDisplay(cast(model, Cards).elements[i].content, grids.get("dispatch").cellSize.width, grids.get("dispatch").cellSize.height, elementBackground);
+	{    var model = super.set_model(model);
+
+        for(elem in cast(model, Cards).elements){
+
+			var elementDisplay = new CardsElementDisplay(elementTemplate,elem);
 			elementsArray.push(elementDisplay);
+
 			grids.get("dispatch").add(elementDisplay, false);
 			addChild(elementDisplay);
 		}
 
-		// TODO Container
-		//grids.get("dispatch").alignContainer(grids.get("dispatch").container, background);
-		return super.set_model(model);
+        displays.get("next").visible = false;
+
+        return model;
 	}
 
 	override private function createElement(elemNode:Fast):Void
@@ -108,16 +125,10 @@ class CardsDisplay extends ActivityDisplay {
 				var target = new Image(elemNode);
 				addElement(target, elemNode);
 			case "popup" :
-				var pop:Bitmap = new Bitmap(AssetsStorage.getBitmapData(elemNode.att.background));
-				popUp.addChild(pop);
-				var icon:Bitmap = new Bitmap(AssetsStorage.getBitmapData(elemNode.att.buttonIcon));
-				popUp.addChild(icon);
-				popUp.addEventListener(MouseEvent.CLICK, onClosePopUp);
-				popUp.visible = false;
-				popUp.alpha = 0;
-				addChild(popUp);
-				if(elemNode.has.style)
-					stylesheet = elemNode.att.style;
+                var pop = new PopupDisplay(elemNode);
+                popUp = pop;
+                if(elemNode.has.style)stylesheet = elemNode.att.style;
+
 			case "animationelement" :
 				var tilesheet = spritesheets.get(elemNode.att.spritesheet);
 				flipLayer = new TileLayer(tilesheet);
@@ -130,10 +141,15 @@ class CardsDisplay extends ActivityDisplay {
 				grid.x = Std.parseFloat(elemNode.att.x);
 				grid.y = Std.parseFloat(elemNode.att.y);
 				grids.set(elemNode.att.ref, grid);
-			case "element" : elementBackground = elemNode.att.src;
-		}
+            case "element" :
+
+                elementTemplate = elemNode;
+
+        }
 	}
 
+
+/*
 	private function onClosePopUp(ev:MouseEvent):Void
 	{
 		nextCard = null;
@@ -151,10 +167,11 @@ class CardsDisplay extends ActivityDisplay {
 		setChildIndex(flipLayer.view, numChildren - 1);
 		flipDirection = -1;
 		addEventListener(Event.ENTER_FRAME, onEnterFrameClip);
-		Actuate.tween(flipLayer.view, 0.8, {x: cardInProgress.x + cardInProgress.width / 2, y: cardInProgress.y + cardInProgress.height / 2}).onComplete(launchCard);
-	}
 
-	private function launchCard()
+		Actuate.tween(flipLayer.view, 0.8, {x: cardInProgress.x + cardInProgress.width / 2, y: cardInProgress.y + cardInProgress.height / 2}).onComplete(launchCard);
+	}*/
+
+	private function launchCard():Void
 	{
 		flipLayer.view.visible = false;
 		for(i in 0...elementsArray.length){
@@ -178,7 +195,7 @@ class CardsDisplay extends ActivityDisplay {
 
 	private function showPopUp(pText:String)
 	{
-		var previousStyleSheet = null;
+		/*var previousStyleSheet = null;
 		if(stylesheet != null){
 			previousStyleSheet = StyleParser.currentStyleSheet;
 			StyleParser.currentStyleSheet = stylesheet;
@@ -211,6 +228,7 @@ class CardsDisplay extends ActivityDisplay {
 		popUp.visible = true;
 		Actuate.tween(popUp, 0.5, {alpha: 1});
 		flipLayer.view.visible = false;
+		*/
 	}
 
 	private function onEnterFrameClip(e:Event)
@@ -230,11 +248,26 @@ class CardsDisplay extends ActivityDisplay {
 		}
 	}
 
-	private function new()
-	{
-		super();
-		grids = new Map<String, Grid>();
-		popUp = new Sprite();
-		elementsArray = new Array<CardsElementDisplay>();
-	}
+    override private function setButtonAction(button:DefaultButton, action:String):Void
+    {
+        if(action.toLowerCase() == ButtonActionEvent.NEXT){
+            btNext = button;
+            btNext.buttonAction = endActivity;
+        }
+    }
+
+    public function allCardsView():Void{
+
+        displays.get("next").visible = true;
+    }
+
+    public function checkElement():Void{
+        var nb:Int = 0;
+        launchCard();
+        for(elem in cast(model, Cards).elements){
+            if (elem.viewed)nb++;
+
+        }
+        if (nb==cast(model, Cards).elements.length)allCardsView();
+    }
 }

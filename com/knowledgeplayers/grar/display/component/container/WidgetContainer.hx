@@ -218,11 +218,23 @@ class WidgetContainer extends Widget{
 	public function createElement(elemNode:Fast):Void
 	{
 		switch(elemNode.name.toLowerCase()){
-			case "background" | "image": addElement(new TileImage(elemNode, layer));
+			case "background" | "image": createImage(elemNode);
 			case "button": createButton(elemNode);
 			case "text": addElement(new ScrollPanel(elemNode));
 		}
 	}
+
+    private function createImage(itemNode:Fast):Void
+    {
+
+        if(itemNode.has.src){
+            addElement(new Image(itemNode));
+        }
+        else{
+            addElement(new TileImage(itemNode, layer));
+        }
+    }
+
 	private function addElement(elem:Widget):Void
 	{
 		elem.z = zIndex;

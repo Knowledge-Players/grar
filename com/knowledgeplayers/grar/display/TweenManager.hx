@@ -140,6 +140,12 @@ class TweenManager {
 		}
 	}
 
+    public static function createTransition(display:Dynamic,duration:Float,params:Dynamic):IGenericActuator{
+
+
+        return Actuate.tween(display, duration, params);
+
+    }
 	public static function fastForwardDiscover():Void
 	{
 		if(discovering != null){
@@ -228,6 +234,8 @@ class TweenManager {
 		display.y = inOutY[0];
 		return Actuate.tween(display, slide.duration, {x: inOutX[1], y: inOutY[1]}).ease(getEasing(slide));
 	}
+
+
 
 	public static function transform(display:Dynamic, ref:String):IGenericActuator
 	{

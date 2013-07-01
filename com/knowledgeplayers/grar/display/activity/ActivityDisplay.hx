@@ -55,7 +55,7 @@ class ActivityDisplay extends KpDisplay {
     * End the activity
     **/
 
-	public function endActivity():Void
+	public function endActivity(?_target:DefaultButton):Void
 	{
 		model.endActivity();
 		unLoad();
@@ -107,7 +107,7 @@ class ActivityDisplay extends KpDisplay {
 	override private function setButtonAction(button:DefaultButton, action:String):Void
 	{
 		if(action.toLowerCase() == ButtonActionEvent.NEXT){
-			button.addEventListener(ButtonActionEvent.NEXT, onValidate);
+			button.buttonAction= onValidate;
 		}
 	}
 
@@ -118,7 +118,7 @@ class ActivityDisplay extends KpDisplay {
 		// Override in subclass
 	}
 
-	private function onValidate(e:ButtonActionEvent):Void
+	private function onValidate(?_target:DefaultButton):Void
 	{
 		// Override in subclass
 	}

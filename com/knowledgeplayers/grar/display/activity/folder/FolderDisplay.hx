@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.activity.folder;
 
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.PopupDisplay;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.component.Widget;
@@ -54,13 +55,16 @@ class FolderDisplay extends ActivityDisplay {
     **/
 	public var targetSpritesheet (default, default):Bool = false;
 
+    public var popUp:PopupDisplay;
+
 	private var elementTemplate:Fast;
 
 	private var elementsArray:Array<FolderElementDisplay>;
 
 	private var background:Bitmap;
 
-    public var popUp:PopupDisplay;
+    private var btNext:DefaultButton;
+
 
 	/**
     * @return the instance
@@ -72,6 +76,7 @@ class FolderDisplay extends ActivityDisplay {
 		grids = new Map<String, Grid>();
 		targets = new Array<{obj:DisplayObject, name:String, elem:FolderElementDisplay}>();
 		elementsArray = new Array<FolderElementDisplay>();
+
 	}
 
 	public static function get_instance():FolderDisplay
@@ -103,7 +108,10 @@ class FolderDisplay extends ActivityDisplay {
 			elementsArray.push(elementDisplay);
 			grids.get("drag").add(elementDisplay, false);
 			addChild(elementDisplay);
+
 		}
+
+       displays.get("next").visible = false;
 
 		return model;
 	}
@@ -135,9 +143,11 @@ class FolderDisplay extends ActivityDisplay {
 
 				popUp = pop;
 
+
 			case "element" :
 
 				elementTemplate = elemNode;
+
 
 			case "grid" :
 				var cellWidth = elemNode.has.cellWidth ? Std.parseFloat(elemNode.att.cellWidth) : 0;
@@ -164,12 +174,30 @@ class FolderDisplay extends ActivityDisplay {
 
 	// Handlers
 
-	override private function onValidate(e:ButtonActionEvent):Void
+	override private function onValidate(?_target:DefaultButton):Void
 	{
 		if(cast(model, Folder).controlMode != "auto")
 			cast(model, Folder).validate();
-		endActivity();
+		//endActivity();
 	}
+
+    override private function setButtonAction(button:DefaultButton, action:String):Void
+    {
+        if(action.toLowerCase() == ButtonActionEvent.NEXT){
+            btNext = button;
+            btNext.buttonAction = endActivity;
+        }
+    }
+
+    public function elementOnTarget():Void{
+        cast(model, Folder).validate();
+       // trace('model.score : '+model.score);
+        if ( model.score==100){
+            displays.get("next").visible = true;
+
+        }
+    }
+
 
 	/*private function onClosePopUp(ev:MouseEvent):Void
 	{

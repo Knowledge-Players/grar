@@ -10,7 +10,7 @@ class Folder extends Activity {
 	/**
     * Elements of the activity
     **/
-	public var elements (default, null):Map<String, FolderElement>;
+	public var elements (default, null):Array<FolderElement>;
 
 	/**
     * Targets where to drop elements
@@ -24,7 +24,7 @@ class Folder extends Activity {
 
 	public function new(content:String)
 	{
-		elements = new Map<String, FolderElement>();
+		elements = new Array<FolderElement>();
 		targets = new Array<String>();
 		super(content);
 
@@ -32,9 +32,10 @@ class Folder extends Activity {
 
 	public function validate():Void
 	{
-		for(key in elements.keys()){
-			var element = elements.get(key);
-			if(element.currentTarget == element.target)
+        score = 0;
+		for(elem in elements){
+
+			if(elem.currentTarget == elem.target)
 				score++;
 		}
 		score = Math.floor(score * 100 / Lambda.count(elements));
@@ -54,7 +55,7 @@ class Folder extends Activity {
 				elem.target = element.att.target;
 				targets.push(element.att.target);
 			}
-			elements.set(elem.content, elem);
+			elements.push(elem);
 		}
 	}
 }

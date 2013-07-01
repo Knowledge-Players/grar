@@ -126,7 +126,7 @@ class QuizDisplay extends ActivityDisplay {
 		}
 	}
 
-	override private function onValidate(e:ButtonActionEvent):Void
+	override private function onValidate(?_target:DefaultButton):Void
 	{
 		if(quiz.controlMode == "auto"){
 			switch(quiz.state) {

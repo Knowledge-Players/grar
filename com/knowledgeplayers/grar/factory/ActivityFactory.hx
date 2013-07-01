@@ -34,6 +34,7 @@ class ActivityFactory {
 			case "scanner": creation = new Scanner(content);
 			case "folder": creation = new Folder(content);
 			case "cards": creation = new Cards(content);
+            default:
 				throw "Factory - " + activityType + " :  Unsupported activity";
 		}
 

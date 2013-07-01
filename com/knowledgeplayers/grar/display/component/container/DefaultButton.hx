@@ -342,10 +342,8 @@ class DefaultButton extends WidgetContainer {
 
 	private function onMouseEvent(event:MouseEvent):Void
 	{
-		if(!enabled){
-			event.stopImmediatePropagation();
-			return;
-		}
+
+		event.stopImmediatePropagation();
 
 		switch (event.type) {
 			case MouseEvent.MOUSE_OUT: onOut(event);
