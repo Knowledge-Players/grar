@@ -5,28 +5,35 @@ import haxe.xml.Fast;
 import nme.geom.Point;
 
 class Scanner extends Activity {
-	public var pointsMap (default, null):GenericStack<ScannerPoint>;
+/**
+    * Elements of the activity
+    **/
+    public var elements (default, null):Array<ScannerPoint>;
+
 	public var pointVisible (default, default):Bool;
 
 	public function new(content:String)
 	{
-		pointsMap = new GenericStack<ScannerPoint>();
+        elements = new Array<ScannerPoint>();
 		super(content);
 	}
 
 	public override function toString():String
 	{
-		return pointsMap.toString();
+		return elements.toString();
 	}
 
 	// Private
 
 	override private function parseContent(content:Xml):Void
 	{
+        super.parseContent(content);
 		var fast = new Fast(content).node.Scanner;
 		pointVisible = fast.att.pointVisible == "true";
 		for(point in fast.nodes.Point){
-			pointsMap.add(new ScannerPoint(Std.parseFloat(point.att.x), Std.parseFloat(point.att.y), point.att.ref, point.att.text, point.att.content));
+            var elem = new ScannerPoint(Std.parseFloat(point.att.x), Std.parseFloat(point.att.y), point.att.ref, point.att.text, point.att.content);
+			elements.push(elem);
 		}
 	}
+
 }

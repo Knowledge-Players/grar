@@ -30,6 +30,8 @@ class ActivityDisplay extends KpDisplay {
 		this.model = model;
 		this.model.loadActivity();
 		return model;
+
+
 	}
 
 	/**
@@ -48,7 +50,7 @@ class ActivityDisplay extends KpDisplay {
 		});
 
 		model.startActivity();
-		displayActivity();
+        displayActivity();
 	}
 
 	/**

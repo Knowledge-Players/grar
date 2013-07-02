@@ -18,6 +18,8 @@ class ScannerPoint extends Point {
 **/
 	public var textRef (default, default):String;
 
+
+    public var viewed:Bool;
 	/**
     * Constructor
     * @param x : X of the point
@@ -31,5 +33,6 @@ class ScannerPoint extends Point {
 		this.ref = ref;
 		this.textRef = textRef;
 		this.content = content;
+        this.viewed = false;
 	}
 }

@@ -158,7 +158,7 @@ class CardsDisplay extends ActivityDisplay {
     }
 
     private function closePopup(_array:Array<Dynamic>):Void{
-        trace("closePopup : ");
+
         removeChild(cardAnim);
 
     }
@@ -185,7 +185,7 @@ class CardsDisplay extends ActivityDisplay {
     }
 
     public function checkElement():Void{
-        trace("checkElement");
+
         var nb:Int = 0;
 
         for(elem in cast(model, Cards).elements){

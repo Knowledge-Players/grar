@@ -13,6 +13,7 @@ class PointDisplay extends Sprite {
 	private var style:PointStyle;
 	private var bitmap:Bitmap;
 	private var point:ScannerPoint;
+    public var viewed:Bool =false;
 
 	/**
     * Constructor
@@ -58,6 +59,9 @@ class PointDisplay extends Sprite {
 		setGraphic("over");
 		var text = Localiser.instance.getItemContent(point.content);
 		cast(parent, ScannerDisplay).setText(point.textRef, text);
+        point.viewed=true;
+        cast(parent, ScannerDisplay).checkElement();
+
 	}
 
 	private function onOut(e:MouseEvent):Void
