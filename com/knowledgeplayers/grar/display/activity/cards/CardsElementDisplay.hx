@@ -45,18 +45,14 @@ class CardsElementDisplay extends WidgetContainer {
 		buttonMode = false;
 	}
 
-	private function onClick(e:MouseEvent):Void
-	{
-		var cd = cast(parent, CardsDisplay);
+    private function onClick(e:MouseEvent):Void
+    {
+        var cd = cast(parent, CardsDisplay);
         model.viewed = true;
-		//var localizedText = Localiser.instance.getItemContent(content);
-		//cd.clickCard(this, localizedText);
+        cd.launchCard(model);
+    }
 
-        popUp = cd.popUp;
-        popUp.init(model.content);
-        parent.addChild(popUp);
-        cd.checkElement();
 
-	}
+
 
 }

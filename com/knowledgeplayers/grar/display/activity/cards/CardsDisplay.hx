@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.activity.cards;
 
+import com.knowledgeplayers.grar.structure.activity.cards.CardsElement;
+import com.knowledgeplayers.grar.display.element.AnimationDisplay;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.PopupDisplay;
 import com.knowledgeplayers.grar.display.component.Image;
@@ -37,8 +39,7 @@ class CardsDisplay extends ActivityDisplay {
     **/
 	public var grids (default, null):Map<String, Grid>;
 
-	private var flipLayer:TileLayer;
-	private var flipClip:TileClip;
+
 	private var flipDirection:Int;
 	private var cardInProgress:CardsElementDisplay;
 	private var nextCard:CardsElementDisplay;
@@ -55,6 +56,7 @@ class CardsDisplay extends ActivityDisplay {
     public var popUp:PopupDisplay;
 
     private var btNext:DefaultButton;
+    private var cardAnim:AnimationDisplay;
 
 
 
@@ -77,21 +79,6 @@ class CardsDisplay extends ActivityDisplay {
 		return instance;
 	}
 
-	/**
-    *
-    **/
-
-	/*public function clickCard(pCard:CardsElementDisplay, pText:String)
-	{
-		nextCard = pCard;
-		nextText = pText;
-		if(popUp.visible){
-			closePopUp();
-		}
-		else{
-			launchCard();
-		}
-	}*/
 
 	// Private
 
@@ -130,12 +117,11 @@ class CardsDisplay extends ActivityDisplay {
                 if(elemNode.has.style)stylesheet = elemNode.att.style;
 
 			case "animationelement" :
-				var tilesheet = spritesheets.get(elemNode.att.spritesheet);
-				flipLayer = new TileLayer(tilesheet);
-				flipClip = new TileClip(flipLayer, elemNode.att.id);
-				flipClip.loop = false;
-				flipLayer.addChild(flipClip);
-				addChild(flipLayer.view);
+
+                var tilesheet = spritesheets.get(elemNode.att.spritesheet);
+                cardAnim = new AnimationDisplay(elemNode,elemNode.att.id,tilesheet);
+
+
 			case "grid" :
 				var grid = new Grid(Std.parseInt(elemNode.att.numRow), Std.parseInt(elemNode.att.numCol), Std.parseFloat(elemNode.att.cellWidth), Std.parseFloat(elemNode.att.cellHeight), Std.parseFloat(elemNode.att.gapCol), Std.parseFloat(elemNode.att.gapRow));
 				grid.x = Std.parseFloat(elemNode.att.x);
@@ -149,96 +135,33 @@ class CardsDisplay extends ActivityDisplay {
 	}
 
 
-/*
-	private function onClosePopUp(ev:MouseEvent):Void
+
+	public function launchCard(_model:CardsElement):Void
 	{
-		nextCard = null;
-		nextText = null;
-		closePopUp();
+        addChild(cardAnim);
+		cardAnim.visible = true;
+        cardAnim.playAnimation(showPopup,[_model]);
 	}
 
-	private function closePopUp()
-	{
-		popUp.removeChildAt(popUp.numChildren - 1);
-		popUp.visible = false;
-		flipLayer.view.visible = true;
-		flipLayer.view.x = popUp.x + popUp.width / 2;
-		flipLayer.view.y = popUp.y + popUp.height / 2;
-		setChildIndex(flipLayer.view, numChildren - 1);
-		flipDirection = -1;
-		addEventListener(Event.ENTER_FRAME, onEnterFrameClip);
 
-		Actuate.tween(flipLayer.view, 0.8, {x: cardInProgress.x + cardInProgress.width / 2, y: cardInProgress.y + cardInProgress.height / 2}).onComplete(launchCard);
-	}*/
+    private function showPopup(_array:Array<Dynamic>):Void
+    {
+        popUp.init(_array[0].content);
+        addChild(popUp);
+        popUp.addEventListener(Event.REMOVED_FROM_STAGE,onPopupClosed);
+        checkElement();
 
-	private function launchCard():Void
-	{
-		flipLayer.view.visible = false;
-		for(i in 0...elementsArray.length){
+    }
 
-			elementsArray[i].visible = true;
+    private function onPopupClosed(e:Event):Void{
+        cardAnim.playAnimationBack(closePopup,[model]);
+    }
 
-		}
-		if(nextCard != null){
-			nextCard.visible = false;
-			cardInProgress = nextCard;
-			flipLayer.view.x = cardInProgress.x + cardInProgress.width / 2;
-			flipLayer.view.y = cardInProgress.y + cardInProgress.height / 2;
-			setChildIndex(flipLayer.view, numChildren - 1);
-			flipLayer.view.visible = true;
-			flipDirection = 1;
-			addEventListener(Event.ENTER_FRAME, onEnterFrameClip);
-			Actuate.tween(flipLayer.view, 0.8, {x: popUp.x + popUp.width / 2, y:popUp.y + popUp.height / 2}).onComplete(showPopUp, [nextText]);
-		}
+    private function closePopup(_array:Array<Dynamic>):Void{
+        trace("closePopup : ");
+        removeChild(cardAnim);
 
-	}
-
-	private function showPopUp(pText:String)
-	{
-		/*var previousStyleSheet = null;
-		if(stylesheet != null){
-			previousStyleSheet = StyleParser.currentStyleSheet;
-			StyleParser.currentStyleSheet = stylesheet;
-		}
-
-		var content = new Sprite();
-		var offSetY:Float = 0;
-
-		var isFirst:Bool = true;
-
-		for(element in KpTextDownParser.parse(pText)){
-			var padding = StyleParser.getStyle(element.style).getPadding();
-			var item = element.createSprite(popUp.width - padding[1] - padding[3]);
-
-			if(isFirst){
-				offSetY += padding[0];
-			}
-			item.x = padding[3];
-			item.y = offSetY;
-			offSetY += item.height;
-			content.addChild(item);
-
-		}
-
-		if(previousStyleSheet != null)
-			StyleParser.currentStyleSheet = previousStyleSheet;
-
-		popUp.addChild(content);
-		setChildIndex(popUp, numChildren - 1);
-		popUp.visible = true;
-		Actuate.tween(popUp, 0.5, {alpha: 1});
-		flipLayer.view.visible = false;
-		*/
-	}
-
-	private function onEnterFrameClip(e:Event)
-	{
-		flipClip.currentFrame += 1 * flipDirection;
-		flipLayer.render();
-		if(flipClip.currentFrame == flipClip.totalFrames || flipClip.currentFrame == 0){
-			removeEventListener(Event.ENTER_FRAME, onEnterFrameClip);
-		}
-	}
+    }
 
 	override private function unLoad(keepLayer:Int = 0):Void
 	{
@@ -262,8 +185,9 @@ class CardsDisplay extends ActivityDisplay {
     }
 
     public function checkElement():Void{
+        trace("checkElement");
         var nb:Int = 0;
-        launchCard();
+
         for(elem in cast(model, Cards).elements){
             if (elem.viewed)nb++;
 

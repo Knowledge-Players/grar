@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.element;
 
+
+import com.knowledgeplayers.grar.display.element.AnimationDisplay;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.display.component.Widget;
@@ -13,11 +15,15 @@ class AnimationDisplay extends WidgetContainer
 {
 	private var clip:TileClip;
 	private var loop: Int;
+    private var callBack:Dynamic;
+    private var parameters:Array<Dynamic>;
+    private var frame:Int;
+    private var totalFrames:Int;
 
-	public function new(?xml: Fast, ?_id:String, ?_tileSheet:TilesheetEx, _loop:Int = 0)
+	public function new(?xml: Fast, ?_id:String, ?_tileSheet:TilesheetEx, _loop:Int = 0,_visible:Bool=false)
 	{
 		super(xml);
-
+        set_visible(_visible);
 		if(_tileSheet != null)
 			tilesheet = _tileSheet;
 		if(_id != null){
@@ -41,6 +47,35 @@ class AnimationDisplay extends WidgetContainer
 		clip.onComplete = onAnimationEnd;
 		layer.render();
 	}
+    public function animateBack(?e:Event):Void
+    {
+
+        clip.currentFrame = frame;
+        clip.loop = false;
+        if (clip.currentFrame==0){
+            onAnimationEndBack(clip);
+        }
+
+        layer.render();
+        frame--;
+    }
+
+    private function onAnimationEndBack(_clip:TileClip):Void
+    {
+
+        if(loop > 0){
+            _clip.currentFrame = totalFrames;
+            animateBack();
+        }
+        else
+        {
+            removeEventListener(Event.ENTER_FRAME, animateBack);
+
+            callBack(parameters);
+        }
+        loop--;
+    }
+
 
 	/**
     * Stop the animation
@@ -51,6 +86,7 @@ class AnimationDisplay extends WidgetContainer
 		clip.stop();
 		clip.currentFrame = 0;
 		layer.render();
+
 	}
 	/*
      Goto the frame you want;
@@ -64,11 +100,35 @@ class AnimationDisplay extends WidgetContainer
 
 	private function onAnimationEnd(clip:TileClip):Void
 	{
-		loop--;
+
 		if(loop > 0){
 			clip.currentFrame = 0;
 			clip.play();
 			layer.render();
 		}
+        else
+        {
+            removeEventListener(Event.ENTER_FRAME, animate);
+            callBack(parameters);
+        }
+        loop--;
 	}
+
+    public function playAnimation(?_loop:Int=0,?_callBack:Dynamic,?_parameters:Array <Dynamic>):Void{
+
+        if (_callBack != null)callBack=_callBack;
+        if(_parameters != null)parameters = _parameters;
+        addEventListener(Event.ENTER_FRAME, animate);
+    }
+
+    public function playAnimationBack(?_loop:Int=0,?_callBack:Dynamic,?_parameters:Array <Dynamic>):Void{
+        totalFrames = frame = clip.currentFrame;
+        if (_callBack != null)callBack=_callBack;
+        if(_parameters != null)parameters = _parameters;
+        addEventListener(Event.ENTER_FRAME, animateBack);
+    }
+
+    public function stopAnimation():Void{
+        addEventListener(Event.ENTER_FRAME, animate);
+    }
 }

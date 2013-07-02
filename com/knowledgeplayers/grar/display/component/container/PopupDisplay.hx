@@ -55,13 +55,14 @@ class PopupDisplay extends WidgetContainer {
 
     private function onClosePopup(?_target:DefaultButton):Void{
            // trace("close popup");
-       TweenManager.applyTransition(this, transitionOut).onComplete(removePopup);
-
+       //TweenManager.applyTransition(this, transitionOut).onComplete(removePopup);
+        removePopup();
 
     }
 
     private function removePopup():Void{
         parent.removeChild(this);
+
     }
 
 }
