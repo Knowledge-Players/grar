@@ -50,13 +50,15 @@ class QuizItemDisplay extends Sprite {
 		buttonMode = true;
 		correction = new Bitmap();
 		checkIcon = new Bitmap();
-		if(width != null && height != null){
+		/*if(width != null && height != null){
 			text = new ScrollPanel(width, height, style != null ? style : (xmlTemplate.has.style ? xmlTemplate.att.style : null));
+            trace("here : "+width);
 		}
 		else{
-			text = new ScrollPanel(Std.parseFloat(xmlTemplate.att.width), Std.parseFloat(xmlTemplate.att.height), style != null ? style : (xmlTemplate.has.style ? xmlTemplate.att.style : null));
-		}
-
+            trace("here : "+xmlTemplate.att.width);
+			//text = new ScrollPanel(Std.parseFloat(xmlTemplate.att.width), Std.parseFloat(xmlTemplate.att.height), style != null ? style : (xmlTemplate.has.style ? xmlTemplate.att.style : null));
+		}*/
+       text =  new ScrollPanel(xmlTemplate);
 		if(xmlTemplate != null){
 			if(xmlTemplate.has.spritesheet)
 				setIcon(xmlTemplate.att.id, xmlTemplate.att.spritesheet);
@@ -71,9 +73,10 @@ class QuizItemDisplay extends Sprite {
 			}
 		}
 
-		var content = Localiser.get_instance().getItemContent(model.content);
+		var contenu = Localiser.get_instance().getItemContent(model.content);
 
-		text.setContent(content);
+
+		text.setContent(contenu);
 
 		addEventListener(MouseEvent.CLICK, onClick);
 

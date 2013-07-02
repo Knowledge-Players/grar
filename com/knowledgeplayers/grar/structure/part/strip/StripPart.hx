@@ -21,7 +21,6 @@ class StripPart extends StructurePart {
 		return true;
 
 	}
-
 	// Private
 
 	override private function parseContent(content:Xml):Void
