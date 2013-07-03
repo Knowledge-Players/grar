@@ -113,6 +113,8 @@ class KpDisplay extends Sprite {
 	private function createImage(itemNode:Fast):Void
 	{
 		var spritesheet = itemNode.has.spritesheet?itemNode.att.spritesheet:"ui";
+
+
 		if(itemNode.has.src || itemNode.has.filters){
 			addElement(new Image(itemNode, spritesheets.get(spritesheet)), itemNode);
 		}
@@ -122,6 +124,8 @@ class KpDisplay extends Sprite {
 				layers.set(spritesheet, layer);
 			}
 			addElement(new TileImage(itemNode, layers.get(spritesheet), false), itemNode);
+
+            addChild(layers.get(spritesheet).view);
 		}
 	}
 
