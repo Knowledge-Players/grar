@@ -352,9 +352,13 @@ class PartDisplay extends KpDisplay {
 				}
 				else{
 					char.alpha = 1;
+                    //TODO Ajout transtion au charactere par kévin
+                    char.transitionIn=transition;
 					char.set_visible(true);
 				}
 				currentSpeaker = char;
+                //TODO  Ajout transtion au charactere par kévin
+                currentSpeaker.transitionIn=transition;
 				currentSpeaker.set_visible(true);
 				if(char.nameRef != null && displays.exists(char.nameRef))
 					cast(displays.get(char.nameRef), ScrollPanel).setContent(currentSpeaker.model.getName());

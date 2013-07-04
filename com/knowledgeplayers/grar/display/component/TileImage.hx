@@ -70,6 +70,7 @@ class TileImage extends Image{
 	{
 		tileSprite.visible = visible;
 		var actuator: IGenericActuator = null;
+
 		if(visible){
 			origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY};
 			actuator = TweenManager.applyTransition(tileSprite, transitionIn);

@@ -124,7 +124,7 @@ class KpDisplay extends Sprite {
 				layers.set(spritesheet, layer);
 			}
 			addElement(new TileImage(itemNode, layers.get(spritesheet), false), itemNode);
-
+            //TODO ajout des éléments d'UI par kévin
             addChild(layers.get(spritesheet).view);
 		}
 	}
