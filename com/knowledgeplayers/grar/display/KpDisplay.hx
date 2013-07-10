@@ -110,6 +110,8 @@ class KpDisplay extends Sprite {
 		}
 	}
 
+
+
 	private function createImage(itemNode:Fast):Void
 	{
 		var spritesheet = itemNode.has.spritesheet?itemNode.att.spritesheet:"ui";
@@ -193,7 +195,9 @@ class KpDisplay extends Sprite {
 	}
 
 	private function setButtonAction(button:DefaultButton, action:String):Void
-	{}
+	{
+        trace("set button action");
+    }
 
 	private function onButtonToggle(e:ButtonActionEvent):Void
 	{

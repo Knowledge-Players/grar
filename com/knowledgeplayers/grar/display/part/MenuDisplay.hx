@@ -49,13 +49,18 @@ class MenuDisplay extends Zone {
 		return this.orientation;
 	}
 
-	override public function onActionEvent(e:Event):Void
+    override private function setButtonAction(button:DefaultButton, action:String):Void
 	{
-		switch(e.type){
-			case "close_menu": TweenManager.applyTransition(this, transitionOut);
+        trace("close menu");
+		switch(action){
+			case "close_menu": button.buttonAction = closeMenu;
 		}
 
 	}
+
+    private function closeMenu(?_target:DefaultButton):Void{
+        TweenManager.applyTransition(this, transitionOut);
+    }
 
 	/**
     * Init the menu with an XML descriptor
@@ -95,6 +100,10 @@ class MenuDisplay extends Zone {
 		GameManager.instance.menuLoaded = true;
 	}
 
+    private function createMaskMenu():Void{
+
+    }
+
 	// Private
 
 	private function createMenuLevel(level:Xml):Void
@@ -123,6 +132,8 @@ class MenuDisplay extends Zone {
 		}
 		for(elem in level.elements())
 			createMenuLevel(elem);
+
+       // trace("create menu level");
 	}
 
 	private function addLine(fast:Fast):Void
@@ -148,7 +159,7 @@ class MenuDisplay extends Zone {
 		var button:DefaultButton = new DefaultButton(fast);
 
 		button.setText(text);
-		button.addEventListener(ButtonActionEvent.GOTO, onClick);
+		button.buttonAction = onClick;
 		button.transitionOut = transitionOut;
 
 		button.name = text;
@@ -156,9 +167,9 @@ class MenuDisplay extends Zone {
 		return button;
 	}
 
-	private function onClick(e:ButtonActionEvent):Void
+	private function onClick(?_target:DefaultButton):Void
 	{
-		var target = cast(e.target, DefaultButton);
+		var target = _target;
 		for(key in buttons.keys()){
 			if(buttons.get(key) == target)
 				GameManager.instance.displayPartById(key, true);

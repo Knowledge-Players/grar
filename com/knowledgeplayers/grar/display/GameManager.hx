@@ -265,6 +265,8 @@ class GameManager extends EventDispatcher {
 
 	public function getItemName(id:String):String
 	{
+
+        //trace("Localiser.instance.getItemContent(game.getItemName(id)) : "+Localiser.instance.getItemContent(game.getItemName(id)));
 		if(game.getItemName(id) != null)
 			return Localiser.instance.getItemContent(game.getItemName(id));
 		else if(ActivityManager.instance.activities.get(id) != null)

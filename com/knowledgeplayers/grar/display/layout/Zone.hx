@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.layout;
 
+import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.display.component.Image;
 import nme.events.MouseEvent;
@@ -111,7 +112,8 @@ class Zone extends KpDisplay {
 
 	public function createMenu(element:Fast):Void
 	{
-		GameManager.instance.menuLoaded = false;
+    trace("create menu");
+		//GameManager.instance.menuLoaded = false;
 		menu = new MenuDisplay(Std.parseFloat(element.att.width), Std.parseFloat(element.att.height));
 		menuXml = element;
 		menu.transitionIn = element.att.transitionIn;
@@ -122,26 +124,33 @@ class Zone extends KpDisplay {
 		addChild(menu);
 	}
 
-	public function onActionEvent(e:Event):Void
+	override private function setButtonAction(button:DefaultButton, action:String):Void
 	{
-		switch(e.type){
-			case "open_menu": TweenManager.applyTransition(menu, menu.transitionIn);
-			case "sound_toggle": activeSound(e);
+        trace("open menu");
+		switch(action){
+			case "open_menu": button.buttonAction= showMenu;
+
+
+			case "sound_toggle": button.buttonAction=activeSound;
 		}
 	}
 
-	private function activeSound(e:Event):Void
+    private function showMenu(?_target:DefaultButton):Void{
+        TweenManager.applyTransition(menu, menu.transitionIn);
+    }
+
+	private function activeSound(?_target:DefaultButton):Void
 	{
-		var button:DefaultButton = Std.is(e.target, DefaultButton) ? cast(e.target, DefaultButton) : null;
+
 		if(soundState){
 			GameManager.instance.changeVolume(0);
 			soundState = false;
-			if(button != null) button.setToggle(false);
+			if(_target != null) _target.setToggle(false);
 		}
 		else{
 			GameManager.instance.changeVolume(1);
 			soundState = true;
-			if(button != null) button.setToggle(true);
+			if(_target != null) _target.setToggle(true);
 		}
 
 	}
@@ -188,13 +197,38 @@ class Zone extends KpDisplay {
 		text.setContent(Localiser.instance.getItemContent(textNode.att.content));
 		addElement(text, textNode);
 	}*/
+    //TODO creation de background du menu (en attendant de le mettre au bon endroit ) kévin
+
+    public function createSpriteFormXml(xml:Fast):Widget
+    {
+        var background = new Widget();
+
+        var color:Int;
+
+        var _alpha = xml.has.alpha ? Std.parseFloat(xml.att.alpha) : 1;
+
+        if(xml.has.color)
+            color = Std.parseInt(xml.att.color);
+        else
+            color = Std.parseInt("0xFFFFFF");
+        background.graphics.beginFill(color, _alpha);
+        background.graphics.drawRect(Std.parseFloat(xml.att.x), Std.parseFloat(xml.att.y), Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height));
+        background.graphics.endFill();
+
+        return background;
+    }
 
 	override private function createImage(itemNode:Fast):Void
 	{
-		if(itemNode.has.src || itemNode.has.filters){
+		 if(itemNode.has.src || itemNode.has.filters){
 			addElement(new Image(itemNode, layer.tilesheet), itemNode);
 		}
-		else{
+		else if(itemNode.has.color){
+             var bkg = createSpriteFormXml(itemNode);
+
+             addElement(bkg,itemNode);
+
+         }else{
 			var tile = new TileImage(itemNode, layer);
 			addElement(tile, itemNode);
 		}
