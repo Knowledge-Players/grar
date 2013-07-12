@@ -281,14 +281,15 @@ class DefaultButton extends WidgetContainer {
 	public function setText(pContent:String, ?pKey:String):Void
 	{
 		for(state in states){
-			if(pKey != null && state.exists(pKey)){
-				cast(state.get(pKey), ScrollPanel).setContent(pContent);
-			}
-			else if(pKey == null){
+			if(pKey == null){
 				for(elem in state){
-					if(Std.is(elem, ScrollPanel))
+					if(Std.is(elem, ScrollPanel)){
 						cast(elem, ScrollPanel).setContent(pContent);
+					}
 				}
+			}
+			else if(state.exists(pKey)){
+				cast(state.get(pKey), ScrollPanel).setContent(pContent);
 			}
 		}
 	}

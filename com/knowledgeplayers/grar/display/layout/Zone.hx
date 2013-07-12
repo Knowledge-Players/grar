@@ -112,7 +112,6 @@ class Zone extends KpDisplay {
 
 	public function createMenu(element:Fast):Void
 	{
-    trace("create menu");
 		//GameManager.instance.menuLoaded = false;
 		menu = new MenuDisplay(Std.parseFloat(element.att.width), Std.parseFloat(element.att.height));
 		menuXml = element;
@@ -126,7 +125,6 @@ class Zone extends KpDisplay {
 
 	override private function setButtonAction(button:DefaultButton, action:String):Void
 	{
-        trace("open menu");
 		switch(action){
 			case "open_menu": button.buttonAction= showMenu;
 

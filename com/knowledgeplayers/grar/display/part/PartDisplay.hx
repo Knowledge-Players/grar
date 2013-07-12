@@ -506,7 +506,10 @@ class PartDisplay extends KpDisplay {
 
 			if(button.exists(key)){
 				for(contentKey in button.get(key).keys()){
-					cast(displays.get(key), DefaultButton).setText(Localiser.instance.getItemContent(button.get(key).get(contentKey)), contentKey);
+					var targetedText: String = null;
+					if(contentKey != " ")
+						targetedText = contentKey;
+					cast(displays.get(key), DefaultButton).setText(Localiser.instance.getItemContent(button.get(key).get(contentKey)), targetedText);
 				}
 				return true;
 			}

@@ -196,7 +196,7 @@ class KpDisplay extends Sprite {
 
 	private function setButtonAction(button:DefaultButton, action:String):Void
 	{
-        trace("set button action");
+		// override in subclass
     }
 
 	private function onButtonToggle(e:ButtonActionEvent):Void

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.factory.ActivityFactory;
 import com.knowledgeplayers.grar.factory.ItemFactory;
@@ -349,18 +350,7 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 					nbSubPartTotal++;
 					createPart(child);
 				case "button":
-					var content = new Map<String, String>();
-					if(child.has.content){
-						if(child.att.content.indexOf("{") == 0){
-							var contentString:String = child.att.content.substr(1, child.att.content.length - 2);
-							var contents = contentString.split(",");
-							for(c in contents)
-								content.set(StringTools.trim(c.split(":")[0]), StringTools.trim(c.split(":")[1]));
-						}
-						else
-							content.set(child.att.content, child.att.content);
-					}
-					button.set(child.att.ref, content);
+					button.set(child.att.ref, ParseUtils.parseButtonContent(child));
 					if(child.has.goTo){
 						if(child.att.goTo == "")
 							buttonTargets.set(child.att.ref, null);

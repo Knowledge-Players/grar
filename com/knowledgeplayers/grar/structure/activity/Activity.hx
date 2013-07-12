@@ -2,6 +2,7 @@ package com.knowledgeplayers.grar.structure.activity;
 
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.part.Part;
@@ -200,18 +201,7 @@ class Activity extends EventDispatcher implements PartElement implements Trackab
 			controlMode = "auto";
 		var child = fast.node.Button;
 
-		var content = new Map<String, String>();
-		if(child.has.content){
-			if(child.att.content.indexOf("{") == 0){
-				var contentString:String = child.att.content.substr(1, child.att.content.length - 2);
-				var contents = contentString.split(",");
-				for(c in contents)
-					content.set(StringTools.trim(c.split(":")[0]), StringTools.trim(c.split(":")[1]));
-				}
-			else
-				content.set(child.att.content, child.att.content);
-		}
-		button.set(child.att.ref, content);
+		button.set(child.att.ref, ParseUtils.parseButtonContent(child));
 		if(fast.hasNode.Token)
 			token = fast.node.Token.att.ref;
 	}

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.factory.ItemFactory;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
@@ -65,18 +66,7 @@ class Pattern implements PartElement {
 		}
 		for(child in xml.elements){
 			if(child.name.toLowerCase() == "button" || child.name.toLowerCase() == "choice"){
-				var content = new Map<String, String>();
-				if(child.has.content){
-					if(child.att.content.indexOf("{") == 0){
-						var contentString:String = child.att.content.substr(1, child.att.content.length - 2);
-						var contents = contentString.split(",");
-						for(c in contents)
-							content.set(StringTools.trim(c.split(":")[0]), StringTools.trim(c.split(":")[1]));
-					}
-					else
-						content.set(child.att.content, child.att.content);
-				}
-				buttons.set(child.att.ref, content);
+				buttons.set(child.att.ref, ParseUtils.parseButtonContent(child));
 			}
 		}
 		nextPattern = xml.att.next;
