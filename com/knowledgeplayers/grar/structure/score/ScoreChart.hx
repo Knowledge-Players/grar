@@ -46,6 +46,15 @@ class ScoreChart {
 		perk.susbscribeActivity(activity);
 	}
 
+	public function addScoreToPerk(perk:String, score:Int):Void
+	{
+		if(!perks.exists(perk)){
+			throw '[ScoreChart] There is no perk "$perk".';
+		}
+		else
+			perks.get(perk).addToScore(score);
+	}
+
 	/**
 	 * @return a string-based representation of the object
 	 */

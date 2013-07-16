@@ -18,6 +18,7 @@ public var elements (default, null):Array<PartElement>;
 public var token (default, null):String;
 public var tokens (default, null):GenericStack<String>;
 public var buttonTargets (default, null): Map<String, PartElement>;
+public var perks (default, null): Map<String, Int>;
 public var soundLoop (default, default):Sound;
 
 public function init(xml:Fast, ?filePath:String):Void;

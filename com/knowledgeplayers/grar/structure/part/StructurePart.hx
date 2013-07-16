@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import com.knowledgeplayers.grar.structure.score.ScoreChart;
+import StringTools;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.factory.ActivityFactory;
@@ -73,6 +75,11 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 	    **/
 	public var button (default, default):Map<String, Map<String, String>>;
 
+	/**
+	* Perks of this part
+	**/
+	public var perks (default, null): Map<String, Int>;
+
 	public var next (default, default):String;
 
 	public var endScreen (default, null):Bool = false;
@@ -94,6 +101,7 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 		elements = new Array<PartElement>();
 		button = new Map<String, Map<String, String>>();
 		buttonTargets = new Map<String, PartElement>();
+		perks = new Map<String, Int>();
 	}
 
 		/**
@@ -148,8 +156,10 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 	public function end():Void
 	{
 		isDone = true;
+		for(perk in perks.keys())
+			ScoreChart.instance.addScoreToPerk(perk, perks.get(perk));
 		if(soundLoopChannel != null)
-		soundLoopChannel.stop();
+			soundLoopChannel.stop();
 	}
 	/**
 		* @param    startIndex : Next element after this position
@@ -340,6 +350,8 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 
 		if(partFast.has.next)
 			next = partFast.att.next;
+		if(partFast.has.perks)
+			setPerks(partFast.att.perks);
 		for(child in partFast.elements){
 			switch(child.name.toLowerCase()){
 				case "text":
@@ -393,6 +405,7 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 		if(xml.has.file) file = xml.att.file;
 		if(xml.has.display) display = xml.att.display;
 		if(xml.has.next) next = xml.att.next;
+		if(xml.has.perks) setPerks(xml.att.perks);
 
 		if(xml.hasNode.Sound)
 			soundLoop = AssetsStorage.getSound(xml.node.Sound.att.content);
@@ -437,5 +450,21 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 		var ev = new PartEvent(PartEvent.PART_LOADED);
 		ev.part = this;
 		dispatchEvent(ev);
+	}
+
+	private function setPerks(perks: String):Void
+	{
+		var couples: Array<String>;
+		if(perks.indexOf('{') > -1){
+			var hash = perks.substr(1, perks.length-2);
+			couples = hash.split(",");
+		}
+		else
+			couples = [perks];
+
+		for(couple in couples){
+			var keyValue = couple.split(":");
+			this.perks.set(StringTools.trim(keyValue[0]), Std.parseInt(keyValue[1]));
+		}
 	}
 }

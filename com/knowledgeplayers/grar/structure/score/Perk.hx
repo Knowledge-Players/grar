@@ -17,11 +17,12 @@ class Perk {
      */
 	public var activities (default, null):GenericStack<Activity>;
 
-	/**
+	private var score: Int = 0;
+
+		/**
      * Constructor
      * @param	name : Name of the perk
      */
-
 	public function new(name:String)
 	{
 		this.name = name;
@@ -45,12 +46,17 @@ class Perk {
 
 	public function getScore():Int
 	{
-		var score:Int = 0;
+		var tmpScore = score;
 		for(activity in activities){
-			score += activity.score;
+			tmpScore += activity.score;
 		}
 
-		return score;
+		return tmpScore;
+	}
+
+	public function addToScore(delta:Int):Void
+	{
+		score += delta;
 	}
 
 	/**
