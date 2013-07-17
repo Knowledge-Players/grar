@@ -292,12 +292,15 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
     **/
     public function getAllItems():Array<Trackable>
     {
-        var activities = new Array<Trackable>();
+        var trackable = new Array<Trackable>();
         for(part in parts){
-            activities = activities.concat(part.getAllItems());
+            trackable = trackable.concat(part.getAllItems());
+	        /*for(subpart in part.getAllParts())
+		        trackable.push(subpart);
+	        trackable.push(part);*/
         }
 
-        return activities;
+        return trackable;
     }
 
 	/**

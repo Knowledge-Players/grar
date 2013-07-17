@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.layout;
 
+import com.knowledgeplayers.grar.display.component.DropdownMenu;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.display.component.Image;
@@ -33,6 +34,7 @@ class Zone extends KpDisplay {
 	private var layer:TileLayer;
 	private var soundState:Bool = true;
 	private var menuXml:Fast;
+	private var fastnav: DropdownMenu;
 
 	public function new(_width:Float, _height:Float):Void
 	{
@@ -112,7 +114,6 @@ class Zone extends KpDisplay {
 
 	public function createMenu(element:Fast):Void
 	{
-		//GameManager.instance.menuLoaded = false;
 		menu = new MenuDisplay(Std.parseFloat(element.att.width), Std.parseFloat(element.att.height));
 		menuXml = element;
 		menu.transitionIn = element.att.transitionIn;
@@ -127,8 +128,6 @@ class Zone extends KpDisplay {
 	{
 		switch(action){
 			case "open_menu": button.buttonAction= showMenu;
-
-
 			case "sound_toggle": button.buttonAction=activeSound;
 		}
 	}
@@ -182,6 +181,7 @@ class Zone extends KpDisplay {
 		switch(elemNode.name.toLowerCase()){
 			case "menu":createMenu(elemNode);
 			case "progressbar": createProgressBar(elemNode);
+			case "fastnav":	fastnav = new DropdownMenu(elemNode, true);
 		}
 
 		for(widget in displays){
@@ -189,12 +189,6 @@ class Zone extends KpDisplay {
 		}
 	}
 
-	/*override private function createText(textNode:Fast):Void
-	{
-		var text = new ScrollPanel(textNode);
-		text.setContent(Localiser.instance.getItemContent(textNode.att.content));
-		addElement(text, textNode);
-	}*/
     //TODO creation de background du menu (en attendant de le mettre au bon endroit ) kévin
 
     public function createSpriteFormXml(xml:Fast):Widget
@@ -243,5 +237,24 @@ class Zone extends KpDisplay {
 	{
 		if(menu != null)
 			menu.initMenu(menuXml);
+		if(fastnav != null){
+			for(item in GameManager.instance.game.getAllItems()){
+				fastnav.addItem(item.name);
+			}
+			addChild(fastnav);
+			fastnav.addEventListener(Event.CHANGE, onFastNav);
+		}
+	}
+
+	private function onFastNav(e: Event):Void
+	{
+		var track = fastnav.currentLabel;
+		var items = GameManager.instance.game.getAllItems();
+		var i = 0;
+		while(i < items.length && items[i].name != track)
+			i++;
+		if(i == items.length)
+			throw '[Zone] There is no trackable item with the name "$track".';
+		GameManager.instance.displayTrackable(items[i]);
 	}
 }

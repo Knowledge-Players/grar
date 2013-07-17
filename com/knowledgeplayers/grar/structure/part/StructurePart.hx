@@ -237,15 +237,19 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 		for(elem in elements){
 			if(Std.is(elem, Trackable)){
 				if(elem.isPart()){
-					if(!cast(elem, Part).hasParts())
+					if(!cast(elem, Part).hasParts()){
 						items.push(cast(elem, Trackable));
+					}
 					else
 						items = items.concat(cast(elem, Part).getAllItems());
 				}
-				if(elem.isActivity())
+				else if(elem.isActivity())
 					items.push(cast(elem, Activity));
 			}
 		}
+		if(!hasParts())
+			items.push(this);
+
 		return items;
 	}
 

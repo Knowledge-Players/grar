@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.tracking.Trackable;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.contextual.ContextualDisplay;
@@ -254,6 +255,14 @@ class GameManager extends EventDispatcher {
 			this.layout.zones.get(game.ref).addChild(cast(contextual, KpDisplay));
 	}
 
+	public function displayTrackable(item: Trackable):Void
+	{
+		if(Std.is(item, Activity))
+			displayActivity(cast(item,Activity));
+		else if(Std.is(item, Part))
+			displayPart(cast(item, Part), true);
+	}
+
 	public function hideContextual(contextual:ContextualDisplay):Void
 	{
 		changeLayout(previousLayout);
@@ -265,8 +274,6 @@ class GameManager extends EventDispatcher {
 
 	public function getItemName(id:String):String
 	{
-
-        //trace("Localiser.instance.getItemContent(game.getItemName(id)) : "+Localiser.instance.getItemContent(game.getItemName(id)));
 		if(game.getItemName(id) != null)
 			return Localiser.instance.getItemContent(game.getItemName(id));
 		else if(ActivityManager.instance.activities.get(id) != null)

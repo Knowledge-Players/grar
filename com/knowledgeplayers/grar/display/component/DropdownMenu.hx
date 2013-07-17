@@ -1,4 +1,8 @@
 package com.knowledgeplayers.grar.display.component;
+
+import nme.geom.Point;
+import haxe.xml.Fast;
+import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import haxe.ds.GenericStack;
 import nme.display.Sprite;
@@ -8,19 +12,19 @@ import nme.events.MouseEvent;
 /**
  * Drop down menu component
  */
+class DropdownMenu extends WidgetContainer {
 
-class DropdownMenu extends Sprite {
 	public var items (default, default):GenericStack<String>;
-	public var currentLabel (default, setCurrentLabel):String;
+	public var currentLabel (default, set_currentLabel):String;
 
 	private var list:Sprite;
 	private var labelSprite:Sprite;
 	private var sprites:Map<String, Sprite>;
 	private var blank:Bool;
 
-	public function new(blankItem = false)
+	public function new(?xml: Fast, blankItem = false)
 	{
-		super();
+		super(xml);
 		blank = blankItem;
 		buttonMode = true;
 		items = new GenericStack<String>();
@@ -44,12 +48,12 @@ class DropdownMenu extends Sprite {
 
 	// Private
 
-	private function setCurrentLabel(label:String):String
+	private function set_currentLabel(label:String):String
 	{
 		currentLabel = label;
 		if(labelSprite.numChildren > 0)
 			labelSprite.removeChildAt(0);
-		labelSprite.addChild(KpTextDownParser.parse(label));
+		labelSprite.addChild(KpTextDownParser.parse(label)[0].createSprite(maskWidth));
 		dispatchEvent(new Event(Event.CHANGE));
 		return label;
 	}
@@ -58,9 +62,10 @@ class DropdownMenu extends Sprite {
 	{
 
 		var yOffset:Float = 0;
+		// TODO remove useless index
 		var index = 0;
 		for(item in items){
-			var sprite = KpTextDownParser.parse(item);
+			var sprite = KpTextDownParser.parse(item)[0].createSprite(maskWidth);
 			sprite.buttonMode = true;
 			sprite.y = yOffset;
 			yOffset += sprite.height;
@@ -69,10 +74,12 @@ class DropdownMenu extends Sprite {
 			sprites.set(item, sprite);
 			index++;
 		}
+		if(localToGlobal(new Point(0, 0)).y+list.height > nme.Lib.stage.stageHeight)
+			list.y = y - list.height;
 		list.visible = false;
 
 		if(!blank)
-			setCurrentLabel(items.first());
+			set_currentLabel(items.first());
 		else{
 			labelSprite.graphics.beginFill(0x000000, 0.1);
 			labelSprite.graphics.drawRect(0, 0, list.getChildAt(0).width, list.getChildAt(0).height);
@@ -87,7 +94,7 @@ class DropdownMenu extends Sprite {
 	{
 		for(label in sprites.keys()){
 			if(e.currentTarget == sprites.get(label))
-				setCurrentLabel(label);
+				set_currentLabel(label);
 		}
 		list.visible = false;
 		labelSprite.visible = true;
