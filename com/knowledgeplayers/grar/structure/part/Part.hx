@@ -54,4 +54,6 @@ public function isPattern():Bool;
 public function isPart():Bool;
 
 public function getItemName(id:String):Null<String>;
+
+public function canStart():Bool;
 }

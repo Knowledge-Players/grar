@@ -199,6 +199,10 @@ class GameManager extends EventDispatcher {
 
 	public function displayPart(part:Part, interrupt:Bool = false, startPosition:Int = -1):Void
 	{
+		// TODO better user feedback
+		if(!part.canStart())
+			throw "Et non !";
+
 		if(interrupt){
 			var oldPart = parts.pop();
 			oldPart.removeEventListener(PartEvent.EXIT_PART, onExitPart);

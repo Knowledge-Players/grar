@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import com.knowledgeplayers.grar.structure.score.Perk;
 import com.knowledgeplayers.grar.structure.score.ScoreChart;
 import StringTools;
 import com.knowledgeplayers.grar.util.ParseUtils;
@@ -80,6 +81,11 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 	**/
 	public var perks (default, null): Map<String, Int>;
 
+	/**
+	* Perks requirements to start the part
+	**/
+	public var requirements (default, null): Map<String, Int>;
+
 	public var next (default, default):String;
 
 	public var endScreen (default, null):Bool = false;
@@ -102,6 +108,7 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 		button = new Map<String, Map<String, String>>();
 		buttonTargets = new Map<String, PartElement>();
 		perks = new Map<String, Int>();
+		requirements = new Map<String, Int>();
 	}
 
 		/**
@@ -253,6 +260,19 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 		return items;
 	}
 
+	public function canStart():Bool
+	{
+		var can: Bool = true;
+		for(perk in requirements.keys()){
+			if(!ScoreChart.instance.perks.exists(perk))
+				ScoreChart.instance.perks.set(perk, new Perk(perk));
+			if(ScoreChart.instance.perks.get(perk).getScore() < requirements.get(perk))
+				can = false;
+		}
+
+		return can;
+	}
+
 		/**
 	     * @return a string-based representation of the part
 	     */
@@ -348,14 +368,10 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 
 	private function parseContent(content:Xml):Void
 	{
-		var partFast:Fast = new Fast(content);
-		if(partFast.hasNode.Part)
-			partFast = partFast.node.Part;
+		var partFast:Fast = new Fast(content).node.Part;
 
-		if(partFast.has.next)
-			next = partFast.att.next;
-		if(partFast.has.perks)
-			setPerks(partFast.att.perks);
+		parseHeader(partFast);
+
 		for(child in partFast.elements){
 			switch(child.name.toLowerCase()){
 				case "text":
@@ -363,8 +379,9 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 				case "activity":
 					elements.push(ActivityFactory.createActivityFromXml(child, this));
 				case "part":
-					nbSubPartTotal++;
 					createPart(child);
+				case "sound":
+					soundLoop = AssetsStorage.getSound(child.att.content);
 				case "button":
 					button.set(child.att.ref, ParseUtils.parseButtonContent(child));
 					if(child.has.goTo){
@@ -402,30 +419,38 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 			fireLoaded();
 	}
 
-	private function parseXml(xml:Fast):Void
+	/**
+	* Common attributes between xml tag and part file
+	**/
+	private function parseHeader(xml: Fast): Void
 	{
-		id = xml.att.id;
 		if(xml.has.name) name = xml.att.name;
 		if(xml.has.file) file = xml.att.file;
 		if(xml.has.display) display = xml.att.display;
 		if(xml.has.next) next = xml.att.next;
-		if(xml.has.perks) setPerks(xml.att.perks);
+		if(xml.has.bounty) setPerks(xml.att.bounty);
+		if(xml.has.requires) setPerks(xml.att.requires, requirements);
+	}
+
+	private function parseXml(xml:Fast):Void
+	{
+		id = xml.att.id;
+		parseHeader(xml);
+
 
 		if(xml.hasNode.Sound)
 			soundLoop = AssetsStorage.getSound(xml.node.Sound.att.content);
 
 		if(xml.hasNode.Part){
 			for(partNode in xml.nodes.Part){
-				nbSubPartTotal++;
-			}
-			for(partNode in xml.nodes.Part){
-					createPart(partNode);
+				createPart(partNode);
 			}
 		}
 	}
 
 	private function createPart(partNode:Fast):Void
 	{
+		nbSubPartTotal++;
 		var part:Part = PartFactory.createPartFromXml(partNode);
 		part.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		part.parent = this;
@@ -456,7 +481,7 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 		dispatchEvent(ev);
 	}
 
-	private function setPerks(perks: String):Void
+	private function setPerks(perks: String, ?hash: Map<String, Int>):Void
 	{
 		var couples: Array<String>;
 		if(perks.indexOf('{') > -1){
@@ -468,7 +493,9 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 
 		for(couple in couples){
 			var keyValue = couple.split(":");
-			this.perks.set(StringTools.trim(keyValue[0]), Std.parseInt(keyValue[1]));
+			if(hash == null)
+				hash = this.perks;
+			hash.set(StringTools.trim(keyValue[0]), Std.parseInt(keyValue[1]));
 		}
 	}
 }

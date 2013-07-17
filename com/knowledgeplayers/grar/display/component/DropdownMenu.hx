@@ -62,8 +62,6 @@ class DropdownMenu extends WidgetContainer {
 	{
 
 		var yOffset:Float = 0;
-		// TODO remove useless index
-		var index = 0;
 		for(item in items){
 			var sprite = KpTextDownParser.parse(item)[0].createSprite(maskWidth);
 			sprite.buttonMode = true;
@@ -72,7 +70,6 @@ class DropdownMenu extends WidgetContainer {
 			sprite.addEventListener(MouseEvent.CLICK, onItemClick);
 			list.addChild(sprite);
 			sprites.set(item, sprite);
-			index++;
 		}
 		if(localToGlobal(new Point(0, 0)).y+list.height > nme.Lib.stage.stageHeight)
 			list.y = y - list.height;
