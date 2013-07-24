@@ -137,10 +137,38 @@ class Widget extends Sprite{
 				throw Type.getClassName(Type.getClass(this))+" must have a ref attribute: "+xml;
 			else
 				ref = xml.att.ref;
-			if(xml.has.x)
-				x = Std.parseFloat(xml.att.x);
-			if(xml.has.y)
-				y = Std.parseFloat(xml.att.y);
+			if(xml.has.x){
+				if(Std.parseFloat(xml.att.x) > -1)
+					x = Std.parseFloat(xml.att.x);
+				else{
+					switch(xml.att.x.toLowerCase()){
+						case "left": x = 0;
+						case "center": addEventListener(Event.ADDED_TO_STAGE, function(e){
+							x = parent.width /2 - width/2;
+						}, false, 100);
+						case "right": addEventListener(Event.ADDED_TO_STAGE, function(e){
+							x = parent.width - width;
+						}, false, 100);
+						default: throw '[Widget] Unsupported position "'+xml.att.x+'".';
+					}
+				}
+			}
+			if(xml.has.y){
+				if(Std.parseFloat(xml.att.y) > -1)
+					y = Std.parseFloat(xml.att.y);
+				else{
+					switch(xml.att.y.toLowerCase()){
+						case "top": y = 0;
+						case "middle": addEventListener(Event.ADDED_TO_STAGE, function(e){
+							y = parent.height /2 - height/2;
+						}, false, 100);
+						case "bottom": addEventListener(Event.ADDED_TO_STAGE, function(e){
+							y = parent.height - height;
+						}, false, 100);
+						default: throw '[Widget] Unsupported position "'+xml.att.y+'".';
+					}
+				}
+			}
 			if(xml.has.scale)
 				scale = Std.parseFloat(xml.att.scale);
 			else
