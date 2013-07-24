@@ -54,7 +54,7 @@ class Grid {
 		empty();
 	}
 
-	public function add(object:DisplayObject, ?withTween:Bool = true):Void
+	public function add(object:DisplayObject, withTween:Bool = true):Void
 	{
 		if(cellSize.width == 0){
 			cellSize.width = object.width;
