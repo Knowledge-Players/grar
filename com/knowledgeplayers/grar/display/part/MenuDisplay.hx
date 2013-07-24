@@ -51,7 +51,6 @@ class MenuDisplay extends Zone {
 
     override private function setButtonAction(button:DefaultButton, action:String):Void
 	{
-        trace("close menu");
 		switch(action){
 			case "close_menu": button.buttonAction = closeMenu;
 		}
@@ -92,17 +91,11 @@ class MenuDisplay extends Zone {
 		yOffset += yBase;
 
 		for(elem in menuXml.firstElement().elements()){
-
 			createMenuLevel(elem);
-			// Lib.trace("createMenu : "+elem);
 		}
 
 		GameManager.instance.menuLoaded = true;
 	}
-
-    private function createMaskMenu():Void{
-
-    }
 
 	// Private
 
@@ -132,8 +125,6 @@ class MenuDisplay extends Zone {
 		}
 		for(elem in level.elements())
 			createMenuLevel(elem);
-
-       // trace("create menu level");
 	}
 
 	private function addLine(fast:Fast):Void
