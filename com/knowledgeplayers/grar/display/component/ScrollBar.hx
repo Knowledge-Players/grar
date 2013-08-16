@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
+import nme.ui.Mouse;
 import nme.geom.ColorTransform;
 import nme.display.Bitmap;
 import nme.display.BitmapData;
@@ -62,17 +63,22 @@ class ScrollBar extends Sprite
 			cursorData.colorTransform(new Rectangle(0,0,cursorData.width,cursorData.height), color);
 		}
 
+
 		var bmp = new ScaleBitmap(cursorData, true);
 		bmp.bitmapScale9Grid = scale9Grid;
 		bmp.bitmapWidth = width;
 		cursorSprite.addChild(bmp);
+        cursorSprite.mouseChildren = false;
 
+        cursorSprite.buttonMode = true;
+        cursorSprite.addEventListener(MouseEvent.MOUSE_DOWN, cursorStart);
+        addEventListener(MouseEvent.MOUSE_UP, cursorStop);
+        addEventListener(MouseEvent.MOUSE_OUT, cursorStop);
 		addChild(bgSprite);
 		addChild(cursorSprite);
 
-		cursorSprite.addEventListener(MouseEvent.MOUSE_DOWN, cursorStart);
-		cursorSprite.addEventListener(MouseEvent.MOUSE_UP, cursorStop);
-		mouseEnabled = false;
+
+		mouseEnabled = true;
 	}
 
 	public function setHeight(height: Float):Void
@@ -104,6 +110,8 @@ class ScrollBar extends Sprite
 		}
 	}
 
+
+
 	/**
 	 * Abstract function to scroll the text
 	 * @param	destination : where to scroll
@@ -117,19 +125,23 @@ class ScrollBar extends Sprite
 	private function onScroll(e:MouseEvent)
 	{
 		scrolled(cursorSprite.y / (height));
+
 	}
 
 	private function cursorStart(e:MouseEvent)
 	{
-		cursorSprite.startDrag(false, new Rectangle(0, 0, 200, 200));
-		cursorSprite.addEventListener(MouseEvent.MOUSE_UP, cursorStop);
+        trace("start");
+		cursorSprite.startDrag(false, new Rectangle(0, 0, 0,bgSprite.height-cursorSprite.height ));
+		addEventListener(MouseEvent.MOUSE_UP, cursorStop);
+        addEventListener(MouseEvent.MOUSE_OUT, cursorStop);
 		parent.addEventListener(MouseEvent.MOUSE_MOVE, onScroll);
 	}
 
 	private function cursorStop(e:MouseEvent)
 	{
 		cursorSprite.stopDrag();
-		cursorSprite.removeEventListener(MouseEvent.MOUSE_UP, cursorStop);
+		removeEventListener(MouseEvent.MOUSE_UP, cursorStop);
+        removeEventListener(MouseEvent.MOUSE_OUT, cursorStop);
 		parent.removeEventListener(MouseEvent.MOUSE_MOVE, onScroll);
 	}
 }

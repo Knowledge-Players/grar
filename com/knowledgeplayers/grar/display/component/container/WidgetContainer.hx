@@ -194,6 +194,7 @@ class WidgetContainer extends Widget{
 
 		if(maskHeight < content.height && scrollable){
 			var partDisplay = parent;
+
 			while(!Std.is(partDisplay, KpDisplay)){
 				partDisplay = partDisplay.parent;
 			}
@@ -203,12 +204,16 @@ class WidgetContainer extends Widget{
 				scrollBarName = keyArray[0];
 			}
 			scrollBar = cast(partDisplay, KpDisplay).scrollBars.get(scrollBarName);
-			addChild(scrollBar);
+
+
 			scrollBar.setHeight(maskHeight);
 			scrollBar.set_ratio(maskHeight / content.height);
-			scrollBar.x = maskWidth;// - scrollBar.width/2;
+			scrollBar.x = this.x+maskWidth;// - scrollBar.width/2;
+			scrollBar.y = this.y;
 			scrollBar.scrolled = scrollToRatio;
 			scrollNeeded = true;
+             //TODO A voir si on peut optimiser
+            parent.addChild(scrollBar);
 		}
 		else{
 			scrollNeeded = false;
@@ -216,6 +221,7 @@ class WidgetContainer extends Widget{
 
 		TweenManager.applyTransition(content, contentTransition);
 	}
+
 
 	private function render():Void
 	{
