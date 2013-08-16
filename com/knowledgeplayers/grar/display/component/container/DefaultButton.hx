@@ -275,6 +275,7 @@ class DefaultButton extends WidgetContainer {
 			}
 
 			renderNeeded = true;
+			displayContent();
 		}
 	}
 

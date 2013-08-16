@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.factory;
 
+import flash.geom.Rectangle;
+import nme.geom.Rectangle;
 import nme.geom.Matrix;
 import nme.display.BitmapData;
 import nme.filters.DropShadowFilter;
@@ -48,10 +50,10 @@ class UiFactory {
      * @return the fresh new scrollbar
      */
 
-	public static function createScrollBar(width:Float, height:Float, ratio:Float, tileBackground:String, tileCursor:String):ScrollBar
+	/*public static function createScrollBar(width:Float, height:Float, ratio:Float, tile: String, ?bgTile:String, cursor9Grid: Rectangle, ?bg9Grid: Rectangle, ?cursorColor:String, ?bgColor: String):ScrollBar
 	{
-		return new ScrollBar(width, height, ratio, tilesheet, tileBackground, tileCursor);
-	}
+		return new ScrollBar(width, height, ratio, tilesheet, tile, bgTile, cursor9Grid, bg9Grid, cursorColor, bgColor);
+	}*/
 
 	/**
     * Create a tilesprite from an XML descriptor

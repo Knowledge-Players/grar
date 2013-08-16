@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import haxe.ds.GenericStack;
 import nme.events.Event;
@@ -62,6 +63,7 @@ class WidgetContainer extends Widget{
 
 	public var renderNeeded: Bool = false;
 
+	private var scrollBarName: String;
 	private var scrollBar:ScrollBar;
 	private var scrollNeeded:Bool;
 	private var layer: TileLayer;
@@ -129,11 +131,7 @@ class WidgetContainer extends Widget{
 
 	public function maskSprite(sprite: Sprite, maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0):Void
 	{
-		var mask = new Sprite();
-		DisplayUtils.initSprite(mask, maskWidth, maskHeight, 0, 1, maskX == 0 ? sprite.x : maskX, maskY == 0 ? sprite.y : maskY);
-		if(sprite.parent != null)
-			sprite.parent.addChild(mask);
-		sprite.mask = mask;
+		DisplayUtils.maskSprite(sprite, maskWidth, maskHeight, maskX, maskY);
 	}
 
 	override public function toString():String
@@ -149,11 +147,13 @@ class WidgetContainer extends Widget{
 		displays = new Map<String, Widget>();
 		buttonGroups = new Map<String, GenericStack<DefaultButton>>();
 
+
 		addChild(content);
 		if(xml != null){
 			maskWidth = xml.has.width ? Std.parseFloat(xml.att.width) : 1;
 			maskHeight = xml.has.height ? Std.parseFloat(xml.att.height) : 1;
 			contentAlpha = xml.has.contentAlpha ? Std.parseFloat(xml.att.contentAlpha) : 1;
+			scrollBarName = xml.has.scrollBar ? xml.att.scrollBar : null;
 			if(xml.has.contentTransition)
 				contentTransition = xml.att.contentTransition;
 			if(xml.has.scrollable)
@@ -193,9 +193,20 @@ class WidgetContainer extends Widget{
 
 
 		if(maskHeight < content.height && scrollable){
-			scrollBar = UiFactory.createScrollBar(18, maskHeight, maskHeight / content.height, "scrollbar", "cursor");
-			scrollBar.x = maskWidth - scrollBar.width;
+			var partDisplay = parent;
+			while(!Std.is(partDisplay, KpDisplay)){
+				partDisplay = partDisplay.parent;
+			}
+			if(scrollBarName == null){
+				var keyArray = [];
+				for (key in cast(partDisplay, KpDisplay).scrollBars.keys()) keyArray.push(key);
+				scrollBarName = keyArray[0];
+			}
+			scrollBar = cast(partDisplay, KpDisplay).scrollBars.get(scrollBarName);
 			addChild(scrollBar);
+			scrollBar.setHeight(maskHeight);
+			scrollBar.set_ratio(maskHeight / content.height);
+			scrollBar.x = maskWidth;// - scrollBar.width/2;
 			scrollBar.scrolled = scrollToRatio;
 			scrollNeeded = true;
 		}

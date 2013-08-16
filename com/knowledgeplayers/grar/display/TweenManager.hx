@@ -88,15 +88,15 @@ class TweenManager {
 
 	public static function discover(display:Dynamic, ref:String, it:Int):IGenericActuator
 	{
+		var mask: Sprite = cast(cast(display, Sprite).mask, Sprite);
+		if(it < mask.numChildren){
 
-		if(it < cast(display, Sprite).numChildren){
+			discovering = {display: mask, ref: ref};
 
-			discovering = {display: cast(display, Sprite), ref: ref};
-
-			for(i in 0...cast(display, Sprite).numChildren){
+			for(i in 0...mask.numChildren){
 				if(i >= it){
-					cast(display, Sprite).getChildAt(i).scaleX = 0;
-					cast(display, Sprite).getChildAt(i).scaleY = 0;
+					mask.getChildAt(i).scaleX = 0;
+					mask.getChildAt(i).scaleY = 0;
 				}
 			}
 
@@ -104,7 +104,7 @@ class TweenManager {
 
 			var type = shutter.shutterTransitions[Std.int(it % shutter.shutterTransitions.length)];
 
-			var msk = cast(display, Sprite).getChildAt(it);
+			var msk = mask.getChildAt(it);
 
 			switch (type.toLowerCase()) {
 				case "left" :
@@ -136,9 +136,9 @@ class TweenManager {
 		else{
 			// Element is scrollable. Can't use discover
 			discovering = null;
-			for(i in 0...cast(display, Sprite).numChildren){
-				cast(display, Sprite).getChildAt(i).scaleX = 1;
-				cast(display, Sprite).getChildAt(i).scaleY = 1;
+			for(i in 0...mask.numChildren){
+				mask.getChildAt(i).scaleX = 1;
+				mask.getChildAt(i).scaleY = 1;
 			}
 			return null;
 		}

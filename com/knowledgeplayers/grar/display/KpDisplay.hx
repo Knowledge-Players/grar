@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display;
 
+import nme.geom.Rectangle;
+import com.knowledgeplayers.grar.display.component.ScrollBar;
 import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import haxe.ds.GenericStack;
@@ -49,6 +51,7 @@ class KpDisplay extends Sprite {
 	public var layout (default, default):String;
 
 	public var renderLayers (default, null):Map<TileLayer, Bool>;
+	public var scrollBars (default, null):Map<String, ScrollBar>;
 
 	private var displays:Map<String, Widget>;
 	private var zIndex:Int = 0;
@@ -57,6 +60,7 @@ class KpDisplay extends Sprite {
 	private var totalSpriteSheets:Int = 0;
 	private var textGroups:Map<String, Map<String, {obj:Fast, z:Int}>>;
 	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
+
 
 		/**
     * Parse the content of a display XML
@@ -106,11 +110,35 @@ class KpDisplay extends Sprite {
 			case "textgroup":createTextGroup(elemNode);
 			case "video": var video = new VideoPlayer(elemNode);
 							addElement(video, elemNode);
+							// TODO set dynamic video
 							video.setVideo("video/01_Golden_Rules_Introduction.f4v");
+			case "scrollbar": createScrollBar(elemNode);
 		}
 	}
 
+	private function createScrollBar(barNode:Fast):Void
+	{
+		var bgColor = barNode.has.bgColor ? barNode.att.bgColor : null;
+		var cursorColor = barNode.has.cursorColor ? barNode.att.cursorColor : null;
+		var bgTile = barNode.has.bgTile ? barNode.att.bgTile : null;
+		var tilesheet = barNode.has.spritesheet?spritesheets.get(barNode.att.spritesheet):UiFactory.tilesheet;
 
+		var grid = new Array<Float>();
+		for(number in barNode.att.cursor9Grid.split(","))
+			grid.push(Std.parseFloat(number));
+		var cursor9Grid = new Rectangle(grid[0], grid[1], grid[2], grid[3]);
+		var bg9Grid;
+		if(barNode.has.bg9Grid){
+			var bgGrid = new Array<Float>();
+			for(number in barNode.att.bg9Grid.split(","))
+				bgGrid.push(Std.parseFloat(number));
+			bg9Grid = new Rectangle(bgGrid[0], bgGrid[1], bgGrid[2], bgGrid[3]);
+		}
+		else
+			bg9Grid = cursor9Grid;
+		var scroll = new ScrollBar(Std.parseFloat(barNode.att.width), tilesheet, barNode.att.tile, bgTile, cursor9Grid, bg9Grid, cursorColor, bgColor);
+		scrollBars.set(barNode.att.ref, scroll);
+	}
 
 	private function createImage(itemNode:Fast):Void
 	{
@@ -229,6 +257,7 @@ class KpDisplay extends Sprite {
 		buttonGroups = new Map<String, GenericStack<DefaultButton>>();
 		layers = new Map<String, TileLayer>();
 		renderLayers = new Map<TileLayer, Bool>();
+		scrollBars = new Map<String, ScrollBar>();
 
 		addEventListener(Event.ENTER_FRAME, checkRender);
 	}

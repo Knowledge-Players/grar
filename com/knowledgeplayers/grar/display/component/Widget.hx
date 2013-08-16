@@ -138,7 +138,7 @@ class Widget extends Sprite{
 			else
 				ref = xml.att.ref;
 			if(xml.has.x){
-				if(Std.parseFloat(xml.att.x) > -1)
+				if(!Math.isNaN(Std.parseFloat(xml.att.x)))
 					x = Std.parseFloat(xml.att.x);
 				else{
 					switch(xml.att.x.toLowerCase()){
@@ -154,7 +154,7 @@ class Widget extends Sprite{
 				}
 			}
 			if(xml.has.y){
-				if(Std.parseFloat(xml.att.y) > -1)
+				if(!Math.isNaN(Std.parseFloat(xml.att.y)))
 					y = Std.parseFloat(xml.att.y);
 				else{
 					switch(xml.att.y.toLowerCase()){

@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.display.component;
 
+import nme.geom.ColorTransform;
+import nme.display.Bitmap;
+import nme.display.BitmapData;
+import com.knowledgeplayers.grar.util.DisplayUtils;
 import aze.display.TileGroup;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
@@ -12,13 +16,15 @@ import nme.geom.Rectangle;
  * Scrollbar for text overflow
  */
 
-class ScrollBar extends Sprite {
-	private var cursor:TileLayer;
+class ScrollBar extends Sprite
+{
+	public var ratio(default, set_ratio):Float;
+
+	//private var cursor:TileLayer;
 	private var cursorSprite:Sprite;
-	private var cursorHeight:Float;
+	private var bgSprite: Sprite;
 	private var page:Float;
-	private var ratio:Float;
-	private var layer:TileLayer;
+	//private var layer:TileLayer;
 	private var maxHeight:Float;
 
 	/**
@@ -32,40 +38,52 @@ class ScrollBar extends Sprite {
 	 * @see UiFactory
 	 */
 
-	public function new(width:Float, height:Float, ratio:Float, tilesheet:TilesheetEx, tileBackground:String, tileCursor:String)
+	public function new(width:Float, tilesheet:TilesheetEx, tile:String, ?bgTile: String, scale9Grid: Rectangle, ?bgScale9Grid: Rectangle, ?cursorColor: String, ?bgColor: String)
 	{
 		super();
 
-		this.ratio = ratio;
-		this.layer = new TileLayer(tilesheet);
+		bgSprite = new Sprite();
+		var bgData: BitmapData = DisplayUtils.getBitmapDataFromLayer(tilesheet, bgTile != null ? bgTile : tile);
+		if(bgColor != null){
+			var color = new ColorTransform();
+			color.color = Std.parseInt(bgColor);
+			bgData.colorTransform(new Rectangle(0,0,bgData.width,bgData.height), color);
+		}
+		var bgBmp = new ScaleBitmap(bgData, true);
+		bgBmp.bitmapScale9Grid = bgScale9Grid != null ? bgScale9Grid : scale9Grid;
+		bgBmp.bitmapWidth = width;
+		bgSprite.addChild(bgBmp);
 
-		var background = new TileGroup(layer);
-		background.addChild(new TileSprite(layer, tileBackground + "_end.png"));
-		background.addChild(new TileSprite(layer, tileBackground + "_middle.png"));
-		background.addChild(new TileSprite(layer, tileBackground + "_end.png"));
-		layer.addChild(background);
-
-		cursorHeight = height * ratio;
-
-		cursor = new TileLayer(layer.tilesheet);
 		cursorSprite = new Sprite();
-		var cursorGroup = new TileGroup(layer);
-		cursorGroup.addChild(new TileSprite(layer, tileCursor + "_end.png"));
-		cursorGroup.addChild(new TileSprite(layer, tileCursor + "_middle.png"));
-		cursorGroup.addChild(new TileSprite(layer, tileCursor + "_end.png"));
-		cursor.addChild(cursorGroup);
-		cursorSprite.addChild(cursor.view);
+		var cursorData: BitmapData = DisplayUtils.getBitmapDataFromLayer(tilesheet, tile);
+		if(cursorColor != null){
+			var color = new ColorTransform();
+			color.color = Std.parseInt(cursorColor);
+			cursorData.colorTransform(new Rectangle(0,0,cursorData.width,cursorData.height), color);
+		}
 
-		addChild(layer.view);
+		var bmp = new ScaleBitmap(cursorData, true);
+		bmp.bitmapScale9Grid = scale9Grid;
+		bmp.bitmapWidth = width;
+		cursorSprite.addChild(bmp);
+
+		addChild(bgSprite);
 		addChild(cursorSprite);
 
-		createBar(layer, background, width, height);
-		createBar(cursor, cursorGroup, width, cursorHeight);
-
-		this.height = maxHeight = height;
-		this.width = width;
-
 		cursorSprite.addEventListener(MouseEvent.MOUSE_DOWN, cursorStart);
+		cursorSprite.addEventListener(MouseEvent.MOUSE_UP, cursorStop);
+		mouseEnabled = false;
+	}
+
+	public function setHeight(height: Float):Void
+	{
+		cast(bgSprite.getChildAt(0), ScaleBitmap).bitmapHeight = height;
+	}
+
+	public function set_ratio(ratio:Float):Float
+	{
+		cast(cursorSprite.getChildAt(0), ScaleBitmap).bitmapHeight = height * ratio;
+		return this.ratio = ratio;
 	}
 
 	/**
@@ -78,13 +96,12 @@ class ScrollBar extends Sprite {
 		if(cursorSprite.y - delta < 0){
 			cursorSprite.y = 0;
 		}
-		else if(cursorSprite.y + cursorSprite.height - delta > maxHeight){
-			cursorSprite.y = maxHeight - cursorSprite.height;
+		else if(cursorSprite.y + cursorSprite.height - delta > height){
+			cursorSprite.y = height - cursorSprite.height;
 		}
 		else{
-			cursorSprite.y -= delta * (cursorSprite.height / maxHeight);
+			cursorSprite.y -= delta * (cursorSprite.height / height);
 		}
-		cursor.render();
 	}
 
 	/**
@@ -100,14 +117,13 @@ class ScrollBar extends Sprite {
 	private function onScroll(e:MouseEvent)
 	{
 		scrolled(cursorSprite.y / (height));
-
 	}
 
 	private function cursorStart(e:MouseEvent)
 	{
+		cursorSprite.startDrag(false, new Rectangle(0, 0, 200, 200));
 		cursorSprite.addEventListener(MouseEvent.MOUSE_UP, cursorStop);
 		parent.addEventListener(MouseEvent.MOUSE_MOVE, onScroll);
-		cursorSprite.startDrag(false, new Rectangle(0, 0, 0, height - cursorHeight));
 	}
 
 	private function cursorStop(e:MouseEvent)
@@ -115,21 +131,5 @@ class ScrollBar extends Sprite {
 		cursorSprite.stopDrag();
 		cursorSprite.removeEventListener(MouseEvent.MOUSE_UP, cursorStop);
 		parent.removeEventListener(MouseEvent.MOUSE_MOVE, onScroll);
-	}
-
-	private function createBar(layer:TileLayer, graphics:TileGroup, width:Float, height:Float):Void
-	{
-		var end_up = cast(graphics.children[0], TileSprite);
-		end_up.y = end_up.height / 2;
-		var end_down = cast(graphics.children[2], TileSprite);
-		end_down.mirror = 2;
-
-		var middle = cast(graphics.children[1], TileSprite);
-		middle.scaleY = (height - (end_up.height + end_down.height)) / middle.height;
-		middle.y = end_up.y + end_up.height / 2 + middle.height / 2;
-
-		end_down.y = middle.y + middle.height / 2 + end_down.height / 2;
-
-		layer.render();
 	}
 }
