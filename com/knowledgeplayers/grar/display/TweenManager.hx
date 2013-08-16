@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import nme.Lib;
 import motion.actuators.GenericActuator.IGenericActuator;
 import nme.display.Sprite;
 import nme.geom.ColorTransform;
@@ -42,6 +43,7 @@ class TweenManager {
 	public static function applyTransition(display:Dynamic, refs:String):Null<IGenericActuator>
 	{
 		var transition:IGenericActuator = null;
+
 		if(refs != null){
 
 			var arrayRef:Array<String> = refs.split(",");
@@ -57,23 +59,24 @@ class TweenManager {
 	private static function startTransition(display:Dynamic, ref:String):Null<IGenericActuator>
 	{
 		var transition = transitions.get(ref);
+
 		if(transition == null)
 			return null;
 
 		if(Reflect.hasField(transition, "alpha"))
-			return fade(display, ref);
+			return fade(display, ref).delay(transition.delay);
 		else if(Reflect.hasField(transition, "width"))
-			return zoom(display, ref);
+			return zoom(display, ref).delay(transition.delay);
 		else if(Reflect.hasField(transition, "color") && Reflect.hasField(transition, "repeat"))
-			return blink(display, ref);
+			return blink(display, ref).delay(transition.delay);
 		else if(Reflect.hasField(transition, "color"))
-			return transform(display, ref);
+			return transform(display, ref).delay(transition.delay);
 		else if(Reflect.hasField(transition, "repeat"))
-			return wiggle(display, ref);
+			return wiggle(display, ref).delay(transition.delay);
 		else if(Reflect.hasField(transition, "shutterTransitions"))
-			return discover(display, ref, 0);
+			return discover(display, ref, 0).delay(transition.delay);
 		else
-			return slide(display, ref);
+			return slide(display, ref).delay(transition.delay);
 	}
 
 	/**
@@ -105,6 +108,7 @@ class TweenManager {
 
 			switch (type.toLowerCase()) {
 				case "left" :
+
 					msk.scaleY = 1;
 					return Actuate.tween(msk, shutter.duration, { scaleX : 1 }).ease(Linear.easeNone).onComplete(discover, [display, ref, it + 1]);
 				case "right" :
@@ -251,6 +255,8 @@ class TweenManager {
 
 	public static function blink(display:Dynamic, ref:String):IGenericActuator
 	{
+
+        trace("blink : "+display);
 		var blink = transitions.get(ref);
 		var repeat = blink.repeat % 2 == 0 ? blink.repeat + 1 : blink.repeat;
 		return Actuate.transform(display, blink.duration).color(blink.color).repeat(repeat).reflect();
@@ -272,6 +278,13 @@ class TweenManager {
 		for(child in root.elements){
 			var transition:Dynamic = {};
 			transition.duration = Std.parseFloat(child.att.duration);
+
+            if(child.has.delay){
+                transition.delay = Std.parseInt(child.att.delay);
+            }
+            else{
+                transition.delay = 0;
+            }
 			if(child.has.easingType){
 				transition.easingType = child.att.easingType.toLowerCase();
 				transition.easingStyle = child.att.easingStyle.toLowerCase();
