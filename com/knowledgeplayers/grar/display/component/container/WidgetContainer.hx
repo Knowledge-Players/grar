@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import nme.display.BitmapData;
+import nme.geom.Rectangle;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import haxe.ds.GenericStack;
@@ -25,6 +27,11 @@ class WidgetContainer extends Widget{
 	* Background for the container. Could be an int or a src
 	**/
 	public var background (default, null):String;
+
+	/**
+	* Scale9Grid for the background
+	**/
+	public var grid9 (default, default):Rectangle;
 
 	/**
 	* Mask width
@@ -82,6 +89,18 @@ class WidgetContainer extends Widget{
 			if(Std.parseInt(bkg) != null){
 				DisplayUtils.initSprite(this, maskWidth, maskHeight, Std.parseInt(bkg), alpha);
 			}
+			if(grid9 != null){
+				var bmpData: BitmapData;
+				if(AssetsStorage.hasAsset(bkg))
+					bmpData = AssetsStorage.getBitmapData(bkg);
+				else
+					bmpData = DisplayUtils.getBitmapDataFromLayer(layer.tilesheet, bkg);
+				var background = new ScaleBitmap(bmpData);
+				background.bitmapScale9Grid = grid9;
+				background.setSize(maskWidth, maskHeight);
+				background.alpha = alpha;
+				addChildAt(background, 0);
+			}
 			else if(bkg.indexOf(".") < 0){
 				var tile = new TileSprite(layer, bkg);
 				tile.alpha = alpha;
@@ -93,7 +112,7 @@ class WidgetContainer extends Widget{
 				layer.render();
 			}
 			else if(AssetsStorage.hasAsset(bkg)){
-				var bkg:Bitmap = new Bitmap(AssetsStorage.getBitmapData(bkg));
+				var bkg = new Bitmap(AssetsStorage.getBitmapData(bkg));
 				bkg.alpha = alpha;
 				addChildAt(bkg, 0);
 			}
@@ -167,6 +186,12 @@ class WidgetContainer extends Widget{
 				this.tilesheet = UiFactory.tilesheet;
 			content.addChild(layer.view);
 
+			if(xml.has.grid){
+				var grid = new Array<Float>();
+				for(number in xml.att.grid.split(","))
+					grid.push(Std.parseFloat(number));
+				grid9 = new Rectangle(grid[0], grid[1], grid[2], grid[3]);
+			}
 			setBackground(xml.has.background ? xml.att.background:null, xml.has.alpha ? Std.parseFloat(xml.att.alpha) : 1);
 			for(child in xml.elements){
 				createElement(child);

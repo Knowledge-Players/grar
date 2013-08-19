@@ -128,7 +128,7 @@ class TweenManager {
 					msk.scaleY = 0;
 					return Actuate.tween(msk, shutter.duration, { y : msk.y - h, scaleY : 1 }).ease(Linear.easeNone).onComplete(discover, [display, ref, it + 1]);
 				default :
-					return null;
+					return new GenericActuator(display, 0, {});
 
 			}
 
@@ -140,7 +140,7 @@ class TweenManager {
 				mask.getChildAt(i).scaleX = 1;
 				mask.getChildAt(i).scaleY = 1;
 			}
-			return null;
+			return new GenericActuator(display, 0, {});
 		}
 	}
 
