@@ -364,4 +364,11 @@ class DefaultButton extends WidgetContainer {
 		setToggle(toggle != "active");
 		dispatchEvent(new ButtonActionEvent(ButtonActionEvent.TOGGLE));
 	}
+
+	override public function maskSprite(sprite:Sprite,  maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0): Void
+	{
+		//super.maskSprite(sprite, maskWidth, maskHeight, maskX, maskY);
+		//content.mouseChildren = false;
+	}
+
 }

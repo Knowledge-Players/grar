@@ -142,6 +142,7 @@ class WidgetContainer extends Widget{
 			child.visible = false
 		layer.render();*/
 		content.addChild(layer.view);
+		content.mask = null;
 
 		var max = (background != null && background != "") ? 1 : 0;
 		while(numChildren > max)

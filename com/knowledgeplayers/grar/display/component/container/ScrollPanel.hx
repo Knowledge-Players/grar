@@ -75,17 +75,14 @@ class ScrollPanel extends WidgetContainer {
 		var offSetY:Float = 0;
 		var isFirst:Bool = true;
 
-		///var mask = new Sprite();
-
-		/*if(scrollable){
-			if(ref == "txt_window_box")
-				DisplayUtils.initSprite(mask, 1, 1, 0xFF0000);
+		var maskLine = new Sprite();
+		if(scrollable){
+			DisplayUtils.initSprite(maskLine, 1, 1);
 		}
-		else{*/
-		var maskLine = DisplayUtils.initSprite(new Sprite(), 1, 1);
-		//	DisplayUtils.initSprite(mask, maskWidth, maskHeight,0x00D00F0);
-		//}
+		else
+			DisplayUtils.initSprite(maskLine, maskWidth, maskHeight);
 
+		var text = new Sprite();
 		for(element in KpTextDownParser.parse(contentString)){
 			if(style != null)
 				element.style = style;
@@ -113,15 +110,16 @@ class ScrollPanel extends WidgetContainer {
 					m.y = item.y + (i * element.lineHeight);
 					m.x = item.x;
 					DisplayUtils.initSprite(m, element.lineWidth, element.lineHeight + 2);
-					//maskLine.addChild(m);
+					maskLine.addChild(m);
 				}
 			}
-			content.addChild(item);
-			content.alpha = contentAlpha;
+			text.addChild(item);
 		}
+		content.alpha = contentAlpha;
+		content.addChild(text);
+		content.addChild(maskLine);
+		text.mask = maskLine;
 		addChild(content);
-		addChild(maskLine);
-		//content.mask = maskLine;
 		/*addEventListener(Event.ADDED_TO_STAGE, function(e){
 			parent.addChild(mask);
 			mask.x = this.x;
@@ -153,7 +151,8 @@ class ScrollPanel extends WidgetContainer {
 
 	/*override public function maskSprite(sprite: Sprite, maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0):Void
 	{
-		super.maskSprite(container, maskWidth, maskHeight, maskX, maskY);
+		//
+		super.maskSprite(content, 100, 100, maskX, maskY);
 	}*/
 
 }

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import nme.Lib;
 import motion.actuators.GenericActuator.IGenericActuator;
 import nme.display.Sprite;
@@ -88,7 +89,15 @@ class TweenManager {
 
 	public static function discover(display:Dynamic, ref:String, it:Int):IGenericActuator
 	{
-		var mask: Sprite = cast(cast(display, Sprite).mask, Sprite);
+		var mask: Sprite;
+		if(Std.is(display.parent, ScrollPanel))
+			mask = display.getChildAt(1).mask;
+		else
+			mask = display.mask;
+
+		if(mask == null)
+			throw '[TweenManager] Can\'t play $ref on $display because it doesn\'t have a mask.';
+
 		if(it < mask.numChildren){
 
 			discovering = {display: mask, ref: ref};
