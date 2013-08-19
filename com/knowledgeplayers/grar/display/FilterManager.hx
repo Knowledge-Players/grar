@@ -2,6 +2,7 @@ package com.knowledgeplayers.grar.display;
 /**
  * Manage the most frequently used filters
  */
+import nme.filters.BlurFilter;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
 import nme.filters.BitmapFilter;
@@ -35,6 +36,8 @@ class FilterManager {
 		switch(Std.string(filterNode[0]).toLowerCase()){
 			case "dropshadow":
 				setDropShadowFilter(filterNode[1]);
+			case "blur":
+				setBlurFilter(filterNode[1]);
 			case _ : throw '[FilterManager] Unsupported filter $filterNode[0]';
 
 		}
@@ -44,10 +47,15 @@ class FilterManager {
 
 	private static function setDropShadowFilter(_params:String):DropShadowFilter
 	{
-
 		var params = _params.split(",");
 		var filter:DropShadowFilter = new DropShadowFilter(Std.parseFloat(params[0]), Std.parseFloat(params[1]), Std.parseInt(params[2]), Std.parseFloat(params[3]), Std.parseFloat(params[4]), Std.parseFloat(params[5]));
 		return filter;
+	}
+
+	private static function setBlurFilter(paramsString: String): BlurFilter
+	{
+		var params = paramsString.split(",");
+		return new BlurFilter(Std.parseFloat(params[0]), Std.parseFloat(params[1]), Std.parseInt(params[2]));
 	}
 
 	public static function loadTemplate(file:String):Void
@@ -69,6 +77,11 @@ class FilterManager {
 						var knockout = child.has.knockout ? child.att.knockout == "true" : false;
 						var hideObject = child.has.hideObject ? child.att.hideObject == "true" : false;
 						new DropShadowFilter(distance, angle, color, alpha, blurX, blurY, strength, quality, inner, knockout, hideObject);
+					case "blur":
+						var blurX = child.has.blurX ? Std.parseFloat(child.att.blurX) : 0;
+						var blurY = child.has.blurY ? Std.parseFloat(child.att.blurY) : 0;
+						var quality = child.has.quality ? Std.parseInt(child.att.quality) : BitmapFilterQuality.MEDIUM;
+						new BlurFilter(blurX, blurY, quality);
 					default:
 						throw "[FilterManager] Filter \"" + child.name + "\" is not supported.";
 				}

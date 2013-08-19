@@ -43,12 +43,6 @@ class Image extends Widget{
 				case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
 			}
 		}
-		if(xml.has.filters){
-			var filtersArray = new Array<BitmapFilter>();
-			for(filter in xml.att.filters.split(","))
-				filtersArray.push(FilterManager.getFilter(filter));
-			filters = filtersArray;
-		}
 		addChild(itemBmp);
 	}
 }

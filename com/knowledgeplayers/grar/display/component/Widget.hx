@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
+import nme.filters.BitmapFilter;
 import motion.actuators.GenericActuator;
 import haxe.xml.Fast;
 import nme.events.Event;
@@ -190,6 +191,12 @@ class Widget extends Sprite{
 				rotation = Std.parseFloat(xml.att.rotation);
 			if(xml.has.transformation)
 				transformation = xml.att.transformation;
+			if(xml.has.filters){
+				var filtersArray = new Array<BitmapFilter>();
+				for(filter in xml.att.filters.split(","))
+					filtersArray.push(FilterManager.getFilter(filter));
+				filters = filtersArray;
+			}
 		}
 	}
 
