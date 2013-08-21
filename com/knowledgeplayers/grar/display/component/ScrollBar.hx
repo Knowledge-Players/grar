@@ -21,11 +21,9 @@ class ScrollBar extends Sprite
 {
 	public var ratio(default, set_ratio):Float;
 
-	//private var cursor:TileLayer;
 	private var cursorSprite:Sprite;
 	private var bgSprite: Sprite;
 	private var page:Float;
-	//private var layer:TileLayer;
 	private var maxHeight:Float;
 
 	/**
@@ -130,7 +128,6 @@ class ScrollBar extends Sprite
 
 	private function cursorStart(e:MouseEvent)
 	{
-        trace("start");
 		cursorSprite.startDrag(false, new Rectangle(0, 0, 0,bgSprite.height-cursorSprite.height ));
 		addEventListener(MouseEvent.MOUSE_UP, cursorStop);
         addEventListener(MouseEvent.MOUSE_OUT, cursorStop);

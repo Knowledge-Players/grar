@@ -22,7 +22,6 @@ class TileImage extends Image{
 
 	public function new(xml: Fast, layer: TileLayer, visible: Bool = true)
 	{
-		super(xml);
 
 		tileSprite = new TileSprite(layer, xml.att.tile);
 		if(xml.has.scale)
@@ -46,6 +45,8 @@ class TileImage extends Image{
 		tileSprite.visible = visible;
 		tilesheet = layer.tilesheet;
 		layer.addChild(tileSprite);
+
+		super(xml);
 		layer.render();
 
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
@@ -113,6 +114,15 @@ class TileImage extends Image{
 		return transitionOut = transition;
 	}
 
+	override public function set_transformation(transformation:String):String
+	{
+		var actuator = TweenManager.applyTransition(tileSprite.layer.view, transformation);
+		renderNeeded();
+		if(actuator != null)
+			actuator.onUpdate(renderNeeded);
+		return this.transformation = transformation;
+	}
+
 	// Private
 
 	override private function createImg(xml:Fast, ?tilesheet:TilesheetEx):Void
@@ -130,15 +140,17 @@ class TileImage extends Image{
 	{
 		if(parent == null)
 			addEventListener(Event.ADDED_TO_STAGE, renderNeeded);
-		else if(hasEventListener(Event.ADDED_TO_STAGE))
-			removeEventListener(Event.ADDED_TO_STAGE, renderNeeded);
+		else{
+			if(hasEventListener(Event.ADDED_TO_STAGE))
+				removeEventListener(Event.ADDED_TO_STAGE, renderNeeded);
 
-		// TODO unify
-		if(Std.is(parent, KpDisplay)){
-			cast(parent, KpDisplay).renderLayers.set(tileSprite.layer, true);
-		}
-		if(Std.is(parent, WidgetContainer)){
-			cast(parent, WidgetContainer).renderNeeded = true;
+			// TODO unify
+			if(Std.is(parent, KpDisplay)){
+				cast(parent, KpDisplay).renderLayers.set(tileSprite.layer, true);
+			}
+			if(Std.is(parent, WidgetContainer)){
+				cast(parent, WidgetContainer).renderNeeded = true;
+			}
 		}
 	}
 

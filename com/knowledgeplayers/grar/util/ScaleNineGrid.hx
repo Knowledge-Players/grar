@@ -11,8 +11,8 @@ class ScaleNineGrid extends Grid {
 	public function initMatrice(_array:Array<TileSprite>, _width:Float, _height:Float):Void
 	{
 
-		//Lib.trace("_width : "+_width);
-		//Lib.trace("_height : "+_height);
+		//trace("_width : "+_width);
+		//trace("_height : "+_height);
 		var largeur:Float = 0;
 		var hauteur:Float = 0;
 
@@ -21,7 +21,7 @@ class ScaleNineGrid extends Grid {
 				largeur += _array[i].width;
 			}
 			if(i == 0 || i == 6){
-				//Lib.trace(_array[i].height);
+				//trace(_array[i].height);
 				hauteur += _array[i].height;
 
 			}

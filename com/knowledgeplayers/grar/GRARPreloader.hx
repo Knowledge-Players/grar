@@ -65,19 +65,24 @@ class GRARPreloader extends NMEPreloader {
 	{
 		if(assetsLoaded){
 			super.onLoaded();
-			cast(getChildAt(0), MovieClip).stop();
+			if(Std.is(getChildAt(0), MovieClip))
+				cast(getChildAt(0), MovieClip).stop();
 			removeChildAt(0);
 		}
 		else{
 			// Loader icon
 			var icon = Assets.getMovieClip("loadingCircular:loading");
-			icon.x = Lib.current.stage.stageWidth / 2;
-			icon.y = Lib.current.stage.stageHeight / 2;
-			addChild(icon);
-			completionArea.y = icon.y + icon.height / 2 - 80;
+			if(icon != null){
+				icon.x = stage.stageWidth / 2;
+				icon.y = stage.stageHeight / 2;
+				addChild(icon);
+				completionArea.y = icon.y + icon.height / 2 - 80;
+			}
+			else
+				completionArea.y = stage.stageHeight / 2;
 			completionArea.defaultTextFormat = new TextFormat(Assets.getFont("fonts/Myriad Pro/MyriadPro-BoldCond.ttf").fontName, 28);
 			completionArea.text = "0%";
-			completionArea.x = Lib.current.stage.stageWidth / 2 - completionArea.textWidth / 2;
+			completionArea.x = stage.stageWidth / 2 - completionArea.textWidth / 2;
 			addChild(completionArea);
 		}
 	}
@@ -98,7 +103,7 @@ class GRARPreloader extends NMEPreloader {
 		loadedAssets++;
 		var prc = Math.round(loadedAssets * 100 / totalAssets);
 		completionArea.text = prc + "%";
-		completionArea.x = Lib.current.stage.stageWidth / 2 - completionArea.textWidth / 2;
+		completionArea.x = stage.stageWidth / 2 - completionArea.textWidth / 2;
 	}
 
 	/**

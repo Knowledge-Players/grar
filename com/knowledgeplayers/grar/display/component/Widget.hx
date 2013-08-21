@@ -49,6 +49,10 @@ class Widget extends Sprite{
 	**/
 	public var transformation (default, set_transformation):String;
 
+	#if !flash
+	public var z: Float;
+	#end
+
 	private var targetWidth: Float;
 	private var targetHeight: Float;
 	private var origin: {x: Float, y: Float, scaleX: Float, scaleY: Float};
@@ -110,10 +114,11 @@ class Widget extends Sprite{
 		return transitionOut = transition;
 	}
 
-	public function set_visible(visible:Bool):Bool
+	#if flash public function set_visible(visible:Bool):Bool
 	{
 		return this.visible = visible;
 	}
+	#end
 
 	public function initSize():Void
 	{

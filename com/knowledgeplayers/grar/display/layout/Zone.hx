@@ -99,7 +99,7 @@ class Zone extends KpDisplay {
 			}
 		}
 		else{
-			Lib.trace("[Zone] This zone is empty. Are you sure your XML is correct ?");
+			trace("[Zone] This zone is empty. Are you sure your XML is correct ?");
 		}
 	}
 

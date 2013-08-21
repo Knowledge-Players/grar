@@ -49,7 +49,7 @@ class ActivityManager {
 				case "folder": activity = FolderDisplay.instance;
 				case "cards": activity = CardsDisplay.instance;
 
-				default: Lib.trace(name + ": Unsupported activity type");
+				default: trace(name + ": Unsupported activity type");
 			}
 			if(activity != null)
 				activities.set(name.toLowerCase(), activity);

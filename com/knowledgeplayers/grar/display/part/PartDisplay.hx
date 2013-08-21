@@ -486,9 +486,11 @@ class PartDisplay extends KpDisplay {
 	private function mustBeDisplayed(key:String):Bool
 	{
 		var object = displays.get(key);
+		#if flash
 		if(Std.is(object, VideoPlayer)){
 			return true;
 		}
+		#end
 
 		// If the object is already displayed
 		if(!Std.is(object, Image) && contains(object)){

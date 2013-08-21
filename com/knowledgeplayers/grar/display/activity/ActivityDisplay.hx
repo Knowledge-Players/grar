@@ -69,7 +69,7 @@ class ActivityDisplay extends KpDisplay {
 
 	public function showDebrief():Void
 	{
-		Lib.trace("Debrief!");
+		trace("Debrief!");
 	}
 
 	// Private

@@ -152,7 +152,7 @@ class AutoTracking extends Tracking {
 			#end
 		}
 		catch(error:Error){
-			Lib.trace("Error...Could not write SharedObject to disk\n");
+			trace("Error...Could not write SharedObject to disk\n");
 		}
 	}
 

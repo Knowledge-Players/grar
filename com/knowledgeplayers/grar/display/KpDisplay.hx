@@ -2,7 +2,9 @@ package com.knowledgeplayers.grar.display;
 
 import nme.geom.Rectangle;
 import com.knowledgeplayers.grar.display.component.ScrollBar;
+#if flash
 import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
+#end
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import haxe.ds.GenericStack;
 import nme.events.Event;
@@ -108,10 +110,12 @@ class KpDisplay extends Sprite {
 			case "button": createButton(elemNode);
 			case "text": createText(elemNode);
 			case "textgroup":createTextGroup(elemNode);
+			#if flash
 			case "video": var video = new VideoPlayer(elemNode);
 							addElement(video, elemNode);
 							// TODO set dynamic video
 							video.setVideo("video/01_Golden_Rules_Introduction.f4v");
+			#end
 			case "scrollbar": createScrollBar(elemNode);
 		}
 	}

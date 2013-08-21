@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.display.component.container;
 
-import Std;
 import nme.display.Bitmap;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import nme.geom.Point;
@@ -19,6 +18,7 @@ import nme.display.Stage;
 import nme.display.StageDisplayState;
 import nme.display.DisplayObject;
 
+#if flash
 import flash.events.NetStatusEvent;
 import flash.media.Video;
 import flash.net.NetConnection;
@@ -36,6 +36,7 @@ class VideoPlayer extends WidgetContainer
 	private var connection : NetConnection;
 	private var stream : NetStream;
 	private var video : Video;
+
 	private var loop : Bool;
 	private var autoStart : Bool;
 	private var progressBar: Image;
@@ -51,16 +52,16 @@ class VideoPlayer extends WidgetContainer
 		controls = new GenericStack<Widget>();
 
 		super(xml);
-		video = new Video();
+		//video = new Video();
 
-		connection = new NetConnection();
+		//connection = new NetConnection();
 		connection.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 		addEventListener(Event.REMOVED_FROM_STAGE , unsetVideo, false, 0, true);
 		connection.connect(null);
 
 		var coordinate = new Point(x, y);
 		var globalCoordinate = localToGlobal(coordinate);
-		nme.Lib.stage.fullScreenSourceRect = new Rectangle(globalCoordinate.x, globalCoordinate.y, maskWidth, maskHeight);
+		stage.fullScreenSourceRect = new Rectangle(globalCoordinate.x, globalCoordinate.y, maskWidth, maskHeight);
 
 		for(i in 0...numChildren){
 			if(Std.is(getChildAt(i), Widget))
@@ -80,7 +81,7 @@ class VideoPlayer extends WidgetContainer
 	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 0, capture:Float = 0): Void
 	{
 		//_timeToCapture = capture
-		stream = new NetStream(connection);
+		//stream = new NetStream(connection);
 		this.loop = loop;
 		this.autoStart = autoStart;
 		soundTransform.volume = defaultVolume;
@@ -142,14 +143,14 @@ class VideoPlayer extends WidgetContainer
 	{
 		var coordinate = new Point(x, y);
 		var globalCoordinate = localToGlobal(coordinate);
-		nme.Lib.stage.fullScreenSourceRect = new Rectangle(x, y, video.width, video.height);
+		stage.fullScreenSourceRect = new Rectangle(x, y, video.width, video.height);
 		isFullscreen = fullscreen;
 		if (isFullscreen) {
-			nme.Lib.stage.displayState = StageDisplayState.FULL_SCREEN;
+			stage.displayState = StageDisplayState.FULL_SCREEN;
 			fullscreenButton.setToggle(true);
 		}
 		else {
-			nme.Lib.stage.displayState = StageDisplayState.NORMAL;
+			stage.displayState = StageDisplayState.NORMAL;
 			fullscreenButton.setToggle(false);
 		}
 	}
@@ -351,3 +352,6 @@ class VideoPlayer extends WidgetContainer
 	}
 
 }
+#else
+typedef VideoPlayer = Dynamic;
+#end

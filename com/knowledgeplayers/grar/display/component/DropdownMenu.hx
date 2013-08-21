@@ -71,7 +71,7 @@ class DropdownMenu extends WidgetContainer {
 			list.addChild(sprite);
 			sprites.set(item, sprite);
 		}
-		if(localToGlobal(new Point(0, 0)).y+list.height > nme.Lib.stage.stageHeight)
+		if(localToGlobal(new Point(0, 0)).y+list.height > stage.stageHeight)
 			list.y = y - list.height;
 		list.visible = false;
 

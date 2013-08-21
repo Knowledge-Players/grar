@@ -253,7 +253,6 @@ class TweenManager {
 	public static function transform(display:Dynamic, ref:String):IGenericActuator
 	{
 		var transform = transitions.get(ref);
-
 		return Actuate.transform(display, transform.duration).color(transform.color).ease(getEasing(transform));
 	}
 
@@ -264,11 +263,9 @@ class TweenManager {
 
 	public static function blink(display:Dynamic, ref:String):IGenericActuator
 	{
-
-        trace("blink : "+display);
 		var blink = transitions.get(ref);
 		var repeat = blink.repeat % 2 == 0 ? blink.repeat + 1 : blink.repeat;
-		return Actuate.transform(display, blink.duration).color(blink.color).repeat(repeat).reflect();
+		return Actuate.transform(display, blink.duration).color(blink.color).repeat(repeat).reflect().ease(getEasing(blink));
 	}
 
 	public static function stop(target:Dynamic, properties:Dynamic = null, complete:Bool = false, sendEvent:Bool = true):Void
@@ -333,12 +330,10 @@ class TweenManager {
 		if(Reflect.hasField(transition, "easingType")){
 			var easingType = transition.easingType.charAt(0).toUpperCase() + transition.easingType.substr(1).toLowerCase();
 			var easingStyle = "Ease" + transition.easingStyle.charAt(0).toUpperCase() + transition.easingStyle.substr(1).toLowerCase();
-
 			return Type.createEmptyInstance(Type.resolveClass("motion.easing." + easingType + easingStyle));
 		}
 		else{
 			return Linear.easeNone;
-
 		}
 	}
 

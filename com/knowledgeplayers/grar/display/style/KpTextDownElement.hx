@@ -171,6 +171,7 @@ class KpTextDownElement {
 			case "left": TextFieldAutoSize.LEFT;
 			case "center": TextFieldAutoSize.CENTER;
 			case "right": TextFieldAutoSize.RIGHT;
+			default: throw "[KpTextDownElement] Unsupported alignement "+style.getAlignment()+".";
 		}
 		#end
 		tf.height += style.getPadding()[2];

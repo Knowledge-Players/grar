@@ -92,7 +92,7 @@ class Localiser extends EventDispatcher {
 		if(localisation != null)
 			return localisation.getItem(key);
 		else{
-			nme.Lib.trace("No locale set. Returning null");
+			trace("No locale set. Returning null");
 			return null;
 		}
 	}

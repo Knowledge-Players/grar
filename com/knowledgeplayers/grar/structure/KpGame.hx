@@ -254,7 +254,7 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
 	    try{
             connection.initConnection(this.mode);
 	    }catch(e: Dynamic){
-	        nme.Lib.trace("[KpGame] Cannot initialize connection with LMS. Setting connection to local.");
+	        trace("[KpGame] Cannot initialize connection with LMS. Setting connection to local.");
 		    connection.initConnection(Mode.AUTO);
 	    }
         stateInfos = connection.revertTracking();
