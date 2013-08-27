@@ -10,8 +10,7 @@ before_install:
   - mkdir ~/haxelib
   - haxelib setup ~/haxelib
   - haxelib git actuate https://github.com/jgranick/actuate.git
-  - wget https://github.com/JbIPS/nme-tilelayer/archive/master.zip
-  - haxelib local master.zip
+  - haxelib install tilelayer
   - wget http://lib.haxe.org/files/3.0/nme-3,5,6.zip
   - haxelib local nme-3,5,6.zip
   - wget http://lib.haxe.org/files/3.0/ExAM-2,0,1.zip
