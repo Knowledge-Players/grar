@@ -29,7 +29,7 @@ class ItemFactory {
 		switch(itemType.toLowerCase()) {
 			case "": creation = new TextItem(xml);
 			case "activity": creation = new RemarkableEvent(xml);
-			default: Lib.trace("[ItemFactory] " + itemType + ": Unsupported item type");
+			default: trace("[ItemFactory] " + itemType + ": Unsupported item type");
 		}
 
 		return creation;

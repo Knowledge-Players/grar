@@ -19,7 +19,7 @@ class Image extends Widget{
 		if(xml != null){
 			createImg(xml, tilesheet);
 			super(xml);
-			initSize();
+			//initSize();
 		}
 	}
 
@@ -34,7 +34,7 @@ class Image extends Widget{
 			#end
 		}
 		else
-			itemBmp = new Bitmap(DisplayUtils.getBitmapDataFromLayer(tilesheet == null ?tilesheet : UiFactory.tilesheet, xml.att.id));
+			itemBmp = new Bitmap(DisplayUtils.getBitmapDataFromLayer(tilesheet != null ?tilesheet : UiFactory.tilesheet, xml.att.tile));
 
 		if(xml.has.mirror){
 			mirror = switch(xml.att.mirror.toLowerCase()){

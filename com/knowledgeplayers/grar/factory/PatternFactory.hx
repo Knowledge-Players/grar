@@ -34,7 +34,7 @@ class PatternFactory {
 						cast(creation, BoxPattern).background = background;
 			case "choice": creation = new ChoicePattern(patternName);
 			case "activity": creation = new ActivityPattern(patternName);
-			default: Lib.trace(patternType + ": Unsupported pattern type");
+			default: trace(patternType + ": Unsupported pattern type");
 		}
 
 		return creation;

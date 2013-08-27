@@ -19,35 +19,26 @@ class TileImage extends Image{
 	public var tileSprite (default, null): TileSprite;
 
 	private var tilesheet: TilesheetEx;
+	private var tilesheetName: String;
+	private var trueLayer: TileLayer;
+	private var xml: Fast;
+	private var isVisible: Bool;
 
 	public function new(xml: Fast, layer: TileLayer, visible: Bool = true)
 	{
-
-		tileSprite = new TileSprite(layer, xml.att.tile);
-		if(xml.has.scale)
-			tileSprite.scale = Std.parseFloat(xml.att.scale);
-		if(xml.has.scaleX)
-			tileSprite.scaleX = Std.parseFloat(xml.att.scaleX);
-		if(xml.has.scaleY)
-			tileSprite.scaleY = Std.parseFloat(xml.att.scaleY);
-		if(xml.has.mirror){
-			tileSprite.mirror = switch(xml.att.mirror.toLowerCase()){
-				case "horizontal": 1;
-				case "vertical": 2;
-				case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
-			}
+		this.xml = xml;
+		isVisible = visible;
+		if(xml.has.spritesheet){
+			trueLayer = new TileLayer(null);
+			tilesheetName = xml.att.spritesheet;
+			addEventListener(Event.ADDED_TO_STAGE, setTilesheet);
 		}
-		if(xml.has.x)
-			tileSprite.x = Std.parseFloat(xml.att.x) + tileSprite.width/2;
-		if(xml.has.y)
-			tileSprite.y = Std.parseFloat(xml.att.y)+ tileSprite.height/2;
-
-		tileSprite.visible = visible;
-		tilesheet = layer.tilesheet;
-		layer.addChild(tileSprite);
+		else{
+			trueLayer = layer;
+			init();
+		}
 
 		super(xml);
-		layer.render();
 
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 	}
@@ -125,6 +116,36 @@ class TileImage extends Image{
 
 	// Private
 
+	private function init():Void
+	{
+		tileSprite = new TileSprite(trueLayer, xml.att.tile);
+		if(xml.has.scale)
+			tileSprite.scale = Std.parseFloat(xml.att.scale);
+		if(xml.has.scaleX)
+			tileSprite.scaleX = Std.parseFloat(xml.att.scaleX);
+		if(xml.has.scaleY)
+			tileSprite.scaleY = Std.parseFloat(xml.att.scaleY);
+		if(xml.has.mirror){
+			tileSprite.mirror = switch(xml.att.mirror.toLowerCase()){
+				case "horizontal": 1;
+				case "vertical": 2;
+				case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
+			}
+		}
+		if(xml.has.x)
+			tileSprite.x = Std.parseFloat(xml.att.x) + tileSprite.width/2;
+		else
+			tileSprite.x = tileSprite.width/2;
+		if(xml.has.y)
+			tileSprite.y = Std.parseFloat(xml.att.y)+ tileSprite.height/2;
+		else
+			tileSprite.y = tileSprite.height/2;
+
+		tileSprite.visible = isVisible;
+		trueLayer.addChild(tileSprite);
+		xml = null;
+	}
+
 	override private function createImg(xml:Fast, ?tilesheet:TilesheetEx):Void
 	{
 	}
@@ -157,6 +178,23 @@ class TileImage extends Image{
 	private function onRemove(e:Event):Void
 	{
 		set_visible(false);
+	}
+
+	private function setTilesheet(e:Event):Void
+	{
+		removeEventListener(Event.ADDED_TO_STAGE, setTilesheet);
+		var ancestor = parent;
+		while(!Std.is(ancestor, PartDisplay) && ancestor != null)
+			ancestor = ancestor.parent;
+		if(ancestor == null)
+			throw "[TileImage] Unable to find spritesheet '"+tilesheetName+"' for image '"+ref+"'.";
+		tilesheet = cast(ancestor, PartDisplay).spritesheets.get(tilesheetName);
+		trueLayer.tilesheet = tilesheet;
+
+		init();
+		parent.addChild(trueLayer.view);
+		trueLayer.render();
+
 	}
 
 }

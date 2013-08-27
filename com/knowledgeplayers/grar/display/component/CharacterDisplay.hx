@@ -27,6 +27,7 @@ class CharacterDisplay extends TileImage {
 
 	public function new(?xml: Fast, layer:TileLayer, ?model:Character)
 	{
+		xml.x.remove("spritesheet");
 		super(xml, layer, false);
 		this.model = model;
 	}

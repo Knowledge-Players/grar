@@ -170,8 +170,15 @@ class WidgetContainer extends Widget{
 
 		addChild(content);
 		if(xml != null){
+			// Default tilesheet
+			if(tilesheet != null)
+				this.tilesheet = tilesheet;
+			else
+				this.tilesheet = UiFactory.tilesheet;
+			content.addChild(layer.view);
 			maskWidth = xml.has.width ? Std.parseFloat(xml.att.width) : 1;
 			maskHeight = xml.has.height ? Std.parseFloat(xml.att.height) : 1;
+
 			contentAlpha = xml.has.contentAlpha ? Std.parseFloat(xml.att.contentAlpha) : 1;
 			scrollBarName = xml.has.scrollBar ? xml.att.scrollBar : null;
 			if(xml.has.contentTransition)
@@ -180,12 +187,6 @@ class WidgetContainer extends Widget{
 				scrollable =  xml.att.scrollable == "true";
 			else
 				scrollable = false;
-			// Default tilesheet
-			if(tilesheet != null)
-				this.tilesheet = tilesheet;
-			else
-				this.tilesheet = UiFactory.tilesheet;
-			content.addChild(layer.view);
 
 			if(xml.has.grid){
 				var grid = new Array<Float>();
@@ -239,6 +240,7 @@ class WidgetContainer extends Widget{
 			scrollBar.scrolled = scrollToRatio;
 			scrollNeeded = true;
              //TODO A voir si on peut optimiser
+			// startDrag() on the mask ?
             parent.addChild(scrollBar);
 		}
 		else{
@@ -251,10 +253,10 @@ class WidgetContainer extends Widget{
 
 	private function render():Void
 	{
-		if(layer.view.x == 0){
+		/*if(layer.view.x == 0){
 			layer.view.x = layer.view.width/2;
 			layer.view.y = layer.view.height/2;
-		}
+		}*/
 		layer.render();
 	}
 

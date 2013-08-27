@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
+import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import nme.geom.Rectangle;
 import com.knowledgeplayers.grar.display.component.ScrollBar;
 #if flash
@@ -117,6 +119,7 @@ class KpDisplay extends Sprite {
 							video.setVideo("video/01_Golden_Rules_Introduction.f4v");
 			#end
 			case "scrollbar": createScrollBar(elemNode);
+			case "div": addElement(new SimpleContainer(elemNode), elemNode);
 		}
 	}
 
@@ -149,7 +152,7 @@ class KpDisplay extends Sprite {
 		var spritesheet = itemNode.has.spritesheet?itemNode.att.spritesheet:"ui";
 
 
-		if(itemNode.has.src || itemNode.has.filters){
+		if(itemNode.has.src || itemNode.has.filters || (itemNode.has.extract && itemNode.att.extract == "true")){
 			addElement(new Image(itemNode, spritesheets.get(spritesheet)), itemNode);
 		}
 		else{
