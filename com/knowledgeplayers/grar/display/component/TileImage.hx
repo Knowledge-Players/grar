@@ -118,7 +118,10 @@ class TileImage extends Image{
 
 	private function init():Void
 	{
+
+
 		tileSprite = new TileSprite(trueLayer, xml.att.tile);
+
 		if(xml.has.scale)
 			tileSprite.scale = Std.parseFloat(xml.att.scale);
 		if(xml.has.scaleX)
@@ -132,6 +135,7 @@ class TileImage extends Image{
 				case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
 			}
 		}
+
 		if(xml.has.x)
 			tileSprite.x = Std.parseFloat(xml.att.x) + tileSprite.width/2;
 		else
@@ -144,6 +148,7 @@ class TileImage extends Image{
 		tileSprite.visible = isVisible;
 		trueLayer.addChild(tileSprite);
 		xml = null;
+        trueLayer.render();
 	}
 
 	override private function createImg(xml:Fast, ?tilesheet:TilesheetEx):Void
