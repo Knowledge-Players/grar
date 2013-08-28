@@ -89,32 +89,34 @@ class WidgetContainer extends Widget{
 			if(Std.parseInt(bkg) != null){
 				DisplayUtils.initSprite(this, maskWidth, maskHeight, Std.parseInt(bkg), alpha);
 			}
-			if(grid9 != null){
-				var bmpData: BitmapData;
-				if(AssetsStorage.hasAsset(bkg))
-					bmpData = AssetsStorage.getBitmapData(bkg);
-				else
-					bmpData = DisplayUtils.getBitmapDataFromLayer(layer.tilesheet, bkg);
-				var background = new ScaleBitmap(bmpData);
-				background.bitmapScale9Grid = grid9;
-				background.setSize(maskWidth, maskHeight);
-				background.alpha = alpha;
-				addChildAt(background, 0);
-			}
-			else if(bkg.indexOf(".") < 0){
-				var tile = new TileSprite(layer, bkg);
-				tile.alpha = alpha;
-				layer.addChild(tile);
-				tile.scaleX = maskWidth / tile.width;
-				tile.scaleY = maskHeight / tile.height;
-				tile.x = tile.width / 2;
-				tile.y = tile.height / 2;
-				layer.render();
-			}
-			else if(AssetsStorage.hasAsset(bkg)){
-				var bkg = new Bitmap(AssetsStorage.getBitmapData(bkg));
-				bkg.alpha = alpha;
-				addChildAt(bkg, 0);
+			else{
+				if(grid9 != null){
+					var bmpData: BitmapData;
+					if(AssetsStorage.hasAsset(bkg))
+						bmpData = AssetsStorage.getBitmapData(bkg);
+					else
+						bmpData = DisplayUtils.getBitmapDataFromLayer(layer.tilesheet, bkg);
+					var background = new ScaleBitmap(bmpData);
+					background.bitmapScale9Grid = grid9;
+					background.setSize(maskWidth, maskHeight);
+					background.alpha = alpha;
+					addChildAt(background, 0);
+				}
+				else if(bkg.indexOf(".") < 0){
+					var tile = new TileSprite(layer, bkg);
+					tile.alpha = alpha;
+					layer.addChild(tile);
+					tile.scaleX = maskWidth / tile.width;
+					tile.scaleY = maskHeight / tile.height;
+					tile.x = tile.width / 2;
+					tile.y = tile.height / 2;
+					layer.render();
+				}
+				else if(AssetsStorage.hasAsset(bkg)){
+					var bkg = new Bitmap(AssetsStorage.getBitmapData(bkg));
+					bkg.alpha = alpha;
+					addChildAt(bkg, 0);
+				}
 			}
 		}
 

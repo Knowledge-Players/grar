@@ -124,7 +124,7 @@ class ScaleBitmap extends Sprite
 		{
 			if(r==null)
 			{
-				// If deleting scalee9Grid, restore the original bitmap
+				// If deleting scale9Grid, restore the original bitmap
 				// then resize it(streched)to the previously set dimensions
 				var currentWidth:Float=width;
 				var currentHeight:Float=height;
