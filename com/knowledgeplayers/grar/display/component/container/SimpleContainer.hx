@@ -50,7 +50,7 @@ class SimpleContainer extends WidgetContainer{
 
             contentMask = new Bitmap(bmpData) ;
             contentData = new BitmapData(bmpData.width, bmpData.height, true, 0x0);
-
+            contentMask.cacheAsBitmap = true;
         }
 	}
         private function setMaskSpriteSheet(e:Event):Void{
@@ -59,9 +59,12 @@ class SimpleContainer extends WidgetContainer{
                 contentData.draw(content);
                 removeEventListener("SET_MASK_SPRITESHEET",setMaskSpriteSheet);
                 var bmp = new Bitmap(contentData);
+                bmp.cacheAsBitmap = true;
+
                 addChild(contentMask);
                 addChild(bmp);
-                content.mask = contentMask;
+                bmp.mask = contentMask;
+
                 removeChild(content);
 
             }
