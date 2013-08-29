@@ -278,10 +278,15 @@ class WidgetContainer extends Widget{
             addElement(new Image(itemNode));
         }
         else{
-            addElement(new TileImage(itemNode, layer));
+            var tileImg:TileImage = new TileImage(itemNode, layer);
+            tileImg.addEventListener("SET_SPRITESHEET",onSetSpriteSheet);
+            addElement(tileImg);
         }
     }
 
+    private function onSetSpriteSheet(e:Event):Void{
+       this.dispatchEvent(new Event("SET_MASK_SPRITESHEET",true));
+    }
 	private function addElement(elem:Widget):Void
 	{
 		elem.z = zIndex;

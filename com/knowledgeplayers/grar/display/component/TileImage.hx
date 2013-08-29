@@ -199,6 +199,7 @@ class TileImage extends Image{
 		init();
 		parent.addChild(trueLayer.view);
 		trueLayer.render();
+        this.dispatchEvent(new Event("SET_SPRITESHEET",true));
 
 	}
 

@@ -14,6 +14,8 @@ class SimpleContainer extends WidgetContainer{
 
 	private var contentMask:Sprite;
     private var xml:Fast;
+    private var bmpData:BitmapData;
+    private var contentData:BitmapData;
 
 	public function new(?xml: Fast, ?tilesheet: TilesheetEx)
 	{
@@ -43,25 +45,31 @@ class SimpleContainer extends WidgetContainer{
 	{
 
         if(xml.has.mask){
+            addEventListener("SET_MASK_SPRITESHEET",setMaskSpriteSheet);
+            bmpData= DisplayUtils.getBitmapDataFromLayer(this.tilesheet, xml.att.mask);
 
-        var bmpData = DisplayUtils.getBitmapDataFromLayer(this.tilesheet, xml.att.mask);
+            contentMask = new Sprite() ;
+            contentMask.graphics.beginBitmapFill(bmpData);
+            contentMask.graphics.drawRect(0, 0, bmpData.width, bmpData.height);
+            contentMask.graphics.endFill();
 
-// contentMask = new Bitmap(bmpData);
+            contentData = new BitmapData(bmpData.width, bmpData.height, true, 0x0);
 
-        contentMask = new Sprite() ;
-        contentMask.graphics.beginBitmapFill(bmpData);
-        contentMask.graphics.drawRect(0, 0, bmpData.width, bmpData.height);
-        contentMask.graphics.endFill();
-
-        var contentData = new BitmapData(bmpData.width, bmpData.height, true, 0x0);
-        contentData.draw(content);
-
-        var bmp = new Bitmap(contentData);
-        addChild(contentMask);
-       // addChild(bmp);
-        content.mask = contentMask;
-       //removeChild(content);
         }
 	}
+        private function setMaskSpriteSheet(e:Event):Void{
+
+            if(xml.has.mask){
+                contentData.draw(content);
+                removeEventListener("SET_MASK_SPRITESHEET",setMaskSpriteSheet);
+                var bmp = new Bitmap(contentData);
+                addChild(contentMask);
+                addChild(bmp);
+                content.mask = contentMask;
+                removeChild(content);
+
+            }
+
+        }
 
 }
