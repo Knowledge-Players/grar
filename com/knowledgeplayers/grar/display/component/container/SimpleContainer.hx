@@ -12,7 +12,7 @@ import nme.display.Sprite;
 
 class SimpleContainer extends WidgetContainer{
 
-	private var contentMask:Sprite;
+	private var contentMask:Bitmap;
     private var xml:Fast;
     private var bmpData:BitmapData;
     private var contentData:BitmapData;
@@ -48,11 +48,7 @@ class SimpleContainer extends WidgetContainer{
             addEventListener("SET_MASK_SPRITESHEET",setMaskSpriteSheet);
             bmpData= DisplayUtils.getBitmapDataFromLayer(this.tilesheet, xml.att.mask);
 
-            contentMask = new Sprite() ;
-            contentMask.graphics.beginBitmapFill(bmpData);
-            contentMask.graphics.drawRect(0, 0, bmpData.width, bmpData.height);
-            contentMask.graphics.endFill();
-
+            contentMask = new Bitmap(bmpData) ;
             contentData = new BitmapData(bmpData.width, bmpData.height, true, 0x0);
 
         }
