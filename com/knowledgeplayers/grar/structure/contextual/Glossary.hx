@@ -2,6 +2,7 @@ package com.knowledgeplayers.grar.structure.contextual;
 
 import haxe.xml.Fast;
 import nme.events.Event;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 
 /**
  * Glossary will be accessible in all your game to provide word definition
@@ -15,7 +16,7 @@ class Glossary {
 	/**
      * Array of all the words in the glossary, alphabetically sorted
      */
-	public var words (getWords, null):Array<String>;
+	public var words (get_words, null):Array<String>;
 
 	private var definitions:Map<String, String>;
 
@@ -37,7 +38,7 @@ class Glossary {
 
 	public function fillWithXml(filePath:String):Void
 	{
-		parseContent(filePath);
+		parseContent(AssetsStorage.getXml(filePath));
 	}
 
 	/**
@@ -67,7 +68,7 @@ class Glossary {
      * @return all the words in the glossary
      */
 
-	public function getWords():Array<String>
+	public function get_words():Array<String>
 	{
 		words.sort(sortWords);
 		return words;

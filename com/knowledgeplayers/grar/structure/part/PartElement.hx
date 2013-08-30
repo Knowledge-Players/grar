@@ -11,4 +11,6 @@ interface PartElement {
 	public function isPattern():Bool;
 
 	public function isPart():Bool;
+
+	public function isVideo():Bool;
 }

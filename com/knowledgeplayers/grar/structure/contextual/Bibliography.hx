@@ -3,6 +3,7 @@ package com.knowledgeplayers.grar.structure.contextual;
 import haxe.ds.GenericStack;
 import haxe.xml.Fast;
 import nme.events.Event;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
 
 /**
  * Glossary will be accessible in all your game to provide books and articles references
@@ -34,7 +35,7 @@ class Bibliography {
 
 	public function fillWithXml(filePath:String):Void
 	{
-		parseContent(filePath);
+		parseContent(AssetsStorage.getXml(filePath));
 	}
 
 	/**

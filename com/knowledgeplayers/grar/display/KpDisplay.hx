@@ -115,8 +115,6 @@ class KpDisplay extends Sprite {
 			#if flash
 			case "video": var video = new VideoPlayer(elemNode);
 							addElement(video, elemNode);
-							// TODO set dynamic video
-							video.setVideo("video/01_Golden_Rules_Introduction.f4v");
 			#end
 			case "scrollbar": createScrollBar(elemNode);
 			case "div": addElement(new SimpleContainer(elemNode), elemNode);

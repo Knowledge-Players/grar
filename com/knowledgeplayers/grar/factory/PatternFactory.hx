@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import com.knowledgeplayers.grar.structure.part.video.pattern.VideoPattern;
 import com.knowledgeplayers.grar.structure.part.dialog.pattern.ActivityPattern;
 import com.knowledgeplayers.grar.structure.part.dialog.pattern.ChoicePattern;
 import com.knowledgeplayers.grar.structure.part.Pattern;
@@ -9,14 +10,8 @@ import nme.Lib;
 
 /**
  * Factory to create dialog pattern
- * @author jbrichardet
  */
 class PatternFactory {
-
-	private function new()
-	{
-
-	}
 
 	/**
      * Create a pattern
@@ -34,6 +29,7 @@ class PatternFactory {
 						cast(creation, BoxPattern).background = background;
 			case "choice": creation = new ChoicePattern(patternName);
 			case "activity": creation = new ActivityPattern(patternName);
+			case "video": creation = new VideoPattern(patternName);
 			default: trace(patternType + ": Unsupported pattern type");
 		}
 
@@ -47,7 +43,7 @@ class PatternFactory {
      * @return the pattern or null if the type is not supported
      */
 
-	public static function createPatternFromXml(xml:Fast):Null<Pattern>
+	public static inline function createPatternFromXml(xml:Fast):Null<Pattern>
 	{
 		return createPattern(xml.att.type, xml.att.id, xml.has.background ? xml.att.background: null);
 	}

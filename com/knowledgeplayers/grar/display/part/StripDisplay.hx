@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.structure.part.Item;
 import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.display.component.container.BoxDisplay;
 import Lambda;
@@ -27,7 +28,7 @@ class StripDisplay extends PartDisplay {
 
 	private var boxes:Map<String, BoxDisplay>;
 	private var currentBox:BoxPattern;
-	private var currentItem:TextItem;
+	private var currentBoxItem:Item;
 	private var boxIndex:Int = 0;
 
 	public function new(part:StripPart)
@@ -72,9 +73,10 @@ class StripDisplay extends PartDisplay {
 
 		var nextItem = pattern.getNextItem();
 		if(nextItem != null){
-			currentItem = nextItem;
-			setupTextItem(nextItem);
-			GameManager.instance.playSound(nextItem.sound);
+			currentBoxItem = nextItem;
+			setupItem(nextItem);
+			if(nextItem.isText())
+				GameManager.instance.playSound(cast(nextItem, TextItem).sound);
 			if(nextItem.token != null){
 				GameManager.instance.activateToken(nextItem.token);
 			}
@@ -102,28 +104,31 @@ class StripDisplay extends PartDisplay {
 		displayPart();
 	}
 
-	override private function setupTextItem(item:TextItem, ?isFirst:Bool = true):Void
+	override private function setupItem(item:Item, ?isFirst:Bool = true):Void
 	{
 		if(isFirst)
 			displayBackground(item.background);
 
-		setSpeaker(item.author, item.transition);
-		setText(item, isFirst);
+		if(item.isText()){
+			var text = cast(item, TextItem);
+			setSpeaker(text.author, text.transition);
+			setText(text, isFirst);
+		}
 	}
 
 	override private function displayPart():Void
 	{
 		var box: BoxDisplay = boxes.get(currentBox.name);
-		if(!box.textFields.exists(currentItem.ref))
-			throw "[StripDisplay] There is no TextField with ref \""+currentItem.ref+"\"";
+		if(!box.textFields.exists(currentBoxItem.ref))
+			throw "[StripDisplay] There is no TextField with ref \""+currentBoxItem.ref+"\"";
 		else
-			box.textFields.get(currentItem.ref).setContent(Localiser.instance.getItemContent(currentItem.content));
+			box.textFields.get(currentBoxItem.ref).setContent(Localiser.instance.getItemContent(currentBoxItem.content));
 		var tfCount = 1;
 		while(tfCount < Lambda.count(box.textFields)){
 			var nextItem = currentBox.getNextItem();
 			if(nextItem != null){
-				currentItem = nextItem;
-				box.textFields.get(currentItem.ref).setContent(Localiser.instance.getItemContent(currentItem.content));
+				currentBoxItem = nextItem;
+				box.textFields.get(currentBoxItem.ref).setContent(Localiser.instance.getItemContent(currentBoxItem.content));
 			}
 			tfCount++;
 		}

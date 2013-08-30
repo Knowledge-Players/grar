@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.GameManager;
@@ -61,8 +62,9 @@ class DialogDisplay extends PartDisplay {
 
 		var nextItem = pattern.getNextItem();
 		if(nextItem != null){
-			setupTextItem(nextItem);
-			GameManager.instance.playSound(nextItem.sound);
+			setupItem(nextItem);
+			if(nextItem.isText())
+				GameManager.instance.playSound(cast(nextItem, TextItem).sound);
 			if(nextItem.hasActivity()){
 				nextActivity = cast(nextItem, RemarkableEvent).getActivity();
 			}

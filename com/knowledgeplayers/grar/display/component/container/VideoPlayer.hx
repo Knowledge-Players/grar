@@ -80,12 +80,13 @@ class VideoPlayer extends WidgetContainer
 
 	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 0, capture:Float = 0): Void
 	{
+		if(url == null || url == "")
+			throw '[VideoPlayer] Invalid url "$url" for video stream.';
 		//_timeToCapture = capture
 		stream = new NetStream(connection);
 		this.loop = loop;
 		this.autoStart = autoStart;
-		soundTransform.volume = defaultVolume;
-		stream.soundTransform = soundTransform;
+		changeVolume(defaultVolume);
 		stream.client = {onMetaData: function(data){ totalLength = Math.round(data.duration*100/100); }};
 		stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 		// TODO bufferTime en fonction de la BP
@@ -270,7 +271,7 @@ class VideoPlayer extends WidgetContainer
 		soundCursor.stopDrag();
 		removeEventListener(MouseEvent.MOUSE_UP, dropSoundCursor);
 		var ratio = (soundCursor.x + soundCursor.width/2 - soundSlider.x) / soundSlider.width;
-		changeVolume(ratio);
+		changeVolume(ratio, false);
 	}
 
 	private function fastForward(ratio: Float):Void
@@ -280,9 +281,11 @@ class VideoPlayer extends WidgetContainer
 		lockCursor = true;
 	}
 
-	private function changeVolume(ratio:Float):Void
+	private function changeVolume(ratio:Float, moveCursor: Bool = true):Void
 	{
 		stream.soundTransform = new SoundTransform(ratio);
+		if(moveCursor)
+			soundCursor.x = soundSlider.width*ratio+soundSlider.x - soundCursor.width /2;
 	}
 
 	private function onClickTimeline(e:MouseEvent):Void
@@ -296,7 +299,7 @@ class VideoPlayer extends WidgetContainer
 			// Hack: increase slider height
 			bounds.height +=5;
 			if(bounds.contains(e.localX, e.localY)){
-				soundCursor.x = e.localX - soundCursor.width/2;
+				//soundCursor.x = e.localX - soundCursor.width/2;
 				var ratio = (e.localX - soundSlider.x) / soundSlider.width;
 				changeVolume(ratio);
 			}

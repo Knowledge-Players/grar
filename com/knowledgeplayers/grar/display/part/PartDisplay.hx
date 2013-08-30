@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.structure.part.Item;
+import com.knowledgeplayers.grar.structure.part.video.item.VideoItem;
 import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.display.component.Widget;
@@ -54,7 +56,7 @@ class PartDisplay extends KpDisplay {
 	private var localeLoaded:Bool = false;
 	private var displayLoaded:Bool = false;
 	private var currentItems:GenericStack<DisplayObject>;
-	private var currentTextItem:TextItem;
+	private var currentItem:Item;
 	private var inventory:InventoryDisplay;
 	private var itemSound:Sound;
 	private var itemSoundChannel:SoundChannel;
@@ -157,12 +159,12 @@ class PartDisplay extends KpDisplay {
 						else{
 							textItem = cast(currentElement, TextItem);
 						}
-						setupTextItem(cast(textItem, TextItem), isFirst);
+						setupItem(cast(textItem, TextItem), isFirst);
 						isFirst = false;
 					}
 				}
 				else{
-					setupTextItem(cast(currentElement, TextItem));
+					setupItem(cast(currentElement, TextItem));
 				}
 
 				GameManager.instance.playSound(cast(currentElement, TextItem).sound);
@@ -182,6 +184,9 @@ class PartDisplay extends KpDisplay {
 			var event = new PartEvent(PartEvent.ENTER_SUB_PART);
 			event.part = cast(currentElement, Part);
 			dispatchEvent(event);
+		}
+		else if(currentElement.isVideo()){
+
 		}
 
 	}
@@ -247,7 +252,7 @@ class PartDisplay extends KpDisplay {
 		for(item in currentItems)
 			item = null;
 		currentItems = null;
-		currentTextItem = null;
+		currentItem = null;
 		inventory = null;
 		itemSound = null;
 		itemSoundChannel = null;
@@ -372,12 +377,12 @@ class PartDisplay extends KpDisplay {
 		}
 	}
 
-	private function setupTextItem(item:TextItem, ?isFirst:Bool = true):Void
+	private function setupItem(item:Item, ?isFirst:Bool = true):Void
 	{
 		if(item == null)
 			return;
 
-		currentTextItem = item;
+		currentItem = item;
 
 		var toRemove = new GenericStack<DisplayObject>();
 
@@ -397,35 +402,44 @@ class PartDisplay extends KpDisplay {
 					removeChild(obj);
 			}
 		}
+		if(item.isText()){
+			var text = cast(item, TextItem);
+			setSpeaker(text.author, text.transition);
+			if(text.introScreen != null){
 
-		setSpeaker(item.author, item.transition);
-		if(item.introScreen != null){
+				for(i in 0...numChildren){
+					if(Std.is(getChildAt(i), DefaultButton))
+						toRemove.add(getChildAt(i));
+				}
+				if(inventory != null && contains(inventory))
+					toRemove.add(inventory);
+				for(obj in toRemove){
+					if(contains(obj))
+						removeChild(obj);
+				}
 
-			for(i in 0...numChildren){
-				if(Std.is(getChildAt(i), DefaultButton))
-					toRemove.add(getChildAt(i));
+				// The intro screen automatically removes itself after its duration
+				var intro = text.introScreen;
+				var introDisplay:IntroScreen = cast(displays.get(intro.ref), IntroScreen);
+				introDisplay.set_text(Localiser.instance.getItemContent(intro.content));
+				introDisplay.addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
+				{
+					introScreenOn = false;
+					setText(text, isFirst);
+				});
+				introScreenOn = true;
+				addChild(introDisplay);
 			}
-			if(inventory != null && contains(inventory))
-				toRemove.add(inventory);
-			for(obj in toRemove){
-				if(contains(obj))
-					removeChild(obj);
-			}
-
-			// The intro screen automatically removes itself after its duration
-			var intro = item.introScreen;
-			var introDisplay:IntroScreen = cast(displays.get(intro.ref), IntroScreen);
-			introDisplay.set_text(Localiser.instance.getItemContent(intro.content));
-			introDisplay.addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
-			{
-				introScreenOn = false;
-				setText(item, isFirst);
-			});
-			introScreenOn = true;
-			addChild(introDisplay);
+			else
+				setText(text, isFirst);
 		}
-		else
-			setText(item, isFirst);
+		else{
+			if(!displays.exists(item.ref))
+				throw "[PartDisplay] There is no VideoPlayer with ref '"+ item.ref+"'.";
+			var video = cast(item, VideoItem);
+			cast(displays.get(item.ref), VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture);
+			displayPart();
+		}
 	}
 
 	private function setText(item:TextItem, isFirst:Bool = true):Void
@@ -488,7 +502,7 @@ class PartDisplay extends KpDisplay {
 		var object = displays.get(key);
 		#if flash
 		if(Std.is(object, VideoPlayer)){
-			return true;
+			return currentItem.ref == key;
 		}
 		#end
 
@@ -524,15 +538,15 @@ class PartDisplay extends KpDisplay {
 		else if(Std.is(object, CharacterDisplay))
 			return true;
 
-		if(currentTextItem != null){
-
+		if(currentItem != null && currentItem.isText()){
+			var text = cast(currentItem, TextItem);
 			if(currentSpeaker != null && Std.is(object, ScrollPanel) && key == currentSpeaker.nameRef)
 				return true;
-			if(Std.is(object, ScrollPanel) && key != currentTextItem.ref)
+			if(Std.is(object, ScrollPanel) && key != text.ref)
 				return false;
 			if(Std.is(object, Image)){
 				var exists = false;
-				for(item in currentTextItem.images){
+				for(item in text.images){
 					if(key == item){
 						exists = true;
 						if(Std.is(object, TileImage)){
@@ -548,6 +562,10 @@ class PartDisplay extends KpDisplay {
 
 				return exists;
 			}
+		}
+		else{
+			if(Std.is(object, ScrollPanel))
+				return false;
 		}
 		return true;
 	}

@@ -297,12 +297,20 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 		return false;
 	}
 
-		/**
-	     * Tell if this part is a strip
-	     * @return true if this part is a strip
-	     */
-
+	/**
+     * Tell if this part is a strip
+     * @return true if this part is a strip
+     */
 	public function isStrip():Bool
+	{
+		return false;
+	}
+
+	/**
+     * Tell if this part is a video
+     * @return true if this part is a video
+     */
+	public function isVideo():Bool
 	{
 		return false;
 	}

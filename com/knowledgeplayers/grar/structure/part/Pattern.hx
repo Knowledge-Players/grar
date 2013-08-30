@@ -9,7 +9,7 @@ class Pattern implements PartElement {
 	/**
      * Array of item composing the pattern
      */
-	public var patternContent (default, default):Array<TextItem>;
+	public var patternContent (default, default):Array<Item>;
 
 	/**
      * Name of the pattern
@@ -47,7 +47,7 @@ class Pattern implements PartElement {
 	public function new(name:String)
 	{
 		this.name = name;
-		patternContent = new Array<TextItem>();
+		patternContent = new Array<Item>();
 		buttons = new Map<String, Map<String, String>>();
 		restart();
 	}
@@ -60,7 +60,7 @@ class Pattern implements PartElement {
 	public function init(xml:Fast):Void
 	{
 		for(itemNode in xml.nodes.Text){
-			var item:TextItem = ItemFactory.createItemFromXml(itemNode);
+			var item:Item = ItemFactory.createItemFromXml(itemNode);
 			patternContent.push(item);
 
 		}
@@ -76,7 +76,7 @@ class Pattern implements PartElement {
      * @return the next item in the pattern, or null if the pattern reachs its end
      */
 
-	public function getNextItem():Null<TextItem>
+	public function getNextItem():Null<Item>
 	{
 		if(itemIndex < patternContent.length){
 			itemIndex++;
@@ -138,6 +138,15 @@ class Pattern implements PartElement {
 **/
 
 	public function isPart():Bool
+	{
+		return false;
+	}
+
+	/**
+    * @return false
+**/
+
+	public function isVideo():Bool
 	{
 		return false;
 	}

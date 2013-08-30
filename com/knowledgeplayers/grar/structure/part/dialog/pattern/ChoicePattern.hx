@@ -50,7 +50,7 @@ class ChoicePattern extends Pattern {
 		}
 	}
 
-	override public function getNextItem():Null<TextItem>
+	override public function getNextItem():Null<Item>
 	{
 		return patternContent[0];
 	}

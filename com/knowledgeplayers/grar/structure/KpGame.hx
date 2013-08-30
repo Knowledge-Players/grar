@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.grar.structure.contextual.Bibliography;
+import com.knowledgeplayers.grar.structure.contextual.Glossary;
 import nme.errors.Error;
 import com.knowledgeplayers.grar.structure.contextual.Notebook;
 import com.knowledgeplayers.grar.display.FilterManager;
@@ -156,8 +158,8 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
 			switch(contextual.att.type.toLowerCase()){
 				case "notebook": Notebook.instance.init(contextual.att.file);
 								NotebookDisplay.instance.parseContent(display);
-				/*case "glossary": Glossary.instance.fillWithXml(content);
-				case "bibliography": Bibliography.instance.fillWithXml(content);*/
+				case "glossary": Glossary.instance.fillWithXml(contextual.att.file);
+				case "bibliography": Bibliography.instance.fillWithXml(contextual.att.file);
 			}
 		}
 

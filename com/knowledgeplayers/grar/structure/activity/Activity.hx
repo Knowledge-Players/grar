@@ -184,6 +184,15 @@ class Activity extends EventDispatcher implements PartElement implements Trackab
 		return false;
 	}
 
+		/**
+	    * @return false
+	**/
+
+	public function isVideo():Bool
+	{
+		return false;
+	}
+
 		// Privates
 
 	private function parseContent(content:Xml):Void
