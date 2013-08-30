@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import flash.display.Bitmap;
+import aze.display.TileLayer;
 import nme.display.Bitmap;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import nme.geom.Point;
@@ -18,7 +20,6 @@ import nme.display.Stage;
 import nme.display.StageDisplayState;
 import nme.display.DisplayObject;
 
-#if flash
 import flash.events.NetStatusEvent;
 import flash.media.Video;
 import flash.net.NetConnection;
@@ -43,7 +44,10 @@ class VideoPlayer extends WidgetContainer
 	private var controls: GenericStack<Widget>;
 	private var timeArea: ScrollPanel;
 	private var controlsHidden: Bool = false;
-	private var cursor: Bitmap;
+	private var cursor: Sprite;
+	private var lockCursor: Bool;
+	private var soundSlider: Image;
+	private var soundCursor: Sprite;
 		//private var _timeToCapture : Float = 0;
 
 	public function new (?xml: Fast)
@@ -52,16 +56,12 @@ class VideoPlayer extends WidgetContainer
 		controls = new GenericStack<Widget>();
 
 		super(xml);
-		//video = new Video();
+		video = new Video();
 
-		//connection = new NetConnection();
+		connection = new NetConnection();
 		connection.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 		addEventListener(Event.REMOVED_FROM_STAGE , unsetVideo, false, 0, true);
 		connection.connect(null);
-
-		var coordinate = new Point(x, y);
-		var globalCoordinate = localToGlobal(coordinate);
-		stage.fullScreenSourceRect = new Rectangle(globalCoordinate.x, globalCoordinate.y, maskWidth, maskHeight);
 
 		for(i in 0...numChildren){
 			if(Std.is(getChildAt(i), Widget))
@@ -81,7 +81,7 @@ class VideoPlayer extends WidgetContainer
 	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 0, capture:Float = 0): Void
 	{
 		//_timeToCapture = capture
-		//stream = new NetStream(connection);
+		stream = new NetStream(connection);
 		this.loop = loop;
 		this.autoStart = autoStart;
 		soundTransform.volume = defaultVolume;
@@ -141,11 +141,11 @@ class VideoPlayer extends WidgetContainer
 
 	public function setFullScreen(fullscreen:Bool):Void
 	{
-		var coordinate = new Point(x, y);
-		var globalCoordinate = localToGlobal(coordinate);
-		stage.fullScreenSourceRect = new Rectangle(x, y, video.width, video.height);
 		isFullscreen = fullscreen;
 		if (isFullscreen) {
+			//width = video.videoWidth;
+			//height = video.videoHeight;
+			stage.fullScreenSourceRect = new Rectangle(x, y,video.videoWidth, video.videoHeight);
 			stage.displayState = StageDisplayState.FULL_SCREEN;
 			fullscreenButton.setToggle(true);
 		}
@@ -164,11 +164,12 @@ class VideoPlayer extends WidgetContainer
 	override public function createElement(elemNode:Fast):Void
 	{
 		super.createElement(elemNode);
+		// TODO widgetContainer
 		if(elemNode.name.toLowerCase() == "progressbar"){
 			progressBar = new Image();
 			progressBar.x = Std.parseFloat(elemNode.att.x);
 			progressBar.y = Std.parseFloat(elemNode.att.y);
-			var mask = null;
+			var mask: Sprite = null;
 			for(child in elemNode.elements){
 				if(child.name.toLowerCase() == "mask"){
 					var tile = new TileImage(child, layer);
@@ -187,21 +188,43 @@ class VideoPlayer extends WidgetContainer
 					progressBar.addChild(bar);
 				}
 				if(child.name.toLowerCase() == "cursor"){
-					var tile = new TileImage(child, layer);
-					tile.set_visible(false);
-					cursor = new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile));
-					cursor.x = child.has.x ? Std.parseFloat(child.att.x) : 0;
-					cursor.y = child.has.y ? Std.parseFloat(child.att.y) : 0;
-					progressBar.addChild(cursor);
+					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
+					//tile.set_visible(false);
+					cursor = new Sprite();
+					cursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile)));
+					cursor.x = (child.has.x ? Std.parseFloat(child.att.x) : 0) + progressBar.x;
+					cursor.y = (child.has.y ? Std.parseFloat(child.att.y) : 0) + progressBar.y;
 				}
 			}
 
 			progressBar.mask = mask;
-			progressBar.buttonMode = progressBar.useHandCursor = true;
-			progressBar.mouseChildren = false;
-			progressBar.addEventListener(MouseEvent.CLICK, onClickTimeline);
-			addChild(mask);
+			mask.mouseEnabled = false;
+			content.addChild(mask);
 			controls.add(progressBar);
+		}
+		else if(elemNode.name.toLowerCase() == "slider"){
+			soundSlider = new Image();
+			soundSlider.x = Std.parseFloat(elemNode.att.x);
+			soundSlider.y = Std.parseFloat(elemNode.att.y);
+			for(child in elemNode.elements){
+				if(child.name.toLowerCase() == "bar"){
+					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
+					var cur = new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile));
+					cur.x = child.has.x ? Std.parseFloat(child.att.x) : 0;
+					cur.y = child.has.y ? Std.parseFloat(child.att.y) : 0;
+					soundSlider.addChild(cur);
+				}
+				if(child.name.toLowerCase() == "cursor"){
+					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
+					soundCursor = new Sprite();
+					soundCursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile)));
+					soundCursor.x = (child.has.x ? Std.parseFloat(child.att.x) : 0) + soundSlider.x + (child.has.vol ? Std.parseFloat(child.att.vol)/100 : 1)*soundSlider.width - soundCursor.width/2;
+					soundCursor.y = (child.has.y ? Std.parseFloat(child.att.y) : 0) + soundSlider.y;
+
+				}
+			}
+			soundSlider.mouseEnabled = false;
+			controls.add(soundSlider);
 		}
 	}
 
@@ -209,9 +232,75 @@ class VideoPlayer extends WidgetContainer
 
 	private function init():Void
 	{
-		addChild(progressBar);
+		content.addChild(progressBar);
+		content.addChild(soundSlider);
+		content.addEventListener(MouseEvent.CLICK, onClickTimeline);
+		content.addChild(cursor);
+		content.addChild(soundCursor);
+		cursor.buttonMode = true;
+		cursor.addEventListener(MouseEvent.MOUSE_DOWN, dragCursor);
+		soundCursor.buttonMode = true;
+		soundCursor.addEventListener(MouseEvent.MOUSE_DOWN, dragSoundCursor);
 		timeArea.style = "small-text";
 		timeArea.setContent(videoTimeConvert(0) + "/" + videoTimeConvert(0));
+	}
+
+	private function dragCursor(e:MouseEvent):Void
+	{
+		cursor.startDrag(false, new Rectangle(progressBar.x-cursor.width/2,progressBar.y-cursor.height/3,progressBar.width, 0));
+		addEventListener(MouseEvent.MOUSE_UP, dropCursor);
+	}
+
+	private function dragSoundCursor(e:MouseEvent):Void
+	{
+		soundCursor.startDrag(false, new Rectangle(soundSlider.x-soundCursor.width/2,soundSlider.y,soundSlider.width, 0));
+		addEventListener(MouseEvent.MOUSE_UP, dropSoundCursor);
+	}
+
+	private function dropCursor(e:MouseEvent):Void
+	{
+		cursor.stopDrag();
+		removeEventListener(MouseEvent.MOUSE_UP, dropCursor);
+		var ratio = (cursor.x + cursor.width/2 - progressBar.x) / progressBar.width;
+		fastForward(ratio);
+	}
+
+	private function dropSoundCursor(e:MouseEvent):Void
+	{
+		soundCursor.stopDrag();
+		removeEventListener(MouseEvent.MOUSE_UP, dropSoundCursor);
+		var ratio = (soundCursor.x + soundCursor.width/2 - soundSlider.x) / soundSlider.width;
+		changeVolume(ratio);
+	}
+
+	private function fastForward(ratio: Float):Void
+	{
+		var position = Math.floor(totalLength)*ratio;
+		stream.seek(position);
+		lockCursor = true;
+	}
+
+	private function changeVolume(ratio:Float):Void
+	{
+		stream.soundTransform = new SoundTransform(ratio);
+	}
+
+	private function onClickTimeline(e:MouseEvent):Void
+	{
+		if(progressBar.getRect(this).contains(e.localX, e.localY)){
+			var ratio = (e.localX - progressBar.x) / progressBar.width;
+			fastForward(ratio);
+		}
+		else{
+			var bounds: Rectangle = soundSlider.getRect(this);
+			// Hack: increase slider height
+			bounds.height +=5;
+			if(bounds.contains(e.localX, e.localY)){
+				soundCursor.x = e.localX - soundCursor.width/2;
+				var ratio = (e.localX - soundSlider.x) / soundSlider.width;
+				changeVolume(ratio);
+			}
+		}
 	}
 
 	private function onCaptureImage():Void{
@@ -221,7 +310,7 @@ class VideoPlayer extends WidgetContainer
 		stream.resume();
 		bCapture = true;
 		_mc.barBg_mc._play.gotoAndStop(2);
-		//dispatchEvent(new BitmapCaptureEvent(BitmapCaptureEvent.CAPTURE,imageCapture(),true));
+		dispatchEvent(new BitmapCaptureEvent(BitmapCaptureEvent.CAPTURE,imageCapture(),true));
 		addEventListener(Event.ENTER_FRAME, enterFrame);*/
 	}
 
@@ -253,8 +342,13 @@ class VideoPlayer extends WidgetContainer
 			var oldWidth = progressBar.getChildAt(1).width;
 			progressBar.getChildAt(1).scaleX = amountPlayed;
 			progressBar.getChildAt(0).scaleX = amountLoaded;
-			cursor.x += progressBar.getChildAt(1).width - oldWidth;
-
+			if(!lockCursor){
+				cursor.x += progressBar.getChildAt(1).width - oldWidth;
+			}
+			else{
+				cursor.x = progressBar.getChildAt(1).width + progressBar.x - cursor.width/2;
+				lockCursor = false;
+			}
 			if(stream.time>=totalLength){
 				dispatchEvent(new Event(Event.COMPLETE));
 				stream.seek(0);
@@ -263,17 +357,6 @@ class VideoPlayer extends WidgetContainer
 					pauseVideo();
 			}
 		}
-	}
-
-	private function onClickTimeline(e:MouseEvent):Void
-	{
-		trace("clic");
-		var _percent:Float = (e.localX-progressBar.x) * 100 / progressBar.width;
-		var timeToGo:Float = totalLength*_percent/100;
-		setPlaying(false);
-		stream.seek(timeToGo);
-		stream.resume();
-		setPlaying(true);
 	}
 
 	private function netStatusHandler(event:NetStatusEvent):Void {
@@ -293,7 +376,7 @@ class VideoPlayer extends WidgetContainer
 		}*/
 	}
 
-	// Refactor
+	// TODO Refactor
 	private function videoTimeConvert(pTime: Float):String {
 		var tempNum = pTime;
 		var minutes = Math.floor(tempNum / 60);
@@ -307,7 +390,7 @@ class VideoPlayer extends WidgetContainer
 			currentTimeConverted = "";
 		var seconds = Math.round(tempNum - (minutes * 60));
 
-		return currentTimeConverted + minutes + ":" + seconds;
+		return currentTimeConverted + (minutes < 10 ? "0":"")+ minutes + ":" +(seconds < 10 ? "0":"")+seconds;
 	}
 
 	private function setPlaying(isPlaying: Bool){
@@ -352,6 +435,3 @@ class VideoPlayer extends WidgetContainer
 	}
 
 }
-#else
-typedef VideoPlayer = Dynamic;
-#end

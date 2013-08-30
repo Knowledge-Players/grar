@@ -53,22 +53,23 @@ class SimpleContainer extends WidgetContainer{
             contentMask.cacheAsBitmap = true;
         }
 	}
-        private function setMaskSpriteSheet(e:Event):Void{
 
-            if(xml.has.mask){
-                contentData.draw(content);
-                removeEventListener("SET_MASK_SPRITESHEET",setMaskSpriteSheet);
-                var bmp = new Bitmap(contentData);
-                bmp.cacheAsBitmap = true;
+    private function setMaskSpriteSheet(e:Event):Void{
 
-                addChild(contentMask);
-                addChild(bmp);
-                bmp.mask = contentMask;
+        if(xml.has.mask){
+            contentData.draw(content);
+            removeEventListener("SET_MASK_SPRITESHEET",setMaskSpriteSheet);
+            var bmp = new Bitmap(contentData);
+            bmp.cacheAsBitmap = true;
 
-                removeChild(content);
+            addChild(contentMask);
+            addChild(bmp);
+            bmp.mask = contentMask;
 
-            }
+            removeChild(content);
 
         }
+
+    }
 
 }

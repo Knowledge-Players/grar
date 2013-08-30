@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
+import nme.display.Sprite;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import nme.display.DisplayObject;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
@@ -82,9 +83,9 @@ class TileImage extends Image{
 		return visible;
 	}
 
-	public function getMask():DisplayObject
+	public function getMask():Sprite
 	{
-		var layer = new TileLayer(tilesheet);
+		var layer = new TileLayer(trueLayer.tilesheet);
 		var tile = new TileSprite(layer, tileSprite.tile);
 		layer.addChild(tile);
 		layer.render();

@@ -255,10 +255,6 @@ class WidgetContainer extends Widget{
 
 	private function render():Void
 	{
-		/*if(layer.view.x == 0){
-			layer.view.x = layer.view.width/2;
-			layer.view.y = layer.view.height/2;
-		}*/
 		layer.render();
 	}
 
