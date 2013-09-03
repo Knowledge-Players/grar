@@ -260,6 +260,7 @@ class WidgetContainer extends Widget{
 
 	public function createElement(elemNode:Fast):Void
 	{
+
 		switch(elemNode.name.toLowerCase()){
 			case "background" | "image": createImage(elemNode);
 			case "button": createButton(elemNode);
@@ -271,26 +272,37 @@ class WidgetContainer extends Widget{
     {
 
         if(itemNode.has.src){
-            addElement(new Image(itemNode));
+            var img:Image = new Image(itemNode);
+            addElement(img);
+
         }
         else{
-            var tileImg:TileImage = new TileImage(itemNode, layer);
-            tileImg.addEventListener("SET_SPRITESHEET",onSetSpriteSheet);
+             trace("--item : "+itemNode.att.ref);
+            var tileImg:TileImage = new TileImage(itemNode, layer,true,true);
+            tileImg.addEventListener("SET_TILE",onSetSpriteSheet);
             addElement(tileImg);
         }
+
     }
 
     private function onSetSpriteSheet(e:Event):Void{
-       this.dispatchEvent(new Event("SET_MASK_SPRITESHEET",true));
+        dispatchEvent(new Event("SET_MASK",true));
     }
 	private function addElement(elem:Widget):Void
 	{
 		elem.z = zIndex;
-		displays.set(elem.ref, elem);
+		//displays.set(elem.ref, elem);
 
 		//ResizeManager.instance.addDisplayObjects(elem, node);
-		zIndex++;
-		content.addChild(elem);
+        trace("elem.ref : "+elem.ref+" -- "+zIndex);
+        var sprite:Sprite = new Sprite();
+        sprite.addChild(elem);
+		content.addChildAt(sprite,zIndex);
+        zIndex++;
+
+
+
+
 	}
 
 	private function createButton(buttonNode:Fast):Void
