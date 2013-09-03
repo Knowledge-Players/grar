@@ -25,18 +25,27 @@ class TileImage extends Image{
 	private var xml: Fast;
 	private var isVisible: Bool;
 
-	public function new(xml: Fast, layer: TileLayer, visible: Bool = true)
+	public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=false)
 	{
 		this.xml = xml;
 		isVisible = visible;
+
 		if(xml.has.spritesheet){
 			trueLayer = new TileLayer(null);
 			tilesheetName = xml.att.spritesheet;
-			addEventListener(Event.ADDED_TO_STAGE, setTilesheet);
+            addEventListener(Event.ADDED_TO_STAGE, setTilesheet);
+
 		}
+        else if (div){
+            trueLayer = new TileLayer(layer.tilesheet);
+            init();
+        }
 		else{
 			trueLayer = layer;
-			init();
+
+
+            init();
+
 		}
 
 		super(xml);
@@ -147,9 +156,15 @@ class TileImage extends Image{
 			tileSprite.y = tileSprite.height/2;
 
 		tileSprite.visible = isVisible;
-		trueLayer.addChild(tileSprite);
-		xml = null;
+
+        trueLayer.addChild(tileSprite);
         trueLayer.render();
+
+        addChild(trueLayer.view);
+
+        xml = null;
+
+
 	}
 
 	override private function createImg(xml:Fast, ?tilesheet:TilesheetEx):Void
@@ -200,7 +215,8 @@ class TileImage extends Image{
 		init();
 		parent.addChild(trueLayer.view);
 		trueLayer.render();
-        this.dispatchEvent(new Event("SET_SPRITESHEET",true));
+
+        dispatchEvent(new Event("SET_TILE",true));
 
 	}
 

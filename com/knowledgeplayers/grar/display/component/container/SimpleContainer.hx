@@ -45,7 +45,7 @@ class SimpleContainer extends WidgetContainer{
 	{
 
         if(xml.has.mask){
-            addEventListener("SET_MASK_SPRITESHEET",setMaskSpriteSheet);
+            addEventListener("SET_MASK",setMaskSpriteSheet);
             bmpData= DisplayUtils.getBitmapDataFromLayer(this.tilesheet, xml.att.mask);
 
             contentMask = new Bitmap(bmpData) ;
@@ -58,18 +58,16 @@ class SimpleContainer extends WidgetContainer{
 
         if(xml.has.mask){
             contentData.draw(content);
-            removeEventListener("SET_MASK_SPRITESHEET",setMaskSpriteSheet);
+            removeEventListener("SET_MASK",setMaskSpriteSheet);
             var bmp = new Bitmap(contentData);
             bmp.cacheAsBitmap = true;
 
             addChild(contentMask);
             addChild(bmp);
             bmp.mask = contentMask;
-
             removeChild(content);
+            }
 
         }
-
-    }
 
 }
