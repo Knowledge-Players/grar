@@ -27,7 +27,6 @@ class Curve {
 	public var radius (default, default):Float;
 
 	private var objects: Array<DisplayObject>;
-	//private var objToAngles : Array<{obj: DisplayObject, angle: Float}>;
 	private var objToAngles : Map<DisplayObject, Float>;
 
 	public function new(center: Point, radius: Float = 1, minAngle: Float = 0, maxAngle: Float = 360)
@@ -44,13 +43,11 @@ class Curve {
 	public function add(object:DisplayObject, withTween: Bool = true):DisplayObject
 	{
 		objects.push(object);
-		//objToAngles = new Array<{obj: DisplayObject, angle: Float}>();
 		var angle = (maxAngle - minAngle)/(2*objects.length);
 		for(i in 0...objects.length){
 			var a = MathUtils.degreeToRad(angle+(angle*2*i)+minAngle);
 			objects[i].x = Math.cos(a)*radius + center.x;
 			objects[i].y = Math.sin(a)*radius + center.y;
-			//objToAngles.push({obj: objects[i], angle: a});
 			objToAngles.set(objects[i], a);
 		}
 		return object;
@@ -58,30 +55,11 @@ class Curve {
 
 	public function getAngle(obj: DisplayObject): Float
 	{
-		/*if(objToAngles == null)
-			throw "[Curve] This curve is empty.";
-		var i = 0;
-		while(i < objToAngles.length && objToAngles[i].obj != obj)
-			i++;
-		if(i == objToAngles.length){
-			trace("Item '"+obj+"' not found.");
-			return 0;
-		}
-		else
-			return objToAngles[i].angle;*/
 		return objToAngles[obj];
 	}
 
 	public function contains(obj: DisplayObject): Bool
 	{
-		/*if(objToAngles == null)
-			throw "[Curve] This curve is empty.";
-		var i = 0;
-		while(i < objToAngles.length && objToAngles[i].obj != obj)
-			i++;
-
-		return i != objToAngles.length;
-		*/
 		return objToAngles.exists(obj);
 	}
 

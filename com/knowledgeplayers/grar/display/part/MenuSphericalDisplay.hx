@@ -1,10 +1,9 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.display.component.container.DefaultButton;
-import nme.display.Bitmap;
-import haxe.ds.BalancedTree.TreeNode;
-import haxe.ds.GenericStack;
 import nme.display.DisplayObject;
+import com.knowledgeplayers.grar.util.MathUtils;
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
+import haxe.ds.GenericStack;
 import com.knowledgeplayers.grar.util.Curve;
 import nme.geom.Point;
 import haxe.xml.Fast;
@@ -18,7 +17,6 @@ class MenuSphericalDisplay extends MenuDisplay {
 
 	private var curves: Map<DisplayObject, Curve>;
 	private var originCurve: Curve;
-	private var initialized: Bool = false;
 
 	public function new(_width:Float, _height:Float)
 	{
@@ -26,30 +24,47 @@ class MenuSphericalDisplay extends MenuDisplay {
 		curves = new Map<DisplayObject, Curve>();
 	}
 
+	override public function initMenu(display:Fast):Void
+	{
+		levelDisplays = new Map<String, Fast>();
+		var regEx = ~/h[0-9]+|hr|item/i;
+		for(child in display.elements){
+			if(regEx.match(child.name))
+				levelDisplays.set(child.name, child);
+		}
+
+		for(child in display.elements){
+			createElement(child);
+		}
+
+		var menuXml = GameManager.instance.game.menu;
+
+		createMenuLevel(menuXml.firstElement().firstElement());
+	}
+
 	override private function createMenuLevel(level:Xml):Void
 	{
-		if(!initialized){
-			if(!levelDisplays.exists(level.nodeName))
-				throw "Display not specified for tag " + level.nodeName;
+		if(!levelDisplays.exists(level.nodeName))
+			throw "Display not specified for tag " + level.nodeName;
 
-			var fast:Fast = levelDisplays.get(level.nodeName);
+		var fast:Fast = levelDisplays.get(level.nodeName);
 
-			var curve: Curve = null;
-			if(level.nodeName == "hr"){
-				addLine(fast);
-			}
-			else{
-				var tree = new XmlTree(GameManager.instance.game.menu);
-				var i = 0;
-				var nodes = tree.getDepth(i);
-				while(!nodes.isEmpty()){
-					for(level in nodes)
-						createSphericLevel(level);
-					nodes = tree.getDepth(++i);
-				}
-			}
-			initialized = true;
+		var curve: Curve = null;
+		if(level.nodeName == "hr"){
+			addLine(fast);
 		}
+		else{
+			var tree = new XmlTree(GameManager.instance.game.menu);
+			var i = 0;
+			var nodes = tree.getDepth(i);
+			while(!nodes.isEmpty()){
+				for(level in nodes)
+					createSphericLevel(level);
+				nodes = tree.getDepth(++i);
+			}
+		}
+
+		GameManager.instance.menuLoaded = true;
 	}
 
 	private function createSphericLevel(level:TreeNode<Xml>):Void
@@ -84,7 +99,6 @@ class MenuSphericalDisplay extends MenuDisplay {
 			var offset = angle.radToDegree() - Std.parseFloat(fast.att.maxAngle)/2;
 			curve.minAngle = (fast.has.minAngle ? Std.parseFloat(fast.att.minAngle) : 0) + offset;
 			curve.maxAngle = (fast.has.maxAngle ? Std.parseFloat(fast.att.maxAngle) : 0) + offset;
-			trace(curve.minAngle, curve.maxAngle);
 			curves.set(parent, curve);
 		}
 

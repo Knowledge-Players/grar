@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.layout;
 
+import com.knowledgeplayers.grar.display.part.MenuSphericalDisplay;
 import com.knowledgeplayers.grar.display.component.DropdownMenu;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.TileImage;
@@ -114,10 +115,16 @@ class Zone extends KpDisplay {
 
 	public function createMenu(element:Fast):Void
 	{
-		menu = new MenuDisplay(Std.parseFloat(element.att.width), Std.parseFloat(element.att.height));
+		if(element.att.type == "spheric")
+			menu = new MenuSphericalDisplay(Std.parseFloat(element.att.width), Std.parseFloat(element.att.height));
+		else
+			menu = new MenuDisplay(Std.parseFloat(element.att.width), Std.parseFloat(element.att.height));
 		menuXml = element;
-		menu.transitionIn = element.att.transitionIn;
-		menu.transitionOut = element.att.transitionOut;
+		// TODO remove when MenuDislay became a widget
+		if(element.has.transitionIn)
+			menu.transitionIn = element.att.transitionIn;
+		if(element.has.transitionOut)
+			menu.transitionOut = element.att.transitionOut;
 		menu.x = Std.parseFloat(element.att.x);
 		menu.y = Std.parseFloat(element.att.y);
 
@@ -126,9 +133,10 @@ class Zone extends KpDisplay {
 
 	override private function setButtonAction(button:DefaultButton, action:String):Void
 	{
-		switch(action){
-			case "open_menu": button.buttonAction= showMenu;
-			case "sound_toggle": button.buttonAction=activeSound;
+		button.buttonAction = switch(action){
+			case "open_menu":  showMenu;
+			case "sound_toggle": activeSound;
+			default: null;
 		}
 	}
 

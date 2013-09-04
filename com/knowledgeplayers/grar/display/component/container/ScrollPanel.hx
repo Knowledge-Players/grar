@@ -65,7 +65,6 @@ class ScrollPanel extends WidgetContainer {
 	public function setContent(contentString:String):Void
 	{
 		clear();
-
 		var previousStyleSheet = null;
 		if(styleSheet != null){
 			previousStyleSheet = StyleParser.currentStyleSheet;
