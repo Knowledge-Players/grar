@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
 import com.knowledgeplayers.grar.structure.part.Item;
 import com.knowledgeplayers.grar.structure.part.video.item.VideoItem;
 import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
@@ -544,9 +545,14 @@ class PartDisplay extends KpDisplay {
 				return true;
 			if(Std.is(object, ScrollPanel) && key != text.ref)
 				return false;
-			if(Std.is(object, Image)){
+			if(Std.is(object, Image) || Std.is(object,SimpleContainer)){
 				var exists = false;
+
+                trace(" ----- key : "+key);
+
+
 				for(item in text.images){
+                    trace(" ----- item :"+item);
 					if(key == item){
 						exists = true;
 						if(Std.is(object, TileImage)){

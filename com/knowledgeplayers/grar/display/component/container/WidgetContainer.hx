@@ -277,7 +277,7 @@ class WidgetContainer extends Widget{
 
         }
         else{
-             trace("--item : "+itemNode.att.ref);
+
             var tileImg:TileImage = new TileImage(itemNode, layer,true,true);
             tileImg.addEventListener("SET_TILE",onSetSpriteSheet);
             addElement(tileImg);
@@ -294,7 +294,7 @@ class WidgetContainer extends Widget{
 		//displays.set(elem.ref, elem);
 
 		//ResizeManager.instance.addDisplayObjects(elem, node);
-        trace("elem.ref : "+elem.ref+" -- "+zIndex);
+
         var sprite:Sprite = new Sprite();
         sprite.addChild(elem);
 		content.addChildAt(sprite,zIndex);
