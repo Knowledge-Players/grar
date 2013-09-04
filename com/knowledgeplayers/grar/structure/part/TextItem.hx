@@ -51,7 +51,7 @@ class TextItem extends Item {
 				introScreen = {ref: xml.node.Intro.att.ref, content: xml.node.Intro.att.content};
 
 			for(elem in xml.elements){
-				if(elem.name.toLowerCase() == "image" || elem.name.toLowerCase() == "character")
+				if(elem.name.toLowerCase() == "image" || elem.name.toLowerCase() == "character" || elem.name.toLowerCase() == "div" )
 					images.add(elem.att.ref);
 			}
 		}
