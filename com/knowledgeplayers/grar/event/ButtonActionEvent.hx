@@ -22,6 +22,11 @@ class ButtonActionEvent extends Event {
 	**/
 	public static inline var TOGGLE: String = "toggle";
 
+    /**
+	* Quit Application
+	**/
+	public static inline var QUIT: String = "quit";
+
 	public function new(type:String, bubbles:Bool = false, cancelable:Bool = false)
 	{
 		super(type, bubbles, cancelable);

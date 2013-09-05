@@ -37,6 +37,7 @@ class TileImage extends Image{
 
 		}
         else if (div){
+
             trueLayer = new TileLayer(layer.tilesheet);
             init();
         }

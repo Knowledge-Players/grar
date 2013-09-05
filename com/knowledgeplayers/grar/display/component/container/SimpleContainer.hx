@@ -49,7 +49,13 @@ class SimpleContainer extends WidgetContainer{
             bmpData= DisplayUtils.getBitmapDataFromLayer(this.tilesheet, xml.att.mask);
 
             contentMask = new Bitmap(bmpData) ;
+            if(xml.has.scale){
+                contentMask.scaleX =   Std.parseFloat(xml.att.scale);
+                contentMask.scaleY =   Std.parseFloat(xml.att.scale);
+            }
+
             contentData = new BitmapData(bmpData.width, bmpData.height, true, 0x0);
+
             contentMask.cacheAsBitmap = true;
         }
 	}
@@ -60,12 +66,24 @@ class SimpleContainer extends WidgetContainer{
             contentData.draw(content);
             removeEventListener("SET_MASK",setMaskSpriteSheet);
             var bmp = new Bitmap(contentData);
+            if(xml.has.scale){
+                bmp.scaleX =   Std.parseFloat(xml.att.scale);
+                bmp.scaleY =   Std.parseFloat(xml.att.scale);
+            };
             bmp.cacheAsBitmap = true;
-
-            addChild(contentMask);
-            addChild(bmp);
             bmp.mask = contentMask;
-            removeChild(content);
+            var sprite = new Sprite();
+
+            sprite.addChild(contentMask);
+            sprite.addChild(bmp);
+
+                while (content.numChildren >0)
+                {
+                    content.removeChildAt(0);
+                }
+           // removeChild(content);
+            content.addChild(sprite);
+
             }
 
         }

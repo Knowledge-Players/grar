@@ -286,6 +286,7 @@ class WidgetContainer extends Widget{
     }
 
     private function onSetSpriteSheet(e:Event):Void{
+        e.currentTarget.removeEventListener("SET_TILE",onSetSpriteSheet);
         dispatchEvent(new Event("SET_MASK",true));
     }
 	private function addElement(elem:Widget):Void

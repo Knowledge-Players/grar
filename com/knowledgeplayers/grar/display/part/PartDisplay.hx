@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import nme.system.System;
+import nme.external.ExternalInterface;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
 import com.knowledgeplayers.grar.structure.part.Item;
 import com.knowledgeplayers.grar.structure.part.video.item.VideoItem;
@@ -121,7 +123,7 @@ class PartDisplay extends KpDisplay {
 	}
 
 	/**
-	* @param    startIndex : Next element after this index
+	* @param    startIndex :   element after this index
     * @return the TextItem in the part or null if there is an activity or the part is over
     **/
 
@@ -207,6 +209,23 @@ class PartDisplay extends KpDisplay {
 	public function next(?target: DefaultButton):Void
 	{
 		nextElement();
+	}
+
+    public function quit(?target: DefaultButton):Void
+	{
+        if (GameManager.instance.game.connection.tracking.suivi != "")
+        GameManager.instance.game.connection.tracking.exitAU();
+
+        if (ExternalInterface.available)
+        {
+            ExternalInterface.call("quitModule");
+        }else
+        {
+            System.exit(0);
+        }
+
+
+        trace("quit le module");
 	}
 
 	/**
@@ -315,6 +334,10 @@ class PartDisplay extends KpDisplay {
 					nextElement(part.getElementIndex(part.buttonTargets.get(button.ref))-1);
 			};
 		}
+        else if (action.toLowerCase() == ButtonActionEvent.QUIT){
+            button.buttonAction = quit;
+
+        }
 	}
 
 	private function displayBackground(background:String):Void
@@ -475,12 +498,14 @@ class PartDisplay extends KpDisplay {
 		var array = new Array<Widget>();
 
 		for(key in displays.keys()){
+
 			if(mustBeDisplayed(key))
 				array.push(displays.get(key));
 		}
 
 		array.sort(sortDisplayObjects);
 		for(obj in array){
+
 			addChild(obj);
 		}
 
@@ -548,11 +573,8 @@ class PartDisplay extends KpDisplay {
 			if(Std.is(object, Image) || Std.is(object,SimpleContainer)){
 				var exists = false;
 
-                trace(" ----- key : "+key);
-
-
 				for(item in text.images){
-                    trace(" ----- item :"+item);
+
 					if(key == item){
 						exists = true;
 						if(Std.is(object, TileImage)){
