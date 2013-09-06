@@ -90,6 +90,7 @@ class SimpleContainer extends WidgetContainer{
 	        };
 	        bmp.cacheAsBitmap = true;
 	        bmp.mask = contentMask;
+            bmp.smoothing = true;
 	        var sprite = new Sprite();
 
 	        sprite.addChild(contentMask);
