@@ -220,18 +220,41 @@ class Zone extends KpDisplay {
 
 	override private function createImage(itemNode:Fast):Void
 	{
-		 if(itemNode.has.src || itemNode.has.filters){
-			addElement(new Image(itemNode, layer.tilesheet), itemNode);
+		var spritesheet = itemNode.has.spritesheet ? itemNode.att.spritesheet:"ui";
+
+
+		if(itemNode.has.src || itemNode.has.filters || (itemNode.has.extract && itemNode.att.extract == "true")){
+			addElement(new Image(itemNode, spritesheets.get(spritesheet)), itemNode);
 		}
 		else if(itemNode.has.color){
              var bkg = createSpriteFormXml(itemNode);
 
              addElement(bkg,itemNode);
 
-         }else{
-			var tile = new TileImage(itemNode, layer);
+        }else{
+			if(!layers.exists(spritesheet)){
+				var layer = new TileLayer(UiFactory.tilesheet);
+				layers.set(spritesheet, layer);
+			}
+			var tile = new TileImage(itemNode, layers.get(spritesheet));
 			addElement(tile, itemNode);
 		}
+
+		/*var spritesheet = itemNode.has.spritesheet ? itemNode.att.spritesheet:"ui";
+
+
+		if(itemNode.has.src || itemNode.has.filters || (itemNode.has.extract && itemNode.att.extract == "true")){
+			addElement(new Image(itemNode, spritesheets.get(spritesheet)), itemNode);
+		}
+		else{
+			if(!layers.exists(spritesheet)){
+				var layer = new TileLayer(UiFactory.tilesheet);
+				layers.set(spritesheet, layer);
+			}
+			addElement(new TileImage(itemNode, layers.get(spritesheet), false), itemNode);
+			//TODO ajout des éléments d'UI par kévin
+			addChild(layers.get(spritesheet).view);
+		}*/
 	}
 
 	// Handlers

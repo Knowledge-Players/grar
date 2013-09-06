@@ -19,7 +19,6 @@ class TileImage extends Image{
 
 	public var tileSprite (default, null): TileSprite;
 
-	private var tilesheet: TilesheetEx;
 	private var tilesheetName: String;
 	private var trueLayer: TileLayer;
 	private var xml: Fast;
@@ -31,26 +30,15 @@ class TileImage extends Image{
 		isVisible = visible;
 
 		if(xml.has.spritesheet){
-			trueLayer = new TileLayer(null);
 			tilesheetName = xml.att.spritesheet;
             addEventListener(Event.ADDED_TO_STAGE, setTilesheet);
 
 		}
-        else if (div){
-
-            trueLayer = new TileLayer(layer.tilesheet);
-            init();
-        }
 		else{
 			trueLayer = layer;
-
-
             init();
-
 		}
-
 		super(xml);
-
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 	}
 
@@ -71,6 +59,9 @@ class TileImage extends Image{
 
 	override public function set_visible(visible:Bool):Bool
 	{
+		if(tileSprite == null)
+			return isVisible = visible;
+
 		tileSprite.visible = visible;
 		var actuator: IGenericActuator = null;
 
@@ -129,8 +120,6 @@ class TileImage extends Image{
 
 	private function init():Void
 	{
-
-
 		tileSprite = new TileSprite(trueLayer, xml.att.tile);
 
 		if(xml.has.scale)
@@ -161,11 +150,7 @@ class TileImage extends Image{
         trueLayer.addChild(tileSprite);
         trueLayer.render();
 
-        addChild(trueLayer.view);
-
         xml = null;
-
-
 	}
 
 	override private function createImg(xml:Fast, ?tilesheet:TilesheetEx):Void
@@ -210,15 +195,9 @@ class TileImage extends Image{
 			ancestor = ancestor.parent;
 		if(ancestor == null)
 			throw "[TileImage] Unable to find spritesheet '"+tilesheetName+"' for image '"+ref+"'.";
-		tilesheet = cast(ancestor, PartDisplay).spritesheets.get(tilesheetName);
-		trueLayer.tilesheet = tilesheet;
+		trueLayer = cast(ancestor, PartDisplay).getLayer(tilesheetName);
 
 		init();
-		parent.addChild(trueLayer.view);
-		trueLayer.render();
-
-        dispatchEvent(new Event("SET_TILE",true));
-
 	}
 
 }

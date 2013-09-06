@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.event.DisplayEvent;
+import aze.display.TileSprite;
+import com.knowledgeplayers.grar.display.part.PartDisplay;
 import nme.display.BitmapData;
 import nme.display.MovieClip;
 import nme.display.Shape;
@@ -16,13 +19,17 @@ class SimpleContainer extends WidgetContainer{
     private var xml:Fast;
     private var bmpData:BitmapData;
     private var contentData:BitmapData;
+	private var tilesheetName: String;
+	private var totalChildren: Int;
+	private var loadedChildren: Int;
 
 	public function new(?xml: Fast, ?tilesheet: TilesheetEx)
 	{
         this.xml = xml;
+		totalChildren = loadedChildren = 0;
 		super(xml, tilesheet);
-
-		//displayContent();
+		if(xml.has.spritesheet)
+			tilesheetName = xml.att.spritesheet;
 		addEventListener(Event.ADDED_TO_STAGE, onAdded);
 	}
 
@@ -43,49 +50,67 @@ class SimpleContainer extends WidgetContainer{
 
 	public function onAdded(e: Event): Void
 	{
+		if(tilesheetName != null){
+			var ancestor = parent;
+			while(!Std.is(ancestor, PartDisplay) && ancestor != null)
+				ancestor = ancestor.parent;
+			if(ancestor == null)
+				throw "[TileImage] Unable to find spritesheet '"+tilesheetName+"' for image '"+ref+"'.";
+			tilesheet = cast(ancestor, PartDisplay).spritesheets.get(tilesheetName);
+			layer.tilesheet = tilesheet;
+			layer.removeAllChildren();
+			for(child in xml.elements){
+				createElement(child);
+			}
+			dispatchEvent(new DisplayEvent(DisplayEvent.LOADED));
+		}
+	}
 
-        if(xml.has.mask){
-            addEventListener("SET_MASK",setMaskSpriteSheet);
+	public function setMask(e: Event):Void
+	{
+		loadedChildren++;
+        if(loadedChildren == totalChildren && xml.has.mask){
             bmpData= DisplayUtils.getBitmapDataFromLayer(this.tilesheet, xml.att.mask);
 
             contentMask = new Bitmap(bmpData) ;
             if(xml.has.scale){
-                contentMask.scaleX =   Std.parseFloat(xml.att.scale);
-                contentMask.scaleY =   Std.parseFloat(xml.att.scale);
+                contentMask.scaleX = Std.parseFloat(xml.att.scale);
+                contentMask.scaleY = Std.parseFloat(xml.att.scale);
             }
 
             contentData = new BitmapData(bmpData.width, bmpData.height, true, 0x0);
 
             contentMask.cacheAsBitmap = true;
+
+	        contentData.draw(content);
+	        var bmp = new Bitmap(contentData);
+	        if(xml.has.scale){
+		        bmp.scaleX =   Std.parseFloat(xml.att.scale);
+		        bmp.scaleY =   Std.parseFloat(xml.att.scale);
+	        };
+	        bmp.cacheAsBitmap = true;
+	        bmp.mask = contentMask;
+	        var sprite = new Sprite();
+
+	        sprite.addChild(contentMask);
+	        sprite.addChild(bmp);
+
+	        while (content.numChildren > 0)
+		        content.removeChildAt(content.numChildren-1);
+
+	        content.addChild(sprite);
+
         }
 	}
 
-    private function setMaskSpriteSheet(e:Event):Void{
-
-        if(xml.has.mask){
-            contentData.draw(content);
-            removeEventListener("SET_MASK",setMaskSpriteSheet);
-            var bmp = new Bitmap(contentData);
-            if(xml.has.scale){
-                bmp.scaleX =   Std.parseFloat(xml.att.scale);
-                bmp.scaleY =   Std.parseFloat(xml.att.scale);
-            };
-            bmp.cacheAsBitmap = true;
-            bmp.mask = contentMask;
-            var sprite = new Sprite();
-
-            sprite.addChild(contentMask);
-            sprite.addChild(bmp);
-
-                while (content.numChildren >0)
-                {
-                    content.removeChildAt(0);
-                }
-           // removeChild(content);
-            content.addChild(sprite);
-
-            }
-
-        }
-
+	override public function createElement(elemNode:Fast):Void
+	{
+		super.createElement(elemNode);
+		if(elemNode.name.toLowerCase() == "div"){
+			var div = new SimpleContainer(elemNode);
+			totalChildren++;
+			div.addEventListener(DisplayEvent.LOADED, setMask);
+			addElement(div);
+		}
+	}
 }

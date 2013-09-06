@@ -66,7 +66,7 @@ class GameManager extends EventDispatcher {
     **/
 	public var tokensImages (default, null):Map<String, {small:BitmapData, large:BitmapData}>;
 
-	public var menuLoaded (default, set_menuLoaded):Bool = false;
+	public var menuLoaded (default, set_menuLoaded):Bool = true;
 
 	/**
 	* Current activity display

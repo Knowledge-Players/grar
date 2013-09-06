@@ -35,6 +35,7 @@ class MenuDisplay extends Zone {
 		super(_width, _height);
 		buttons = new Map<String, DefaultButton>();
 		GameManager.instance.addEventListener(PartEvent.EXIT_PART, onFinishPart);
+		// = UiFactory.tilesheet;
 	}
 
 	/**

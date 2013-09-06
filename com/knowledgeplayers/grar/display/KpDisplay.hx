@@ -75,13 +75,17 @@ class KpDisplay extends Sprite {
 	{
 		displayFast = new Fast(content.firstElement());
 
+		var i: Int = 0;
 		for(child in displayFast.nodes.SpriteSheet){
 			spritesheets.set(child.att.id, AssetsStorage.getSpritesheet(child.att.src));
 			var layer = new TileLayer(AssetsStorage.getSpritesheet(child.att.src));
 			layers.set(child.att.id, layer);
 			addChild(layer.view);
+			i++;
 		}
-		addChild(new TileLayer(UiFactory.tilesheet).view);
+		var uiLayer = new TileLayer(UiFactory.tilesheet);
+		layers.set("ui", uiLayer);
+		addChild(uiLayer.view);
 
 		createDisplay();
 
@@ -93,6 +97,11 @@ class KpDisplay extends Sprite {
 			layout = displayFast.att.layout;
 
 		ResizeManager.instance.onResize();
+	}
+
+	public function getLayer(id:String):TileLayer
+	{
+		return layers.get(id);
 	}
 
 	// Privates
@@ -159,8 +168,6 @@ class KpDisplay extends Sprite {
 				layers.set(spritesheet, layer);
 			}
 			addElement(new TileImage(itemNode, layers.get(spritesheet), false), itemNode);
-            //TODO ajout des éléments d'UI par kévin
-            addChild(layers.get(spritesheet).view);
 		}
 	}
 

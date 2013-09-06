@@ -103,14 +103,6 @@ class PartDisplay extends KpDisplay {
 			localeLoaded = true;
 			checkPartLoaded();
 		}
-
-		/*for(key in layers.keys()){
-			if(key != "ui"){
-				addChild(layers.get(key).view);
-			}
-		}
-		if(layers.exists("ui"))
-			addChild(layers.get("ui").view);*/
 	}
 
 	public function exitPart():Void
@@ -381,19 +373,19 @@ class PartDisplay extends KpDisplay {
 				}
 				else{
 					char.alpha = 1;
-                    //TODO Ajout transtion au charactere par kévin
-                    char.transitionIn=transition;
 					char.set_visible(true);
 				}
 				currentSpeaker = char;
-                //TODO  Ajout transtion au charactere par kévin
                 currentSpeaker.transitionIn=transition;
 				currentSpeaker.set_visible(true);
+				trace(currentSpeaker.tileSprite.layer.view.z);
 				if(char.nameRef != null && displays.exists(char.nameRef))
 					cast(displays.get(char.nameRef), ScrollPanel).setContent(currentSpeaker.model.getName());
 				else if(char.nameRef != null)
 					throw "[PartDisplay] There is no TextArea with ref " + char.nameRef;
 			}
+			if(!contains(currentSpeaker))
+				addChild(currentSpeaker);
 		}
 		else if(currentSpeaker != null && contains(currentSpeaker)){
 			removeChild(currentSpeaker);

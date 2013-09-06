@@ -140,9 +140,6 @@ class WidgetContainer extends Widget{
 	{
 		removeChild(content);
 		content = new Sprite();
-		/*for(child in layer)
-			child.visible = false
-		layer.render();*/
 		content.addChild(layer.view);
 		content.mask = null;
 
@@ -260,7 +257,6 @@ class WidgetContainer extends Widget{
 
 	public function createElement(elemNode:Fast):Void
 	{
-
 		switch(elemNode.name.toLowerCase()){
 			case "background" | "image": createImage(elemNode);
 			case "button": createButton(elemNode);
@@ -285,20 +281,17 @@ class WidgetContainer extends Widget{
 
     }
 
-    private function onSetSpriteSheet(e:Event):Void{
+    private function onSetSpriteSheet(e:Event):Void
+    {
+        trace("presque");
         e.currentTarget.removeEventListener("SET_TILE",onSetSpriteSheet);
         dispatchEvent(new Event("SET_MASK",true));
     }
+
 	private function addElement(elem:Widget):Void
 	{
 		elem.z = zIndex;
-		//displays.set(elem.ref, elem);
-
-		//ResizeManager.instance.addDisplayObjects(elem, node);
-
-        var sprite:Sprite = new Sprite();
-        sprite.addChild(elem);
-		content.addChildAt(sprite,zIndex);
+		content.addChildAt(elem,zIndex);
         zIndex++;
 
 
