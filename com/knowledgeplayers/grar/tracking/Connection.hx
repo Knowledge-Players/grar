@@ -4,6 +4,7 @@ import com.knowledgeplayers.grar.tracking.StateInfos;
 import nme.events.EventDispatcher;
 
 class Connection extends EventDispatcher {
+
 	public var tracking (default, null):Tracking;
 
 	public function new()
@@ -41,7 +42,6 @@ class Connection extends EventDispatcher {
 	{
 		var state:String = tracking.getLocation();
 		var stateInfos:StateInfos = new StateInfos();
-
 		if(state != "" && state != "undefined" && state != "null" && state != null){
 			stateInfos.loadStateInfos(state);
 		}

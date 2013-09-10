@@ -236,24 +236,24 @@ class ScormTracking extends Tracking {
 
 	public function returnFormatedTime():String
 	{
-		var _local4:Int = Math.round((timer.currentCount - this.startTime) / 1000);
-		var _local2:String = "";
-		var _local3:Int = Math.floor(_local4 / 3600);
-		var _local5:Int = Math.floor((_local4 - (_local3 * 3600)) / 60);
-		var _local6:Int = (_local4 - (_local3 * 3600)) - (_local5 * 60);
-		if(_local3 < 10){
-			_local2 = _local2 + "0";
+		var output: StringBuf = new StringBuf();
+		var time:Int = timer.currentCount - this.startTime;
+		var hours:Int = Math.floor(time / 3600);
+		var minutes:Int = Math.floor((time - (hours * 3600)) / 60);
+		var seconds:Int = (time - (hours * 3600)) - (minutes * 60);
+		if(hours < 10){
+			output.add("0");
 		}
-		_local2 = _local2 + (_local3 + ":");
-		if(_local5 < 10){
-			_local2 = _local2 + "0";
+		output.add(hours + ":");
+		if(minutes < 10){
+			output.add("0");
 		}
-		_local2 = _local2 + (_local5 + ":");
-		if(_local6 < 10){
-			_local2 = _local2 + "0";
+		output.add(minutes + ":");
+		if(seconds < 10){
+			output.add("0");
 		}
-		_local2 = _local2 + _local6;
-		return (_local2);
+		output.add(seconds);
+		return output.toString();
 	}
 
 	override function putparam():Void

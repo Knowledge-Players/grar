@@ -248,15 +248,15 @@ return title + " - " + mode + " - " + state + ". Parts: \n\t" + parts.toString()
 
 public function initTracking(?mode:Mode):Void
 {
-connection = new Connection();
-if(mode != null)
-this.mode = mode;
-connection.initConnection(this.mode);
-stateInfos = connection.revertTracking();
-if(stateInfos.isEmpty()){
-stateInfos.loadStateInfos(state);
-}
-Localiser.instance.currentLocale = stateInfos.currentLanguage;
+    connection = new Connection();
+    if(mode != null)
+        this.mode = mode;
+    connection.initConnection(this.mode);
+    stateInfos = connection.revertTracking();
+    if(stateInfos.isEmpty()){
+        stateInfos.loadStateInfos(state);
+    }
+    Localiser.instance.currentLocale = stateInfos.currentLanguage;
 }
 
 /**
@@ -400,26 +400,30 @@ checkLoading();
 
 private function checkLoading():Void
 {
-if(getLoadingCompletion() == 1 && (numStyleSheet == numStyleSheetLoaded)){
-	//checkIntegrity();
-	// Menu hasn't been set, creating the default
-if(menu == null){
-var menuXml = Xml.createElement("menu");
-for(part in parts){
-createMenuXml(menuXml, part);
-}
-menu = menuXml;
-}
-if(!layoutLoaded){
-for(part in getAllParts())
-part.isDone = stateInfos.isPartFinished(part.id);
-	// Load Layout
-LayoutManager.instance.parseXml(Xml.parse(Assets.getText(structureXml.node.Grar.node.Parameters.node.Layout.att.file)));
-}
-else{
-dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
-}
-}
+    if(getLoadingCompletion() == 1 && (numStyleSheet == numStyleSheetLoaded)){
+    	//checkIntegrity();
+    	// Menu hasn't been set, creating the default
+        if(menu == null){
+            var menuXml = Xml.createElement("menu");
+            for(part in parts){
+                createMenuXml(menuXml, part);
+            }
+            menu = menuXml;
+        }
+        if(!layoutLoaded){
+            if(stateInfos.tmpState != null){
+                stateInfos.loadStateInfos(stateInfos.tmpState);
+            }
+            for(part in getAllParts())
+                part.isDone = stateInfos.isPartFinished(part.id);
+
+            	// Load Layout
+            LayoutManager.instance.parseXml(Xml.parse(Assets.getText(structureXml.node.Grar.node.Parameters.node.Layout.att.file)));
+        }
+        else{
+            dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
+        }
+    }
 }
 
 private function onExit(e:Event):Void

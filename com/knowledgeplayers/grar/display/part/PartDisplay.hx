@@ -118,8 +118,10 @@ class PartDisplay extends KpDisplay {
 			exitPart();
 			return;
 		}
-		if(currentElement.endScreen)
+		if(currentElement.endScreen){
+			part.isDone = true;
 			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+		}
 
 		if(currentElement.isText()){
 			var groupKey = "";
@@ -279,17 +281,17 @@ class PartDisplay extends KpDisplay {
 
 	private function displayBackground(background:String):Void
 	{
-		var sameBackground = true;
+		//var sameBackground = true;
 		// Clean previous background
-		if(previousBackground != null && previousBackground.ref != background){
-			sameBackground = false;
+		if(previousBackground != null){// && previousBackground.ref != background){
+			//sameBackground = false;
 			if(previousBackground.bmp != null)
 				displayArea.removeChild(previousBackground.bmp);
 		}
-		else if(previousBackground == null)
-			sameBackground = false;
+		//else if(previousBackground == null)
+		//	sameBackground = false;
 		// Add new background if different from previous one
-		if(!sameBackground && background != null){
+		if(background != null){
 			if(!displaysFast.exists(background))
 				throw "[PartDisplay] There is no background with ref " + background;
 			var fastBkg = displaysFast.get(background);
@@ -365,7 +367,7 @@ class PartDisplay extends KpDisplay {
 			}
 
 		}
-
+		
 		setSpeaker(item.author, item.transition);
 		if(item.introScreen != null){
 
@@ -516,14 +518,12 @@ class PartDisplay extends KpDisplay {
 				for(item in currentTextItem.items){
 					if(key == item){
 						exists = true;
-
 						if(displaysFast.get(item).has.tween){
 							cast(displays.get(item).obj, Sprite).x = Std.parseFloat(displaysFast.get(item).att.x);
 							cast(displays.get(item).obj, Sprite).y = Std.parseFloat(displaysFast.get(item).att.y);
 
 							transitions.push({obj: displays.get(item).obj, tween: displaysFast.get(item).att.tween});
 						}
-
 						currentItems.add(object.obj);
 					}
 				}

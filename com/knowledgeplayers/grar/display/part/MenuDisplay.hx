@@ -101,9 +101,7 @@ class MenuDisplay extends Zone {
 		yOffset += yBase;
 
 		for(elem in menuXml.firstElement().elements()){
-
 			createMenuLevel(elem);
-			// Lib.trace("createMenu : "+elem);
 		}
 
 		GameManager.instance.menuLoaded = true;
@@ -122,8 +120,13 @@ class MenuDisplay extends Zone {
 			addLine(fast);
 		}
 		else{
-			var button = addButton(fast.node.Button, GameManager.instance.getItemName(level.get("id")));
+			var partName = GameManager.instance.getItemName(level.get("id"));
+			var button = addButton(fast.node.Button, partName);
 			buttons.set(level.get("id"), button);
+			for(part in GameManager.instance.game.getAllParts()){
+				if(part.name == partName && part.isDone)
+					button.setToggle(false);
+			}
 
 			button.x += xOffset;
 			button.y += yOffset;
@@ -184,7 +187,8 @@ class MenuDisplay extends Zone {
 
 	private function onFinishPart(e:PartEvent):Void
 	{
-		var button:DefaultButton = buttons.get(e.partId);
-		button.setToggle(false);
+		buttons.get(e.partId).setToggle(false);
 	}
+
+
 }

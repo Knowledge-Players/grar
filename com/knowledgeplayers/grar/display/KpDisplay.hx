@@ -96,6 +96,7 @@ class KpDisplay extends Sprite {
 			var itemTile;
 			if(itemNode.has.spritesheet){
 				itemTile = new TileSprite(layers.get(itemNode.att.spritesheet), itemNode.att.id);
+				//trace(itemNode.att.spritesheet+" -> "+layers.get(itemNode.att.spritesheet));
 				layers.get(itemNode.att.spritesheet).addChild(itemTile);
 				spritesheet = itemNode.att.spritesheet;
 			}
