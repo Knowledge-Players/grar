@@ -216,7 +216,8 @@ class GameManager extends EventDispatcher {
 		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		parts.first().addEventListener(GameEvent.GAME_OVER, function(e:GameEvent)
 		{
-			// e.clone doesn't work. Why ?
+			game.connection.tracking.setStatus(true);
+			game.connection.computeTracking(game.stateInfos);
 			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
 		});
 		parts.first().init();
@@ -303,8 +304,8 @@ class GameManager extends EventDispatcher {
 	private function launchGame():Void
 	{
 		var startingPart:String = null;
-		if(game.stateInfos.bookmark != -1)
-			startingPart = game.getAllParts()[game.stateInfos.bookmark].id;
+		if(game.stateInfos.bookmark > 0)
+			startingPart = game.getAllItems()[game.stateInfos.bookmark].id;
 
 		displayPartById(startingPart);
 	}
@@ -407,10 +408,12 @@ class GameManager extends EventDispatcher {
 	private function setBookmark(partId:String):Void
 	{
 		var i = 0;
-		while(i < game.getAllParts().length && game.getAllParts()[i].id != partId){
+		while(i < game.getAllItems().length && game.getAllItems()[i].id != partId){
 			i++;
 		}
-		game.stateInfos.bookmark = i;
-		game.connection.computeTracking(game.stateInfos);
+		if(i < game.getAllItems().length){
+			game.stateInfos.bookmark = i;
+			game.connection.computeTracking(game.stateInfos);
+		}
 	}
 }

@@ -6,6 +6,7 @@ class StateInfos {
 	public var currentLanguage (default, default):String;
 	public var bookmark (default, default):Int = -1;
 	public var checksum (default, default):Int;
+	public var tmpState (default, null): String;
 
 	private var completion:Map<String, Int>;
 	private var completionOrdered:Array<String>;
@@ -15,21 +16,26 @@ class StateInfos {
 	{
 		completion = new Map<String, Int>();
 		completionOrdered = new Array<String>();
-		allItem = GameManager.instance.game.getAllItems();
 	}
 
 	public function loadStateInfos(state:String):Void
 	{
+		allItem = GameManager.instance.game.getAllItems();
 		var stateInfosArray:Array<String> = state.split("@");
 		currentLanguage = stateInfosArray[0];
 		bookmark = Std.parseInt(stateInfosArray[1]);
 
 		var trackable:Array<String> = stateInfosArray[2].split("-");
-		for(i in 0...trackable.length){
-			if(i < allItem.length){
-				completion.set(allItem[i].id, Std.parseInt(trackable[i]));
-				completionOrdered.push(allItem[i].id);
+		if(allItem.length > 0){
+			for(i in 0...trackable.length){
+				if(i < allItem.length){
+					completion.set(allItem[i].id, Std.parseInt(trackable[i]));
+					completionOrdered.push(allItem[i].id);
+				}
 			}
+		}
+		else{
+			tmpState = state;
 		}
 
 		checksum = Std.parseInt(stateInfosArray[3]);

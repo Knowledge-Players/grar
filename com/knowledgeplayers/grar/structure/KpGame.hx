@@ -250,20 +250,15 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
      */
     public function initTracking(?mode:Mode):Void
     {
-        connection = new Connection();
-        if(mode != null)
+	    connection = new Connection();
+		if(mode != null)
             this.mode = mode;
-	    try{
-            connection.initConnection(this.mode);
-	    }catch(e: Dynamic){
-	        trace("[KpGame] Cannot initialize connection with LMS. Setting connection to local.");
-		    connection.initConnection(Mode.AUTO);
-	    }
+        connection.initConnection(this.mode);
         stateInfos = connection.revertTracking();
         if(stateInfos.isEmpty()){
             stateInfos.loadStateInfos(state);
         }
-        Localiser.instance.currentLocale = stateInfos.currentLanguage;
+		Localiser.instance.currentLocale = stateInfos.currentLanguage;
     }
 
     /**
@@ -297,9 +292,6 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         var trackable = new Array<Trackable>();
         for(part in parts){
             trackable = trackable.concat(part.getAllItems());
-	        /*for(subpart in part.getAllParts())
-		        trackable.push(subpart);
-	        trackable.push(part);*/
         }
 
         return trackable;
@@ -417,7 +409,9 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
                 menu = menuXml;
             }
             if(!layoutLoaded){
-                for(part in getAllParts())
+	            if(stateInfos.tmpState != null)
+	                stateInfos.loadStateInfos(stateInfos.tmpState);
+	            for(part in getAllParts())
                     part.isDone = stateInfos.isPartFinished(part.id);
                 // Load Layout
                 LayoutManager.instance.parseXml(AssetsStorage.getXml(structureXml.node.Grar.node.Parameters.node.Layout.att.file));

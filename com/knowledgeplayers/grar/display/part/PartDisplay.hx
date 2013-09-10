@@ -127,8 +127,10 @@ class PartDisplay extends KpDisplay {
 			exitPart();
 			return;
 		}
-		if(currentElement.endScreen)
+		if(currentElement.endScreen){
+			part.isDone = true;
 			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+		}
 
 		if(currentElement.isText()){
 			var groupKey = "";
