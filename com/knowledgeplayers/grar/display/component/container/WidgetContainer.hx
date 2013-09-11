@@ -83,12 +83,17 @@ class WidgetContainer extends Widget{
 		return content.alpha = contentAlpha = alpha;
 	}
 
-	public function setBackground(bkg:String, alpha: Float = 1):String
+	public function setBackground(bkg:String, alpha: Float = 1,?color:Array<String>,?arrowX:Float,?arrowY:Float,?radius:Float,?line:Float,?colorLine:Int,?bubbleWidth:Float,?bubbleHeight:Float,?shadow:Float):String
 	{
 		if(bkg != null){
 			if(Std.parseInt(bkg) != null){
 				DisplayUtils.initSprite(this, maskWidth, maskHeight, Std.parseInt(bkg), alpha);
 			}
+            else if(bkg == "bubble"){
+                trace("color : "+color[0]);
+                var bubble:SimpleBubble = new SimpleBubble(bubbleWidth!=0 ? bubbleWidth:maskWidth,bubbleHeight!=0 ? bubbleHeight:maskHeight,color,arrowX,arrowY,radius,line,colorLine,shadow);
+                addChildAt(bubble,0);
+            }
 			else{
 				if(grid9 != null){
 					var bmpData: BitmapData;
@@ -192,7 +197,19 @@ class WidgetContainer extends Widget{
 					grid.push(Std.parseFloat(number));
 				grid9 = new Rectangle(grid[0], grid[1], grid[2], grid[3]);
 			}
-			setBackground(xml.has.background ? xml.att.background:null, xml.has.alpha ? Std.parseFloat(xml.att.alpha) : 1);
+			setBackground(
+                xml.has.background ? xml.att.background:null,
+                xml.has.alpha ? Std.parseFloat(xml.att.alpha) : 1,
+                xml.has.color ? Std.string(xml.att.color).split(","):null,
+                xml.has.arrowX ? Std.parseFloat(xml.att.arrowX):0,
+                xml.has.arrowY ? Std.parseFloat(xml.att.arrowY):0,
+                xml.has.radius ? Std.parseFloat(xml.att.radius):0,
+                xml.has.line ? Std.parseFloat(xml.att.line):0,
+                xml.has.colorLine ? Std.parseInt(xml.att.colorLine):0xFFFFFF,
+                xml.has.bubbleWidth ? Std.parseInt(xml.att.bubbleWidth):0,
+                xml.has.bubbleHeight ? Std.parseInt(xml.att.bubbleHeight):0,
+                xml.has.shadow ? Std.parseFloat(xml.att.shadow):0
+            );
 			for(child in xml.elements){
 				createElement(child);
 			}
