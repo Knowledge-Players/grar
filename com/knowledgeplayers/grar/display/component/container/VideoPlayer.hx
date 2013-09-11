@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import nme.Lib;
 import flash.display.Bitmap;
 import aze.display.TileLayer;
 import nme.display.Bitmap;
@@ -48,15 +49,34 @@ class VideoPlayer extends WidgetContainer
 	private var lockCursor: Bool;
 	private var soundSlider: Image;
 	private var soundCursor: Sprite;
+    private var containerVideo:Sprite;
+    private var containerControls:Sprite;
+    private var xVideo:Float=0;
+    private var xControls:Float=0;
+    private var yVideo:Float=0;
+    private var yControls:Float=0;
+    private var yBigPlay:Float=0;
+    private var blackScreen:Sprite;
 		//private var _timeToCapture : Float = 0;
 
 	public function new (?xml: Fast)
 	{
 		playButtons = new GenericStack<DefaultButton>();
 		controls = new GenericStack<Widget>();
+        containerVideo = new Sprite();
+        containerControls = new Sprite();
+        addChild(containerVideo);
+        addChild(containerControls);
+        xVideo = containerVideo.x;
+        yVideo = containerVideo.y;
+        xControls = containerControls.x;
+        yControls = containerControls.y;
+
+
 
 		super(xml);
 		video = new Video();
+
 
 		connection = new NetConnection();
 		connection.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
@@ -64,12 +84,14 @@ class VideoPlayer extends WidgetContainer
 		connection.connect(null);
 
 		for(i in 0...numChildren){
-			if(Std.is(getChildAt(i), Widget))
+			if(Std.is(getChildAt(i), Widget)){
 				controls.add(cast(getChildAt(i), Widget));
+
+            }
 		}
 		timeArea = cast(displays.get("time"), ScrollPanel);
 		controls.add(timeArea);
-
+        yBigPlay =  displays.get("bigPlay").y;
 
 		addEventListener(MouseEvent.ROLL_OUT, hideControls);
 
@@ -102,7 +124,7 @@ class VideoPlayer extends WidgetContainer
 		video.smoothing = true;
 		video.width = maskWidth;
 		video.height = maskHeight;
-		addChildAt(video, 0);
+        containerVideo.addChildAt(video, 0);
 		addEventListener(Event.ENTER_FRAME, enterFrame);
 	}
 
@@ -142,19 +164,66 @@ class VideoPlayer extends WidgetContainer
 
 	public function setFullScreen(fullscreen:Bool):Void
 	{
+
 		isFullscreen = fullscreen;
+
+
+
+        var ratio:Float;
+        if ( ( Lib.current.stage.stageWidth / video.width) < ( Lib.current.stage.stageHeight / video.height) ) {
+            ratio = Lib.current.stage.stageWidth / video.width;
+        } else {
+            ratio = Lib.current.stage.stageHeight / video.height;
+        }
+
 		if (isFullscreen) {
-			//width = video.videoWidth;
-			//height = video.videoHeight;
-			stage.fullScreenSourceRect = new Rectangle(x, y,video.videoWidth, video.videoHeight);
-			stage.displayState = StageDisplayState.FULL_SCREEN;
-			fullscreenButton.setToggle(true);
+
+         //Lib.current.stage.fullScreenSourceRect = new Rectangle(containerVideo.x, containerVideo.y,containerVideo.width, containerVideo.height);
+
+            //Lib.current.stage.displayState = StageDisplayState.FULL_SCREEN;
+            blackScreen = new Sprite();
+            blackScreen.graphics.beginFill(0xCCCCCC);
+            blackScreen.graphics.drawRect(0,0,Lib.current.width,Lib.current.height);
+            blackScreen.graphics.endFill();
+            Lib.current.stage.addChild(blackScreen);
+            Lib.current.stage.addChild(containerVideo);
+            Lib.current.stage.addChild(containerControls);
+            //containerVideo.x = Lib.current.stage.x;
+            //containerVideo.y = Lib.current.stage.y;
+            containerVideo.scaleX =ratio;
+            containerVideo.scaleY =  ratio;
+
+            containerVideo.x = Lib.current.stage.stageWidth/2-containerVideo.width/2;
+            containerVideo.y= Lib.current.stage.stageHeight/2-containerVideo.height/2;
+
+            containerControls.x= Lib.current.stage.stageWidth/2-containerControls.width/2;
+            containerControls.y=  Lib.current.stage.stageHeight-containerControls.height-10;
+            displays.get("bigPlay").y =Lib.current.stage.stageHeight/2-displays.get("bigPlay").height/2-containerControls.y ;
+		    fullscreenButton.setToggle(true);
+            containerVideo.addEventListener(MouseEvent.MOUSE_DOWN,clickFull);
 		}
 		else {
+            Lib.current.stage.removeChild(blackScreen);
+            containerVideo.scaleX =1;
+            containerVideo.scaleY = 1;
+            addChild(containerVideo);
+            addChild(containerControls);
 			stage.displayState = StageDisplayState.NORMAL;
+            containerVideo.width = maskWidth;
+            containerVideo.height = maskHeight;
+            containerVideo.x = xVideo;
+            containerVideo.y = yVideo;
+            containerControls.x = xControls;
+            containerControls.y = yControls;
 			fullscreenButton.setToggle(false);
+            displays.get("bigPlay").y = yBigPlay;
+            containerVideo.removeEventListener(MouseEvent.MOUSE_DOWN,clickFull);
 		}
 	}
+
+    public function clickFull(e:Event):Void{
+        setFullScreen(false);
+    }
 
 	public function imageCapture():BitmapData {
 		var bmp:BitmapData = new BitmapData(Math.round(width), Math.round(height));
@@ -202,6 +271,7 @@ class VideoPlayer extends WidgetContainer
 			mask.mouseEnabled = false;
 			content.addChild(mask);
 			controls.add(progressBar);
+
 		}
 		else if(elemNode.name.toLowerCase() == "slider"){
 			soundSlider = new Image();
@@ -226,36 +296,43 @@ class VideoPlayer extends WidgetContainer
 			}
 			soundSlider.mouseEnabled = false;
 			controls.add(soundSlider);
+
 		}
+
+        content.setChildIndex(displays.get("bg"),content.numChildren-1);
 	}
 
 	// Privates
 
 	private function init():Void
 	{
+
 		content.addChild(progressBar);
 		content.addChild(soundSlider);
-		content.addEventListener(MouseEvent.CLICK, onClickTimeline);
+        containerControls.addEventListener(MouseEvent.CLICK, onClickTimeline);
 		content.addChild(cursor);
 		content.addChild(soundCursor);
+
 		cursor.buttonMode = true;
 		cursor.addEventListener(MouseEvent.MOUSE_DOWN, dragCursor);
 		soundCursor.buttonMode = true;
 		soundCursor.addEventListener(MouseEvent.MOUSE_DOWN, dragSoundCursor);
 		timeArea.style = "small-text";
 		timeArea.setContent(videoTimeConvert(0) + "/" + videoTimeConvert(0));
-	}
+
+        containerControls.addChild(content);
+    }
 
 	private function dragCursor(e:MouseEvent):Void
 	{
 		cursor.startDrag(false, new Rectangle(progressBar.x-cursor.width/2,progressBar.y-cursor.height/3,progressBar.width, 0));
-		addEventListener(MouseEvent.MOUSE_UP, dropCursor);
+		containerControls.addEventListener(MouseEvent.MOUSE_UP, dropCursor);
 	}
 
 	private function dragSoundCursor(e:MouseEvent):Void
 	{
 		soundCursor.startDrag(false, new Rectangle(soundSlider.x-soundCursor.width/2,soundSlider.y,soundSlider.width, 0));
-		addEventListener(MouseEvent.MOUSE_UP, dropSoundCursor);
+		containerControls.addEventListener(MouseEvent.MOUSE_UP, dropSoundCursor);
 	}
 
 	private function dropCursor(e:MouseEvent):Void
@@ -435,6 +512,7 @@ class VideoPlayer extends WidgetContainer
 			button.buttonAction = toggleFullScreen;
 		}
 		controls.add(button);
+        containerControls.addChild(button);
 	}
 
 }

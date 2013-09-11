@@ -184,6 +184,7 @@ class PartDisplay extends KpDisplay {
 		}
 		else if(currentElement.isVideo()){
 
+            setupItem(cast(currentElement, Item));
 		}
 
 	}
@@ -380,7 +381,7 @@ class PartDisplay extends KpDisplay {
 				currentSpeaker = char;
                 currentSpeaker.transitionIn=transition;
 				currentSpeaker.set_visible(true);
-				trace(currentSpeaker.tileSprite.layer.view.z);
+
 				if(char.nameRef != null && displays.exists(char.nameRef))
 					cast(displays.get(char.nameRef), ScrollPanel).setContent(currentSpeaker.model.getName());
 				else if(char.nameRef != null)
@@ -422,6 +423,7 @@ class PartDisplay extends KpDisplay {
 		}
 		if(item.isText()){
 			var text = cast(item, TextItem);
+
 			setSpeaker(text.author, text.transition);
 			if(text.introScreen != null){
 
@@ -455,6 +457,7 @@ class PartDisplay extends KpDisplay {
 			if(!displays.exists(item.ref))
 				throw "[PartDisplay] There is no VideoPlayer with ref '"+ item.ref+"'.";
 			var video = cast(item, VideoItem);
+
 			cast(displays.get(item.ref), VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture);
 			displayPart();
 		}
@@ -533,8 +536,8 @@ class PartDisplay extends KpDisplay {
 		if(Std.is(object, DefaultButton)){
 
 			var button: Map<String, Map<String, String>> = null;
-			if(currentElement.isText())
-				button = cast(currentElement, TextItem).button;
+			if(currentElement.isText() || currentElement.isVideo())
+				button = cast(currentElement, Item).button;
 			else if(currentElement.isActivity())
 				button = cast(currentElement, Activity).button;
 			if(currentElement.isPattern())

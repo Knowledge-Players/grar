@@ -166,7 +166,6 @@ class WidgetContainer extends Widget{
 		displays = new Map<String, Widget>();
 		buttonGroups = new Map<String, GenericStack<DefaultButton>>();
 
-
 		addChild(content);
 		if(xml != null){
 			// Default tilesheet
@@ -283,7 +282,7 @@ class WidgetContainer extends Widget{
 
     private function onSetSpriteSheet(e:Event):Void
     {
-        trace("presque");
+
         e.currentTarget.removeEventListener("SET_TILE",onSetSpriteSheet);
         dispatchEvent(new Event("SET_MASK",true));
     }
@@ -291,11 +290,11 @@ class WidgetContainer extends Widget{
 	private function addElement(elem:Widget):Void
 	{
 		elem.z = zIndex;
+        displays.set(elem.ref,elem);
+
 		content.addChildAt(elem,zIndex);
+
         zIndex++;
-
-
-
 
 	}
 
