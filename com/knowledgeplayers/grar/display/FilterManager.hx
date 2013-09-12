@@ -17,7 +17,7 @@ class FilterManager {
 	* @return a filter from the template
 	**/
 
-	public static function getFilter(id:String):BitmapFilter
+	public static function getFilter(id:String):Null<BitmapFilter>
 	{
 		return filters.get(id);
 	}

@@ -90,7 +90,6 @@ class WidgetContainer extends Widget{
 				DisplayUtils.initSprite(this, maskWidth, maskHeight, Std.parseInt(bkg), alpha);
 			}
             else if(bkg == "bubble"){
-                trace("color : "+color[0]);
                 var bubble:SimpleBubble = new SimpleBubble(bubbleWidth!=0 ? bubbleWidth:maskWidth,bubbleHeight!=0 ? bubbleHeight:maskHeight,color,arrowX,arrowY,radius,line,colorLine,shadow);
                 addChildAt(bubble,0);
             }
