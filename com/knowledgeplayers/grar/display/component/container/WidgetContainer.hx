@@ -148,7 +148,7 @@ class WidgetContainer extends Widget{
 			removeChildAt(numChildren - 1);
 	}
 
-	public function maskSprite(sprite: Sprite, maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0):Void
+	public inline function maskSprite(sprite: Sprite, maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0):Void
 	{
 		DisplayUtils.maskSprite(sprite, maskWidth, maskHeight, maskX, maskY);
 	}
@@ -203,12 +203,12 @@ class WidgetContainer extends Widget{
 		super(xml);
 	}
 
-	private function scrollToRatio(position:Float)
+	private inline function scrollToRatio(position:Float)
 	{
 		content.y = -position * content.height;
 	}
 
-	private function moveCursor(delta:Float)
+	private inline function moveCursor(delta:Float)
 	{
 		scrollBar.moveCursor(delta);
 	}
@@ -250,7 +250,7 @@ class WidgetContainer extends Widget{
 	}
 
 
-	private function render():Void
+	private inline function render():Void
 	{
 		layer.render();
 	}
@@ -275,28 +275,16 @@ class WidgetContainer extends Widget{
         else{
 
             var tileImg:TileImage = new TileImage(itemNode, layer,true,true);
-            tileImg.addEventListener("SET_TILE",onSetSpriteSheet);
             addElement(tileImg);
         }
 
     }
 
-    private function onSetSpriteSheet(e:Event):Void
-    {
-        trace("presque");
-        e.currentTarget.removeEventListener("SET_TILE",onSetSpriteSheet);
-        dispatchEvent(new Event("SET_MASK",true));
-    }
-
-	private function addElement(elem:Widget):Void
+	private inline function addElement(elem:Widget):Void
 	{
 		elem.z = zIndex;
 		content.addChildAt(elem,zIndex);
         zIndex++;
-
-
-
-
 	}
 
 	private function createButton(buttonNode:Fast):Void
@@ -340,7 +328,7 @@ class WidgetContainer extends Widget{
 		}
 	}
 
-	private function checkRender(e:Event):Void
+	private inline function checkRender(e:Event):Void
 	{
 		if(renderNeeded){
 			render();

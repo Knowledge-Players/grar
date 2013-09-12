@@ -84,10 +84,6 @@ class PartDisplay extends KpDisplay {
 
 	public function init():Void
 	{
-		if(part.display != null)
-			parseContent(AssetsStorage.getXml(part.display));
-		else
-			displayLoaded = true;
 
 		if(part.file != null){
 			Localiser.instance.pushLocale();
@@ -95,6 +91,11 @@ class PartDisplay extends KpDisplay {
 		}
 		else
 			localeLoaded = true;
+
+		if(part.display != null)
+			parseContent(AssetsStorage.getXml(part.display));
+		else
+			displayLoaded = true;
 
 		if(currentElement != null && currentElement.isPattern())
 			startPattern(cast(currentElement, Pattern));

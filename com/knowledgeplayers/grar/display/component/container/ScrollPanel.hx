@@ -17,8 +17,8 @@ import nme.events.Event;
 import nme.events.MouseEvent;
 
 /**
- * ScrollPanel to manage text overflow, with auto scrollbar
- */
+* ScrollPanel to manage text overflow, with auto scrollbar
+*/
 class ScrollPanel extends WidgetContainer {
 
 	/**
@@ -31,22 +31,24 @@ class ScrollPanel extends WidgetContainer {
 	**/
 	public var style (default, default):String;
 
-		/**
+	/**
      * Constructor
      * @param	width : Width of the displayed content
      * @param	height : Height of the displayed content
      * @param	scrollLock : Disable scroll. False by default
      * @param   styleSheet : Style sheet used for this panel
      */
-
 	public function new(?xml: Fast, ?width:Float, ?height:Float, ?_styleSheet:String)
 	{
 		super(xml);
 		if(xml != null){
 			styleSheet = xml.has.styleSheet ? xml.att.styleSheet : null;
 			style = xml.has.style ? xml.att.style : null;
-			if(xml.has.content)
+			if(xml.has.content){
+				trace(ref+" : "+xml.att.content+" -> "+Localiser.instance.getItemContent(xml.att.content));
 				setContent(Localiser.instance.getItemContent(xml.att.content));
+
+			}
 		}
 		if(_styleSheet != null)
 			styleSheet = _styleSheet;
@@ -119,13 +121,6 @@ class ScrollPanel extends WidgetContainer {
 		content.addChild(maskLine);
 		text.mask = maskLine;
 		addChild(content);
-		/*addEventListener(Event.ADDED_TO_STAGE, function(e){
-			parent.addChild(mask);
-			mask.x = this.x;
-			mask.y = this.y;
-			this.mask = mask;
-		}, false, 101);*/
-
 
 		if(previousStyleSheet != null)
 			StyleParser.currentStyleSheet = previousStyleSheet;
@@ -146,12 +141,4 @@ class ScrollPanel extends WidgetContainer {
 
 		return transitionIn = transition;
 	}
-
-
-	/*override public function maskSprite(sprite: Sprite, maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0):Void
-	{
-		//
-		super.maskSprite(content, 100, 100, maskX, maskY);
-	}*/
-
 }
