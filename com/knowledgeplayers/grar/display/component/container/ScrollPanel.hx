@@ -45,7 +45,6 @@ class ScrollPanel extends WidgetContainer {
 			styleSheet = xml.has.styleSheet ? xml.att.styleSheet : null;
 			style = xml.has.style ? xml.att.style : null;
 			if(xml.has.content){
-				trace(ref+" : "+xml.att.content+" -> "+Localiser.instance.getItemContent(xml.att.content));
 				setContent(Localiser.instance.getItemContent(xml.att.content));
 
 			}

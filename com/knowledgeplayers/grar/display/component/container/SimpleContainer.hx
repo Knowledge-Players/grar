@@ -70,8 +70,6 @@ class SimpleContainer extends WidgetContainer{
 	{
 		loadedChildren++;
         if(loadedChildren == totalChildren && xml.has.mask){
-            for(i in 0...content.numChildren)
-	            trace(i, content.getChildAt(i));
             bmpData= DisplayUtils.getBitmapDataFromLayer(this.tilesheet, xml.att.mask);
 
             contentMask = new Bitmap(bmpData) ;
@@ -106,9 +104,9 @@ class SimpleContainer extends WidgetContainer{
 	        }
 
 	        content.addChild(sprite);
-	        content.addChild(text);
-	        for(i in 0...content.numChildren)
-		        trace(i, content.getChildAt(i));
+	        if(text != null)
+	            content.addChild(text);
+
         }
 	}
 
