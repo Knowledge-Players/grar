@@ -407,8 +407,8 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 			}
 		}
 		for(elem in elements){
-			if(elem.isText()){
-				var text = cast(elem, TextItem);
+			if(elem.isText() || elem.isVideo()){
+				var text = cast(elem, Item);
 				if(text.button == null)
 					text.button = button;
 			}
