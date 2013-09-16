@@ -84,14 +84,14 @@ class WidgetContainer extends Widget{
 		return content.alpha = contentAlpha = alpha;
 	}
 
-	public function setBackground(bkg:String, alpha: Float = 1,?color:Array<String>,?arrowX:Float,?arrowY:Float,?radius:Float,?line:Float,?colorLine:Int,?bubbleWidth:Float,?bubbleHeight:Float,?shadow:Float):String
+	public function setBackground(bkg:String, alpha: Float = 1,?color:Array<String>,?arrowX:Float,?arrowY:Float,?radius:Float,?line:Float,?colorLine:Int,?bubbleWidth:Float,?bubbleHeight:Float,?shadow:Float,?gap:Float):String
 	{
 		if(bkg != null){
 			if(Std.parseInt(bkg) != null){
 				DisplayUtils.initSprite(this, maskWidth, maskHeight, Std.parseInt(bkg), alpha);
 			}
             else if(bkg == "bubble"){
-                var bubble:SimpleBubble = new SimpleBubble(bubbleWidth!=0 ? bubbleWidth:maskWidth,bubbleHeight!=0 ? bubbleHeight:maskHeight,color,arrowX,arrowY,radius,line,colorLine,shadow);
+                var bubble:SimpleBubble = new SimpleBubble(bubbleWidth!=0 ? bubbleWidth:maskWidth,bubbleHeight!=0 ? bubbleHeight:maskHeight,color,arrowX,arrowY,radius,line,colorLine,shadow,gap);
                 addChildAt(bubble,0);
             }
 			else{
@@ -209,7 +209,8 @@ class WidgetContainer extends Widget{
                 xml.has.colorLine ? Std.parseInt(xml.att.colorLine):0xFFFFFF,
                 xml.has.bubbleWidth ? Std.parseInt(xml.att.bubbleWidth):0,
                 xml.has.bubbleHeight ? Std.parseInt(xml.att.bubbleHeight):0,
-                xml.has.shadow ? Std.parseFloat(xml.att.shadow):0
+                xml.has.shadow ? Std.parseFloat(xml.att.shadow):0,
+                xml.has.gap ? Std.parseFloat(xml.att.gap):5
             );
 			for(child in xml.elements){
 				createElement(child);

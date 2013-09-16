@@ -14,7 +14,7 @@ import nme.display.Sprite;
 
 class SimpleBubble extends Sprite{
 
-    public function new(?width:Float,?height:Float,?color:Array<String>,?arrowX:Float=0,?arrowY:Float=0,?radius:Float=0,?line:Float=0,?colorLine:Int=0xFFFFFF,?shadow:Float=0){
+    public function new(?width:Float,?height:Float,?color:Array<String>,?arrowX:Float=0,?arrowY:Float=0,?radius:Float=0,?line:Float=0,?colorLine:Int=0xFFFFFF,?shadow:Float=0,?gap:Float=5){
 
         super();
         var bubble:Sprite = new Sprite();
@@ -35,7 +35,7 @@ class SimpleBubble extends Sprite{
             matr.createGradientBox(width, height, Math.PI/2, 0, 0);
             bubble.graphics.beginGradientFill(GradientType.LINEAR,[Std.parseInt(color[0]),Std.parseInt(color[1])],alphas,ratios,matr);
         }
-        drawSpeechBubble(bubble, new Rectangle(0,0,width,height), radius, new Point(arrowX,arrowY));
+        drawSpeechBubble(bubble, new Rectangle(0,0,width,height), radius, new Point(arrowX,arrowY),gap);
 
         bubble.graphics.endFill();
         if (shadow !=0){
@@ -49,7 +49,7 @@ class SimpleBubble extends Sprite{
         addChild(bubble);
     }
 
-    public  function drawSpeechBubble(target:Sprite, rect:Rectangle, cornerRadius:Float, point:Point):Void
+    public  function drawSpeechBubble(target:Sprite, rect:Rectangle, cornerRadius:Float, point:Point,gap:Float=10):Void
     {
         var g:Graphics = target.graphics;
         var r:Float = cornerRadius;
@@ -60,15 +60,16 @@ class SimpleBubble extends Sprite{
         var h:Float = rect.height;
         var px:Float = point.x;
         var py:Float = point.y;
-        var min_gap:Float = 20;
-        var hgap:Float = Math.min(w - r - r, Math.max(min_gap, w / 5));
+        //var min_gap:Float = 10;
+        //var hgap:Float = Math.min(w - r - r, Math.max(min_gap, w / 5));
+        var hgap:Float = Math.min(w - r - r, gap);
         var left:Float = px <= x + w / 2 ?
         (Math.max(x+r, px))
         :(Math.min(x + w - r - hgap, px - hgap));
         var right:Float = px <= x + w / 2?
         (Math.max(x + r + hgap, px+hgap))
         :(Math.min(x + w - r, px));
-        var vgap:Float = Math.min(h - r - r, Math.max(min_gap, h / 5));
+        var vgap:Float = Math.min(h - r - r,gap);
         var top:Float = py < y + h / 2 ?
         Math.max(y + r, py)
         :Math.min(y + h - r - vgap, py-vgap);
