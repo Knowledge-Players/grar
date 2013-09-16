@@ -51,10 +51,10 @@ class ScrollPanel extends WidgetContainer {
 		}
 		if(_styleSheet != null)
 			styleSheet = _styleSheet;
-		if(width != null)
+		/*if(width != null)
 			this.width = width;
 		if(height != null)
-			this.height = height;
+			this.height = height;*/
 	}
 
 	/**

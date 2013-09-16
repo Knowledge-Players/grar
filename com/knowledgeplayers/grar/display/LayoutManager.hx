@@ -14,6 +14,11 @@ class LayoutManager extends EventDispatcher {
     **/
 	public static var instance (get_instance, null):LayoutManager;
 
+	/**
+	* Localisation file for the interface
+	**/
+	public var interfaceLocale (default, default):String;
+
 	private var layoutNode:Fast;
 
 	private var layouts:Map<String, Layout>;
@@ -48,8 +53,10 @@ class LayoutManager extends EventDispatcher {
 
 	public function loadInterfaceXml(_xml:Fast):Void
 	{
-		if(_xml.has.text)
-			Localiser.instance.setLocalisationFile(_xml.att.text);
+		if(_xml.has.text){
+			interfaceLocale = _xml.att.text;
+			Localiser.instance.setLocalisationFile(interfaceLocale);
+		}
 
 		for(lay in layoutNode.elements){
 

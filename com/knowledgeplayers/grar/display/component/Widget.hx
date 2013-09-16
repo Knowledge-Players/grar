@@ -49,12 +49,8 @@ class Widget extends Sprite{
 	**/
 	public var transformation (default, set_transformation):String;
 
-	#if !flash
-	public var z: Float;
-	#end
+	public var zz: Float;
 
-	private var targetWidth: Float;
-	private var targetHeight: Float;
 	private var origin: {x: Float, y: Float, scaleX: Float, scaleY: Float};
 
 	public function set_scale(scale:Float):Float
@@ -120,14 +116,6 @@ class Widget extends Sprite{
 	}
 	#end
 
-	public function initSize():Void
-	{
-		if(width != 0)
-			width = targetWidth;
-		if(height != 0)
-			height = targetHeight;
-	}
-
 	override public function toString():String
 	{
 		return '$ref: $x;$y $width x $height ($scale) $transitionIn->$transitionOut';
@@ -180,13 +168,9 @@ class Widget extends Sprite{
 			else
 				scale = 1;
 
-			if(xml.has.width)
-				targetWidth = Std.parseFloat(xml.att.width);
-			else if(xml.has.scaleX)
+			if(xml.has.scaleX)
 				scaleX = Std.parseFloat(xml.att.scaleX);
-			if(xml.has.height)
-				targetHeight = Std.parseFloat(xml.att.height);
-			else if(xml.has.scaleY)
+			if(xml.has.scaleY)
 				scaleY = Std.parseFloat(xml.att.scaleY);
 
 			transitionIn = xml.has.transitionIn ? xml.att.transitionIn : "";

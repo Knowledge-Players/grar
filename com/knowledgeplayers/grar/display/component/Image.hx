@@ -19,7 +19,6 @@ class Image extends Widget{
 		if(xml != null){
 			createImg(xml, tilesheet);
 			super(xml);
-			//initSize();
 		}
 	}
 

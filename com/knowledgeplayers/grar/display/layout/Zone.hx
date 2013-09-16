@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.layout;
 
+import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
+import com.knowledgeplayers.grar.structure.contextual.Notebook;
 import com.knowledgeplayers.grar.display.part.MenuSphericalDisplay;
 import com.knowledgeplayers.grar.display.component.DropdownMenu;
 import com.knowledgeplayers.grar.display.component.Widget;
@@ -134,7 +136,10 @@ class Zone extends KpDisplay {
 	override private function setButtonAction(button:DefaultButton, action:String):Void
 	{
 		button.buttonAction = switch(action){
-			case "open_menu":  showMenu;
+			case "open_menu": showMenu;
+			case "open_inventory":  function(?target: DefaultButton){
+				GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
+			};
 			case "sound_toggle": activeSound;
 			default: null;
 		}
@@ -193,6 +198,7 @@ class Zone extends KpDisplay {
 		}
 
 		for(widget in displays){
+			layer.render();
 			addChild(widget);
 		}
 	}
@@ -239,22 +245,6 @@ class Zone extends KpDisplay {
 			var tile = new TileImage(itemNode, layers.get(spritesheet));
 			addElement(tile, itemNode);
 		}
-
-		/*var spritesheet = itemNode.has.spritesheet ? itemNode.att.spritesheet:"ui";
-
-
-		if(itemNode.has.src || itemNode.has.filters || (itemNode.has.extract && itemNode.att.extract == "true")){
-			addElement(new Image(itemNode, spritesheets.get(spritesheet)), itemNode);
-		}
-		else{
-			if(!layers.exists(spritesheet)){
-				var layer = new TileLayer(UiFactory.tilesheet);
-				layers.set(spritesheet, layer);
-			}
-			addElement(new TileImage(itemNode, layers.get(spritesheet), false), itemNode);
-			//TODO ajout des éléments d'UI par kévin
-			addChild(layers.get(spritesheet).view);
-		}*/
 	}
 
 	// Handlers

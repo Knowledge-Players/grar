@@ -156,10 +156,10 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
 		for(contextual in structureNode.nodes.Contextual){
 			var display = AssetsStorage.getXml(contextual.att.display);
 			switch(contextual.att.type.toLowerCase()){
-				case "notebook": Notebook.instance.init(contextual.att.file);
-								NotebookDisplay.instance.parseContent(display);
-				case "glossary": Glossary.instance.fillWithXml(contextual.att.file);
-				case "bibliography": Bibliography.instance.fillWithXml(contextual.att.file);
+				case "notebook":    NotebookDisplay.instance.parseContent(display);
+									NotebookDisplay.instance.model = new Notebook(contextual.att.file);
+				case "glossary":    Glossary.instance.fillWithXml(contextual.att.file);
+				case "bibliography":Bibliography.instance.fillWithXml(contextual.att.file);
 			}
 		}
 

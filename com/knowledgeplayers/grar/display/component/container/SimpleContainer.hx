@@ -110,14 +110,24 @@ class SimpleContainer extends WidgetContainer{
         }
 	}
 
-	override public function createElement(elemNode:Fast):Void
+	override public function createElement(elemNode:Fast):Widget
 	{
-		super.createElement(elemNode);
+		var widget = super.createElement(elemNode);
 		if(elemNode.name.toLowerCase() == "div"){
-			var div = new SimpleContainer(elemNode);
+			widget = new SimpleContainer(elemNode);
 			totalChildren++;
-			div.addEventListener(DisplayEvent.LOADED, setMask);
-			addElement(div);
+			widget.addEventListener(DisplayEvent.LOADED, setMask);
+			addElement(widget);
 		}
+		return widget;
+	}
+
+	override private inline function addElement(elem:Widget):Void
+	{
+		elem.zz = zIndex;
+		displays.set(elem.ref,elem);
+
+		content.addChildAt(elem,zIndex);
+		zIndex++;
 	}
 }

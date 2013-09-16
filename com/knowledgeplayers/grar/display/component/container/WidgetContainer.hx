@@ -76,6 +76,7 @@ class WidgetContainer extends Widget{
 	private var layer: TileLayer;
 	private var displays: Map<String, Widget>;
 	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
+	// z = 0 is reserved for the layer
 	private var zIndex: Int = 0;
 
 	public function set_contentAlpha(alpha: Float):Float
@@ -177,6 +178,7 @@ class WidgetContainer extends Widget{
 				this.tilesheet = tilesheet;
 			else
 				this.tilesheet = UiFactory.tilesheet;
+
 			content.addChild(layer.view);
 			maskWidth = xml.has.width ? Std.parseFloat(xml.att.width) : 1;
 			maskHeight = xml.has.height ? Std.parseFloat(xml.att.height) : 1;
@@ -270,41 +272,50 @@ class WidgetContainer extends Widget{
 		layer.render();
 	}
 
-	public function createElement(elemNode:Fast):Void
+	public function createElement(elemNode:Fast):Widget
 	{
-		switch(elemNode.name.toLowerCase()){
+		 return switch(elemNode.name.toLowerCase()){
 			case "background" | "image": createImage(elemNode);
 			case "button": createButton(elemNode);
-			case "text": addElement(new ScrollPanel(elemNode));
-		}
+			case "text": createText(elemNode);
+			default: null;
+		 }
 	}
 
-    private function createImage(itemNode:Fast):Void
+    private function createImage(itemNode:Fast):Widget
     {
 
         if(itemNode.has.src){
             var img:Image = new Image(itemNode);
             addElement(img);
-
+			return img;
         }
         else{
 
             var tileImg:TileImage = new TileImage(itemNode, layer,true,true);
             addElement(tileImg);
+	        return tileImg;
         }
 
     }
 
+	private inline function createText(textNode: Fast):Widget
+	{
+		var text = new ScrollPanel(textNode);
+		addElement(text);
+		return text;
+	}
+
 	private inline function addElement(elem:Widget):Void
 	{
-		elem.z = zIndex;
+		elem.zz = zIndex;
         displays.set(elem.ref,elem);
 
 		content.addChildAt(elem,zIndex);
         zIndex++;
 	}
 
-	private function createButton(buttonNode:Fast):Void
+	private function createButton(buttonNode:Fast):Widget
 	{
 		var button:DefaultButton = new DefaultButton(buttonNode);
 
@@ -321,6 +332,7 @@ class WidgetContainer extends Widget{
 		}
 		button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 		addElement(button);
+		return button;
 	}
 
 	private function setButtonAction(button:DefaultButton, action:String):Void

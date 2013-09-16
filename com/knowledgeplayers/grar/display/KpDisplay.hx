@@ -219,7 +219,7 @@ class KpDisplay extends Sprite {
 
 	private function addElement(elem:Widget, node:Fast):Void
 	{
-		elem.z = zIndex;
+		elem.zz = zIndex;
 		if(node.has.id && !node.has.ref){
 			displays.set(node.att.id, elem);
 		}

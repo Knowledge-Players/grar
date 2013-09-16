@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import haxe.ds.GenericStack;
+import aze.display.TileSprite;
+import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.event.TokenEvent;
 import nme.events.Event;
 import com.knowledgeplayers.grar.factory.UiFactory;
@@ -48,9 +51,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		noteMap = new Map<DefaultButton, String>();
 	}
 
-	// Privates
-
-	private function set_model(model:Notebook):Notebook
+	public function set_model(model:Notebook):Notebook
 	{
 		if(model != this.model){
 			Localiser.instance.layoutPath = model.file;
@@ -60,8 +61,9 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			}
 
 			for(item in model.items){
-				if(displays.exists(item))
+				if(displays.exists(item)){
 					addChild(displays.get(item));
+				}
 				else
 					throw '[NotebookDisplay] There is no item with ref "$item."';
 			}
@@ -74,17 +76,19 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			// Display button
 			var button: DefaultButton = cast(displays.get(model.closeButton.ref), DefaultButton);
 			button.setText(Localiser.instance.getItemContent(model.closeButton.content));
-			button.addEventListener("close", function(e){
-				GameManager.instance.hideContextual(this);
-			});
+
 			addChild(button);
 
 			// Display notes
 			var offsetY: Float = 0;
 			for(note in model.notes){
-				var icon: Xml = findIcon(noteTemplate.x);
-				if(icon != null)
+				var icons = findIcon(noteTemplate.x);
+				for(icon in icons){
 					icon.set("src", note.icon);
+					icon.nodeName = "Image";
+				}
+				trace(note, note.icon);
+				trace(noteTemplate.x);
 				var button: DefaultButton = new DefaultButton(noteTemplate);
 				button.y += offsetY;
 				offsetY += button.height + Std.parseFloat(noteTemplate.att.offsetY);
@@ -93,15 +97,16 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				// Fill hit box
 				DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
 				addChild(button);
-				button.addEventListener("show", onSelectNote);
+				setButtonAction(button, "show");
 				button.visible = note.unlocked;
 				noteMap.set(button, note.content);
 			}
-
 			return this.model = model;
 		}
 		return model;
 	}
+
+	// Privates
 
 	private function new()
 	{
@@ -109,25 +114,38 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		GameManager.instance.addEventListener(TokenEvent.ADD, onUnlocked);
 	}
 
-	private function findIcon(xml:Xml):Xml
+	override private function setButtonAction(button:DefaultButton, action:String):Void
 	{
-		if(xml.nodeName == "Item" && xml.get("ref").toLowerCase() == "icon")
-			return xml;
-		else{
-			var iconXml: Xml = null;
-			for(elem in xml.elements()){
-				var result = findIcon(elem);
-				if(result != null)
-					iconXml = result;
-			}
-			return iconXml;
+		button.buttonAction = switch(action.toLowerCase()){
+			case "close" : function(?t: DefaultButton){GameManager.instance.hideContextual(this);};
+			case "show" : onSelectNote;
+			default: throw "[NotebookDisplay] Unknown action '"+action+"'.";
 		}
 	}
 
-	private function onSelectNote(e: Event):Void
+	private function findIcon(xml:Xml):GenericStack<Xml>
 	{
+		var results = new GenericStack<Xml>();
+		findIconRec(xml, results);
+		return results;
+	}
+
+	private function findIconRec(xml: Xml, res: GenericStack<Xml>):Void
+	{
+		if(xml.get("ref") == "icon")
+			res.add(xml);
+		else{
+			for(elem in xml.elements()){
+				findIconRec(elem, res);
+			}
+		}
+	}
+
+	private function onSelectNote(?target: DefaultButton):Void
+	{
+		target.setToggle(false);
 		var panel = cast(displays.get(model.contentRef), ScrollPanel);
-		panel.setContent(Localiser.instance.getItemContent(noteMap.get(e.target)));
+		panel.setContent(Localiser.instance.getItemContent(noteMap.get(target)));
 		if(!contains(panel))
 			addChild(panel);
 	}

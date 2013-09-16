@@ -50,7 +50,7 @@ class DefaultButton extends WidgetContainer {
 
 	private var clip:TileClip;
 
-	/**
+		/**
      * Action to execute on click
      */
 	public dynamic function buttonAction(?target: DefaultButton): Void{}
@@ -260,11 +260,11 @@ class DefaultButton extends WidgetContainer {
 				throw "There is no information for state \"" + currentState + "\" for button \"" + ref + "\".";
 
 			var array = new Array<Widget>();
-			for(key in list.keys()){
-				if(!Std.is(list.get(key), TileImage))
-					array.push(list.get(key));
+			for(widget in list){
+				if(!Std.is(widget, TileImage))
+					array.push(widget);
 				else{
-					cast(list.get(key), TileImage).set_visible(true);
+					cast(widget, TileImage).set_visible(true);
 				}
 			}
 			content.addChild(layer.view);
@@ -272,6 +272,17 @@ class DefaultButton extends WidgetContainer {
 			array.sort(sortDisplayObjects);
 			for(obj in array){
 				content.addChild(obj);
+			}
+
+			if(background != null){
+				var image = new Sprite();
+				if(background.length == 10)
+					image.graphics.beginFill(Std.parseInt("0x"+background.substr(4)), Std.parseInt(background.substr(2, 4))/10);
+				else
+					image.graphics.beginFill(Std.parseInt(background));
+				image.graphics.drawRect(0, 0, width, height);
+				image.graphics.endFill();
+				content.addChildAt(image, 0);
 			}
 
 			renderNeeded = true;
@@ -297,9 +308,9 @@ class DefaultButton extends WidgetContainer {
 
 	private function sortDisplayObjects(x:Widget, y:Widget):Int
 	{
-		if(x.z < y.z)
+		if(x.zz < y.zz)
 			return -1;
-		else if(x.z > y.z)
+		else if(x.zz > y.zz)
 			return 1;
 		else
 			return 0;
@@ -320,22 +331,13 @@ class DefaultButton extends WidgetContainer {
 	private function createStates(node:Fast):Map<String, Widget>
 	{
 		var list = new Map<String, Widget>();
+		if(node.has.background)
+			background = node.att.background;
+
 		var zIndex = 0;
 		for(elem in node.elements){
-			switch (elem.name.toLowerCase()) {
-				case "image":
-					var img = new TileImage(elem, layer, false);
-					list.set(elem.att.tile, img);
-
-				case "text": var text = new ScrollPanel(elem);
-					text.z = zIndex;
-					list.set(elem.att.ref, text);
-
-				case "animation": var anim = new AnimationDisplay(elem);
-					anim.z = zIndex;
-					list.set(elem.att.ref, anim);
-			}
-			zIndex++;
+			var widget = createElement(elem);
+			list.set(widget.ref, widget);
 		}
 		return list;
 	}
@@ -365,10 +367,14 @@ class DefaultButton extends WidgetContainer {
 		dispatchEvent(new ButtonActionEvent(ButtonActionEvent.TOGGLE));
 	}
 
+	override private inline function addElement(elem:Widget):Void
+	{
+		elem.zz = zIndex;
+		zIndex++;
+	}
+
 	override public function maskSprite(sprite:Sprite,  maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0): Void
 	{
-		//super.maskSprite(sprite, maskWidth, maskHeight, maskX, maskY);
-		//content.mouseChildren = false;
 	}
 
 }

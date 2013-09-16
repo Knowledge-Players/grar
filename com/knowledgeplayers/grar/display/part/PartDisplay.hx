@@ -84,7 +84,6 @@ class PartDisplay extends KpDisplay {
 
 	public function init():Void
 	{
-
 		if(part.file != null){
 			Localiser.instance.pushLocale();
 			Localiser.instance.set_layoutPath(part.file);
@@ -282,7 +281,7 @@ class PartDisplay extends KpDisplay {
 		}
 		else if(elemNode.name.toLowerCase() == "intro"){
 			var intro = new IntroScreen(elemNode);
-			intro.z = zIndex;
+			intro.zz = zIndex;
 			displays.set(elemNode.att.ref, intro);
 			zIndex++;
 		}
@@ -318,7 +317,6 @@ class PartDisplay extends KpDisplay {
 		}
 		else if(action.toLowerCase() == "open_notebook"){
 			button.buttonAction = function(?target: DefaultButton){
-				NotebookDisplay.instance.model = Notebook.instance;
 				GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
 			};
 		}
@@ -475,8 +473,8 @@ class PartDisplay extends KpDisplay {
 
 		if(!isFirst)
 			addChild(cast(displays.get(item.ref), ScrollPanel));
-
-		displayPart();
+		else
+			displayPart();
 	}
 
 	private function displayPart():Void
@@ -513,9 +511,9 @@ class PartDisplay extends KpDisplay {
 
 	private function sortDisplayObjects(x:Widget, y:Widget):Int
 	{
-		if(x.z < y.z)
+		if(x.zz < y.zz)
 			return -1;
-		else if(x.z > y.z)
+		else if(x.zz > y.zz)
 			return 1;
 		else
 			return 0;
@@ -572,13 +570,11 @@ class PartDisplay extends KpDisplay {
 				var exists = false;
 
 				for(item in text.images){
-
 					if(key == item){
 						exists = true;
 						if(Std.is(object, TileImage)){
 							currentItems.add(object);
-
-							cast(object, TileImage).set_visible(true);
+							//cast(object, TileImage).set_visible(true);
 						}
 						else
 							currentItems.add(object);

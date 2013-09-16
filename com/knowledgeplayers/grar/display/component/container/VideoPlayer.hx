@@ -231,9 +231,9 @@ class VideoPlayer extends WidgetContainer
 		return bmp;
 	}
 
-	override public function createElement(elemNode:Fast):Void
+	override public function createElement(elemNode:Fast):Widget
 	{
-		super.createElement(elemNode);
+		var widget = super.createElement(elemNode);
 		// TODO widgetContainer
 		if(elemNode.name.toLowerCase() == "progressbar"){
 			progressBar = new Image();
@@ -300,6 +300,7 @@ class VideoPlayer extends WidgetContainer
 		}
 
         content.setChildIndex(displays.get("bg"),content.numChildren-1);
+		return widget;
 	}
 
 	// Privates

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.localisation.Localiser;
 import nme.display.DisplayObject;
 import com.knowledgeplayers.grar.util.MathUtils;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
@@ -57,11 +58,14 @@ class MenuSphericalDisplay extends MenuDisplay {
 			var tree = new XmlTree(GameManager.instance.game.menu);
 			var i = 0;
 			var nodes = tree.getDepth(i);
+			Localiser.instance.pushLocale();
+			Localiser.instance.setLocalisationFile(LayoutManager.instance.interfaceLocale);
 			while(!nodes.isEmpty()){
 				for(level in nodes)
 					createSphericLevel(level);
 				nodes = tree.getDepth(++i);
 			}
+			Localiser.instance.popLocale();
 		}
 
 		GameManager.instance.menuLoaded = true;

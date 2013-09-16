@@ -19,23 +19,24 @@ class BoxDisplay extends WidgetContainer
 
 	public function new(?xml: Fast, ?tilesheet: TilesheetEx)
 	{
-		super(xml, tilesheet);
 		textFields = new Map<String, ScrollPanel>();
-		var sprite = new TileSprite(layer, xml.att.tile);
-		sprite.x = sprite.width /2;
-		sprite.y = sprite.height /2;
-		layer.addChild(sprite);
-		layer.render();
-
-		for(textNode in xml.nodes.Text){
-			var text = new ScrollPanel(textNode);
-			content.addChild(text);
-			textFields.set(text.ref, text);
-		}
-
-		addEventListener(Event.ADDED_TO_STAGE, function(e){
-			displayContent();
-		});
-		//initSize();
+		super(xml, tilesheet);
 	}
+
+	override private inline function createText(textNode:Fast):Widget
+	{
+
+		var text = new ScrollPanel(textNode);
+		addElement(text);
+		textFields.set(text.ref, text);
+		return text;
+	}
+
+	override private inline function addElement(elem:Widget):Void
+	{
+		if(zIndex == 0)
+			zIndex++;
+		super.addElement(elem);
+	}
+
 }

@@ -7,11 +7,6 @@ import com.knowledgeplayers.utils.assets.AssetsStorage;
 class Notebook
 {
 	/**
-     * Instance
-     */
-	public static var instance (get_instance, null):Notebook;
-
-	/**
 	* Notes in the notebook
 	**/
 	public var notes (default, default):Array<Note>;
@@ -46,31 +41,13 @@ class Notebook
 	**/
 	public var items (default, default):GenericStack<String>;
 
-	private var initialized: Bool = false;
-
-		/**
-     * @return the instance
-     */
-
-	static public function get_instance():Notebook
-	{
-		if(instance == null)
-			instance = new Notebook();
-		return instance;
-	}
-
-	public function init(file:String):Void
-	{
-		if(!initialized){
-			this.file = file;
-			parseContent(AssetsStorage.getXml(file));
-		}
-	}
-
-	private function new()
+	public function new(file:String)
 	{
 		notes = new Array<Note>();
 		items = new GenericStack<String>();
+
+		this.file = file;
+		parseContent(AssetsStorage.getXml(file));
 	}
 
 	private function parseContent(content:Xml):Void
@@ -82,7 +59,7 @@ class Notebook
 		for(note in fast.node.Notes.nodes.Note){
 			notes.push({id: note.att.id, title: note.att.title, subtitle: note.has.subtitle?note.att.subtitle:null, content: note.att.content, unlocked: note.att.unlocked == "true", icon: note.has.icon?note.att.icon:null});
 		}
-		for(item in fast.nodes.Item)
+		for(item in fast.nodes.Image)
 			items.add(item.att.ref);
 		closeButton = {ref: fast.node.Button.att.ref, content: fast.node.Button.att.content};
 	}

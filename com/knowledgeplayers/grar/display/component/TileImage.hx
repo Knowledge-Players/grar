@@ -40,6 +40,9 @@ class TileImage extends Image{
 		}
 		super(xml);
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
+		addEventListener(Event.ADDED_TO_STAGE, function(e){
+			set_visible(true);
+		});
 	}
 
 	#if !flash override #end public function set_x(x:Float):Float
@@ -116,6 +119,11 @@ class TileImage extends Image{
 		return this.transformation = transformation;
 	}
 
+	override public function toString():String
+	{
+		return '$ref: $x;$y '+(tileSprite != null ? tileSprite.width : -1)+' x '+(tileSprite != null ? tileSprite.height : -1)+' ($scale) $transitionIn->$transitionOut';
+	}
+
 	// Private
 
 	private function init():Void
@@ -182,7 +190,7 @@ class TileImage extends Image{
 		}
 	}
 
-	private function onRemove(e:Event):Void
+	private inline function onRemove(e:Event):Void
 	{
 		set_visible(false);
 	}
