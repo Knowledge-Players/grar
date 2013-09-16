@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import com.knowledgeplayers.grar.structure.contextual.Note;
 import haxe.ds.GenericStack;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.component.TileImage;
@@ -30,7 +31,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 	public var model (default, set_model): Notebook;
 
 	private var noteTemplate: Fast;
-	private var noteMap: Map<DefaultButton, String>;
+	private var noteMap: Map<DefaultButton, Note>;
 
 		/**
 	* @return the instance
@@ -48,7 +49,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		if(displayFast.has.layout)
 			layout = displayFast.att.layout;
 		noteTemplate = displayFast.node.Note;
-		noteMap = new Map<DefaultButton, String>();
+		noteMap = new Map<DefaultButton, Note>();
 	}
 
 	public function set_model(model:Notebook):Notebook
@@ -91,8 +92,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				var button: DefaultButton = new DefaultButton(noteTemplate);
 				button.y += offsetY;
 				offsetY += button.height + Std.parseFloat(noteTemplate.att.offsetY);
-				button.name = note.title;
-				button.setText(Localiser.instance.getItemContent(note.title), "title");
+				button.setText(Localiser.instance.getItemContent(note.name), "title");
 				button.setText(Localiser.instance.getItemContent(note.subtitle), "subtitle");
 				buttonGroups.get("notes").add(button);
 				//button.enableToggle(true);
@@ -101,8 +101,8 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
 				addChild(button);
 				setButtonAction(button, "show");
-				button.visible = note.unlocked;
-				noteMap.set(button, note.content);
+				button.visible = note.isActivated;
+				noteMap.set(button, note);
 			}
 			return this.model = model;
 		}
@@ -149,19 +149,28 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 	{
 		target.setToggle(false);
 		var panel = cast(displays.get(model.contentRef), ScrollPanel);
-		panel.setContent(Localiser.instance.getItemContent(noteMap.get(target)));
+		var title = cast(displays.get(model.titleRef), ScrollPanel);
+		Localiser.instance.pushLocale();
+		Localiser.instance.layoutPath = model.file;
+		panel.setContent(Localiser.instance.getItemContent(noteMap.get(target).content));
+		title.setContent(Localiser.instance.getItemContent(noteMap.get(target).name));
+		Localiser.instance.popLocale();
 		if(!contains(panel))
 			addChild(panel);
+		if(!contains(title))
+			addChild(title);
 	}
 
 	private function onUnlocked(e:TokenEvent):Void
 	{
-		for(note in model.notes){
-			if(note.id == e.token.ref){
-				note.unlocked = true;
-				for(button in noteMap.keys()){
-					if(noteMap.get(button) == note.content)
-						button.visible = true;
+		if(e.token.type == "note"){
+			for(note in model.notes){
+				if(note.ref == e.token.ref){
+					note.isActivated = true;
+					for(button in noteMap.keys()){
+						if(noteMap.get(button) == note)
+							button.visible = true;
+					}
 				}
 			}
 		}

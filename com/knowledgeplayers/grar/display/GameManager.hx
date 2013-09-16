@@ -118,8 +118,10 @@ class GameManager extends EventDispatcher {
 		inventory.get(tokenName).isActivated = true;
 		var tokenEvent = new TokenEvent(TokenEvent.ADD);
 
-		layout.zones.get(game.ref).addChild(tokenNotification);
-		tokenNotification.showNotification(tokenName);
+		if(tokenNotification != null){
+			layout.zones.get(game.ref).addChild(tokenNotification);
+			tokenNotification.showNotification(tokenName);
+		}
 
 		tokenEvent.token = inventory.get(tokenName);
 		dispatchEvent(tokenEvent);
@@ -156,6 +158,8 @@ class GameManager extends EventDispatcher {
 			this.layout = LayoutManager.instance.getLayout(layout);
 			Lib.current.addChild(this.layout.content);
 		}
+		else
+			previousLayout = this.layout == null ? "default" : this.layout.name;
 	}
 
 	/**
@@ -252,14 +256,6 @@ class GameManager extends EventDispatcher {
 		displayPart(game.start(id), interrupt);
 	}
 
-	public function displayContextual(contextual:ContextualDisplay, ?layout: String):Void
-	{
-		if(layout != null)
-			changeLayout(layout);
-		if(!this.layout.zones.get(game.ref).contains(cast(contextual, KpDisplay)))
-			this.layout.zones.get(game.ref).addChild(cast(contextual, KpDisplay));
-	}
-
 	public function displayTrackable(item: Trackable):Void
 	{
 		if(Std.is(item, Activity))
@@ -268,8 +264,18 @@ class GameManager extends EventDispatcher {
 			displayPart(cast(item, Part), true);
 	}
 
+	public function displayContextual(contextual:ContextualDisplay, ?layout: String):Void
+	{
+		if(layout != null)
+			changeLayout(layout);
+		if(!this.layout.zones.get(game.ref).contains(cast(contextual, KpDisplay)))
+			this.layout.zones.get(game.ref).addChild(cast(contextual, KpDisplay));
+	}
+
 	public function hideContextual(contextual:ContextualDisplay):Void
 	{
+		if(this.layout.zones.get(game.ref).contains(cast(contextual, KpDisplay)))
+			this.layout.zones.get(game.ref).removeChild(cast(contextual, KpDisplay));
 		changeLayout(previousLayout);
 	}
 

@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.structure.contextual;
 
+import com.knowledgeplayers.grar.display.GameManager;
+import com.knowledgeplayers.grar.structure.contextual.Note;
 import haxe.ds.GenericStack;
 import haxe.xml.Fast;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
@@ -37,6 +39,11 @@ class Notebook
 	public var contentRef (default, default):String;
 
 	/**
+	* Ref to the text area where title will be displayed
+	**/
+	public var titleRef (default, default):String;
+
+	/**
 	* Items to display with the notebook
 	**/
 	public var items (default, default):GenericStack<String>;
@@ -56,8 +63,11 @@ class Notebook
 		background = fast.att.background;
 		title = {ref: fast.node.Title.att.ref, content: fast.node.Title.att.content};
 		contentRef = fast.node.Notes.att.ref;
-		for(note in fast.node.Notes.nodes.Note){
-			notes.push({id: note.att.id, title: note.att.title, subtitle: note.has.subtitle?note.att.subtitle:null, content: note.att.content, unlocked: note.att.unlocked == "true", icon: note.has.icon?note.att.icon:null});
+		titleRef = fast.node.Notes.att.titleRef;
+		for(noteFast in fast.node.Notes.nodes.Note){
+			var note = new Note(noteFast);
+			notes.push(note);
+			GameManager.instance.inventory.set(note.ref, note);
 		}
 		for(item in fast.nodes.Image)
 			items.add(item.att.ref);
@@ -68,13 +78,4 @@ class Notebook
 	{
 		return '$title.content: $notes';
 	}
-}
-
-typedef Note = {
-	var id: String;
-	var title: String;
-	var content: String;
-	var unlocked: Bool;
-	@:optionnal var subtitle: String;
-	@:optionnal var icon: String;
 }

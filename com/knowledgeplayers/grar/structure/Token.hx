@@ -45,10 +45,10 @@ class Token {
 	{
 		if(_fast != null){
 			ref = _fast.att.ref;
-			type = _fast.att.type;
+			type = _fast.has.type ? _fast.att.type : null;
 			name = _fast.att.name;
 			content = _fast.att.content;
-			fullScreenContent = _fast.att.fullScreenContent;
+			fullScreenContent = _fast.has.fullScreenContent ? _fast.att.fullScreenContent : null;
 		}
 	}
 
