@@ -49,6 +49,7 @@ class DefaultButton extends WidgetContainer {
 	private var currentState:String;
 
 	private var clip:TileClip;
+	private var isToggleEnabled: Bool = false;
 
 		/**
      * Action to execute on click
@@ -87,7 +88,7 @@ class DefaultButton extends WidgetContainer {
 			}
 
 			if(xml.has.toggle)
-				enableToggle(xml.att.toggle == "true");
+				isToggleEnabled = xml.att.toggle == "true";
 			if(xml.has.group)
 				group = xml.att.group.toLowerCase();
 		}
@@ -130,16 +131,17 @@ class DefaultButton extends WidgetContainer {
 		renderState("out");
 	}
 
-	public function enableToggle(enable:Bool = true):Void
+	/*public function enableToggle(enable:Bool = true):Void
 	{
 		if(enable){
+			trace("toggle enabled");
 			addEventListener(MouseEvent.CLICK, onToggle);
 		}
 		else{
 			if(hasEventListener(MouseEvent.CLICK))
 				removeEventListener(MouseEvent.CLICK, onToggle);
 		}
-	}
+	}*/
 
 	// Abstract
 
@@ -153,6 +155,8 @@ class DefaultButton extends WidgetContainer {
 
 	private function onClick(event:MouseEvent):Void
 	{
+		if(isToggleEnabled)
+			onToggle();
 		buttonAction(this);
 	}
 
@@ -331,10 +335,18 @@ class DefaultButton extends WidgetContainer {
 	private function createStates(node:Fast):Map<String, Widget>
 	{
 		var list = new Map<String, Widget>();
-		if(node.has.background)
-			background = node.att.background;
+		if(node.has.background){
+			var bkg = new Image();
+			if(node.att.background.length == 10)
+				bkg.graphics.beginFill(Std.parseInt("0x"+node.att.background.substr(4)), Std.parseInt(node.att.background.substr(2, 4))/10);
+			else
+				bkg.graphics.beginFill(Std.parseInt(node.att.background));
+			bkg.graphics.drawRect(0, 0, width, height);
+			bkg.graphics.endFill();
+			list.set("bkg", bkg);
+		}
+			//background = node.att.background;
 
-		var zIndex = 0;
 		for(elem in node.elements){
 			var widget = createElement(elem);
 			list.set(widget.ref, widget);
@@ -361,7 +373,7 @@ class DefaultButton extends WidgetContainer {
 		}
 	}
 
-	private inline function onToggle(e: MouseEvent):Void
+	private inline function onToggle():Void
 	{
 		setToggle(toggle != "active");
 		dispatchEvent(new ButtonActionEvent(ButtonActionEvent.TOGGLE));

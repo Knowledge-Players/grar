@@ -84,7 +84,7 @@ class WidgetContainer extends Widget{
 		return content.alpha = contentAlpha = alpha;
 	}
 
-	public function setBackground(bkg:String, alpha: Float = 1,?color:Array<String>,?arrowX:Float,?arrowY:Float,?radius:Float,?line:Float,?colorLine:Int,?bubbleWidth:Float,?bubbleHeight:Float,?shadow:Float,?gap:Float):String
+	public function setBackground(bkg:String, alpha: Float = 1,?color:Array<String>,?arrowX:Float,?arrowY:Float,?radius:Float,?line:Float,?colorLine:Int,?bubbleWidth:Float,?bubbleHeight:Float,?shadow:Float,?gap:Float, resize: Bool = false):String
 	{
 		if(bkg != null){
 			if(Std.parseInt(bkg) != null){
@@ -111,8 +111,10 @@ class WidgetContainer extends Widget{
 					var tile = new TileSprite(layer, bkg);
 					tile.alpha = alpha;
 					layer.addChild(tile);
-					tile.scaleX = maskWidth / tile.width;
-					tile.scaleY = maskHeight / tile.height;
+					if(resize){
+						tile.scaleX = maskWidth / tile.width;
+						tile.scaleY = maskHeight / tile.height;
+					}
 					tile.x = tile.width / 2;
 					tile.y = tile.height / 2;
 					layer.render();
@@ -210,7 +212,8 @@ class WidgetContainer extends Widget{
                 xml.has.bubbleWidth ? Std.parseInt(xml.att.bubbleWidth):0,
                 xml.has.bubbleHeight ? Std.parseInt(xml.att.bubbleHeight):0,
                 xml.has.shadow ? Std.parseFloat(xml.att.shadow):0,
-                xml.has.gap ? Std.parseFloat(xml.att.gap):5
+                xml.has.gap ? Std.parseFloat(xml.att.gap):5,
+				xml.has.resize ? xml.att.resize == "true" : false
             );
 			for(child in xml.elements){
 				createElement(child);

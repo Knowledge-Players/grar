@@ -87,13 +87,16 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 					icon.set("src", note.icon);
 					icon.nodeName = "Image";
 				}
-				trace(note, note.icon);
-				trace(noteTemplate.x);
+				// Clickable note
 				var button: DefaultButton = new DefaultButton(noteTemplate);
 				button.y += offsetY;
 				offsetY += button.height + Std.parseFloat(noteTemplate.att.offsetY);
+				button.name = note.title;
 				button.setText(Localiser.instance.getItemContent(note.title), "title");
 				button.setText(Localiser.instance.getItemContent(note.subtitle), "subtitle");
+				buttonGroups.get("notes").add(button);
+				//button.enableToggle(true);
+				button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 				// Fill hit box
 				DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
 				addChild(button);
@@ -112,6 +115,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 	{
 		super();
 		GameManager.instance.addEventListener(TokenEvent.ADD, onUnlocked);
+		buttonGroups.set("notes", new GenericStack<DefaultButton>());
 	}
 
 	override private function setButtonAction(button:DefaultButton, action:String):Void

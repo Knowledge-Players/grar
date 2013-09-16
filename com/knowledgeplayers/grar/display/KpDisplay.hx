@@ -241,6 +241,7 @@ class KpDisplay extends Sprite {
 
 	private function onButtonToggle(e:ButtonActionEvent):Void
 	{
+		trace("toggled");
 		var button = cast(e.target, DefaultButton);
 		if(button.toggle == "inactive"){
 			for(b in buttonGroups.get(button.group)){
