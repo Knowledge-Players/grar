@@ -32,7 +32,7 @@ class BoxDisplay extends WidgetContainer
 		return text;
 	}
 
-	override private inline function addElement(elem:Widget):Void
+	override private function addElement(elem:Widget):Void
 	{
 		if(zIndex == 0)
 			zIndex++;

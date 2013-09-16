@@ -300,14 +300,14 @@ class WidgetContainer extends Widget{
 
     }
 
-	private inline function createText(textNode: Fast):Widget
+	private function createText(textNode: Fast):Widget
 	{
 		var text = new ScrollPanel(textNode);
 		addElement(text);
 		return text;
 	}
 
-	private inline function addElement(elem:Widget):Void
+	private function addElement(elem:Widget):Void
 	{
 		elem.zz = zIndex;
         displays.set(elem.ref,elem);
