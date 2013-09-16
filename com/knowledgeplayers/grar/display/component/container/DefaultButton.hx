@@ -278,8 +278,8 @@ class DefaultButton extends WidgetContainer {
 				content.addChild(obj);
 			}
 
-			if(background != null){
-				var image = new Sprite();
+			if(list.exists("backgroundDrawn")){
+				var image: Image = cast(list.get("backgroundDrawn"), Image);
 				if(background.length == 10)
 					image.graphics.beginFill(Std.parseInt("0x"+background.substr(4)), Std.parseInt(background.substr(2, 4))/10);
 				else
@@ -337,13 +337,14 @@ class DefaultButton extends WidgetContainer {
 		var list = new Map<String, Widget>();
 		if(node.has.background){
 			var bkg = new Image();
-			if(node.att.background.length == 10)
+			background = node.att.background;
+			/*if(node.att.background.length == 10)
 				bkg.graphics.beginFill(Std.parseInt("0x"+node.att.background.substr(4)), Std.parseInt(node.att.background.substr(2, 4))/10);
 			else
 				bkg.graphics.beginFill(Std.parseInt(node.att.background));
 			bkg.graphics.drawRect(0, 0, width, height);
-			bkg.graphics.endFill();
-			list.set("bkg", bkg);
+			bkg.graphics.endFill();*/
+			list.set("backgroundDrawn", bkg);
 		}
 			//background = node.att.background;
 
