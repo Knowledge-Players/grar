@@ -151,7 +151,6 @@ class Zone extends KpDisplay {
 
 	private function activeSound(?_target:DefaultButton):Void
 	{
-
 		if(soundState){
 			GameManager.instance.changeVolume(0);
 			soundState = false;
@@ -162,7 +161,6 @@ class Zone extends KpDisplay {
 			soundState = true;
 			if(_target != null) _target.setToggle(true);
 		}
-
 	}
 
 	private function initSize(sizes:String, maxSize:Float):Array<Dynamic>
@@ -244,6 +242,7 @@ class Zone extends KpDisplay {
 			}
 			var tile = new TileImage(itemNode, layers.get(spritesheet));
 			addElement(tile, itemNode);
+			addChild(layers.get(spritesheet).view);
 		}
 	}
 

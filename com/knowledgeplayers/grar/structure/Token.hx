@@ -19,7 +19,7 @@ class Token {
 	/**
     * State of activation
     **/
-	public var isActivated (default, default):Bool = false;
+	public var isActivated (default, default):Bool;
 
 	/**
     * Key to the name of this token
@@ -49,6 +49,11 @@ class Token {
 			name = _fast.att.name;
 			content = _fast.att.content;
 			fullScreenContent = _fast.has.fullScreenContent ? _fast.att.fullScreenContent : null;
+			isActivated = _fast.has.unlocked ? _fast.att.unlocked == "true" : false;
+		}
+		else{
+			ref="undefined";
+			isActivated = false;
 		}
 	}
 
