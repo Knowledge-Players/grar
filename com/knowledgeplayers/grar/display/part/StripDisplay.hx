@@ -29,12 +29,10 @@ class StripDisplay extends PartDisplay {
 	private var boxes:Map<String, BoxDisplay>;
 	private var currentBox:BoxPattern;
 	private var currentBoxItem:Item;
-	private var boxIndex:Int = 0;
 
 	public function new(part:StripPart)
 	{
 		super(part);
-
 		boxes = new Map<String, BoxDisplay>();
 	}
 
@@ -68,6 +66,7 @@ class StripDisplay extends PartDisplay {
 
 	override private function startPattern(pattern:Pattern):Void
 	{
+		trace(pattern.name);
 		super.startPattern(pattern);
 		currentBox = cast(pattern, BoxPattern);
 
@@ -118,6 +117,7 @@ class StripDisplay extends PartDisplay {
 
 	override private function displayPart():Void
 	{
+		trace(currentBox.name);
 		var box: BoxDisplay = boxes.get(currentBox.name);
 		if(!box.textFields.exists(currentBoxItem.ref))
 			throw "[StripDisplay] There is no TextField with ref \""+currentBoxItem.ref+"\"";
@@ -148,8 +148,10 @@ class StripDisplay extends PartDisplay {
 
 	private function onBoxVisible():Void
 	{
-		if(Lambda.count(currentBox.buttons) == 0 && currentBox.nextPattern != "")
+		if(Lambda.count(currentBox.buttons) == 0 && currentBox.nextPattern != ""){
+			currentBox.restart();
 			goToPattern(currentBox.nextPattern);
+		}
 	}
 
 	override private function createImage(itemNode:Fast):Void

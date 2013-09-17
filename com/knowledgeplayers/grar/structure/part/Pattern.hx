@@ -82,8 +82,10 @@ class Pattern implements PartElement {
 			itemIndex++;
 			return patternContent[itemIndex - 1];
 		}
-		else
+		else{
+			restart();
 			return null;
+		}
 	}
 
 	/**

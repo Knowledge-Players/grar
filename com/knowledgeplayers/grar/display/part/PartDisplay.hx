@@ -237,7 +237,7 @@ class PartDisplay extends KpDisplay {
 		if(i == part.elements.length)
 			throw "[PartDisplay] There is no pattern with ref \""+target+"\"";
 
-		cast(part.elements[i], Pattern).itemIndex = 0;
+		cast(part.elements[i], Pattern).restart();
 		startPattern(cast(part.elements[i], Pattern));
 	}
 

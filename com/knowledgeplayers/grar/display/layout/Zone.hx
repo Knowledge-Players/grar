@@ -50,10 +50,9 @@ class Zone extends KpDisplay {
 
 	public function init(_zone:Fast):Void
 	{
-
-		if(_zone.has.text){
+		/*if(_zone.has.text){
 			trace(Localiser.instance.currentLocale);
-		}
+		}*/
 		if(_zone.has.bgColor)
 			DisplayUtils.initSprite(this, zoneWidth, zoneHeight, Std.parseInt(_zone.att.bgColor));
 		else
@@ -239,10 +238,10 @@ class Zone extends KpDisplay {
 			if(!layers.exists(spritesheet)){
 				var layer = new TileLayer(UiFactory.tilesheet);
 				layers.set(spritesheet, layer);
+				addChild(layers.get(spritesheet).view);
 			}
 			var tile = new TileImage(itemNode, layers.get(spritesheet));
 			addElement(tile, itemNode);
-			addChild(layers.get(spritesheet).view);
 		}
 	}
 

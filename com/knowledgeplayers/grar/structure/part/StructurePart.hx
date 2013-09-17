@@ -167,6 +167,7 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 			ScoreChart.instance.addScoreToPerk(perk, perks.get(perk));
 		if(soundLoopChannel != null)
 			soundLoopChannel.stop();
+
 	}
 	/**
 		* @param    startIndex : Next element after this position
