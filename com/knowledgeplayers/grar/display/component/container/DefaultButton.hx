@@ -131,18 +131,6 @@ class DefaultButton extends WidgetContainer {
 		renderState("out");
 	}
 
-	/*public function enableToggle(enable:Bool = true):Void
-	{
-		if(enable){
-			trace("toggle enabled");
-			addEventListener(MouseEvent.CLICK, onToggle);
-		}
-		else{
-			if(hasEventListener(MouseEvent.CLICK))
-				removeEventListener(MouseEvent.CLICK, onToggle);
-		}
-	}*/
-
 	// Abstract
 
 	private function onMouseOver(event:MouseEvent):Void
@@ -310,7 +298,7 @@ class DefaultButton extends WidgetContainer {
 		}
 	}
 
-	private function sortDisplayObjects(x:Widget, y:Widget):Int
+	private inline function sortDisplayObjects(x:Widget, y:Widget):Int
 	{
 		if(x.zz < y.zz)
 			return -1;
@@ -338,15 +326,8 @@ class DefaultButton extends WidgetContainer {
 		if(node.has.background){
 			var bkg = new Image();
 			background = node.att.background;
-			/*if(node.att.background.length == 10)
-				bkg.graphics.beginFill(Std.parseInt("0x"+node.att.background.substr(4)), Std.parseInt(node.att.background.substr(2, 4))/10);
-			else
-				bkg.graphics.beginFill(Std.parseInt(node.att.background));
-			bkg.graphics.drawRect(0, 0, width, height);
-			bkg.graphics.endFill();*/
 			list.set("backgroundDrawn", bkg);
 		}
-			//background = node.att.background;
 
 		for(elem in node.elements){
 			var widget = createElement(elem);

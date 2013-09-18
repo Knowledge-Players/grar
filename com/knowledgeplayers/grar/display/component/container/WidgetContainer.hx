@@ -76,7 +76,6 @@ class WidgetContainer extends Widget{
 	private var layer: TileLayer;
 	private var displays: Map<String, Widget>;
 	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
-	// z = 0 is reserved for the layer
 	private var zIndex: Int = 0;
 
 	public function set_contentAlpha(alpha: Float):Float
@@ -256,7 +255,7 @@ class WidgetContainer extends Widget{
 
 			scrollBar.setHeight(maskHeight);
 			scrollBar.set_ratio(maskHeight / content.height);
-			scrollBar.x = content.x+maskWidth;// - scrollBar.width/2;
+			scrollBar.x = content.x+maskWidth;
 			scrollBar.y = content.y;
 			scrollBar.scrolled = scrollToRatio;
 			scrollNeeded = true;

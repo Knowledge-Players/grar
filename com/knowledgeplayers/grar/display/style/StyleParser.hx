@@ -47,7 +47,10 @@ class StyleParser {
 					else
 						style.icon = AssetsStorage.getBitmapData(child.att.value);
 					style.iconPosition = child.att.position.toLowerCase();
-					style.setIconMargin(child.att.margin);
+					if(child.has.margin)
+						style.setIconMargin(child.att.margin);
+					else
+						style.setIconMargin("");
 				}
 				else if(child.name.toLowerCase() == "background"){
 					if(Std.parseInt(child.att.value) != null){

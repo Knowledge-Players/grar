@@ -51,7 +51,7 @@ class Widget extends Sprite{
 
 	public var zz: Float;
 
-	private var origin: {x: Float, y: Float, scaleX: Float, scaleY: Float};
+	private var origin: {x: Float, y: Float, scaleX: Float, scaleY: Float, alpha: Float};
 	private var lockPosition: Bool = false;
 
 	public function set_scale(scale:Float):Float
@@ -90,7 +90,7 @@ class Widget extends Sprite{
 		addEventListener(Event.ADDED_TO_STAGE, function(e:Event)
 		{
 			if(!lockPosition){
-				origin = {x: x, y: y, scaleX: scaleX, scaleY: scaleY};
+				origin = {x: x, y: y, scaleX: scaleX, scaleY: scaleY, alpha: alpha};
 				lockPosition = true;
 			}
 			reset();

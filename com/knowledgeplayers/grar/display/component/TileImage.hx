@@ -45,7 +45,7 @@ class TileImage extends Image{
 			set_visible(true);
 		});
 		if(tileSprite != null)
-			origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY};
+			origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY, alpha: tileSprite.alpha};
 	}
 
 	#if !flash override #end public function set_x(x:Float):Float
