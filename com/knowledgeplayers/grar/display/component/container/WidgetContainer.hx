@@ -200,7 +200,8 @@ class WidgetContainer extends Widget{
 					grid.push(Std.parseFloat(number));
 				grid9 = new Rectangle(grid[0], grid[1], grid[2], grid[3]);
 			}
-			setBackground(
+			setBackground
+            (
                 xml.has.background ? xml.att.background:null,
                 xml.has.alpha ? Std.parseFloat(xml.att.alpha) : 1,
                 xml.has.color ? Std.string(xml.att.color).split(","):null,
@@ -255,13 +256,12 @@ class WidgetContainer extends Widget{
 
 			scrollBar.setHeight(maskHeight);
 			scrollBar.set_ratio(maskHeight / content.height);
-			scrollBar.x = this.x+maskWidth;// - scrollBar.width/2;
-			scrollBar.y = this.y;
+			scrollBar.x = content.x+maskWidth;// - scrollBar.width/2;
+			scrollBar.y = content.y;
 			scrollBar.scrolled = scrollToRatio;
 			scrollNeeded = true;
-             //TODO A voir si on peut optimiser
-			// startDrag() on the mask ?
-            parent.addChild(scrollBar);
+
+            addChild(scrollBar);
 		}
 		else{
 			scrollNeeded = false;
@@ -307,7 +307,7 @@ class WidgetContainer extends Widget{
 	{
 		var text = new ScrollPanel(textNode);
 		addElement(text);
-		return text;
+        return text;
 	}
 
 	private function addElement(elem:Widget):Void

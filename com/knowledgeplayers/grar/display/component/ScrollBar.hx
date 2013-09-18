@@ -66,14 +66,14 @@ class ScrollBar extends Sprite
 		bmp.bitmapScale9Grid = scale9Grid;
 		bmp.bitmapWidth = width;
 		cursorSprite.addChild(bmp);
-        cursorSprite.mouseChildren = false;
 
         cursorSprite.buttonMode = true;
-        cursorSprite.addEventListener(MouseEvent.MOUSE_DOWN, cursorStart);
+
         addEventListener(MouseEvent.MOUSE_UP, cursorStop);
         addEventListener(MouseEvent.MOUSE_OUT, cursorStop);
 		addChild(bgSprite);
 		addChild(cursorSprite);
+
 
 
 		mouseEnabled = true;
@@ -82,12 +82,23 @@ class ScrollBar extends Sprite
 	public function setHeight(height: Float):Void
 	{
 		cast(bgSprite.getChildAt(0), ScaleBitmap).bitmapHeight = height;
+
 	}
 
 	public function set_ratio(ratio:Float):Float
 	{
 		cast(cursorSprite.getChildAt(0), ScaleBitmap).bitmapHeight = height * ratio;
+
+        var zoneClick = new Sprite();
+        zoneClick.graphics.beginFill(0xFF0000,0);
+        zoneClick.graphics.drawRect(-cursorSprite.width/2-10,0,cursorSprite.width*2+20,cursorSprite.height);
+        zoneClick.graphics.endFill();
+        zoneClick.addEventListener(MouseEvent.MOUSE_DOWN, cursorStart);
+        cursorSprite.addChild(zoneClick);
+
 		return this.ratio = ratio;
+
+
 	}
 
 	/**
