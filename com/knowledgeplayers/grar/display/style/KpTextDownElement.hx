@@ -200,17 +200,21 @@ class KpTextDownElement {
 			case "before": concatObjects(output, bmp, tf);
 				tf.x += style.iconMargin[1];
 			case "after": concatObjects(output, tf, bmp);
-				tf.x += style.iconMargin[3];
+				bmp.x = tf.x + tf.textWidth;
+				bmp.x += style.iconMargin[3];
 			case "both": concatObjects(output, bmp, tf);
 				var bmpBis = new Bitmap(style.icon);
 				if(style.iconResize)
 					bmpBis.width = bmpBis.height = 10;
 				concatObjects(output, bmpBis);
-			default: throw style.iconPosition + ": this position is not handled";
+			default: throw "[KpTextDownElement] Position '"+style.iconPosition+"' is not handled";
 		}
 
 		bmp.y = StyleParser.getStyle().getSize() / 2 - bmp.height / 2;
-
+		bmp.y += style.iconMargin[0];
+		var bottomMargin = DisplayUtils.initSprite(new Sprite(), 1, style.iconMargin[2], 0.001);
+		bottomMargin.y = output.height;
+		output.addChild(bottomMargin);
 	}
 
 	private function setBackground(styleName:String, output:Sprite):Void
