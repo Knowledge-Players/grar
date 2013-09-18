@@ -24,12 +24,20 @@ import nme.display.Sprite;
 import nme.events.Event;
 import nme.Lib;
 
+using StringTools;
+
 /**
 * Graphic zone in the layout
 * //TODO extends WidgetContainer
 **/
 class Zone extends KpDisplay {
+
+	/**
+	* Reference
+	**/
 	public var ref:String;
+
+	public var dynamicFields (default, null): Array<{field: ScrollPanel, content: String}>;
 
 	private var zoneWidth:Float;
 	private var zoneHeight:Float;
@@ -45,6 +53,7 @@ class Zone extends KpDisplay {
 
 		zoneWidth = _width;
 		zoneHeight = _height;
+		dynamicFields = new Array<{field: ScrollPanel, content: String}>();
 		GameManager.instance.game.addEventListener(PartEvent.PART_LOADED, onGameLoaded);
 	}
 
@@ -200,6 +209,14 @@ class Zone extends KpDisplay {
 		}
 	}
 
+	override private function createText(textNode:Fast):Void
+	{
+		var panel = new ScrollPanel(textNode);
+		if(textNode.has.content && textNode.att.content.startsWith("$"))
+			dynamicFields.push({field: panel, content: textNode.att.content});
+		addElement(panel, textNode);
+	}
+
     //TODO creation de background du menu (en attendant de le mettre au bon endroit ) kévin
 
     public function createSpriteFormXml(xml:Fast):Widget
@@ -214,9 +231,7 @@ class Zone extends KpDisplay {
             color = Std.parseInt(xml.att.color);
         else
             color = Std.parseInt("0xFFFFFF");
-        background.graphics.beginFill(color, _alpha);
-        background.graphics.drawRect(Std.parseFloat(xml.att.x), Std.parseFloat(xml.att.y), Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height));
-        background.graphics.endFill();
+	    DisplayUtils.initSprite(background, Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), color, _alpha, Std.parseFloat(xml.att.x), Std.parseFloat(xml.att.y));
 
         return background;
     }

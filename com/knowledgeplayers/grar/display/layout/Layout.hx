@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.layout;
 
+import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.event.LayoutEvent;
 import haxe.xml.Fast;
 import nme.Lib;
@@ -50,6 +51,15 @@ class Layout {
 	public function get_content():Zone
 	{
 		return content;
+	}
+
+	public function updateDynamicFields():Void
+	{
+		for(zone in zones){
+			for(field in zone.dynamicFields){
+				field.field.setContent(Localiser.instance.getItemContent(field.content.substr(1)));
+			}
+		}
 	}
 
 	// Handlers
