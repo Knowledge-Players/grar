@@ -14,7 +14,7 @@ import nme.display.Sprite;
 
 class SimpleBubble extends Sprite{
 
-    public function new(?width:Float,?height:Float,?color:Array<String>,?arrowX:Float=0,?arrowY:Float=0,?radius:Float=0,?line:Float=0,?colorLine:Int=0xFFFFFF,?shadow:Float=0,?gap:Float=5){
+    public function new(?width:Float,?height:Float,?color:Array<String>,?arrowX:Float=0,?arrowY:Float=0,?radius:Float=0,?line:Float=0,?colorLine:Int=0xFFFFFF,?shadow:Float=0,?gap:Float=5,?alphasBulle:Array<String>){
 
         super();
         var bubble:Sprite = new Sprite();
@@ -25,11 +25,11 @@ class SimpleBubble extends Sprite{
             bubble.graphics.lineStyle(line,colorLine,1,true,LineScaleMode.NONE,CapsStyle.SQUARE,JointStyle.ROUND);
 
         }
-        if (color.length ==1)
-            bubble.graphics.beginFill(Std.parseInt(color[0]));
-        else
-        {
-            var alphas:Array<Int> = [1, 1];
+        if (color.length ==1){
+            trace("alpha bulle : "+Std.parseInt(alphasBulle[0]));
+            bubble.graphics.beginFill(Std.parseInt(color[0]),Std.parseFloat(alphasBulle[0]));
+        }else{
+            var alphas:Array<Float> = [Std.parseFloat(alphasBulle[0]), Std.parseFloat(alphasBulle[1])];
             var ratios:Array<Int> = [0x00, 0xFF];
             var matr:Matrix = new Matrix();
             matr.createGradientBox(width, height, Math.PI/2, 0, 0);
