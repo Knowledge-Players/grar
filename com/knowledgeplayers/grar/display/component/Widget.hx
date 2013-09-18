@@ -52,6 +52,7 @@ class Widget extends Sprite{
 	public var zz: Float;
 
 	private var origin: {x: Float, y: Float, scaleX: Float, scaleY: Float};
+	private var lockPosition: Bool = false;
 
 	public function set_scale(scale:Float):Float
 	{
@@ -88,10 +89,16 @@ class Widget extends Sprite{
 	{
 		addEventListener(Event.ADDED_TO_STAGE, function(e:Event)
 		{
-			origin = {x: x, y: y, scaleX: scaleX, scaleY: scaleY};
+			if(!lockPosition){
+				origin = {x: x, y: y, scaleX: scaleX, scaleY: scaleY};
+				lockPosition = true;
+			}
+			reset();
 			var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
 			if(actuator != null && onComplete != null)
 				actuator.onComplete(onComplete);
+			else if(onComplete != null)
+				onComplete();
 		});
 
 		return transitionIn = transition;
@@ -102,10 +109,6 @@ class Widget extends Sprite{
 		addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
 		{
 			var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
-			if(actuator != null)
-				actuator.onComplete(reset);
-			else
-				reset();
 		});
 		return transitionOut = transition;
 	}

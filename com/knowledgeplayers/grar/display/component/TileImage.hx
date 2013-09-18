@@ -39,10 +39,13 @@ class TileImage extends Image{
             init();
 		}
 		super(xml);
+		x = y = 0;
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
 			set_visible(true);
 		});
+		if(tileSprite != null)
+			origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY};
 	}
 
 	#if !flash override #end public function set_x(x:Float):Float
@@ -69,17 +72,13 @@ class TileImage extends Image{
 		var actuator: IGenericActuator = null;
 
 		if(visible){
-			origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY};
+			reset();
 			actuator = TweenManager.applyTransition(tileSprite, transitionIn);
 			if(actuator != null && onComplete != null)
 				actuator.onComplete(onComplete);
 		}
 		else{
 			actuator = TweenManager.applyTransition(tileSprite, transitionOut);
-			if(actuator != null)
-				actuator.onComplete(reset);
-			else
-				reset();
 		}
 		renderNeeded();
 		if(actuator != null)

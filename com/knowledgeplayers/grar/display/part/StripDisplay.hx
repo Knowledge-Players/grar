@@ -66,7 +66,6 @@ class StripDisplay extends PartDisplay {
 
 	override private function startPattern(pattern:Pattern):Void
 	{
-		trace(pattern.name);
 		super.startPattern(pattern);
 		currentBox = cast(pattern, BoxPattern);
 
@@ -117,7 +116,6 @@ class StripDisplay extends PartDisplay {
 
 	override private function displayPart():Void
 	{
-		trace(currentBox.name);
 		var box: BoxDisplay = boxes.get(currentBox.name);
 		if(!box.textFields.exists(currentBoxItem.ref))
 			throw "[StripDisplay] There is no TextField with ref \""+currentBoxItem.ref+"\"";

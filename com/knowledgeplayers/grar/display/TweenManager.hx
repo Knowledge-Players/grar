@@ -64,6 +64,8 @@ class TweenManager {
 		if(transition == null)
 			return null;
 
+		stop(display, true, true);
+
 		if(Reflect.hasField(transition, "alpha"))
 			return fade(display, ref).delay(transition.delay);
 		else if(Reflect.hasField(transition, "width"))
@@ -153,12 +155,11 @@ class TweenManager {
 		}
 	}
 
-    public static function createTransition(display:Dynamic,duration:Float,params:Dynamic):IGenericActuator{
-
-
+    public static function createTransition(display:Dynamic,duration:Float,params:Dynamic):IGenericActuator
+    {
         return Actuate.tween(display, duration, params);
-
     }
+
 	public static function fastForwardDiscover():Void
 	{
 		if(discovering != null){
@@ -183,7 +184,7 @@ class TweenManager {
 		var inOut = parseValue("alpha", fade.alpha, display);
 
 		display.alpha = inOut[0];
-		return Actuate.tween(display, fade.duration, { alpha: inOut[1] }).autoVisible(false).ease(getEasing(fade));
+		return Actuate.tween(display, fade.duration, { alpha: inOut[1] }).autoVisible(true).ease(getEasing(fade));
 	}
 
 	/**

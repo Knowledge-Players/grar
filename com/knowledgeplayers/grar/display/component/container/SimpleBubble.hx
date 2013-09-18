@@ -35,7 +35,12 @@ class SimpleBubble extends Sprite{
             matr.createGradientBox(width, height, Math.PI/2, 0, 0);
             bubble.graphics.beginGradientFill(GradientType.LINEAR,[Std.parseInt(color[0]),Std.parseInt(color[1])],alphas,ratios,matr);
         }
-        drawSpeechBubble(bubble, new Rectangle(0,0,width,height), radius, new Point(arrowX,arrowY),gap);
+	    var point;
+	    if(arrowX == 0 || arrowY == 0)
+	        point = new Point(width/2,height/2);
+		else
+	        point = new Point(arrowX, arrowY);
+        drawSpeechBubble(bubble, new Rectangle(0,0,width,height), radius, point,gap);
 
         bubble.graphics.endFill();
         if (shadow !=0){
@@ -60,8 +65,6 @@ class SimpleBubble extends Sprite{
         var h:Float = rect.height;
         var px:Float = point.x;
         var py:Float = point.y;
-        //var min_gap:Float = 10;
-        //var hgap:Float = Math.min(w - r - r, Math.max(min_gap, w / 5));
         var hgap:Float = Math.min(w - r - r, gap);
         var left:Float = px <= x + w / 2 ?
         (Math.max(x+r, px))

@@ -51,10 +51,7 @@ class ScrollPanel extends WidgetContainer {
 		}
 		if(_styleSheet != null)
 			styleSheet = _styleSheet;
-		/*if(width != null)
-			this.width = width;
-		if(height != null)
-			this.height = height;*/
+		onComplete = displayContent;
 	}
 
 	/**
@@ -123,21 +120,5 @@ class ScrollPanel extends WidgetContainer {
 
 		if(previousStyleSheet != null)
 			StyleParser.currentStyleSheet = previousStyleSheet;
-	}
-
-	override public function set_transitionIn(transition:String):String
-	{
-		addEventListener(Event.ADDED_TO_STAGE, function(e:Event)
-		{
-			var actuator = TweenManager.applyTransition(this, transition);
-			if(actuator != null){
-				actuator.onComplete(displayContent);
-			}
-			else{
-				displayContent();
-			}
-		});
-
-		return transitionIn = transition;
 	}
 }

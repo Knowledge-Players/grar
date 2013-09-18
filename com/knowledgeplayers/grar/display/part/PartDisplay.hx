@@ -201,11 +201,19 @@ class PartDisplay extends KpDisplay {
 		nextElement(startPosition);
 	}
 
-	public function next(?target: DefaultButton):Void
+	/**
+	* Next Button action
+	* @param target : Clicked button
+	**/
+	public inline function next(?target: DefaultButton):Void
 	{
 		nextElement();
 	}
 
+	/**
+	* Quit the app
+	* @param target : Clicked button
+	**/
     public function quit(?target: DefaultButton):Void
 	{
         if (GameManager.instance.game.connection.tracking.suivi != "")
@@ -218,9 +226,6 @@ class PartDisplay extends KpDisplay {
         {
             System.exit(0);
         }
-
-
-        trace("quit le module");
 	}
 
 	/**
@@ -362,8 +367,6 @@ class PartDisplay extends KpDisplay {
 
 	private function setSpeaker(author:String, ?transition:String):Void
 	{
-		if(currentSpeaker != null)
-			TweenManager.stop(currentSpeaker, null, false, true);
 		if(author != null && displays.exists(author)){
 			if(!displays.exists(author))
 				throw "[PartDisplay] There is no Character with ref " + author;
@@ -373,13 +376,8 @@ class PartDisplay extends KpDisplay {
 				if(currentSpeaker != null && !Std.is(this, StripDisplay)){
 					removeChild(currentSpeaker);
 				}
-				else{
-					char.alpha = 1;
-					char.set_visible(true);
-				}
 				currentSpeaker = char;
                 currentSpeaker.transitionIn=transition;
-				currentSpeaker.set_visible(true);
 
 				if(char.nameRef != null && displays.exists(char.nameRef))
 					cast(displays.get(char.nameRef), ScrollPanel).setContent(currentSpeaker.model.getName());
@@ -509,7 +507,7 @@ class PartDisplay extends KpDisplay {
 			addChild(inventory);
 	}
 
-	private function sortDisplayObjects(x:Widget, y:Widget):Int
+	private inline function sortDisplayObjects(x:Widget, y:Widget):Int
 	{
 		if(x.zz < y.zz)
 			return -1;
@@ -572,12 +570,7 @@ class PartDisplay extends KpDisplay {
 				for(item in text.images){
 					if(key == item){
 						exists = true;
-						if(Std.is(object, TileImage)){
-							currentItems.add(object);
-							//cast(object, TileImage).set_visible(true);
-						}
-						else
-							currentItems.add(object);
+						currentItems.add(object);
 						break;
 					}
 				}
