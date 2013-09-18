@@ -205,7 +205,7 @@ class PartDisplay extends KpDisplay {
 	* Next Button action
 	* @param target : Clicked button
 	**/
-	public inline function next(?target: DefaultButton):Void
+	public function next(?target: DefaultButton):Void
 	{
 		nextElement();
 	}
