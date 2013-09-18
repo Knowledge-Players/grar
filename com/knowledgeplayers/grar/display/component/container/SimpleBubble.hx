@@ -14,11 +14,12 @@ import nme.display.Sprite;
 
 class SimpleBubble extends Sprite{
 
-    public function new(?width:Float,?height:Float,?color:Array<String>,?arrowX:Float=0,?arrowY:Float=0,?radius:Float=0,?line:Float=0,?colorLine:Int=0xFFFFFF,?shadow:Float=0,?gap:Float=5,?alphasBulle:Array<String>){
+    public function new(?width:Float,?height:Float,?color:Array<String>,?arrowX:Float=0,?arrowY:Float=0,?radius:Float=0,?line:Float=0,?colorLine:Int=0xFFFFFF,?shadow:Float=0,?gap:Float=5,?alphasBulle:Array<String>,?bubbleX:Float=0,?bubbleY:Float=0){
 
         super();
         var bubble:Sprite = new Sprite();
-
+        bubble.x = bubbleX;
+        bubble.y = bubbleY;
 
         if(line !=0)
         {
@@ -26,7 +27,6 @@ class SimpleBubble extends Sprite{
 
         }
         if (color.length ==1){
-            trace("alpha bulle : "+Std.parseInt(alphasBulle[0]));
             bubble.graphics.beginFill(Std.parseInt(color[0]),Std.parseFloat(alphasBulle[0]));
         }else{
             var alphas:Array<Float> = [Std.parseFloat(alphasBulle[0]), Std.parseFloat(alphasBulle[1])];

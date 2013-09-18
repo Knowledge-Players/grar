@@ -83,14 +83,14 @@ class WidgetContainer extends Widget{
 		return content.alpha = contentAlpha = alpha;
 	}
 
-	public function setBackground(bkg:String, alpha: Float = 1,?color:Array<String>,?arrowX:Float,?arrowY:Float,?radius:Float,?line:Float,?colorLine:Int,?bubbleWidth:Float,?bubbleHeight:Float,?shadow:Float,?gap:Float,?alphasBubble:Array<String>, resize: Bool = false):String
+	public function setBackground(bkg:String, alpha: Float = 1,?color:Array<String>,?arrowX:Float,?arrowY:Float,?radius:Float,?line:Float,?colorLine:Int,?bubbleWidth:Float,?bubbleHeight:Float,?shadow:Float,?gap:Float,?alphasBubble:Array<String>,?bubbleX:Float,?bubbleY:Float, resize: Bool = false):String
 	{
 		if(bkg != null){
 			if(Std.parseInt(bkg) != null){
 				DisplayUtils.initSprite(this, maskWidth, maskHeight, Std.parseInt(bkg), alpha);
 			}
             else if(bkg == "bubble"){
-                var bubble:SimpleBubble = new SimpleBubble(bubbleWidth!=0 ? bubbleWidth:maskWidth,bubbleHeight!=0 ? bubbleHeight:maskHeight,color,arrowX,arrowY,radius,line,colorLine,shadow,gap,alphasBubble);
+                var bubble:SimpleBubble = new SimpleBubble(bubbleWidth!=0 ? bubbleWidth:maskWidth,bubbleHeight!=0 ? bubbleHeight:maskHeight,color,arrowX,arrowY,radius,line,colorLine,shadow,gap,alphasBubble,bubbleX,bubbleY);
                 addChildAt(bubble,0);
             }
 			else{
@@ -214,6 +214,8 @@ class WidgetContainer extends Widget{
                 xml.has.shadow ? Std.parseFloat(xml.att.shadow):0,
                 xml.has.gap ? Std.parseFloat(xml.att.gap):5,
                 xml.has.alphasBubble ? Std.string(xml.att.alphasBubble).split(","):["1","1"],
+                xml.has.bubbleX ? Std.parseFloat(xml.att.bubbleX):0,
+                xml.has.bubbleY ? Std.parseFloat(xml.att.bubbleY):0,
 				xml.has.resize ? xml.att.resize == "true" : false
             );
 			for(child in xml.elements){
