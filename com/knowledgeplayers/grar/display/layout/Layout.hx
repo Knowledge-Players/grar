@@ -58,6 +58,7 @@ class Layout {
 		for(zone in zones){
 			for(field in zone.dynamicFields){
 				field.field.setContent(Localiser.instance.getItemContent(field.content.substr(1)));
+				field.field.updateX();
 			}
 		}
 	}

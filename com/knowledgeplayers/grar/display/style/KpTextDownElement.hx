@@ -28,7 +28,7 @@ class KpTextDownElement {
 		style = "text";
 	}
 
-	public function createSprite(_width:Float):Sprite
+	public function createSprite(_width:Float, trim: Bool = false):Sprite
 	{
 		var styleName = style;
 		var output = new Sprite();
@@ -62,14 +62,14 @@ class KpTextDownElement {
 		if(style != null){
 			var hasIcon = false;
 			if(style.icon != null){
-				setIcons(content, styleName, output);
+				setIcons(content, styleName, output, trim);
 				hasIcon = true;
 			}
 			if(style.background != null){
 				setBackground(styleName, output);
 			}
 			if(!hasIcon && content != "")
-				concatObjects(output, createTextField(content, styleName));
+				concatObjects(output, createTextField(content, styleName, trim));
 			else if(content == ""){
 				var height = StyleParser.getStyle().getSize();
 				DisplayUtils.initSprite(output, 1, height, 0, 0.001);
@@ -109,7 +109,7 @@ class KpTextDownElement {
 			container.addChild(objLeft);
 	}
 
-	private function createTextField(content:String, ?styleName:String):StyledTextField
+	private function createTextField(content:String, ?styleName:String, trim: Bool = false, iconWidth: Float = 0):StyledTextField
 	{
 		var tf = new StyledTextField();
 		var modificators = new Array<{match:{pos:Int, len:Int}, offset:Int, style:String}>();
@@ -162,7 +162,10 @@ class KpTextDownElement {
 		else
 			tf.text = content;
 
-		tf.width = width;
+		if(!trim)
+			tf.width = width;
+		else
+			tf.width += iconWidth;
 		tf.wordWrap = true;
 		#if flash
             tf.autoSize = style.getAlignment();
@@ -189,13 +192,13 @@ class KpTextDownElement {
 		return tf;
 	}
 
-	private function setIcons(content:String, styleName:String, output:Sprite):Void
+	private function setIcons(content:String, styleName:String, output:Sprite, trim: Bool = false):Void
 	{
 		var style = StyleParser.getStyle(styleName);
 		var bmp = new Bitmap(style.icon);
 		if(style.iconResize)
 			bmp.width = bmp.height = 10;
-		var tf = createTextField(content, styleName);
+		var tf = createTextField(content, styleName, trim, (bmp.width+style.iconMargin[1]+style.iconMargin[3]));
 		switch(style.iconPosition) {
 			case "before": concatObjects(output, bmp, tf);
 				tf.x += style.iconMargin[1];

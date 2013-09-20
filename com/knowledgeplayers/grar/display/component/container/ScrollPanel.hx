@@ -32,6 +32,11 @@ class ScrollPanel extends WidgetContainer {
 	public var style (default, default):String;
 
 	/**
+	* If true, resize the panel to the text width
+	**/
+	public var trim (default, default):Bool;
+
+		/**
      * Constructor
      * @param	width : Width of the displayed content
      * @param	height : Height of the displayed content
@@ -48,6 +53,7 @@ class ScrollPanel extends WidgetContainer {
 				setContent(Localiser.instance.getItemContent(xml.att.content));
 
 			}
+			trim = xml.has.trim ? xml.att.trim == "true" : false;
 		}
 		if(_styleSheet != null)
 			styleSheet = _styleSheet;
@@ -72,12 +78,7 @@ class ScrollPanel extends WidgetContainer {
 		var offSetY:Float = 0;
 		var isFirst:Bool = true;
 
-		var maskLine = new Sprite();
-		if(scrollable){
-			DisplayUtils.initSprite(maskLine, 1, 1);
-		}
-		else
-			DisplayUtils.initSprite(maskLine, maskWidth, maskHeight);
+		var maskLine = new Sprite();//DisplayUtils.initSprite(new Sprite(), 1, 1);
 
 		var text = new Sprite();
 		for(element in KpTextDownParser.parse(contentString)){
@@ -92,7 +93,7 @@ class ScrollPanel extends WidgetContainer {
 				iconOffset += style.icon.width;
 			if(style.iconMargin != null)
 				iconOffset += style.iconMargin[1] + style.iconMargin[3];
-			var item = element.createSprite(maskWidth - padding[1] - padding[3] - iconOffset);
+			var item = element.createSprite(maskWidth - padding[1] - padding[3] - iconOffset, trim);
 
 			if(isFirst){
 				offSetY += padding[0];
@@ -114,6 +115,8 @@ class ScrollPanel extends WidgetContainer {
 		}
 		content.alpha = contentAlpha;
 		content.addChild(text);
+		if(!scrollable)
+			DisplayUtils.initSprite(maskLine, text.width, maskHeight);
 		content.addChild(maskLine);
 		text.mask = maskLine;
 		addChild(content);

@@ -130,7 +130,7 @@ class Zone extends KpDisplay {
 		else
 			menu = new MenuDisplay(Std.parseFloat(element.att.width), Std.parseFloat(element.att.height));
 		menuXml = element;
-		// TODO remove when MenuDislay became a widget
+		// TODO remove when MenuDislay become a widget
 		if(element.has.transitionIn)
 			menu.transitionIn = element.att.transitionIn;
 		if(element.has.transitionOut)
@@ -212,8 +212,9 @@ class Zone extends KpDisplay {
 	override private function createText(textNode:Fast):Void
 	{
 		var panel = new ScrollPanel(textNode);
-		if(textNode.has.content && textNode.att.content.startsWith("$"))
+		if(textNode.has.content && textNode.att.content.startsWith("$")){
 			dynamicFields.push({field: panel, content: textNode.att.content});
+		}
 		addElement(panel, textNode);
 	}
 

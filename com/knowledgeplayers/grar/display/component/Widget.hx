@@ -53,6 +53,7 @@ class Widget extends Sprite{
 
 	private var origin: {x: Float, y: Float, scaleX: Float, scaleY: Float, alpha: Float};
 	private var lockPosition: Bool = false;
+	private var currentX: String;
 
 	public function set_scale(scale:Float):Float
 	{
@@ -124,7 +125,49 @@ class Widget extends Sprite{
 		return '$ref: $x;$y $width x $height ($scale) $transitionIn->$transitionOut';
 	}
 
+	public function updateX():Void
+	{
+		setX(currentX);
+	}
+
 	// Privates
+
+	private function setX(xString:String):Void
+	{
+		if(!Math.isNaN(Std.parseFloat(xString)))
+			x = Std.parseFloat(xString);
+		else{
+			switch(xString.toLowerCase()){
+				case "left": if(parent != null)
+						setXLeft();
+				else
+					addEventListener(Event.ADDED_TO_STAGE, function(e){setXLeft();}, false, 100);
+				case "center": addEventListener(Event.ADDED_TO_STAGE, function(e){
+					x = parent.width /2 - width/2;
+				}, false, 100);
+				case "right": addEventListener(Event.ADDED_TO_STAGE, function(e){
+					x = parent.width - width;
+				}, false, 100);
+				default: throw '[Widget] Unsupported position "'+xString+'".';
+			}
+		}
+	}
+
+	private inline function setXLeft():Void
+	{
+		var maxX: Float = 0;
+		if(parent.numChildren > 1){
+			var maxWidth: Float = 0;
+			for(i in 0...parent.numChildren){
+				if(parent.getChildAt(i) != this && maxX < parent.getChildAt(i).x){
+					maxX = parent.getChildAt(i).x;
+					maxWidth = parent.getChildAt(i).width;
+				}
+			}
+			maxX += maxWidth;
+		}
+		x = maxX;
+	}
 
 	private function new(?xml: Fast)
 	{
@@ -135,20 +178,8 @@ class Widget extends Sprite{
 			else
 				ref = xml.att.ref;
 			if(xml.has.x){
-				if(!Math.isNaN(Std.parseFloat(xml.att.x)))
-					x = Std.parseFloat(xml.att.x);
-				else{
-					switch(xml.att.x.toLowerCase()){
-						case "left": x = 0;
-						case "center": addEventListener(Event.ADDED_TO_STAGE, function(e){
-							x = parent.width /2 - width/2;
-						}, false, 100);
-						case "right": addEventListener(Event.ADDED_TO_STAGE, function(e){
-							x = parent.width - width;
-						}, false, 100);
-						default: throw '[Widget] Unsupported position "'+xml.att.x+'".';
-					}
-				}
+				currentX = xml.att.x;
+				setX(xml.att.x);
 			}
 			if(xml.has.y){
 				if(!Math.isNaN(Std.parseFloat(xml.att.y)))
