@@ -5,7 +5,7 @@ import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import aze.display.TilesheetEx;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
-import nme.filters.BitmapFilter;
+import flash.filters.BitmapFilter;
 import StringTools;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
@@ -13,13 +13,13 @@ import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.folder.Folder;
 import com.knowledgeplayers.grar.structure.activity.folder.FolderElement;
-import nme.display.Bitmap;
-import nme.display.BitmapData;
-import nme.display.SimpleButton;
-import nme.display.Sprite;
-import nme.events.Event;
-import nme.events.MouseEvent;
-import nme.geom.Point;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.SimpleButton;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.events.MouseEvent;
+import flash.geom.Point;
 
 
 /**

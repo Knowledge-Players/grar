@@ -1,8 +1,8 @@
 package com.knowledgeplayers.grar.display.contextual;
 
 import com.knowledgeplayers.grar.display.component.Widget;
-import nme.Lib;
-import nme.display.DisplayObject;
+import flash.Lib;
+import flash.display.DisplayObject;
 import com.knowledgeplayers.grar.structure.Token;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
@@ -16,12 +16,12 @@ import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.ds.GenericStack;
 import haxe.xml.Fast;
-import nme.display.Bitmap;
-import nme.display.BitmapData;
-import nme.display.Sprite;
-import nme.events.Event;
-import nme.events.MouseEvent;
-import nme.geom.Point;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.events.MouseEvent;
+import flash.geom.Point;
 
 /**
 * View of an inventory

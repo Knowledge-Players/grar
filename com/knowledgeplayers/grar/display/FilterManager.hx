@@ -2,12 +2,12 @@ package com.knowledgeplayers.grar.display;
 /**
  * Manage the most frequently used filters
  */
-import nme.filters.BlurFilter;
+import flash.filters.BlurFilter;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
-import nme.filters.BitmapFilter;
-import nme.filters.BitmapFilterQuality;
-import nme.filters.DropShadowFilter;
+import flash.filters.BitmapFilter;
+import flash.filters.BitmapFilterQuality;
+import flash.filters.DropShadowFilter;
 
 class FilterManager {
 

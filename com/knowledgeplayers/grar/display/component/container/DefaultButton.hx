@@ -6,17 +6,17 @@ import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import haxe.xml.Fast;
-import nme.Lib;
+import flash.Lib;
 import motion.Actuate;
 import aze.display.TileClip;
 import aze.display.TileLayer;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import nme.display.DisplayObject;
-import nme.display.Sprite;
-import nme.events.Event;
-import nme.events.MouseEvent;
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.events.MouseEvent;
 
 /**
  * Custom base button class

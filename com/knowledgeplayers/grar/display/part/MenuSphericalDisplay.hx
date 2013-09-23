@@ -1,12 +1,12 @@
 package com.knowledgeplayers.grar.display.part;
 
 import com.knowledgeplayers.grar.localisation.Localiser;
-import nme.display.DisplayObject;
+import flash.display.DisplayObject;
 import com.knowledgeplayers.grar.util.MathUtils;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import haxe.ds.GenericStack;
 import com.knowledgeplayers.grar.util.Curve;
-import nme.geom.Point;
+import flash.geom.Point;
 import haxe.xml.Fast;
 
 using com.knowledgeplayers.grar.util.MathUtils;

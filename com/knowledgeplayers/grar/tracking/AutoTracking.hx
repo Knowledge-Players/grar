@@ -1,10 +1,10 @@
 package com.knowledgeplayers.grar.tracking;
 
-import nme.errors.Error;
-import nme.events.Event;
-import nme.Lib;
-import nme.net.SharedObject;
-import nme.net.SharedObjectFlushStatus;
+import flash.errors.Error;
+import flash.events.Event;
+import flash.Lib;
+import flash.net.SharedObject;
+import flash.net.SharedObjectFlushStatus;
 
 class AutoTracking extends Tracking {
 	public var lesson_location:String;

@@ -5,9 +5,9 @@ import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
-import nme.display.Sprite;
-import nme.events.Event;
-import nme.geom.Point;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.geom.Point;
 
 /**
  * Graphic representation of a character of the game

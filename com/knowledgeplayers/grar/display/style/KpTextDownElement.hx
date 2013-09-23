@@ -5,11 +5,11 @@ import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.display.text.UrlField;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
-import nme.display.Bitmap;
-import nme.display.DisplayObject;
-import nme.display.DisplayObjectContainer;
-import nme.display.Sprite;
-import nme.text.TextFieldAutoSize;
+import flash.display.Bitmap;
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.Sprite;
+import flash.text.TextFieldAutoSize;
 
 class KpTextDownElement {
 
@@ -223,6 +223,7 @@ class KpTextDownElement {
 	private function setBackground(styleName:String, output:Sprite):Void
 	{
 		var style = StyleParser.getStyle(styleName);
+		#if !html
 		if(style.background.opaqueBackground != null){
 			if(bullet != null){
 				var bullet = new StyledTextField(StyleParser.getStyle("text"));
@@ -237,6 +238,7 @@ class KpTextDownElement {
 			}
 		}
 		else{
+		#end
 			if(bullet != null){
 				var bullet = new StyledTextField(StyleParser.getStyle("text"));
 				bullet.text = this.bullet;
@@ -249,7 +251,7 @@ class KpTextDownElement {
 				style.background.width = output.width;
 				style.background.height = output.height;
 			}
-		}
+		#if !html } #end
 
 	}
 }

@@ -2,7 +2,7 @@ package com.knowledgeplayers.grar.structure.contextual;
 
 import haxe.ds.GenericStack;
 import haxe.xml.Fast;
-import nme.events.Event;
+import flash.events.Event;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
 /**

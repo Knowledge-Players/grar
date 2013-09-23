@@ -18,8 +18,8 @@ import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
 import com.knowledgeplayers.grar.structure.part.strip.StripPart;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
-import nme.display.DisplayObject;
-import nme.display.Sprite;
+import flash.display.DisplayObject;
+import flash.display.Sprite;
 
 /**
  * Display for the strip parts, like a comic

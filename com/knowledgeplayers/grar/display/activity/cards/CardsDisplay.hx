@@ -17,10 +17,10 @@ import com.knowledgeplayers.grar.structure.activity.cards.Cards;
 import com.knowledgeplayers.grar.util.Grid;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
-import nme.display.Bitmap;
-import nme.display.Sprite;
-import nme.events.Event;
-import nme.events.MouseEvent;
+import flash.display.Bitmap;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.events.MouseEvent;
 
 /**
 * Display of the model activity

@@ -1,17 +1,17 @@
 package com.knowledgeplayers.grar.display.component;
 
-import nme.ui.Mouse;
-import nme.geom.ColorTransform;
-import nme.display.Bitmap;
-import nme.display.BitmapData;
+import flash.ui.Mouse;
+import flash.geom.ColorTransform;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import aze.display.TileGroup;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import aze.display.TileSprite;
-import nme.display.Sprite;
-import nme.events.MouseEvent;
-import nme.geom.Rectangle;
+import flash.display.Sprite;
+import flash.events.MouseEvent;
+import flash.geom.Rectangle;
 
 /**
  * Scrollbar for text overflow

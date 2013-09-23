@@ -3,15 +3,15 @@ package com.knowledgeplayers.grar.display.component.container;
 import com.knowledgeplayers.grar.event.DisplayEvent;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
-import nme.display.BitmapData;
-import nme.display.MovieClip;
-import nme.display.Shape;
-import nme.display.Bitmap;
-import nme.events.Event;
+import flash.display.BitmapData;
+import flash.display.MovieClip;
+import flash.display.Shape;
+import flash.display.Bitmap;
+import flash.events.Event;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import aze.display.TilesheetEx;
 import haxe.xml.Fast;
-import nme.display.Sprite;
+import flash.display.Sprite;
 
 class SimpleContainer extends WidgetContainer{
 

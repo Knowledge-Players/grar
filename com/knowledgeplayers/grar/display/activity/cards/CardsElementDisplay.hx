@@ -7,8 +7,8 @@ import haxe.xml.Fast;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.localisation.Localiser;
-import nme.display.Sprite;
-import nme.events.MouseEvent;
+import flash.display.Sprite;
+import flash.events.MouseEvent;
 
 /**
 * Display of an element in a folder activity

@@ -7,9 +7,9 @@ import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import haxe.Timer;
 import haxe.xml.Fast;
-import nme.display.Bitmap;
-import nme.display.Sprite;
-import nme.geom.Point;
+import flash.display.Bitmap;
+import flash.display.Sprite;
+import flash.geom.Point;
 
 /**
  * Graphic representation of a token of the game

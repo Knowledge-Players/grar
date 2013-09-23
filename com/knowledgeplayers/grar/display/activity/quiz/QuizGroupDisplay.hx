@@ -5,9 +5,9 @@ import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.structure.activity.quiz.QuizGroup;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import haxe.xml.Fast;
-import nme.display.Bitmap;
-import nme.display.BitmapData;
-import nme.display.Sprite;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.Sprite;
 import Std;
 
 /**

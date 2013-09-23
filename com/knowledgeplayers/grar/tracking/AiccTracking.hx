@@ -1,14 +1,14 @@
 package com.knowledgeplayers.grar.tracking;
 
-import nme.errors.Error;
-import nme.events.Event;
-import nme.events.IOErrorEvent;
-import nme.external.ExternalInterface;
-import nme.net.URLLoader;
-import nme.net.URLRequest;
-import nme.net.URLRequestMethod;
-import nme.net.URLVariables;
-import nme.utils.Timer;
+import flash.errors.Error;
+import flash.events.Event;
+import flash.events.IOErrorEvent;
+import flash.external.ExternalInterface;
+import flash.net.URLLoader;
+import flash.net.URLRequest;
+import flash.net.URLRequestMethod;
+import flash.net.URLVariables;
+import flash.utils.Timer;
 
 class AiccTracking extends Tracking {
 

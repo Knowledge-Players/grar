@@ -2,11 +2,11 @@ package com.knowledgeplayers.grar.display.component;
 
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
-import nme.Assets;
+import openfl.Assets;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.util.DisplayUtils;
-import nme.filters.BitmapFilter;
-import nme.display.Bitmap;
+import flash.filters.BitmapFilter;
+import flash.display.Bitmap;
 import haxe.xml.Fast;
 
 /**

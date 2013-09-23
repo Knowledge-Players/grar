@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.tracking;
 
-import nme.events.Event;
-import nme.events.EventDispatcher;
+import flash.events.Event;
+import flash.events.EventDispatcher;
 
 class Tracking implements ITracking {
 

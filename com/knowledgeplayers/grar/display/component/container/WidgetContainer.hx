@@ -1,21 +1,21 @@
 package com.knowledgeplayers.grar.display.component.container;
 
-import nme.display.BitmapData;
-import nme.geom.Rectangle;
+import flash.display.BitmapData;
+import flash.geom.Rectangle;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import haxe.ds.GenericStack;
-import nme.events.Event;
+import flash.events.Event;
 import com.knowledgeplayers.grar.factory.UiFactory;
-import nme.display.Sprite;
-import nme.events.MouseEvent;
+import flash.display.Sprite;
+import flash.events.MouseEvent;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.util.DisplayUtils;
-import nme.display.Bitmap;
+import flash.display.Bitmap;
 import haxe.xml.Fast;
 
 /**
@@ -168,6 +168,7 @@ class WidgetContainer extends Widget{
 
 	private function new(?xml: Fast, ?tilesheet: TilesheetEx)
 	{
+		super(xml);
 		content = new Sprite();
 		displays = new Map<String, Widget>();
 		buttonGroups = new Map<String, GenericStack<DefaultButton>>();
@@ -224,7 +225,6 @@ class WidgetContainer extends Widget{
 		}
 		addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
 		addEventListener(Event.ENTER_FRAME, checkRender);
-		super(xml);
 	}
 
 	private inline function scrollToRatio(position:Float)

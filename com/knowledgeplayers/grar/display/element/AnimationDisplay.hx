@@ -8,8 +8,8 @@ import com.knowledgeplayers.grar.display.component.Widget;
 import aze.display.TileClip;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
-import nme.display.Sprite;
-import nme.events.Event;
+import flash.display.Sprite;
+import flash.events.Event;
 
 class AnimationDisplay extends WidgetContainer
 {

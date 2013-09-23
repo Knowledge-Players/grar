@@ -4,9 +4,9 @@ import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import aze.display.TileSprite;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
-import nme.display.Bitmap;
-import nme.display.BitmapData;
-import nme.display.Sprite;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.Sprite;
 
 /**
  * Utility class for display

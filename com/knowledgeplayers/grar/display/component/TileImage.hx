@@ -1,11 +1,11 @@
 package com.knowledgeplayers.grar.display.component;
 
-import nme.display.Sprite;
+import flash.display.Sprite;
 import com.knowledgeplayers.grar.factory.UiFactory;
-import nme.display.DisplayObject;
+import flash.display.DisplayObject;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
-import nme.events.Event;
+import flash.events.Event;
 import motion.actuators.GenericActuator.IGenericActuator;
 import aze.display.TilesheetEx;
 import haxe.xml.Fast;

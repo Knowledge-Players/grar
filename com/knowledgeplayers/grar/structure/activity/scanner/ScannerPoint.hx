@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.structure.activity.scanner;
 
-import nme.geom.Point;
+import flash.geom.Point;
 class ScannerPoint extends Point {
 
 	/**

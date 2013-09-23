@@ -1,16 +1,16 @@
 package com.knowledgeplayers.grar.display.component.container;
 
 
-import nme.geom.Matrix;
-import nme.display.GradientType;
-import nme.display.Graphics;
-import nme.geom.Point;
-import nme.geom.Rectangle;
-import nme.filters.DropShadowFilter;
-import nme.display.JointStyle;
-import nme.display.CapsStyle;
-import nme.display.LineScaleMode;
-import nme.display.Sprite;
+import flash.geom.Matrix;
+import flash.display.GradientType;
+import flash.display.Graphics;
+import flash.geom.Point;
+import flash.geom.Rectangle;
+import flash.filters.DropShadowFilter;
+import flash.display.JointStyle;
+import flash.display.CapsStyle;
+import flash.display.LineScaleMode;
+import flash.display.Sprite;
 
 class SimpleBubble extends Sprite{
 

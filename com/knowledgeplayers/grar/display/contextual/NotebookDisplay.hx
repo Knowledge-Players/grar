@@ -5,10 +5,10 @@ import haxe.ds.GenericStack;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.event.TokenEvent;
-import nme.events.Event;
+import flash.events.Event;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import haxe.xml.Fast;
-import nme.display.DisplayObject;
+import flash.display.DisplayObject;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.localisation.Localiser;
@@ -16,7 +16,7 @@ import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.structure.contextual.Notebook;
 import com.knowledgeplayers.grar.display.KpDisplay;
-import nme.display.Sprite;
+import flash.display.Sprite;
 
 class NotebookDisplay extends KpDisplay implements ContextualDisplay
 {

@@ -1,10 +1,10 @@
 package com.knowledgeplayers.grar.structure.activity.quiz;
 
-import nme.text.TextField;
-import nme.display.Bitmap;
-import nme.display.BitmapData;
-import nme.display.Sprite;
-import nme.events.MouseEvent;
+import flash.text.TextField;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.Sprite;
+import flash.events.MouseEvent;
 
 /**
  * Model for quiz propositions

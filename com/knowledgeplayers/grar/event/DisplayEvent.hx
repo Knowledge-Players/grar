@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.event;
 
-import nme.events.Event;
+import flash.events.Event;
 
 /**
 * Event dispatch by display

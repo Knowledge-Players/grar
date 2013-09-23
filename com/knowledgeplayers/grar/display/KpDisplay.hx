@@ -2,21 +2,21 @@ package com.knowledgeplayers.grar.display;
 
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
-import nme.geom.Rectangle;
+import flash.geom.Rectangle;
 import com.knowledgeplayers.grar.display.component.ScrollBar;
 #if flash
 import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
 #end
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import haxe.ds.GenericStack;
-import nme.events.Event;
+import flash.events.Event;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
-import nme.filters.BitmapFilter;
+import flash.filters.BitmapFilter;
 import com.knowledgeplayers.grar.util.DisplayUtils;
-import nme.Lib;
+import flash.Lib;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import aze.display.TileSprite;
@@ -27,11 +27,11 @@ import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
-import nme.Assets;
-import nme.display.Bitmap;
-import nme.display.DisplayObject;
-import nme.display.Sprite;
-import nme.geom.Point;
+import openfl.Assets;
+import flash.display.Bitmap;
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+import flash.geom.Point;
 
 class KpDisplay extends Sprite {
 	/**

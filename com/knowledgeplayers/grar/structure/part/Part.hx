@@ -3,8 +3,8 @@ package com.knowledgeplayers.grar.structure.part;
 import com.knowledgeplayers.grar.tracking.Trackable;
 import haxe.ds.GenericStack;
 import haxe.xml.Fast;
-import nme.events.IEventDispatcher;
-import nme.media.Sound;
+import flash.events.IEventDispatcher;
+import flash.media.Sound;
 
 interface Part extends IEventDispatcher extends PartElement extends Trackable {
 public var file (default, null):String;

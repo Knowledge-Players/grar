@@ -7,9 +7,9 @@ import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.quiz.QuizItem;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import haxe.xml.Fast;
-import nme.display.Bitmap;
-import nme.display.Sprite;
-import nme.events.MouseEvent;
+import flash.display.Bitmap;
+import flash.display.Sprite;
+import flash.events.MouseEvent;
 import Std;
 
 /**

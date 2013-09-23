@@ -5,9 +5,9 @@ import Lambda;
 import com.knowledgeplayers.grar.display.part.DialogDisplay;
 import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
 import com.knowledgeplayers.grar.display.GameManager;
-import nme.events.KeyboardEvent;
-import nme.Lib;
-import nme.ui.Keyboard;
+import flash.events.KeyboardEvent;
+import flash.Lib;
+import flash.ui.Keyboard;
 
 /**
  * Utility class to manage Keyboard inputs

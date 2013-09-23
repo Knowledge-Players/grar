@@ -7,7 +7,7 @@ import com.knowledgeplayers.grar.display.component.DropdownMenu;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.display.component.Image;
-import nme.events.MouseEvent;
+import flash.events.MouseEvent;
 import aze.display.TileLayer;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
@@ -20,9 +20,9 @@ import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import haxe.xml.Fast;
-import nme.display.Sprite;
-import nme.events.Event;
-import nme.Lib;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.Lib;
 
 using StringTools;
 

@@ -4,7 +4,7 @@ import com.knowledgeplayers.grar.util.DisplayUtils;
 import aze.display.TilesheetEx;
 import aze.display.TileLayer;
 import haxe.xml.Fast;
-import nme.events.Event;
+import flash.events.Event;
 import aze.display.TileSprite;
 
 /**

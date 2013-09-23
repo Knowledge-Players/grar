@@ -7,7 +7,7 @@ import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.tracking.Trackable;
 import haxe.xml.Fast;
-import nme.display.Sprite;
+import flash.display.Sprite;
 
 class ProgressBar extends Sprite {
 

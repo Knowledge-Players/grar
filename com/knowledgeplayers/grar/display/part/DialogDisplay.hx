@@ -12,7 +12,7 @@ import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import com.knowledgeplayers.grar.structure.part.dialog.pattern.ChoicePattern;
 import com.knowledgeplayers.grar.structure.part.Pattern;
-import nme.events.MouseEvent;
+import flash.events.MouseEvent;
 
 /**
  * Display of a dialog

@@ -16,14 +16,14 @@ import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.util.Grid;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
-import nme.display.Bitmap;
-import nme.display.BitmapData;
-import nme.display.DisplayObject;
-import nme.display.SimpleButton;
-import nme.display.Sprite;
-import nme.events.MouseEvent;
-import nme.geom.Point;
-import nme.Lib;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.DisplayObject;
+import flash.display.SimpleButton;
+import flash.display.Sprite;
+import flash.events.MouseEvent;
+import flash.geom.Point;
+import flash.Lib;
 
 /**
 * Display of the folder activity
@@ -94,7 +94,7 @@ class FolderDisplay extends ActivityDisplay {
 		var folder = cast(model, Folder);
 		// Targets
 		for(target in folder.targets){
-			addChildAt(displays.get(target), cast(Math.min(displays.get(target).z, numChildren), Int));
+			addChildAt(displays.get(target), cast(Math.min(displays.get(target).zz, numChildren), Int));
 		}
 	}
 

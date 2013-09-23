@@ -6,11 +6,11 @@ import com.knowledgeplayers.grar.display.style.Style;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.structure.contextual.Bibliography;
 import haxe.ds.GenericStack;
-import nme.display.DisplayObject;
-import nme.display.Sprite;
-import nme.events.Event;
-import nme.text.TextField;
-import nme.text.TextFieldType;
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.text.TextField;
+import flash.text.TextFieldType;
 
 /**
  * Display for a bibliography

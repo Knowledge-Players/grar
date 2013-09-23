@@ -2,7 +2,7 @@ package com.knowledgeplayers.grar.structure.activity.scanner;
 
 import haxe.ds.GenericStack;
 import haxe.xml.Fast;
-import nme.geom.Point;
+import flash.geom.Point;
 
 class Scanner extends Activity {
 /**

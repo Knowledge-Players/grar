@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.tracking;
 
 import com.knowledgeplayers.grar.tracking.StateInfos;
-import nme.events.EventDispatcher;
+import flash.events.EventDispatcher;
 
 class Connection extends EventDispatcher {
 	public var tracking (default, null):Tracking;

@@ -1,10 +1,10 @@
 package com.knowledgeplayers.grar.display;
 
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import nme.Lib;
+import flash.Lib;
 import motion.actuators.GenericActuator.IGenericActuator;
-import nme.display.Sprite;
-import nme.geom.ColorTransform;
+import flash.display.Sprite;
+import flash.geom.ColorTransform;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import motion.easing.Cubic;
 import motion.Actuate;
@@ -23,8 +23,8 @@ import motion.easing.Quint;
 import motion.easing.Sine;
 
 import haxe.xml.Fast;
-import nme.display.DisplayObject;
-import nme.events.Event;
+import flash.display.DisplayObject;
+import flash.events.Event;
 
 /**
  * Manage the most frequently used tweens

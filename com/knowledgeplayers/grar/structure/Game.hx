@@ -4,7 +4,7 @@ import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.tracking.Connection;
 import com.knowledgeplayers.grar.tracking.StateInfos;
 import com.knowledgeplayers.grar.tracking.Trackable;
-import nme.events.IEventDispatcher;
+import flash.events.IEventDispatcher;
 
 interface Game extends IEventDispatcher {
 	public var mode (default, default):Mode;

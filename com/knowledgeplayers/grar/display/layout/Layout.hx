@@ -3,7 +3,7 @@ package com.knowledgeplayers.grar.display.layout;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.event.LayoutEvent;
 import haxe.xml.Fast;
-import nme.Lib;
+import flash.Lib;
 
 /**
 * Layout of the application

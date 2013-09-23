@@ -23,14 +23,14 @@ import com.knowledgeplayers.grar.util.KeyboardManager;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.ds.GenericStack;
 import haxe.xml.Fast;
-import nme.display.BitmapData;
-import nme.events.Event;
-import nme.events.EventDispatcher;
-import nme.Lib;
-import nme.media.Sound;
-import nme.media.SoundChannel;
-import nme.media.SoundTransform;
-import nme.net.URLRequest;
+import flash.display.BitmapData;
+import flash.events.Event;
+import flash.events.EventDispatcher;
+import flash.Lib;
+import flash.media.Sound;
+import flash.media.SoundChannel;
+import flash.media.SoundTransform;
+import flash.net.URLRequest;
 
 /**
  * Display of a game

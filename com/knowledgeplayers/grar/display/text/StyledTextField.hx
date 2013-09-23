@@ -2,8 +2,8 @@ package com.knowledgeplayers.grar.display.text;
 
 import com.knowledgeplayers.grar.display.style.Style;
 import com.knowledgeplayers.grar.display.style.StyleParser;
-import nme.text.TextField;
-import nme.text.TextFormat;
+import flash.text.TextField;
+import flash.text.TextFormat;
 
 /**
  * Textfield with embedded style
@@ -29,7 +29,7 @@ class StyledTextField extends TextField {
 			set_style(StyleParser.getStyle("text"));
 
 		//Default Values
-		autoSize = nme.text.TextFieldAutoSize.LEFT;
+		autoSize = flash.text.TextFieldAutoSize.LEFT;
 		embedFonts = true;
 		selectable = mouseEnabled = false;
 	}

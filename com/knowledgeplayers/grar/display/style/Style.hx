@@ -1,12 +1,12 @@
 package com.knowledgeplayers.grar.display.style;
 
 import haxe.ds.StringMap;
-import nme.Assets;
-import nme.display.Bitmap;
-import nme.display.BitmapData;
-import nme.text.Font;
+import openfl.Assets;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.text.Font;
 #if flash
-import nme.text.TextFormatAlign;
+import flash.text.TextFormatAlign;
 #end
 
 /**
@@ -62,7 +62,7 @@ class Style extends StringMap<String> {
 	public function inherit(parent:Style):Void
 	{
 		if(parent == null)
-			throw "Can't inherit style for " + name + ", the parent doesn't exist";
+			throw "Can't inherit style for " + name + ", the parent doesn't exist.";
 		for(rule in parent.keys()){
 			set(rule, parent.get(rule));
 		}

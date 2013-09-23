@@ -4,8 +4,8 @@ import com.knowledgeplayers.grar.display.style.StyleParser;
 
 import com.knowledgeplayers.grar.localisation.Localisation;
 import haxe.ds.GenericStack;
-import nme.events.EventDispatcher;
-import nme.Lib;
+import flash.events.EventDispatcher;
+import flash.Lib;
 
 /**
  * Singleton manager of the localisation

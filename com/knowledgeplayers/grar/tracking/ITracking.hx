@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.tracking;
 
-import nme.events.IEventDispatcher;
+import flash.events.IEventDispatcher;
 
 interface ITracking extends IEventDispatcher {
 	public function activation(activation:String):Void;

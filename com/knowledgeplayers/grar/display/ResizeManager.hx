@@ -1,9 +1,9 @@
 package com.knowledgeplayers.grar.display;
 
 import haxe.xml.Fast;
-import nme.display.DisplayObject;
-import nme.events.Event;
-import nme.Lib;
+import flash.display.DisplayObject;
+import flash.events.Event;
+import flash.Lib;
 
 /**
  * Manager of resize events

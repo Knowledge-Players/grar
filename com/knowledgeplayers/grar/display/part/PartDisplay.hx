@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
-import nme.system.System;
-import nme.external.ExternalInterface;
+import flash.system.System;
+import flash.external.ExternalInterface;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
 import com.knowledgeplayers.grar.structure.part.Item;
 import com.knowledgeplayers.grar.structure.part.video.item.VideoItem;
@@ -34,12 +34,12 @@ import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.ds.GenericStack;
 import haxe.xml.Fast;
-import nme.display.Bitmap;
-import nme.display.DisplayObject;
-import nme.display.Sprite;
-import nme.events.Event;
-import nme.media.Sound;
-import nme.media.SoundChannel;
+import flash.display.Bitmap;
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.media.Sound;
+import flash.media.SoundChannel;
 
 /**
  * Display of a part

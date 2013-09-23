@@ -2,7 +2,7 @@ package com.knowledgeplayers.grar.structure;
 
 import com.knowledgeplayers.grar.structure.contextual.Bibliography;
 import com.knowledgeplayers.grar.structure.contextual.Glossary;
-import nme.errors.Error;
+import flash.errors.Error;
 import com.knowledgeplayers.grar.structure.contextual.Notebook;
 import com.knowledgeplayers.grar.display.FilterManager;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
@@ -23,10 +23,12 @@ import com.knowledgeplayers.grar.tracking.StateInfos;
 import com.knowledgeplayers.grar.tracking.Trackable;
 import haxe.ds.GenericStack;
 import haxe.xml.Fast;
-import nme.Assets;
-import nme.events.Event;
-import nme.events.EventDispatcher;
-import nme.Lib;
+import openfl.Assets;
+import flash.events.Event;
+import flash.events.EventDispatcher;
+import flash.Lib;
+
+using StringTools;
 
 /**
  * KP inmplentation of a game
@@ -132,7 +134,8 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
             }
             localePath.add(Localiser.instance.currentLocale + "/");
             localePath.add(fullPath[fullPath.length - 1]);
-            StyleParser.parse(AssetsStorage.getXml(localePath.toString()));
+	        var extension = localePath.toString().split(".");
+            StyleParser.parse(AssetsStorage.getText(localePath.toString()), extension[extension.length-1]);
         }
 
         // Load Languages
@@ -375,7 +378,7 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         }
     }
 
-    private function onStyleLoaded(styleSheet:Xml):Void
+    /*private function onStyleLoaded(styleSheet:Xml):Void
     {
         StyleParser.parse(styleSheet);
         numStyleSheetLoaded++;
@@ -384,7 +387,7 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
                 initActivities(activitiesWaiting.pop());
         }
         checkLoading();
-    }
+    }*/
 
     private function onPartLoaded(event:PartEvent):Void
     {
@@ -424,6 +427,6 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
 
     private function onExit(e:Event):Void
     {
-        Lib.exit();
+        //Lib.exit();
     }
 }

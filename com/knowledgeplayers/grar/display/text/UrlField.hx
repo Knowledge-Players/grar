@@ -1,9 +1,9 @@
 package com.knowledgeplayers.grar.display.text;
 import com.knowledgeplayers.grar.display.style.StyleParser;
-import nme.display.Sprite;
-import nme.events.MouseEvent;
-import nme.Lib;
-import nme.net.URLRequest;
+import flash.display.Sprite;
+import flash.events.MouseEvent;
+import flash.Lib;
+import flash.net.URLRequest;
 
 /**
  * Url Filed

@@ -3,8 +3,8 @@ package com.knowledgeplayers.grar.localisation;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
 import haxe.xml.Fast;
-import nme.events.Event;
-import nme.events.EventDispatcher;
+import flash.events.Event;
+import flash.events.EventDispatcher;
 
 /**
  * Localisation

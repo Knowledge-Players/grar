@@ -4,7 +4,7 @@ import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.style.Style;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.structure.contextual.Glossary;
-import nme.display.Sprite;
+import flash.display.Sprite;
 
 /**
  * Display for a glossary

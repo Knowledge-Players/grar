@@ -1,6 +1,7 @@
 package com.knowledgeplayers.grar;
 
-import nme.text.TextFormat;
+import flash.display.MovieClip;
+import flash.text.TextFormat;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import haxe.ds.GenericStack;
@@ -8,14 +9,13 @@ import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.utils.assets.AssetsConfig;
 import com.knowledgeplayers.utils.assets.AssetsLoader;
 import com.knowledgeplayers.utils.assets.interfaces.IAsset;
-import format.display.MovieClip;
-import nme.Assets;
-import nme.events.ErrorEvent;
-import nme.events.Event;
-import nme.events.IOErrorEvent;
-import nme.events.SecurityErrorEvent;
-import nme.Lib;
-import nme.text.TextField;
+import openfl.Assets;
+import flash.events.ErrorEvent;
+import flash.events.Event;
+import flash.events.IOErrorEvent;
+import flash.events.SecurityErrorEvent;
+import flash.Lib;
+import flash.text.TextField;
 
 class GRARPreloader extends NMEPreloader {
 
@@ -71,7 +71,7 @@ class GRARPreloader extends NMEPreloader {
 		}
 		else{
 			// Loader icon
-			var icon = Assets.getMovieClip("loadingCircular:loading");
+			var icon = new MovieClip();//Assets.getMovieClip("loadingCircular:loading");
 			if(icon != null){
 				icon.x = stage.stageWidth / 2;
 				icon.y = stage.stageHeight / 2;

@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.event;
 import com.knowledgeplayers.grar.display.layout.Zone;
-import nme.events.Event;
+import flash.events.Event;
 
 /**
  * Event for the layouts

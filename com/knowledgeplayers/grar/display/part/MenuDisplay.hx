@@ -7,8 +7,8 @@ import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import haxe.xml.Fast;
-import nme.display.Shape;
-import nme.events.Event;
+import flash.display.Shape;
+import flash.events.Event;
 
 /**
  * Display of a menu

@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.event;
 
 import com.knowledgeplayers.grar.structure.part.Part;
-import nme.events.Event;
+import flash.events.Event;
 
 /**
  * Part related event

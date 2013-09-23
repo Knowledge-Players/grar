@@ -1,15 +1,15 @@
 package com.knowledgeplayers.grar.factory;
 
 import flash.geom.Rectangle;
-import nme.geom.Rectangle;
-import nme.geom.Matrix;
-import nme.display.BitmapData;
-import nme.filters.DropShadowFilter;
+import flash.geom.Rectangle;
+import flash.geom.Matrix;
+import flash.display.BitmapData;
+import flash.filters.DropShadowFilter;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.display.FilterManager;
-import nme.filters.BitmapFilter;
-import nme.display.Bitmap;
-import nme.display.Sprite;
+import flash.filters.BitmapFilter;
+import flash.display.Bitmap;
+import flash.display.Sprite;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import aze.display.TileSprite;
@@ -20,9 +20,9 @@ import com.knowledgeplayers.grar.display.element.AnimationDisplay;
 import com.knowledgeplayers.grar.display.TweenManager;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
-import nme.display.DisplayObject;
+import flash.display.DisplayObject;
 #if !flash
-	import nme.Assets;
+	import openfl.Assets;
 #end
 
 /**

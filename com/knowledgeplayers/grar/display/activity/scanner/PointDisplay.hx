@@ -3,9 +3,9 @@ package com.knowledgeplayers.grar.display.activity.scanner;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.scanner.ScannerPoint;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
-import nme.display.Bitmap;
-import nme.display.Sprite;
-import nme.events.MouseEvent;
+import flash.display.Bitmap;
+import flash.display.Sprite;
+import flash.events.MouseEvent;
 import String;
 
 class PointDisplay extends Sprite {

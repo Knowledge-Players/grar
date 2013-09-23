@@ -1,13 +1,13 @@
 package com.knowledgeplayers.grar.display.component;
 
-import nme.filters.BitmapFilter;
+import flash.filters.BitmapFilter;
 import motion.actuators.GenericActuator;
 import haxe.xml.Fast;
-import nme.events.Event;
-import nme.display.Bitmap;
-import nme.geom.Matrix;
-import nme.display.BitmapData;
-import nme.display.Sprite;
+import flash.events.Event;
+import flash.display.Bitmap;
+import flash.geom.Matrix;
+import flash.display.BitmapData;
+import flash.display.Sprite;
 
 /**
 * Base class for all graphical elements

@@ -9,8 +9,8 @@ import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.activity.quiz.Quiz;
 import haxe.xml.Fast;
-import nme.display.BitmapData;
-import nme.display.DisplayObject;
+import flash.display.BitmapData;
+import flash.display.DisplayObject;
 
 /**
 * Display for quiz activity. Since all quiz in a game must look alike,

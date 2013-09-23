@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
-import nme.events.Event;
+import flash.events.Event;
 import com.knowledgeplayers.grar.display.activity.folder.FolderDisplay;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.structure.activity.folder.FolderElement;

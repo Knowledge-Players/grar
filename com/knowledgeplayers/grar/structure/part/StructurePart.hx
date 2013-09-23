@@ -15,10 +15,10 @@ import com.knowledgeplayers.grar.tracking.Trackable;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.ds.GenericStack;
 import haxe.xml.Fast;
-import nme.events.Event;
-import nme.events.EventDispatcher;
-import nme.media.Sound;
-import nme.media.SoundChannel;
+import flash.events.Event;
+import flash.events.EventDispatcher;
+import flash.media.Sound;
+import flash.media.SoundChannel;
 
 class StructurePart extends EventDispatcher #if haxe3 implements Part implements Trackable #else ,implements Part ,implements Trackable #end {
 	/**

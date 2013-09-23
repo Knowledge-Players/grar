@@ -8,10 +8,10 @@ import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.Timer;
 import haxe.xml.Fast;
-import nme.display.Bitmap;
-import nme.display.DisplayObject;
-import nme.display.Sprite;
-import nme.events.Event;
+import flash.display.Bitmap;
+import flash.display.DisplayObject;
+import flash.display.Sprite;
+import flash.events.Event;
 
 class IntroScreen extends WidgetContainer {
 

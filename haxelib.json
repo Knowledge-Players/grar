@@ -5,10 +5,10 @@
     "tags": [ "cpp", "flash" ],
     "description": "GRAR is a powerful engine designed for training applications. Create an e-learning app just with XML",
     "version": "2.0.0",
-    "releasenote": "Finalized for v1, support Haxe3",
+    "releasenote": "OpenFL, better customization",
     "contributors": [ "knowledge-players" ],
     "dependencies": {
-        "nme": "",
+        "openfl": "",
         "actuate": "",
         "ExAM": ""
     }

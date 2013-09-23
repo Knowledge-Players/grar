@@ -9,8 +9,8 @@ import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.tracking.Trackable;
 import haxe.xml.Fast;
-import nme.events.Event;
-import nme.events.EventDispatcher;
+import flash.events.Event;
+import flash.events.EventDispatcher;
 
 /**
  * Abstract activity

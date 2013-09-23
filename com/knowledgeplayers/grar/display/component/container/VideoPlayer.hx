@@ -1,25 +1,25 @@
 package com.knowledgeplayers.grar.display.component.container;
-
-import nme.Lib;
+#if flash
+import flash.Lib;
 import flash.display.Bitmap;
 import aze.display.TileLayer;
-import nme.display.Bitmap;
+import flash.display.Bitmap;
 import com.knowledgeplayers.grar.util.DisplayUtils;
-import nme.geom.Point;
-import nme.display.Sprite;
+import flash.geom.Point;
+import flash.display.Sprite;
 import haxe.ds.GenericStack;
 import aze.display.TileClip;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import haxe.xml.Fast;
-import nme.events.Event;
-import nme.events.MouseEvent;
-import nme.media.SoundTransform;
-import nme.display.BitmapData;
-import nme.geom.Rectangle;
-import nme.display.Stage;
-import nme.display.StageDisplayState;
-import nme.display.DisplayObject;
+import flash.events.Event;
+import flash.events.MouseEvent;
+import flash.media.SoundTransform;
+import flash.display.BitmapData;
+import flash.geom.Rectangle;
+import flash.display.Stage;
+import flash.display.StageDisplayState;
+import flash.display.DisplayObject;
 
 import flash.events.NetStatusEvent;
 import flash.media.Video;
@@ -515,5 +515,10 @@ class VideoPlayer extends WidgetContainer
 		controls.add(button);
         containerControls.addChild(button);
 	}
-
 }
+#else
+class VideoPlayer extends WidgetContainer {
+	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 0, capture:Float = 0): Void
+	{}
+}
+#end

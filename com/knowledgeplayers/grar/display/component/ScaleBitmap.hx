@@ -1,11 +1,11 @@
 package com.knowledgeplayers.grar.display.component;
 
-import nme.display.Sprite;
-import nme.display.Bitmap;
-import nme.display.BitmapData;
-import nme.display.PixelSnapping;
-import nme.geom.Matrix;
-import nme.geom.Rectangle;
+import flash.display.Sprite;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
+import flash.display.PixelSnapping;
+import flash.geom.Matrix;
+import flash.geom.Rectangle;
 
 class ScaleBitmap extends Sprite
 {

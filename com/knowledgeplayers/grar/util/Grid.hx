@@ -1,8 +1,8 @@
 package com.knowledgeplayers.grar.util;
 
 import motion.Actuate;
-import nme.display.DisplayObject;
-import nme.geom.Point;
+import flash.display.DisplayObject;
+import flash.geom.Point;
 
 /**
  * Manage a grid to place object
