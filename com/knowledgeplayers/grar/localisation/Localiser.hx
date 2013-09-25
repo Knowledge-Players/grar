@@ -101,7 +101,7 @@ class Localiser extends EventDispatcher {
     * Set File of localisation
     **/
 
-	public function setLocalisationFile(path:String):Void
+	private function setLocalisationFile(path:String):Void
 	{
 		var fullPath = path.split("/");
 

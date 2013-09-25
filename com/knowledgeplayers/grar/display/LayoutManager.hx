@@ -55,7 +55,7 @@ class LayoutManager extends EventDispatcher {
 	{
 		if(_xml.has.text){
 			interfaceLocale = _xml.att.text;
-			Localiser.instance.setLocalisationFile(interfaceLocale);
+			Localiser.instance.layoutPath = interfaceLocale;
 		}
 
 		for(lay in layoutNode.elements){

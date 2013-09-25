@@ -41,7 +41,7 @@ class Zone extends KpDisplay {
 
 	private var zoneWidth:Float;
 	private var zoneHeight:Float;
-	private var menu:MenuDisplay;
+	//private var menu:MenuDisplay;
 	private var layer:TileLayer;
 	private var soundState:Bool = true;
 	private var menuXml:Fast;
@@ -126,19 +126,12 @@ class Zone extends KpDisplay {
 	public function createMenu(element:Fast):Void
 	{
 		if(element.att.type == "spheric")
-			menu = new MenuSphericalDisplay(Std.parseFloat(element.att.width), Std.parseFloat(element.att.height));
+			MenuSphericalDisplay.instance.parseContent(element.x);
 		else
-			menu = new MenuDisplay(Std.parseFloat(element.att.width), Std.parseFloat(element.att.height));
+			MenuDisplay.instance.parseContent(element.x);
 		menuXml = element;
-		// TODO remove when MenuDislay become a widget
-		if(element.has.transitionIn)
-			menu.transitionIn = element.att.transitionIn;
-		if(element.has.transitionOut)
-			menu.transitionOut = element.att.transitionOut;
-		menu.x = Std.parseFloat(element.att.x);
-		menu.y = Std.parseFloat(element.att.y);
 
-		addChild(menu);
+		//addChild(menu);
 	}
 
 	override private function setButtonAction(button:DefaultButton, action:String):Void
@@ -154,7 +147,7 @@ class Zone extends KpDisplay {
 	}
 
     private function showMenu(?_target:DefaultButton):Void{
-        TweenManager.applyTransition(menu, menu.transitionIn);
+        GameManager.instance.displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout);
     }
 
 	private function activeSound(?_target:DefaultButton):Void
@@ -270,8 +263,8 @@ class Zone extends KpDisplay {
 
 	private function onGameLoaded(e:PartEvent):Void
 	{
-		if(menu != null)
-			menu.initMenu(menuXml);
+		/*if(menu != null)
+			menu.initMenu(menuXml);*/
 		if(fastnav != null){
 			for(item in GameManager.instance.game.getAllItems()){
 				fastnav.addItem(item.name);

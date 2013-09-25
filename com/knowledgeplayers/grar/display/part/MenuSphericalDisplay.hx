@@ -16,25 +16,34 @@ using com.knowledgeplayers.grar.util.MathUtils;
  */
 class MenuSphericalDisplay extends MenuDisplay {
 
+	public static var instance(get_instance, null): MenuSphericalDisplay;
+
 	private var curves: Map<DisplayObject, Curve>;
 	private var originCurve: Curve;
 
-	public function new(_width:Float, _height:Float)
+	public static function get_instance():MenuSphericalDisplay
 	{
-		super(_width, _height);
+		if(instance == null)
+			instance = new MenuSphericalDisplay();
+		return instance;
+	}
+
+	private function new()
+	{
+		super();
 		curves = new Map<DisplayObject, Curve>();
 	}
 
-	override public function initMenu(display:Fast):Void
+	override public function init():Void
 	{
 		levelDisplays = new Map<String, Fast>();
 		var regEx = ~/h[0-9]+|hr|item/i;
-		for(child in display.elements){
+		for(child in displayFast.elements){
 			if(regEx.match(child.name))
 				levelDisplays.set(child.name, child);
 		}
 
-		for(child in display.elements){
+		for(child in displayFast.elements){
 			createElement(child);
 		}
 
@@ -59,7 +68,7 @@ class MenuSphericalDisplay extends MenuDisplay {
 			var i = 0;
 			var nodes = tree.getDepth(i);
 			Localiser.instance.pushLocale();
-			Localiser.instance.setLocalisationFile(LayoutManager.instance.interfaceLocale);
+			Localiser.instance.layoutPath = LayoutManager.instance.interfaceLocale;
 			while(!nodes.isEmpty()){
 				for(level in nodes)
 					createSphericLevel(level);

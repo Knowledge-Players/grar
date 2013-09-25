@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.localisation.Localiser;
+import com.knowledgeplayers.grar.display.contextual.ContextualDisplay;
+import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.layout.Zone;
@@ -14,7 +17,9 @@ import flash.events.Event;
  * Display of a menu
  */
 
-class MenuDisplay extends Zone {
+class MenuDisplay extends KpDisplay implements ContextualDisplay {
+
+	public static var instance (get_instance, null) : MenuDisplay;
 	/**
     * Orientation of the menu. Must be Horizontal or Vertical
     **/
@@ -30,9 +35,16 @@ class MenuDisplay extends Zone {
 
 	private var buttons:Map<String, DefaultButton>;
 
-	public function new(_width:Float, _height:Float)
+	public static function get_instance():MenuDisplay
 	{
-		super(_width, _height);
+		if(instance == null)
+			instance = new MenuDisplay();
+		return instance;
+	}
+
+	private function new()
+	{
+		super();
 		buttons = new Map<String, DefaultButton>();
 		GameManager.instance.addEventListener(PartEvent.EXIT_PART, onFinishPart);
 	}
@@ -54,48 +66,55 @@ class MenuDisplay extends Zone {
 		switch(action){
 			case "close_menu": button.buttonAction = closeMenu;
 		}
-
 	}
 
-    private function closeMenu(?_target:DefaultButton):Void{
-        TweenManager.applyTransition(this, transitionOut);
-    }
-
-	/**
-    * Init the menu with an XML descriptor
-    * @param    xml : XML descriptor
-    **/
-
-	public function initMenu(display:Fast):Void
+	public function init():Void
 	{
-		orientation = display.att.orientation;
+
+		orientation = displayFast.att.orientation;
 
 		levelDisplays = new Map<String, Fast>();
 		var regEx = ~/h[0-9]+|hr|item/i;
-		for(child in display.elements){
+		for(child in displayFast.elements){
 			if(regEx.match(child.name))
 				levelDisplays.set(child.name, child);
 		}
 
-		for(child in display.elements){
+		for(child in displayFast.elements){
 			createElement(child);
 		}
-		if(display.has.xBase)
-			xBase = Std.parseFloat(display.att.xBase);
-		if(display.has.yBase)
-			yBase = Std.parseFloat(display.att.yBase);
+		if(displayFast.has.xBase)
+			xBase = Std.parseFloat(displayFast.att.xBase);
+		if(displayFast.has.yBase)
+			yBase = Std.parseFloat(displayFast.att.yBase);
 
 		var menuXml = GameManager.instance.game.menu;
 
 		xOffset += xBase;
 		yOffset += yBase;
 
+		Localiser.instance.pushLocale();
+		Localiser.instance.layoutPath = LayoutManager.instance.interfaceLocale;
+
 		for(elem in menuXml.firstElement().elements()){
 			createMenuLevel(elem);
 		}
 
+		Localiser.instance.popLocale();
+
 		GameManager.instance.menuLoaded = true;
 	}
+
+    private function closeMenu(?_target:DefaultButton):Void{
+        GameManager.instance.hideContextual(MenuDisplay.instance);
+    }
+
+	/*
+
+	public function initMenu(display:Fast):Void
+	{
+
+	}*/
 
 	// Private
 
@@ -111,6 +130,9 @@ class MenuDisplay extends Zone {
 		}
 		else{
 			var partName = GameManager.instance.getItemName(level.get("id"));
+			if(partName == null)
+				throw "[MenuDisplay] Can't find a name for '"+level.get("id")+"'.";
+
 			var button = addButton(fast.node.Button, partName);
 			buttons.set(level.get("id"), button);
 			for(part in GameManager.instance.game.getAllParts()){
@@ -125,9 +147,11 @@ class MenuDisplay extends Zone {
 			if(orientation == "vertical"){
 				yOffset += button.height;
 			}
-			else{
-				xOffset += button.width + Std.parseFloat(fast.att.width);
+			else if(fast.has.width){
+				xOffset += Std.parseFloat(fast.att.width);
 			}
+			else
+			    xOffset += button.width;
 		}
 		for(elem in level.elements())
 			createMenuLevel(elem);

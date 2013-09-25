@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import com.knowledgeplayers.grar.structure.contextual.Bibliography;
 import com.knowledgeplayers.grar.structure.contextual.Glossary;
 import flash.errors.Error;
@@ -163,15 +164,16 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
 									NotebookDisplay.instance.model = new Notebook(contextual.att.file);
 				case "glossary":    Glossary.instance.fillWithXml(contextual.att.file);
 				case "bibliography":Bibliography.instance.fillWithXml(contextual.att.file);
+				case "menu" :       MenuDisplay.instance.parseContent(display);
+									if(contextual.has.file)
+										menu = AssetsStorage.getXml(contextual.att.file);
 			}
 		}
 
         // Load Parts
         if(structureNode.has.inventory)
             GameManager.instance.loadTokens(structureNode.att.inventory);
-        if(structureNode.has.menu){
-            menu = AssetsStorage.getXml(structureNode.att.menu);
-        }
+
         ref = structureNode.att.ref;
         // Count parts
         for(part in structureNode.nodes.Part){
@@ -378,17 +380,6 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         }
     }
 
-    /*private function onStyleLoaded(styleSheet:Xml):Void
-    {
-        StyleParser.parse(styleSheet);
-        numStyleSheetLoaded++;
-        if(numStyleSheet == numStyleSheetLoaded){
-            while(!activitiesWaiting.isEmpty())
-                initActivities(activitiesWaiting.pop());
-        }
-        checkLoading();
-    }*/
-
     private function onPartLoaded(event:PartEvent):Void
     {
         if(event.target == LayoutManager.instance)
@@ -405,7 +396,8 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         	//checkIntegrity();
         	// Menu hasn't been set, creating the default
             if(menu == null){
-                var menuXml = Xml.createElement("menu");
+                var menuXml = Xml.createDocument();
+	            menu.addChild(Xml.createElement("menu"));
                 for(part in parts){
                     createMenuXml(menuXml, part);
                 }
@@ -421,6 +413,7 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
             }
             else{
                 dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
+	            MenuDisplay.instance.init();
             }
         }
     }
