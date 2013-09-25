@@ -109,13 +109,6 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
         GameManager.instance.hideContextual(MenuDisplay.instance);
     }
 
-	/*
-
-	public function initMenu(display:Fast):Void
-	{
-
-	}*/
-
 	// Private
 
 	private function createMenuLevel(level:Xml):Void
@@ -201,6 +194,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 	private function onFinishPart(e:PartEvent):Void
 	{
-		buttons.get(e.partId).setToggle(false);
+		if(buttons.exists(e.partId))
+			buttons.get(e.partId).setToggle(false);
 	}
 }

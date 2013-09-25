@@ -397,7 +397,7 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         	// Menu hasn't been set, creating the default
             if(menu == null){
                 var menuXml = Xml.createDocument();
-	            menu.addChild(Xml.createElement("menu"));
+	            menuXml.addChild(Xml.createElement("menu"));
                 for(part in parts){
                     createMenuXml(menuXml, part);
                 }
