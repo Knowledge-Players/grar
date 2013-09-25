@@ -10,6 +10,7 @@ import flash.display.Sprite;
 import haxe.ds.GenericStack;
 import aze.display.TileClip;
 import aze.display.TileSprite;
+import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import haxe.xml.Fast;
 import flash.events.Event;
@@ -59,7 +60,7 @@ class VideoPlayer extends WidgetContainer
     private var blackScreen:Sprite;
 		//private var _timeToCapture : Float = 0;
 
-	public function new (?xml: Fast)
+	public function new(?xml: Fast, ?tilesheet: TilesheetEx)
 	{
 		playButtons = new GenericStack<DefaultButton>();
 		controls = new GenericStack<Widget>();
@@ -74,7 +75,7 @@ class VideoPlayer extends WidgetContainer
 
 
 
-		super(xml);
+		super(xml, tilesheet);
 		video = new Video();
 
 
@@ -164,41 +165,25 @@ class VideoPlayer extends WidgetContainer
 
 	public function setFullScreen(fullscreen:Bool):Void
 	{
-
 		isFullscreen = fullscreen;
 
-
-
-        var ratio:Float;
-        if ( ( Lib.current.stage.stageWidth / video.width) < ( Lib.current.stage.stageHeight / video.height) ) {
-            ratio = Lib.current.stage.stageWidth / video.width;
-        } else {
-            ratio = Lib.current.stage.stageHeight / video.height;
-        }
-
 		if (isFullscreen) {
-
-         //Lib.current.stage.fullScreenSourceRect = new Rectangle(containerVideo.x, containerVideo.y,containerVideo.width, containerVideo.height);
-
-            //Lib.current.stage.displayState = StageDisplayState.FULL_SCREEN;
             blackScreen = new Sprite();
-            blackScreen.graphics.beginFill(0xCCCCCC);
+            blackScreen.graphics.beginFill(0);
             blackScreen.graphics.drawRect(0,0,Lib.current.width,Lib.current.height);
             blackScreen.graphics.endFill();
             Lib.current.stage.addChild(blackScreen);
             Lib.current.stage.addChild(containerVideo);
             Lib.current.stage.addChild(containerControls);
-            //containerVideo.x = Lib.current.stage.x;
-            //containerVideo.y = Lib.current.stage.y;
-            containerVideo.scaleX =ratio;
-            containerVideo.scaleY =  ratio;
+            containerVideo.scaleX = Math.min((Lib.current.stage.stageWidth / video.width), (Lib.current.stage.stageHeight / video.height));
+            containerVideo.scaleY =  containerVideo.scaleX;
 
             containerVideo.x = Lib.current.stage.stageWidth/2-containerVideo.width/2;
-            containerVideo.y= Lib.current.stage.stageHeight/2-containerVideo.height/2;
+            containerVideo.y = Lib.current.stage.stageHeight/2-containerVideo.height/2;
 
-            containerControls.x= Lib.current.stage.stageWidth/2-containerControls.width/2;
-            containerControls.y=  Lib.current.stage.stageHeight-containerControls.height-10;
-            displays.get("bigPlay").y =Lib.current.stage.stageHeight/2-displays.get("bigPlay").height/2-containerControls.y ;
+            containerControls.x = Lib.current.stage.stageWidth/2-containerControls.width/2;
+            containerControls.y =  Lib.current.stage.stageHeight-containerControls.height-10;
+            displays.get("bigPlay").y = Lib.current.stage.stageHeight/2-displays.get("bigPlay").height/2-containerControls.y ;
 		    fullscreenButton.setToggle(true);
             containerVideo.addEventListener(MouseEvent.MOUSE_DOWN,clickFull);
 		}
@@ -259,7 +244,6 @@ class VideoPlayer extends WidgetContainer
 				}
 				if(child.name.toLowerCase() == "cursor"){
 					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
-					//tile.set_visible(false);
 					cursor = new Sprite();
 					cursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile)));
 					cursor.x = (child.has.x ? Std.parseFloat(child.att.x) : 0) + progressBar.x;
@@ -299,7 +283,6 @@ class VideoPlayer extends WidgetContainer
 
 		}
 
-        content.setChildIndex(displays.get("bg"),content.numChildren-1);
 		return widget;
 	}
 
@@ -307,6 +290,7 @@ class VideoPlayer extends WidgetContainer
 
 	private function init():Void
 	{
+        content.setChildIndex(displays.get("bg"),content.numChildren-1);
 
 		content.addChild(progressBar);
 		content.addChild(soundSlider);
@@ -377,7 +361,6 @@ class VideoPlayer extends WidgetContainer
 			// Hack: increase slider height
 			bounds.height +=5;
 			if(bounds.contains(e.localX, e.localY)){
-				//soundCursor.x = e.localX - soundCursor.width/2;
 				var ratio = (e.localX - soundSlider.x) / soundSlider.width;
 				changeVolume(ratio);
 			}
@@ -483,10 +466,12 @@ class VideoPlayer extends WidgetContainer
 	private function showControls(e:MouseEvent):Void
 	{
 		if(controlsHidden){
-			for(control in controls){
+			/*for(control in controls){
 				TweenManager.applyTransition(control, transitionIn);
-			}
+			}*/
 			TweenManager.applyTransition(layer.view, transitionIn);
+
+			TweenManager.applyTransition(containerControls, transitionOut);
 			controlsHidden = false;
 		}
 	}
@@ -494,10 +479,11 @@ class VideoPlayer extends WidgetContainer
 	private function hideControls(e:MouseEvent):Void
 	{
 		if(!controlsHidden){
-			for(control in controls){
+			/*for(control in controls){
 				TweenManager.applyTransition(control, transitionOut);
-			}
+			}*/
 			TweenManager.applyTransition(layer.view, transitionOut);
+			TweenManager.applyTransition(containerControls, transitionOut);
 			controlsHidden = true;
 		}
 	}

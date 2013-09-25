@@ -75,6 +75,12 @@ class KpDisplay extends Sprite {
 	{
 		displayFast = new Fast(content.firstElement());
 
+		if(displayFast.has.x)
+			x = Std.parseFloat(displayFast.att.x);
+		if(displayFast.has.y)
+			y = Std.parseFloat(displayFast.att.y);
+		if(displayFast.has.width && displayFast.has.height)
+			DisplayUtils.initSprite(this, Std.parseFloat(displayFast.att.width), Std.parseFloat(displayFast.att.height), 0, 0.001);
 		var i: Int = 0;
 		for(child in displayFast.nodes.SpriteSheet){
 			spritesheets.set(child.att.id, AssetsStorage.getSpritesheet(child.att.src));
@@ -95,6 +101,13 @@ class KpDisplay extends Sprite {
 			transitionOut = displayFast.att.transitionOut;
 		if(displayFast.has.layout)
 			layout = displayFast.att.layout;
+		if(displayFast.has.filters){
+			var filtersArray = new Array<BitmapFilter>();
+			for(filter in displayFast.att.filters.split(","))
+				filtersArray.push(FilterManager.getFilter(filter));
+			filters = filtersArray;
+		}
+
 
 		ResizeManager.instance.onResize();
 	}
@@ -121,10 +134,7 @@ class KpDisplay extends Sprite {
 			case "button": createButton(elemNode);
 			case "text": createText(elemNode);
 			case "textgroup":createTextGroup(elemNode);
-			#if flash
-			case "video": var video = new VideoPlayer(elemNode);
-							addElement(video, elemNode);
-			#end
+			case "video": createVideo(elemNode);
 			case "scrollbar": createScrollBar(elemNode);
 			case "div": addElement(new SimpleContainer(elemNode), elemNode);
 		}
@@ -190,6 +200,13 @@ class KpDisplay extends Sprite {
 		addElement(button, buttonNode);
 	}
 
+	private function createVideo(videoNode: Fast):Void
+	{
+		var tilesheet = videoNode.has.spritesheet ? spritesheets.get(videoNode.att.spritesheet) : null;
+		var video = new VideoPlayer(videoNode, tilesheet);
+		addElement(video, videoNode);
+	}
+
 	private function createText(textNode:Fast):Void
 	{
 		addElement(new ScrollPanel(textNode), textNode);
@@ -205,6 +222,12 @@ class KpDisplay extends Sprite {
 			hashTextGroup.set(child.att.ref, {obj:child, z:numIndex});
 			numIndex++;
 		}
+		#if flash
+			if(textNode.hasNode.Video){
+				createVideo(textNode.node.Video);
+				hashTextGroup.set(textNode.node.Video.att.ref, {obj: textNode.node.Video, z: numIndex});
+			}
+		#end
 		textGroups.set(textNode.att.ref, hashTextGroup);
 	}
 

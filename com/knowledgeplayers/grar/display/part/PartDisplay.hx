@@ -150,13 +150,13 @@ class PartDisplay extends KpDisplay {
 					var textItem = null;
 					for(keyG in textGroups.get(groupKey).keys()){
 						if(!isFirst){
-							textItem = cast(part.getNextElement(), TextItem);
+							textItem = cast(part.getNextElement(), Item);
 
 						}
 						else{
-							textItem = cast(currentElement, TextItem);
+							textItem = cast(currentElement, Item);
 						}
-						setupItem(cast(textItem, TextItem), isFirst);
+						setupItem(cast(textItem, Item), isFirst);
 						isFirst = false;
 					}
 				}
@@ -485,23 +485,19 @@ class PartDisplay extends KpDisplay {
 		}
 		if(inventory != null && contains(inventory))
 			toRemove.add(inventory);
-		for(button in toRemove){
+		for(button in toRemove)
 			removeChild(button);
-		}
 
 		var array = new Array<Widget>();
 
 		for(key in displays.keys()){
-
 			if(mustBeDisplayed(key))
 				array.push(displays.get(key));
 		}
 
 		array.sort(sortDisplayObjects);
-		for(obj in array){
-
+		for(obj in array)
 			addChild(obj);
-		}
 
 		if(inventory != null && currentSpeaker != null)
 			addChild(inventory);

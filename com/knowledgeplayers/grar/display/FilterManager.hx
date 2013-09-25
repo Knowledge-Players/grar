@@ -71,7 +71,7 @@ class FilterManager {
 						var alpha = child.has.alpha ? Std.parseFloat(child.att.alpha) : 1;
 						var blurX = child.has.blurX ? Std.parseFloat(child.att.blurX) : 0;
 						var blurY = child.has.blurY ? Std.parseFloat(child.att.blurY) : 0;
-						var strength = child.has.strength ? Std.parseFloat(child.att.strength) : 127;
+						var strength = child.has.strength ? Std.parseFloat(child.att.strength) : 1;
 						var quality = child.has.quality ? Reflect.getProperty(BitmapFilterQuality, child.att.quality.toUpperCase()) : BitmapFilterQuality.MEDIUM;
 						var inner = child.has.inner ? child.att.inner == "true" : false;
 						var knockout = child.has.knockout ? child.att.knockout == "true" : false;
