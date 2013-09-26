@@ -90,7 +90,6 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 
 	public var endScreen (default, null):Bool = false;
 
-	// TODO reengineer buttons
 	public var buttonTargets (default, null): Map<String, PartElement>;
 
 	private var nbSubPartLoaded:Int = 0;

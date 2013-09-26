@@ -1,5 +1,16 @@
 package com.knowledgeplayers.grar.display;
 
+#if flash
+import flash.system.System;
+import flash.external.ExternalInterface;
+#end
+import com.knowledgeplayers.grar.display.contextual.InventoryDisplay;
+import com.knowledgeplayers.grar.display.contextual.BibliographyDisplay;
+import com.knowledgeplayers.grar.display.contextual.GlossaryDisplay;
+import com.knowledgeplayers.grar.display.contextual.GlossaryDisplay;
+import com.knowledgeplayers.grar.structure.contextual.Glossary;
+import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
+import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import com.knowledgeplayers.grar.tracking.Trackable;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.localisation.Localiser;
@@ -66,7 +77,7 @@ class GameManager extends EventDispatcher {
     **/
 	public var tokensImages (default, null):Map<String, {small:BitmapData, large:BitmapData}>;
 
-	public var menuLoaded (default, set_menuLoaded):Bool = true;
+	public var menuLoaded (default, set_menuLoaded):Bool = false;
 
 	/**
 	* Current activity display
@@ -209,8 +220,10 @@ class GameManager extends EventDispatcher {
 
 		if(interrupt){
 			var oldPart = parts.pop();
-			oldPart.removeEventListener(PartEvent.EXIT_PART, onExitPart);
-			oldPart.exitPart();
+			if(oldPart != null){
+				oldPart.removeEventListener(PartEvent.EXIT_PART, onExitPart);
+				oldPart.exitPart();
+			}
 		}
 		// Display the new part
 		parts.add(DisplayFactory.createPartDisplay(part));
@@ -305,6 +318,25 @@ class GameManager extends EventDispatcher {
 		dispatchEvent(event);
 	}
 
+	/**
+	* Exit the app
+	**/
+	public function quitGame():Void
+	{
+		if (GameManager.instance.game.connection.tracking.suivi != "")
+			GameManager.instance.game.connection.tracking.exitAU();
+
+		#if flash
+		if (ExternalInterface.available)
+		{
+			ExternalInterface.call("quitModule");
+		}else
+		{
+			System.exit(0);
+		}
+		#end
+	}
+
 	// Privates
 
 	private function launchGame():Void
@@ -350,8 +382,22 @@ class GameManager extends EventDispatcher {
 		finishPart(cast(event.target.part, Part).id);
 		var finishedPart = parts.pop();
 		if(finishedPart.part.parent == null){
-			if(finishedPart.part.next != null)
-				displayPartById(finishedPart.part.next);
+			if(finishedPart.part.next != null){
+				var next = game.start(finishedPart.part.next);
+				if(next != null)
+					displayPart(next);
+				else{
+					var contextual: ContextualType = Type.createEnum(ContextualType, finishedPart.part.next.toUpperCase());
+					switch(contextual){
+						case MENU : displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout);
+						case NOTEBOOK : displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
+						case GLOSSARY : displayContextual(GlossaryDisplay.instance, GlossaryDisplay.instance.layout);
+						case BIBLIOGRAPHY : displayContextual(BibliographyDisplay.instance, BibliographyDisplay.instance.layout);
+						// TODO à gérer
+						case INVENTORY : null;
+					}
+				}
+			}
 			else
 				dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
 		}

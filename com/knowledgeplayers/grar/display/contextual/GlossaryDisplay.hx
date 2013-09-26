@@ -9,12 +9,23 @@ import flash.display.Sprite;
 /**
  * Display for a glossary
  */
-class GlossaryDisplay extends Sprite {
+class GlossaryDisplay extends Sprite implements ContextualDisplay{
+
+	public static var instance (get_instance, null): GlossaryDisplay;
+
+	public var layout (default, default):String;
 
 	private var style:Style;
 	private var xOffset:Float = 10;
 
-	public function new(?wordStyle:Style)
+	public static function get_instance():GlossaryDisplay
+	{
+		if(instance == null)
+			instance = new GlossaryDisplay();
+		return instance;
+	}
+
+	private function new(?wordStyle:Style)
 	{
 		super();
 		style = wordStyle;
@@ -27,7 +38,7 @@ class GlossaryDisplay extends Sprite {
 	{
 		var lastLetter:String = " ";
 		var yOffset:Float = 0;
-		for(word in Glossary.instance.getWords()){
+		for(word in Glossary.instance.words){
 			var def = Glossary.instance.getDefinition(word);
 			if(word.charAt(0) > lastLetter){
 				lastLetter = word.charAt(0);
@@ -42,7 +53,8 @@ class GlossaryDisplay extends Sprite {
 			wordTf.x = xOffset;
 			wordTf.y = yOffset;
 			addChild(wordTf);
-			var defSprite = KpTextDownParser.parse(def);
+			var defKPTD = KpTextDownParser.parse(def);
+			var defSprite = defKPTD[0].createSprite(width);
 			defSprite.x = wordTf.x + wordTf.width;
 			defSprite.y = wordTf.y + (wordTf.height - defSprite.height);
 			addChild(defSprite);

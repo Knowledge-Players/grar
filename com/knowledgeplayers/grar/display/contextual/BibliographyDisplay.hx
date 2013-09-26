@@ -15,14 +15,26 @@ import flash.text.TextFieldType;
 /**
  * Display for a bibliography
  */
-class BibliographyDisplay extends Sprite {
+class BibliographyDisplay extends Sprite implements ContextualDisplay{
+
+	public static var instance (get_instance, null): BibliographyDisplay;
+
+	public var layout (default, default): String;
+
 	private var style:Style;
 	private var xOffset:Float = 10;
 	private var displayed:GenericStack<DisplayObject>;
 	private var filter:TextField;
 	private var drop:DropdownMenu;
 
-	public function new(?wordStyle:Style)
+	public static function get_instance():BibliographyDisplay
+	{
+		if(instance == null)
+			instance = new BibliographyDisplay();
+		return instance;
+	}
+
+	private function new(?wordStyle:Style)
 	{
 		super();
 		style = wordStyle;
@@ -67,7 +79,8 @@ class BibliographyDisplay extends Sprite {
 			buf.add(entry.themes.join(", "));
 			buf.add(". ");
 			buf.add(entry.sumup);
-			var entrySprite = KpTextDownParser.parse(buf.toString());
+			var entriesKPTD = KpTextDownParser.parse(buf.toString());
+			var entrySprite = entriesKPTD[0].createSprite(width);
 			entrySprite.x = xOffset;
 			entrySprite.y = yOffset;
 			addChild(entrySprite);

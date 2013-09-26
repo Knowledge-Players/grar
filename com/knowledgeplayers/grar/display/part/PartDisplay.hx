@@ -209,25 +209,6 @@ class PartDisplay extends KpDisplay {
 	{
 		nextElement();
 	}
-
-	/**
-	* Quit the app
-	* @param target : Clicked button
-	**/
-    public function quit(?target: DefaultButton):Void
-	{
-        if (GameManager.instance.game.connection.tracking.suivi != "")
-        GameManager.instance.game.connection.tracking.exitAU();
-
-        if (ExternalInterface.available)
-        {
-            ExternalInterface.call("quitModule");
-        }else
-        {
-            System.exit(0);
-        }
-	}
-
 	/**
 	* Go to a specific pattern
 	* @param    target : Name of the pattern to go
@@ -338,6 +319,12 @@ class PartDisplay extends KpDisplay {
 
         }
 	}
+
+	private function quit(?target: DefaultButton):Void
+	{
+		GameManager.instance.quitGame();
+	}
+
 
 	private function displayBackground(background:String):Void
 	{

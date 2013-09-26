@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.grar.display.contextual.ContextualDisplay.ContextualType;
 import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import com.knowledgeplayers.grar.structure.contextual.Bibliography;
 import com.knowledgeplayers.grar.structure.contextual.Glossary;
@@ -159,14 +160,16 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
 		var structureNode:Fast = structureXml.node.Grar.node.Structure;
 		for(contextual in structureNode.nodes.Contextual){
 			var display = AssetsStorage.getXml(contextual.att.display);
-			switch(contextual.att.type.toLowerCase()){
-				case "notebook":    NotebookDisplay.instance.parseContent(display);
+			var contextualType: ContextualType = Type.createEnum(ContextualType, contextual.att.type.toUpperCase());
+			switch(contextualType){
+				case NOTEBOOK:    NotebookDisplay.instance.parseContent(display);
 									NotebookDisplay.instance.model = new Notebook(contextual.att.file);
-				case "glossary":    Glossary.instance.fillWithXml(contextual.att.file);
-				case "bibliography":Bibliography.instance.fillWithXml(contextual.att.file);
-				case "menu" :       MenuDisplay.instance.parseContent(display);
+				case GLOSSARY:    Glossary.instance.fillWithXml(contextual.att.file);
+				case BIBLIOGRAPHY:Bibliography.instance.fillWithXml(contextual.att.file);
+				case MENU :       MenuDisplay.instance.parseContent(display);
 									if(contextual.has.file)
 										menu = AssetsStorage.getXml(contextual.att.file);
+				default: null;
 			}
 		}
 
@@ -205,15 +208,17 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
             while(i < getAllParts().length && getAllParts()[i].id != partId){
                 i++;
             }
-            nextPart = getAllParts()[i].start(true);
-            var j = 0;
-            var k = 0;
-            while(j <= i){
-                if(getAllParts()[j] == parts[k] && j > 0)
-                    k++;
-                j++;
-            }
-            partIndex = k + 1;
+	        if(i != getAllParts().length){
+                nextPart = getAllParts()[i].start(true);
+	            var j = 0;
+	            var k = 0;
+	            while(j <= i){
+	                if(getAllParts()[j] == parts[k] && j > 0)
+	                    k++;
+	                j++;
+	            }
+	            partIndex = k + 1;
+	        }
         }
         return nextPart;
     }
