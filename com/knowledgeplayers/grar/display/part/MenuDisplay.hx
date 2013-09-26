@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import haxe.xml.Fast;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.contextual.ContextualDisplay;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
@@ -93,6 +94,8 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		xOffset += xBase;
 		yOffset += yBase;
 
+
+
 		Localiser.instance.pushLocale();
 		Localiser.instance.layoutPath = LayoutManager.instance.interfaceLocale;
 
@@ -103,6 +106,13 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		Localiser.instance.popLocale();
 
 		GameManager.instance.menuLoaded = true;
+
+        for(elem in displays){
+            if(elem.ref == "bkg_intro")
+            addChildAt(elem,0);
+            else
+            addChild(elem);
+        }
 	}
 
     private function closeMenu(?_target:DefaultButton):Void{
@@ -134,17 +144,20 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 			}
 			buttons.set(level.get("id"), button);
 
-			button.x += xOffset;
-			button.y += yOffset;
-			addChild(button);
+            button.x += xOffset;
+            button.y += yOffset;
 			if(orientation == "vertical"){
-				yOffset += button.height;
+				yOffset += button.height+Std.parseFloat(fast.att.yOffset);
 			}
 			else if(fast.has.width){
-				xOffset += Std.parseFloat(fast.att.width);
+				xOffset += xOffset+Std.parseFloat(fast.att.width);
 			}
-			else
-			    xOffset += button.width;
+			else if(orientation == "horizontal")
+			    xOffset += button.width+Std.parseFloat(fast.att.xOffset);
+
+
+
+            addChild(button);
 		}
 		for(elem in level.elements())
 			createMenuLevel(elem);

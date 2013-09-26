@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import flash.geom.Rectangle;
@@ -65,6 +66,9 @@ class KpDisplay extends Sprite {
 	private var textGroups:Map<String, Map<String, {obj:Fast, z:Int}>>;
 	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
 
+	private var timelines: Map<String, Timeline>;
+
+
 
 		/**
     * Parse the content of a display XML
@@ -94,6 +98,18 @@ class KpDisplay extends Sprite {
 		addChild(uiLayer.view);
 
 		createDisplay();
+
+
+        for(child in displayFast.nodes.Timeline){
+            var timeLine = new Timeline(child.att.ref);
+
+            for (elem in child.elements){
+                var delay = elem.has.delay?Std.parseFloat(elem.att.delay):0;
+                timeLine.addElement(displays.get(elem.att.ref),elem.att.transition,delay);
+            }
+
+            timelines.set(child.att.ref,timeLine);
+        }
 
 		if(displayFast.has.transitionIn)
 			transitionIn = displayFast.att.transitionIn;
@@ -137,6 +153,7 @@ class KpDisplay extends Sprite {
 			case "video": createVideo(elemNode);
 			case "scrollbar": createScrollBar(elemNode);
 			case "div": addElement(new SimpleContainer(elemNode), elemNode);
+
 		}
 	}
 
@@ -264,7 +281,6 @@ class KpDisplay extends Sprite {
 
 	private function onButtonToggle(e:ButtonActionEvent):Void
 	{
-		trace("toggled");
 		var button = cast(e.target, DefaultButton);
 		if(button.toggle == "inactive"){
 			for(b in buttonGroups.get(button.group)){
@@ -294,6 +310,7 @@ class KpDisplay extends Sprite {
 		layers = new Map<String, TileLayer>();
 		renderLayers = new Map<TileLayer, Bool>();
 		scrollBars = new Map<String, ScrollBar>();
+        timelines = new Map<String, Timeline>();
 
 		addEventListener(Event.ENTER_FRAME, checkRender);
 	}

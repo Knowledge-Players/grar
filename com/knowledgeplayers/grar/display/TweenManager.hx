@@ -41,7 +41,7 @@ class TweenManager {
     * @return the actuator
     **/
 
-	public static function applyTransition(display:Dynamic, refs:String):Null<IGenericActuator>
+	public static function applyTransition(display:Dynamic, refs:String,delay:Float=0):Null<IGenericActuator>
 	{
 		var transition:IGenericActuator = null;
 
@@ -49,7 +49,7 @@ class TweenManager {
 
 			var arrayRef:Array<String> = refs.split(",");
 			for(i in 0...arrayRef.length){
-				transition = startTransition(display, arrayRef[i]);
+				transition = startTransition(display, arrayRef[i],delay);
 			}
 
 		}
@@ -57,29 +57,30 @@ class TweenManager {
 		return transition;
 	}
 
-	private static function startTransition(display:Dynamic, ref:String):Null<IGenericActuator>
+	private static function startTransition(display:Dynamic, ref:String,delay:Float=0):Null<IGenericActuator>
 	{
 		var transition = transitions.get(ref);
 
 		if(transition == null)
 			return null;
+        var totalDelay:Float = delay + transition.delay;
 
 		stop(display, true, true);
 
 		if(Reflect.hasField(transition, "alpha"))
-			return fade(display, ref).delay(transition.delay);
+			return fade(display, ref).delay(totalDelay);
 		else if(Reflect.hasField(transition, "width"))
-			return zoom(display, ref).delay(transition.delay);
+			return zoom(display, ref).delay(totalDelay);
 		else if(Reflect.hasField(transition, "color") && Reflect.hasField(transition, "repeat"))
-			return blink(display, ref).delay(transition.delay);
+			return blink(display, ref).delay(totalDelay);
 		else if(Reflect.hasField(transition, "color"))
-			return transform(display, ref).delay(transition.delay);
+			return transform(display, ref).delay(totalDelay);
 		else if(Reflect.hasField(transition, "repeat"))
-			return wiggle(display, ref).delay(transition.delay);
+			return wiggle(display, ref).delay(totalDelay);
 		else if(Reflect.hasField(transition, "shutterTransitions"))
-			return discover(display, ref, 0).delay(transition.delay);
+			return discover(display, ref, 0).delay(totalDelay);
 		else
-			return slide(display, ref).delay(transition.delay);
+			return slide(display, ref).delay(totalDelay);
 	}
 
 	/**

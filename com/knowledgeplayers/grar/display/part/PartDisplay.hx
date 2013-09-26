@@ -63,6 +63,7 @@ class PartDisplay extends KpDisplay {
 	private var inventory:InventoryDisplay;
 	private var itemSound:Sound;
 	private var itemSoundChannel:SoundChannel;
+    private var firstView:Bool = true;
 
 	/**
      * Constructor
@@ -488,6 +489,12 @@ class PartDisplay extends KpDisplay {
 
 		if(inventory != null && currentSpeaker != null)
 			addChild(inventory);
+        if (firstView){
+            firstView=false;
+            if (timelines.exists("in"))
+                timelines.get("in").play();
+
+        }
 	}
 
 	private inline function sortDisplayObjects(x:Widget, y:Widget):Int
