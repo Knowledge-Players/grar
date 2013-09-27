@@ -110,6 +110,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
         for(elem in displays){
             if(elem.ref == "bkg_intro")
             addChildAt(elem,0);
+
             else
             addChild(elem);
         }

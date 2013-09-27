@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
@@ -68,6 +69,7 @@ class KpDisplay extends Sprite {
 
 	private var timelines: Map<String, Timeline>;
 
+    private var buttonsTimeline:Array<{widget:Widget,timeline:String}>;
 
 
 		/**
@@ -110,6 +112,11 @@ class KpDisplay extends Sprite {
 
             timelines.set(child.att.ref,timeLine);
         }
+        for (elem in buttonsTimeline){
+
+            cast(elem.widget,DefaultButton).timeline = timelines.get(elem.timeline);
+        }
+        buttonsTimeline = null;
 
 		if(displayFast.has.transitionIn)
 			transitionIn = displayFast.att.transitionIn;
@@ -201,7 +208,9 @@ class KpDisplay extends Sprite {
 	private function createButton(buttonNode:Fast):Void
 	{
 		var button:DefaultButton = new DefaultButton(buttonNode);
-
+        if(buttonNode.has.timeline){
+            buttonsTimeline.push({widget:button,timeline:buttonNode.att.timeline});
+        }
 		if(buttonNode.has.action)
 			setButtonAction(button, buttonNode.att.action);
 		if(buttonNode.has.group){
@@ -311,6 +320,7 @@ class KpDisplay extends Sprite {
 		renderLayers = new Map<TileLayer, Bool>();
 		scrollBars = new Map<String, ScrollBar>();
         timelines = new Map<String, Timeline>();
+        buttonsTimeline= new Array<{widget:Widget,timeline:String}>();
 
 		addEventListener(Event.ENTER_FRAME, checkRender);
 	}

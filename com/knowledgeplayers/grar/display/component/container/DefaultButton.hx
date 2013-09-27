@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.element.AnimationDisplay;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.factory.UiFactory;
@@ -51,6 +52,9 @@ class DefaultButton extends WidgetContainer {
 	private var clip:TileClip;
 	private var isToggleEnabled: Bool = false;
 
+
+    public var timeline:Timeline;
+
 		/**
      * Action to execute on click
      */
@@ -91,6 +95,7 @@ class DefaultButton extends WidgetContainer {
 				isToggleEnabled = xml.att.toggle == "true";
 			if(xml.has.group)
 				group = xml.att.group.toLowerCase();
+
 		}
 
 		mouseChildren = false;
@@ -145,7 +150,12 @@ class DefaultButton extends WidgetContainer {
 	{
 		if(isToggleEnabled)
 			onToggle();
-		buttonAction(this);
+        if(timeline != null){
+            timeline.addEventListener(Event.COMPLETE,function(e){buttonAction(this);});
+            timeline.play();
+
+        }else
+		    buttonAction(this);
 	}
 
 	private function onDblClick(event:MouseEvent):Void

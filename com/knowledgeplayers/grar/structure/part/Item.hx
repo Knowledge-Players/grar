@@ -48,9 +48,11 @@ class Item implements PartElement {
 				background = xml.att.background;
 			if(xml.hasNode.Token)
 				token = xml.node.Token.att.ref;
-			if(xml.hasNode.Button){
-				button = new Map<String, Map<String, String>>();
-				button.set(xml.node.Button.att.ref, ParseUtils.parseButtonContent(xml.node.Button));
+
+            button = new Map<String, Map<String, String>>();
+
+            for(elem in xml.nodes.Button){
+                button.set(elem.att.ref, ParseUtils.parseButtonContent(elem));
 			}
 			if(xml.has.endScreen)
 				endScreen = xml.att.endScreen == "true";

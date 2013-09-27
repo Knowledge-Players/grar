@@ -299,6 +299,7 @@ class PartDisplay extends KpDisplay {
 
 	override private function setButtonAction(button:DefaultButton, action:String):Void
 	{
+
 		if(action.toLowerCase() == ButtonActionEvent.NEXT){
 			button.buttonAction = next;
 		}
@@ -311,8 +312,10 @@ class PartDisplay extends KpDisplay {
 			button.buttonAction = function(?target: DefaultButton){
 				if(part.buttonTargets.get(button.ref) == null)
 					exitPart();
-				else
+				else {
 					nextElement(part.getElementIndex(part.buttonTargets.get(button.ref))-1);
+
+                }
 			};
 		}
         else if (action.toLowerCase() == ButtonActionEvent.QUIT){

@@ -20,7 +20,7 @@ class TileImage extends Image{
 	public var tileSprite (default, null): TileSprite;
 
 	private var tilesheetName: String;
-	private var trueLayer: TileLayer;
+	public var trueLayer: TileLayer;
 	private var xml: Fast;
 	private var isVisible: Bool;
 
