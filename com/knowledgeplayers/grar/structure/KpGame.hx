@@ -418,7 +418,8 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
             }
             else{
                 dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
-	            MenuDisplay.instance.init();
+	            if(MenuDisplay.instance.exists)
+                    MenuDisplay.instance.init();
             }
         }
     }

@@ -4,6 +4,7 @@ package com.knowledgeplayers.grar.display;
 import flash.system.System;
 import flash.external.ExternalInterface;
 #end
+import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import com.knowledgeplayers.grar.display.contextual.InventoryDisplay;
 import com.knowledgeplayers.grar.display.contextual.BibliographyDisplay;
 import com.knowledgeplayers.grar.display.contextual.GlossaryDisplay;
@@ -114,7 +115,7 @@ class GameManager extends EventDispatcher {
 	{
 		this.game = game;
 		changeLayout(layout);
-		if(menuLoaded){
+		if(!MenuDisplay.instance.exists || menuLoaded){
 			launchGame();
 		}
 	}

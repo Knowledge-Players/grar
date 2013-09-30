@@ -36,6 +36,8 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 	private var buttons:Map<String, DefaultButton>;
 
+    public var exists(default,null):Bool=false;
+
 	public static function get_instance():MenuDisplay
 	{
 		if(instance == null)
@@ -68,6 +70,10 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 			case "close_menu": button.buttonAction = closeMenu;
 		}
 	}
+    override public function parseContent(content:Xml):Void{
+        super.parseContent(content);
+        exists = true;
+    }
 
 	public function init():Void
 	{
