@@ -56,7 +56,7 @@ class Scorm {
 		}
 
 		displayDebugInfo("__connectionActive: " + activeConnection);
-		#else
+		#elseif js
 		var wrapper:Dynamic = untyped __js__('pipwerks.SCORM.init()');
 		result = wrapper == "true";
 		#end
@@ -85,7 +85,7 @@ class Scorm {
 		else{
 			displayDebugInfo("pipwerks.SCORM.quit aborted: connection already inactive.");
 		}
-		#else
+		#elseif js
 		var wrapper:Dynamic = untyped __js__('pipwerks.SCORM.quit()');
 		result = wrapper == "true";
 		#end
@@ -115,7 +115,7 @@ class Scorm {
 		else{
 			displayDebugInfo("pipwerks.SCORM.get(" + param + ") failed: connection is inactive.");
 		}
-		#else
+		#elseif js
 		returnedValue = untyped __js__('pipwerks.SCORM.get('+param+')');
 		#end
 		return returnedValue;
@@ -140,7 +140,7 @@ class Scorm {
 		else{
 			displayDebugInfo("pipwerks.SCORM.set(" + parameter + ") failed: connection is inactive.");
 		}
-		#else
+		#elseif js
 		var wrapper:Dynamic = untyped __js__('pipwerks.SCORM.set('+parameter+','+value+')');
 		result = wrapper == "true";
 		#end
@@ -165,7 +165,7 @@ class Scorm {
 		else{
 			displayDebugInfo("pipwerks.SCORM.save() failed: API connection is inactive.");
 		}
-		#else
+		#elseif js
 		var wrapper:Dynamic = untyped __js__('pipwerks.SCORM.save()');
 		result = wrapper == "true";
 		#end
@@ -180,7 +180,7 @@ class Scorm {
 		#if flash
 		if(ExternalInterface.available)
 			code = cast (ExternalInterface.call("pipwerks.SCORM.debug.getCode"), Int);
-		#else
+		#elseif js
 		var wrapper:Dynamic = untyped __js__('pipwerks.SCORM.debug.getCode()');
 		code = Std.parseInt(wrapper);
 		#end
@@ -193,7 +193,7 @@ class Scorm {
 		#if flash
 		if(ExternalInterface.available)
 			result = Std.string(ExternalInterface.call("pipwerks.SCORM.debug.getInfo", errorCode));
-		#else
+		#elseif js
 		result = untyped __js__('pipwerks.SCORM.getInfo('+errorCode+')');
 		#end
 		return result;
@@ -205,7 +205,7 @@ class Scorm {
 		#if flash
 		if(ExternalInterface.available)
 			result = cast (ExternalInterface.call("pipwerks.SCORM.debug.getDiagnosticInfo", errorCode), String);
-		#else
+		#elseif js
 		result = untyped __js__('pipwerks.SCORM.getDiagnosticInfo('+errorCode+')');
 		#end
 		return result;
@@ -217,7 +217,7 @@ class Scorm {
 			#if flash
 			if(ExternalInterface.available)
 				ExternalInterface.call("pipwerks.UTILS.trace", msg);
-			#else
+			#elseif js
 			untyped __js__('pipwerks.UTILS.trace('+msg+')');
 			#end
 		}

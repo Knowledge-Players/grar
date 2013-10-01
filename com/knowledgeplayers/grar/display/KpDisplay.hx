@@ -228,9 +228,11 @@ class KpDisplay extends Sprite {
 
 	private function createVideo(videoNode: Fast):Void
 	{
+		#if flash
 		var tilesheet = videoNode.has.spritesheet ? spritesheets.get(videoNode.att.spritesheet) : null;
 		var video = new VideoPlayer(videoNode, tilesheet);
 		addElement(video, videoNode);
+		#end
 	}
 
 	private function createText(textNode:Fast):Void

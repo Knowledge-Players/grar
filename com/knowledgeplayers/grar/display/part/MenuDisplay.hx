@@ -70,8 +70,16 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 			case "close_menu": button.buttonAction = closeMenu;
 		}
 	}
-    override public function parseContent(content:Xml):Void{
-        super.parseContent(content);
+    override public function parseContent(content:Xml):Void
+    {
+		// BAAAAAAAAAAHHH
+        if(!Std.is(this, MenuSphericalDisplay) && content.firstElement().get("type") == "spheric"){
+	        instance = MenuSphericalDisplay.instance;
+	        instance.parseContent(content);
+        }
+	    else
+            super.parseContent(content);
+
         exists = true;
     }
 
