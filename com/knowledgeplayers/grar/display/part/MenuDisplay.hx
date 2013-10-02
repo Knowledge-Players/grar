@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.component.TileImage;
+import com.knowledgeplayers.grar.display.component.Widget;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.contextual.ContextualDisplay;
@@ -50,6 +52,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		super();
 		buttons = new Map<String, DefaultButton>();
 		GameManager.instance.addEventListener(PartEvent.EXIT_PART, onFinishPart);
+		addEventListener(Event.ADDED_TO_STAGE, onAdded);
 	}
 
 	/**
@@ -113,6 +116,16 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		Localiser.instance.pushLocale();
 		Localiser.instance.layoutPath = LayoutManager.instance.interfaceLocale;
 
+		var array = new Array<Widget>();
+		for(key in displays.keys()){
+			array.push(displays.get(key));
+		}
+
+		array.sort(sortDisplayObjects);
+		for(obj in array)
+			addChild(obj);
+		addChild(layers.get("ui").view);
+
 		for(elem in menuXml.firstElement().elements()){
 			createMenuLevel(elem);
 		}
@@ -120,14 +133,6 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		Localiser.instance.popLocale();
 
 		GameManager.instance.menuLoaded = true;
-
-        for(elem in displays){
-            if(elem.ref == "bkg_intro")
-            addChildAt(elem,0);
-
-            else
-            addChild(elem);
-        }
 	}
 
     private function closeMenu(?_target:DefaultButton):Void{
@@ -209,6 +214,8 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		return button;
 	}
 
+	// Handlers
+
 	private function onClick(?_target:DefaultButton):Void
 	{
 		var target = _target;
@@ -224,5 +231,18 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 	{
 		if(buttons.exists(e.partId))
 			buttons.get(e.partId).setToggle(false);
+	}
+
+	private function onAdded(e:Event):Void
+	{
+		if (timelines.exists("in")){
+			timelines.get("in").addEventListener(Event.COMPLETE, function(e){
+				trace(cast(displays.get("braceLeft"), TileImage).tileSprite.x);
+				for(layer in layers)
+					layer.render();
+			});
+			timelines.get("in").play();
+		}
+		//TweenManager.applyTransition(this, "fadeIn");
 	}
 }

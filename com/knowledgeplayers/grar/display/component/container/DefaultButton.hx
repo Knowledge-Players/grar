@@ -45,15 +45,16 @@ class DefaultButton extends WidgetContainer {
 	**/
 	public var group (default, default):String;
 
+	/**
+	* State of the button: 'active' or 'inactive'
+	**/
 	public var toggle (default, null):String = "active";
 
 	private var currentState:String;
-
 	private var clip:TileClip;
 	private var isToggleEnabled: Bool = false;
-
-
-    public var timeline:Timeline;
+    private var timelines: Map<String, Timeline>;
+	private var tmpXml: Fast;
 
 		/**
      * Action to execute on click
@@ -69,6 +70,7 @@ class DefaultButton extends WidgetContainer {
 	public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>)
 	{
 		super(xml);
+		timelines = new Map<String, Timeline>();
 
 		if(pStates != null)
 			states = pStates;
@@ -76,20 +78,14 @@ class DefaultButton extends WidgetContainer {
 			states = new Map<String, Map<String, Widget>>();
 
 		if(xml != null){
-			if(xml.hasNode.active){
-				for(state in xml.node.active.elements){
-					if(states.exists("active_out") || state.name == "out"){
-						states.set("active_" + state.name, createStates(state));
-					}
+			for(state in xml.elements){
+				if(state.has.timeline){
+					tmpXml = xml;
+					break;
 				}
 			}
-			if(xml.hasNode.inactive){
-				for(state in xml.node.inactive.elements){
-					if(states.exists("inactive_out") || state.name == "out"){
-						states.set("inactive_" + state.name, createStates(state));
-					}
-				}
-			}
+			if(tmpXml == null)
+				initStates(xml);
 
 			if(xml.has.toggle)
 				isToggleEnabled = xml.att.toggle == "true";
@@ -102,6 +98,34 @@ class DefaultButton extends WidgetContainer {
 		useHandCursor = buttonMode = true;
 
 		init();
+	}
+
+	public function initStates(?xml: Fast, ?timelines: Map<String, Timeline>):Void
+	{
+		if(xml != null)
+			tmpXml = xml;
+		if(tmpXml != null){
+			if(tmpXml.hasNode.active){
+				if(timelines != null && tmpXml.node.active.has.timeline)
+					this.timelines.set("active", timelines.get(tmpXml.node.active.att.timeline));
+				for(state in tmpXml.node.active.elements){
+					if(states.exists("active_out") || state.name == "out"){
+						states.set("active_" + state.name, createStates(state));
+					}
+				}
+			}
+			if(tmpXml.hasNode.inactive){
+				if(timelines != null && tmpXml.node.inactive.has.timeline)
+					this.timelines.set("inactive", timelines.get(tmpXml.node.inactive.att.timeline));
+				for(state in tmpXml.node.inactive.elements){
+					if(states.exists("inactive_out") || state.name == "out"){
+						states.set("inactive_" + state.name, createStates(state));
+					}
+				}
+			}
+			tmpXml = null;
+		}
+		renderState("out");
 	}
 
 	/**
@@ -136,6 +160,22 @@ class DefaultButton extends WidgetContainer {
 		renderState("out");
 	}
 
+	public function setText(pContent:String, ?pKey:String):Void
+	{
+		for(state in states){
+			if(pKey == null){
+				for(elem in state){
+					if(Std.is(elem, ScrollPanel)){
+						cast(elem, ScrollPanel).setContent(pContent);
+					}
+				}
+			}
+			else if(state.exists(pKey)){
+				cast(state.get(pKey), ScrollPanel).setContent(pContent);
+			}
+		}
+	}
+
 	// Abstract
 
 	private function onMouseOver(event:MouseEvent):Void
@@ -150,9 +190,9 @@ class DefaultButton extends WidgetContainer {
 	{
 		if(isToggleEnabled)
 			onToggle();
-        if(timeline != null){
-            timeline.addEventListener(Event.COMPLETE,function(e){buttonAction(this);});
-            timeline.play();
+        if(timelines.exists(toggle)){
+	        timelines.get(toggle).addEventListener(Event.COMPLETE,function(e){buttonAction(this);});
+	        timelines.get(toggle).play();
 
         }else
 		    buttonAction(this);
@@ -208,7 +248,8 @@ class DefaultButton extends WidgetContainer {
 
 		setAllListeners(onMouseEvent);
 
-		renderState("out");
+		if(tmpXml == null)
+			renderState("out");
 
 		// Hack for C++ hitArea (NME 3.5.5)
 		#if cpp
@@ -289,22 +330,6 @@ class DefaultButton extends WidgetContainer {
 
 			renderNeeded = true;
 			displayContent();
-		}
-	}
-
-	public function setText(pContent:String, ?pKey:String):Void
-	{
-		for(state in states){
-			if(pKey == null){
-				for(elem in state){
-					if(Std.is(elem, ScrollPanel)){
-						cast(elem, ScrollPanel).setContent(pContent);
-					}
-				}
-			}
-			else if(state.exists(pKey)){
-				cast(state.get(pKey), ScrollPanel).setContent(pContent);
-			}
 		}
 	}
 

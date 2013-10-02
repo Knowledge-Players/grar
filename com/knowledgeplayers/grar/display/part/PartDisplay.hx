@@ -500,16 +500,6 @@ class PartDisplay extends KpDisplay {
         }
 	}
 
-	private inline function sortDisplayObjects(x:Widget, y:Widget):Int
-	{
-		if(x.zz < y.zz)
-			return -1;
-		else if(x.zz > y.zz)
-			return 1;
-		else
-			return 0;
-	}
-
 	private function mustBeDisplayed(key:String):Bool
 	{
 		var object = displays.get(key);

@@ -69,8 +69,6 @@ class KpDisplay extends Sprite {
 
 	private var timelines: Map<String, Timeline>;
 
-    private var buttonsTimeline:Array<{widget:Widget,timeline:String}>;
-
 
 		/**
     * Parse the content of a display XML
@@ -112,11 +110,10 @@ class KpDisplay extends Sprite {
 
             timelines.set(child.att.ref,timeLine);
         }
-        for (elem in buttonsTimeline){
-
-            cast(elem.widget,DefaultButton).timeline = timelines.get(elem.timeline);
+        for (elem in displays){
+			if(Std.is(elem, DefaultButton))
+                cast(elem,DefaultButton).initStates(timelines);
         }
-        buttonsTimeline = null;
 
 		if(displayFast.has.transitionIn)
 			transitionIn = displayFast.att.transitionIn;
@@ -208,9 +205,6 @@ class KpDisplay extends Sprite {
 	private function createButton(buttonNode:Fast):Void
 	{
 		var button:DefaultButton = new DefaultButton(buttonNode);
-        if(buttonNode.has.timeline){
-            buttonsTimeline.push({widget:button,timeline:buttonNode.att.timeline});
-        }
 		if(buttonNode.has.action)
 			setButtonAction(button, buttonNode.att.action);
 		if(buttonNode.has.group){
@@ -311,6 +305,16 @@ class KpDisplay extends Sprite {
 		}
 	}
 
+	private inline function sortDisplayObjects(x:Widget, y:Widget):Int
+	{
+		if(x.zz < y.zz)
+			return -1;
+		else if(x.zz > y.zz)
+			return 1;
+		else
+			return 0;
+	}
+
 	private function new()
 	{
 		super();
@@ -322,7 +326,6 @@ class KpDisplay extends Sprite {
 		renderLayers = new Map<TileLayer, Bool>();
 		scrollBars = new Map<String, ScrollBar>();
         timelines = new Map<String, Timeline>();
-        buttonsTimeline= new Array<{widget:Widget,timeline:String}>();
 
 		addEventListener(Event.ENTER_FRAME, checkRender);
 	}

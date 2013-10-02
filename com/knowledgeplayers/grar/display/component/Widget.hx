@@ -49,7 +49,7 @@ class Widget extends Sprite{
 	**/
 	public var transformation (default, set_transformation):String;
 
-	public var zz: Float;
+	public var zz: Int;
 
 	private var origin: {x: Float, y: Float, scaleX: Float, scaleY: Float, alpha: Float};
 	private var lockPosition: Bool = false;
@@ -210,6 +210,8 @@ class Widget extends Sprite{
 			transitionIn = xml.has.transitionIn ? xml.att.transitionIn : "";
 			transitionOut = xml.has.transitionOut ? xml.att.transitionOut : "";
 
+			if(xml.has.alpha)
+				alpha = Std.parseFloat(xml.att.alpha);
 			if(xml.has.rotation)
 				rotation = Std.parseFloat(xml.att.rotation);
 			if(xml.has.transformation)
