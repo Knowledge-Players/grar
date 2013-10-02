@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import flash.events.MouseEvent;
 import flash.system.System;
 import flash.external.ExternalInterface;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
@@ -73,10 +74,15 @@ class PartDisplay extends KpDisplay {
 	{
 		super();
 		this.part = part;
-
+        addEventListener(MouseEvent.CLICK,tracePosition);
 		resizeD = ResizeManager.get_instance();
 		currentItems = new GenericStack<DisplayObject>();
 	}
+
+    public function tracePosition(e:MouseEvent):Void{
+
+    trace("x : "+this.mouseX+" - y : "+this.mouseY);
+    }
 
 	/**
     * Initialize the part display.
@@ -316,7 +322,6 @@ class PartDisplay extends KpDisplay {
 
                 }
 			};
-
 		}
         else if (action.toLowerCase() == ButtonActionEvent.QUIT){
             button.buttonAction = quit;
@@ -394,6 +399,7 @@ class PartDisplay extends KpDisplay {
 		var toRemove = new GenericStack<DisplayObject>();
 
 		if(isFirst){
+
 			displayBackground(item.background);
 
 			for(i in 0...numChildren){

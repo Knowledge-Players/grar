@@ -11,7 +11,7 @@ class Connection extends EventDispatcher {
 		super();
 	}
 
-	public function initConnection(mode:Mode, isNote:Bool = false):Void
+	public function initConnection(mode:Mode, isNote:Bool = false,activation:String="off"):Void
 	{
 		switch(mode) {
 			case AICC :
@@ -24,7 +24,7 @@ class Connection extends EventDispatcher {
 				tracking = new AutoTracking();
 		}
 
-		tracking.init(isNote, "on");
+		tracking.init(isNote, activation);
 	}
 
 	public function computeTracking(stateInfos:StateInfos):Void
