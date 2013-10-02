@@ -121,6 +121,8 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         state = parametersNode.node.State.innerData;
 
     	// Start Tracking
+
+
         initTracking();
 
     	// Load UI
@@ -263,7 +265,15 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
 	    connection = new Connection();
 		if(mode != null)
             this.mode = mode;
-        connection.initConnection(this.mode);
+
+
+        var activationTracking:String = "off";
+        var parametersNode:Fast = structureXml.node.Grar.node.Parameters;
+
+        if(parametersNode.node.State.has.tracking)
+            activationTracking = parametersNode.node.State.att.tracking;
+
+        connection.initConnection(this.mode,false,activationTracking);
         stateInfos = connection.revertTracking();
         if(stateInfos.isEmpty()){
             stateInfos.loadStateInfos(state);
