@@ -7,14 +7,20 @@ import com.knowledgeplayers.grar.display.component.Widget;
 
 class Timeline extends EventDispatcher
 {
+	/**
+	* Name of the timeline
+	**/
+	public var name (default, default):String;
 
     private var elements:Array<TimelineElement>;
 
     private var nbCompleteTransitions:Float = 0;
 
-    public function new(?_id:String):Void{
-            super();
-         elements = new Array<TimelineElement>();
+    public function new(?name:String):Void
+	{
+		super();
+		this.name = name;
+        elements = new Array<TimelineElement>();
 
     }
 
@@ -24,13 +30,12 @@ class Timeline extends EventDispatcher
 
     }
 
-    public function play():Void{
-
+    public function play():Void
+    {
          nbCompleteTransitions=0;
 
          for (elem in elements){
             if (Std.is(elem.widget, TileImage)) {
-
                 TweenManager.applyTransition(cast(elem.widget,TileImage).tileSprite,elem.transition,elem.delay).onComplete(onCompleteTransition).onUpdate(function(){
                     cast(elem.widget,TileImage).tileSprite.layer.render();
                     cast(elem.widget,TileImage).trueLayer.render();
@@ -42,10 +47,8 @@ class Timeline extends EventDispatcher
     }
 
     private function onCompleteTransition():Void {
-
         nbCompleteTransitions++;
         if(nbCompleteTransitions == elements.length){
-
             dispatchEvent(new Event(Event.COMPLETE));
 
         }

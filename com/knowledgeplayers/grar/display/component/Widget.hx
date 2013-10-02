@@ -209,7 +209,6 @@ class Widget extends Sprite{
 
 			transitionIn = xml.has.transitionIn ? xml.att.transitionIn : "";
 			transitionOut = xml.has.transitionOut ? xml.att.transitionOut : "";
-
 			if(xml.has.alpha)
 				alpha = Std.parseFloat(xml.att.alpha);
 			if(xml.has.rotation)

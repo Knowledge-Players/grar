@@ -43,6 +43,8 @@ class TileImage extends Image{
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
 			set_visible(true);
+			if(onComplete != null)
+				onComplete();
 		});
 		if(tileSprite != null)
 			origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY, alpha: tileSprite.alpha};

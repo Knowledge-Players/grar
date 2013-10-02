@@ -63,7 +63,6 @@ class PartDisplay extends KpDisplay {
 	private var inventory:InventoryDisplay;
 	private var itemSound:Sound;
 	private var itemSoundChannel:SoundChannel;
-    private var firstView:Bool = true;
 
 	/**
      * Constructor
@@ -317,6 +316,7 @@ class PartDisplay extends KpDisplay {
 
                 }
 			};
+
 		}
         else if (action.toLowerCase() == ButtonActionEvent.QUIT){
             button.buttonAction = quit;
@@ -394,7 +394,6 @@ class PartDisplay extends KpDisplay {
 		var toRemove = new GenericStack<DisplayObject>();
 
 		if(isFirst){
-
 			displayBackground(item.background);
 
 			for(i in 0...numChildren){
@@ -487,17 +486,22 @@ class PartDisplay extends KpDisplay {
 		}
 
 		array.sort(sortDisplayObjects);
-		for(obj in array)
+		var objAdded = 0;
+		var timelineIn = currentItem.timelineIn;
+		for(obj in array){
+			obj.onComplete = function(){
+				objAdded++;
+				if(objAdded == array.length){
+					if(timelineIn != null)
+						timelines.get(timelineIn).play();
+				}
+			};
 			addChild(obj);
+		}
 
 		if(inventory != null && currentSpeaker != null)
 			addChild(inventory);
-        if (firstView){
-            firstView=false;
-            if (timelines.exists("in"))
-                timelines.get("in").play();
 
-        }
 	}
 
 	private function mustBeDisplayed(key:String):Bool
@@ -530,6 +534,7 @@ class PartDisplay extends KpDisplay {
 						targetedText = contentKey;
 					cast(displays.get(key), DefaultButton).setText(Localiser.instance.getItemContent(button.get(key).get(contentKey)), targetedText);
 				}
+				cast(displays.get(key), DefaultButton).timeline = timelines.get(currentItem.timelineOut);
 				return true;
 			}
 			else

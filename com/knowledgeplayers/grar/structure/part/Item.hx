@@ -32,6 +32,9 @@ class Item implements PartElement {
 
 	public var endScreen (default, null):Bool = false;
 
+	public var timelineIn (default, default):String;
+	public var timelineOut (default, default):String;
+
 	/**
      * Constructor
      * @param	xml : fast xml node with structure info
@@ -46,6 +49,10 @@ class Item implements PartElement {
 				ref = xml.att.ref;
 			if(xml.has.background)
 				background = xml.att.background;
+			if(xml.has.timelineIn)
+				timelineIn = xml.att.timelineIn;
+			if(xml.has.timelineOut)
+				timelineOut = xml.att.timelineOut;
 			if(xml.hasNode.Token)
 				token = xml.node.Token.att.ref;
 

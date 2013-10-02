@@ -50,6 +50,11 @@ class DefaultButton extends WidgetContainer {
 	**/
 	public var toggle (default, null):String = "active";
 
+	/**
+	* Timeline that will play on the next click
+	**/
+	public var timeline (default, default):Timeline;
+
 	private var currentState:String;
 	private var clip:TileClip;
 	private var isToggleEnabled: Bool = false;
@@ -125,6 +130,7 @@ class DefaultButton extends WidgetContainer {
 			}
 			tmpXml = null;
 		}
+		timeline = this.timelines.get(toggle);
 		renderState("out");
 	}
 
@@ -157,6 +163,7 @@ class DefaultButton extends WidgetContainer {
 	public function setToggle(toggle:Bool):Void
 	{
 		this.toggle = toggle ? "active" : "inactive";
+		timeline = timelines.get(this.toggle);
 		renderState("out");
 	}
 
@@ -188,14 +195,13 @@ class DefaultButton extends WidgetContainer {
 
 	private function onClick(event:MouseEvent):Void
 	{
+		if(timeline != null){
+			timeline.addEventListener(Event.COMPLETE,function(e){buttonAction(this);});
+			timeline.play();
+		}else
+			buttonAction(this);
 		if(isToggleEnabled)
 			onToggle();
-        if(timelines.exists(toggle)){
-	        timelines.get(toggle).addEventListener(Event.COMPLETE,function(e){buttonAction(this);});
-	        timelines.get(toggle).play();
-
-        }else
-		    buttonAction(this);
 	}
 
 	private function onDblClick(event:MouseEvent):Void
