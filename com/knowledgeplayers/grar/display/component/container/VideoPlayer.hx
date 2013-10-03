@@ -188,7 +188,9 @@ class VideoPlayer extends WidgetContainer
             containerVideo.addEventListener(MouseEvent.MOUSE_DOWN,clickFull);
 		}
 		else {
+		    if (blackScreen !=null)
             Lib.current.stage.removeChild(blackScreen);
+
             containerVideo.scaleX =1;
             containerVideo.scaleY = 1;
             addChild(containerVideo);
