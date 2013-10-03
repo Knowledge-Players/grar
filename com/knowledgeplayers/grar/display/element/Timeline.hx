@@ -12,7 +12,10 @@ class Timeline extends EventDispatcher
 	**/
 	public var name (default, default):String;
 
-    private var elements:Array<TimelineElement>;
+	/**
+	* Elements affected by this timeline
+	**/
+    public var elements (default, null):Array<TimelineElement>;
 
     private var nbCompleteTransitions:Float = 0;
 

@@ -237,12 +237,12 @@ class WidgetContainer extends Widget{
 		scrollBar.moveCursor(delta);
 	}
 
-	private function displayContent():Void
+	private function displayContent(trim: Bool = false):Void
 	{
-		maskSprite(content, maskWidth, maskHeight);
+		maskSprite(content, (trim ? content.width:maskWidth), maskHeight);
 
 
-		if(maskHeight < content.height && scrollable){
+		if(maskHeight < content.height && scrollable && parent != null){
 			var partDisplay = parent;
 
 			while(!Std.is(partDisplay, KpDisplay)){
@@ -268,6 +268,8 @@ class WidgetContainer extends Widget{
 		else{
 			scrollNeeded = false;
 		}
+		//if(Std.is(this, ScrollPanel))
+		//	trace("ok");
 
 		TweenManager.applyTransition(content, contentTransition);
 	}

@@ -100,7 +100,7 @@ class Widget extends Sprite{
 				actuator.onComplete(onComplete);
 			else if(onComplete != null)
 				onComplete();
-		});
+		}, 1000);
 
 		return transitionIn = transition;
 	}
@@ -130,6 +130,12 @@ class Widget extends Sprite{
 		setX(currentX);
 	}
 
+	public function reset(): Void
+	{
+		for(field in Reflect.fields(origin))
+			Reflect.setField(this, field, Reflect.field(origin, field));
+	}
+
 	// Privates
 
 	private function setX(xString:String):Void
@@ -138,7 +144,8 @@ class Widget extends Sprite{
 			x = Std.parseFloat(xString);
 		else{
 			switch(xString.toLowerCase()){
-				case "left": if(parent != null)
+				case "left":
+					if(parent != null)
 						setXLeft();
 				else
 					addEventListener(Event.ADDED_TO_STAGE, function(e){setXLeft();}, false, 100);
@@ -222,12 +229,6 @@ class Widget extends Sprite{
 				filters = filtersArray;
 			}
 		}
-	}
-
-	private function reset(): Void
-	{
-		for(field in Reflect.fields(origin))
-			Reflect.setField(this, field, Reflect.field(origin, field));
 	}
 
 }

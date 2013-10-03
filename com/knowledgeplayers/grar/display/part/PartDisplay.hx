@@ -56,7 +56,7 @@ class PartDisplay extends KpDisplay {
 	private var currentElement:PartElement;
 	private var resizeD:ResizeManager;
 	private var currentSpeaker:CharacterDisplay;
-	private var previousBackground:{ref:String, bmp:Image};
+	private var previousBackground:String;
 	private var localeLoaded:Bool = false;
 	private var displayLoaded:Bool = false;
 	private var currentItems:GenericStack<DisplayObject>;
@@ -340,23 +340,26 @@ class PartDisplay extends KpDisplay {
 		if(background != null && background != ""){
 			var sameBackground = true;
 			// Clean previous background
-			if(previousBackground != null && previousBackground.ref != background){
+			if(previousBackground != null && previousBackground != background){
 				sameBackground = false;
-				if(previousBackground.bmp != null)
-					removeChild(previousBackground.bmp);
+				for(b in previousBackground.split(","))
+					removeChild(displays.get(b));
 			}
 			else if(previousBackground == null)
 				sameBackground = false;
 			// Add new background if different from previous one
 			if(!sameBackground){
-				if(!displays.exists(background))
-					throw '[PartDisplay] There is no background with ref "$background"';
-				var bkg:Image = cast(displays.get(background), Image);
-				if(bkg != null){
-					addChildAt(bkg, 0);
+				var bkgs = background.split(",");
+				bkgs.reverse();
+				for(b in bkgs){
+					if(!displays.exists(b))
+						throw '[PartDisplay] There is no background with ref "$b"';
+					var bkg:Image = cast(displays.get(b), Image);
+					if(bkg != null){
+						addChildAt(bkg, 0);
+					}
 				}
-
-				previousBackground = {ref: background, bmp: cast(bkg, Image)};
+				previousBackground = background;
 			}
 		}
 	}

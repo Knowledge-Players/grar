@@ -99,22 +99,6 @@ class KpDisplay extends Sprite {
 
 		createDisplay();
 
-
-        for(child in displayFast.nodes.Timeline){
-            var timeLine = new Timeline(child.att.ref);
-
-            for (elem in child.elements){
-                var delay = elem.has.delay?Std.parseFloat(elem.att.delay):0;
-                timeLine.addElement(displays.get(elem.att.ref),elem.att.transition,delay);
-            }
-
-            timelines.set(child.att.ref,timeLine);
-        }
-        for (elem in displays){
-			if(Std.is(elem, DefaultButton))
-                cast(elem,DefaultButton).initStates(timelines);
-        }
-
 		if(displayFast.has.transitionIn)
 			transitionIn = displayFast.att.transitionIn;
 		if(displayFast.has.transitionOut)
@@ -143,6 +127,21 @@ class KpDisplay extends Sprite {
 	{
 		for(child in displayFast.elements){
 			createElement(child);
+		}
+
+		for(child in displayFast.nodes.Timeline){
+			var timeLine = new Timeline(child.att.ref);
+
+			for (elem in child.elements){
+				var delay = elem.has.delay?Std.parseFloat(elem.att.delay):0;
+				timeLine.addElement(displays.get(elem.att.ref),elem.att.transition,delay);
+			}
+
+			timelines.set(child.att.ref,timeLine);
+		}
+		for (elem in displays){
+			if(Std.is(elem, DefaultButton))
+				cast(elem,DefaultButton).initStates(timelines);
 		}
 	}
 

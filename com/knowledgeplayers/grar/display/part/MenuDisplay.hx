@@ -15,6 +15,8 @@ import com.knowledgeplayers.grar.factory.UiFactory;
 import haxe.xml.Fast;
 import flash.display.Shape;
 import flash.events.Event;
+import aze.display.TileLayer;
+import aze.display.TileSprite;
 
 /**
  * Display of a menu
@@ -53,6 +55,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		buttons = new Map<String, DefaultButton>();
 		GameManager.instance.addEventListener(PartEvent.EXIT_PART, onFinishPart);
 		addEventListener(Event.ADDED_TO_STAGE, onAdded);
+		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 	}
 
 	/**
@@ -98,9 +101,8 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 				levelDisplays.set(child.name, child);
 		}
 
-		for(child in displayFast.elements){
-			createElement(child);
-		}
+		super.createDisplay();
+
 		if(displayFast.has.xBase)
 			xBase = Std.parseFloat(displayFast.att.xBase);
 		if(displayFast.has.yBase)
@@ -139,7 +141,12 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
         GameManager.instance.hideContextual(MenuDisplay.instance);
     }
 
+
 	// Private
+
+	override private function createDisplay():Void
+	{
+	}
 
 	private function createMenuLevel(level:Xml):Void
 	{
@@ -236,13 +243,13 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 	private function onAdded(e:Event):Void
 	{
 		if (timelines.exists("in")){
-			timelines.get("in").addEventListener(Event.COMPLETE, function(e){
-				trace(cast(displays.get("braceLeft"), TileImage).tileSprite.x);
-				for(layer in layers)
-					layer.render();
-			});
 			timelines.get("in").play();
 		}
-		//TweenManager.applyTransition(this, "fadeIn");
+	}
+
+	private function onRemove(e:Event):Void
+	{
+		for(elem in timelines.get("in").elements)
+			elem.widget.reset();
 	}
 }
