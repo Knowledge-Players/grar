@@ -98,7 +98,7 @@ class FolderElementDisplay extends WidgetContainer {
 		buttonMode = false;
 	}
 
-    override private function reset():Void
+    override public function reset():Void
 	{
 
 		if(!hasEventListener(MouseEvent.MOUSE_DOWN))

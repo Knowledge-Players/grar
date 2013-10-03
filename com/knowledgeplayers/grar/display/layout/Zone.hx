@@ -1,13 +1,11 @@
 package com.knowledgeplayers.grar.display.layout;
 
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
-import com.knowledgeplayers.grar.structure.contextual.Notebook;
 import com.knowledgeplayers.grar.display.part.MenuSphericalDisplay;
 import com.knowledgeplayers.grar.display.component.DropdownMenu;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.display.component.Image;
-import flash.events.MouseEvent;
 import aze.display.TileLayer;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
@@ -17,12 +15,10 @@ import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import com.knowledgeplayers.grar.event.LayoutEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.factory.UiFactory;
-import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import haxe.xml.Fast;
 import flash.display.Sprite;
 import flash.events.Event;
-import flash.Lib;
 
 using StringTools;
 
@@ -37,11 +33,13 @@ class Zone extends KpDisplay {
 	**/
 	public var ref:String;
 
+	/**
+	* Fields with dynamic content that need to be update while loading a new part
+	**/
 	public var dynamicFields (default, null): Array<{field: ScrollPanel, content: String}>;
 
 	private var zoneWidth:Float;
 	private var zoneHeight:Float;
-	//private var menu:MenuDisplay;
 	private var layer:TileLayer;
 	private var soundState:Bool = true;
 	private var menuXml:Fast;

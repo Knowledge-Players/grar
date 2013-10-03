@@ -57,7 +57,7 @@ class ScrollPanel extends WidgetContainer {
 		}
 		if(_styleSheet != null)
 			styleSheet = _styleSheet;
-		onComplete = displayContent;
+		//onComplete = displayContent;
 	}
 
 	/**
@@ -120,6 +120,7 @@ class ScrollPanel extends WidgetContainer {
 		content.addChild(maskLine);
 		text.mask = maskLine;
 		addChild(content);
+		displayContent(trim);
 
 		if(previousStyleSheet != null)
 			StyleParser.currentStyleSheet = previousStyleSheet;

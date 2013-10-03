@@ -508,8 +508,6 @@ class PartDisplay extends KpDisplay {
 			addChild(obj);
 		}
 
-		trace(getChildIndex(displays.get("splash")), getChildIndex(displays.get("logo")));
-
 		if(inventory != null && currentSpeaker != null)
 			addChild(inventory);
 

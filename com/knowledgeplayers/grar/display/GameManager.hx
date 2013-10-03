@@ -282,14 +282,12 @@ class GameManager extends EventDispatcher {
 	{
 		if(layout != null)
 			changeLayout(layout);
-		//if(!this.layout.zones.get(game.ref).contains(cast(contextual, KpDisplay)))
-			this.layout.zones.get(game.ref).addChild(cast(contextual, KpDisplay));
+		this.layout.zones.get(game.ref).addChild(cast(contextual, KpDisplay));
 	}
 
 	public function hideContextual(contextual:ContextualDisplay):Void
 	{
-		//if(this.layout.zones.get(game.ref).contains(cast(contextual, KpDisplay)))
-			this.layout.zones.get(game.ref).removeChild(cast(contextual, KpDisplay));
+		this.layout.zones.get(game.ref).removeChild(cast(contextual, KpDisplay));
 		changeLayout(previousLayout);
 	}
 

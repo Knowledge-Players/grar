@@ -45,7 +45,7 @@ class TileImage extends Image{
 			set_visible(true);
 			if(onComplete != null)
 				onComplete();
-		});
+		}, 1000);
 		if(tileSprite != null)
 			origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY, alpha: tileSprite.alpha};
 	}
@@ -125,6 +125,13 @@ class TileImage extends Image{
 		return '$ref: $x;$y '+(tileSprite != null ? tileSprite.width : -1)+' x '+(tileSprite != null ? tileSprite.height : -1)+' ($scale) $transitionIn->$transitionOut';
 	}
 
+	override public function reset():Void
+	{
+		for(field in Reflect.fields(origin)){
+			Reflect.setProperty(tileSprite, field, Reflect.field(origin, field));
+		}
+	}
+
 	// Private
 
 	private function init():Void
@@ -164,13 +171,6 @@ class TileImage extends Image{
 
 	override private function createImg(xml:Fast, ?tilesheet:TilesheetEx):Void
 	{
-	}
-
-	override private function reset():Void
-	{
-		for(field in Reflect.fields(origin)){
-			Reflect.setProperty(tileSprite, field, Reflect.field(origin, field));
-		}
 	}
 
 	private function renderNeeded(?e: Event): Void
