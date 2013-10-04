@@ -97,7 +97,7 @@ class DialogDisplay extends PartDisplay {
 		cast(currentPattern, ChoicePattern).choices.get(choice.ref).viewed = true;
 
 		choice.removeEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
-		choice.setToggle(false);
+		choice.toggle(false);
 		// Clean tooltip
 		onOutChoice(null);
 		goToPattern(target);

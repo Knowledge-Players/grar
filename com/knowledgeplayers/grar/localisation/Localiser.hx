@@ -92,7 +92,7 @@ class Localiser extends EventDispatcher {
 		if(localisation != null)
 			return localisation.getItem(key);
 		else{
-			trace("No locale set. Returning null");
+			trace("No locale set. Returning null for key '"+key+"'.");
 			return null;
 		}
 	}

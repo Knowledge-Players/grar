@@ -32,6 +32,8 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 
 	private var noteTemplate: Fast;
 	private var noteMap: Map<DefaultButton, Note>;
+	private var currentPage: Page;
+	private var tabTemplate: Fast;
 
 		/**
 	* @return the instance
@@ -50,12 +52,14 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			layout = displayFast.att.layout;
 		noteTemplate = displayFast.node.Note;
 		noteMap = new Map<DefaultButton, Note>();
+		tabTemplate = displayFast.node.Tab;
 	}
 
 	public function set_model(model:Notebook):Notebook
 	{
 		if(model != this.model){
-			Localiser.instance.layoutPath = model.file;
+			this.model = model;
+
 			// Display bkg
 			if(model.background != null){
 				addChildAt(displays.get(model.background), 0);
@@ -69,42 +73,48 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 					throw '[NotebookDisplay] There is no item with ref "$item."';
 			}
 
-			// Display title
-			var title: ScrollPanel = cast(displays.get(model.title.ref), ScrollPanel);
-			title.setContent(Localiser.instance.getItemContent(model.title.content));
-			addChild(title);
+			// Display page
+			displayPage(model.pages[0]);
 
-			// Display button
+
+			// Set Locale
+			Localiser.instance.pushLocale();
+			Localiser.instance.layoutPath = model.file;
+
+			// Display close button
 			var button: DefaultButton = cast(displays.get(model.closeButton.ref), DefaultButton);
 			button.setText(Localiser.instance.getItemContent(model.closeButton.content));
 
 			addChild(button);
 
-			// Display notes
-			var offsetY: Float = 0;
-			for(note in model.notes){
-				var icons = findIcon(noteTemplate.x);
+			// Display Tabs
+			var totalX: Float = Std.parseFloat(tabTemplate.att.x);
+			var xOffset = Std.parseFloat(tabTemplate.att.xOffset);
+			var first = true;
+			for(page in model.pages){
+				var cloneXml = Xml.parse(tabTemplate.x.toString()).firstElement();
+				var tmpTemplate = new Fast(cloneXml);
+				tmpTemplate.x.set("ref", page.tabContent);
+				var icons = findIcon(tmpTemplate.x);
 				for(icon in icons){
-					icon.set("src", note.icon);
-					icon.nodeName = "Image";
+					icon.set("tile", page.icon+icon.get("tile"));
 				}
-				// Clickable note
-				var button: DefaultButton = new DefaultButton(noteTemplate);
-				button.y += offsetY;
-				offsetY += button.height + Std.parseFloat(noteTemplate.att.offsetY);
-				button.setText(Localiser.instance.getItemContent(note.name), "title");
-				button.setText(Localiser.instance.getItemContent(note.subtitle), "subtitle");
-				buttonGroups.get("notes").add(button);
-				//button.enableToggle(true);
-				button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
-				// Fill hit box
-				DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
-				addChild(button);
-				setButtonAction(button, "show");
-				button.visible = note.isActivated;
-				noteMap.set(button, note);
+
+				var tab = new DefaultButton(tmpTemplate);
+				tab.x = totalX;
+				totalX += tab.width+xOffset;
+				tab.name = page.tabContent;
+				tab.setText(Localiser.instance.getItemContent(page.tabContent));
+				buttonGroups.get("tabs").add(tab);
+				setButtonAction(tab, tmpTemplate.att.action);
+				addChild(tab);
+				if(first){
+					tab.toggle();
+					first = false;
+				}
+				tab.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 			}
-			return this.model = model;
+			Localiser.instance.popLocale();
 		}
 		return model;
 	}
@@ -116,6 +126,63 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		super();
 		GameManager.instance.addEventListener(TokenEvent.ADD, onUnlocked);
 		buttonGroups.set("notes", new GenericStack<DefaultButton>());
+		buttonGroups.set("tabs", new GenericStack<DefaultButton>());
+	}
+
+	private function displayPage(page:Page):Void
+	{
+		currentPage = page;
+
+		// Set Locale
+		Localiser.instance.pushLocale();
+		Localiser.instance.layoutPath = model.file;
+
+		// Display title
+		var title: ScrollPanel = cast(displays.get(currentPage.title.ref), ScrollPanel);
+		title.setContent(Localiser.instance.getItemContent(currentPage.title.content));
+		addChild(title);
+
+		// Clean previous note
+		for(note in buttonGroups.get("notes")){
+			removeChild(note);
+			note = null;
+		}
+		buttonGroups.set("notes", new GenericStack<DefaultButton>());
+		noteMap = new Map<DefaultButton, Note>();
+
+		var offsetY: Float = 0;
+		for(note in currentPage.notes){
+			var icons = findIcon(noteTemplate.x);
+			for(icon in icons){
+				if(note.icon.indexOf(".") < 0){
+					icon.set("tile", note.icon);
+					if(icon.exists("src"))
+						icon.remove("src");
+				}
+				else
+					icon.set("src", note.icon);
+				icon.nodeName = "Image";
+			}
+			// Clickable note
+			var button: DefaultButton = new DefaultButton(noteTemplate);
+			button.y += offsetY;
+			offsetY += button.height + Std.parseFloat(noteTemplate.att.offsetY);
+			button.setText(Localiser.instance.getItemContent(note.name), "title");
+			button.setText(Localiser.instance.getItemContent(note.subtitle), "subtitle");
+			buttonGroups.get("notes").add(button);
+			button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+			// Fill hit box
+			DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
+			addChild(button);
+			setButtonAction(button, "show");
+			button.visible = note.isActivated;
+			noteMap.set(button, note);
+
+			// Video
+			//if(note.)
+
+		}
+		Localiser.instance.popLocale();
 	}
 
 	override private function setButtonAction(button:DefaultButton, action:String):Void
@@ -123,6 +190,8 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		button.buttonAction = switch(action.toLowerCase()){
 			case "close" : function(?t: DefaultButton){GameManager.instance.hideContextual(this);};
 			case "show" : onSelectNote;
+			case "goto" :
+				changePage;
 			default: throw "[NotebookDisplay] Unknown action '"+action+"'.";
 		}
 	}
@@ -147,9 +216,8 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 
 	private function onSelectNote(?target: DefaultButton):Void
 	{
-		target.setToggle(false);
-		var panel = cast(displays.get(model.contentRef), ScrollPanel);
-		var title = cast(displays.get(model.titleRef), ScrollPanel);
+		var panel = cast(displays.get(currentPage.contentRef), ScrollPanel);
+		var title = cast(displays.get(currentPage.titleRef), ScrollPanel);
 		Localiser.instance.pushLocale();
 		Localiser.instance.layoutPath = model.file;
 		panel.setContent(Localiser.instance.getItemContent(noteMap.get(target).content));
@@ -161,10 +229,18 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			addChild(title);
 	}
 
+	private function changePage(?target:DefaultButton):Void
+	{
+		for(page in model.pages){
+			if(page.tabContent == target.name)
+				displayPage(page);
+		}
+	}
+
 	private function onUnlocked(e:TokenEvent):Void
 	{
 		if(e.token.type == "note"){
-			for(note in model.notes){
+			for(note in model.getAllNotes()){
 				if(note.ref == e.token.ref){
 					note.isActivated = true;
 					for(button in noteMap.keys()){

@@ -153,12 +153,12 @@ class Zone extends KpDisplay {
 		if(soundState){
 			GameManager.instance.changeVolume(0);
 			soundState = false;
-			if(_target != null) _target.setToggle(false);
+			if(_target != null) _target.toggle(false);
 		}
 		else{
 			GameManager.instance.changeVolume(1);
 			soundState = true;
-			if(_target != null) _target.setToggle(true);
+			if(_target != null) _target.toggle(true);
 		}
 	}
 

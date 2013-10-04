@@ -48,7 +48,7 @@ class DefaultButton extends WidgetContainer {
 	/**
 	* State of the button: 'active' or 'inactive'
 	**/
-	public var toggle (default, null):String = "active";
+	public var toggleState (default, null):String;
 
 	/**
 	* Timeline that will play on the next click
@@ -96,8 +96,13 @@ class DefaultButton extends WidgetContainer {
 				isToggleEnabled = xml.att.toggle == "true";
 			if(xml.has.group)
 				group = xml.att.group.toLowerCase();
+			if(xml.has.defaultState)
+				toggleState = xml.att.defaultState;
 
 		}
+
+		if(toggleState == null)
+			toggleState = "active";
 
 		mouseChildren = false;
 		useHandCursor = buttonMode = true;
@@ -130,7 +135,7 @@ class DefaultButton extends WidgetContainer {
 			}
 			tmpXml = null;
 		}
-		timeline = this.timelines.get(toggle);
+		timeline = this.timelines.get(toggleState);
 		renderState("out");
 	}
 
@@ -160,10 +165,12 @@ class DefaultButton extends WidgetContainer {
 	* Define if the button is in state active or inactive
 	**/
 
-	public function setToggle(toggle:Bool):Void
+	public function toggle(?toggle:Bool):Void
 	{
-		this.toggle = toggle ? "active" : "inactive";
-		timeline = timelines.get(this.toggle);
+		if(toggle == null)
+			toggle = toggleState == "inactive";
+		toggleState = toggle ? "active" : "inactive";
+		timeline = timelines.get(toggleState);
 		renderState("out");
 	}
 
@@ -269,17 +276,17 @@ class DefaultButton extends WidgetContainer {
 	{
 		var changeState = false;
 		var list:Map<String, Widget>;
-		if(states.exists(toggle + "_" + state)){
-			list = states.get(toggle + "_" + state);
-			if(currentState != toggle + "_" + state){
-				currentState = toggle + "_" + state;
+		if(states.exists(toggleState + "_" + state)){
+			list = states.get(toggleState + "_" + state);
+			if(currentState != toggleState + "_" + state){
+				currentState = toggleState + "_" + state;
 				changeState = true;
 			}
 		}
-		else if(states.exists(toggle + "_" + "out")){
-			list = states.get(toggle + "_" + "out");
-			if(currentState != toggle + "_" + "out"){
-				currentState = toggle + "_" + "out";
+		else if(states.exists(toggleState + "_" + "out")){
+			list = states.get(toggleState + "_" + "out");
+			if(currentState != toggleState + "_" + "out"){
+				currentState = toggleState + "_" + "out";
 				changeState = true;
 			}
 		}
@@ -398,7 +405,7 @@ class DefaultButton extends WidgetContainer {
 
 	private inline function onToggle():Void
 	{
-		setToggle(toggle != "active");
+		toggle(toggleState != "active");
 		dispatchEvent(new ButtonActionEvent(ButtonActionEvent.TOGGLE));
 	}
 

@@ -19,6 +19,13 @@ class Image extends Widget{
 		if(xml != null){
 			createImg(xml, tilesheet);
 			super(xml);
+
+			if(xml.has.width)
+				width = Std.parseFloat(xml.att.width);
+			if(xml.has.height)
+				height = Std.parseFloat(xml.att.height);
+
+			//DisplayUtils.initSprite(this, tmpWidth, tmpHeight, 0, 0.001);
 		}
 	}
 

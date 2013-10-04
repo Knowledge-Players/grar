@@ -144,6 +144,10 @@ class TileImage extends Image{
 			tileSprite.scaleX = Std.parseFloat(xml.att.scaleX);
 		if(xml.has.scaleY)
 			tileSprite.scaleY = Std.parseFloat(xml.att.scaleY);
+		if(xml.has.width)
+			tileSprite.scaleX = Std.parseFloat(xml.att.width)/tileSprite.width;
+		if(xml.has.height)
+			tileSprite.scaleY = Std.parseFloat(xml.att.height)/tileSprite.height;
 		if(xml.has.mirror){
 			tileSprite.mirror = switch(xml.att.mirror.toLowerCase()){
 				case "horizontal": 1;

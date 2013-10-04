@@ -268,8 +268,6 @@ class WidgetContainer extends Widget{
 		else{
 			scrollNeeded = false;
 		}
-		//if(Std.is(this, ScrollPanel))
-		//	trace("ok");
 
 		TweenManager.applyTransition(content, contentTransition);
 	}
@@ -376,10 +374,10 @@ class WidgetContainer extends Widget{
 	private function onButtonToggle(e:ButtonActionEvent):Void
 	{
 		var button = cast(e.target, DefaultButton);
-		if(button.toggle == "inactive" && button.group != null){
+		if(button.toggleState == "inactive" && button.group != null){
 			for(b in buttonGroups.get(button.group)){
 				if(b != button)
-					b.setToggle(true);
+					b.toggle(true);
 			}
 		}
 	}

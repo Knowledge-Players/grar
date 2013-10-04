@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
+import com.knowledgeplayers.grar.util.DisplayUtils;
 import flash.filters.BitmapFilter;
 import motion.actuators.GenericActuator;
 import haxe.xml.Fast;
@@ -179,6 +180,7 @@ class Widget extends Sprite{
 	private function new(?xml: Fast)
 	{
 		super();
+
 		if(xml != null){
 			if(!xml.has.ref)
 				throw Type.getClassName(Type.getClass(this))+" must have a ref attribute: "+xml;

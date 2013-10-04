@@ -9,16 +9,6 @@ import com.knowledgeplayers.utils.assets.AssetsStorage;
 class Notebook
 {
 	/**
-	* Notes in the notebook
-	**/
-	public var notes (default, default):Array<Note>;
-
-	/**
-	* Title of the notebook
-	**/
-	public var title (default, default):{ref: String, content: String};
-
-	/**
 	* Text of the close button
 	**/
 	public var closeButton (default, default):{ref: String, content: String};
@@ -34,48 +24,66 @@ class Notebook
 	public var file (default, default):String;
 
 	/**
-	* Ref to the text area where content will be displayed
-	**/
-	public var contentRef (default, default):String;
-
-	/**
-	* Ref to the text area where title will be displayed
-	**/
-	public var titleRef (default, default):String;
-
-	/**
 	* Items to display with the notebook
 	**/
 	public var items (default, default):GenericStack<String>;
 
+	public var pages (default, null): Array<Page>;
+
 	public function new(file:String)
 	{
-		notes = new Array<Note>();
 		items = new GenericStack<String>();
+		pages = new Array<Page>();
 
 		this.file = file;
 		parseContent(AssetsStorage.getXml(file));
 	}
 
-	private function parseContent(content:Xml):Void
+	public inline function getAllNotes():Iterable<Note>
 	{
-		var fast:Fast = new Fast(content).node.Notebook;
-		background = fast.att.background;
-		title = {ref: fast.node.Title.att.ref, content: fast.node.Title.att.content};
-		contentRef = fast.node.Notes.att.ref;
-		titleRef = fast.node.Notes.att.titleRef;
-		for(noteFast in fast.node.Notes.nodes.Note){
-			var note = new Note(noteFast);
-			notes.push(note);
-			GameManager.instance.inventory.set(note.ref, note);
-		}
-		for(item in fast.nodes.Image)
-			items.add(item.att.ref);
-		closeButton = {ref: fast.node.Button.att.ref, content: fast.node.Button.att.content};
+		var notes = new Array<Note>();
+		for(page in pages)
+			notes = notes.concat(page.notes);
+		return notes;
 	}
 
 	public function toString(): String
 	{
-		return '$title.content: $notes';
+		var output = "";
+		for(page in pages)
+			output += "Page "+page.tabContent+": "+page+"\n";
+		return output;
 	}
+
+	// Privates
+
+	private function parseContent(content:Xml):Void
+	{
+		var fast:Fast = new Fast(content).node.Notebook;
+		background = fast.att.background;
+		for(item in fast.nodes.Image)
+			items.add(item.att.ref);
+		for(page in fast.nodes.Page){
+			var title = {ref: page.node.Title.att.ref, content: page.node.Title.att.content};
+			var contentRef = page.node.Notes.att.ref;
+			var titleRef = page.node.Notes.att.titleRef;
+			var newPage:Page = {title: title, contentRef: contentRef, titleRef: titleRef, tabContent: page.att.tabContent, icon: page.att.icon, notes: new Array<Note>()};
+			for(noteFast in page.node.Notes.nodes.Note){
+				var note = new Note(noteFast);
+				newPage.notes.push(note);
+				GameManager.instance.inventory.set(note.ref, note);
+			}
+			pages.push(newPage);
+		}
+		closeButton = {ref: fast.node.Button.att.ref, content: fast.node.Button.att.content};
+	}
+}
+
+typedef Page = {
+	var title: {ref: String, content: String};
+	var notes: Array<Note>;
+	var contentRef: String;
+	var titleRef: String;
+	var tabContent: String;
+	var icon: String;
 }

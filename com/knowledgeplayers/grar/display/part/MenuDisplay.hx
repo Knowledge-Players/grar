@@ -167,7 +167,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 			buttons.set(level.get("id"), button);
 			for(part in GameManager.instance.game.getAllParts()){
 				if(part.name == partName && part.isDone)
-				  button.setToggle(false);
+				  button.toggle(false);
 			}
 			buttons.set(level.get("id"), button);
 
@@ -237,7 +237,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 	private function onFinishPart(e:PartEvent):Void
 	{
 		if(buttons.exists(e.partId))
-			buttons.get(e.partId).setToggle(false);
+			buttons.get(e.partId).toggle(false);
 	}
 
 	private function onAdded(e:Event):Void
