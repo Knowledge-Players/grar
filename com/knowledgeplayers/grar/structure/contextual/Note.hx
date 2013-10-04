@@ -13,6 +13,11 @@ class Note extends Token {
 	**/
 	public var icon (default, default):String;
 
+	/**
+	* URL of the video contained in this note
+	**/
+	public var video (default, default):String;
+
 	public function new(?note: Fast)
 	{
 		super(note);
@@ -20,6 +25,7 @@ class Note extends Token {
 		if(note != null){
 			subtitle = note.has.subtitle ? note.att.subtitle : null;
 			icon = note.has.icon ? note.att.icon : null;
+			video = note.has.video ? note.att.video : null;
 		}
 	}
 }

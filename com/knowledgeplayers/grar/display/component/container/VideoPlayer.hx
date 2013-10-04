@@ -87,7 +87,6 @@ class VideoPlayer extends WidgetContainer
 		for(i in 0...numChildren){
 			if(Std.is(getChildAt(i), Widget)){
 				controls.add(cast(getChildAt(i), Widget));
-
             }
 		}
 		timeArea = cast(displays.get("time"), ScrollPanel);
@@ -385,7 +384,6 @@ class VideoPlayer extends WidgetContainer
 		var mc:MovieClip = (e.target) as MovieClip;
 		soundTransform.volume = mc.mouseX / mc.width;
 		stream.soundTransform = soundTransform;
-		trace(mc.mouseX);
 		_mc.barBg_mc.pictoSon.mcTrack.x = mc.mouseX;
 	}*/
 
@@ -442,7 +440,6 @@ class VideoPlayer extends WidgetContainer
 		}*/
 	}
 
-	// TODO Refactor
 	private function videoTimeConvert(pTime: Float):String {
 		var tempNum = pTime;
 		var minutes = Math.floor(tempNum / 60);

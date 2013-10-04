@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
 import com.knowledgeplayers.grar.structure.contextual.Note;
 import haxe.ds.GenericStack;
 import aze.display.TileSprite;
@@ -178,9 +179,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			button.visible = note.isActivated;
 			noteMap.set(button, note);
 
-			// Video
-			//if(note.)
-
 		}
 		Localiser.instance.popLocale();
 	}
@@ -227,6 +225,14 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			addChild(panel);
 		if(!contains(title))
 			addChild(title);
+
+		if(noteMap.get(target).video != null){
+			var player = cast(displays.get("player"), VideoPlayer);
+			player.setVideo(noteMap.get(target).video);
+			player.scale = 0.5;
+			addChild(player);
+		}
+
 	}
 
 	private function changePage(?target:DefaultButton):Void
