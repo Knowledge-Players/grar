@@ -3,15 +3,11 @@ package com.knowledgeplayers.grar.display.part;
 import com.knowledgeplayers.grar.structure.part.Item;
 import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.display.component.container.BoxDisplay;
-import Lambda;
-import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
-import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
@@ -19,7 +15,6 @@ import com.knowledgeplayers.grar.structure.part.strip.StripPart;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
 import flash.display.DisplayObject;
-import flash.display.Sprite;
 
 /**
  * Display for the strip parts, like a comic

@@ -8,13 +8,9 @@ import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.style.Style;
 import com.knowledgeplayers.grar.display.style.StyleParser;
-import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
-import flash.display.Bitmap;
 import flash.display.Sprite;
-import flash.events.Event;
-import flash.events.MouseEvent;
 
 /**
 * ScrollPanel to manage text overflow, with auto scrollbar

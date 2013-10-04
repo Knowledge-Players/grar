@@ -4,7 +4,6 @@ import com.knowledgeplayers.grar.structure.part.video.item.VideoItem;
 import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
-import flash.Lib;
 
 /**
  * Factory to create dialog items

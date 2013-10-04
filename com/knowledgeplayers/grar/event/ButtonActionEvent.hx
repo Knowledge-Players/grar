@@ -1,9 +1,9 @@
 package com.knowledgeplayers.grar.event;
+
 import flash.events.Event;
 
 /**
  * Event for the buttons
- * @author jbrichardet
  */
 
 class ButtonActionEvent extends Event {

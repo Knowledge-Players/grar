@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.structure.part.video.item;
 
-import com.knowledgeplayers.grar.util.ParseUtils;
 import haxe.xml.Fast;
 
 class VideoItem extends Item {

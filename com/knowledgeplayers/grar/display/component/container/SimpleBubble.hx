@@ -6,7 +6,6 @@ import flash.display.GradientType;
 import flash.display.Graphics;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import flash.filters.DropShadowFilter;
 import flash.display.JointStyle;
 import flash.display.CapsStyle;
 import flash.display.LineScaleMode;

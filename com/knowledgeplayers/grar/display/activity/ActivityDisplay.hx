@@ -6,10 +6,7 @@ import com.knowledgeplayers.grar.event.ButtonActionEvent;
 
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.activity.Activity;
-import com.knowledgeplayers.grar.util.DisplayUtils;
 import flash.events.Event;
-import flash.Lib;
-
 /**
 * Abstract display for an activity
 */

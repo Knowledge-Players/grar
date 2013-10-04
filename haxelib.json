@@ -2,14 +2,14 @@
     "name": "grar",
     "url": "http://knowledge-players.github.io/grar/",
     "license": "MIT",
-    "tags": [ "cpp", "flash" ],
+    "tags": [ "flash" ],
     "description": "GRAR is a powerful engine designed for training applications. Create an e-learning app just with XML",
     "version": "2.0.0",
-    "releasenote": "OpenFL, better customization",
+    "releasenote": "OpenFL, better customization, simplified XMLs",
     "contributors": [ "knowledge-players" ],
     "dependencies": {
-        "openfl": "",
-        "actuate": "",
+        "openfl": "1.0.6",
+        "actuate": "1.6.4",
         "ExAM": ""
     }
 }

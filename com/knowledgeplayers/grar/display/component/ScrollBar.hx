@@ -1,8 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
-import flash.ui.Mouse;
 import flash.geom.ColorTransform;
-import flash.display.Bitmap;
 import flash.display.BitmapData;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import aze.display.TileGroup;

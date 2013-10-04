@@ -5,7 +5,6 @@ import com.knowledgeplayers.utils.assets.AssetsStorage;
 import openfl.Assets;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.util.DisplayUtils;
-import flash.filters.BitmapFilter;
 import flash.display.Bitmap;
 import haxe.xml.Fast;
 

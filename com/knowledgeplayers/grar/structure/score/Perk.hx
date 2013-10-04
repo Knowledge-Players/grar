@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.structure.score;
+
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import haxe.ds.GenericStack;
 

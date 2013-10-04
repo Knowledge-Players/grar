@@ -5,7 +5,6 @@ import com.knowledgeplayers.grar.display.layout.Layout;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import haxe.xml.Fast;
-import flash.events.Event;
 import flash.events.EventDispatcher;
 
 class LayoutManager extends EventDispatcher {

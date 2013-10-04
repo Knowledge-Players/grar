@@ -4,8 +4,6 @@ import com.knowledgeplayers.grar.event.DisplayEvent;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import flash.display.BitmapData;
-import flash.display.MovieClip;
-import flash.display.Shape;
 import flash.display.Bitmap;
 import flash.events.Event;
 import com.knowledgeplayers.grar.util.DisplayUtils;

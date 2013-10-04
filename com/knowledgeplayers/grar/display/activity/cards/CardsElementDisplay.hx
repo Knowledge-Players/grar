@@ -7,7 +7,6 @@ import haxe.xml.Fast;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.localisation.Localiser;
-import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 /**

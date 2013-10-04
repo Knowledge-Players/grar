@@ -3,7 +3,6 @@ package com.knowledgeplayers.grar.util;
 import com.knowledgeplayers.grar.display.TweenManager;
 import Lambda;
 import com.knowledgeplayers.grar.display.part.DialogDisplay;
-import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
 import com.knowledgeplayers.grar.display.GameManager;
 import flash.events.KeyboardEvent;
 import flash.Lib;

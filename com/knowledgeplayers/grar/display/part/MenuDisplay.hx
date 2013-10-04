@@ -1,17 +1,12 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.display.component.Widget;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.contextual.ContextualDisplay;
-import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.GameManager;
-import com.knowledgeplayers.grar.display.layout.Zone;
-import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
-import com.knowledgeplayers.grar.factory.UiFactory;
 import haxe.xml.Fast;
 import flash.display.Shape;
 import flash.events.Event;

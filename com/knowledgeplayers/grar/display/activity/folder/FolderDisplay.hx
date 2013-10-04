@@ -2,7 +2,6 @@ package com.knowledgeplayers.grar.display.activity.folder;
 
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.PopupDisplay;
-import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.structure.activity.Activity;
@@ -12,18 +11,12 @@ import com.knowledgeplayers.grar.event.ButtonActionEvent;
 
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.structure.activity.folder.Folder;
-import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.grar.util.Grid;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
 import flash.display.Bitmap;
-import flash.display.BitmapData;
 import flash.display.DisplayObject;
-import flash.display.SimpleButton;
 import flash.display.Sprite;
-import flash.events.MouseEvent;
-import flash.geom.Point;
-import flash.Lib;
 
 /**
 * Display of the folder activity

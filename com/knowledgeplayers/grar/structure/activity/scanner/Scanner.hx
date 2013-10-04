@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.structure.activity.scanner;
 
-import haxe.ds.GenericStack;
 import haxe.xml.Fast;
 import flash.geom.Point;
 

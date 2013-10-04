@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.display.component;
 
-import com.knowledgeplayers.grar.util.DisplayUtils;
 import flash.filters.BitmapFilter;
 import motion.actuators.GenericActuator;
 import haxe.xml.Fast;

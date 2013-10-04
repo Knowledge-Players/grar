@@ -1,26 +1,12 @@
 package com.knowledgeplayers.grar.factory;
 
-import flash.geom.Rectangle;
-import flash.geom.Rectangle;
 import flash.geom.Matrix;
 import flash.display.BitmapData;
-import flash.filters.DropShadowFilter;
-import com.knowledgeplayers.grar.util.DisplayUtils;
-import com.knowledgeplayers.grar.display.FilterManager;
-import flash.filters.BitmapFilter;
-import flash.display.Bitmap;
-import flash.display.Sprite;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import aze.display.TileSprite;
-import com.knowledgeplayers.grar.display.component.container.DefaultButton;
-import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.display.component.ScrollBar;
-import com.knowledgeplayers.grar.display.element.AnimationDisplay;
-import com.knowledgeplayers.grar.display.TweenManager;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
-import flash.display.DisplayObject;
 #if !flash
 	import openfl.Assets;
 #end
@@ -39,21 +25,6 @@ class UiFactory {
 
 	private function new()
 	{}
-
-	/**
-     * Create a scrollbar
-     * @param	width : Width of the scrollbar
-     * @param	height : Height of the scrollbar
-     * @param	ratio : Ratio of the cursor
-     * @param	tileBackground : Tile containing background image
-     * @param	tileCursor : Tile containing cursor image
-     * @return the fresh new scrollbar
-     */
-
-	/*public static function createScrollBar(width:Float, height:Float, ratio:Float, tile: String, ?bgTile:String, cursor9Grid: Rectangle, ?bg9Grid: Rectangle, ?cursorColor:String, ?bgColor: String):ScrollBar
-	{
-		return new ScrollBar(width, height, ratio, tilesheet, tile, bgTile, cursor9Grid, bg9Grid, cursorColor, bgColor);
-	}*/
 
 	/**
     * Create a tilesprite from an XML descriptor

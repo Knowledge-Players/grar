@@ -1,14 +1,10 @@
 package com.knowledgeplayers.grar.display.element;
 
-
-import com.knowledgeplayers.grar.display.element.AnimationDisplay;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import haxe.xml.Fast;
-import com.knowledgeplayers.grar.display.component.Widget;
 import aze.display.TileClip;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
-import flash.display.Sprite;
 import flash.events.Event;
 
 class AnimationDisplay extends WidgetContainer

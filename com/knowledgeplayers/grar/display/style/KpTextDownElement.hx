@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.display.style;
 
-import Array;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.display.text.UrlField;
 import com.knowledgeplayers.grar.util.DisplayUtils;

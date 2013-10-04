@@ -3,14 +3,10 @@ package com.knowledgeplayers.grar.display.part;
 import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.factory.UiFactory;
-import com.knowledgeplayers.grar.util.DisplayUtils;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.Timer;
 import haxe.xml.Fast;
-import flash.display.Bitmap;
 import flash.display.DisplayObject;
-import flash.display.Sprite;
 import flash.events.Event;
 
 class IntroScreen extends WidgetContainer {

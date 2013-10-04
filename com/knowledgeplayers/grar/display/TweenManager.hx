@@ -1,17 +1,16 @@
 package com.knowledgeplayers.grar.display;
 
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import flash.Lib;
 import motion.actuators.GenericActuator.IGenericActuator;
 import flash.display.Sprite;
 import flash.geom.ColorTransform;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
-import motion.easing.Cubic;
 import motion.Actuate;
 import motion.actuators.GenericActuator;
 
 import motion.easing.IEasing;
 
+// Let them all
 import motion.easing.Linear;
 import motion.easing.Cubic;
 import motion.easing.Back;
@@ -21,10 +20,10 @@ import motion.easing.Quad;
 import motion.easing.Quart;
 import motion.easing.Quint;
 import motion.easing.Sine;
+////
 
 import haxe.xml.Fast;
 import flash.display.DisplayObject;
-import flash.events.Event;
 
 /**
  * Manage the most frequently used tweens

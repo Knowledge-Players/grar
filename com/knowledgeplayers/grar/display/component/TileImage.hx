@@ -1,8 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
 import flash.display.Sprite;
-import com.knowledgeplayers.grar.factory.UiFactory;
-import flash.display.DisplayObject;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import flash.events.Event;

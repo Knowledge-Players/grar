@@ -1,9 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
-import flash.events.Event;
-import com.knowledgeplayers.grar.display.activity.folder.FolderDisplay;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
-import com.knowledgeplayers.grar.structure.activity.folder.FolderElement;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import aze.display.TilesheetEx;
 import haxe.xml.Fast;

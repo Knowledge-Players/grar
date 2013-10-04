@@ -2,7 +2,6 @@ package com.knowledgeplayers.grar.tracking;
 
 import flash.errors.Error;
 import flash.events.Event;
-import flash.Lib;
 import flash.net.SharedObject;
 import flash.net.SharedObjectFlushStatus;
 

@@ -1,10 +1,8 @@
 package com.knowledgeplayers.grar.display.component.container;
 
-import com.knowledgeplayers.grar.util.DisplayUtils;
 import aze.display.TilesheetEx;
 import aze.display.TileLayer;
 import haxe.xml.Fast;
-import flash.events.Event;
 import aze.display.TileSprite;
 
 /**

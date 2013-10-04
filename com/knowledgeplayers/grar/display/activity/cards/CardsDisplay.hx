@@ -8,9 +8,6 @@ import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.structure.activity.Activity;
 import aze.display.TileClip;
 import aze.display.TileLayer;
-import motion.Actuate;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import com.knowledgeplayers.grar.display.style.StyleParser;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 
 import com.knowledgeplayers.grar.structure.activity.cards.Cards;
@@ -20,7 +17,6 @@ import haxe.xml.Fast;
 import flash.display.Bitmap;
 import flash.display.Sprite;
 import flash.events.Event;
-import flash.events.MouseEvent;
 
 /**
 * Display of the model activity

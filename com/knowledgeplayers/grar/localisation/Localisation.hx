@@ -3,7 +3,6 @@ package com.knowledgeplayers.grar.localisation;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
 import haxe.xml.Fast;
-import flash.events.Event;
 import flash.events.EventDispatcher;
 
 /**

@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.structure.activity.folder;
 
-import flash.Lib;
 import haxe.xml.Fast;
 
 /**

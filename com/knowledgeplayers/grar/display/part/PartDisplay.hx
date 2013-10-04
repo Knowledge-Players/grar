@@ -1,17 +1,13 @@
 package com.knowledgeplayers.grar.display.part;
 
 import flash.events.MouseEvent;
-import flash.system.System;
-import flash.external.ExternalInterface;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
 import com.knowledgeplayers.grar.structure.part.Item;
 import com.knowledgeplayers.grar.structure.part.video.item.VideoItem;
 import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
-import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.display.GameManager;
-import com.knowledgeplayers.grar.structure.contextual.Notebook;
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import aze.display.TileSprite;
 import aze.display.TileLayer;
@@ -35,9 +31,7 @@ import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.ds.GenericStack;
 import haxe.xml.Fast;
-import flash.display.Bitmap;
 import flash.display.DisplayObject;
-import flash.display.Sprite;
 import flash.events.Event;
 import flash.media.Sound;
 import flash.media.SoundChannel;

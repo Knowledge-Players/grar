@@ -4,7 +4,6 @@ import com.knowledgeplayers.grar.display.activity.cards.CardsDisplay;
 import com.knowledgeplayers.grar.display.activity.folder.FolderDisplay;
 import com.knowledgeplayers.grar.display.activity.quiz.QuizDisplay;
 import com.knowledgeplayers.grar.display.activity.scanner.ScannerDisplay;
-import flash.Lib;
 
 /**
  * Manager of the activity, store all the activity display for a game

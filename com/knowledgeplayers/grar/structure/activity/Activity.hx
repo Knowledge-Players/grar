@@ -9,7 +9,6 @@ import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.tracking.Trackable;
 import haxe.xml.Fast;
-import flash.events.Event;
 import flash.events.EventDispatcher;
 
 /**

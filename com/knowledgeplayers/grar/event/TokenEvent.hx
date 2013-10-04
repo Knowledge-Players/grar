@@ -1,4 +1,5 @@
 package com.knowledgeplayers.grar.event;
+
 import com.knowledgeplayers.grar.structure.Token;
 import flash.events.Event;
 

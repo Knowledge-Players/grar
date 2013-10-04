@@ -2,7 +2,6 @@ package com.knowledgeplayers.grar.structure.part;
 
 import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.factory.ItemFactory;
-import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
 
 class Pattern implements PartElement {
