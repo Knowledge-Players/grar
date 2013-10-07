@@ -12,10 +12,11 @@ We, [Knowledge-Players](http://www.knowledge-players.com), are waiting for your 
 * UI management by spritesheet (based on [nme-tilelayer](https://github.com/elsassph/nme-tilelayer)). 
 * Tween management (based on [Actuate](https://github.com/jgranick/actuate)). 
 * Markdown support. 
+* Video support
 * New Knowledge-Players dialog engine.
 
 ### TODO
-* Integrate video
+* Target JS
 
 ### API & Documentation
 You can find the API documentation on the [project page](http://knowledge-players.github.com/grar/). And to find some examples, visit the [wiki](https://github.com/Knowledge-Players/grar/wiki)!
