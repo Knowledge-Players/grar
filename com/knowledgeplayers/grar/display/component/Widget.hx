@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import flash.filters.BitmapFilter;
 import motion.actuators.GenericActuator;
 import haxe.xml.Fast;
@@ -95,11 +96,13 @@ class Widget extends Sprite{
 				lockPosition = true;
 			}
 			reset();
-			var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
-			if(actuator != null && onComplete != null)
-				actuator.onComplete(onComplete);
-			else if(onComplete != null)
-				onComplete();
+			if(visible){
+				var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
+				if(actuator != null && onComplete != null)
+					actuator.onComplete(onComplete);
+				else if(onComplete != null)
+					onComplete();
+			}
 		}, 1000);
 
 		return transitionIn = transition;

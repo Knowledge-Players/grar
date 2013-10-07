@@ -74,7 +74,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			// Display page
 			displayPage(model.pages[0]);
 
-
 			// Set Locale
 			Localiser.instance.pushLocale();
 			Localiser.instance.layoutPath = model.file;
@@ -147,6 +146,9 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		}
 		buttonGroups.set("notes", new GenericStack<DefaultButton>());
 		noteMap = new Map<DefaultButton, Note>();
+		cast(displays.get(currentPage.contentRef), ScrollPanel).setContent("");
+		if(contains(displays.get("player")))
+			removeChild(displays.get("player"));
 
 		var offsetY: Float = 0;
 		for(note in currentPage.notes){
@@ -171,9 +173,9 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 			// Fill hit box
 			DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
+			button.visible = button.enabled = note.isActivated;
 			addChild(button);
 			setButtonAction(button, "show");
-			button.visible = note.isActivated;
 			noteMap.set(button, note);
 
 		}

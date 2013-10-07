@@ -40,9 +40,9 @@ class DefaultButton extends WidgetContainer {
 	public var group (default, default):String;
 
 	/**
-	* State of the button: 'active' or 'inactive'
+	* State of the button.
 	**/
-	public var toggleState (default, null):String;
+	public var toggleState (default, set_toggleState):String;
 
 	/**
 	* Timeline that will play on the next click
@@ -50,7 +50,7 @@ class DefaultButton extends WidgetContainer {
 	public var timeline (default, default):Timeline;
 
 	private var currentState:String;
-	private var clip:TileClip;
+	//private var clip:TileClip;
 	private var isToggleEnabled: Bool = false;
     private var timelines: Map<String, Timeline>;
 	private var tmpXml: Fast;
@@ -95,9 +95,6 @@ class DefaultButton extends WidgetContainer {
 
 		}
 
-		if(toggleState == null)
-			toggleState = "active";
-
 		mouseChildren = false;
 		useHandCursor = buttonMode = true;
 
@@ -109,28 +106,20 @@ class DefaultButton extends WidgetContainer {
 		if(xml != null)
 			tmpXml = xml;
 		if(tmpXml != null){
-			if(tmpXml.hasNode.active){
-				if(timelines != null && tmpXml.node.active.has.timeline)
-					this.timelines.set("active", timelines.get(tmpXml.node.active.att.timeline));
-				for(state in tmpXml.node.active.elements){
-					if(states.exists("active_out") || state.name == "out"){
-						states.set("active_" + state.name, createStates(state));
-					}
-				}
-			}
-			if(tmpXml.hasNode.inactive){
-				if(timelines != null && tmpXml.node.inactive.has.timeline)
-					this.timelines.set("inactive", timelines.get(tmpXml.node.inactive.att.timeline));
-				for(state in tmpXml.node.inactive.elements){
-					if(states.exists("inactive_out") || state.name == "out"){
-						states.set("inactive_" + state.name, createStates(state));
+			for(state in tmpXml.elements){
+				if(timelines != null && state.has.timeline)
+					this.timelines.set(state.name, timelines.get(state.att.timeline));
+				for(elem in state.elements){
+					if(states.exists(state.name+"_out") || elem.name == "out"){
+						states.set(state.name+"_" + elem.name, createStates(elem));
 					}
 				}
 			}
 			tmpXml = null;
 		}
-		timeline = this.timelines.get(toggleState);
-		renderState("out");
+
+		if(toggleState == null)
+			toggleState = "active";
 	}
 
 	/**
@@ -144,6 +133,14 @@ class DefaultButton extends WidgetContainer {
 		enabled = buttonMode = mouseEnabled = activate;
 
 		return activate;
+	}
+
+	public function set_toggleState(state:String):String
+	{
+		toggleState = state;
+		timeline = timelines.get(toggleState);
+		renderState("out");
+		return toggleState;
 	}
 
 	override public function set_mirror(mirror:Int):Int
@@ -164,8 +161,6 @@ class DefaultButton extends WidgetContainer {
 		if(toggle == null)
 			toggle = toggleState == "inactive";
 		toggleState = toggle ? "active" : "inactive";
-		timeline = timelines.get(toggleState);
-		renderState("out");
 	}
 
 	public function setText(pContent:String, ?pKey:String):Void
@@ -254,9 +249,6 @@ class DefaultButton extends WidgetContainer {
 		enabled = true;
 
 		setAllListeners(onMouseEvent);
-
-		if(tmpXml == null)
-			renderState("out");
 
 		// Hack for C++ hitArea (NME 3.5.5)
 		#if cpp
@@ -350,7 +342,7 @@ class DefaultButton extends WidgetContainer {
 			return 0;
 	}
 
-	private function removeAllEventsListeners(listener:MouseEvent -> Void):Void
+	private inline function removeAllEventsListeners(listener:MouseEvent -> Void):Void
 	{
 		removeEventListener(MouseEvent.MOUSE_OUT, listener);
 		removeEventListener(MouseEvent.MOUSE_OVER, listener);
@@ -380,9 +372,8 @@ class DefaultButton extends WidgetContainer {
 
 	// Listener
 
-	private function onMouseEvent(event:MouseEvent):Void
+	private inline function onMouseEvent(event:MouseEvent):Void
 	{
-
 		event.stopImmediatePropagation();
 
 		switch (event.type) {

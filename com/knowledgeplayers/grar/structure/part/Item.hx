@@ -53,9 +53,13 @@ class Item implements PartElement {
 				timelineIn = xml.att.timelineIn;
 			if(xml.has.timelineOut)
 				timelineOut = xml.att.timelineOut;
-			if(xml.hasNode.Token)
-				token = xml.node.Token.att.ref;
-
+			var tokens = new StringBuf();
+			for(node in xml.nodes.Token){
+				tokens.add(node.att.ref);
+				tokens.add(",");
+			}
+			token = tokens.toString();
+			token = token.substr(0, token.length-1);
             button = new Map<String, Map<String, String>>();
 
             for(elem in xml.nodes.Button){

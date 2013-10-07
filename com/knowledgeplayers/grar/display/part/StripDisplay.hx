@@ -70,8 +70,9 @@ class StripDisplay extends PartDisplay {
 			setupItem(nextItem);
 			if(nextItem.isText())
 				GameManager.instance.playSound(cast(nextItem, TextItem).sound);
-			if(nextItem.token != null){
-				GameManager.instance.activateToken(nextItem.token);
+			if(nextItem.token != null && nextItem.token != ""){
+				for(token in nextItem.token.split(","))
+					GameManager.instance.activateToken(token);
 			}
 		}
 		else if(currentBox.nextPattern != "")

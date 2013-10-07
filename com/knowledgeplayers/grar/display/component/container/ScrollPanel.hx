@@ -53,7 +53,6 @@ class ScrollPanel extends WidgetContainer {
 		}
 		if(_styleSheet != null)
 			styleSheet = _styleSheet;
-		//onComplete = displayContent;
 	}
 
 	/**
@@ -74,7 +73,7 @@ class ScrollPanel extends WidgetContainer {
 		var offSetY:Float = 0;
 		var isFirst:Bool = true;
 
-		var maskLine = new Sprite();//DisplayUtils.initSprite(new Sprite(), 1, 1);
+		var maskLine = new Sprite();
 
 		var text = new Sprite();
 		for(element in KpTextDownParser.parse(contentString)){

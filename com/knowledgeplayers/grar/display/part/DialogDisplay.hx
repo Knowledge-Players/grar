@@ -68,8 +68,9 @@ class DialogDisplay extends PartDisplay {
 			if(nextItem.hasActivity()){
 				nextActivity = cast(nextItem, RemarkableEvent).getActivity();
 			}
-			if(nextItem.token != null){
-				GameManager.instance.activateToken(nextItem.token);
+			if(nextItem.token != null && nextItem.token != ""){
+				for(token in nextItem.token.split(","))
+					GameManager.instance.activateToken(token);
 			}
 		}
 		else if(currentPattern.nextPattern != "")

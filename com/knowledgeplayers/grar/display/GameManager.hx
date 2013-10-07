@@ -93,6 +93,7 @@ class GameManager extends EventDispatcher {
 	private var itemSoundChannel:SoundChannel;
 	private var startIndex:Int;
 	private var previousLayout: String;
+	private var lastContextual: KpDisplay;
 
 		/**
     * @return the instance of the singleton
@@ -217,7 +218,7 @@ class GameManager extends EventDispatcher {
 	{
 		// TODO better user feedback
 		if(!part.canStart())
-			throw "Et non !";
+			trace("Et non !");
 
 		if(interrupt){
 			var oldPart = parts.pop();
@@ -280,9 +281,14 @@ class GameManager extends EventDispatcher {
 
 	public function displayContextual(contextual:ContextualDisplay, ?layout: String):Void
 	{
+		// Remove previous one
+		if(lastContextual != null && this.layout.zones.get(game.ref).contains(lastContextual))
+			hideContextual(cast(lastContextual, ContextualDisplay));
+		// Change to selected layout
 		if(layout != null)
 			changeLayout(layout);
 		this.layout.zones.get(game.ref).addChild(cast(contextual, KpDisplay));
+		lastContextual = cast(contextual, KpDisplay);
 	}
 
 	public function hideContextual(contextual:ContextualDisplay):Void

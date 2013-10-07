@@ -242,34 +242,42 @@ class WidgetContainer extends Widget{
 		maskSprite(content, (trim ? content.width:maskWidth), maskHeight);
 
 
-		if(maskHeight < content.height && scrollable && parent != null){
-			var partDisplay = parent;
-
-			while(!Std.is(partDisplay, KpDisplay)){
-				partDisplay = partDisplay.parent;
-			}
-			if(scrollBarName == null){
-				var keyArray = [];
-				for (key in cast(partDisplay, KpDisplay).scrollBars.keys()) keyArray.push(key);
-				scrollBarName = keyArray[0];
-			}
-			scrollBar = cast(partDisplay, KpDisplay).scrollBars.get(scrollBarName);
-
-
-			scrollBar.setHeight(maskHeight);
-			scrollBar.set_ratio(maskHeight / content.height);
-			scrollBar.x = content.x+maskWidth;
-			scrollBar.y = content.y;
-			scrollBar.scrolled = scrollToRatio;
-			scrollNeeded = true;
-
-            addChild(scrollBar);
+		if(maskHeight < content.height && scrollable){
+			if(parent != null)
+				setScrollBar();
+			else
+				addEventListener(Event.ADDED_TO_STAGE, setScrollBar, 10);
 		}
 		else{
 			scrollNeeded = false;
 		}
 
 		TweenManager.applyTransition(content, contentTransition);
+	}
+
+	private inline function setScrollBar(?e: Event):Void
+	{
+		var partDisplay = parent;
+
+		while(!Std.is(partDisplay, KpDisplay)){
+			partDisplay = partDisplay.parent;
+		}
+		if(scrollBarName == null){
+			var keyArray = [];
+			for (key in cast(partDisplay, KpDisplay).scrollBars.keys()) keyArray.push(key);
+			scrollBarName = keyArray[0];
+		}
+		scrollBar = cast(partDisplay, KpDisplay).scrollBars.get(scrollBarName);
+
+
+		scrollBar.setHeight(maskHeight);
+		scrollBar.set_ratio(maskHeight / content.height);
+		scrollBar.x = content.x+maskWidth;
+		scrollBar.y = content.y;
+		scrollBar.scrolled = scrollToRatio;
+		scrollNeeded = true;
+
+		addChild(scrollBar);
 	}
 
 

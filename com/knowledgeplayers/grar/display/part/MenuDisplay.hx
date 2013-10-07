@@ -73,7 +73,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 	}
     override public function parseContent(content:Xml):Void
     {
-		// BAAAAAAAAAAHHH
+		// BAAAAAAAAAAHHH: remove singleton
         if(!Std.is(this, MenuSphericalDisplay) && content.firstElement().get("type") == "spheric"){
 	        instance = MenuSphericalDisplay.instance;
 	        instance.parseContent(content);
@@ -161,8 +161,13 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 			var button = addButton(fast.node.Button, partName);
 			buttons.set(level.get("id"), button);
 			for(part in GameManager.instance.game.getAllParts()){
-				if(part.name == partName && part.isDone)
-				  button.toggle(false);
+				if(part.name == level.get("id")){
+					if(!part.canStart())
+						button.toggleState = "lock";
+					else
+						button.toggle(!part.isDone);
+					break;
+				}
 			}
 			buttons.set(level.get("id"), button);
 
@@ -207,7 +212,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 	{
 		var button:DefaultButton = new DefaultButton(fast);
 
-		button.setText(text);
+		button.setText(text, "partName");
 		button.buttonAction = onClick;
 		button.transitionOut = transitionOut;
 
@@ -231,8 +236,11 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 	private function onFinishPart(e:PartEvent):Void
 	{
-		if(buttons.exists(e.partId))
-			buttons.get(e.partId).toggle(false);
+		if(buttons.exists(e.partId)){
+			var button = buttons.get(e.partId);
+			button.toggle(false);
+
+		}
 	}
 
 	private function onAdded(e:Event):Void
