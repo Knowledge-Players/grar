@@ -83,7 +83,7 @@ class MenuSphericalDisplay extends MenuDisplay {
 	private function createSphericLevel(level:TreeNode<Xml>):Void
 	{
 		var fast:Fast = levelDisplays.get(level.value.nodeName);
-		var button = addButton(fast.node.Button, GameManager.instance.getItemName(level.value.get("id")));
+		var button = addButton(fast.node.Button, GameManager.instance.getItemName(level.value.get("id")), level.value.get("icon"));
 		buttons.set(level.value.get("id"), button);
 		var curve: Curve;
 		var parent: DisplayObject = buttons.get(level.parent.value.get("id"));

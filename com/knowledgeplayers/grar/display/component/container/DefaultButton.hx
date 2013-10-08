@@ -179,86 +179,7 @@ class DefaultButton extends WidgetContainer {
 		}
 	}
 
-	// Abstract
-
-	private function onMouseOver(event:MouseEvent):Void
-	{
-
-	}
-
-	private function onMouseOut(event:MouseEvent):Void
-	{}
-
-	private function onClick(event:MouseEvent):Void
-	{
-		if(timeline != null){
-			timeline.addEventListener(Event.COMPLETE,function(e){buttonAction(this);});
-			timeline.play();
-		}else
-			buttonAction(this);
-		if(isToggleEnabled)
-			onToggle();
-	}
-
-	private function onDblClick(event:MouseEvent):Void
-	{}
-
-	private function open(event:MouseEvent):Void
-	{}
-
-	private function close(event:MouseEvent):Void
-	{}
-
-	// Private
-
-	private function setAllListeners(listener:MouseEvent -> Void):Void
-	{
-		removeAllEventsListeners(listener);
-		addEventListener(MouseEvent.MOUSE_OUT, listener);
-		addEventListener(MouseEvent.MOUSE_OVER, listener);
-		addEventListener(MouseEvent.ROLL_OVER, listener);
-		addEventListener(MouseEvent.ROLL_OUT, listener);
-		addEventListener(MouseEvent.CLICK, listener);
-		addEventListener(MouseEvent.DOUBLE_CLICK, listener);
-		addEventListener(MouseEvent.MOUSE_DOWN, listener);
-		addEventListener(MouseEvent.MOUSE_UP, listener);
-	}
-
-	private function onOver(event:MouseEvent):Void
-	{
-		renderState("over");
-	}
-
-	private function onOut(event:MouseEvent):Void
-	{
-		renderState("out");
-	}
-
-	private function onClickDown(event:MouseEvent):Void
-	{
-		renderState("press");
-	}
-
-	private function onClickUp(event:MouseEvent):Void
-	{
-		renderState("out");
-	}
-
-	private function init():Void
-	{
-		enabled = true;
-
-		setAllListeners(onMouseEvent);
-
-		// Hack for C++ hitArea (NME 3.5.5)
-		#if cpp
-			graphics.beginFill (0xFFFFFF, 0.01);
-			graphics.drawRect (-width/2, -height/2, width, height);
-			graphics.endFill();
-		#end
-	}
-
-	private function renderState(state:String)
+	public function renderState(state:String)
 	{
 		var changeState = false;
 		var list:Map<String, Widget>;
@@ -332,6 +253,86 @@ class DefaultButton extends WidgetContainer {
 		}
 	}
 
+	// Abstract
+
+	private function onMouseOver(event:MouseEvent):Void
+	{
+
+	}
+
+	private function onMouseOut(event:MouseEvent):Void
+	{}
+
+	private function onClick(event:MouseEvent):Void
+	{
+		if(timeline != null){
+			timeline.addEventListener(Event.COMPLETE,function(e){buttonAction(this);});
+			timeline.play();
+		}else
+			buttonAction(this);
+		if(isToggleEnabled)
+			onToggle();
+	}
+
+	private function onDblClick(event:MouseEvent):Void
+	{}
+
+	private function open(event:MouseEvent):Void
+	{}
+
+	private function close(event:MouseEvent):Void
+	{}
+
+	// Private
+
+	private function setAllListeners(listener:MouseEvent -> Void):Void
+	{
+		removeAllEventsListeners(listener);
+		addEventListener(MouseEvent.MOUSE_OUT, listener);
+		addEventListener(MouseEvent.MOUSE_OVER, listener);
+		addEventListener(MouseEvent.ROLL_OVER, listener);
+		addEventListener(MouseEvent.ROLL_OUT, listener);
+		addEventListener(MouseEvent.CLICK, listener);
+		addEventListener(MouseEvent.DOUBLE_CLICK, listener);
+		addEventListener(MouseEvent.MOUSE_DOWN, listener);
+		addEventListener(MouseEvent.MOUSE_UP, listener);
+	}
+
+	private function onOver(event:MouseEvent):Void
+	{
+		renderState("over");
+		//dispatchEvent(new ButtonActionEvent(ButtonActionEvent.OVER));
+	}
+
+	private function onOut(event:MouseEvent):Void
+	{
+		renderState("out");
+	}
+
+	private function onClickDown(event:MouseEvent):Void
+	{
+		renderState("press");
+	}
+
+	private function onClickUp(event:MouseEvent):Void
+	{
+		renderState("out");
+	}
+
+	private function init():Void
+	{
+		enabled = true;
+
+		setAllListeners(onMouseEvent);
+
+		// Hack for C++ hitArea (NME 3.5.5)
+		#if cpp
+			graphics.beginFill (0xFFFFFF, 0.01);
+			graphics.drawRect (-width/2, -height/2, width, height);
+			graphics.endFill();
+		#end
+	}
+
 	private inline function sortDisplayObjects(x:Widget, y:Widget):Int
 	{
 		if(x.zz < y.zz)
@@ -374,7 +375,7 @@ class DefaultButton extends WidgetContainer {
 
 	private inline function onMouseEvent(event:MouseEvent):Void
 	{
-		event.stopImmediatePropagation();
+		//event.stopImmediatePropagation();
 
 		switch (event.type) {
 			case MouseEvent.MOUSE_OUT: onOut(event);

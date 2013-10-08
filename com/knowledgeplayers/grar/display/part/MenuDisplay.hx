@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.display.part;
 
+import flash.events.MouseEvent;
+import com.knowledgeplayers.grar.display.component.Image;
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
+import haxe.ds.GenericStack;
 import com.knowledgeplayers.grar.display.component.Widget;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.localisation.Localiser;
@@ -25,6 +29,11 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
     **/
 	public var orientation (default, set_orientation):String;
 
+	/**
+	* Tell wether or not there is a menu in the module
+	**/
+	public var exists(default,null):Bool=false;
+
 	private var levelDisplays:Map<String, Fast>;
 	private var xOffset:Float = 0;
 	private var yOffset:Float = 0;
@@ -35,7 +44,8 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 	private var buttons:Map<String, DefaultButton>;
 
-    public var exists(default,null):Bool=false;
+	// Constant that stock the name of the button group
+	private inline static var btnGroupName: String = "levels";
 
 	public static function get_instance():MenuDisplay
 	{
@@ -48,6 +58,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 	{
 		super();
 		buttons = new Map<String, DefaultButton>();
+		buttonGroups.set(btnGroupName, new GenericStack<DefaultButton>());
 		GameManager.instance.addEventListener(PartEvent.EXIT_PART, onFinishPart);
 		addEventListener(Event.ADDED_TO_STAGE, onAdded);
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
@@ -86,7 +97,6 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 	public function init():Void
 	{
-
 		orientation = displayFast.att.orientation;
 
 		levelDisplays = new Map<String, Fast>();
@@ -107,8 +117,6 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 		xOffset += xBase;
 		yOffset += yBase;
-
-
 
 		Localiser.instance.pushLocale();
 		Localiser.instance.layoutPath = LayoutManager.instance.interfaceLocale;
@@ -158,7 +166,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 			if(partName == null)
 				throw "[MenuDisplay] Can't find a name for '"+level.get("id")+"'.";
 
-			var button = addButton(fast.node.Button, partName);
+			var button = addButton(fast.node.Button, partName, level.get("icon"));
 			buttons.set(level.get("id"), button);
 			for(part in GameManager.instance.game.getAllParts()){
 				if(part.name == level.get("id")){
@@ -182,8 +190,6 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 			else if(orientation == "horizontal")
 			    xOffset += button.width+Std.parseFloat(fast.att.xOffset);
 
-
-
             addChild(button);
 		}
 		for(elem in level.elements())
@@ -205,20 +211,52 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		line.y = Std.parseFloat(fast.att.y) + yOffset;
 
 		addChild(line);
-
 	}
 
-	private function addButton(fast:Fast, text:String):DefaultButton
+	private function addButton(fast:Fast, text:String, iconId: String):DefaultButton
 	{
+		var icons = findIcon(fast.x);
+		for(icon in icons){
+			if(iconId.indexOf(".") < 0){
+				icon.set("tile", iconId);
+				if(icon.exists("src"))
+					icon.remove("src");
+			}
+			else{
+				icon.set("src", iconId);
+				if(icon.exists("tile"))
+					icon.remove("tile");
+			}
+		}
 		var button:DefaultButton = new DefaultButton(fast);
 
 		button.setText(text, "partName");
 		button.buttonAction = onClick;
+		button.addEventListener(MouseEvent.MOUSE_OVER, onOver);
+		button.addEventListener(MouseEvent.MOUSE_OUT, onOut);
 		button.transitionOut = transitionOut;
-
 		button.name = text;
+		buttonGroups.get(btnGroupName).add(button);
 
 		return button;
+	}
+
+	private inline function findIcon(xml:Xml):GenericStack<Xml>
+	{
+		var results = new GenericStack<Xml>();
+		findIconRec(xml, results);
+		return results;
+	}
+
+	private inline function findIconRec(xml: Xml, res: GenericStack<Xml>):Void
+	{
+		if(xml.get("ref") == "icon")
+			res.add(xml);
+		else{
+			for(elem in xml.elements()){
+				findIconRec(elem, res);
+			}
+		}
 	}
 
 	// Handlers
@@ -234,19 +272,34 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		TweenManager.applyTransition(this, transitionOut);
 	}
 
+	private function onOver(e: Event):Void
+	{
+		for(button in buttonGroups.get(btnGroupName)){
+			if(button != e.target){
+				button.renderState("groupOver");
+			}
+		}
+	}
+
+	private function onOut(e: Event):Void
+	{
+		for(button in buttonGroups.get(btnGroupName)){
+			for(i in 0...button.content.numChildren){
+				button.renderState("out");
+			}
+		}
+	}
+
 	private function onFinishPart(e:PartEvent):Void
 	{
-		//if(buttons.exists(e.partId)){
-		//	buttons.get(e.partId).toggle(false);
-			for(part in GameManager.instance.game.getAllParts()){
-				if(buttons.exists(part.id)){
-					if(!part.canStart())
-						buttons.get(part.id).toggleState = "lock";
-					else
-						buttons.get(part.id).toggle(!part.isDone);
-				}
+		for(part in GameManager.instance.game.getAllParts()){
+			if(buttons.exists(part.id)){
+				if(!part.canStart())
+					buttons.get(part.id).toggleState = "lock";
+				else
+					buttons.get(part.id).toggle(!part.isDone);
 			}
-		//}
+		}
 	}
 
 	private function onAdded(e:Event):Void

@@ -33,6 +33,9 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 	private var currentPage: Page;
 	private var tabTemplate: Fast;
 
+	private inline static var noteGroupName: String = "notes";
+	private inline static var tabGroupName: String = "tabs";
+
 		/**
 	* @return the instance
 	**/
@@ -102,7 +105,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				totalX += tab.width+xOffset;
 				tab.name = page.tabContent;
 				tab.setText(Localiser.instance.getItemContent(page.tabContent));
-				buttonGroups.get("tabs").add(tab);
+				buttonGroups.get(tabGroupName).add(tab);
 				setButtonAction(tab, tmpTemplate.att.action);
 				addChild(tab);
 				if(first){
@@ -122,8 +125,8 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 	{
 		super();
 		GameManager.instance.addEventListener(TokenEvent.ADD, onUnlocked);
-		buttonGroups.set("notes", new GenericStack<DefaultButton>());
-		buttonGroups.set("tabs", new GenericStack<DefaultButton>());
+		buttonGroups.set(noteGroupName, new GenericStack<DefaultButton>());
+		buttonGroups.set(tabGroupName, new GenericStack<DefaultButton>());
 	}
 
 	private function displayPage(page:Page):Void
@@ -140,17 +143,19 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		addChild(title);
 
 		// Clean previous note
-		for(note in buttonGroups.get("notes")){
+		for(note in buttonGroups.get(noteGroupName)){
 			removeChild(note);
 			note = null;
 		}
-		buttonGroups.set("notes", new GenericStack<DefaultButton>());
+		buttonGroups.set(noteGroupName, new GenericStack<DefaultButton>());
 		noteMap = new Map<DefaultButton, Note>();
 		cast(displays.get(currentPage.contentRef), ScrollPanel).setContent("");
 		if(contains(displays.get("player")))
 			removeChild(displays.get("player"));
 
 		var offsetY: Float = 0;
+
+		// Fill every occurences of "icon" element with the proper tile/img
 		for(note in currentPage.notes){
 			var icons = findIcon(noteTemplate.x);
 			for(icon in icons){
@@ -159,8 +164,11 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 					if(icon.exists("src"))
 						icon.remove("src");
 				}
-				else
+				else{
 					icon.set("src", note.icon);
+					if(icon.exists("tile"))
+						icon.remove("tile");
+				}
 				icon.nodeName = "Image";
 			}
 			// Clickable note
@@ -169,7 +177,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			offsetY += button.height + Std.parseFloat(noteTemplate.att.offsetY);
 			button.setText(Localiser.instance.getItemContent(note.name), "title");
 			button.setText(Localiser.instance.getItemContent(note.subtitle), "subtitle");
-			buttonGroups.get("notes").add(button);
+			buttonGroups.get(noteGroupName).add(button);
 			button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 			// Fill hit box
 			DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
@@ -193,14 +201,14 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		}
 	}
 
-	private function findIcon(xml:Xml):GenericStack<Xml>
+	private inline function findIcon(xml:Xml):GenericStack<Xml>
 	{
 		var results = new GenericStack<Xml>();
 		findIconRec(xml, results);
 		return results;
 	}
 
-	private function findIconRec(xml: Xml, res: GenericStack<Xml>):Void
+	private inline function findIconRec(xml: Xml, res: GenericStack<Xml>):Void
 	{
 		if(xml.get("ref") == "icon")
 			res.add(xml);

@@ -2,6 +2,9 @@ package com.knowledgeplayers.grar.display;
 /**
  * Manage the most frequently used filters
  */
+import flash.filters.GlowFilter;
+import flash.filters.ColorMatrixFilter;
+import flash.display.Bitmap;
 import flash.filters.BlurFilter;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
@@ -38,6 +41,8 @@ class FilterManager {
 				setDropShadowFilter(filterNode[1]);
 			case "blur":
 				setBlurFilter(filterNode[1]);
+			case "glow":
+				setGlowFilter(filterNode[1]);
 			case _ : throw '[FilterManager] Unsupported filter $filterNode[0]';
 
 		}
@@ -56,6 +61,12 @@ class FilterManager {
 	{
 		var params = paramsString.split(",");
 		return new BlurFilter(Std.parseFloat(params[0]), Std.parseFloat(params[1]), Std.parseInt(params[2]));
+	}
+
+	private static function setGlowFilter(paramsString:String):GlowFilter
+	{
+		var params = paramsString.split(",");
+		return new GlowFilter(Std.parseInt(params[0]), Std.parseFloat(params[1]), Std.parseInt(params[2]), Std.parseFloat(params[3]), Std.parseFloat(params[4]), Std.parseInt(params[5]));
 	}
 
 	public static function loadTemplate(file:String):Void
@@ -82,11 +93,25 @@ class FilterManager {
 						var blurY = child.has.blurY ? Std.parseFloat(child.att.blurY) : 0;
 						var quality = child.has.quality ? Std.parseInt(child.att.quality) : BitmapFilterQuality.MEDIUM;
 						new BlurFilter(blurX, blurY, quality);
+					case "glow":
+						var color = child.has.color ? Std.parseInt(child.att.color) : 0;
+						var alpha = child.has.alpha ? Std.parseFloat(child.att.alpha) : 1;
+						var blurX = child.has.blurX ? Std.parseFloat(child.att.blurX) : 0;
+						var blurY = child.has.blurY ? Std.parseFloat(child.att.blurY) : 0;
+						var strength = child.has.strength ? Std.parseFloat(child.att.strength) : 1;
+						var quality = child.has.quality ? Reflect.getProperty(BitmapFilterQuality, child.att.quality.toUpperCase()) : BitmapFilterQuality.MEDIUM;
+						var inner = child.has.inner ? child.att.inner == "true" : false;
+						var knockout = child.has.knockout ? child.att.knockout == "true" : false;
+						new GlowFilter(color, alpha, blurX, blurY, strength, quality, inner, knockout);
+					case "color":
+						var matrix = new Array();
+						for(v in child.att.matrix.split(","))
+							matrix.push(Std.parseFloat(v));
+						new ColorMatrixFilter(matrix);
 					default:
 						throw "[FilterManager] Filter \"" + child.name + "\" is not supported.";
 				}
 			filters.set(child.att.ref, filter);
 		}
 	}
-
 }

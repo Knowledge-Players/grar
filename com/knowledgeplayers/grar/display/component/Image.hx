@@ -13,6 +13,8 @@ import haxe.xml.Fast;
 **/
 class Image extends Widget{
 
+	public var bitmap (default, null):Bitmap;
+
 	public function new(?xml: Fast, ?tilesheet: TilesheetEx)
 	{
 		if(xml != null){
@@ -23,23 +25,20 @@ class Image extends Widget{
 				width = Std.parseFloat(xml.att.width);
 			if(xml.has.height)
 				height = Std.parseFloat(xml.att.height);
-
-			//DisplayUtils.initSprite(this, tmpWidth, tmpHeight, 0, 0.001);
 		}
 	}
 
 	private function createImg(xml:Fast, ?tilesheet: TilesheetEx):Void
 	{
-		var itemBmp;
 		if(xml.has.src){
 			#if flash
-	                itemBmp = new Bitmap(AssetsStorage.getBitmapData(xml.att.src));
+	                bitmap = new Bitmap(AssetsStorage.getBitmapData(xml.att.src));
 	            #else
-			itemBmp = new Bitmap(Assets.getBitmapData(xml.att.src));
+			bitmap = new Bitmap(Assets.getBitmapData(xml.att.src));
 			#end
 		}
 		else
-			itemBmp = new Bitmap(DisplayUtils.getBitmapDataFromLayer(tilesheet != null ?tilesheet : UiFactory.tilesheet, xml.att.tile));
+			bitmap = new Bitmap(DisplayUtils.getBitmapDataFromLayer(tilesheet != null ?tilesheet : UiFactory.tilesheet, xml.att.tile));
 
 		if(xml.has.mirror){
 			mirror = switch(xml.att.mirror.toLowerCase()){
@@ -48,6 +47,6 @@ class Image extends Widget{
 				case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
 			}
 		}
-		addChild(itemBmp);
+		addChild(bitmap);
 	}
 }

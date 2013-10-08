@@ -22,6 +22,11 @@ class ButtonActionEvent extends Event {
 	**/
 	public static inline var TOGGLE: String = "toggle";
 
+	/**
+	* Over
+	**/
+	public static inline var OVER: String = "over";
+
     /**
 	* Quit Application
 	**/
