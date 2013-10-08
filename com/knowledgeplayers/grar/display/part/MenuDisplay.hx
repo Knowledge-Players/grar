@@ -236,11 +236,17 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 	private function onFinishPart(e:PartEvent):Void
 	{
-		if(buttons.exists(e.partId)){
-			var button = buttons.get(e.partId);
-			button.toggle(false);
-
-		}
+		//if(buttons.exists(e.partId)){
+		//	buttons.get(e.partId).toggle(false);
+			for(part in GameManager.instance.game.getAllParts()){
+				if(buttons.exists(part.id)){
+					if(!part.canStart())
+						buttons.get(part.id).toggleState = "lock";
+					else
+						buttons.get(part.id).toggle(!part.isDone);
+				}
+			}
+		//}
 	}
 
 	private function onAdded(e:Event):Void

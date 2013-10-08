@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.structure.score;
 
-import com.knowledgeplayers.grar.structure.activity.Activity;
+import com.knowledgeplayers.grar.tracking.Trackable;
 
 /**
  * Concatenates all the score from the activities and organizes it per skills
@@ -34,7 +34,7 @@ class ScoreChart {
 	 * @param	activity : Activity to link
 	 */
 
-	public function subscribe(perkName:String, activity:Activity)
+	public function subscribe(perkName:String, activity:Trackable)
 	{
 		var perk:Perk;
 		if(!perks.exists(perkName)){
@@ -44,7 +44,7 @@ class ScoreChart {
 		else
 			perk = perks.get(perkName);
 
-		perk.susbscribeActivity(activity);
+		perk.susbscribe(activity);
 	}
 
 	public function addScoreToPerk(perk:String, score:Int):Void

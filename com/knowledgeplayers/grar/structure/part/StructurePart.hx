@@ -82,6 +82,11 @@ class StructurePart extends EventDispatcher #if haxe3 implements Part implements
 	public var perks (default, null): Map<String, Int>;
 
 	/**
+	* Score of this part
+	**/
+	public var score (default, default):Int;
+
+	/**
 	* Perks requirements to start the part
 	**/
 	public var requirements (default, null): Map<String, Int>;

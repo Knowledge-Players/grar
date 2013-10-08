@@ -1,6 +1,6 @@
 package com.knowledgeplayers.grar.structure.score;
 
-import com.knowledgeplayers.grar.structure.activity.Activity;
+import com.knowledgeplayers.grar.tracking.Trackable;
 import haxe.ds.GenericStack;
 
 /**
@@ -16,7 +16,7 @@ class Perk {
 	/**
      * Activities who subscribes to this perk
      */
-	public var activities (default, null):GenericStack<Activity>;
+	public var subscribed (default, null):GenericStack<Trackable>;
 
 	private var score: Int = 0;
 
@@ -27,7 +27,7 @@ class Perk {
 	public function new(name:String)
 	{
 		this.name = name;
-		activities = new GenericStack<Activity>();
+		subscribed = new GenericStack<Trackable>();
 	}
 
 	/**
@@ -36,9 +36,9 @@ class Perk {
      * @param	activity
      */
 
-	public function susbscribeActivity(activity:Activity):Void
+	public function susbscribe(activity:Trackable):Void
 	{
-		activities.add(activity);
+		subscribed.add(activity);
 	}
 
 	/**
@@ -48,7 +48,7 @@ class Perk {
 	public function getScore():Int
 	{
 		var tmpScore = score;
-		for(activity in activities){
+		for(activity in subscribed){
 			tmpScore += activity.score;
 		}
 
