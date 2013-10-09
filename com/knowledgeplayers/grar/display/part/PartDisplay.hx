@@ -76,6 +76,7 @@ class PartDisplay extends KpDisplay {
     public function tracePosition(e:MouseEvent):Void{
 
     trace("x : "+this.mouseX+" - y : "+this.mouseY);
+
     }
 
 	/**
@@ -448,7 +449,7 @@ class PartDisplay extends KpDisplay {
 				throw "[PartDisplay] There is no VideoPlayer with ref '"+ item.ref+"'.";
 			var video = cast(item, VideoItem);
 
-			cast(displays.get(item.ref), VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture);
+			cast(displays.get(item.ref), VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture,video.autoFullscreen);
 			displayPart();
 		}
 	}

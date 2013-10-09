@@ -217,16 +217,18 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 	{
 		var icons = findIcon(fast.x);
 		for(icon in icons){
-			if(iconId.indexOf(".") < 0){
-				icon.set("tile", iconId);
-				if(icon.exists("src"))
-					icon.remove("src");
-			}
-			else{
-				icon.set("src", iconId);
-				if(icon.exists("tile"))
-					icon.remove("tile");
-			}
+            if (iconId != null){
+                if(iconId.indexOf(".") < 0){
+                    icon.set("tile", iconId);
+                    if(icon.exists("src"))
+                        icon.remove("src");
+                }
+                else{
+                    icon.set("src", iconId);
+                    if(icon.exists("tile"))
+                        icon.remove("tile");
+                }
+            }
 		}
 		var button:DefaultButton = new DefaultButton(fast);
 

@@ -117,9 +117,12 @@ class DefaultButton extends WidgetContainer {
 			}
 			tmpXml = null;
 		}
+          trace(this.timelines);
 
 		if(toggleState == null)
 			toggleState = "active";
+
+
 	}
 
 	/**

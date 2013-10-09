@@ -8,6 +8,11 @@ class VideoItem extends Item {
 	**/
 	public var autoStart (default, default):Bool;
 
+    /**
+	* Autofullscreen the video
+	**/
+	public var autoFullscreen (default, default):Bool;
+
 	/**
 	* Loop the video
 	**/
@@ -28,11 +33,12 @@ class VideoItem extends Item {
      * @param	xml : fast xml node with structure info
      * @param	source : URL of the video
      */
-	public function new(?xml:Fast, content:String = "", autoStart: Bool = false, loop: Bool = false, defaultVolume: Float = 1, capture: Float = 0)
+	public function new(?xml:Fast, content:String = "", autoStart: Bool = false,autoFullscreen: Bool = false, loop: Bool = false, defaultVolume: Float = 1, capture: Float = 0)
 	{
 		super(xml, content);
 		if(xml != null){
 			this.autoStart = xml.has.autostart ? xml.att.autostart == "true" : false;
+			this.autoFullscreen = xml.has.autoFullscreen ? xml.att.autoFullscreen == "true" : false;
 			this.loop = xml.has.loop ? xml.att.loop == "true" : false;
 			this.defaultVolume = xml.has.volume ? Std.parseFloat(xml.att.volume) : 1;
 			this.capture = xml.has.capture ? Std.parseFloat(xml.att.capture) : 0;

@@ -1,5 +1,5 @@
 package com.knowledgeplayers.grar.display.component.container;
-#if flash
+
 import flash.Lib;
 import flash.display.Bitmap;
 import aze.display.TileLayer;
@@ -42,14 +42,18 @@ class VideoPlayer extends WidgetContainer
 
 	private var loop : Bool;
 	private var autoStart : Bool;
+	private var autoFullscreen : Bool = false;
 	private var progressBar: Image;
 	private var controls: GenericStack<Widget>;
 	private var timeArea: ScrollPanel;
+	private var timeCurrent: ScrollPanel;
+	private var timeTotal: ScrollPanel;
 	private var controlsHidden: Bool = false;
-	private var cursor: Sprite;
+	private var controlsVisible: Bool = false;
+	private var cursor: Widget;
 	private var lockCursor: Bool;
 	private var soundSlider: Image;
-	private var soundCursor: Sprite;
+	private var soundCursor: Widget;
     private var containerVideo:Sprite;
     private var containerControls:Sprite;
     private var xVideo:Float=0;
@@ -59,6 +63,7 @@ class VideoPlayer extends WidgetContainer
     private var yBigPlay:Float=0;
     private var blackScreen:Sprite;
 		//private var _timeToCapture : Float = 0;
+    private var backgroundControls:Widget;
 
 	public function new(?xml: Fast, ?tilesheet: TilesheetEx)
 	{
@@ -89,18 +94,35 @@ class VideoPlayer extends WidgetContainer
 				controls.add(cast(getChildAt(i), Widget));
             }
 		}
-		timeArea = cast(displays.get("time"), ScrollPanel);
-		controls.add(timeArea);
+        if (cast(displays.get("time"))!=null){
+            timeArea = cast(displays.get("time"), ScrollPanel);
+            controls.add(timeArea);
+        }
+
+        if (cast(displays.get("timeCurrent"))!=null){
+            timeCurrent = cast(displays.get("timeCurrent"), ScrollPanel);
+            controls.add(timeCurrent);
+        }
+
+        if (cast(displays.get("timeTotal"))!=null){
+            timeTotal = cast(displays.get("timeTotal"), ScrollPanel);
+            controls.add(timeTotal);
+        }
+
         yBigPlay =  displays.get("bigPlay").y;
 
-		addEventListener(MouseEvent.ROLL_OUT, hideControls);
+		if(xml.has.controlsHidden){
 
-		addEventListener(MouseEvent.ROLL_OVER, showControls);
+		    controlsHidden = xml.att.controlsHidden=="true";
+        }
+
+        if(xml.has.autoFullscreen)
+            autoFullscreen = xml.att.autoFullscreen=="true";
 
 		init();
 	}
 
-	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 0, capture:Float = 0): Void
+	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 0, capture:Float = 0,?autoFullscreen:Bool): Void
 	{
 		if(url == null || url == "")
 			throw '[VideoPlayer] Invalid url "$url" for video stream.';
@@ -108,6 +130,9 @@ class VideoPlayer extends WidgetContainer
 		stream = new NetStream(connection);
 		this.loop = loop;
 		this.autoStart = autoStart;
+        if(autoFullscreen !=null)
+		    this.autoFullscreen = autoFullscreen;
+
 		changeVolume(defaultVolume);
 		stream.client = {onMetaData: function(data){ totalLength = Math.round(data.duration*100/100); }};
 		stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
@@ -126,10 +151,15 @@ class VideoPlayer extends WidgetContainer
 		video.height = maskHeight;
         containerVideo.addChildAt(video, 0);
 		addEventListener(Event.ENTER_FRAME, enterFrame);
+
 	}
 
 	public function playVideo(?target: DefaultButton):Void
 	{
+        if(autoFullscreen){
+            setFullscreen(true);
+            autoFullscreen = false;
+        }
 		addEventListener(Event.ENTER_FRAME, enterFrame);
 		setPlaying(true);
 		stream.resume();
@@ -144,6 +174,7 @@ class VideoPlayer extends WidgetContainer
 
 	private function playOrPause(?target: DefaultButton)
 	{
+
 		if(!isPlaying)
 			playVideo();
 		else
@@ -159,10 +190,10 @@ class VideoPlayer extends WidgetContainer
 
 	public function toggleFullScreen(?target: DefaultButton)
 	{
-		setFullScreen(!isFullscreen);
+		setFullscreen(!isFullscreen);
 	}
 
-	public function setFullScreen(fullscreen:Bool):Void
+	public function setFullscreen(fullscreen:Bool):Void
 	{
 		isFullscreen = fullscreen;
 
@@ -183,8 +214,8 @@ class VideoPlayer extends WidgetContainer
             containerControls.x = Lib.current.stage.stageWidth/2-containerControls.width/2;
             containerControls.y =  Lib.current.stage.stageHeight-containerControls.height-10;
             displays.get("bigPlay").y = Lib.current.stage.stageHeight/2-displays.get("bigPlay").height/2-containerControls.y ;
-		    fullscreenButton.toggle(true);
-            containerVideo.addEventListener(MouseEvent.MOUSE_DOWN,clickFull);
+		    fullscreenButton.toggle();
+
 		}
 		else {
 		    if (blackScreen !=null)
@@ -201,15 +232,11 @@ class VideoPlayer extends WidgetContainer
             containerVideo.y = yVideo;
             containerControls.x = xControls;
             containerControls.y = yControls;
-			fullscreenButton.toggle(false);
+			fullscreenButton.toggle();
             displays.get("bigPlay").y = yBigPlay;
-            containerVideo.removeEventListener(MouseEvent.MOUSE_DOWN,clickFull);
+
 		}
 	}
-
-    public function clickFull(e:Event):Void{
-        setFullScreen(false);
-    }
 
 	public function imageCapture():BitmapData {
 		var bmp:BitmapData = new BitmapData(Math.round(width), Math.round(height));
@@ -219,12 +246,32 @@ class VideoPlayer extends WidgetContainer
 
 	override public function createElement(elemNode:Fast):Widget
 	{
-		var widget = super.createElement(elemNode);
-		// TODO widgetContainer
-		if(elemNode.name.toLowerCase() == "progressbar"){
+       var widget = super.createElement(elemNode);
+
+       if(elemNode.name.toLowerCase() == "backgroundcontrols"){
+
+            backgroundControls = new Widget();
+
+            var color = elemNode.has.color ? Std.parseInt(elemNode.att.color) : 0;
+            var alpha = elemNode.has.alpha ? Std.parseFloat(elemNode.att.alpha) : 1;
+            var x = elemNode.has.x ? Std.parseFloat(elemNode.att.x) : 0;
+            var y = elemNode.has.y ? Std.parseFloat(elemNode.att.y) : 0;
+            var w = elemNode.has.width ? Std.parseFloat(elemNode.att.width) : 0;
+            var h = elemNode.has.height ? Std.parseFloat(elemNode.att.height) : 0;
+
+            backgroundControls.graphics.beginFill(color,alpha);
+            backgroundControls.graphics.drawRect(x,y,w,h);
+            backgroundControls.graphics.endFill();
+
+            controls.add(backgroundControls);
+            addElement(backgroundControls);
+
+        }
+		else if(elemNode.name.toLowerCase() == "progressbar"){
 			progressBar = new Image();
 			progressBar.x = Std.parseFloat(elemNode.att.x);
 			progressBar.y = Std.parseFloat(elemNode.att.y);
+           addElement(progressBar);
 			var mask: Sprite = null;
 			for(child in elemNode.elements){
 				if(child.name.toLowerCase() == "mask"){
@@ -232,6 +279,7 @@ class VideoPlayer extends WidgetContainer
 					tile.set_x(progressBar.x + tile.tileSprite.width/2);
 					tile.set_y(progressBar.y + tile.tileSprite.height/2);
 					mask = tile.getMask();
+					mask.width = child.has.width ? Std.parseFloat(child.att.width) : tile.tileSprite.width;
 				}
 				if(child.name.toLowerCase() == "bar"){
 					var bar = new Sprite();
@@ -245,17 +293,20 @@ class VideoPlayer extends WidgetContainer
 				}
 				if(child.name.toLowerCase() == "cursor"){
 					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
-					cursor = new Sprite();
+					cursor = new Widget();
 					cursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile)));
 					cursor.x = (child.has.x ? Std.parseFloat(child.att.x) : 0) + progressBar.x;
-					cursor.y = (child.has.y ? Std.parseFloat(child.att.y) : 0) + progressBar.y;
+					cursor.y = progressBar.y-cursor.height/3;
+					addElement(cursor);
 				}
 			}
 
 			progressBar.mask = mask;
 			mask.mouseEnabled = false;
 			content.addChild(mask);
+
 			controls.add(progressBar);
+
 
 		}
 		else if(elemNode.name.toLowerCase() == "slider"){
@@ -269,18 +320,20 @@ class VideoPlayer extends WidgetContainer
 					cur.x = child.has.x ? Std.parseFloat(child.att.x) : 0;
 					cur.y = child.has.y ? Std.parseFloat(child.att.y) : 0;
 					soundSlider.addChild(cur);
+
 				}
 				if(child.name.toLowerCase() == "cursor"){
 					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
-					soundCursor = new Sprite();
+					soundCursor = new Widget();
 					soundCursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile)));
 					soundCursor.x = (child.has.x ? Std.parseFloat(child.att.x) : 0) + soundSlider.x + (child.has.vol ? Std.parseFloat(child.att.vol)/100 : 1)*soundSlider.width - soundCursor.width/2;
 					soundCursor.y = (child.has.y ? Std.parseFloat(child.att.y) : 0) + soundSlider.y;
-
+                    addElement(soundCursor);
 				}
 			}
 			soundSlider.mouseEnabled = false;
 			controls.add(soundSlider);
+			addElement(soundSlider);
 
 		}
 
@@ -291,22 +344,44 @@ class VideoPlayer extends WidgetContainer
 
 	private function init():Void
 	{
-        content.setChildIndex(displays.get("bg"),content.numChildren-1);
-
+        /*
+        content.addChild(backgroundControls);
 		content.addChild(progressBar);
 		content.addChild(soundSlider);
-        containerControls.addEventListener(MouseEvent.CLICK, onClickTimeline);
 		content.addChild(cursor);
 		content.addChild(soundCursor);
+        */
+        content.setChildIndex(layer.view,1);
 
+        progressBar.addEventListener(MouseEvent.CLICK, onClickTimeline);
 		cursor.buttonMode = true;
 		cursor.addEventListener(MouseEvent.MOUSE_DOWN, dragCursor);
 		soundCursor.buttonMode = true;
 		soundCursor.addEventListener(MouseEvent.MOUSE_DOWN, dragSoundCursor);
-		timeArea.style = "small-text";
-		timeArea.setContent(videoTimeConvert(0) + "/" + videoTimeConvert(0));
+        if(timeArea != null)
+		    timeArea.setContent(videoTimeConvert(0) + "/" + videoTimeConvert(0));
+
+        if(timeCurrent != null)
+            timeCurrent.setContent(videoTimeConvert(0));
+
+        if(timeTotal != null)
+            timeTotal.setContent(videoTimeConvert(0));
 
         containerControls.addChild(content);
+
+        addChild(displays.get("bigPlay"));
+
+        containerControls.addEventListener(MouseEvent.MOUSE_OVER,showControls);
+        containerControls.addEventListener(MouseEvent.MOUSE_OUT,hideControls);
+
+        containerVideo.addEventListener(MouseEvent.MOUSE_MOVE,onMouseMove);
+        containerControls.alpha =0;
+
+
+
+    }
+    private function onMouseMove(e:MouseEvent):Void{
+        checkPositionMouse();
     }
 
 	private function dragCursor(e:MouseEvent):Void
@@ -400,7 +475,15 @@ class VideoPlayer extends WidgetContainer
 		}*/
 
 		if(nowSecs > 0)	{
-			timeArea.setContent("-"+videoTimeConvert(nowSecs) + "/" + videoTimeConvert(totalSecs));
+            if(timeArea != null)
+			    timeArea.setContent("-"+videoTimeConvert(nowSecs) + "/" + videoTimeConvert(totalSecs));
+
+            if(timeCurrent != null)
+                timeCurrent.setContent(videoTimeConvert(nowSecs));
+
+            if(timeTotal != null)
+                timeTotal.setContent(videoTimeConvert(totalSecs));
+
 			var amountPlayed:Float = nowSecs / totalSecs;
 			var amountLoaded:Float = stream.bytesLoaded / stream.bytesTotal;
 			var oldWidth = progressBar.getChildAt(1).width;
@@ -416,7 +499,7 @@ class VideoPlayer extends WidgetContainer
 			if(stream.time>=totalLength){
 				dispatchEvent(new Event(Event.COMPLETE));
 				stream.seek(0);
-				setFullScreen(false);
+				setFullscreen(false);
 				if(!loop)
 					pauseVideo();
 			}
@@ -462,29 +545,37 @@ class VideoPlayer extends WidgetContainer
 		this.isPlaying = isPlaying;
 	}
 
-	private function showControls(e:MouseEvent):Void
+	private function showControls(e:MouseEvent=null):Void
 	{
-		if(controlsHidden){
-			/*for(control in controls){
-				TweenManager.applyTransition(control, transitionIn);
-			}*/
-			TweenManager.applyTransition(layer.view, transitionIn);
 
-			TweenManager.applyTransition(containerControls, transitionOut);
-			controlsHidden = false;
-		}
+
+        if(controlsHidden){
+            TweenManager.stop(containerControls);
+            TweenManager.applyTransition(containerControls, "fadeInVideoControls").onComplete(checkPositionMouse);
+        }
+
 	}
 
-	private function hideControls(e:MouseEvent):Void
+	private function hideControls(e:MouseEvent=null):Void
 	{
-		if(!controlsHidden){
-			/*for(control in controls){
-				TweenManager.applyTransition(control, transitionOut);
-			}*/
-			TweenManager.applyTransition(layer.view, transitionOut);
-			TweenManager.applyTransition(containerControls, transitionOut);
-			controlsHidden = true;
-		}
+
+        if(controlsHidden){
+            TweenManager.stop(containerControls);
+
+            TweenManager.applyTransition(containerControls, "fadeOutVideoControls",3).onComplete(checkPositionMouse);
+        }
+
+	}
+
+	private function checkPositionMouse():Void{
+
+	    if(backgroundControls.hitTestPoint(Lib.current.stage.mouseX,Lib.current.stage.mouseY)){
+
+            showControls();
+
+	    }else{
+	       hideControls();
+	       }
 	}
 
 	override private function setButtonAction(button:DefaultButton, action:String):Void
@@ -492,18 +583,20 @@ class VideoPlayer extends WidgetContainer
 		if(action == "play"){
 			playButtons.add(button);
 			button.buttonAction = playOrPause;
+
 		}
 		else if(action == "fullscreen"){
 			fullscreenButton = button;
 			button.buttonAction = toggleFullScreen;
 		}
 		controls.add(button);
-        containerControls.addChild(button);
+
+
 	}
 }
-#else
+/*#else
 class VideoPlayer extends WidgetContainer {
 	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 0, capture:Float = 0): Void
 	{}
 }
-#end
+#end    */
