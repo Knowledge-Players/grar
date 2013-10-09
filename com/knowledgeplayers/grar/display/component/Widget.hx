@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.display.component;
 
-import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import flash.filters.BitmapFilter;
 import motion.actuators.GenericActuator;
 import haxe.xml.Fast;
@@ -50,6 +49,9 @@ class Widget extends Sprite{
 	**/
 	public var transformation (default, set_transformation):String;
 
+	/**
+	* Layer order of this widget
+	**/
 	public var zz: Int;
 
 	private var origin: {x: Float, y: Float, scaleX: Float, scaleY: Float, alpha: Float};

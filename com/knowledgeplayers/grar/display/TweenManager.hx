@@ -66,20 +66,25 @@ class TweenManager {
 
 		stop(display, true, true);
 
+		var actuator: IGenericActuator;
 		if(Reflect.hasField(transition, "alpha"))
-			return fade(display, ref).delay(totalDelay);
+			actuator = fade(display, ref);
 		else if(Reflect.hasField(transition, "width"))
-			return zoom(display, ref).delay(totalDelay);
-		else if(Reflect.hasField(transition, "color") && Reflect.hasField(transition, "repeat"))
-			return blink(display, ref).delay(totalDelay);
+			actuator = zoom(display, ref);
 		else if(Reflect.hasField(transition, "color"))
-			return transform(display, ref).delay(totalDelay);
-		else if(Reflect.hasField(transition, "repeat"))
-			return wiggle(display, ref).delay(totalDelay);
+			actuator = transform(display, ref);
 		else if(Reflect.hasField(transition, "shutterTransitions"))
-			return discover(display, ref, 0).delay(totalDelay);
+			actuator = discover(display, ref, 0);
 		else
-			return slide(display, ref).delay(totalDelay);
+			actuator = slide(display, ref);
+
+		actuator.delay(totalDelay);
+		if(transition.repeat != null)
+			actuator.repeat(transition.repeat);
+		if(transition.reflect != null && transition.reflect)
+			actuator.reflect();
+
+		return actuator;
 	}
 
 	/**
@@ -195,7 +200,7 @@ class TweenManager {
     * @return the actuator
     **/
 
-	public static function wiggle(display:Dynamic, ref:String):IGenericActuator
+	/*public static function wiggle(display:Dynamic, ref:String):IGenericActuator
 	{
 		var wiggle = transitions.get(ref);
 		var inOutX = parseValue("x", wiggle.x, display);
@@ -204,7 +209,7 @@ class TweenManager {
 		display.y = inOutY[0];
 		var repeat = wiggle.repeat % 2 == 0 ? wiggle.repeat + 1 : wiggle.repeat;
 		return Actuate.tween(display, wiggle.duration, {x: inOutX[1], y: inOutY[1]}).repeat(repeat).reflect();
-	}
+	}*/
 
 	/**
     * Get a zoom effect for the object
@@ -263,12 +268,12 @@ class TweenManager {
 		display.transform.colorTransform = new ColorTransform(1, 1, 1, 1, 0, 0, 0, 0);
 	}
 
-	public static function blink(display:Dynamic, ref:String):IGenericActuator
+	/*public static function blink(display:Dynamic, ref:String):IGenericActuator
 	{
 		var blink = transitions.get(ref);
 		var repeat = blink.repeat % 2 == 0 ? blink.repeat + 1 : blink.repeat;
 		return Actuate.transform(display, blink.duration).color(blink.color).repeat(repeat).reflect().ease(getEasing(blink));
-	}
+	}*/
 
 	public static function stop(target:Dynamic, properties:Dynamic = null, complete:Bool = false, sendEvent:Bool = true):Void
 	{
@@ -297,24 +302,22 @@ class TweenManager {
 				transition.easingType = child.att.easingType.toLowerCase();
 				transition.easingStyle = child.att.easingStyle.toLowerCase();
 			}
+			if(child.has.repeat)
+				transition.repeat = Std.parseInt(child.att.repeat);
+			if(child.has.reflect)
+				transition.reflect = child.att.reflect == "true";
+
 			switch(child.name.toLowerCase()){
 				case "zoom":
-					transition.x = child.att.x;
-					transition.y = child.att.y;
-					transition.width = child.att.width;
-					transition.height = child.att.height;
-				case "wiggle":
-					transition.repeat = Std.parseInt(child.att.repeat);
-					transition.x = child.att.x;
-					transition.y = child.att.y;
+					transition.x = child.has.x ? child.att.x : "x";
+					transition.y = child.has.y ? child.att.y : "y";
+					transition.width = child.has.width ? child.att.width : "width";
+					transition.height = child.has.height ? child.att.height : "height";
 				case "fade":
 					transition.alpha = child.att.alpha;
 				case "slide":
-					transition.x = child.att.x;
-					transition.y = child.att.y;
-				case "blink":
-					transition.color = Std.parseInt(child.att.color);
-					transition.repeat = Std.parseInt(child.att.repeat);
+					transition.x = child.has.x ? child.att.x : "x";
+					transition.y = child.has.y ? child.att.y : "y";
 				case "transform":
 					transition.color = Std.parseInt(child.att.color);
 				case "mask":

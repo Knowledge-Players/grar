@@ -11,7 +11,7 @@ import com.knowledgeplayers.grar.display.activity.quiz.QuizItemDisplay;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.ScrollBar;
 import com.knowledgeplayers.grar.display.part.DialogDisplay;
-import com.knowledgeplayers.grar.display.part.MenuDisplay;
+import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.style.Style;

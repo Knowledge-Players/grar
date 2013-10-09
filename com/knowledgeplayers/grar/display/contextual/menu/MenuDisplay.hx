@@ -1,8 +1,6 @@
-package com.knowledgeplayers.grar.display.part;
+package com.knowledgeplayers.grar.display.contextual.menu;
 
 import flash.events.MouseEvent;
-import com.knowledgeplayers.grar.display.component.Image;
-import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import haxe.ds.GenericStack;
 import com.knowledgeplayers.grar.display.component.Widget;
 import haxe.xml.Fast;
@@ -43,8 +41,10 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 	private var xBase:Float = 0;
 
 	private var buttons:Map<String, DefaultButton>;
+	private var bookmark: BookmarkDisplay;
+	private var currentPartButton: DefaultButton;
 
-	// Constant that stock the name of the button group
+// Constant that stock the name of the button group
 	private inline static var btnGroupName: String = "levels";
 
 	public static function get_instance():MenuDisplay
@@ -60,6 +60,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		buttons = new Map<String, DefaultButton>();
 		buttonGroups.set(btnGroupName, new GenericStack<DefaultButton>());
 		GameManager.instance.addEventListener(PartEvent.EXIT_PART, onFinishPart);
+		//GameManager.instance.addEventListener(PartEvent.ENTER_PART, onEnterPart);
 		addEventListener(Event.ADDED_TO_STAGE, onAdded);
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 	}
@@ -91,6 +92,10 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
         }
 	    else
             super.parseContent(content);
+
+
+	    if(displayFast.hasNode.Bookmark)
+			bookmark = new BookmarkDisplay(displayFast.node.Bookmark);
 
         exists = true;
     }
@@ -133,6 +138,11 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 		for(elem in menuXml.firstElement().elements()){
 			createMenuLevel(elem);
+		}
+
+		if(bookmark != null){
+			bookmark.updatePosition(currentPartButton.x, currentPartButton.y);
+			addChild(bookmark);
 		}
 
 		Localiser.instance.popLocale();
@@ -191,6 +201,9 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 			    xOffset += button.width+Std.parseFloat(fast.att.xOffset);
 
             addChild(button);
+			if(currentPartButton == null){
+				currentPartButton = button;
+			}
 		}
 		for(elem in level.elements())
 			createMenuLevel(elem);
@@ -304,8 +317,31 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		}
 	}
 
+	private function onEnterPart(e: PartEvent):Void
+	{
+		trace(e.partId);
+		if(buttons.exists(e.partId)){
+			trace("exist");
+		}
+	}
+
 	private function onAdded(e:Event):Void
 	{
+		var i = 0;
+		while(i < GameManager.instance.game.getAllParts().length && GameManager.instance.game.getAllParts()[i].isDone){
+			i++;
+		}
+		var part;
+		if(!buttons.exists(GameManager.instance.game.getAllParts()[i].id)){
+			part = GameManager.instance.game.getAllParts()[i];
+			while(!buttons.exists(part.id))
+				part = part.parent;
+		}
+		else
+			part = GameManager.instance.game.getAllParts()[i];
+		currentPartButton = buttons.get(part.id);
+		bookmark.updatePosition(currentPartButton.x, currentPartButton.y);
+
 		if (timelines.exists("in")){
 			timelines.get("in").play();
 		}

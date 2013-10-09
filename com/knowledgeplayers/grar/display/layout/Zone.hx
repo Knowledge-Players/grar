@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.display.layout;
 
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
-import com.knowledgeplayers.grar.display.part.MenuSphericalDisplay;
+import com.knowledgeplayers.grar.display.contextual.menu.MenuSphericalDisplay;
 import com.knowledgeplayers.grar.display.component.DropdownMenu;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.TileImage;
@@ -11,7 +11,7 @@ import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.component.ProgressBar;
-import com.knowledgeplayers.grar.display.part.MenuDisplay;
+import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
 import com.knowledgeplayers.grar.event.LayoutEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.factory.UiFactory;

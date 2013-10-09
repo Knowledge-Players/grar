@@ -104,7 +104,7 @@ class DialogDisplay extends PartDisplay {
 		goToPattern(target);
 	}
 
-	private function onOverChoice(e:ButtonActionEvent):Void
+	private function onOverChoice(e:MouseEvent):Void
 	{
 		var choiceButton = cast(e.currentTarget, DefaultButton);
 		var pattern = cast(currentPattern, ChoicePattern);

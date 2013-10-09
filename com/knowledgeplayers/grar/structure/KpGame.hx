@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.structure;
 
 import com.knowledgeplayers.grar.display.contextual.ContextualDisplay.ContextualType;
-import com.knowledgeplayers.grar.display.part.MenuDisplay;
+import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
 import com.knowledgeplayers.grar.structure.contextual.Bibliography;
 import com.knowledgeplayers.grar.structure.contextual.Glossary;
 import flash.errors.Error;

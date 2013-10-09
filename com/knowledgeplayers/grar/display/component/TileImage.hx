@@ -22,7 +22,7 @@ class TileImage extends Image{
 	private var xml: Fast;
 	private var isVisible: Bool;
 
-	public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=false)
+public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=false)
 	{
 		this.xml = xml;
 		isVisible = visible;
@@ -70,12 +70,17 @@ class TileImage extends Image{
 
 		tileSprite.visible = visible;
 		var actuator: IGenericActuator = null;
+		var transform: IGenericActuator = null;
 
 		if(visible){
 			reset();
 			actuator = TweenManager.applyTransition(tileSprite, transitionIn);
 			if(actuator != null && onComplete != null)
 				actuator.onComplete(onComplete);
+
+			transform = TweenManager.applyTransition(tileSprite.layer.view, transformation);
+			//if(transform != null)
+			//	transform.onUpdate(renderNeeded);
 		}
 		else{
 			actuator = TweenManager.applyTransition(tileSprite, transitionOut);
@@ -83,6 +88,8 @@ class TileImage extends Image{
 		renderNeeded();
 		if(actuator != null)
 			actuator.onUpdate(renderNeeded);
+		else if(transform != null)
+			transform.onUpdate(renderNeeded);
 		return visible;
 	}
 
@@ -111,10 +118,6 @@ class TileImage extends Image{
 
 	override public function set_transformation(transformation:String):String
 	{
-		var actuator = TweenManager.applyTransition(tileSprite.layer.view, transformation);
-		renderNeeded();
-		if(actuator != null)
-			actuator.onUpdate(renderNeeded);
 		return this.transformation = transformation;
 	}
 
@@ -177,8 +180,11 @@ class TileImage extends Image{
 
 	private function renderNeeded(?e: Event): Void
 	{
-		if(parent == null)
+		if(parent == null){
 			addEventListener(Event.ADDED_TO_STAGE, renderNeeded);
+			//TweenManager.stop(tileSprite);
+			//TweenManager.stop(tileSprite.layer.view);
+		}
 		else{
 			if(hasEventListener(Event.ADDED_TO_STAGE))
 				removeEventListener(Event.ADDED_TO_STAGE, renderNeeded);

@@ -3,7 +3,6 @@ package com.knowledgeplayers.grar.display.component.container;
 import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import haxe.xml.Fast;
-import aze.display.TileClip;
 import aze.display.TileLayer;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
@@ -50,7 +49,6 @@ class DefaultButton extends WidgetContainer {
 	public var timeline (default, default):Timeline;
 
 	private var currentState:String;
-	//private var clip:TileClip;
 	private var isToggleEnabled: Bool = false;
     private var timelines: Map<String, Timeline>;
 	private var tmpXml: Fast;
@@ -117,7 +115,6 @@ class DefaultButton extends WidgetContainer {
 			}
 			tmpXml = null;
 		}
-          trace(this.timelines);
 
 		if(toggleState == null)
 			toggleState = "active";
@@ -131,14 +128,14 @@ class DefaultButton extends WidgetContainer {
      * @return true if the button is now activated
      */
 
-	public function set_enabled(activate:Bool):Bool
+	public inline function set_enabled(activate:Bool):Bool
 	{
 		enabled = buttonMode = mouseEnabled = activate;
 
 		return activate;
 	}
 
-	public function set_toggleState(state:String):String
+	public inline function set_toggleState(state:String):String
 	{
 		toggleState = state;
 		timeline = timelines.get(toggleState);
@@ -159,7 +156,7 @@ class DefaultButton extends WidgetContainer {
 	* Define if the button is in state active or inactive
 	**/
 
-	public function toggle(?toggle:Bool):Void
+	public inline function toggle(?toggle:Bool):Void
 	{
 		if(toggle == null)
 			toggle = toggleState == "inactive";
@@ -239,6 +236,8 @@ class DefaultButton extends WidgetContainer {
 			for(obj in array){
 				content.addChild(obj);
 			}
+			//trace(ref, "stop tween");
+			TweenManager.stop(layer.view);
 
 			if(list.exists("backgroundDrawn")){
 				var image: Image = cast(list.get("backgroundDrawn"), Image);
@@ -258,14 +257,6 @@ class DefaultButton extends WidgetContainer {
 
 	// Abstract
 
-	private function onMouseOver(event:MouseEvent):Void
-	{
-
-	}
-
-	private function onMouseOut(event:MouseEvent):Void
-	{}
-
 	private function onClick(event:MouseEvent):Void
 	{
 		if(timeline != null){
@@ -276,15 +267,6 @@ class DefaultButton extends WidgetContainer {
 		if(isToggleEnabled)
 			onToggle();
 	}
-
-	private function onDblClick(event:MouseEvent):Void
-	{}
-
-	private function open(event:MouseEvent):Void
-	{}
-
-	private function close(event:MouseEvent):Void
-	{}
 
 	// Private
 
@@ -301,28 +283,28 @@ class DefaultButton extends WidgetContainer {
 		addEventListener(MouseEvent.MOUSE_UP, listener);
 	}
 
-	private function onOver(event:MouseEvent):Void
+	private inline function onOver(event:MouseEvent):Void
 	{
 		renderState("over");
 		//dispatchEvent(new ButtonActionEvent(ButtonActionEvent.OVER));
 	}
 
-	private function onOut(event:MouseEvent):Void
+	private inline function onOut(event:MouseEvent):Void
 	{
 		renderState("out");
 	}
 
-	private function onClickDown(event:MouseEvent):Void
+	private inline function onClickDown(event:MouseEvent):Void
 	{
 		renderState("press");
 	}
 
-	private function onClickUp(event:MouseEvent):Void
+	private inline function onClickUp(event:MouseEvent):Void
 	{
 		renderState("out");
 	}
 
-	private function init():Void
+	private inline function init():Void
 	{
 		enabled = true;
 
@@ -358,7 +340,7 @@ class DefaultButton extends WidgetContainer {
 		removeEventListener(MouseEvent.MOUSE_UP, listener);
 	}
 
-	private function createStates(node:Fast):Map<String, Widget>
+	private inline function createStates(node:Fast):Map<String, Widget>
 	{
 		var list = new Map<String, Widget>();
 		if(node.has.background){
@@ -388,7 +370,6 @@ class DefaultButton extends WidgetContainer {
 			case MouseEvent.CLICK: onClick(event);
 			case MouseEvent.MOUSE_DOWN: onClickDown(event);
 			case MouseEvent.MOUSE_UP: onClickUp(event);
-			case MouseEvent.DOUBLE_CLICK: onDblClick(event);
 		}
 	}
 

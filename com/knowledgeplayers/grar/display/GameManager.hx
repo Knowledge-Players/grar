@@ -4,14 +4,13 @@ package com.knowledgeplayers.grar.display;
 import flash.system.System;
 import flash.external.ExternalInterface;
 #end
-import com.knowledgeplayers.grar.display.part.MenuDisplay;
 import com.knowledgeplayers.grar.display.contextual.InventoryDisplay;
 import com.knowledgeplayers.grar.display.contextual.BibliographyDisplay;
 import com.knowledgeplayers.grar.display.contextual.GlossaryDisplay;
 import com.knowledgeplayers.grar.display.contextual.GlossaryDisplay;
 import com.knowledgeplayers.grar.structure.contextual.Glossary;
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
-import com.knowledgeplayers.grar.display.part.MenuDisplay;
+import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
 import com.knowledgeplayers.grar.tracking.Trackable;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.localisation.Localiser;
@@ -427,7 +426,7 @@ class GameManager extends EventDispatcher {
 		layout.zones.get(game.ref).addChild(partDisplay);
 		layout.updateDynamicFields();
 		var event = new PartEvent(PartEvent.ENTER_PART);
-		event.partId = partDisplay.part.id;
+		event.part = partDisplay.part;
 		dispatchEvent(event);
 	}
 

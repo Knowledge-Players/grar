@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.display.part;
+package com.knowledgeplayers.grar.display.contextual.menu;
 
 import com.knowledgeplayers.grar.localisation.Localiser;
 import flash.display.DisplayObject;
