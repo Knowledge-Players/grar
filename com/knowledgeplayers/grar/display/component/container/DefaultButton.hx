@@ -52,8 +52,9 @@ class DefaultButton extends WidgetContainer {
 	private var isToggleEnabled: Bool = false;
     private var timelines: Map<String, Timeline>;
 	private var tmpXml: Fast;
+	private var defaultState: String;
 
-		/**
+	/**
      * Action to execute on click
      */
 	public dynamic function buttonAction(?target: DefaultButton): Void{}
@@ -89,7 +90,7 @@ class DefaultButton extends WidgetContainer {
 			if(xml.has.group)
 				group = xml.att.group.toLowerCase();
 			if(xml.has.defaultState)
-				toggleState = xml.att.defaultState;
+				defaultState = xml.att.defaultState;
 
 		}
 
@@ -114,11 +115,8 @@ class DefaultButton extends WidgetContainer {
 				}
 			}
 			tmpXml = null;
+			toggleState = defaultState;
 		}
-
-		if(toggleState == null)
-			toggleState = "active";
-
 
 	}
 
@@ -137,6 +135,8 @@ class DefaultButton extends WidgetContainer {
 
 	public inline function set_toggleState(state:String):String
 	{
+		if(ref=="button_info")
+			trace("miojhmolhluiblv jk,lbgvugtgui,hjsjuxwcjuvdhildfsqilhj");
 		toggleState = state;
 		timeline = timelines.get(toggleState);
 		renderState("out");

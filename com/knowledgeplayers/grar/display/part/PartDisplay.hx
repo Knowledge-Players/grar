@@ -538,7 +538,8 @@ class PartDisplay extends KpDisplay {
 						targetedText = contentKey;
 					cast(displays.get(key), DefaultButton).setText(Localiser.instance.getItemContent(button.get(key).get(contentKey)), targetedText);
 				}
-				cast(displays.get(key), DefaultButton).timeline = timelines.get(currentItem.timelineOut);
+				if(timelines.get(currentItem.timelineOut) != null)
+					cast(displays.get(key), DefaultButton).timeline = timelines.get(currentItem.timelineOut);
 				return true;
 			}
 			else

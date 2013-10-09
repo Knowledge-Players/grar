@@ -93,7 +93,8 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 	    else
             super.parseContent(content);
 
-
+		if(displayFast == null)
+			displayFast = new Fast(content.firstElement());
 	    if(displayFast.hasNode.Bookmark)
 			bookmark = new BookmarkDisplay(displayFast.node.Bookmark);
 
@@ -334,7 +335,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		var part;
 		if(!buttons.exists(GameManager.instance.game.getAllParts()[i].id)){
 			part = GameManager.instance.game.getAllParts()[i];
-			while(!buttons.exists(part.id))
+			while(part != null && !buttons.exists(part.id))
 				part = part.parent;
 		}
 		else

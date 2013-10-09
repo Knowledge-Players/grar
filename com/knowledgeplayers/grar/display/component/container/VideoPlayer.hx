@@ -1,5 +1,5 @@
 package com.knowledgeplayers.grar.display.component.container;
-
+#if flash
 import flash.Lib;
 import flash.display.Bitmap;
 import aze.display.TileLayer;
@@ -594,9 +594,9 @@ class VideoPlayer extends WidgetContainer
 
 	}
 }
-/*#else
+#else
 class VideoPlayer extends WidgetContainer {
-	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 0, capture:Float = 0): Void
+	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 0, capture:Float = 0, ?autoFullscreen:Bool): Void
 	{}
 }
-#end    */
+#end

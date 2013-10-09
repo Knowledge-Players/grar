@@ -215,7 +215,8 @@ class KpDisplay extends Sprite {
 				buttonGroups.set(buttonNode.att.group.toLowerCase(), stack);
 			}
 		}
-		button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+		if(button.group != null)
+			button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 		addElement(button, buttonNode);
 	}
 
