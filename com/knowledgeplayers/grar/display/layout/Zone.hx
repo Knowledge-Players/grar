@@ -2,7 +2,7 @@ package com.knowledgeplayers.grar.display.layout;
 
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import com.knowledgeplayers.grar.display.contextual.menu.MenuSphericalDisplay;
-import com.knowledgeplayers.grar.display.component.DropdownMenu;
+import com.knowledgeplayers.grar.display.component.container.DropdownMenu;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.display.component.Image;

@@ -9,6 +9,7 @@ import com.knowledgeplayers.grar.tracking.Trackable;
 import haxe.xml.Fast;
 import flash.display.Sprite;
 
+// TODO extends Widget
 class ProgressBar extends Sprite {
 
 	private var backgroundColor:Int;

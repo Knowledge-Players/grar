@@ -14,6 +14,7 @@ import flash.geom.Point;
 /**
  * Graphic representation of a token of the game
  */
+// TODO extends WidgetContainer
 class TokenNotification extends Sprite {
 	/**
     * Reference to the "in" transition for the notification

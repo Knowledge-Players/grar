@@ -1,9 +1,9 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
 import com.knowledgeplayers.grar.structure.contextual.Note;
 import haxe.ds.GenericStack;
-import aze.display.TileSprite;
 import com.knowledgeplayers.grar.event.TokenEvent;
 import haxe.xml.Fast;
 import flash.display.DisplayObject;
@@ -95,10 +95,8 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				var cloneXml = Xml.parse(tabTemplate.x.toString()).firstElement();
 				var tmpTemplate = new Fast(cloneXml);
 				tmpTemplate.x.set("ref", page.tabContent);
-				var icons = findIcon(tmpTemplate.x);
-				for(icon in icons){
-					icon.set("tile", page.icon+icon.get("tile"));
-				}
+				var icons = ParseUtils.selectByAttribute("ref", "icon", tmpTemplate.x);
+				ParseUtils.updateIconsXml(page.icon, icons);
 
 				var tab = new DefaultButton(tmpTemplate);
 				tab.x = totalX;
@@ -157,20 +155,8 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 
 		// Fill every occurences of "icon" element with the proper tile/img
 		for(note in currentPage.notes){
-			var icons = findIcon(noteTemplate.x);
-			for(icon in icons){
-				if(note.icon.indexOf(".") < 0){
-					icon.set("tile", note.icon);
-					if(icon.exists("src"))
-						icon.remove("src");
-				}
-				else{
-					icon.set("src", note.icon);
-					if(icon.exists("tile"))
-						icon.remove("tile");
-				}
-				icon.nodeName = "Image";
-			}
+			var icons = ParseUtils.selectByAttribute("ref", "icon", noteTemplate.x);
+			ParseUtils.updateIconsXml(note.icon, icons);
 			// Clickable note
 			var button: DefaultButton = new DefaultButton(noteTemplate);
 			button.y += offsetY;
@@ -198,24 +184,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			case "goto" :
 				changePage;
 			default: throw "[NotebookDisplay] Unknown action '"+action+"'.";
-		}
-	}
-
-	private inline function findIcon(xml:Xml):GenericStack<Xml>
-	{
-		var results = new GenericStack<Xml>();
-		findIconRec(xml, results);
-		return results;
-	}
-
-	private inline function findIconRec(xml: Xml, res: GenericStack<Xml>):Void
-	{
-		if(xml.get("ref") == "icon")
-			res.add(xml);
-		else{
-			for(elem in xml.elements()){
-				findIconRec(elem, res);
-			}
 		}
 	}
 

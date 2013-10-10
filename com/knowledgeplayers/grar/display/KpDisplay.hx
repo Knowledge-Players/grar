@@ -3,7 +3,6 @@ package com.knowledgeplayers.grar.display;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
-import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import flash.geom.Rectangle;
 import com.knowledgeplayers.grar.display.component.ScrollBar;
 #if flash
@@ -15,13 +14,10 @@ import flash.events.Event;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.Image;
-import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import flash.filters.BitmapFilter;
 import com.knowledgeplayers.grar.util.DisplayUtils;
-import flash.Lib;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
-import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.component.CharacterDisplay;
@@ -30,10 +26,8 @@ import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
 import openfl.Assets;
-import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
-import flash.geom.Point;
 
 class KpDisplay extends Sprite {
 	/**

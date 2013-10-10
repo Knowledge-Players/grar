@@ -1,9 +1,7 @@
 package com.knowledgeplayers.grar.display.component.container;
 
 import aze.display.TilesheetEx;
-import aze.display.TileLayer;
 import haxe.xml.Fast;
-import aze.display.TileSprite;
 
 /**
 * Box Widget for strip part

@@ -135,8 +135,6 @@ class DefaultButton extends WidgetContainer {
 
 	public inline function set_toggleState(state:String):String
 	{
-		if(ref=="button_info")
-			trace("miojhmolhluiblv jk,lbgvugtgui,hjsjuxwcjuvdhildfsqilhj");
 		toggleState = state;
 		timeline = timelines.get(toggleState);
 		renderState("out");

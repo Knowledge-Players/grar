@@ -22,21 +22,16 @@ class PopupDisplay extends WidgetContainer {
 
     public function new(?_xml: Fast, ?tilesheet: TilesheetEx)
     {
-
         super(_xml,tilesheet);
-
         xml =_xml;
-
     }
 
-   public function init(_ref:String):Void{
-
-
+   public function init(_ref:String):Void
+   {
        localRef = _ref;
        for (txt in xml.nodes.Text)
        {
            var localizedText = Localiser.instance.getItemContent(localRef +"_"+txt.att.ref);
-           //trace("localRef : "+localRef+" - txt : "+txt.att.ref+" -- localizedText : "+localizedText);
            var text = cast(displays.get(txt.att.ref),ScrollPanel);
            text.setContent(localizedText);
        }
@@ -47,14 +42,10 @@ class PopupDisplay extends WidgetContainer {
         {
             button.buttonAction = onClosePopup;
         }
-
     }
 
     private function onClosePopup(?_target:DefaultButton):Void{
-           // trace("close popup");
-       //TweenManager.applyTransition(this, transitionOut).onComplete(removePopup);
         removePopup();
-
     }
 
     private function removePopup():Void{

@@ -194,24 +194,6 @@ class TweenManager {
 	}
 
 	/**
-    * Get a wiggle effect for the object
-    * @param    display : Target of the tween
-    * @param    ref : The name of the fade transition to applied
-    * @return the actuator
-    **/
-
-	/*public static function wiggle(display:Dynamic, ref:String):IGenericActuator
-	{
-		var wiggle = transitions.get(ref);
-		var inOutX = parseValue("x", wiggle.x, display);
-		var inOutY = parseValue("y", wiggle.y, display);
-		display.x = inOutX[0];
-		display.y = inOutY[0];
-		var repeat = wiggle.repeat % 2 == 0 ? wiggle.repeat + 1 : wiggle.repeat;
-		return Actuate.tween(display, wiggle.duration, {x: inOutX[1], y: inOutY[1]}).repeat(repeat).reflect();
-	}*/
-
-	/**
     * Get a zoom effect for the object
     * @param    display : Target of the tween
     * @param    ref : The name of the fade transition to applied
@@ -267,13 +249,6 @@ class TweenManager {
 	{
 		display.transform.colorTransform = new ColorTransform(1, 1, 1, 1, 0, 0, 0, 0);
 	}
-
-	/*public static function blink(display:Dynamic, ref:String):IGenericActuator
-	{
-		var blink = transitions.get(ref);
-		var repeat = blink.repeat % 2 == 0 ? blink.repeat + 1 : blink.repeat;
-		return Actuate.transform(display, blink.duration).color(blink.color).repeat(repeat).reflect().ease(getEasing(blink));
-	}*/
 
 	public static function stop(target:Dynamic, properties:Dynamic = null, complete:Bool = false, sendEvent:Bool = true):Void
 	{

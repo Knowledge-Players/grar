@@ -11,6 +11,7 @@ import flash.display.CapsStyle;
 import flash.display.LineScaleMode;
 import flash.display.Sprite;
 
+// TODO extends WidgetContainer
 class SimpleBubble extends Sprite{
 
     public function new(?width:Float,?height:Float,?color:Array<String>,?arrowX:Float=0,?arrowY:Float=0,?radius:Float=0,?line:Float=0,?colorLine:Int=0xFFFFFF,?shadow:Float=0,?gap:Float=5,?alphasBulle:Array<String>,?bubbleX:Float=0,?bubbleY:Float=0){

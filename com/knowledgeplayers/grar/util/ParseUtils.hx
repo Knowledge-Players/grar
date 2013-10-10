@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.util;
 
+import haxe.ds.GenericStack;
 import haxe.xml.Fast;
 
 class ParseUtils {
@@ -19,5 +20,43 @@ class ParseUtils {
 		}
 
 		return content;
+	}
+
+	public static inline function selectByAttribute(attr: String, value: String, xml: Xml): GenericStack<Xml>
+	{
+		var results = new GenericStack<Xml>();
+		recursiveSelect(attr, value, xml, results);
+		return results;
+	}
+
+	public static function updateIconsXml(value:String, xmls:GenericStack<Xml>):Void
+	{
+		for(elem in xmls){
+			if (value != null){
+				if(value.indexOf(".") < 0){
+					elem.set("tile", value);
+					if(elem.exists("src"))
+						elem.remove("src");
+				}
+				else{
+					elem.set("src", value);
+					if(elem.exists("tile"))
+						elem.remove("tile");
+				}
+			}
+		}
+	}
+
+	// Private
+
+	private static inline function recursiveSelect(attr: String, value: String, xml: Xml, res: GenericStack<Xml>):Void
+	{
+		if(xml.get(attr) == value)
+			res.add(xml);
+		else{
+			for(elem in xml.elements()){
+				recursiveSelect(attr, value, elem, res);
+			}
+		}
 	}
 }

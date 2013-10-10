@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.display.component;
+package com.knowledgeplayers.grar.display.component.container;
 
 import flash.geom.Point;
 import haxe.xml.Fast;

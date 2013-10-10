@@ -1,7 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
 import com.knowledgeplayers.grar.event.DisplayEvent;
-import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import flash.display.BitmapData;
 import flash.display.Bitmap;

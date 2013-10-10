@@ -2,9 +2,6 @@ package com.knowledgeplayers.grar.display.component.container;
 
 import com.knowledgeplayers.grar.localisation.Localiser;
 import haxe.xml.Fast;
-import aze.display.TileLayer;
-import aze.display.TilesheetEx;
-import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.style.Style;
 import com.knowledgeplayers.grar.display.style.StyleParser;

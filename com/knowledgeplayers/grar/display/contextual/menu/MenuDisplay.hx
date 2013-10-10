@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.contextual.menu;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import flash.events.MouseEvent;
 import haxe.ds.GenericStack;
 import com.knowledgeplayers.grar.display.component.Widget;
@@ -60,7 +61,6 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		buttons = new Map<String, DefaultButton>();
 		buttonGroups.set(btnGroupName, new GenericStack<DefaultButton>());
 		GameManager.instance.addEventListener(PartEvent.EXIT_PART, onFinishPart);
-		//GameManager.instance.addEventListener(PartEvent.ENTER_PART, onEnterPart);
 		addEventListener(Event.ADDED_TO_STAGE, onAdded);
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 	}
@@ -229,21 +229,8 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 	private function addButton(fast:Fast, text:String, iconId: String):DefaultButton
 	{
-		var icons = findIcon(fast.x);
-		for(icon in icons){
-            if (iconId != null){
-                if(iconId.indexOf(".") < 0){
-                    icon.set("tile", iconId);
-                    if(icon.exists("src"))
-                        icon.remove("src");
-                }
-                else{
-                    icon.set("src", iconId);
-                    if(icon.exists("tile"))
-                        icon.remove("tile");
-                }
-            }
-		}
+		var icons = ParseUtils.selectByAttribute("ref", "icon", fast.x);
+		ParseUtils.updateIconsXml(iconId, icons);
 		var button:DefaultButton = new DefaultButton(fast);
 
 		button.setText(text, "partName");
@@ -318,14 +305,6 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		}
 	}
 
-	private function onEnterPart(e: PartEvent):Void
-	{
-		trace(e.partId);
-		if(buttons.exists(e.partId)){
-			trace("exist");
-		}
-	}
-
 	private function onAdded(e:Event):Void
 	{
 		var i = 0;
@@ -340,8 +319,10 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		}
 		else
 			part = GameManager.instance.game.getAllParts()[i];
-		currentPartButton = buttons.get(part.id);
-		bookmark.updatePosition(currentPartButton.x, currentPartButton.y);
+		if(part != null){
+			currentPartButton = buttons.get(part.id);
+			bookmark.updatePosition(currentPartButton.x, currentPartButton.y);
+		}
 
 		if (timelines.exists("in")){
 			timelines.get("in").play();
@@ -353,4 +334,10 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		for(elem in timelines.get("in").elements)
 			elem.widget.reset();
 	}
+
+	override private function addElement(elem:Widget, node:Fast):Void
+	{
+		addChild(elem);
+	}
+
 }
