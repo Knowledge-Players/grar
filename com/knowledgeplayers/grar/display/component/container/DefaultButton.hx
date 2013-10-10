@@ -82,6 +82,7 @@ class DefaultButton extends WidgetContainer {
 					break;
 				}
 			}
+			defaultState = xml.has.defaultState ? xml.att.defaultState : "active";
 			if(tmpXml == null)
 				initStates(xml);
 
@@ -89,10 +90,9 @@ class DefaultButton extends WidgetContainer {
 				isToggleEnabled = xml.att.toggle == "true";
 			if(xml.has.group)
 				group = xml.att.group.toLowerCase();
-			if(xml.has.defaultState)
-				defaultState = xml.att.defaultState;
-
 		}
+		else
+			defaultState = "active";
 
 		mouseChildren = false;
 		useHandCursor = buttonMode = true;
@@ -109,9 +109,9 @@ class DefaultButton extends WidgetContainer {
 				if(timelines != null && state.has.timeline)
 					this.timelines.set(state.name, timelines.get(state.att.timeline));
 				for(elem in state.elements){
-					if(states.exists(state.name+"_out") || elem.name == "out"){
+					//if(states.exists(state.name+"_out") || elem.name == "out"){
 						states.set(state.name+"_" + elem.name, createStates(elem));
-					}
+					//}
 				}
 			}
 			tmpXml = null;
