@@ -36,6 +36,7 @@ class VideoPlayer extends WidgetContainer
 {
 	public var playButtons (default, default): GenericStack<DefaultButton>;
 	public var fullscreenButton (default, default):DefaultButton;
+	public var soundButton (default, default):DefaultButton;
 	private var isPlaying: Bool = false;
 	private var isFullscreen: Bool = false;
 	private var displayHours: Bool = false;
@@ -69,6 +70,8 @@ class VideoPlayer extends WidgetContainer
 	private var blackScreen:Sprite;
 	//private var _timeToCapture : Float = 0;
 	private var backgroundControls:Widget;
+    private var volumeEnCours:Float = 0;
+    private var ratioEnCours:Float = 1;
 
 	public function new(?xml: Fast, ?tilesheet: TilesheetEx)
 	{
@@ -196,6 +199,20 @@ class VideoPlayer extends WidgetContainer
 	public function toggleFullScreen(?target: DefaultButton)
 	{
 		setFullscreen(!isFullscreen);
+	}
+
+    public function toggleSound(?target: DefaultButton)
+	{
+
+        if(target.toggleState=="active"){
+
+            volumeEnCours = 0;
+        }
+        else{
+
+            volumeEnCours = ratioEnCours;
+        }
+        changeVolume(volumeEnCours);
 	}
 
 	public function setFullscreen(fullscreen:Bool):Void
@@ -401,7 +418,7 @@ class VideoPlayer extends WidgetContainer
 	private function dropCursor(e:MouseEvent):Void
 	{
 		cursor.stopDrag();
-		removeEventListener(MouseEvent.MOUSE_UP, dropCursor);
+        containerControls.removeEventListener(MouseEvent.MOUSE_UP, dropCursor);
 		var ratio = (cursor.x + cursor.width/2 - progressBar.x) / progressBar.width;
 		fastForward(ratio);
 	}
@@ -411,6 +428,13 @@ class VideoPlayer extends WidgetContainer
 		soundCursor.stopDrag();
 		removeEventListener(MouseEvent.MOUSE_UP, dropSoundCursor);
 		var ratio = (soundCursor.x + soundCursor.width/2 - soundSlider.x) / soundSlider.width;
+        if(ratio>0.2){
+            ratioEnCours = (soundCursor.x + soundCursor.width/2 - soundSlider.x) / soundSlider.width;
+            soundButton.toggle(true);
+        }
+        else {
+            soundButton.toggle(false);
+        }
 		changeVolume(ratio, false);
 	}
 
@@ -423,9 +447,20 @@ class VideoPlayer extends WidgetContainer
 
 	private function changeVolume(ratio:Float, moveCursor: Bool = true):Void
 	{
+        if(ratio <0.2){
+
+            ratio = 0;
+        }else
+        {
+
+        }
 		stream.soundTransform = new SoundTransform(ratio);
 		if(moveCursor)
 			soundCursor.x = soundSlider.width*ratio+soundSlider.x - soundCursor.width /2;
+
+        volumeEnCours = ratio;
+
+
 	}
 
 	private function onClickTimeline(e:MouseEvent):Void
@@ -437,6 +472,14 @@ class VideoPlayer extends WidgetContainer
 	private function onClickSoundLine(e:MouseEvent):Void
 	{
 		var ratio = e.localX / soundSlider.width;
+
+        if(ratio>0.2){
+            ratioEnCours = ratio;
+            soundButton.toggle(true);
+        }
+        else {
+            soundButton.toggle(false);
+        }
 		changeVolume(ratio);
 	}
 
@@ -536,13 +579,10 @@ class VideoPlayer extends WidgetContainer
 
 	private function showControls(e:MouseEvent=null):Void
 	{
-
-
 		if(controlsHidden){
 			TweenManager.stop(containerControls);
 			TweenManager.applyTransition(containerControls, "fadeInVideoControls").onComplete(checkPositionMouse);
 		}
-
 	}
 
 	private function hideControls(e:MouseEvent=null):Void
@@ -578,6 +618,10 @@ class VideoPlayer extends WidgetContainer
 			fullscreenButton = button;
 			button.buttonAction = toggleFullScreen;
 		}
+        else if(action == "sound"){
+            soundButton = button;
+            button.buttonAction = toggleSound;
+        }
 		controls.add(button);
 
 
