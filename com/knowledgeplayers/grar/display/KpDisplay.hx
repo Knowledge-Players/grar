@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.display.element.ChronoCircle;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
@@ -150,6 +151,7 @@ class KpDisplay extends Sprite {
 			case "video": createVideo(elemNode);
 			case "scrollbar": createScrollBar(elemNode);
 			case "div": addElement(new SimpleContainer(elemNode), elemNode);
+            case "timer":addElement(new ChronoCircle(elemNode),elemNode);
 
 		}
 	}
