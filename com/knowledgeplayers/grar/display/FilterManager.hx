@@ -1,17 +1,20 @@
 package com.knowledgeplayers.grar.display;
+
+#if flash
+import flash.filters.GlowFilter;
+import flash.filters.ColorMatrixFilter;
+import flash.filters.BlurFilter;
+import flash.filters.DropShadowFilter;
+#end
+import flash.filters.BitmapFilterQuality;
+import flash.filters.BitmapFilter;
+import flash.display.Bitmap;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
+import haxe.xml.Fast;
+
 /**
  * Manage the most frequently used filters
  */
-import flash.filters.GlowFilter;
-import flash.filters.ColorMatrixFilter;
-import flash.display.Bitmap;
-import flash.filters.BlurFilter;
-import com.knowledgeplayers.utils.assets.AssetsStorage;
-import haxe.xml.Fast;
-import flash.filters.BitmapFilter;
-import flash.filters.BitmapFilterQuality;
-import flash.filters.DropShadowFilter;
-
 class FilterManager {
 
 	private static var filters:Map<String, BitmapFilter> = new Map<String, BitmapFilter>();
@@ -50,29 +53,42 @@ class FilterManager {
 		return filter;
 	}
 
-	private static function setDropShadowFilter(_params:String):DropShadowFilter
+	private static function setDropShadowFilter(_params:String):BitmapFilter
 	{
 		var params = _params.split(",");
+		#if flash
 		var filter:DropShadowFilter = new DropShadowFilter(Std.parseFloat(params[0]), Std.parseFloat(params[1]), Std.parseInt(params[2]), Std.parseFloat(params[3]), Std.parseFloat(params[4]), Std.parseFloat(params[5]));
+		#else
+		var filter = null;
+		#end
 		return filter;
 	}
 
-	private static function setBlurFilter(paramsString: String): BlurFilter
+	private static function setBlurFilter(paramsString: String): BitmapFilter
 	{
 		var params = paramsString.split(",");
+		#if flash
 		return new BlurFilter(Std.parseFloat(params[0]), Std.parseFloat(params[1]), Std.parseInt(params[2]));
+		#else
+		return null;
+		#end
 	}
 
-	private static function setGlowFilter(paramsString:String):GlowFilter
+	private static function setGlowFilter(paramsString:String):BitmapFilter
 	{
 		var params = paramsString.split(",");
+		#if flash
 		return new GlowFilter(Std.parseInt(params[0]), Std.parseFloat(params[1]), Std.parseInt(params[2]), Std.parseFloat(params[3]), Std.parseFloat(params[4]), Std.parseInt(params[5]));
+		#else
+		return null;
+		#end
 	}
 
 	public static function loadTemplate(file:String):Void
 	{
 		var root = new Fast(AssetsStorage.getXml(file)).node.Filters;
 		for(child in root.elements){
+			#if flash
 			var filter:BitmapFilter =
 				switch(child.name.toLowerCase()){
 					case "dropshadow":
@@ -111,6 +127,9 @@ class FilterManager {
 					default:
 						throw "[FilterManager] Filter \"" + child.name + "\" is not supported.";
 				}
+			#else
+			var filter = null;
+			#end
 			filters.set(child.att.ref, filter);
 		}
 	}

@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.display.contextual.menu;
 
+import StringTools;
+import com.knowledgeplayers.grar.display.component.Widget;
+import flash.events.Event;
+import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import flash.display.DisplayObject;
 import com.knowledgeplayers.grar.util.MathUtils;
@@ -20,8 +24,9 @@ class MenuSphericalDisplay extends MenuDisplay {
 
 	private var curves: Map<DisplayObject, Curve>;
 	private var originCurve: Curve;
+	private var separators: Map<String, Widget>;
 
-	public static function get_instance():MenuSphericalDisplay
+public static function get_instance():MenuSphericalDisplay
 	{
 		if(instance == null)
 			instance = new MenuSphericalDisplay();
@@ -32,6 +37,7 @@ class MenuSphericalDisplay extends MenuDisplay {
 	{
 		super();
 		curves = new Map<DisplayObject, Curve>();
+		separators = new Map<String, Widget>();
 	}
 
 	override public function init():Void
@@ -61,7 +67,7 @@ class MenuSphericalDisplay extends MenuDisplay {
 
 		var curve: Curve = null;
 		if(level.nodeName == "hr"){
-			addLine(fast);
+			addSeparator(fast);
 		}
 		else{
 			var tree = new XmlTree(GameManager.instance.game.menu);
@@ -83,25 +89,43 @@ class MenuSphericalDisplay extends MenuDisplay {
 	private function createSphericLevel(level:TreeNode<Xml>):Void
 	{
 		var fast:Fast = levelDisplays.get(level.value.nodeName);
-		var button = addButton(fast.node.Button, GameManager.instance.getItemName(level.value.get("id")), level.value.get("icon"));
-		buttons.set(level.value.get("id"), button);
-		var curve: Curve;
-		var parent: DisplayObject = buttons.get(level.parent.value.get("id"));
-		if(curves.exists(buttons.get(level.parent.value.get("id")))){
-			curve = curves.get(buttons.get(level.parent.value.get("id")));
+		if(fast == null)
+			throw "[MenuSphericalDisplay] There is no display set for level '"+level.value.nodeName+"'.";
+
+		var levelDisplay: Widget;
+		if(StringTools.startsWith(level.value.nodeName, "hr")){
+			levelDisplay = addSeparator(fast);
+			separators.set(level.value.get("id"), levelDisplay);
 		}
-		else if(originCurve == null && parent == null){
-				var x = fast.has.x ? Std.parseFloat(fast.att.x) : 0;
-				var y = fast.has.y ? Std.parseFloat(fast.att.y) : 0;
-				originCurve = new Curve(new Point(x, y), Std.parseFloat(fast.att.radius));
-				curve = originCurve;
-				if(fast.has.minAngle) originCurve.minAngle = Std.parseFloat(fast.att.minAngle);
-				if(fast.has.maxAngle) originCurve.maxAngle = Std.parseFloat(fast.att.maxAngle);
+		else{
+
+			levelDisplay = addButton(fast.node.Button, GameManager.instance.getItemName(level.value.get("id")), level.value.get("icon"));
+			buttons.set(level.value.get("id"), cast(levelDisplay, DefaultButton));
+		}
+
+		var curve: Curve;
+		var parent: DisplayObject;
+		var parentId = level.parent.value.get("id");
+		if(buttons.exists(parentId))
+			parent = buttons.get(parentId);
+		else
+			parent = separators.get(parentId);
+
+		if(curves.exists(parent)){
+			curve = curves.get(parent);
+		}
+		else if(originCurve == null){
+			var x = fast.has.x ? Std.parseFloat(fast.att.x) : 0;
+			var y = fast.has.y ? Std.parseFloat(fast.att.y) : 0;
+			originCurve = new Curve(new Point(x, y), Std.parseFloat(fast.att.radius), fast.att.centerObjects == "true");
+			curve = originCurve;
+			if(fast.has.minAngle) originCurve.minAngle = Std.parseFloat(fast.att.minAngle);
+			if(fast.has.maxAngle) originCurve.maxAngle = Std.parseFloat(fast.att.maxAngle);
 		}
 		else if(parent == null)
 			curve = originCurve;
 		else{
-			curve = new Curve(new Point(parent.x, parent.y), Std.parseFloat(fast.att.radius));
+			curve = new Curve(new Point(parent.x+parent.width/2, parent.y+parent.height/2), Std.parseFloat(fast.att.radius), fast.att.centerObjects == "true");
 			var angle: Float = -1;
 			for(c in curves){
 				if(c.contains(parent))
@@ -109,14 +133,19 @@ class MenuSphericalDisplay extends MenuDisplay {
 			}
 			if(angle == -1)
 				angle = originCurve.getAngle(parent);
-			var offset = angle.radToDegree() - Std.parseFloat(fast.att.maxAngle)/2;
+			var offset = angle.radToDegree() - (fast.has.maxAngle ? Std.parseFloat(fast.att.maxAngle) : 360)/2;
 			curve.minAngle = (fast.has.minAngle ? Std.parseFloat(fast.att.minAngle) : 0) + offset;
-			curve.maxAngle = (fast.has.maxAngle ? Std.parseFloat(fast.att.maxAngle) : 0) + offset;
+			curve.maxAngle = (fast.has.maxAngle ? Std.parseFloat(fast.att.maxAngle) : 360) + offset;
 			curves.set(parent, curve);
 		}
 
-		curve.add(button);
-		addChild(button);
+		#if debug
+		addEventListener(Event.ADDED_TO_STAGE, function(e){
+			curve.drawCurve();
+		});
+		#end
+		curve.add(levelDisplay);
+		addChild(levelDisplay);
 	}
 }
 

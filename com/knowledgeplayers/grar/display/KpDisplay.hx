@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import flash.events.MouseEvent;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
@@ -63,6 +64,11 @@ class KpDisplay extends Sprite {
 
 	private var timelines: Map<String, Timeline>;
 
+
+	public function tracePosition(e:MouseEvent):Void
+	{
+		trace("x : "+this.mouseX+" - y : "+this.mouseY);
+	}
 
 		/**
     * Parse the content of a display XML
@@ -321,6 +327,9 @@ class KpDisplay extends Sprite {
 		scrollBars = new Map<String, ScrollBar>();
         timelines = new Map<String, Timeline>();
 
+		#if debug
+        addEventListener(MouseEvent.CLICK,tracePosition);
+        #end
 		addEventListener(Event.ENTER_FRAME, checkRender);
 	}
 }

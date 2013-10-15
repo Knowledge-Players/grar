@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.contextual.menu;
 
+import com.knowledgeplayers.grar.display.component.Image;
+import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import flash.events.MouseEvent;
 import haxe.ds.GenericStack;
@@ -127,14 +129,14 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		Localiser.instance.pushLocale();
 		Localiser.instance.layoutPath = LayoutManager.instance.interfaceLocale;
 
-		var array = new Array<Widget>();
+		/*var array = new Array<Widget>();
 		for(key in displays.keys()){
 			array.push(displays.get(key));
 		}
 
 		array.sort(sortDisplayObjects);
 		for(obj in array)
-			addChild(obj);
+			addChild(obj);*/
 		addChild(layers.get("ui").view);
 
 		for(elem in menuXml.firstElement().elements()){
@@ -170,7 +172,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		var fast:Fast = levelDisplays.get(level.nodeName);
 
 		if(level.nodeName == "hr"){
-			addLine(fast);
+			addSeparator(fast);
 		}
 		else{
 			var partName = GameManager.instance.getItemName(level.get("id"));
@@ -210,21 +212,30 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 			createMenuLevel(elem);
 	}
 
-	private function addLine(fast:Fast):Void
+	private function addSeparator(fast:Fast):Widget
 	{
-		var line = new Shape();
-		line.graphics.lineStyle(Std.parseFloat(fast.att.thickness), Std.parseInt(fast.att.color), Std.parseFloat(fast.att.alpha));
-		var originCoord:Array<String> = fast.att.origin.split(';');
-		var origin = {x: Std.parseFloat(originCoord[0]), y: Std.parseFloat(originCoord[1])};
-		line.graphics.moveTo(origin.x, origin.y);
-		var destCoord = fast.att.destination.split(";");
-		var dest = {x: Std.parseFloat(destCoord[0]), y: Std.parseFloat(destCoord[1])};
-		line.graphics.lineTo(dest.x, dest.y);
+		var hasChildren = fast.elements.hasNext();
+		var separator: Widget;
+		if(hasChildren)
+			separator = new SimpleContainer(fast);
+		else{
+			separator = new Image();
+			if(fast.has.thickness){
+				var line = new Shape();
+				line.graphics.lineStyle(Std.parseFloat(fast.att.thickness), Std.parseInt(fast.att.color), Std.parseFloat(fast.att.alpha));
+				var originCoord:Array<String> = fast.att.origin.split(';');
+				var origin = {x: Std.parseFloat(originCoord[0]), y: Std.parseFloat(originCoord[1])};
+				line.graphics.moveTo(origin.x, origin.y);
+				var destCoord = fast.att.destination.split(";");
+				var dest = {x: Std.parseFloat(destCoord[0]), y: Std.parseFloat(destCoord[1])};
+				line.graphics.lineTo(dest.x, dest.y);
 
-		line.x = Std.parseFloat(fast.att.x);
-		line.y = Std.parseFloat(fast.att.y) + yOffset;
-
-		addChild(line);
+				line.x = Std.parseFloat(fast.att.x);
+				line.y = Std.parseFloat(fast.att.y) + yOffset;
+				separator.addChild(line);
+			}
+		}
+		return separator;
 	}
 
 	private function addButton(fast:Fast, text:String, iconId: String):DefaultButton

@@ -6,7 +6,6 @@ import aze.display.TilesheetEx;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import flash.filters.BitmapFilter;
-import StringTools;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.style.StyleParser;
@@ -116,7 +115,7 @@ class FolderElementDisplay extends WidgetContainer {
 	{
 		origin.x = x;
 		origin.y = y;
-		parent.setChildIndex(this, parent.numChildren - 1);
+		parent.addChild(this);
 		//filters = [shadows.get("up")];
 		startDrag();
 	}

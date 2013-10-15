@@ -1,9 +1,10 @@
 package com.knowledgeplayers.grar.tracking;
-
+#if flash
+import flash.external.ExternalInterface;
+#end
 import flash.errors.Error;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
-import flash.external.ExternalInterface;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
 import flash.net.URLRequestMethod;
@@ -58,16 +59,22 @@ class AiccTracking extends Tracking {
 
 	override function init(isNote:Bool = false, activation:String = "on"):Void
 	{
+		#if flash
 		var is_EI_available:Bool = ExternalInterface.available;
 		if(is_EI_available){
 			var bool:Bool = cast(ExternalInterface.call("aicc.isAvailable"), Bool);
 			if(bool){
-				var aicc_url:String = Std.string(ExternalInterface.call("aicc.aicc_url"));
-				var aicc_sid:String = Std.string(ExternalInterface.call("aicc.aicc_sid"));
-				_aicc_sid = aicc_sid;
-				_aicc_url = aicc_url;
+				_aicc_sid = Std.string(ExternalInterface.call("aicc.aicc_sid"));
+				_aicc_url = Std.string(ExternalInterface.call("aicc.aicc_url"));
 			}
 		}
+		#elseif js
+			var aiccAvailable: Bool = untyped __js__('aicc.isAvailable') == true;
+			if(aiccAvailable){
+				_aicc_sid = untyped __js__('aicc.aicc_sid');
+				_aicc_url = untyped __js__('aicc.aicc_url');
+			}
+		#end
 
 		note = isNote;
 		if(_aicc_sid == null){
@@ -312,6 +319,10 @@ class AiccTracking extends Tracking {
 
 	override function exitAU():Void
 	{
+		#if flash
 		ExternalInterface.call("exitAU");
+		#elseif js
+		untyped __js__('exitAU()');
+		#end
 	}
 }

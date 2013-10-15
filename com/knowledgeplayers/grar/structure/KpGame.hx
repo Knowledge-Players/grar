@@ -175,6 +175,7 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
 			}
 		}
 
+
         // Load Parts
         if(structureNode.has.inventory)
             GameManager.instance.loadTokens(structureNode.att.inventory);
@@ -184,6 +185,7 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         for(part in structureNode.nodes.Part){
             numParts++;
         }
+
         // Load them
         for(part in structureNode.nodes.Part){
             addPartFromXml(part.att.id, part);

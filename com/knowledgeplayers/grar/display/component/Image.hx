@@ -17,9 +17,9 @@ class Image extends Widget{
 
 	public function new(?xml: Fast, ?tilesheet: TilesheetEx)
 	{
+		super(xml);
 		if(xml != null){
 			createImg(xml, tilesheet);
-			super(xml);
 
 			if(xml.has.width)
 				width = Std.parseFloat(xml.att.width);

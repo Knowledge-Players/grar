@@ -68,16 +68,9 @@ class PartDisplay extends KpDisplay {
 	{
 		super();
 		this.part = part;
-        addEventListener(MouseEvent.CLICK,tracePosition);
 		resizeD = ResizeManager.get_instance();
 		currentItems = new GenericStack<DisplayObject>();
 	}
-
-    public function tracePosition(e:MouseEvent):Void{
-
-    trace("x : "+this.mouseX+" - y : "+this.mouseY);
-
-    }
 
 	/**
     * Initialize the part display.
