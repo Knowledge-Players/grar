@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.display.part;
 
-import flash.events.MouseEvent;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
 import com.knowledgeplayers.grar.structure.part.Item;
 import com.knowledgeplayers.grar.structure.part.video.item.VideoItem;
@@ -9,8 +8,6 @@ import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
-import aze.display.TileSprite;
-import aze.display.TileLayer;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.contextual.InventoryDisplay;
@@ -456,8 +453,17 @@ class PartDisplay extends KpDisplay {
 			cast(displays.get(item.ref), ScrollPanel).setContent(content);
 		}
 
-		if(!isFirst)
-			addChild(cast(displays.get(item.ref), ScrollPanel));
+		if(!isFirst){
+			var i = 0;
+			var found = false;
+			while(i < numChildren && !found){
+				if(Std.is(getChildAt(i),Widget) && (cast(getChildAt(i),Widget).zz > displays.get(item.ref).zz)){
+					addChildAt(cast(displays.get(item.ref), ScrollPanel),i);
+					found = true;
+				}
+				i++;
+			}
+		}
 		else
 			displayPart();
 	}

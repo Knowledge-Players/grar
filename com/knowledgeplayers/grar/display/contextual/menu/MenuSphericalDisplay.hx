@@ -139,7 +139,7 @@ public static function get_instance():MenuSphericalDisplay
 			curves.set(parent, curve);
 		}
 
-		#if debug
+		#if kpdebug
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
 			curve.drawCurve();
 		});

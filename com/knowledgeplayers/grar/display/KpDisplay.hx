@@ -26,8 +26,6 @@ import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
-import openfl.Assets;
-import flash.events.MouseEvent;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
