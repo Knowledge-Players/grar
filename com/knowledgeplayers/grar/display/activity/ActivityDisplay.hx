@@ -74,7 +74,8 @@ class ActivityDisplay extends KpDisplay {
 	private function displayActivity():Void
 	{
 		// Background
-		if(model.background != null){
+
+		if(displays.get(model.background) != null){
 			addChildAt(displays.get(model.background), 0);
 		}
 

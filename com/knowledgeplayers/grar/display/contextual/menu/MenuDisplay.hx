@@ -342,8 +342,10 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 	private function onRemove(e:Event):Void
 	{
-		for(elem in timelines.get("in").elements)
-			elem.widget.reset();
+        if( timelines.get("in") != null){
+            for(elem in timelines.get("in").elements)
+                elem.widget.reset();
+        }
 	}
 
 	override private function addElement(elem:Widget, node:Fast):Void
