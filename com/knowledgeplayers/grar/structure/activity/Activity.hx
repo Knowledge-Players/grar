@@ -191,6 +191,14 @@ class Activity extends EventDispatcher implements PartElement implements Trackab
 	{
 		return false;
 	}
+			/**
+	    * @return false
+	**/
+
+	public function isSound():Bool
+	{
+		return false;
+	}
 
 		// Privates
 

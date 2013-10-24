@@ -151,4 +151,13 @@ class Pattern implements PartElement {
 	{
 		return false;
 	}
+
+	/**
+    * @return false
+**/
+
+	public function isSound():Bool
+	{
+		return false;
+	}
 }

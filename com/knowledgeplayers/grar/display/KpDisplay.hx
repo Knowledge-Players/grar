@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.display.component.container.SoundPlayer;
 import com.knowledgeplayers.grar.display.element.ChronoCircle;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.element.Timeline;
@@ -148,6 +149,7 @@ class KpDisplay extends Sprite {
 			case "text": createText(elemNode);
 			case "textgroup":createTextGroup(elemNode);
 			case "video": createVideo(elemNode);
+            case "sound": createSound(elemNode);
 			case "scrollbar": createScrollBar(elemNode);
 			case "div": addElement(new SimpleContainer(elemNode), elemNode);
             case "timer":addElement(new ChronoCircle(elemNode),elemNode);
@@ -223,6 +225,15 @@ class KpDisplay extends Sprite {
 		addElement(video, videoNode);
 		#end
 	}
+    private function createSound(soundNode: Fast):Void
+	{
+
+
+		var tilesheet = soundNode.has.spritesheet ? spritesheets.get(soundNode.att.spritesheet) : null;
+		var sound = new SoundPlayer(soundNode, tilesheet);
+		addElement(sound, soundNode);
+
+	}
 
 	private function createText(textNode:Fast):Void
 	{
@@ -245,6 +256,12 @@ class KpDisplay extends Sprite {
 				hashTextGroup.set(textNode.node.Video.att.ref, {obj: textNode.node.Video, z: numIndex});
 			}
 		#end
+
+        if(textNode.hasNode.Sound){
+            createSound(textNode.node.Sound);
+            hashTextGroup.set(textNode.node.Sound.att.ref, {obj: textNode.node.Sound, z: numIndex});
+        }
+
 		textGroups.set(textNode.att.ref, hashTextGroup);
 	}
 

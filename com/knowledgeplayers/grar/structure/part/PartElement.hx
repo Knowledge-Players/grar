@@ -13,4 +13,6 @@ interface PartElement {
 	public function isPart():Bool;
 
 	public function isVideo():Bool;
+
+    public function isSound():Bool;
 }

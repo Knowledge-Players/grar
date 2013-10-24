@@ -319,6 +319,15 @@ class StructurePart extends EventDispatcher implements Part{
 		return false;
 	}
 
+		/**
+     * Tell if this part is a sound
+     * @return true if this part is a sound
+     */
+	public function isSound():Bool
+	{
+		return false;
+	}
+
 		// Implements PartElement
 
 		/**
@@ -411,7 +420,7 @@ class StructurePart extends EventDispatcher implements Part{
 			}
 		}
 		for(elem in elements){
-			if(elem.isText() || elem.isVideo()){
+			if(elem.isText() || elem.isVideo()|| elem.isSound()){
 				var text = cast(elem, Item);
 				if(text.button == null || Lambda.empty(text.button))
 					text.button = button;

@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.component.container.SoundPlayer;
+import com.knowledgeplayers.grar.structure.part.sound.item.SoundItem;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
 import com.knowledgeplayers.grar.structure.part.Item;
 import com.knowledgeplayers.grar.structure.part.video.item.VideoItem;
@@ -434,14 +436,22 @@ class PartDisplay extends KpDisplay {
 			else
 				setText(text, isFirst);
 		}
-		else{
+		else if(item.isVideo()){
 			if(!displays.exists(item.ref))
 				throw "[PartDisplay] There is no VideoPlayer with ref '"+ item.ref+"'.";
 			var video = cast(item, VideoItem);
 
 			cast(displays.get(item.ref), VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture,video.autoFullscreen);
 			displayPart();
-		}
+		}  else {
+
+            if(!displays.exists(item.ref))
+                throw "[PartDisplay] There is no SoundPlayer with ref '"+ item.ref+"'.";
+            var sound = cast(item, SoundItem);
+            cast(displays.get(item.ref), SoundPlayer).setSound(sound.content, sound.autoStart, sound.loop, sound.defaultVolume);
+            displayPart();
+        }
+
 	}
 
 	private function setText(item:TextItem, isFirst:Bool = true):Void
