@@ -25,7 +25,8 @@ class ChronoCircle extends WidgetContainer {
     private var alphaCircle:Int;
     private var minRadius:Int;
     private var maxRadius:Int;
-    private var time:Int;
+    private var time:Float=1;
+    private var am:Int = 360;
 
 
 
@@ -36,7 +37,7 @@ class ChronoCircle extends WidgetContainer {
         var sprite:Sprite = new Sprite();
         sprite.x =  Std.parseFloat(_node.att.x);
         sprite.y =  Std.parseFloat(_node.att.y);
-        time = Std.parseInt(_node.att.time);
+
 
         if(_node.att.type=="circle"){
 
@@ -46,11 +47,8 @@ class ChronoCircle extends WidgetContainer {
             maxRadius =Std.parseInt(_node.att.maxRadius);
 
 
-            var am:Int = 360;
+
             degree = 0; // Initial angle
-
-            degChange = (am/time)/30; // Amount angle will change on each click
-
             circleR =maxRadius; // Circle radius (in pixels)
             circleX = 0; // Screen coordinates of center of circle
             circleY = 0;
@@ -78,16 +76,10 @@ class ChronoCircle extends WidgetContainer {
 
         };
 
-        myTimer = new Timer(1000);
 
-        shFill.addEventListener(Event.ENTER_FRAME,decreaseAngle);
-        myTimer.addEventListener(TimerEvent.TIMER_COMPLETE, completeTimer);
         //myTimer.addEventListener(TimerEvent.TIMER, countdown);
 
         addChild(sprite);
-
-
-        activChrono();
     }
     public function updatePicture(t:Int):Void {
 
@@ -115,7 +107,7 @@ class ChronoCircle extends WidgetContainer {
     }
     public function decreaseAngle(evt:Event):Void {
         degree = (degree - degChange);
-        trace('degree : '+degree);
+
         if (degree < 0) {
 
             degree = 360 + degree;
@@ -145,10 +137,22 @@ class ChronoCircle extends WidgetContainer {
 
     }
 
-    public function activChrono():Void{
+    public function pauseChrono(_bool:Bool):Void{
 
-       // shFill.addEventListener(Event.ENTER_FRAME,decreaseAngle);
+          if(_bool)
+              shFill.removeEventListener(Event.ENTER_FRAME,decreaseAngle);
+              else
+              shFill.addEventListener(Event.ENTER_FRAME,decreaseAngle);
 
+    }
+
+    public function activChrono(_time:Float):Void{
+
+        myTimer = new Timer(1000);
+        shFill.addEventListener(Event.ENTER_FRAME,decreaseAngle);
+        myTimer.addEventListener(TimerEvent.TIMER_COMPLETE, completeTimer);
+        time = _time;
+        degChange = (am/time)/30; // Amount angle will change on each click
         myTimer.start();
 
     }
