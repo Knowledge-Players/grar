@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.display.element.ChronoCircle;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import flash.display.BitmapData;
 import flash.geom.Rectangle;
@@ -69,9 +70,6 @@ class WidgetContainer extends Widget{
      */
 	public var content (default, default):Sprite;
 
-	/**
-	* Children of this container
-	**/
 	public var children (default, default):Array<Widget>;
 
 	public var renderNeeded: Bool = false;
@@ -300,6 +298,7 @@ class WidgetContainer extends Widget{
 			case "background" | "image": createImage(elemNode);
 			case "button": createButton(elemNode);
 			case "text": createText(elemNode);
+            case "timer":createTimer(elemNode);
 			default: null;
 		 }
 	}
@@ -326,6 +325,15 @@ class WidgetContainer extends Widget{
 		var text = new ScrollPanel(textNode);
 		addElement(text);
         return text;
+	}
+
+    private function createTimer(timerNode: Fast):Widget
+	{
+        var timer = new ChronoCircle(timerNode);
+
+		addElement(timer);
+
+        return timer;
 	}
 
 	private function addElement(elem:Widget):Void
