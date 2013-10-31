@@ -4,29 +4,24 @@ package com.knowledgeplayers.grar.display;
 import flash.system.System;
 import flash.external.ExternalInterface;
 #end
-import com.knowledgeplayers.grar.display.contextual.InventoryDisplay;
+import com.knowledgeplayers.grar.structure.part.ActivityPart;
 import com.knowledgeplayers.grar.display.contextual.BibliographyDisplay;
 import com.knowledgeplayers.grar.display.contextual.GlossaryDisplay;
 import com.knowledgeplayers.grar.display.contextual.GlossaryDisplay;
-import com.knowledgeplayers.grar.structure.contextual.Glossary;
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
 import com.knowledgeplayers.grar.tracking.Trackable;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.contextual.ContextualDisplay;
-import com.knowledgeplayers.grar.display.activity.ActivityDisplay;
-import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.display.element.TokenNotification;
 import com.knowledgeplayers.grar.display.layout.Layout;
 import com.knowledgeplayers.grar.display.LayoutManager;
-import com.knowledgeplayers.grar.display.part.DialogDisplay;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.GameEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.event.TokenEvent;
 import com.knowledgeplayers.grar.factory.DisplayFactory;
-import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.Game;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.Token;
@@ -65,6 +60,7 @@ class GameManager extends EventDispatcher {
 	/**
     * Inventory of the game
     **/
+	// TODO Refactor inventory
 	public var inventory (default, null):Map<String, Token>;
 
 	/**
@@ -79,19 +75,15 @@ class GameManager extends EventDispatcher {
 
 	public var menuLoaded (default, set_menuLoaded):Bool = false;
 
-	/**
-	* Current activity display
-	**/
-	public var activityDisplay (default, null):ActivityDisplay;
-
 	private var layout:Layout;
-	private var nbVolume:Float = 1;
+	private var previousLayout: String;
 
+	private var nbVolume:Float = 1;
 	private var soundControl:SoundTransform;
 	private var itemSound:Sound;
 	private var itemSoundChannel:SoundChannel;
+
 	private var startIndex:Int;
-	private var previousLayout: String;
 	private var lastContextual: KpDisplay;
 
 		/**
@@ -242,25 +234,6 @@ class GameManager extends EventDispatcher {
 	}
 
 	/**
-    * Displays an activity
-    * @param    activity : Activity model to display
-    **/
-
-	public function displayActivity(activity:Activity):Void
-	{
-		cleanup();
-		activity.addEventListener(PartEvent.EXIT_PART, onActivityEnd);
-		var activityName:String = Type.getClassName(Type.getClass(activity));
-		activityName = activityName.substr(activityName.lastIndexOf(".") + 1);
-		activityDisplay = ActivityManager.instance.getActivity(activityName);
-		activityDisplay.model = activity;
-
-		layout.zones.get(game.ref).addChild(activityDisplay);
-		activityDisplay.startActivity();
-
-	}
-
-	/**
     * Display a graphic representation of the part with the given ID
     * @param id : The ID of the part to display
     **/
@@ -272,9 +245,7 @@ class GameManager extends EventDispatcher {
 
 	public function displayTrackable(item: Trackable):Void
 	{
-		if(Std.is(item, Activity))
-			displayActivity(cast(item,Activity));
-		else if(Std.is(item, Part))
+		if(Std.is(item, Part))
 			displayPart(cast(item, Part), true);
 	}
 
@@ -302,10 +273,9 @@ class GameManager extends EventDispatcher {
 
 	public function getItemName(id:String):String
 	{
-		if(game.getItemName(id) != null)
-			return Localiser.instance.getItemContent(game.getItemName(id));
-		else if(ActivityManager.instance.activities.get(id) != null)
-			return Localiser.instance.getItemContent(ActivityManager.instance.activities.get(id).name);
+		var name = game.getItemName(id);
+		if(name != null)
+			return Localiser.instance.getItemContent(name);
 		else
 			throw "[GameManager] Unable to find the name of item \"" + id + "\".";
 	}
@@ -430,36 +400,12 @@ class GameManager extends EventDispatcher {
 		dispatchEvent(event);
 	}
 
+	// TODO include in displayPart
 	public function onEnterSubPart(event:PartEvent):Void
 	{
 		parts.first().visible = false;
 		parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		displayPartById(event.part.id);
-	}
-
-	private function onActivityEnd(e:PartEvent):Void
-	{
-		var activity:Activity = e.target;
-		activity.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
-		if(activityDisplay != null && layout.zones.get(game.ref).contains(activityDisplay))
-			layout.zones.get(game.ref).removeChild(activityDisplay);
-		cleanup();
-		if(parts != null){
-			if(activity.nextPattern == null)
-				parts.first().nextElement();
-			else if(Std.is(parts.first(), DialogDisplay))
-				cast(parts.first(), DialogDisplay).goToPattern(activity.nextPattern);
-
-		}
-	}
-
-	private function cleanup():Void
-	{
-		if(activityDisplay != null){
-			activityDisplay.model.removeEventListener(PartEvent.EXIT_PART, onActivityEnd);
-			activityDisplay.endActivity();
-			activityDisplay = null;
-		}
 	}
 
 	private function setBookmark(partId:String):Void

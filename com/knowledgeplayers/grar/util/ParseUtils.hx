@@ -3,20 +3,22 @@ package com.knowledgeplayers.grar.util;
 import haxe.ds.GenericStack;
 import haxe.xml.Fast;
 
+using StringTools;
+
 class ParseUtils {
 
-	public static inline function parseButtonContent(xml: Fast): Map<String, String>
+	public static inline function parseButtonContent(fast: Fast): Map<String, String>
 	{
 		var content = new Map<String, String>();
-		if(xml.has.content){
-			if(xml.att.content.indexOf("{") == 0){
-				var contentString:String = xml.att.content.substr(1, xml.att.content.length - 2);
+		if(fast.has.content){
+			if(fast.att.content.indexOf("{") == 0){
+				var contentString:String = fast.att.content.substr(1, fast.att.content.length - 2);
 				var contents = contentString.split(",");
 				for(c in contents)
-					content.set(StringTools.trim(c.split(":")[0]), StringTools.trim(c.split(":")[1]));
+					content.set(c.split(":")[0].trim(), c.split(":")[1].trim());
 			}
 			else
-				content.set(" ", xml.att.content);
+				content.set(" ", fast.att.content);
 		}
 
 		return content;
@@ -27,6 +29,15 @@ class ParseUtils {
 		var results = new GenericStack<Xml>();
 		recursiveSelect(attr, value, xml, results);
 		return results;
+	}
+
+	public static inline function parseListOfValues(list: String, separator: String = ","):Array<String>
+	{
+		var result = new Array<String>();
+		for(elem in list.split(separator)){
+			result.push(elem.trim());
+		}
+		return result;
 	}
 
 	public static function updateIconsXml(value:String, xmls:GenericStack<Xml>):Void
@@ -47,6 +58,14 @@ class ParseUtils {
 		}
 	}
 
+	public static function parseColor(value: String): Color
+	{
+		if(value.length == 10)
+			return {color: Std.parseInt("0x"+value.substr(4)), alpha: Std.parseInt(value.substr(2, 2))/10};
+		else
+			return {color: Std.parseInt(value), alpha: 1};
+	}
+
 	// Private
 
 	private static inline function recursiveSelect(attr: String, value: String, xml: Xml, res: GenericStack<Xml>):Void
@@ -59,4 +78,9 @@ class ParseUtils {
 			}
 		}
 	}
+}
+
+typedef Color = {
+	var color: Int;
+	var alpha: Float;
 }

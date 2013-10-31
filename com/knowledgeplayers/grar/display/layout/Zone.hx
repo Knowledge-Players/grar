@@ -20,8 +20,6 @@ import haxe.xml.Fast;
 import flash.display.Sprite;
 import flash.events.Event;
 
-using StringTools;
-
 /**
 * Graphic zone in the layout
 * //TODO extends WidgetContainer
@@ -32,11 +30,6 @@ class Zone extends KpDisplay {
 	* Reference
 	**/
 	public var ref:String;
-
-	/**
-	* Fields with dynamic content that need to be update while loading a new part
-	**/
-	public var dynamicFields (default, null): Array<{field: ScrollPanel, content: String}>;
 
 	private var zoneWidth:Float;
 	private var zoneHeight:Float;
@@ -51,15 +44,11 @@ class Zone extends KpDisplay {
 
 		zoneWidth = _width;
 		zoneHeight = _height;
-		dynamicFields = new Array<{field: ScrollPanel, content: String}>();
 		GameManager.instance.game.addEventListener(PartEvent.PART_LOADED, onGameLoaded);
 	}
 
 	public function init(_zone:Fast):Void
 	{
-		/*if(_zone.has.text){
-			trace(Localiser.instance.currentLocale);
-		}*/
 		if(_zone.has.bgColor)
 			DisplayUtils.initSprite(this, zoneWidth, zoneHeight, Std.parseInt(_zone.att.bgColor));
 		else
@@ -128,8 +117,6 @@ class Zone extends KpDisplay {
 		else
 			MenuDisplay.instance.parseContent(element.x);
 		menuXml = element;
-
-		//addChild(menu);
 	}
 
 	override private function setButtonAction(button:DefaultButton, action:String):Void
@@ -185,9 +172,9 @@ class Zone extends KpDisplay {
 		return sizeArray;
 	}
 
-	override private function createElement(elemNode:Fast):Void
+	override private function createElement(elemNode:Fast):Widget
 	{
-		super.createElement(elemNode);
+		var elem = super.createElement(elemNode);
 		switch(elemNode.name.toLowerCase()){
 			case "menu":createMenu(elemNode);
 			case "progressbar": createProgressBar(elemNode);
@@ -198,15 +185,14 @@ class Zone extends KpDisplay {
 			layer.render();
 			addChild(widget);
 		}
+		return elem;
 	}
 
-	override private function createText(textNode:Fast):Void
+	override private function createText(textNode:Fast):Widget
 	{
 		var panel = new ScrollPanel(textNode);
-		if(textNode.has.content && textNode.att.content.startsWith("$")){
-			dynamicFields.push({field: panel, content: textNode.att.content});
-		}
 		addElement(panel, textNode);
+		return panel;
 	}
 
     //TODO creation de background du menu (en attendant de le mettre au bon endroit ) kévin
@@ -228,18 +214,21 @@ class Zone extends KpDisplay {
         return background;
     }
 
-	override private function createImage(itemNode:Fast):Void
+	override private function createImage(itemNode:Fast):Widget
 	{
 		var spritesheet = itemNode.has.spritesheet ? itemNode.att.spritesheet:"ui";
-
+		var img: Widget;
 
 		if(itemNode.has.src || itemNode.has.filters || (itemNode.has.extract && itemNode.att.extract == "true")){
-			addElement(new Image(itemNode, spritesheets.get(spritesheet)), itemNode);
+			img = new Image(itemNode, spritesheets.get(spritesheet));
+			addElement(img, itemNode);
+			return img;
 		}
 		else if(itemNode.has.color){
-             var bkg = createSpriteFormXml(itemNode);
+             img = createSpriteFormXml(itemNode);
 
-             addElement(bkg,itemNode);
+             addElement(img,itemNode);
+			return null;
 
         }else{
 			if(!layers.exists(spritesheet)){
@@ -249,6 +238,7 @@ class Zone extends KpDisplay {
 			}
 			var tile = new TileImage(itemNode, layers.get(spritesheet));
 			addElement(tile, itemNode);
+			return tile;
 		}
 	}
 
@@ -261,8 +251,6 @@ class Zone extends KpDisplay {
 
 	private function onGameLoaded(e:PartEvent):Void
 	{
-		/*if(menu != null)
-			menu.initMenu(menuXml);*/
 		if(fastnav != null){
 			for(item in GameManager.instance.game.getAllItems()){
 				fastnav.addItem(item.name);

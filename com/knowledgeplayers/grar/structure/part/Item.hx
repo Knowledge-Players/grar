@@ -4,6 +4,10 @@ import com.knowledgeplayers.grar.util.ParseUtils;
 import haxe.xml.Fast;
 
 class Item implements PartElement {
+	/**
+	* @inherits
+	**/
+	public var id (default, null):String;
 
 	/**
      * Content of the item
@@ -71,7 +75,7 @@ class Item implements PartElement {
 		else{
 			this.content = content;
 		}
-
+		id = "";
 	}
 
 	/**

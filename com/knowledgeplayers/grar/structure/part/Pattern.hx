@@ -6,9 +6,18 @@ import haxe.xml.Fast;
 
 class Pattern implements PartElement {
 	/**
+	* @inherits
+	**/
+	public var id (default, null):String;
+	/**
      * Array of item composing the pattern
      */
 	public var patternContent (default, default):Array<Item>;
+
+	/**
+	* @inheritDoc
+	**/
+	public var ref (default, default):String;
 
 	/**
      * Name of the pattern
@@ -46,6 +55,7 @@ class Pattern implements PartElement {
 	public function new(name:String)
 	{
 		this.name = name;
+		id = "";
 		patternContent = new Array<Item>();
 		buttons = new Map<String, Map<String, String>>();
 		restart();

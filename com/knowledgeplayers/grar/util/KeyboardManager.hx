@@ -23,11 +23,6 @@ class KeyboardManager {
 	private static function keyDownHandler(e:KeyboardEvent):Void
 	{
 		switch(e.keyCode){
-			case Keyboard.SPACE: if(GameManager.instance.activityDisplay != null){
-				var activity = GameManager.instance.activityDisplay.model;
-				activity.score = e.altKey ? 0 : 100;
-				activity.endActivity();
-			}
 			case Keyboard.S: TweenManager.fastForwardDiscover();
 			case Keyboard.RIGHT: if(GameManager.instance.parts != null && !GameManager.instance.parts.isEmpty() && !GameManager.instance.parts.first().introScreenOn){
 				var part = GameManager.instance.parts.first();

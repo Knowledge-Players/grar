@@ -4,11 +4,9 @@ import com.knowledgeplayers.grar.display.contextual.ContextualDisplay.Contextual
 import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
 import com.knowledgeplayers.grar.structure.contextual.Bibliography;
 import com.knowledgeplayers.grar.structure.contextual.Glossary;
-import flash.errors.Error;
 import com.knowledgeplayers.grar.structure.contextual.Notebook;
 import com.knowledgeplayers.grar.display.FilterManager;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
-import com.knowledgeplayers.grar.display.activity.ActivityManager;
 import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.LayoutManager;
 import com.knowledgeplayers.grar.display.style.StyleParser;
@@ -18,14 +16,12 @@ import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.factory.PartFactory;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.tracking.Connection;
 import com.knowledgeplayers.grar.tracking.StateInfos;
 import com.knowledgeplayers.grar.tracking.Trackable;
 import haxe.ds.GenericStack;
 import haxe.xml.Fast;
-import openfl.Assets;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.Lib;
@@ -84,7 +80,6 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
     private var layoutLoaded:Bool = false;
     private var numStyleSheet:Int = 0;
     private var numStyleSheetLoaded:Int = 0;
-    private var activitiesWaiting:GenericStack<Xml>;
 
 	/**
     * Constructor.
@@ -97,7 +92,6 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         flags = new Map<String, String>();
         parts = new Array<Part>();
         inventory = new Array<Token>();
-        activitiesWaiting = new GenericStack<Xml>();
 
         GameManager.instance.game = this;
 
@@ -113,7 +107,6 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
     {
         structureXml = new Fast(xml);
 
-        var displayNode:Fast = structureXml.node.Grar.node.Display;
         var parametersNode:Fast = structureXml.node.Grar.node.Parameters;
         var displayNode:Fast = structureXml.node.Grar.node.Display;
 
@@ -121,7 +114,6 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         state = parametersNode.node.State.innerData;
 
     	// Start Tracking
-
 
         initTracking();
 
@@ -153,11 +145,6 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         if(displayNode.hasNode.Filters)
             FilterManager.loadTemplate(displayNode.node.Filters.att.display);
 
-        // Load Activities displays
-        for(activity in displayNode.nodes.Activity){
-            initActivities(AssetsStorage.getXml(activity.att.display));
-        }
-
 		// Load contextual
 		var structureNode:Fast = structureXml.node.Grar.node.Structure;
 		for(contextual in structureNode.nodes.Contextual){
@@ -175,8 +162,6 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
 			}
 		}
 
-
-        // Load Parts
         if(structureNode.has.inventory)
             GameManager.instance.loadTokens(structureNode.att.inventory);
 
@@ -287,7 +272,7 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
      * Get the state of loading of the game
      * @return a float between 0 (nothing loaded) and 1 (everything's loaded)
      */
-    public function getLoadingCompletion():Float
+    public inline function getLoadingCompletion():Float
     {
         return nbPartsLoaded / numParts;
     }
@@ -300,7 +285,6 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         var array = new Array<Part>();
         for(part in parts){
             array = array.concat(part.getAllParts());
-            array.push(part);
         }
 
         return array;
@@ -370,14 +354,6 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         }
     }
 
-    private function initActivities(xml:Xml):Void
-    {
-        if(numStyleSheetLoaded != numStyleSheet)
-            activitiesWaiting.add(xml);
-        else
-            ActivityManager.instance.getActivity(xml.firstElement().nodeName).parseContent(xml);
-    }
-
     // Handlers
 
     private function createMenuXml(xml:Xml, part:Part, level:Int = 1):Void
@@ -429,7 +405,8 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
                 LayoutManager.instance.parseXml(AssetsStorage.getXml(structureXml.node.Grar.node.Parameters.node.Layout.att.file));
             }
             else{
-                dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
+                // Menu must be init after the event is dispatched. Trust me.
+	            dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
 	            if(MenuDisplay.instance.exists)
                     MenuDisplay.instance.init();
             }

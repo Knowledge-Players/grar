@@ -16,7 +16,6 @@ import flash.events.Event;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.Image;
-import flash.filters.BitmapFilter;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
@@ -29,6 +28,8 @@ import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+
+using StringTools;
 
 class KpDisplay extends Sprite {
 	/**
@@ -51,6 +52,11 @@ class KpDisplay extends Sprite {
 	**/
 	public var layout (default, default):String;
 
+	/**
+	* Fields with dynamic content that need to be update while loading a new part
+	**/
+	public var dynamicFields (default, null): Array<{field: ScrollPanel, content: String}>;
+
 	public var renderLayers (default, null):Map<TileLayer, Bool>;
 	public var scrollBars (default, null):Map<String, ScrollBar>;
 
@@ -61,7 +67,7 @@ class KpDisplay extends Sprite {
 	private var totalSpriteSheets:Int = 0;
 	private var textGroups:Map<String, Map<String, {obj:Fast, z:Int}>>;
 	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
-
+	private var displayTemplates: Map<String, Fast>;
 	private var timelines: Map<String, Timeline>;
 
 
@@ -101,12 +107,8 @@ class KpDisplay extends Sprite {
 		if(displayFast.has.layout)
 			layout = displayFast.att.layout;
 		if(displayFast.has.filters){
-			var filtersArray = new Array<BitmapFilter>();
-			for(filter in displayFast.att.filters.split(","))
-				filtersArray.push(FilterManager.getFilter(filter));
-			filters = filtersArray;
+			filters = FilterManager.getFilter(displayFast.att.filters);
 		}
-
 
 		ResizeManager.instance.onResize();
 	}
@@ -140,24 +142,38 @@ class KpDisplay extends Sprite {
 		}
 	}
 
-	private function createElement(elemNode:Fast):Void
+	private function createElement(elemNode:Fast):Widget
 	{
-		switch(elemNode.name.toLowerCase()){
-			case "background" | "image": createImage(elemNode);
-			case "character": createCharacter(elemNode);
-			case "button": createButton(elemNode);
-			case "text": createText(elemNode);
-			case "textgroup":createTextGroup(elemNode);
-			case "video": createVideo(elemNode);
-            case "sound": createSound(elemNode);
-			case "scrollbar": createScrollBar(elemNode);
-			case "div": addElement(new SimpleContainer(elemNode), elemNode);
-            case "timer":addElement(new ChronoCircle(elemNode),elemNode);
-
+		if(elemNode.name.toLowerCase() == "textgroup"){
+			createTextGroup(elemNode);
+			return null;
+		}
+		else{
+			return switch(elemNode.name.toLowerCase()){
+				case "background" | "image": createImage(elemNode);
+				case "character": createCharacter(elemNode);
+				case "button": createButton(elemNode);
+				case "text": createText(elemNode);
+				case "video": createVideo(elemNode);
+				case "sound": createSound(elemNode);
+				case "scrollbar": createScrollBar(elemNode);
+				case "div":
+					var div = new SimpleContainer(elemNode);
+					addElement(div, elemNode);
+					div;
+	            case "timer":
+		            var timer = new ChronoCircle(elemNode);
+		            addElement(timer, elemNode);
+					timer;
+				case "template":
+					displayTemplates.set(elemNode.att.ref, elemNode);
+					null;
+				default: null;
+			}
 		}
 	}
 
-	private function createScrollBar(barNode:Fast):Void
+	private function createScrollBar(barNode:Fast):Widget
 	{
 		var bgColor = barNode.has.bgColor ? barNode.att.bgColor : null;
 		var cursorColor = barNode.has.cursorColor ? barNode.att.cursorColor : null;
@@ -179,26 +195,30 @@ class KpDisplay extends Sprite {
 			bg9Grid = cursor9Grid;
 		var scroll = new ScrollBar(Std.parseFloat(barNode.att.width), tilesheet, barNode.att.tile, bgTile, cursor9Grid, bg9Grid, cursorColor, bgColor);
 		scrollBars.set(barNode.att.ref, scroll);
+		// TODO widgetize
+		return null; //scroll;
 	}
 
-	private function createImage(itemNode:Fast):Void
+	private function createImage(itemNode:Fast):Widget
 	{
 		var spritesheet = itemNode.has.spritesheet?itemNode.att.spritesheet:"ui";
-
+		var img = null;
 
 		if(itemNode.has.src || itemNode.has.filters || (itemNode.has.extract && itemNode.att.extract == "true")){
-			addElement(new Image(itemNode, spritesheets.get(spritesheet)), itemNode);
+			img = new Image(itemNode, spritesheets.get(spritesheet));
 		}
 		else{
 			if(!layers.exists(spritesheet)){
 				var layer = new TileLayer(UiFactory.tilesheet);
 				layers.set(spritesheet, layer);
 			}
-			addElement(new TileImage(itemNode, layers.get(spritesheet), false), itemNode);
+			img = new TileImage(itemNode, layers.get(spritesheet), false);
 		}
+		addElement(img, itemNode);
+		return img;
 	}
 
-	private function createButton(buttonNode:Fast):Void
+	private function createButton(buttonNode:Fast):Widget
 	{
 		var button:DefaultButton = new DefaultButton(buttonNode);
 		if(buttonNode.has.action)
@@ -215,29 +235,38 @@ class KpDisplay extends Sprite {
 		if(button.group != null)
 			button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 		addElement(button, buttonNode);
+		return button;
 	}
 
-	private function createVideo(videoNode: Fast):Void
+	private function createVideo(videoNode: Fast):Widget
 	{
 		#if flash
 		var tilesheet = videoNode.has.spritesheet ? spritesheets.get(videoNode.att.spritesheet) : null;
 		var video = new VideoPlayer(videoNode, tilesheet);
 		addElement(video, videoNode);
+		return video;
+		#else
+		return null;
 		#end
 	}
-    private function createSound(soundNode: Fast):Void
+    private function createSound(soundNode: Fast):Widget
 	{
-
 
 		var tilesheet = soundNode.has.spritesheet ? spritesheets.get(soundNode.att.spritesheet) : null;
 		var sound = new SoundPlayer(soundNode, tilesheet);
 		addElement(sound, soundNode);
-
+		return sound;
 	}
 
-	private function createText(textNode:Fast):Void
+	private function createText(textNode:Fast):Widget
 	{
-		addElement(new ScrollPanel(textNode), textNode);
+		var panel = new ScrollPanel(textNode);
+		addElement(panel, textNode);
+
+		if(textNode.has.content && textNode.att.content.startsWith("$")){
+			dynamicFields.push({field: panel, content: textNode.att.content.substr(1)});
+		}
+		return panel;
 	}
 
 	private function createTextGroup(textNode:Fast):Void
@@ -265,13 +294,13 @@ class KpDisplay extends Sprite {
 		textGroups.set(textNode.att.ref, hashTextGroup);
 	}
 
-	private function createCharacter(character:Fast)
+	private function createCharacter(character:Fast): Widget
 	{
 		var char:CharacterDisplay = new CharacterDisplay(character, layers.get(character.att.spritesheet), new Character(character.att.ref));
 		if(character.has.nameRef)
 			char.nameRef = character.att.nameRef;
 		addElement(char, character);
-
+		return char;
 	}
 
 	private function addElement(elem:Widget, node:Fast):Void
@@ -338,6 +367,8 @@ class KpDisplay extends Sprite {
 		renderLayers = new Map<TileLayer, Bool>();
 		scrollBars = new Map<String, ScrollBar>();
         timelines = new Map<String, Timeline>();
+		dynamicFields = new Array<{field: ScrollPanel, content: String}>();
+		displayTemplates = new Map<String, Fast>();
 
 		addEventListener(Event.ENTER_FRAME, checkRender);
 	}

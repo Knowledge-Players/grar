@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import haxe.xml.Fast;
@@ -90,14 +91,25 @@ class DefaultButton extends WidgetContainer {
 				isToggleEnabled = xml.att.toggle == "true";
 			if(xml.has.group)
 				group = xml.att.group.toLowerCase();
+
+			enabled = (xml.has.action || xml.name != "Button");
 		}
-		else
+		else{
 			defaultState = "active";
+			enabled = true;
+		}
 
 		mouseChildren = false;
-		useHandCursor = buttonMode = true;
+		useHandCursor = buttonMode = enabled;
 
-		init();
+		setAllListeners(onMouseEvent);
+
+		// Hack for C++ hitArea (NME 3.5.5)
+		#if cpp
+			graphics.beginFill (0xFFFFFF, 0.01);
+			graphics.drawRect (-width/2, -height/2, width, height);
+			graphics.endFill();
+		#end
 	}
 
 	public function initStates(?xml: Fast, ?timelines: Map<String, Timeline>):Void
@@ -109,11 +121,12 @@ class DefaultButton extends WidgetContainer {
 				if(timelines != null && state.has.timeline)
 					this.timelines.set(state.name, timelines.get(state.att.timeline));
 				for(elem in state.elements){
-					//if(states.exists(state.name+"_out") || elem.name == "out"){
-						states.set(state.name+"_" + elem.name, createStates(elem));
-					//}
+					states.set(state.name+"_" + elem.name, createStates(elem));
 				}
 			}
+			// Simplified XML
+			if(Lambda.count(states) == 0)
+				states.set(defaultState+"_out", createStates(tmpXml));
 			tmpXml = null;
 			toggleState = defaultState;
 		}
@@ -135,9 +148,11 @@ class DefaultButton extends WidgetContainer {
 
 	public inline function set_toggleState(state:String):String
 	{
-		toggleState = state;
-		timeline = timelines.get(toggleState);
-		renderState("out");
+		if(states.exists(state+"_out")){
+			toggleState = state;
+			timeline = timelines.get(toggleState);
+			renderState("out");
+		}
 		return toggleState;
 	}
 
@@ -164,14 +179,14 @@ class DefaultButton extends WidgetContainer {
 	public function setText(pContent:String, ?pKey:String):Void
 	{
 		for(state in states){
-			if(pKey == null){
+			if(pKey == null || !state.exists(pKey)){
 				for(elem in state){
 					if(Std.is(elem, ScrollPanel)){
 						cast(elem, ScrollPanel).setContent(pContent);
 					}
 				}
 			}
-			else if(state.exists(pKey)){
+			else{
 				cast(state.get(pKey), ScrollPanel).setContent(pContent);
 			}
 		}
@@ -216,33 +231,42 @@ class DefaultButton extends WidgetContainer {
 			}
 			for(child in layer.children)
 				child.visible = false;
+			scale = scaleX = scaleY = 1;
+
+			// Reset children
+			children = new Array<Widget>();
 
 			if(list == null)
 				throw "There is no information for state \"" + currentState + "\" for button \"" + ref + "\".";
 
 			var array = new Array<Widget>();
+			var layerIndex: Int = -1;
 			for(widget in list){
 				if(!Std.is(widget, TileImage))
 					array.push(widget);
 				else{
 					cast(widget, TileImage).set_visible(true);
+					if(layerIndex == -1) layerIndex = widget.zz;
 				}
 			}
-			content.addChild(layer.view);
 
 			array.sort(sortDisplayObjects);
 			for(obj in array){
 				content.addChild(obj);
+				children.push(obj);
 			}
-			//trace(ref, "stop tween");
+
+			var j = 0;
+			while(j < content.numChildren && cast(content.getChildAt(j), Widget).zz < layerIndex)
+				j++;
+			content.addChildAt(layer.view, j);
+
 			TweenManager.stop(layer.view);
 
 			if(list.exists("backgroundDrawn")){
 				var image: Image = cast(list.get("backgroundDrawn"), Image);
-				if(background.length == 10)
-					image.graphics.beginFill(Std.parseInt("0x"+background.substr(4)), Std.parseInt(background.substr(2, 4))/10);
-				else
-					image.graphics.beginFill(Std.parseInt(background));
+				var bg = ParseUtils.parseColor(background);
+				image.graphics.beginFill(bg.color, bg.alpha);
 				image.graphics.drawRect(0, 0, width, height);
 				image.graphics.endFill();
 				content.addChildAt(image, 0);
@@ -250,6 +274,7 @@ class DefaultButton extends WidgetContainer {
 
 			renderNeeded = true;
 			displayContent();
+			dispatchEvent(new Event(Event.CHANGE));
 		}
 	}
 
@@ -284,7 +309,6 @@ class DefaultButton extends WidgetContainer {
 	private inline function onOver(event:MouseEvent):Void
 	{
 		renderState("over");
-		//dispatchEvent(new ButtonActionEvent(ButtonActionEvent.OVER));
 	}
 
 	private inline function onOut(event:MouseEvent):Void
@@ -300,20 +324,6 @@ class DefaultButton extends WidgetContainer {
 	private inline function onClickUp(event:MouseEvent):Void
 	{
 		renderState("out");
-	}
-
-	private inline function init():Void
-	{
-		enabled = true;
-
-		setAllListeners(onMouseEvent);
-
-		// Hack for C++ hitArea (NME 3.5.5)
-		#if cpp
-			graphics.beginFill (0xFFFFFF, 0.01);
-			graphics.drawRect (-width/2, -height/2, width, height);
-			graphics.endFill();
-		#end
 	}
 
 	private inline function sortDisplayObjects(x:Widget, y:Widget):Int
@@ -358,8 +368,6 @@ class DefaultButton extends WidgetContainer {
 
 	private inline function onMouseEvent(event:MouseEvent):Void
 	{
-		//event.stopImmediatePropagation();
-
 		switch (event.type) {
 			case MouseEvent.MOUSE_OUT: onOut(event);
 			case MouseEvent.MOUSE_OVER: onOver(event);

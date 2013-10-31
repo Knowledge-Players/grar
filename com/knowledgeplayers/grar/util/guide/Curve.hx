@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.util;
+package com.knowledgeplayers.grar.util.guide;
 
 import flash.Lib;
 import flash.display.Shape;
@@ -9,7 +9,7 @@ import flash.geom.Point;
 /**
 * Utility to place items on a curve
 **/
-class Curve {
+class Curve implements Guide{
 	/**
 	* Upper value of the angle defining the curve
 	**/
@@ -55,10 +55,7 @@ class Curve {
 	}
 
 	/**
-	* Add an object to the curve
-	* @param object :   Object to add
-	* @param withTween  :   Play a tween when adding. Default is true
-	* @return the added object
+	* @inherits
 	**/
 	public function add(object:DisplayObject, withTween: Bool = true):DisplayObject
 	{

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import flash.display.BitmapData;
 import flash.geom.Rectangle;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
@@ -68,6 +69,11 @@ class WidgetContainer extends Widget{
      */
 	public var content (default, default):Sprite;
 
+	/**
+	* Children of this container
+	**/
+	public var children (default, default):Array<Widget>;
+
 	public var renderNeeded: Bool = false;
 
 	private var scrollBarName: String;
@@ -87,7 +93,8 @@ class WidgetContainer extends Widget{
 	{
 		if(bkg != null){
 			if(Std.parseInt(bkg) != null){
-				DisplayUtils.initSprite(this, maskWidth, maskHeight, Std.parseInt(bkg), alpha);
+				var bkgColor = ParseUtils.parseColor(bkg);
+				DisplayUtils.initSprite(this, maskWidth, maskHeight, bkgColor.color, bkgColor.alpha);
 			}
             else if(bkg == "bubble"){
                 var bubble:SimpleBubble = new SimpleBubble(bubbleWidth!=0 ? bubbleWidth:maskWidth,bubbleHeight!=0 ? bubbleHeight:maskHeight,color,arrowX,arrowY,radius,line,colorLine,shadow,gap,alphasBubble,bubbleX,bubbleY);
@@ -172,6 +179,7 @@ class WidgetContainer extends Widget{
 		content = new Sprite();
 		displays = new Map<String, Widget>();
 		buttonGroups = new Map<String, GenericStack<DefaultButton>>();
+		children = new Array<Widget>();
 
 		addChild(content);
 		if(xml != null){
@@ -326,7 +334,9 @@ class WidgetContainer extends Widget{
         displays.set(elem.ref,elem);
 
 		content.addChildAt(elem,zIndex);
+		children.push(elem);
         zIndex++;
+		dispatchEvent(new Event(Event.CHANGE));
 	}
 
 	private function createButton(buttonNode:Fast):Widget

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import flash.filters.BitmapFilter;
 import motion.actuators.GenericActuator;
 import haxe.xml.Fast;
@@ -8,6 +9,8 @@ import flash.display.Bitmap;
 import flash.geom.Matrix;
 import flash.display.BitmapData;
 import flash.display.Sprite;
+
+using StringTools;
 
 /**
 * Base class for all graphical elements
@@ -187,7 +190,7 @@ class Widget extends Sprite{
 
 		if(xml != null){
 			if(!xml.has.ref)
-				throw Type.getClassName(Type.getClass(this))+" must have a ref attribute: "+xml;
+				throw Type.getClassName(Type.getClass(this))+" must have a ref attribute: "+xml.x;
 			else
 				ref = xml.att.ref;
 			if(xml.has.x){
@@ -229,10 +232,16 @@ class Widget extends Sprite{
 			if(xml.has.transformation)
 				transformation = xml.att.transformation;
 			if(xml.has.filters){
-				var filtersArray = new Array<BitmapFilter>();
-				for(filter in xml.att.filters.split(","))
-					filtersArray.push(FilterManager.getFilter(filter));
-				filters = filtersArray;
+				filters = FilterManager.getFilter(xml.att.filters);
+			}
+			if(xml.has.border){
+				var params = xml.att.border.split(",");
+				var thickness = Std.parseFloat(params[0].trim());
+				var borderColor = ParseUtils.parseColor(params[1].trim());
+				addEventListener(Event.ADDED_TO_STAGE, function(e){
+					graphics.lineStyle(thickness, borderColor.color, borderColor.alpha);
+					graphics.drawRect(-thickness, -thickness, width/scaleX+(2*thickness), height/scaleY+(2*thickness));
+				});
 			}
 		}
 	}

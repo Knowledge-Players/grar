@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.contextual.menu;
 
+import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
+import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
+import flash.display.DisplayObjectContainer;
 import StringTools;
 import com.knowledgeplayers.grar.display.component.Widget;
 import flash.events.Event;
@@ -9,7 +12,7 @@ import flash.display.DisplayObject;
 import com.knowledgeplayers.grar.util.MathUtils;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import haxe.ds.GenericStack;
-import com.knowledgeplayers.grar.util.Curve;
+import com.knowledgeplayers.grar.util.guide.Curve;
 import flash.geom.Point;
 import haxe.xml.Fast;
 
@@ -24,7 +27,6 @@ class MenuSphericalDisplay extends MenuDisplay {
 
 	private var curves: Map<DisplayObject, Curve>;
 	private var originCurve: Curve;
-	private var separators: Map<String, Widget>;
 
 public static function get_instance():MenuSphericalDisplay
 	{
@@ -125,7 +127,9 @@ public static function get_instance():MenuSphericalDisplay
 		else if(parent == null)
 			curve = originCurve;
 		else{
-			curve = new Curve(new Point(parent.x+parent.width/2, parent.y+parent.height/2), Std.parseFloat(fast.att.radius), fast.att.centerObjects == "true");
+			var offsetX = fast.has.offsetX ? Std.parseFloat(fast.att.offsetX) : 0;
+			var offsetY = fast.has.offsetY ? Std.parseFloat(fast.att.offsetY) : 0;
+			curve = new Curve(new Point(parent.x+parent.width/2+offsetX, parent.y+parent.height/2+offsetY), Std.parseFloat(fast.att.radius), fast.att.centerObjects == "true");
 			var angle: Float = -1;
 			for(c in curves){
 				if(c.contains(parent))

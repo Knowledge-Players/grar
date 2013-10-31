@@ -63,13 +63,15 @@ class DropdownMenu extends WidgetContainer {
 
 		var yOffset:Float = 0;
 		for(item in items){
-			var sprite = KpTextDownParser.parse(item)[0].createSprite(maskWidth);
-			sprite.buttonMode = true;
-			sprite.y = yOffset;
-			yOffset += sprite.height;
-			sprite.addEventListener(MouseEvent.CLICK, onItemClick);
-			list.addChild(sprite);
-			sprites.set(item, sprite);
+			if(item != null){
+				var sprite = KpTextDownParser.parse(item)[0].createSprite(maskWidth);
+				sprite.buttonMode = true;
+				sprite.y = yOffset;
+				yOffset += sprite.height;
+				sprite.addEventListener(MouseEvent.CLICK, onItemClick);
+				list.addChild(sprite);
+				sprites.set(item, sprite);
+			}
 		}
 		if(localToGlobal(new Point(0, 0)).y+list.height > stage.stageHeight)
 			list.y = y - list.height;

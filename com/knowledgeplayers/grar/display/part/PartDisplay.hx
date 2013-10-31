@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.structure.part.ActivityPart;
 import com.knowledgeplayers.grar.display.component.container.SoundPlayer;
 import com.knowledgeplayers.grar.structure.part.sound.item.SoundItem;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
@@ -22,7 +23,6 @@ import com.knowledgeplayers.grar.event.GameEvent;
 
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import com.knowledgeplayers.grar.structure.part.Pattern;
@@ -89,10 +89,12 @@ class PartDisplay extends KpDisplay {
 		else
 			displayLoaded = true;
 
-		if(currentElement != null && currentElement.isPattern())
+		if(currentElement != null && currentElement.isPattern()){
+			// Si tu n'as jamais vu cette trace, supprime le bloc
+			trace("currentElement n'est pas null");
 			startPattern(cast(currentElement, Pattern));
+		}
 		else{
-
 			localeLoaded = true;
 			checkPartLoaded();
 		}
@@ -159,10 +161,6 @@ class PartDisplay extends KpDisplay {
 
 				GameManager.instance.playSound(cast(currentElement, TextItem).sound);
 			}
-		}
-
-		else if(currentElement.isActivity()){
-			GameManager.instance.displayActivity(cast(currentElement, Activity));
 		}
 
 		else if(currentElement.isPattern()){
@@ -252,20 +250,22 @@ class PartDisplay extends KpDisplay {
 		itemSoundChannel = null;
 	}
 
-	override private function createElement(elemNode:Fast):Void
+	override private function createElement(elemNode:Fast):Widget
 	{
 		if(elemNode.name.toLowerCase() == "inventory"){
 			inventory = new InventoryDisplay(elemNode);
 			inventory.init(part.tokens);
+			return null;
 		}
 		else if(elemNode.name.toLowerCase() == "intro"){
 			var intro = new IntroScreen(elemNode);
 			intro.zz = zIndex;
 			displays.set(elemNode.att.ref, intro);
 			zIndex++;
+			return intro;
 		}
 		else
-			super.createElement(elemNode);
+			return super.createElement(elemNode);
 	}
 
 	override private function createDisplay():Void
@@ -481,15 +481,7 @@ class PartDisplay extends KpDisplay {
 	private function displayPart():Void
 	{
 		// Clean-up buttons
-		var toRemove = new GenericStack<DisplayObject>();
-		for(i in 0...numChildren){
-			if(Std.is(getChildAt(i), DefaultButton))
-				toRemove.add(getChildAt(i));
-		}
-		if(inventory != null && contains(inventory))
-			toRemove.add(inventory);
-		for(button in toRemove)
-			removeChild(button);
+		cleanDisplay();
 
 		var array = new Array<Widget>();
 
@@ -500,7 +492,9 @@ class PartDisplay extends KpDisplay {
 
 		array.sort(sortDisplayObjects);
 		var objAdded = 0;
-		var timelineIn = currentItem.timelineIn;
+		var timelineIn = null;
+		if(currentItem != null)
+			timelineIn = currentItem.timelineIn;
 		for(obj in array){
 			obj.onComplete = function(){
 				objAdded++;
@@ -515,6 +509,19 @@ class PartDisplay extends KpDisplay {
 		if(inventory != null && currentSpeaker != null)
 			addChild(inventory);
 
+	}
+
+	private function cleanDisplay():Void
+	{
+		var toRemove = new GenericStack<DisplayObject>();
+		for(i in 0...numChildren){
+			if(Std.is(getChildAt(i), DefaultButton))
+				toRemove.add(getChildAt(i));
+		}
+		if(inventory != null && contains(inventory))
+			toRemove.add(inventory);
+		for(button in toRemove)
+			removeChild(button);
 	}
 
 	private function mustBeDisplayed(key:String):Bool
@@ -535,9 +542,7 @@ class PartDisplay extends KpDisplay {
 			var button: Map<String, Map<String, String>> = null;
 			if(currentElement.isText() || currentElement.isVideo())
 				button = cast(currentElement, Item).button;
-			else if(currentElement.isActivity())
-				button = cast(currentElement, Activity).button;
-			if(currentElement.isPattern())
+			else if(currentElement.isPattern())
 				button = cast(currentElement, Pattern).buttons;
 
 			if(button.exists(key)){

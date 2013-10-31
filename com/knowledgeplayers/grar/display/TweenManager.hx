@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import motion.actuators.GenericActuator.IGenericActuator;
 import flash.display.Sprite;
@@ -44,13 +45,11 @@ class TweenManager {
 	{
 		var transition:IGenericActuator = null;
 
-		if(refs != null){
-
-			var arrayRef:Array<String> = refs.split(",");
-			for(i in 0...arrayRef.length){
-				transition = startTransition(display, arrayRef[i],delay);
+		if(refs != null && display != null){
+			var arrayRef:Array<String> = ParseUtils.parseListOfValues(refs);
+			for(ref in arrayRef){
+				transition = startTransition(display, ref,delay);
 			}
-
 		}
 
 		return transition;
@@ -85,6 +84,21 @@ class TweenManager {
 			actuator.reflect();
 
 		return actuator;
+	}
+
+	/**
+	 * Creates a new tween
+	 * @example		<code>Actuate.tween (MyClip, 1, { alpha: 1 } ).onComplete (trace, [ "MyClip is now visible" ]);</code>
+	 * @param	target		The object to tween
+	 * @param	duration		The length of the tween in seconds
+	 * @param	properties		The end values to tween the target to
+	 * @param	overwrite			Sets whether previous tweens for the same target and properties will be overwritten (Default is true)
+	 * @param	customActuator		A custom actuator to use instead of the default (Optional)
+	 * @return		The current actuator instance, which can be used to apply properties like ease, delay, onComplete or onUpdate
+	 */
+	public static function tween (target:Dynamic, duration:Float, properties:Dynamic, overwrite:Bool = true, customActuator:Class <GenericActuator> = null):IGenericActuator
+	{
+		return Actuate.tween(target, duration, properties, overwrite, customActuator);
 	}
 
 	/**

@@ -5,10 +5,11 @@ import flash.filters.GlowFilter;
 import flash.filters.ColorMatrixFilter;
 import flash.filters.BlurFilter;
 import flash.filters.DropShadowFilter;
-#end
 import flash.filters.BitmapFilterQuality;
-import flash.filters.BitmapFilter;
 import flash.display.Bitmap;
+#end
+import com.knowledgeplayers.grar.util.ParseUtils;
+import flash.filters.BitmapFilter;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.xml.Fast;
 
@@ -23,9 +24,16 @@ class FilterManager {
 	* @return a filter from the template
 	**/
 
-	public static function getFilter(id:String):Null<BitmapFilter>
+	public static function getFilter(id:String):Array<BitmapFilter>
 	{
-		return filters.get(id);
+		var result = new Array<BitmapFilter>();
+		var filtersId = ParseUtils.parseListOfValues(id);
+		for(filter in filtersId){
+			if(!filters.exists(filter))
+				throw "[FilterManager] There is no filter with id '"+filter+"'.";
+			result.push(filters.get(filter));
+		}
+		return result;
 	}
 
 	/**

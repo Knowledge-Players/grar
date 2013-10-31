@@ -1,13 +1,14 @@
-package com.knowledgeplayers.grar.util;
+package com.knowledgeplayers.grar.util.guide;
 
-import motion.Actuate;
+import flash.events.Event;
+import com.knowledgeplayers.grar.display.TweenManager;
 import flash.display.DisplayObject;
 import flash.geom.Point;
 
 /**
  * Manage a grid to place object
  */
-class Grid {
+class Grid implements Guide {
 	/**
     * Number of rows
     **/
@@ -19,7 +20,7 @@ class Grid {
 	/**
     * Size of a cell
     **/
-	public var cellSize (default, default):{width:Float, height:Float};
+	public var cellSize (default, default):Size;
 	/**
     * X of the grid
     **/
@@ -28,16 +29,18 @@ class Grid {
     * Y of the grid
     **/
 	public var y (default, default):Float;
-
+	/**
+	* Space between columns
+	**/
 	public var gapCol (default, default):Float;
+	/**
+	* Space between rows
+	**/
 	public var gapRow (default, default):Float;
 
-	/**
-    * Align the element in the cell, if the cell is too large
-    **/
-	public var alignment (default, default):GridAlignment;
-
 	private var nextCell:Point;
+
+	private var alignment: GridAlignment;
 
 	public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?alignment:GridAlignment)
 	{
@@ -54,7 +57,10 @@ class Grid {
 		empty();
 	}
 
-	public function add(object:DisplayObject, withTween:Bool = true):Void
+	/**
+	* @inherits
+	**/
+	public function add(object:DisplayObject, withTween:Bool = true):DisplayObject
 	{
 		if(cellSize.width == 0){
 			cellSize.width = object.width;
@@ -90,20 +96,36 @@ class Grid {
 			throw "This grid is already full!";
 
 		if(withTween)
-			Actuate.tween(object, 0.5, {x: targetX, y: targetY, width: cellSize.width, height: cellSize.height});
+			TweenManager.tween(object, 0.5, {x: targetX, y: targetY, width: cellSize.width, height: cellSize.height});
 		else{
 			object.x = targetX;
 			object.y = targetY;
-
-			object.width = cellSize.width;
-			object.height = cellSize.height;
+			fitInGrid(object);
 		}
+		object.addEventListener(Event.CHANGE, function(e){
+			fitInGrid(object);
+		});
+		return object;
+	}
 
+	/**
+    * Align the element in the cell, if the cell is too large
+    **/
+
+	public function setAlignment(alignment: String):Void
+	{
+		this.alignment = Type.createEnum(GridAlignment, alignment.toUpperCase());
 	}
 
 	public function empty():Void
 	{
 		nextCell = new Point(0, 0);
+	}
+
+	private inline function fitInGrid(object: DisplayObject):Void
+	{
+		object.width = cellSize.width;
+		object.height = cellSize.height;
 	}
 }
 
@@ -117,4 +139,9 @@ enum GridAlignment {
 	BOTTOM_LEFT;
 	BOTTOM_MIDDLE;
 	BOTTOM_RIGHT;
+}
+
+typedef Size = {
+	var width: Float;
+	var height: Float;
 }

@@ -5,10 +5,8 @@ import com.knowledgeplayers.grar.structure.score.ScoreChart;
 import StringTools;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.event.PartEvent;
-import com.knowledgeplayers.grar.factory.ActivityFactory;
 import com.knowledgeplayers.grar.factory.ItemFactory;
 import com.knowledgeplayers.grar.factory.PartFactory;
-import com.knowledgeplayers.grar.structure.activity.Activity;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.tracking.Trackable;
@@ -73,7 +71,7 @@ class StructurePart extends EventDispatcher implements Part{
 		/**
 	    * Button of the part
 	    **/
-	public var button (default, default):Map<String, Map<String, String>>;
+	public var buttons (default, default):Map<String, Map<String, String>>;
 
 	/**
 	* Perks of this part
@@ -84,6 +82,11 @@ class StructurePart extends EventDispatcher implements Part{
 	* Score of this part
 	**/
 	public var score (default, default):Int;
+
+	/**
+	* @inheritDoc
+	**/
+	public var ref (default, default):String;
 
 	/**
 	* Perks requirements to start the part
@@ -108,7 +111,7 @@ class StructurePart extends EventDispatcher implements Part{
 		super();
 		tokens = new GenericStack<String>();
 		elements = new Array<PartElement>();
-		button = new Map<String, Map<String, String>>();
+		buttons = new Map<String, Map<String, String>>();
 		buttonTargets = new Map<String, PartElement>();
 		perks = new Map<String, Int>();
 		requirements = new Map<String, Int>();
@@ -212,11 +215,10 @@ class StructurePart extends EventDispatcher implements Part{
 
 	public function hasParts():Bool
 	{
-		for(elem in elements){
-			if(elem.isPart())
-				return true;
-		}
-		return false;
+		var i = 0;
+		while(i < elements.length && !elements[i].isPart())
+			i++;
+		return i < elements.length;
 	}
 
 		/**
@@ -254,12 +256,9 @@ class StructurePart extends EventDispatcher implements Part{
 					else
 						items = items.concat(cast(elem, Part).getAllItems());
 				}
-				else if(elem.isActivity())
-					items.push(cast(elem, Activity));
 			}
 		}
-		if(!hasParts())
-			items.push(this);
+		items.push(this);
 
 		return items;
 	}
@@ -275,6 +274,16 @@ class StructurePart extends EventDispatcher implements Part{
 		}
 
 		return can;
+	}
+
+	public function getElementById(id:String):PartElement
+	{
+		var i = 0;
+		while(i < elements.length && elements[i].id != id)
+			i++;
+		if(i == elements.length)
+			throw "[StructurePart] There is no Element with the id '"+id+"'.";
+		return elements[i];
 	}
 
 		/**
@@ -389,7 +398,7 @@ class StructurePart extends EventDispatcher implements Part{
 
 	private function parseContent(content:Xml):Void
 	{
-		var partFast:Fast = new Fast(content).node.Part;
+		var partFast:Fast = (content.nodeType == Xml.Element && content.nodeName == "Part") ? new Fast(content) : new Fast(content).node.Part;
 
 		parseHeader(partFast);
 
@@ -397,14 +406,12 @@ class StructurePart extends EventDispatcher implements Part{
 			switch(child.name.toLowerCase()){
 				case "text":
 					elements.push(ItemFactory.createItemFromXml(child));
-				case "activity":
-					elements.push(ActivityFactory.createActivityFromXml(child, this));
 				case "part":
 					createPart(child);
 				case "sound":
 					soundLoop = AssetsStorage.getSound(child.att.content);
 				case "button":
-					button.set(child.att.ref, ParseUtils.parseButtonContent(child));
+					buttons.set(child.att.ref, ParseUtils.parseButtonContent(child));
 					if(child.has.goTo){
 						if(child.att.goTo == "")
 							buttonTargets.set(child.att.ref, null);
@@ -423,7 +430,7 @@ class StructurePart extends EventDispatcher implements Part{
 			if(elem.isText() || elem.isVideo()|| elem.isSound()){
 				var text = cast(elem, Item);
 				if(text.button == null || Lambda.empty(text.button))
-					text.button = button;
+					text.button = buttons;
 			}
 			if(elem.isPattern()){
 				for(item in cast(elem, Pattern).patternContent){
@@ -462,7 +469,7 @@ class StructurePart extends EventDispatcher implements Part{
 		if(xml.hasNode.Sound)
 			soundLoop = AssetsStorage.getSound(xml.node.Sound.att.content);
 
-		if(xml.hasNode.Part){
+		if(xml.hasNode.Part && file != null){
 			for(partNode in xml.nodes.Part){
 				createPart(partNode);
 			}

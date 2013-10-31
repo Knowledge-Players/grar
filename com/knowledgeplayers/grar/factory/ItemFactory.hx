@@ -2,7 +2,6 @@ package com.knowledgeplayers.grar.factory;
 import com.knowledgeplayers.grar.structure.part.sound.item.SoundItem;
 import com.knowledgeplayers.grar.structure.part.Item;
 import com.knowledgeplayers.grar.structure.part.video.item.VideoItem;
-import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
 
@@ -12,11 +11,6 @@ import haxe.xml.Fast;
  */
 
 class ItemFactory {
-
-	private function new()
-	{
-
-	}
 
 	/**
      * Create an item
@@ -30,7 +24,6 @@ class ItemFactory {
 		var creation:Item = null;
 		switch(itemType.toLowerCase()) {
 			case "": creation = new TextItem(xml);
-			case "activity": creation = new RemarkableEvent(xml);
 			case "video": creation = new VideoItem(xml);
 			case "sound": creation = new SoundItem(xml);
 			default: trace("[ItemFactory] " + itemType + ": Unsupported item type");

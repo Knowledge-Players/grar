@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.contextual.menu;
 
+import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
 import com.knowledgeplayers.grar.util.ParseUtils;
@@ -17,6 +18,8 @@ import flash.display.Shape;
 import flash.events.Event;
 import aze.display.TileLayer;
 import aze.display.TileSprite;
+
+using StringTools;
 
 /**
  * Display of a menu
@@ -44,6 +47,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 	private var xBase:Float = 0;
 
 	private var buttons:Map<String, DefaultButton>;
+	private var separators: Map<String, Widget>;
 	private var bookmark: BookmarkDisplay;
 	private var currentPartButton: DefaultButton;
 
@@ -129,14 +133,6 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		Localiser.instance.pushLocale();
 		Localiser.instance.layoutPath = LayoutManager.instance.interfaceLocale;
 
-		/*var array = new Array<Widget>();
-		for(key in displays.keys()){
-			array.push(displays.get(key));
-		}
-
-		array.sort(sortDisplayObjects);
-		for(obj in array)
-			addChild(obj);*/
 		addChild(layers.get("ui").view);
 
 		for(elem in menuXml.firstElement().elements()){
@@ -156,7 +152,6 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
     private function closeMenu(?_target:DefaultButton):Void{
         GameManager.instance.hideContextual(MenuDisplay.instance);
     }
-
 
 	// Private
 
@@ -235,6 +230,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 				separator.addChild(line);
 			}
 		}
+		separator.addEventListener(Event.CHANGE, updateDynamicFields);
 		return separator;
 	}
 
@@ -316,8 +312,52 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		}
 	}
 
+	private inline function getUnlockCounterInfos(partId:String):String
+	{
+		var output: String;
+		var parent: Part = GameManager.instance.game.getPart(partId);
+		var numUnlocked = 0;
+		var children = parent.getAllParts();
+		if(children.length <= 1){
+			var totalChildren = 0;
+			var allParts = GameManager.instance.game.getAllParts();
+			for(part in allParts){
+				if(part.id.startsWith(partId) && part.id != partId){
+					totalChildren++;
+					if(part.canStart())
+						numUnlocked++;
+				}
+			}
+			output = numUnlocked+"/"+totalChildren;
+		}
+		else{
+			for(child in children){
+				if(child.canStart())
+					numUnlocked++;
+			}
+			output = numUnlocked+"/"+children.length;
+		}
+
+		return output;
+	}
+
+	private function updateDynamicFields(e: Event):Void
+	{
+		for(field in dynamicFields){
+			if(field.content == "unlock_counter"){
+				var content = getUnlockCounterInfos(field.field.ref);
+				field.field.setContent(content);
+			}
+			else{
+				field.field.setContent(Localiser.instance.getItemContent(field.content));
+			}
+			field.field.updateX();
+		}
+	}
+
 	private function onAdded(e:Event):Void
 	{
+		// Update bookmark
 		var i = 0;
 		while(i < GameManager.instance.game.getAllParts().length && GameManager.instance.game.getAllParts()[i].isDone){
 			i++;

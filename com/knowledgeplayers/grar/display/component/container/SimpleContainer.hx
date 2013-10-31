@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import flash.display.DisplayObject;
 import com.knowledgeplayers.grar.event.DisplayEvent;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import flash.display.BitmapData;
@@ -9,6 +10,8 @@ import com.knowledgeplayers.grar.util.DisplayUtils;
 import aze.display.TilesheetEx;
 import haxe.xml.Fast;
 import flash.display.Sprite;
+
+using StringTools;
 
 class SimpleContainer extends WidgetContainer{
 
@@ -119,12 +122,23 @@ class SimpleContainer extends WidgetContainer{
 		return widget;
 	}
 
-	override private inline function addElement(elem:Widget):Void
+	override private function createText(textNode:Fast):Widget
 	{
-		elem.zz = zIndex;
-		displays.set(elem.ref,elem);
-
-		content.addChildAt(elem,zIndex);
-		zIndex++;
+		var panel = super.createText(textNode);
+		if(textNode.has.content && textNode.att.content.startsWith("$")){
+			addEventListener(Event.ADDED_TO_STAGE, function(e){
+				var display: DisplayObject = parent;
+				while(display != null && !Std.is(display, KpDisplay)){
+					display = display.parent;
+				}
+				if(display != null){
+					var kpParent: KpDisplay = cast(display, KpDisplay);
+					kpParent.dynamicFields.push({field: cast(panel, ScrollPanel), content: textNode.att.content.substr(1)});
+				}
+				// Warn its parent about its change
+				dispatchEvent(new Event(Event.CHANGE));
+			}, 1000);
+		}
+		return panel;
 	}
 }

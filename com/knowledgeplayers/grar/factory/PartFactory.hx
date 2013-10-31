@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
+import com.knowledgeplayers.grar.structure.part.ActivityPart;
 import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.strip.StripPart;
@@ -28,6 +29,7 @@ class PartFactory {
 		switch(partType.toLowerCase()) {
 			case "dialog": creation = new DialogPart();
 			case "strip" : creation = new StripPart();
+			case "activity": creation = new ActivityPart();
 			case "" : creation = new StructurePart();
 			default: throw "[PartFactory] Unsupported part type '$partType.";
 		}
@@ -44,6 +46,6 @@ class PartFactory {
 	public static function createPartFromXml(xml:Fast):Null<Part>
 	{
 
-		return createPart(xml.att.type);
+		return createPart(xml.has.type ? xml.att.type: "");
 	}
 }

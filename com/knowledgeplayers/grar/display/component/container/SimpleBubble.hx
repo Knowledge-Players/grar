@@ -44,10 +44,8 @@ class SimpleBubble extends Sprite{
 
         bubble.graphics.endFill();
         if (shadow !=0){
-            var filterShadow = FilterManager.getFilter("bubbleShadow");
-	        if(filterShadow != null)
-                bubble.filters = [filterShadow];
-	        else
+                bubble.filters = FilterManager.getFilter("bubbleShadow");
+	        if(bubble.filters.length == 0)
 	            trace("[SimpleBubble] No filter are specified for bubble. You must use the ref 'bubbleShadow' for it.");
         }
 

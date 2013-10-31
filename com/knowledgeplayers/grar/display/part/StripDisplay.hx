@@ -1,17 +1,16 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.component.Widget;
+import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.Item;
 import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.display.component.container.BoxDisplay;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import aze.display.TileSprite;
-import aze.display.TileLayer;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
-import com.knowledgeplayers.grar.structure.part.strip.StripPart;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import haxe.xml.Fast;
 import flash.display.DisplayObject;
@@ -25,7 +24,7 @@ class StripDisplay extends PartDisplay {
 	private var currentBox:BoxPattern;
 	private var currentBoxItem:Item;
 
-	public function new(part:StripPart)
+	public function new(part:Part)
 	{
 		super(part);
 		boxes = new Map<String, BoxDisplay>();
@@ -51,12 +50,14 @@ class StripDisplay extends PartDisplay {
 		}
 	}
 
-	override private function createElement(elemNode:Fast):Void
+	override private function createElement(elemNode:Fast):Widget
 	{
-		super.createElement(elemNode);
+		var elem: Widget = super.createElement(elemNode);
 		if(elemNode.name.toLowerCase() == "box"){
-			boxes.set(elemNode.att.ref, new BoxDisplay(elemNode, spritesheets.get(elemNode.att.spritesheet)));
+			elem = new BoxDisplay(elemNode, spritesheets.get(elemNode.att.spritesheet));
+			boxes.set(elemNode.att.ref, cast(elem, BoxDisplay));
 		}
+		return elem;
 	}
 
 	override private function startPattern(pattern:Pattern):Void
@@ -148,14 +149,16 @@ class StripDisplay extends PartDisplay {
 		}
 	}
 
-	override private function createImage(itemNode:Fast):Void
+	override private function createImage(itemNode:Fast):Widget
 	{
 		var spritesheet = itemNode.has.spritesheet?itemNode.att.spritesheet:"ui";
 		if(itemNode.name.toLowerCase() == "background"){
-			addChild(new Image(itemNode, spritesheets.get(spritesheet)));
+			var img = new Image(itemNode, spritesheets.get(spritesheet));
+			addChild(img);
+			return img;
 		}
 		else{
-			super.createImage(itemNode);
+			return super.createImage(itemNode);
 		}
 	}
 }

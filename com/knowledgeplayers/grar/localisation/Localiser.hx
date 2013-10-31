@@ -88,8 +88,12 @@ class Localiser extends EventDispatcher {
 
 	public function getItemContent(key:String):Null<String>
 	{
-		if(localisation != null)
-			return localisation.getItem(key);
+		if(localisation != null){
+			var content = localisation.getItem(key);
+			if(content == null)
+				content = "UNKNOWN LOCALISATION KEY";
+			return content;
+		}
 		else{
 			trace("No locale set. Returning null for key '"+key+"'.");
 			return null;

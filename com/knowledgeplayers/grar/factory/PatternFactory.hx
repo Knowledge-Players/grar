@@ -1,7 +1,6 @@
 package com.knowledgeplayers.grar.factory;
 
 import com.knowledgeplayers.grar.structure.part.video.pattern.VideoPattern;
-import com.knowledgeplayers.grar.structure.part.dialog.pattern.ActivityPattern;
 import com.knowledgeplayers.grar.structure.part.dialog.pattern.ChoicePattern;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import com.knowledgeplayers.grar.structure.part.strip.pattern.BoxPattern;
@@ -27,7 +26,6 @@ class PatternFactory {
 			case "box": creation = new BoxPattern(patternName);
 						cast(creation, BoxPattern).background = background;
 			case "choice": creation = new ChoicePattern(patternName);
-			case "activity": creation = new ActivityPattern(patternName);
 			case "video": creation = new VideoPattern(patternName);
 			default: trace(patternType + ": Unsupported pattern type");
 		}

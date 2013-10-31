@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.structure.part.Part;
+import com.knowledgeplayers.grar.structure.part.ActivityPart;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
@@ -7,9 +9,6 @@ import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.structure.activity.Activity;
-import com.knowledgeplayers.grar.structure.part.dialog.DialogPart;
-import com.knowledgeplayers.grar.structure.part.dialog.item.RemarkableEvent;
 import com.knowledgeplayers.grar.structure.part.dialog.pattern.ChoicePattern;
 import com.knowledgeplayers.grar.structure.part.Pattern;
 import flash.events.MouseEvent;
@@ -25,26 +24,19 @@ class DialogDisplay extends PartDisplay {
 	**/
 	public var currentPattern:Pattern;
 
-	private var nextActivity:Activity;
-
 	/**
      * Constructor
      * @param	part : DialogPart to display
      */
 
-	public function new(part:DialogPart)
+	public function new(part:Part)
 	{
 		super(part);
 	}
 
 	override public function next(?target: DefaultButton):Void
 	{
-		if(nextActivity != null){
-			GameManager.instance.displayActivity(nextActivity);
-			nextActivity = null;
-		}
-		else
-			startPattern(currentPattern);
+		startPattern(currentPattern);
 	}
 
 	// Private
@@ -65,9 +57,6 @@ class DialogDisplay extends PartDisplay {
 			setupItem(nextItem);
 			if(nextItem.isText())
 				GameManager.instance.playSound(cast(nextItem, TextItem).sound);
-			if(nextItem.hasActivity()){
-				nextActivity = cast(nextItem, RemarkableEvent).getActivity();
-			}
 			if(nextItem.token != null && nextItem.token != ""){
 				for(token in nextItem.token.split(","))
 					GameManager.instance.activateToken(token);
