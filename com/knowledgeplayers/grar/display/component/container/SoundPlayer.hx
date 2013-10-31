@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.display.element.ChronoCircle;
 import flash.events.Event;
 import flash.net.URLRequest;
 import flash.media.SoundChannel;
@@ -22,6 +23,8 @@ class SoundPlayer extends WidgetContainer
     private var mySound:Sound;
     private var mySoundChannel:SoundChannel;
     private var pausePosition:Float=0;
+    private var chrono:ChronoCircle;
+    private var timeSound:Float;
 
     public function new(?xml: Fast, ?tilesheet: TilesheetEx)
     {
@@ -37,10 +40,10 @@ class SoundPlayer extends WidgetContainer
         super(xml, tilesheet);
 
         for(i in 0...numChildren){
-        if(Std.is(getChildAt(i), Widget)){
-            controls.add(cast(getChildAt(i), Widget));
+            if(Std.is(getChildAt(i), Widget))
+                controls.add(cast(getChildAt(i), Widget));
         }
-    }
+
         init();
     }
 
@@ -48,15 +51,26 @@ class SoundPlayer extends WidgetContainer
 
         if(url == null || url == "")
             throw '[SoundPlayer] Invalid url "$url" for video stream.';
-            mySound = new Sound(new URLRequest(url));
 
+            trace("url : "+url);
 
+            var req:URLRequest = new URLRequest();
+            req.url = url;
+            mySound = new Sound();
+            mySound.addEventListener(Event.COMPLETE,onLoadComplete);
+            mySound.load(req);
+
+    }
+
+    private function onLoadComplete(e:Event):Void{
+        timeSound = Math.floor(cast(e.currentTarget,Sound).length/1000);
 
     }
 
     override public function createElement(elemNode:Fast):Widget
     {
         var widget = super.createElement(elemNode);
+
         if(elemNode.name.toLowerCase() == "backgroundcontrols"){
 
             backgroundControls = new Widget();
@@ -84,6 +98,14 @@ class SoundPlayer extends WidgetContainer
 
         content.setChildIndex(layer.view,1);
         containerControls.addChild(content);
+
+        for(i in 0...content.numChildren){
+            if(Std.is(content.getChildAt(i), ChronoCircle))
+                chrono = cast(content.getChildAt(i),ChronoCircle);
+
+        }
+
+
     }
 
     override private function setButtonAction(button:DefaultButton, action:String):Void
@@ -100,8 +122,9 @@ class SoundPlayer extends WidgetContainer
     private function playOrPause(?target: DefaultButton)
     {
 
-        trace("play or pause sound");
+
         if(!isPlaying)
+
             playSound();
         else
             pauseSound();
@@ -111,11 +134,17 @@ class SoundPlayer extends WidgetContainer
         pausePosition = 0;
     }
     private function playSound():Void{
+        if (pausePosition ==0)
+        chrono.activChrono(timeSound);
+        else
+        chrono.pauseChrono(false);
         setPlaying(true);
         mySoundChannel = mySound.play(pausePosition);
     }
 
     private function pauseSound():Void{
+
+        chrono.pauseChrono(true);
         pausePosition = mySoundChannel.position;
         setPlaying(false);
         mySoundChannel.stop();
