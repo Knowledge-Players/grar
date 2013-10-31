@@ -70,6 +70,9 @@ class WidgetContainer extends Widget{
      */
 	public var content (default, default):Sprite;
 
+	/**
+	* Children of this container
+	**/
 	public var children (default, default):Array<Widget>;
 
 	public var renderNeeded: Bool = false;
