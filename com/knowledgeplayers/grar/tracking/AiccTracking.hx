@@ -16,12 +16,9 @@ class AiccTracking extends Tracking {
 	public var _aicc_sid:String;
 	public var _aicc_url:String;
 
-	public var lesson_location:String;
 	public var isNote:Bool;
 
 	public var isActive:Bool;
-	public var startTime:Int;
-	public var timer:Timer;
 
 	public var scriptRequest:URLRequest;
 	public var scriptLoader:URLLoader;
@@ -35,26 +32,11 @@ class AiccTracking extends Tracking {
 		this.lessonStatus = "";
 		this.score = "0";
 		this.masteryScore = 0;
-		this.lesson_location = "";
+		this.location = "";
 		this.isNote = false;
 
 		this.timer = new Timer(1000, 0);
 
-	}
-
-	override function activation(activation:String):Void
-	{
-		switch (activation) {
-			case "off" :this.isActive = false;
-				this.studentId = "LMS Out";
-				this.studentName = "Apprenant non suivi";
-				this.lesson_location = suivi;
-				this.score = "0";
-				this.masteryScore = 80;
-				this.lessonStatus = "n,a";
-			case "on" : this.isActive = true;
-				timer.start();
-		}
 	}
 
 	override function init(isNote:Bool = false, activation:String = "on"):Void
@@ -120,70 +102,14 @@ class AiccTracking extends Tracking {
 		}
 	}
 
-	public function getParamSuccessful(e:Event):Void
-	{
-		this.loadDatas(Std.string(e.target.data), note);
-		scriptLoader.removeEventListener(Event.COMPLETE, getParamSuccessful);
-		scriptLoader.removeEventListener(IOErrorEvent.IO_ERROR, getParamError);
-	}
-
-	public function getParamError(e:IOErrorEvent):Void
-	{
-
-	}
-
-	public function loadDatas(datas:String, isNote:Bool):Void
-	{
-		var listeDatas = new Array<String>();
-		if(datas != "undefined"){
-			if(datas.split("\r\n").length > 5)
-				listeDatas = datas.split("\r\n");
-			else if(datas.split("\r").length > 5)
-				listeDatas = datas.split("\r");
-			else if(datas.split("\n").length > 5)
-				listeDatas = datas.split("\n");
-			else
-				listeDatas = null;
-
-			if(listeDatas != null){
-				for(z in 0...listeDatas.length){
-					listeDatas[z] = listeDatas[z].split(" ").join("");
-
-					switch (listeDatas[z].split("=")[0].toUpperCase()) {
-						case "LESSON_LOCATION" :
-							lesson_location = listeDatas[z].split("=")[1];
-						case "LESSON_STATUS" :
-							lessonStatus = listeDatas[z].split("=")[1];
-						case "SCORE" :
-							score = listeDatas[z].split("=")[1];
-						case "MASTERY_SCORE" :
-							masteryScore = Std.parseInt(listeDatas[z].split("=")[1]);
-						case "STUDENT_ID" :
-							studentId = listeDatas[z].split("=")[1];
-						case "STUDENT_NAME" :
-							studentName = listeDatas[z].split("=")[1];
-					}
-				}
-				dispatchEvent(new Event(Event.INIT));
-
-			}
-			else{
-				init(isNote, "off");
-			}
-		}
-		else{
-			init(isNote, "off");
-		}
-	}
-
 	override function getLocation():String
 	{
-		return lesson_location;
+		return location;
 	}
 
 	override function setLocation(location:String):Void
 	{
-		lesson_location = location;
+		this.location = location;
 		putparam();
 	}
 
@@ -218,7 +144,7 @@ class AiccTracking extends Tracking {
 			}
 		}
 		lessonStatus = stringStatus;
-		setLocation(lesson_location);
+		setLocation(location);
 	}
 
 	override function setSuspend(suspention:String):Void
@@ -250,28 +176,6 @@ class AiccTracking extends Tracking {
 		return masteryScore;
 	}
 
-	public function returnFormatedTime():String
-	{
-		var secondsTime:Int = Math.round((timer.currentCount - startTime));
-		var time:String = "";
-		var hours:Int = Math.floor(secondsTime / 3600);
-		var minutes:Int = Math.floor((secondsTime % 3600) / 60);
-		var seconds:Int = secondsTime % 60;
-		if(hours < 10){
-			time = time + "0";
-		}
-		time = time + (hours + ":");
-		if(minutes < 10){
-			time = time + "0";
-		}
-		time = time + (minutes + ":");
-		if(seconds < 10){
-			time = time + "0";
-		}
-		time = time + seconds;
-		return time;
-	}
-
 	override function putparam():Void
 	{
 		if(_aicc_sid != "undefined" && _aicc_url != "undefined"){
@@ -290,11 +194,11 @@ class AiccTracking extends Tracking {
 			var aicc_data:String = "[core]";
 			aicc_data += "\r\nstudentId=" + studentId;
 			aicc_data += "\r\nstudentName=" + studentName;
-			aicc_data += "\r\nlesson_location=" + lesson_location;
+			aicc_data += "\r\nlesson_location=" + location;
 			aicc_data += "\r\ncredit=no-credit";
 			aicc_data += "\r\nlessonStatus=" + lessonStatus;
 			aicc_data += "\r\nscore=" + score;
-			aicc_data += "\r\ntime=" + returnFormatedTime();
+			aicc_data += "\r\ntime=" + getFormatTime(timer.currentCount - startTime);
 			aicc_data += "\r\n[core_lesson]";
 
 			scriptVars.aicc_data = aicc_data;
@@ -306,17 +210,6 @@ class AiccTracking extends Tracking {
 		}
 	}
 
-	public function putParamSuccessful(e:Event):Void
-	{
-		scriptLoader.removeEventListener(Event.COMPLETE, getParamSuccessful);
-		scriptLoader.removeEventListener(IOErrorEvent.IO_ERROR, getParamError);
-	}
-
-	public function putParamError(e:IOErrorEvent):Void
-	{
-
-	}
-
 	override function exitAU():Void
 	{
 		#if flash
@@ -324,5 +217,89 @@ class AiccTracking extends Tracking {
 		#elseif js
 		untyped __js__('exitAU()');
 		#end
+	}
+
+	// Private
+
+	private function putParamSuccessful(e:Event):Void
+	{
+		scriptLoader.removeEventListener(Event.COMPLETE, getParamSuccessful);
+		scriptLoader.removeEventListener(IOErrorEvent.IO_ERROR, getParamError);
+	}
+
+	private function putParamError(e:IOErrorEvent):Void
+	{
+
+	}
+
+	private function getParamSuccessful(e:Event):Void
+	{
+		this.loadDatas(Std.string(e.target.data), note);
+		scriptLoader.removeEventListener(Event.COMPLETE, getParamSuccessful);
+		scriptLoader.removeEventListener(IOErrorEvent.IO_ERROR, getParamError);
+	}
+
+	private function getParamError(e:IOErrorEvent):Void
+	{
+
+	}
+
+	private function activation(activation:String):Void
+	{
+		switch (activation) {
+			case "off" :this.isActive = false;
+				this.studentId = "LMS Out";
+				this.studentName = "Apprenant non suivi";
+				this.location = suivi;
+				this.score = "0";
+				this.masteryScore = 80;
+				this.lessonStatus = "n,a";
+			case "on" : this.isActive = true;
+				timer.start();
+		}
+	}
+
+	private function loadDatas(datas:String, isNote:Bool):Void
+	{
+		var listeDatas = new Array<String>();
+		if(datas != "undefined"){
+			if(datas.split("\r\n").length > 5)
+				listeDatas = datas.split("\r\n");
+			else if(datas.split("\r").length > 5)
+				listeDatas = datas.split("\r");
+			else if(datas.split("\n").length > 5)
+				listeDatas = datas.split("\n");
+			else
+				listeDatas = null;
+
+			if(listeDatas != null){
+				for(z in 0...listeDatas.length){
+					listeDatas[z] = listeDatas[z].split(" ").join("");
+
+					switch (listeDatas[z].split("=")[0].toUpperCase()) {
+						case "LESSON_LOCATION" :
+							location = listeDatas[z].split("=")[1];
+						case "LESSON_STATUS" :
+							lessonStatus = listeDatas[z].split("=")[1];
+						case "SCORE" :
+							score = listeDatas[z].split("=")[1];
+						case "MASTERY_SCORE" :
+							masteryScore = Std.parseInt(listeDatas[z].split("=")[1]);
+						case "STUDENT_ID" :
+							studentId = listeDatas[z].split("=")[1];
+						case "STUDENT_NAME" :
+							studentName = listeDatas[z].split("=")[1];
+					}
+				}
+				dispatchEvent(new Event(Event.INIT));
+
+			}
+			else{
+				init(isNote, "off");
+			}
+		}
+		else{
+			init(isNote, "off");
+		}
 	}
 }

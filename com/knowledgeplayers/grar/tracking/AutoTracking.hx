@@ -22,22 +22,6 @@ class AutoTracking extends Tracking {
 		this.isNote = false;
 	}
 
-	override function activation(activation:String):Void
-	{
-
-		switch (activation) {
-			case "off" :this.isActive = false;
-				this.studentId = "42";
-				studentName = "wayne";
-				this.lesson_location = suivi;
-				this.score = "0";
-				this.masteryScore = 80;
-				this.lessonStatus = "n,a";
-			case "on" : this.isActive = true;
-		}
-
-	}
-
 	override function init(isNote:Bool = false, activation:String = "on"):Void
 	{
 		this.activation(activation);
@@ -129,7 +113,30 @@ class AutoTracking extends Tracking {
 
 	}
 
-	public function save():Void
+	override function getMasteryScore():Int
+	{
+		return masteryScore;
+	}
+
+	override function setSuspend(suspention:String):Void
+	{
+		throw new Error("setSuspend AUTO");
+	}
+
+	override function getSuspend():String
+	{
+		throw new Error("getSuspend AUTO");
+		return null;
+	}
+
+	override function clearDatas():Void
+	{
+		mySo.clear();
+	}
+
+	// Private
+
+	private function save():Void
 	{
 		mySo.data.lessonStatus = getStatus();
 		mySo.data.score = getScore();
@@ -155,7 +162,7 @@ class AutoTracking extends Tracking {
 		}
 	}
 
-	public function load():Void
+	private function load():Void
 	{
 		lessonStatus = mySo.data.lessonStatus;
 		score = mySo.data.score;
@@ -164,25 +171,20 @@ class AutoTracking extends Tracking {
 		lesson_location = mySo.data.lesson_location;
 	}
 
-	override function getMasteryScore():Int
+	private function activation(activation:String):Void
 	{
-		return masteryScore;
-	}
 
-	override function setSuspend(suspention:String):Void
-	{
-		throw new Error("setSuspend AUTO");
-	}
+		switch (activation) {
+			case "off" :this.isActive = false;
+				this.studentId = "42";
+				studentName = "wayne";
+				this.lesson_location = suivi;
+				this.score = "0";
+				this.masteryScore = 80;
+				this.lessonStatus = "n,a";
+			case "on" : this.isActive = true;
+		}
 
-	override function getSuspend():String
-	{
-		throw new Error("getSuspend AUTO");
-		return null;
-	}
-
-	override function clearDatas():Void
-	{
-		mySo.clear();
 	}
 
 	private function onFlushStatus(event:Event):Void

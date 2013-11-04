@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.layout;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import com.knowledgeplayers.grar.display.contextual.menu.MenuSphericalDisplay;
 import com.knowledgeplayers.grar.display.component.container.DropdownMenu;
@@ -201,15 +202,13 @@ class Zone extends KpDisplay {
     {
         var background = new Widget();
 
-        var color:Int;
-
-        var _alpha = xml.has.alpha ? Std.parseFloat(xml.att.alpha) : 1;
+        var color: Color;
 
         if(xml.has.color)
-            color = Std.parseInt(xml.att.color);
+            color = ParseUtils.parseColor(xml.att.color);
         else
-            color = Std.parseInt("0xFFFFFF");
-	    DisplayUtils.initSprite(background, Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), color, _alpha, Std.parseFloat(xml.att.x), Std.parseFloat(xml.att.y));
+            color = {color: 0xFFFFFF, alpha: 1};
+	    DisplayUtils.initSprite(background, Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), color.color, color.alpha, Std.parseFloat(xml.att.x), Std.parseFloat(xml.att.y));
 
         return background;
     }

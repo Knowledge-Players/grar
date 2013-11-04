@@ -1,6 +1,8 @@
 package com.knowledgeplayers.grar.tracking;
 
+#if flash
 import flash.external.ExternalInterface;
+#end
 
 class Scorm {
 
@@ -56,6 +58,7 @@ class Scorm {
 		}
 
 		displayDebugInfo("__connectionActive: " + activeConnection);
+		
 		#elseif js
 		var wrapper:Dynamic = untyped __js__('pipwerks.SCORM.init()');
 		result = wrapper == "true";

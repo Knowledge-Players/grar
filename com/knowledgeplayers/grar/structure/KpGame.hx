@@ -20,7 +20,6 @@ import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.tracking.Connection;
 import com.knowledgeplayers.grar.tracking.StateInfos;
 import com.knowledgeplayers.grar.tracking.Trackable;
-import haxe.ds.GenericStack;
 import haxe.xml.Fast;
 import flash.events.Event;
 import flash.events.EventDispatcher;
@@ -68,6 +67,11 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
     public var connection (default, null):Connection;
 
     /**
+	* Unique identifier of the module
+	**/
+	public var id (default, default):String;
+
+    /**
     * Index of the current part
     **/
     private var partIndex:Int = 0;
@@ -112,6 +116,7 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
 
         mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
         state = parametersNode.node.State.innerData;
+	    id = parametersNode.node.Id.innerData;
 
     	// Start Tracking
 

@@ -386,6 +386,7 @@ class GameManager extends EventDispatcher {
 
 	private function onPartLoaded(event:PartEvent):Void
 	{
+		// TODO add a subpart in its parent display (embed)
 		setBookmark(event.partId);
 		var partDisplay = cast(event.target, PartDisplay);
 
@@ -403,7 +404,7 @@ class GameManager extends EventDispatcher {
 	// TODO include in displayPart
 	public function onEnterSubPart(event:PartEvent):Void
 	{
-		parts.first().visible = false;
+		//parts.first().visible = false;
 		parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		displayPartById(event.part.id);
 	}

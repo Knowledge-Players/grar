@@ -6,13 +6,10 @@ import flash.utils.Timer;
 class ScormTracking extends Tracking {
 
 	public var success_status:String = "";
-	public var lesson_location:String = "";
 	public var suspend_data:String = "";
 	public var isNote:Bool = false;
 
 	public var isActive:Bool = false;
-	public var startTime:Int = 0;
-	public var timer:Timer;
 	public var is2004:Bool;
 
 	public var scorm:Scorm;
@@ -21,28 +18,9 @@ class ScormTracking extends Tracking {
 	{
 		super();
 		this.is2004 = is2004;
-		this.timer = new Timer(1000, 0);
 		score = "";
 		masteryScore = 0;
 
-	}
-
-	override function activation(activation:String):Void
-	{
-		switch (activation) {
-			case "off" :
-				isActive = false;
-				lesson_location = suivi;
-				score = "";
-				masteryScore = 80;
-				lessonStatus = "n,a";
-				success_status = "unknow";
-				suspend_data = "suspend";
-				studentId = "12";
-				studentName = "miloose";
-			case "on" :
-				isActive = true;
-		}
 	}
 
 	override function init(isNote:Bool = false, activation:String = "on"):Void
@@ -61,7 +39,7 @@ class ScormTracking extends Tracking {
 					score = scorm.get("cmi.score.raw");
 					studentName = scorm.get("cmi.learner_name");
 					studentId = scorm.get("cmi.learner_id");
-					lesson_location = scorm.get("cmi.location");
+					location = scorm.get("cmi.location");
 					suspend_data = scorm.get("cmi.suspend_data");
 				}
 				else{
@@ -70,7 +48,7 @@ class ScormTracking extends Tracking {
 					score = scorm.get("cmi.core.score.raw");
 					studentName = scorm.get("cmi.core.studentName");
 					studentId = scorm.get("cmi.core.studentId");
-					lesson_location = scorm.get("cmi.core.lesson_location");
+					location = scorm.get("cmi.core.lesson_location");
 					suspend_data = scorm.get("cmi.suspend_data");
 				}
 
@@ -88,12 +66,12 @@ class ScormTracking extends Tracking {
 
 	override function getLocation():String
 	{
-		return lesson_location;
+		return location;
 	}
 
 	override function setLocation(location:String):Void
 	{
-		lesson_location = location;
+		this.location = location;
 		var success:Bool;
 		if(isActive){
 			if(is2004){
@@ -234,44 +212,22 @@ class ScormTracking extends Tracking {
 		return masteryScore;
 	}
 
-	public function returnFormatedTime():String
-	{
-		var output: StringBuf = new StringBuf();
-		var time:Int = timer.currentCount - this.startTime;
-		var hours:Int = Math.floor(time / 3600);
-		var minutes:Int = Math.floor((time - (hours * 3600)) / 60);
-		var seconds:Int = (time - (hours * 3600)) - (minutes * 60);
-		if(hours < 10){
-			output.add("0");
-		}
-		output.add(hours + ":");
-		if(minutes < 10){
-			output.add("0");
-		}
-		output.add(minutes + ":");
-		if(seconds < 10){
-			output.add("0");
-		}
-		output.add(seconds);
-		return output.toString();
-	}
-
 	override function putparam():Void
 	{
 		if(isActive){
 			if(is2004){
-				scorm.set("cmi.session_time", returnFormatedTime());
+				scorm.set("cmi.session_time", getFormatTime(timer.currentCount - startTime));
 				scorm.set("cmi.completion_status", lessonStatus);
 				scorm.set("cmi.success_status", success_status);
 				scorm.set("cmi.score.raw", score);
-				scorm.set("cmi.location", lesson_location);
+				scorm.set("cmi.location", location);
 				scorm.set("cmi.exit", "suspend");
 			}
 			else{
-				scorm.set("cmi.core.session_time", returnFormatedTime());
+				scorm.set("cmi.core.session_time", getFormatTime(timer.currentCount - startTime));
 				scorm.set("cmi.core.lessonStatus", lessonStatus);
 				scorm.set("cmi.core.score.raw", score);
-				scorm.set("cmi.core.lesson_location", lesson_location);
+				scorm.set("cmi.core.lesson_location", location);
 				scorm.set("cmi.exit", "suspend");
 			}
 			scorm.save();
@@ -302,5 +258,25 @@ class ScormTracking extends Tracking {
 	override function clearDatas():Void
 	{
 
+	}
+
+	// Private
+
+	private function activation(activation:String):Void
+	{
+		switch (activation) {
+			case "off" :
+				isActive = false;
+				location = suivi;
+				score = "";
+				masteryScore = 80;
+				lessonStatus = "n,a";
+				success_status = "unknow";
+				suspend_data = "suspend";
+				studentId = "12";
+				studentName = "miloose";
+			case "on" :
+				isActive = true;
+		}
 	}
 }

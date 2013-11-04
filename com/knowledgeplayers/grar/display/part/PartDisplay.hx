@@ -241,8 +241,9 @@ class PartDisplay extends KpDisplay {
 		currentElement = null;
 		currentSpeaker = null;
 		previousBackground = null;
-		for(item in currentItems)
-			item = null;
+		if(currentItems != null)
+			for(item in currentItems)
+				item = null;
 		currentItems = null;
 		currentItem = null;
 		inventory = null;

@@ -14,6 +14,7 @@ interface Game extends IEventDispatcher {
 	public var menu (default, default):Xml;
 	public var stateInfos (default, null):StateInfos;
 	public var connection (default, null):Connection;
+	public var id (default, default):String;
 
 	public function start(?partId:String):Null<Part>;
 

@@ -3,7 +3,7 @@ package com.knowledgeplayers.grar.tracking;
 import flash.events.IEventDispatcher;
 
 interface ITracking extends IEventDispatcher {
-	public function activation(activation:String):Void;
+	//public function activation(activation:String):Void;
 	public function init (isNote:Bool = false, activation:String = "on"):Void;
 	public function getLocation():String;
 	public function setLocation(location:String):Void;
