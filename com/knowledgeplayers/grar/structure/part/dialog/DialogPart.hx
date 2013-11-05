@@ -10,13 +10,11 @@ class DialogPart extends StructurePart {
 	public function new()
 	{
 		super();
-
 	}
 
 	override public function isDialog():Bool
 	{
 		return true;
-
 	}
 
 	override public function restart():Void
@@ -28,17 +26,15 @@ class DialogPart extends StructurePart {
 
 	// Private
 
-	override private function parseContent(content:Xml):Void
+	override private function parseElement(node: Fast):Void
 	{
-		var partFast:Fast = new Fast(content).node.Part;
+		super.parseElement(node);
 
-		for(patternNode in partFast.nodes.Pattern){
-
-			var pattern:Pattern = PatternFactory.createPatternFromXml(patternNode);
-			pattern.init(patternNode);
+		if(node.name.toLowerCase() == "pattern"){
+			var pattern:Pattern = PatternFactory.createPatternFromXml(node);
+			pattern.init(node);
 			elements.push(pattern);
 		}
-		super.parseContent(content);
 	}
 
 }

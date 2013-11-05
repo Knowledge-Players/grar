@@ -1,7 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
 import com.knowledgeplayers.grar.structure.part.Part;
-import com.knowledgeplayers.grar.structure.part.ActivityPart;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
@@ -28,7 +27,6 @@ class DialogDisplay extends PartDisplay {
      * Constructor
      * @param	part : DialogPart to display
      */
-
 	public function new(part:Part)
 	{
 		super(part);
@@ -52,8 +50,17 @@ class DialogDisplay extends PartDisplay {
 		if(currentPattern != pattern)
 			currentPattern = pattern;
 
+		// Check if minimum choices requirements is met
+		var exitPattern = false;
+		if(Std.is(currentPattern, ChoicePattern)){
+			var choice = cast(currentPattern, ChoicePattern);
+			trace(choice.minimumChoice, choice.numChoices);
+			if(choice.minimumChoice == choice.numChoices)
+				exitPattern = true;
+		}
+
 		var nextItem = pattern.getNextItem();
-		if(nextItem != null){
+		if(nextItem != null && !exitPattern){
 			setupItem(nextItem);
 			if(nextItem.isText())
 				GameManager.instance.playSound(cast(nextItem, TextItem).sound);
@@ -65,7 +72,7 @@ class DialogDisplay extends PartDisplay {
 		else if(currentPattern.nextPattern != "")
 			goToPattern(currentPattern.nextPattern);
 		else{
-			exitPart();
+			nextElement(part.getElementIndex(currentPattern));
 		}
 	}
 
@@ -83,6 +90,7 @@ class DialogDisplay extends PartDisplay {
 
 	private function onChoice(?choice: DefaultButton):Void
 	{
+		cast(currentPattern, ChoicePattern).numChoices++;
 		var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
 		cast(currentPattern, ChoicePattern).choices.get(choice.ref).viewed = true;
 

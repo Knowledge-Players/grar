@@ -403,28 +403,7 @@ class StructurePart extends EventDispatcher implements Part{
 		parseHeader(partFast);
 
 		for(child in partFast.elements){
-			switch(child.name.toLowerCase()){
-				case "text":
-					elements.push(ItemFactory.createItemFromXml(child));
-				case "part":
-					createPart(child);
-				case "sound":
-					soundLoop = AssetsStorage.getSound(child.att.content);
-				case "button":
-					buttons.set(child.att.ref, ParseUtils.parseButtonContent(child));
-					if(child.has.goTo){
-						if(child.att.goTo == "")
-							buttonTargets.set(child.att.ref, null);
-						else{
-							var i = 0;
-							while((!elements[i].isText() || cast(elements[i], TextItem).content != child.att.goTo) && i < elements.length){
-								i++;
-							}
-							if(i != elements.length)
-								buttonTargets.set(child.att.ref, elements[i]);
-						}
-					}
-			}
+			parseElement(child);
 		}
 		for(elem in elements){
 			if(elem.isText() || elem.isVideo()|| elem.isSound()){
@@ -445,6 +424,32 @@ class StructurePart extends EventDispatcher implements Part{
 		loaded = true;
 		if(nbSubPartLoaded == nbSubPartTotal)
 			fireLoaded();
+	}
+
+	private function parseElement(node:Fast):Void
+	{
+		switch(node.name.toLowerCase()){
+			case "text":
+				elements.push(ItemFactory.createItemFromXml(node));
+			case "part":
+				createPart(node);
+			case "sound":
+				soundLoop = AssetsStorage.getSound(node.att.content);
+			case "button":
+				buttons.set(node.att.ref, ParseUtils.parseButtonContent(node));
+				if(node.has.goTo){
+					if(node.att.goTo == "")
+						buttonTargets.set(node.att.ref, null);
+					else{
+						var i = 0;
+						while((!elements[i].isText() || cast(elements[i], TextItem).content != node.att.goTo) && i < elements.length){
+							i++;
+						}
+						if(i != elements.length)
+							buttonTargets.set(node.att.ref, elements[i]);
+					}
+				}
+		}
 	}
 
 	/**

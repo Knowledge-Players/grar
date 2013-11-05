@@ -140,8 +140,13 @@ class Widget extends Sprite{
 
 	public function reset(): Void
 	{
-		for(field in Reflect.fields(origin))
+		for(field in Reflect.fields(origin)){
 			Reflect.setField(this, field, Reflect.field(origin, field));
+			if(field == "alpha"){
+				// Auto visible
+				Reflect.setField(this, "visible", alpha > 0);
+			}
+		}
 	}
 
 	// Privates

@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.style;
 
+import flash.display.BitmapData;
+import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.display.text.UrlField;
 import com.knowledgeplayers.grar.util.DisplayUtils;
@@ -108,8 +111,9 @@ class KpTextDownElement {
 			container.addChild(objLeft);
 	}
 
-	private function createTextField(content:String, ?styleName:String, trim: Bool = false, iconWidth: Float = 0):StyledTextField
+	private function createTextField(content:String, ?styleName:String, trim: Bool = false, iconWidth: Float = 0):Sprite
 	{
+		var container = new Sprite();
 		var tf = new StyledTextField();
 		var modificators = new Array<{match:{pos:Int, len:Int}, offset:Int, style:String}>();
 
@@ -182,13 +186,54 @@ class KpTextDownElement {
 		for(mod in modificators){
 			var position = mod.match.pos - offset;
 			offset += mod.offset;
-			tf.setPartialStyle(StyleParser.getStyle(mod.style), position, position + mod.match.len - mod.offset);
+			var style: Style = StyleParser.getStyle(mod.style);
+			tf.setPartialStyle(style, position, position + mod.match.len - mod.offset);
+		}
+		if(style.exists("highlight")){
+			var currentY = 0.0;
+			for(i in 0...tf.numLines){
+				var textField = new StyledTextField(tf.style);
+				textField.text = tf.getLineText(i);
+				setHighlight(style.get("highlight"), container, Math.max(textField.textWidth, textField.width), Math.max(textField.textHeight, textField.height), 0, currentY);
+				currentY += textField.textHeight;
+			}
 		}
 
 		lineHeight = tf.textHeight / tf.numLines;
 		numLines = tf.numLines;
-		lineWidth = tf.width;
-		return tf;
+		lineWidth = tf.textWidth;
+		container.addChild(tf);
+		return container;
+	}
+
+	private function setHighlight(highlight:String, item: Sprite, width: Float, height: Float, x: Float = 0, y: Float = 0):Void
+	{
+		if(highlight != null){
+			if(Std.parseInt(highlight) != null){
+				var highlightColor = ParseUtils.parseColor(highlight);
+				// 5px bottom margin for p/q and so on and 5px top margin for accented characters
+				DisplayUtils.initSprite(item, width, (height+5), highlightColor.color, highlightColor.alpha, x, (y-5));
+			}
+			else{
+				var bmp: BitmapData = null;
+				if(highlight.indexOf(".") < 0){
+					bmp = DisplayUtils.getBitmapDataFromLayer(UiFactory.tilesheet, highlight);
+				}
+				else if(AssetsStorage.hasAsset(highlight)){
+					bmp = AssetsStorage.getBitmapData(highlight);
+				}
+				if(bmp != null){
+					var bitmap = new Bitmap(bmp);
+					bitmap.width = width;
+					bitmap.height = height;
+					bitmap.x = x;
+					bitmap.y = y;
+
+					item.addChild(bitmap);
+				}
+			}
+
+		}
 	}
 
 	private function setIcons(content:String, styleName:String, output:Sprite, trim: Bool = false):Void
@@ -197,7 +242,7 @@ class KpTextDownElement {
 		var bmp = new Bitmap(style.icon);
 		if(style.iconResize)
 			bmp.width = bmp.height = 10;
-		var tf = createTextField(content, styleName, trim, (bmp.width+style.iconMargin[1]+style.iconMargin[3]));
+		var tf: StyledTextField = cast(createTextField(content, styleName, trim, (bmp.width+style.iconMargin[1]+style.iconMargin[3])).getChildAt(0), StyledTextField);
 		switch(style.iconPosition) {
 			case "before": concatObjects(output, bmp, tf);
 				tf.x += style.iconMargin[1];

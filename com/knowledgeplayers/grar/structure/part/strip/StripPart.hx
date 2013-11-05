@@ -1,7 +1,6 @@
 package com.knowledgeplayers.grar.structure.part.strip;
 
 import com.knowledgeplayers.grar.factory.PatternFactory;
-import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.StructurePart;
 import haxe.xml.Fast;
 
@@ -23,16 +22,15 @@ class StripPart extends StructurePart {
 	}
 	// Private
 
-	override private function parseContent(content:Xml):Void
+	override private function parseElement(node: Fast):Void
 	{
-		var partFast:Fast = new Fast(content).node.Part;
+		super.parseElement(node);
 
-		for(patternNode in partFast.nodes.Pattern){
-			var pattern:Pattern = PatternFactory.createPatternFromXml(patternNode);
-			pattern.init(patternNode);
+		if(node.name.toLowerCase() == "pattern"){
+			var pattern:Pattern = PatternFactory.createPatternFromXml(node);
+			pattern.init(node);
 			elements.push(pattern);
 		}
-		super.parseContent(content);
 	}
 
 }

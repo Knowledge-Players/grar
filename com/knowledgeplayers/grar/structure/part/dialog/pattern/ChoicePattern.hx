@@ -10,6 +10,10 @@ class ChoicePattern extends Pattern {
     * Minimum choices that needs to be explored before leaving the pattern
     **/
 	public var minimumChoice (default, default):Int;
+	/**
+    * Number of choices currently explored
+    **/
+	public var numChoices (default, default):Int;
 
 	/**
     * All the choices for this pattern
@@ -35,16 +39,22 @@ class ChoicePattern extends Pattern {
 	{
 		super(name);
 		choices = new Map<String, Choice>();
+		numChoices = 0;
 	}
 
 	override public function init(xml:Fast):Void
 	{
 		super.init(xml);
-		tooltipRef = xml.has.toolTip ? xml.att.toolTip != "" ? xml.att.toolTip : null : null;
-		tooltipTransition = xml.has.toolTipTransition ? xml.att.toolTipTransition != "" ? xml.att.toolTipTransition : null : null;
+		if(xml.has.toolTip && xml.att.toolTip != "")
+			tooltipRef = xml.att.toolTip;
+		if(xml.has.toolTipTransition && xml.att.toolTipTransition != "")
+			tooltipTransition = xml.att.toolTipTransition;
+		minimumChoice = xml.has.minChoice ? Std.parseInt(xml.att.minChoice) : 1;
 
 		for(choiceNode in xml.nodes.Choice){
-			var tooltip = choiceNode.has.toolTip ? choiceNode.att.toolTip != "" ? choiceNode.att.toolTip : null : null ;
+			var tooltip = null;
+			if(choiceNode.has.toolTip && choiceNode.att.toolTip != "")
+				tooltip = choiceNode.att.toolTip;
 			var choice = {ref: choiceNode.att.ref, toolTip: tooltip, goTo: choiceNode.att.goTo, viewed:false};
 			choices.set(choiceNode.att.ref, choice);
 		}
