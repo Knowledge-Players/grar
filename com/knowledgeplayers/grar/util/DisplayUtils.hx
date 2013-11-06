@@ -54,15 +54,16 @@ class DisplayUtils {
     * @param    alpha : Alpha of the color
     **/
 
-	public static inline function initSprite(sprite:Sprite, width:Float = 1, height:Float = 1, color:Int = 0, alpha:Float = 1, x:Float = 0, y:Float = 0):Sprite
+	public static inline function initSprite(?sprite:Sprite, width:Float = 1, height:Float = 1, color:Int = 0, alpha:Float = 1, x:Float = 0, y:Float = 0):Sprite
 	{
-		sprite.graphics.beginFill(color, alpha);
+		var s: Sprite = sprite != null ? sprite : new Sprite();
+		s.graphics.beginFill(color, alpha);
 		if(width > 0 && height > 0)
-			sprite.graphics.drawRect(x, y, width, height);
+			s.graphics.drawRect(x, y, width, height);
 		else
-			sprite.graphics.drawRect(x, y, 1, 1);
-		sprite.graphics.endFill();
-		return sprite;
+			s.graphics.drawRect(x, y, 1, 1);
+		s.graphics.endFill();
+		return s;
 	}
 
 	public static inline function maskSprite(sprite: Sprite, maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0):Void

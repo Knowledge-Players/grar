@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.style;
 
+import flash.display.Shape;
 import flash.display.BitmapData;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.util.ParseUtils;
@@ -182,6 +183,8 @@ class KpTextDownElement {
 		#end
 		tf.height += style.getPadding()[2];
 
+		container.addChild(tf);
+
 		var offset:Int = 0;
 		for(mod in modificators){
 			var position = mod.match.pos - offset;
@@ -198,21 +201,39 @@ class KpTextDownElement {
 				currentY += textField.textHeight;
 			}
 		}
+		if(style.exists("ruled")){
+			var currentY = 0.0;
+			for(i in 0...tf.numLines){
+				var textField = new StyledTextField(tf.style);
+				textField.text = tf.getLineText(i);
+				if(i == 0)
+					currentY += textField.textHeight/2;
+				var rulingLine = style.get("ruled").split(" "); // 0 is thickness in px, 1 is color/bmp
+				if(rulingLine.length == 1)
+					rulingLine.push("0"); // Default color
+				setHighlight(rulingLine[1], container, Math.max(textField.textWidth, textField.width), Std.parseFloat(rulingLine[0]), 0, currentY, false);
+				currentY += textField.textHeight;
+			}
+		}
 
 		lineHeight = tf.textHeight / tf.numLines;
 		numLines = tf.numLines;
 		lineWidth = tf.textWidth;
-		container.addChild(tf);
 		return container;
 	}
 
-	private function setHighlight(highlight:String, item: Sprite, width: Float, height: Float, x: Float = 0, y: Float = 0):Void
+	private function setHighlight(highlight:String, item: Sprite, width: Float, height: Float, x: Float = 0, y: Float = 0, withMargins: Bool = true):Void
 	{
 		if(highlight != null){
 			if(Std.parseInt(highlight) != null){
 				var highlightColor = ParseUtils.parseColor(highlight);
+				if(withMargins)
 				// 5px bottom margin for p/q and so on and 5px top margin for accented characters
-				DisplayUtils.initSprite(item, width, (height+5), highlightColor.color, highlightColor.alpha, x, (y-5));
+					DisplayUtils.initSprite(item, width, (height+5), highlightColor.color, highlightColor.alpha, x, (y-5));
+				else{
+					var line = DisplayUtils.initSprite(width, height, highlightColor.color, highlightColor.alpha, x, y);
+					item.addChild(line);
+				}
 			}
 			else{
 				var bmp: BitmapData = null;

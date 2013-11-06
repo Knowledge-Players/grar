@@ -44,7 +44,9 @@ class Timeline extends EventDispatcher
                     cast(elem.widget,TileImage).trueLayer.render();
                 });
             }else{
-                TweenManager.applyTransition(elem.widget,elem.transition,elem.delay).onComplete(onCompleteTransition);
+                var actuator = TweenManager.applyTransition(elem.widget,elem.transition,elem.delay);
+                if(actuator != null)
+	                actuator.onComplete(onCompleteTransition);
             }
          }
     }
