@@ -169,6 +169,12 @@ class PartDisplay extends KpDisplay {
 		}
 
 		else if(currentElement.isPart()){
+			if(currentItem != null){
+				removeChild(displays.get(currentItem.ref));
+			for(i in 0...numChildren)
+				if(Std.is(getChildAt(i), DefaultButton))
+					removeChildAt(i);
+			}
 			var event = new PartEvent(PartEvent.ENTER_SUB_PART);
 			event.part = cast(currentElement, Part);
 			dispatchEvent(event);

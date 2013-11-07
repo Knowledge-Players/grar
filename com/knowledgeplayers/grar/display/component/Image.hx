@@ -56,8 +56,9 @@ class Image extends Widget{
 				case "vertical": 2;
 				case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
 			}
-            addChild(bitmap);
 		}
+		if(bitmap != null)
+			addChild(bitmap);
 
 	}
 }
