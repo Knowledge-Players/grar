@@ -42,13 +42,15 @@ class Grid implements Guide {
 	private var nextCell:Point;
 
 	private var alignment: GridAlignment;
+	private var resize: Bool;
 
-	public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?alignment:GridAlignment)
+	public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?alignment:GridAlignment, resize: Bool = true)
 	{
 		this.numRow = numRow;
 		this.numCol = numCol;
 		this.gapCol = gapCol;
 		this.gapRow = gapRow;
+		this.resize = resize;
 
 		this.alignment = alignment != null ? alignment : GridAlignment.TOP_LEFT;
 
@@ -96,8 +98,14 @@ class Grid implements Guide {
 		else
 			throw "This grid is already full!";
 
-		if(withTween)
-			TweenManager.tween(object, 0.5, {x: targetX, y: targetY, width: cellSize.width, height: cellSize.height});
+		if(withTween){
+			var params: Dynamic;
+			if(resize)
+				params = {x: targetX, y: targetY, width: cellSize.width, height: cellSize.height};
+			else
+				params = {x: targetX, y: targetY};
+			TweenManager.tween(object, 0.5, params);
+		}
 		else{
 			if(tile){
 				cast(object, TileImage).set_x(targetX);
@@ -107,11 +115,13 @@ class Grid implements Guide {
 				object.x = targetX;
 				object.y = targetY;
 			}
-			fitInGrid(object);
+			if(resize)
+				fitInGrid(object);
 		}
-		object.addEventListener(Event.CHANGE, function(e){
-			fitInGrid(object);
-		});
+		if(resize)
+			object.addEventListener(Event.CHANGE, function(e){
+				fitInGrid(object);
+			});
 		return object;
 	}
 

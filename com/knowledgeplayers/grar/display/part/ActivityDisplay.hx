@@ -60,7 +60,7 @@ class ActivityDisplay extends PartDisplay {
 		var guideNode = new Fast(currentGroup.x.firstElement());
 		var guide: Guide = switch(guideNode.name.toLowerCase()){
 			case "grid":
-				var grid = new Grid(Std.parseInt(guideNode.att.numRow), Std.parseInt(guideNode.att.numCol));
+				var grid = new Grid(Std.parseInt(guideNode.att.numRow), Std.parseInt(guideNode.att.numCol), guideNode.has.resize?guideNode.att.resize=="true":true);
 				if(guideNode.has.width)
 					grid.cellSize = {width: Std.parseFloat(guideNode.att.width), height: Std.parseFloat(guideNode.att.height)};
 				if(guideNode.has.gapCol)
@@ -205,15 +205,17 @@ class ActivityDisplay extends PartDisplay {
 	{
 		var object = displays.get(key);
 
+		// Display all buttons/inputs
 		if(Std.is(object, DefaultButton))
 			return part.buttons.exists(key);
-		else{
+
+		/*else{
 			for(elem in part.elements)
 				if(elem.ref == key)
 					return true;
-		}
+		}*/
 
-		return false;
+		return super.mustBeDisplayed(key);
 	}
 
 	override private function cleanDisplay():Void
@@ -223,7 +225,15 @@ class ActivityDisplay extends PartDisplay {
 	private inline function disableInputs():Void
 	{
 		for(input in inputs){
-			input.enabled = false;
+			if(input.toggleState == "inactive")
+				input.enabled = false;
+		}
+	}
+
+	private inline function enableInputs():Void
+	{
+		for(input in inputs){
+			input.enabled = true;
 		}
 	}
 
@@ -240,17 +250,22 @@ class ActivityDisplay extends PartDisplay {
 						GameManager.instance.displayPart(cast(target, Part));
 				case "toggle":
 					target.toggle();
-					validatedInputs.set(target, true);
+					validatedInputs.set(target, target.toggleState == "active");
 			}
 		}
 		if(autoCorrect)
 			validate(target);
 
 		// Selection limits
-		var validated = Lambda.count(validatedInputs);
-		if(validated >= minSelect)
-			validationButton.enabled = true;
+		var validated = Lambda.count(validatedInputs, function(input){
+			return input;
+		});
+		// Activate validation button
+		validationButton.enabled = (validated >= minSelect);
+		// Toggle inputs
 		if(validated == maxSelect)
 			disableInputs();
+		else
+			enableInputs();
 	}
 }

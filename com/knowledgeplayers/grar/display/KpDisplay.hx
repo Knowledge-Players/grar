@@ -305,7 +305,10 @@ class KpDisplay extends Sprite {
 
 	private function addElement(elem:Widget, node:Fast):Void
 	{
-		elem.zz = zIndex;
+		if(node.name.toLowerCase() == "background")
+			elem.zz = 0;
+		else
+			elem.zz = zIndex;
 		if(node.has.id && !node.has.ref){
 			displays.set(node.att.id, elem);
 		}

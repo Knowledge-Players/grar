@@ -504,12 +504,14 @@ class PartDisplay extends KpDisplay {
 						timelines.get(timelineIn).play();
 				}
 			};
-			addChild(obj);
+			if(obj.zz == 0)
+				addChildAt(obj, 0);
+			else
+				addChild(obj);
 		}
 
 		if(inventory != null && currentSpeaker != null)
 			addChild(inventory);
-
 	}
 
 	private function cleanDisplay():Void

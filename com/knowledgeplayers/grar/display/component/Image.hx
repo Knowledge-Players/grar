@@ -1,7 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
 import com.knowledgeplayers.grar.util.ParseUtils;
-import Std;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import openfl.Assets;
@@ -33,10 +32,10 @@ class Image extends Widget{
 	private function createImg(xml:Fast, ?tilesheet: TilesheetEx):Void
 	{
 		if(xml.has.src){
-            if(Std.string(xml.att.src).indexOf(".") < 0)
+            if(xml.att.src.indexOf(".") < 0)
             {
-                addChild(DisplayUtils.initSprite(null,Std.parseFloat(xml.att.width),Std.parseFloat(xml.att.height),ParseUtils.parseColor(xml.att.src).color,ParseUtils.parseColor(xml.att.src).alpha
-                ,Std.parseFloat(xml.att.x),Std.parseFloat(xml.att.y)));
+                var color = ParseUtils.parseColor(xml.att.src);
+                addChild(DisplayUtils.initSprite(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), color.color, color.alpha, xml.has.x ? Std.parseFloat(xml.att.x):0, xml.has.y ? Std.parseFloat(xml.att.y):0));
             }else{
                 #if flash
 	                bitmap = new Bitmap(AssetsStorage.getBitmapData(xml.att.src));

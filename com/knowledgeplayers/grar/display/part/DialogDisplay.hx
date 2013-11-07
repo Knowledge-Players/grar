@@ -54,7 +54,6 @@ class DialogDisplay extends PartDisplay {
 		var exitPattern = false;
 		if(Std.is(currentPattern, ChoicePattern)){
 			var choice = cast(currentPattern, ChoicePattern);
-			trace(choice.minimumChoice, choice.numChoices);
 			if(choice.minimumChoice == choice.numChoices)
 				exitPattern = true;
 		}
