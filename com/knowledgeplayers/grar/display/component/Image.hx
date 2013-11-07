@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.component;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
+import Std;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import openfl.Assets;
@@ -31,11 +33,20 @@ class Image extends Widget{
 	private function createImg(xml:Fast, ?tilesheet: TilesheetEx):Void
 	{
 		if(xml.has.src){
-			#if flash
+            if(Std.string(xml.att.src).indexOf(".") < 0)
+            {
+                addChild(DisplayUtils.initSprite(null,Std.parseFloat(xml.att.width),Std.parseFloat(xml.att.height),ParseUtils.parseColor(xml.att.src).color,ParseUtils.parseColor(xml.att.src).alpha
+                ,Std.parseFloat(xml.att.x),Std.parseFloat(xml.att.y)));
+            }else{
+                #if flash
 	                bitmap = new Bitmap(AssetsStorage.getBitmapData(xml.att.src));
 	            #else
-			bitmap = new Bitmap(Assets.getBitmapData(xml.att.src));
-			#end
+                    bitmap = new Bitmap(Assets.getBitmapData(xml.att.src));
+                #end
+                addChild(bitmap);
+            }
+
+
 		}
 		else
 			bitmap = new Bitmap(DisplayUtils.getBitmapDataFromLayer(tilesheet != null ?tilesheet : UiFactory.tilesheet, xml.att.tile));
@@ -46,7 +57,8 @@ class Image extends Widget{
 				case "vertical": 2;
 				case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
 			}
+            addChild(bitmap);
 		}
-		addChild(bitmap);
+
 	}
 }
