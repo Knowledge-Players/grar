@@ -192,6 +192,7 @@ class KpTextDownElement {
 			var style: Style = StyleParser.getStyle(mod.style);
 			tf.setPartialStyle(style, position, position + mod.match.len - mod.offset);
 		}
+		// TODO merge highlight and ruled
 		if(style.exists("highlight")){
 			var currentY = 0.0;
 			for(i in 0...tf.numLines){

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.util.guide;
 
+import com.knowledgeplayers.grar.display.component.TileImage;
 import flash.Lib;
 import flash.display.Shape;
 import com.knowledgeplayers.grar.util.MathUtils;
@@ -57,14 +58,20 @@ class Curve implements Guide{
 	/**
 	* @inherits
 	**/
-	public function add(object:DisplayObject, withTween: Bool = true):DisplayObject
+	public function add(object:DisplayObject, withTween: Bool = true, tile: Bool = false):DisplayObject
 	{
 		objects.push(object);
 		var angle = (maxAngle - minAngle)/(2*objects.length);
 		for(i in 0...objects.length){
 			var a = MathUtils.degreeToRad(angle+(angle*2*i)+minAngle);
-			objects[i].x = Math.cos(a)*radius + center.x - (centerObject ? objects[i].width/2 : 0);
-			objects[i].y = Math.sin(a)*radius + center.y - (centerObject ? objects[i].height/2 : 0);
+			if(tile){
+				cast(objects[i], TileImage).set_x(Math.cos(a)*radius + center.x - (centerObject ? objects[i].width/2 : 0));
+				cast(objects[i], TileImage).set_y(Math.sin(a)*radius + center.y - (centerObject ? objects[i].height/2 : 0));
+			}
+			else{
+				objects[i].x = Math.cos(a)*radius + center.x - (centerObject ? objects[i].width/2 : 0);
+				objects[i].y = Math.sin(a)*radius + center.y - (centerObject ? objects[i].height/2 : 0);
+			}
 			objToAngles.set(objects[i], a);
 		}
 		return object;

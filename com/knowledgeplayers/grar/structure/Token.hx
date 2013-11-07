@@ -40,13 +40,12 @@ class Token {
     * Constructor
     * @param    fast : Xml descriptor of the token
     **/
-
 	public function new(?_fast:Fast):Void
 	{
 		if(_fast != null){
 			ref = _fast.att.ref;
 			type = _fast.has.type ? _fast.att.type : null;
-			name = _fast.att.name;
+			name = _fast.has.name ?_fast.att.name : null;
 			content = _fast.att.content;
 			fullScreenContent = _fast.has.fullScreenContent ? _fast.att.fullScreenContent : null;
 			isActivated = _fast.has.unlocked ? _fast.att.unlocked == "true" : false;

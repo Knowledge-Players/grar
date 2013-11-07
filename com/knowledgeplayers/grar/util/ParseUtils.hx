@@ -40,6 +40,16 @@ class ParseUtils {
 		return result;
 	}
 
+	public static inline function parseListOfIntValues(list: String, separator: String = ","):Array<Int>
+	{
+		var result = new Array<Int>();
+		var list = parseListOfValues(list, separator);
+		for(elem in list){
+			result.push(Std.parseInt(elem));
+		}
+		return result;
+	}
+
 	public static function updateIconsXml(value:String, xmls:GenericStack<Xml>):Void
 	{
 		for(elem in xmls){

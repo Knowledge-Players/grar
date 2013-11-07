@@ -40,17 +40,19 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		x = y = 0;
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
+			if(tileSprite != null)
+				origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY, alpha: tileSprite.alpha};
 			set_visible(true);
 			if(onComplete != null)
 				onComplete();
 		}, 1000);
-		if(tileSprite != null)
-			origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY, alpha: tileSprite.alpha};
 	}
 
 	#if !flash override #end public function set_x(x:Float):Float
 	{
-		return tileSprite.x = x;
+		tileSprite.x = x;
+		trueLayer.render();
+		return x;
 	}
 
 	#if !flash override #end public function get_x():Float
@@ -60,7 +62,9 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 
 	#if !flash override #end public function set_y(y:Float):Float
 	{
-		return tileSprite.y = y;
+		tileSprite.y = y;
+		trueLayer.render();
+		return y;
 	}
 
 	override public function set_visible(visible:Bool):Bool

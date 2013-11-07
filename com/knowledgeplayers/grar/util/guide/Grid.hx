@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.util.guide;
 
+import com.knowledgeplayers.grar.display.component.TileImage;
 import flash.events.Event;
 import com.knowledgeplayers.grar.display.TweenManager;
 import flash.display.DisplayObject;
@@ -60,7 +61,7 @@ class Grid implements Guide {
 	/**
 	* @inherits
 	**/
-	public function add(object:DisplayObject, withTween:Bool = true):DisplayObject
+	public function add(object:DisplayObject, withTween:Bool = true, tile: Bool = false):DisplayObject
 	{
 		if(cellSize.width == 0){
 			cellSize.width = object.width;
@@ -98,8 +99,14 @@ class Grid implements Guide {
 		if(withTween)
 			TweenManager.tween(object, 0.5, {x: targetX, y: targetY, width: cellSize.width, height: cellSize.height});
 		else{
-			object.x = targetX;
-			object.y = targetY;
+			if(tile){
+				cast(object, TileImage).set_x(targetX);
+				cast(object, TileImage).set_y(targetY);
+			}
+			else{
+				object.x = targetX;
+				object.y = targetY;
+			}
 			fitInGrid(object);
 		}
 		object.addEventListener(Event.CHANGE, function(e){

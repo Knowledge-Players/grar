@@ -39,11 +39,12 @@ class Notebook
 		parseContent(AssetsStorage.getXml(file));
 	}
 
-	public inline function getAllNotes():Iterable<Note>
+	public inline function getAllNotes():Array<Note>
 	{
 		var notes = new Array<Note>();
 		for(page in pages)
-			notes = notes.concat(page.notes);
+			for(chapter in page.chapters)
+				notes = notes.concat(chapter.notes);
 		return notes;
 	}
 
@@ -65,13 +66,17 @@ class Notebook
 			items.add(item.att.ref);
 		for(page in fast.nodes.Page){
 			var title = {ref: page.node.Title.att.ref, content: page.node.Title.att.content};
-			var contentRef = page.node.Notes.att.ref;
-			var titleRef = page.node.Notes.att.titleRef;
-			var newPage:Page = {title: title, contentRef: contentRef, titleRef: titleRef, tabContent: page.att.tabContent, icon: page.att.icon, notes: new Array<Note>()};
-			for(noteFast in page.node.Notes.nodes.Note){
-				var note = new Note(noteFast);
-				newPage.notes.push(note);
-				GameManager.instance.inventory.set(note.ref, note);
+			var contentRef = page.node.Chapter.att.ref;
+			var titleRef = page.node.Chapter.att.titleRef;
+			var newPage:Page = {title: title, contentRef: contentRef, titleRef: titleRef, tabContent: page.att.tabContent, icon: page.att.icon, chapters: new Array<Chapter>()};
+			for(chapter in page.nodes.Chapter){
+				var chap: Chapter = {notes: new Array<Note>(), icon: chapter.att.icon, name: chapter.att.name, subtitle: chapter.att.subtitle, isActivated: chapter.has.unlocked ? chapter.att.unlocked == "true" : false};
+				for(noteFast in chapter.nodes.Note){
+					var note = new Note(noteFast);
+					chap.notes.push(note);
+					GameManager.instance.inventory.set(note.ref, note);
+				}
+				newPage.chapters.push(chap);
 			}
 			pages.push(newPage);
 		}
@@ -81,9 +86,17 @@ class Notebook
 
 typedef Page = {
 	var title: {ref: String, content: String};
-	var notes: Array<Note>;
+	var chapters: Array<Chapter>;
 	var contentRef: String;
 	var titleRef: String;
 	var tabContent: String;
 	var icon: String;
+}
+
+typedef Chapter = {
+	var notes: Array<Note>;
+	var icon: String;
+	var name: String;
+	var subtitle: String;
+	var isActivated: Bool;
 }

@@ -4,14 +4,6 @@ import haxe.xml.Fast;
 import com.knowledgeplayers.grar.structure.Token;
 
 class Note extends Token {
-	/**
-	* Subtitle of the note
-	**/
-	public var subtitle (default, default):String;
-	/**
-	* Icon of the note
-	**/
-	public var icon (default, default):String;
 
 	/**
 	* URL of the video contained in this note
@@ -23,8 +15,6 @@ class Note extends Token {
 		super(note);
 		type = "note";
 		if(note != null){
-			subtitle = note.has.subtitle ? note.att.subtitle : null;
-			icon = note.has.icon ? note.att.icon : null;
 			video = note.has.video ? note.att.video : null;
 		}
 	}
