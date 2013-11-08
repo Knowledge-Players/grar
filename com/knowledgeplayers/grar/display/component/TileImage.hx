@@ -83,7 +83,7 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 				actuator.onComplete(onComplete);
 
 			transform = TweenManager.applyTransition(tileSprite.layer.view, transformation);
-			trace("Applying transformation '"+transformation+"'. Transformation found ? "+(transform != null ? "yes" : "no"));
+			//trace("Applying transformation '"+transformation+"'. Transformation found ? "+(transform != null ? "yes" : "no"));
 			//if(transform != null)
 			//	transform.onUpdate(renderNeeded);
 		}

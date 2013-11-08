@@ -21,16 +21,17 @@ class StripPart extends StructurePart {
 
 	}
 	// Private
+    //TODO override parseElement
+    override private function parseContent(content:Xml):Void
+    {
+        var partFast:Fast = new Fast(content).node.Part;
 
-	override private function parseElement(node: Fast):Void
-	{
-		super.parseElement(node);
-
-		if(node.name.toLowerCase() == "pattern"){
-			var pattern:Pattern = PatternFactory.createPatternFromXml(node);
-			pattern.init(node);
-			elements.push(pattern);
-		}
-	}
+        for(patternNode in partFast.nodes.Pattern){
+            var pattern:Pattern = PatternFactory.createPatternFromXml(patternNode);
+            pattern.init(patternNode);
+            elements.push(pattern);
+        }
+        super.parseContent(content);
+    }
 
 }

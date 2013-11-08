@@ -85,7 +85,8 @@ class StripDisplay extends PartDisplay {
 
 	override private function displayBackground(background:String):Void
 	{
-		super.displayBackground(currentBox.background);
+        if (currentBox != null)
+		    super.displayBackground(currentBox.background);
 	}
 
 	override private function setText(item:TextItem, isFirst:Bool = true):Void
@@ -113,7 +114,7 @@ class StripDisplay extends PartDisplay {
 
 	override private function displayPart():Void
 	{
-		var box: BoxDisplay = boxes.get(currentBox.name);
+        var box: BoxDisplay = boxes.get(currentBox.name);
 		if(!box.textFields.exists(currentBoxItem.ref))
 			throw "[StripDisplay] There is no TextField with ref \""+currentBoxItem.ref+"\"";
 		else
