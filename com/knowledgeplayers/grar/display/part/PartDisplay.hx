@@ -568,11 +568,10 @@ class PartDisplay extends KpDisplay {
 			else
 				return false;
 		}
-		// If the character is not the current speaker
-		if(Std.is(object, CharacterDisplay) && object != currentSpeaker)
-			return false;
-		else if(Std.is(object, CharacterDisplay))
-			return true;
+		// If the character is present on the scene
+		if(Std.is(object, CharacterDisplay)){
+			return (object == currentSpeaker || (currentItem != null && currentItem.isText() && Lambda.has(cast(currentItem, TextItem).images, key)));
+		}
 
 		if(currentItem != null && currentItem.isText()){
 			var text = cast(currentItem, TextItem);
@@ -581,17 +580,12 @@ class PartDisplay extends KpDisplay {
 			if(Std.is(object, ScrollPanel) && key != text.ref)
 				return false;
 			if(Std.is(object, Image) || Std.is(object,SimpleContainer)){
-				var exists = false;
-
-				for(item in text.images){
-					if(key == item){
-						exists = true;
-						currentItems.add(object);
-						break;
-					}
+				if(Lambda.has(text.images, key)){
+					currentItems.add(object);
+					return true;
 				}
-
-				return exists;
+				else
+					return false;
 			}
 		}
 		else{
