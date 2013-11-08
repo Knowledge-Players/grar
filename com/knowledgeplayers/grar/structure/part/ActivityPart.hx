@@ -80,7 +80,8 @@ class ActivityPart extends StructurePart
 		var contextuals = getRulesByType("contextual");
 		for(rule in contextuals){
 			if(rule.value == "addtonotebook"){
-				for(input in getInputs()){
+				var inputs = getInputs();
+				for(input in inputs){
 					if(input.selected)
 						GameManager.instance.activateToken(input.id);
 				}

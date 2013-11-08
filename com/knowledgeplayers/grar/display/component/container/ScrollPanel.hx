@@ -79,6 +79,7 @@ class ScrollPanel extends WidgetContainer {
 		var maskLine = new Sprite();
 
 		var text = new Sprite();
+		var minPaddingLeft = Math.POSITIVE_INFINITY;
 		for(element in KpTextDownParser.parse(contentString)){
 			if(style != null)
 				element.style = style;
@@ -98,6 +99,8 @@ class ScrollPanel extends WidgetContainer {
 				isFirst = false;
 			}
 			item.x = padding[3];
+			if(padding[3] < minPaddingLeft)
+				minPaddingLeft = padding[3];
 			item.y = offSetY;
 			offSetY += item.height + style.getLeading()[1];
 			if(scrollable){
@@ -114,7 +117,7 @@ class ScrollPanel extends WidgetContainer {
 		content.alpha = contentAlpha;
 		content.addChild(text);
 		if(!scrollable)
-			DisplayUtils.initSprite(maskLine, text.width, maskHeight);
+			DisplayUtils.initSprite(maskLine, text.width, maskHeight, 0, 1, minPaddingLeft);
 		content.addChild(maskLine);
 		text.mask = maskLine;
 		addChild(content);

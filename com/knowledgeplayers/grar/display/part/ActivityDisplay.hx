@@ -209,12 +209,6 @@ class ActivityDisplay extends PartDisplay {
 		if(Std.is(object, DefaultButton))
 			return part.buttons.exists(key);
 
-		/*else{
-			for(elem in part.elements)
-				if(elem.ref == key)
-					return true;
-		}*/
-
 		return super.mustBeDisplayed(key);
 	}
 
@@ -250,7 +244,8 @@ class ActivityDisplay extends PartDisplay {
 						GameManager.instance.displayPart(cast(target, Part));
 				case "toggle":
 					target.toggle();
-					validatedInputs.set(target, target.toggleState == "active");
+					buttonsToInputs.get(target).selected = target.toggleState == "active";
+					validatedInputs.set(target, buttonsToInputs.get(target).selected);
 			}
 		}
 		if(autoCorrect)

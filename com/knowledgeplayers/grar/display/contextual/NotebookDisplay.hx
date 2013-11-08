@@ -229,7 +229,11 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				addChild(step);
 			}
 		}
-		displayNote(chapterMap.get(target).notes[0]);
+		var i = 0;
+		while(i < notes.length && notes[i].isActivated)
+			i++;
+		if(i < notes.length)
+			displayNote(chapterMap.get(target).notes[i]);
 	}
 
 	private function displayNote(note: Note):Void
@@ -280,7 +284,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				notes[i].isActivated = true;
 				for(button in chapterMap.keys()){
 					if(Lambda.has(chapterMap.get(button).notes, notes[i])){
-						button.visible = true;
+						button.visible = button.enabled = true;
 						button.alpha = 1;
 					}
 				}

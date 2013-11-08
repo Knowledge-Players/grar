@@ -333,7 +333,7 @@ class KpDisplay extends Sprite {
 		var button = cast(e.target, DefaultButton);
 		for(b in buttonGroups.get(button.group)){
 			if(b != button)
-				b.toggle();
+				b.toggle(button.toggleState != "active");
 		}
 	}
 
