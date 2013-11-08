@@ -162,12 +162,7 @@ class PartDisplay extends KpDisplay {
 		}
 
 		else if(currentElement.isPart()){
-			if(currentItem != null){
-				removeChild(displays.get(currentItem.ref));
-			for(i in 0...numChildren)
-				if(Std.is(getChildAt(i), DefaultButton))
-					removeChildAt(i);
-			}
+			cleanDisplay();
 			var event = new PartEvent(PartEvent.ENTER_SUB_PART);
 			event.part = cast(currentElement, Part);
 			dispatchEvent(event);
@@ -391,18 +386,8 @@ class PartDisplay extends KpDisplay {
 		if(isFirst){
 
 			displayBackground(item.background);
+			// cleanDisplay()
 
-			for(i in 0...numChildren){
-				if(Std.is(getChildAt(i), ScrollPanel))
-					toRemove.add(getChildAt(i));
-			}
-			for(item in currentItems){
-				toRemove.add(item);
-			}
-			for(obj in toRemove){
-				if(contains(obj))
-					removeChild(obj);
-			}
 		}
 		if(item.isText()){
 			var text = cast(item, TextItem);
@@ -517,13 +502,17 @@ class PartDisplay extends KpDisplay {
 	{
 		var toRemove = new GenericStack<DisplayObject>();
 		for(i in 0...numChildren){
-			if(Std.is(getChildAt(i), DefaultButton))
+			if(Std.is(getChildAt(i), DefaultButton) || Std.is(getChildAt(i), ScrollPanel))
 				toRemove.add(getChildAt(i));
+		}
+		for(item in currentItems){
+			toRemove.add(item);
 		}
 		if(inventory != null && contains(inventory))
 			toRemove.add(inventory);
-		for(button in toRemove)
-			removeChild(button);
+		for(obj in toRemove)
+			if(contains(obj))
+				removeChild(obj);
 	}
 
 	private function mustBeDisplayed(key:String):Bool
