@@ -390,6 +390,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 	override private function addElement(elem:Widget, node:Fast):Void
 	{
+		super.addElement(elem, node);
 		addChild(elem);
 	}
 

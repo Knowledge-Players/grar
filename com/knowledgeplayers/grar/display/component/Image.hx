@@ -35,7 +35,7 @@ class Image extends Widget{
             if(xml.att.src.indexOf(".") < 0)
             {
                 var color = ParseUtils.parseColor(xml.att.src);
-                addChild(DisplayUtils.initSprite(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), color.color, color.alpha, xml.has.x ? Std.parseFloat(xml.att.x):0, xml.has.y ? Std.parseFloat(xml.att.y):0));
+                addChild(DisplayUtils.initSprite(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), color.color, color.alpha));
             }else{
                 #if flash
 	                bitmap = new Bitmap(AssetsStorage.getBitmapData(xml.att.src));

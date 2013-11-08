@@ -131,6 +131,8 @@ class KpDisplay extends Sprite {
 
 			for (elem in child.elements){
 				var delay = elem.has.delay?Std.parseFloat(elem.att.delay):0;
+				if(!displays.exists(elem.att.ref))
+					throw "[KpDisplay] Can't add unexistant widget '"+elem.att.ref+"' in timeline '"+child.att.ref+"'.";
 				timeLine.addElement(displays.get(elem.att.ref),elem.att.transition,delay);
 			}
 
@@ -309,15 +311,8 @@ class KpDisplay extends Sprite {
 			elem.zz = 0;
 		else
 			elem.zz = zIndex;
-		if(node.has.id && !node.has.ref){
-			displays.set(node.att.id, elem);
-		}
-		else if(!node.has.ref){
-			displays.set(node.att.src, elem);
-		}
-		else{
-			displays.set(node.att.ref, elem);
-		}
+
+		displays.set(node.att.ref, elem);
 
 		ResizeManager.instance.addDisplayObjects(elem, node);
 		zIndex++;
