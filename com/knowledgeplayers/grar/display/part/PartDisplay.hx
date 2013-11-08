@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.structure.part.ActivityPart;
 import com.knowledgeplayers.grar.display.component.container.SoundPlayer;
 import com.knowledgeplayers.grar.structure.part.sound.item.SoundItem;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
@@ -20,7 +19,6 @@ import com.knowledgeplayers.grar.display.ResizeManager;
 import com.knowledgeplayers.grar.display.TweenManager;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.event.GameEvent;
-
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.structure.part.Part;
@@ -552,7 +550,14 @@ class PartDisplay extends KpDisplay {
 		}
 		// If the character is present on the scene
 		if(Std.is(object, CharacterDisplay)){
-			return (object == currentSpeaker || (currentItem != null && currentItem.isText() && Lambda.has(cast(currentItem, TextItem).images, key)));
+			if(object == currentSpeaker)
+				return true;
+			else if((currentItem != null && currentItem.isText() && Lambda.has(cast(currentItem, TextItem).images, key))){
+				currentItems.add(object);
+				return true;
+			}
+			else
+				return false;
 		}
 
 		if(currentItem != null && currentItem.isText()){
