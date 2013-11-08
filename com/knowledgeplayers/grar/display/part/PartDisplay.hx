@@ -89,15 +89,8 @@ class PartDisplay extends KpDisplay {
 		else
 			displayLoaded = true;
 
-		if(currentElement != null && currentElement.isPattern()){
-			// Si tu n'as jamais vu cette trace, supprime le bloc
-			trace("currentElement n'est pas null");
-			startPattern(cast(currentElement, Pattern));
-		}
-		else{
-			localeLoaded = true;
-			checkPartLoaded();
-		}
+		localeLoaded = true;
+		checkPartLoaded();
 	}
 
 	public function exitPart():Void

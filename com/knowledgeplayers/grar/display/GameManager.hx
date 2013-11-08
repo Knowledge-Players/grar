@@ -119,6 +119,8 @@ class GameManager extends EventDispatcher {
 
 	public function activateToken(tokenName:String):Void
 	{
+		if(!inventory.exists(tokenName))
+			throw '[GameManager] Unknown token "tokenName".';
 		inventory.get(tokenName).isActivated = true;
 		var tokenEvent = new TokenEvent(TokenEvent.ADD);
 

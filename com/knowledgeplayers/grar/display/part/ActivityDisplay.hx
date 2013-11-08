@@ -44,18 +44,24 @@ class ActivityDisplay extends PartDisplay {
 
 	override public function nextElement(startIndex:Int = -1):Void
 	{
-		for(elem in part.elements){
-			if(elem.isText()){
-				setupItem(cast(elem, Item));
+		// If startIndex == 0, it's called from startPart, no verification needed
+		if(startIndex == 0 || cast(part, ActivityPart).hasNextGroup()){
+			for(elem in part.elements){
+				if(elem.isText()){
+					setupItem(cast(elem, Item));
+				}
 			}
+			displayPart();
 		}
-		displayPart();
+		else
+			endActivity();
 	}
 
 	override public function startPart(startPosition:Int = -1):Void
 	{
 		var activity = cast(part, ActivityPart);
-		var currentGroup: Fast = groups.get(activity.currentGroup.ref);
+
+		var currentGroup: Fast = groups.get(activity.getNextGroup().ref);
 		// Set guide to place inputs
 		var guideNode = new Fast(currentGroup.x.firstElement());
 		var guide: Guide = switch(guideNode.name.toLowerCase()){
@@ -109,7 +115,7 @@ class ActivityDisplay extends PartDisplay {
 			throw "[ActivityDisplay] Multiple correction rules in activity '"+part.id+"'. Pick only one!";
 		if(validationRules.length == 1){
 			if(!displays.exists("validate"))
-				throw "[ActivityDisplay] You must have a button with ref 'validate' in order to use the validation rule.";
+				throw "[ActivityDisplay] You must have a button with ref 'validate' in order to use the correction rule.";
 			validationButton = cast(displays.get("validate"), DefaultButton);
 			switch(validationRules[0].value){
 				case "auto": autoCorrect = true;
@@ -139,12 +145,12 @@ class ActivityDisplay extends PartDisplay {
 			}
 			else
 				throw "[ActivityDisplay] There is more than 2 limits of selection in activity '"+part.id+"'. Just set a minimum and a maximum.";
-			if(minSelect > 0)
+			if(minSelect > 0 && validationButton != null)
 				validationButton.enabled = false;
 		}
 
 
-		super.startPart(startPosition);
+		super.startPart(0);
 	}
 
 	override public function parseContent(content:Xml):Void
@@ -255,8 +261,10 @@ class ActivityDisplay extends PartDisplay {
 		var validated = Lambda.count(validatedInputs, function(input){
 			return input;
 		});
+
 		// Activate validation button
-		validationButton.enabled = (validated >= minSelect);
+		if(validationButton != null)
+			validationButton.enabled = (validated >= minSelect);
 		// Toggle inputs
 		if(validated == maxSelect)
 			disableInputs();

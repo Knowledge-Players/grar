@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import haxe.ds.GenericStack;
 import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import haxe.xml.Fast;
@@ -8,10 +9,6 @@ using StringTools;
 
 class ActivityPart extends StructurePart
 {
-	/**
-	* Groups of input in this activity
-	**/
-	public var groups (default, null): Map<String, Group>;
 
 	/**
 	* Rules of this activity
@@ -24,21 +21,33 @@ class ActivityPart extends StructurePart
 	public var inputs (default, null):Array<Input>;
 
 	/**
-	* Group currently active
+	* Groups of input in this activity
 	**/
-	public var currentGroup (default, null): Group;
+	private var groups: Array<Group>;
+	private var groupIndex: Int;
 
 	public function new()
 	{
 		super();
-		groups = new Map<String, Group>();
+		groups = new Array<Group>();
 		rules = new Map<String, Rule>();
 		inputs = new Array<Input>();
+		groupIndex = -1;
 	}
 
-	public function getInputs():Array<Input>
+	public inline function getInputs():Array<Input>
 	{
-		return inputs.concat(currentGroup.inputs);
+		return inputs.concat(groups[groupIndex].inputs);
+	}
+
+	public inline function hasNextGroup():Bool
+	{
+		return groupIndex < groups.length-1;
+	}
+
+	public inline function getNextGroup():Group
+	{
+		return groups[++groupIndex];
 	}
 
 	public function getRulesByType(type: String, ?group: Group):Array<Rule>
@@ -139,9 +148,7 @@ class ActivityPart extends StructurePart
 					for(input in child.elements)
 						inputs.push(createInput(input));
 					var group: Group = {id: child.att.id, ref: child.att.ref, rules: rules, inputs: inputs};
-					groups.set(group.id, group);
-					if(currentGroup == null)
-						currentGroup = group;
+					groups.push(group);
 
 				case "rule":
 					var rule: Rule = {id: child.att.id, type: child.att.type.toLowerCase(), value: child.att.value.toLowerCase()};
