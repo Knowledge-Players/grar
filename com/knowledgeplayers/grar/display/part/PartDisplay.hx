@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.SoundPlayer;
 import com.knowledgeplayers.grar.structure.part.sound.item.SoundItem;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
@@ -33,6 +34,8 @@ import flash.events.Event;
 import flash.media.Sound;
 import flash.media.SoundChannel;
 
+using StringTools;
+
 /**
  * Display of a part
  */
@@ -50,7 +53,7 @@ class PartDisplay extends KpDisplay {
 	private var previousBackground:String;
 	private var localeLoaded:Bool = false;
 	private var displayLoaded:Bool = false;
-	private var currentItems:GenericStack<DisplayObject>;
+	private var currentItems:GenericStack<Widget>;
 	private var currentItem:Item;
 	private var inventory:InventoryDisplay;
 	private var itemSound:Sound;
@@ -66,7 +69,7 @@ class PartDisplay extends KpDisplay {
 		super();
 		this.part = part;
 		resizeD = ResizeManager.get_instance();
-		currentItems = new GenericStack<DisplayObject>();
+		currentItems = new GenericStack<Widget>();
 	}
 
 	/**
@@ -315,7 +318,7 @@ class PartDisplay extends KpDisplay {
 	}
 
 
-	private function displayBackground(background:String):Void
+	private function setBackground(background:String):Void
 	{
 		if(background != null && background != ""){
 			var sameBackground = true;
@@ -356,15 +359,12 @@ class PartDisplay extends KpDisplay {
 					removeChild(currentSpeaker);
 				}
 				currentSpeaker = char;
-                currentSpeaker.transitionIn=transition;
 
 				if(char.nameRef != null && displays.exists(char.nameRef))
 					cast(displays.get(char.nameRef), ScrollPanel).setContent(currentSpeaker.model.getName());
 				else if(char.nameRef != null)
 					throw "[PartDisplay] There is no TextArea with ref " + char.nameRef;
 			}
-			if(!contains(currentSpeaker))
-				addChild(currentSpeaker);
 		}
 		else if(currentSpeaker != null && contains(currentSpeaker)){
 			removeChild(currentSpeaker);
@@ -381,12 +381,9 @@ class PartDisplay extends KpDisplay {
 
 		var toRemove = new GenericStack<DisplayObject>();
 
-		if(isFirst){
+		if(isFirst)
+			setBackground(item.background);
 
-			displayBackground(item.background);
-			// cleanDisplay()
-
-		}
 		if(item.isText()){
 			var text = cast(item, TextItem);
 
@@ -435,6 +432,38 @@ class PartDisplay extends KpDisplay {
             displayPart();
         }
 
+		// Dynamic timeline
+		var tl: Timeline = timelines.get(currentItem.timelineIn);
+		if(tl != null){
+			for(elem in tl.elements){
+				var bkgRegExp: EReg = ~/\$currentBackground/;
+				if(elem.widget.ref == "$currentSpeaker"){
+					elem.widget = currentSpeaker;
+					trace("currentSpeaker replaced by "+currentSpeaker.ref);
+				}
+				else if(bkgRegExp.match(elem.widget.ref)){
+					var bkgs = previousBackground.split(",");
+					var index = 0;
+					if(Std.parseInt(bkgRegExp.matchedRight()) != null)
+						index = Std.parseInt(bkgRegExp.matchedRight());
+					elem.widget = displays.get(bkgs[index]);
+					trace("currentBackground"+(index != 0?Std.string(index):"")+" replaced by "+bkgs[index]);
+				}
+				else if(elem.widget.ref.startsWith("$character")){
+					var index = Std.parseInt(elem.widget.ref.replace("$character", ""));
+					var i = 0;
+					for(item in currentItems){
+						if(Std.is(item, CharacterDisplay))
+							i++;
+						if(i == index){
+							elem.widget = item;
+							trace("character"+index+" replaced by "+item.ref);
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private function setText(item:TextItem, isFirst:Bool = true):Void
@@ -479,8 +508,10 @@ class PartDisplay extends KpDisplay {
 		if(currentItem != null)
 			timelineIn = currentItem.timelineIn;
 		for(obj in array){
+			trace("in array: "+obj.ref);
 			obj.onComplete = function(){
 				objAdded++;
+				trace(objAdded, array.length, obj.ref);
 				if(objAdded == array.length){
 					if(timelineIn != null)
 						timelines.get(timelineIn).play();

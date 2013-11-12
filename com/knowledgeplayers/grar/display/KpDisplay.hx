@@ -127,16 +127,23 @@ class KpDisplay extends Sprite {
 		}
 
 		for(child in displayFast.nodes.Timeline){
-			var timeLine = new Timeline(child.att.ref);
+			var timeline = new Timeline(child.att.ref);
 
 			for (elem in child.elements){
 				var delay = elem.has.delay?Std.parseFloat(elem.att.delay):0;
-				if(!displays.exists(elem.att.ref))
+				// Creating mock widget for dynamic timeline
+				if(elem.att.ref.startsWith("$")){
+					var mock = new Image();
+					mock.ref = elem.att.ref;
+					timeline.addElement(mock, elem.att.transition, delay);
+				}
+				else if(!displays.exists(elem.att.ref))
 					throw "[KpDisplay] Can't add unexistant widget '"+elem.att.ref+"' in timeline '"+child.att.ref+"'.";
-				timeLine.addElement(displays.get(elem.att.ref),elem.att.transition,delay);
+				else
+					timeline.addElement(displays.get(elem.att.ref),elem.att.transition,delay);
 			}
 
-			timelines.set(child.att.ref,timeLine);
+			timelines.set(child.att.ref,timeline);
 		}
 		for (elem in displays){
 			if(Std.is(elem, DefaultButton))

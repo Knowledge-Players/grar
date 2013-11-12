@@ -250,5 +250,4 @@ class Widget extends Sprite{
 			}
 		}
 	}
-
 }

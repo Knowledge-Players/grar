@@ -122,6 +122,12 @@ class ActivityPart extends StructurePart
 		return idNext;
 	}
 
+	override public function restart():Void
+	{
+		super.restart();
+		groupIndex = -1;
+	}
+
 	override public function toString():String
 	{
 		return 'ref: $ref, groups: $groups, rules: $rules, inputs: $inputs';

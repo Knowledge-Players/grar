@@ -195,6 +195,7 @@ class ActivityDisplay extends PartDisplay {
 	private function endActivity(?target:DefaultButton):Void
 	{
 		var idNext = cast(part, ActivityPart).endActivity();
+		part.restart();
 
 		if(idNext != null){
 			var target = part.getElementById(idNext);

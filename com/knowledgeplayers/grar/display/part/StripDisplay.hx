@@ -83,10 +83,10 @@ class StripDisplay extends PartDisplay {
 		}
 	}
 
-	override private function displayBackground(background:String):Void
+	override private function setBackground(background:String):Void
 	{
         if (currentBox != null)
-		    super.displayBackground(currentBox.background);
+		    super.setBackground(currentBox.background);
 	}
 
 	override private function setText(item:TextItem, isFirst:Bool = true):Void
@@ -103,7 +103,7 @@ class StripDisplay extends PartDisplay {
 	override private function setupItem(item:Item, ?isFirst:Bool = true):Void
 	{
 		if(isFirst)
-			displayBackground(item.background);
+			setBackground(item.background);
 
 		if(item.isText()){
 			var text = cast(item, TextItem);
