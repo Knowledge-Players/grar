@@ -122,11 +122,12 @@ class Widget extends Sprite{
 		return transitionOut = transition;
 	}
 
-	#if flash public function set_visible(visible:Bool):Bool
+	@:setter(alpha)
+	public function set_alpha(alpha:Float):Void
 	{
-		return this.visible = visible;
+		visible = alpha == 1;
+		super.alpha = alpha;
 	}
-	#end
 
 	override public function toString():String
 	{
@@ -140,13 +141,8 @@ class Widget extends Sprite{
 
 	public function reset(): Void
 	{
-		for(field in Reflect.fields(origin)){
+		for(field in Reflect.fields(origin))
 			Reflect.setField(this, field, Reflect.field(origin, field));
-			if(field == "alpha"){
-				// Auto visible
-				Reflect.setField(this, "visible", alpha > 0);
-			}
-		}
 	}
 
 	// Privates

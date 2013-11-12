@@ -204,7 +204,7 @@ class TweenManager {
 
 		display.alpha = inOut[0];
 
-		return Actuate.tween(display, fade.duration, { alpha: inOut[1] }).autoVisible(true).ease(getEasing(fade));
+		return Actuate.tween(display, fade.duration, { alpha: inOut[1] }).autoVisible(false).ease(getEasing(fade));
 	}
 
 	/**

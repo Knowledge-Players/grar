@@ -439,7 +439,6 @@ class PartDisplay extends KpDisplay {
 				var bkgRegExp: EReg = ~/\$currentBackground/;
 				if(elem.widget.ref == "$currentSpeaker"){
 					elem.widget = currentSpeaker;
-					trace("currentSpeaker replaced by "+currentSpeaker.ref);
 				}
 				else if(bkgRegExp.match(elem.widget.ref)){
 					var bkgs = previousBackground.split(",");
@@ -447,7 +446,6 @@ class PartDisplay extends KpDisplay {
 					if(Std.parseInt(bkgRegExp.matchedRight()) != null)
 						index = Std.parseInt(bkgRegExp.matchedRight());
 					elem.widget = displays.get(bkgs[index]);
-					trace("currentBackground"+(index != 0?Std.string(index):"")+" replaced by "+bkgs[index]);
 				}
 				else if(elem.widget.ref.startsWith("$character")){
 					var index = Std.parseInt(elem.widget.ref.replace("$character", ""));
@@ -457,7 +455,6 @@ class PartDisplay extends KpDisplay {
 							i++;
 						if(i == index){
 							elem.widget = item;
-							trace("character"+index+" replaced by "+item.ref);
 							break;
 						}
 					}
@@ -508,14 +505,10 @@ class PartDisplay extends KpDisplay {
 		if(currentItem != null)
 			timelineIn = currentItem.timelineIn;
 		for(obj in array){
-			trace("in array: "+obj.ref);
 			obj.onComplete = function(){
 				objAdded++;
-				trace(objAdded, array.length, obj.ref);
-				if(objAdded == array.length){
-					if(timelineIn != null)
-						timelines.get(timelineIn).play();
-				}
+				if(objAdded == array.length && timelineIn != null)
+					timelines.get(timelineIn).play();
 			};
 			if(obj.zz == 0)
 				addChildAt(obj, 0);

@@ -133,6 +133,13 @@ class DefaultButton extends WidgetContainer {
 
 	}
 
+	@:setter(visible)
+	public function set_visible(visible: Bool): Void
+	{
+		enabled = visible;
+		super.visible = visible;
+	}
+
 	/**
      * Enable or disable the button
      * @param	activate : True to activate the button
@@ -368,6 +375,8 @@ class DefaultButton extends WidgetContainer {
 
 	private inline function onMouseEvent(event:MouseEvent):Void
 	{
+		if(!enabled)
+			return ;
 		switch (event.type) {
 			case MouseEvent.MOUSE_OUT: onOut(event);
 			case MouseEvent.MOUSE_OVER: onOver(event);

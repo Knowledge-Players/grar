@@ -67,7 +67,7 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		return y;
 	}
 
-	override public function set_visible(visible:Bool):Bool
+	public function set_visible(visible:Bool):Bool
 	{
 		if(tileSprite == null)
 			return isVisible = visible;
