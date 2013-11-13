@@ -189,30 +189,7 @@ class Zone extends KpDisplay {
 		return elem;
 	}
 
-	override private function createText(textNode:Fast):Widget
-	{
-		var panel = new ScrollPanel(textNode);
-		addElement(panel, textNode);
-		return panel;
-	}
-
-    //TODO creation de background du menu (en attendant de le mettre au bon endroit ) kévin
-
-    public function createSpriteFormXml(xml:Fast):Widget
-    {
-        var background = new Widget();
-
-        var color: Color;
-
-        if(xml.has.color)
-            color = ParseUtils.parseColor(xml.att.color);
-        else
-            color = {color: 0xFFFFFF, alpha: 1};
-	    DisplayUtils.initSprite(background, Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), color.color, color.alpha, Std.parseFloat(xml.att.x), Std.parseFloat(xml.att.y));
-
-        return background;
-    }
-
+	// TODO is this still useful ?
 	override private function createImage(itemNode:Fast):Widget
 	{
 		var spritesheet = itemNode.has.spritesheet ? itemNode.att.spritesheet:"ui";
@@ -223,13 +200,7 @@ class Zone extends KpDisplay {
 			addElement(img, itemNode);
 			return img;
 		}
-		else if(itemNode.has.color){
-             img = createSpriteFormXml(itemNode);
-
-             addElement(img,itemNode);
-			return null;
-
-        }else{
+		else{
 			if(!layers.exists(spritesheet)){
 				var layer = new TileLayer(UiFactory.tilesheet);
 				layers.set(spritesheet, layer);
