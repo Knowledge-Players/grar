@@ -133,11 +133,11 @@ class DefaultButton extends WidgetContainer {
 
 	}
 
-	@:setter(visible)
-	public function set_visible(visible: Bool): Void
+	@:setter(alpha)
+	override public function set_alpha(alpha:Float):Void
 	{
-		enabled = visible;
-		super.visible = visible;
+		enabled = alpha == 1;
+		super.alpha = alpha;
 	}
 
 	/**

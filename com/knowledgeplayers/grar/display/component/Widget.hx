@@ -125,7 +125,7 @@ class Widget extends Sprite{
 	@:setter(alpha)
 	public function set_alpha(alpha:Float):Void
 	{
-		visible = alpha == 1;
+		visible = alpha != 0;
 		super.alpha = alpha;
 	}
 
