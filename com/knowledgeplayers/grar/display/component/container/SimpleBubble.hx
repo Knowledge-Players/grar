@@ -1,187 +1,162 @@
 package com.knowledgeplayers.grar.display.component.container;
 
-
 import flash.geom.Matrix;
 import flash.display.GradientType;
 import flash.display.Graphics;
 import flash.geom.Point;
-import flash.geom.Rectangle;
 import flash.display.JointStyle;
 import flash.display.CapsStyle;
 import flash.display.LineScaleMode;
 import flash.display.Sprite;
 
-// TODO extends WidgetContainer
-class SimpleBubble extends Sprite{
+class SimpleBubble extends WidgetContainer{
 
-    public function new(?width:Float,?height:Float,?color:Array<String>,?arrowX:Float=0,?arrowY:Float=0,?radius:Float=0,?line:Float=0,?colorLine:Int=0xFFFFFF,?shadow:Float=0,?gap:Float=5,?alphasBulle:Array<String>,?bubbleX:Float=0,?bubbleY:Float=0){
+    public function new(?width:Float,?height:Float,?colors:Array<Int>,?arrowX:Float=0,?arrowY:Float=0,?radius:Array<Float>,?line:Float=0,?colorLine:Int=0xFFFFFF,?shadow:Float=0,?gap:Float=5,?alphas:Array<Float>,?bubbleX:Float=0,?bubbleY:Float=0){
 
         super();
+
         var bubble:Sprite = new Sprite();
-        bubble.x = bubbleX;
-        bubble.y = bubbleY;
+        x = bubbleX;
+        y = bubbleY;
 
-        if(line !=0)
-        {
+	    // Fill bubble
+	    if(line !=0)
             bubble.graphics.lineStyle(line,colorLine,1,true,LineScaleMode.NONE,CapsStyle.SQUARE,JointStyle.ROUND);
-
+        if (colors.length == 1){
+            bubble.graphics.beginFill(colors[0], alphas[0]);
         }
-        if (color.length ==1){
-            bubble.graphics.beginFill(Std.parseInt(color[0]),Std.parseFloat(alphasBulle[0]));
-        }else{
-            var alphas:Array<Float> = [Std.parseFloat(alphasBulle[0]), Std.parseFloat(alphasBulle[1])];
+        else{
             var ratios:Array<Int> = [0x00, 0xFF];
             var matr:Matrix = new Matrix();
             matr.createGradientBox(width, height, Math.PI/2, 0, 0);
-            bubble.graphics.beginGradientFill(GradientType.LINEAR,[Std.parseInt(color[0]),Std.parseInt(color[1])],alphas,ratios,matr);
+            bubble.graphics.beginGradientFill(GradientType.LINEAR,[colors[0], colors[1]],alphas,ratios,matr);
         }
+
+	    // Draw arrow
 	    var point;
 	    if(arrowX == 0 || arrowY == 0)
 	        point = new Point(width/2,height/2);
 		else
 	        point = new Point(arrowX, arrowY);
-        drawSpeechBubble(bubble, new Rectangle(0,0,width,height), radius, point,gap);
+        drawSpeechBubble(bubble, radius, width, height, point,gap);
 
         bubble.graphics.endFill();
-        if (shadow !=0){
+        if (shadow != 0){
                 bubble.filters = FilterManager.getFilter("bubbleShadow");
 	        if(bubble.filters.length == 0)
-	            trace("[SimpleBubble] No filter are specified for bubble. You must use the ref 'bubbleShadow' for it.");
+	            throw "[SimpleBubble] No filter are specified for bubble. You must use the ref 'bubbleShadow' for it.";
         }
 
-        addChild(bubble);
+	    content.addChild(bubble);
     }
 
-    public  function drawSpeechBubble(target:Sprite, rect:Rectangle, cornerRadius:Float, point:Point,gap:Float=10):Void
+    private function drawSpeechBubble(bubble: Sprite, cornerRadius:Array<Float>, width: Float, height: Float, point:Point, gap:Float = 10): Void
     {
-        var g:Graphics = target.graphics;
-        var r:Float = cornerRadius;
+        var g:Graphics = bubble.graphics;
 
-        var x:Float = rect.x;
-        var y:Float = rect.y;
-        var w:Float = rect.width;
-        var h:Float = rect.height;
+	    var x = 0;
+	    var y = 0;
         var px:Float = point.x;
         var py:Float = point.y;
-        var hgap:Float = Math.min(w - r - r, gap);
-        var left:Float = px <= x + w / 2 ?
-        (Math.max(x+r, px))
-        :(Math.min(x + w - r - hgap, px - hgap));
-        var right:Float = px <= x + w / 2?
-        (Math.max(x + r + hgap, px+hgap))
-        :(Math.min(x + w - r, px));
-        var vgap:Float = Math.min(h - r - r,gap);
-        var top:Float = py < y + h / 2 ?
-        Math.max(y + r, py)
-        :Math.min(y + h - r - vgap, py-vgap);
-        var bottom:Float = py < y + h / 2 ?
-        Math.max(y + r + vgap, py+vgap)
-        :Math.min(y + h - r, py);
+        var hgap:Float = Math.min(width - cornerRadius[0] - cornerRadius[0], gap);
+        var left:Float = px <= x + width / 2 ? (Math.max(x+cornerRadius[0], px)) : (Math.min(x + width - cornerRadius[0] - hgap, px - hgap));
+        var right:Float = px <= x + width / 2 ? (Math.max(x + cornerRadius[1] + hgap, px+hgap)) : (Math.min(x + width - cornerRadius[1], px));
+        var vgap:Float = Math.min(height - cornerRadius[2] - cornerRadius[2],gap);
+        var top:Float = py < y + height / 2 ? Math.max(y + cornerRadius[0], py) : Math.min(y + height - cornerRadius[0] - vgap, py-vgap);
+        var bottom:Float = py < y + height / 2 ? Math.max(y + cornerRadius[2] + vgap, py+vgap) : Math.min(y + height - cornerRadius[2], py);
 
-//bottom right corner
-        var a:Float = r - (r*0.707106781186547);
-        var s:Float = r - (r*0.414213562373095);
 
-        g.moveTo ( x+w,y+h-r);
-        if (r > 0)
-        {
-            if (px > x+w-r && py > y+h-r && Math.abs((px - x - w) - (py - y - h)) <= r)
-            {
+	    //bottom right corner
+	    var a:Float = cornerRadius[2] - (cornerRadius[2]*0.707106781186547); // cos45
+	    var s:Float = cornerRadius[2] - (cornerRadius[2]*0.414213562373095); // tan PI/8
+        g.moveTo ( x+width,y+height-cornerRadius[2]);
+        if(cornerRadius[2] > 0){
+            if (px > x+width-cornerRadius[2] && py > y+height-cornerRadius[2] && Math.abs((px - x - width) - (py - y - height)) <= cornerRadius[2]){
                 g.lineTo(px, py);
-                g.lineTo(x + w - r, y + h);
+                g.lineTo(x + width - cornerRadius[2], y + height);
             }
-            else
-            {
-                g.curveTo( x + w, y + h - s, x + w - a, y + h - a);
-                g.curveTo( x + w - s, y + h, x + w - r, y + h);
+            else{
+                g.curveTo( x + width, y + height - s, x + width - a, y + height - a);
+                g.curveTo( x + width - s, y + height, x + width - cornerRadius[2], y + height);
             }
         }
 
-        if (py > y + h && (px - x - w) < (py - y -h - r) && (py - y - h - r) > (x - px))
-        {
-// bottom edge
-            g.lineTo(right, y + h);
+	    // bottom edge
+        if (py > y + height && (px - x - width) < (py - y -height - cornerRadius[2]) && (py - y - height - cornerRadius[2]) > (x - px)){
+            g.lineTo(right, y + height);
             g.lineTo(px, py);
-            g.lineTo(left, y + h);
+            g.lineTo(left, y + height);
         }
 
-        g.lineTo ( x+r,y+h );
+        g.lineTo ( x+cornerRadius[3],y+height );
 
-//bottom left corner
-        if (r > 0)
-        {
-            if (px < x + r && py > y + h - r && Math.abs((px-x)+(py-y-h)) <= r)
-            {
+		//bottom left corner
+	    a = cornerRadius[3] - (cornerRadius[3]*0.707106781186547); // cos45
+	    s = cornerRadius[3] - (cornerRadius[3]*0.414213562373095); // tan PI/8
+        if (cornerRadius[3] > 0){
+            if (px < x + cornerRadius[3] && py > y + height - cornerRadius[3] && Math.abs((px-x)+(py-y-height)) <= cornerRadius[3]){
                 g.lineTo(px, py);
-                g.lineTo(x, y + h - r);
+                g.lineTo(x, y + height - cornerRadius[3]);
             }
-            else
-            {
-                g.curveTo( x+s,y+h,x+a,y+h-a);
-                g.curveTo( x, y + h - s, x, y + h - r);
+            else{
+                g.curveTo( x+s,y+height,x+a,y+height-a);
+                g.curveTo( x, y + height - s, x, y + height - cornerRadius[3]);
             }
         }
 
-        if (px < x && (py - y - h + r) < (x - px) && (px - x) < (py - y - r) )
-        {
-// left edge
+	    // left edge
+        if (px < x && (py - y - height + cornerRadius[3]) < (x - px) && (px - x) < (py - y - cornerRadius[3]) ){
             g.lineTo(x, bottom);
             g.lineTo(px, py);
             g.lineTo(x, top);
         }
 
-        g.lineTo ( x,y+r );
+        g.lineTo ( x,y+cornerRadius[0] );
 
-//top left corner
-        if (r > 0)
-        {
-            if (px < x + r && py < y + r && Math.abs((px - x) - (py - y)) <= r)
-            {
+		//top left corner
+	    a = cornerRadius[0] - (cornerRadius[0]*0.707106781186547); // cos45
+	    s = cornerRadius[0] - (cornerRadius[0]*0.414213562373095); // tan PI/8
+        if (cornerRadius[0] > 0){
+            if (px < x + cornerRadius[0] && py < y + cornerRadius[0] && Math.abs((px - x) - (py - y)) <= cornerRadius[0]){
                 g.lineTo(px, py);
-                g.lineTo(x + r, y);
+                g.lineTo(x + cornerRadius[0], y);
             }
-            else
-            {
+            else{
                 g.curveTo( x,y+s,x+a,y+a);
-                g.curveTo( x + s, y, x + r, y);
+                g.curveTo( x + s, y, x + cornerRadius[0], y);
             }
         }
 
-        if (py < y && (px - x) > (py - y + r) && (py - y + r) < (x - px + w))
-        {
-//top edge
+	    //top edge
+        if (py < y && (px - x) > (py - y + cornerRadius[0]) && (py - y + cornerRadius[0]) < (x - px + width)){
             g.lineTo(left, y);
             g.lineTo(px, py);
             g.lineTo(right, y);
         }
 
-        g.lineTo ( x + w - r, y );
+        g.lineTo ( x + width - cornerRadius[1], y );
 
-//top right corner
-        if (r > 0)
-        {
-            if (px > x + w - r && py < y + r && Math.abs((px - x - w) + (py - y)) <= r)
-            {
+		//top right corner
+	    a = cornerRadius[1] - (cornerRadius[1]*0.707106781186547); // cos45
+	    s = cornerRadius[1] - (cornerRadius[1]*0.414213562373095); // tan PI/8
+        if (cornerRadius[1] > 0){
+            if (px > x + width - cornerRadius[1] && py < y + cornerRadius[1] && Math.abs((px - x - width) + (py - y)) <= cornerRadius[1]){
                 g.lineTo(px, py);
-                g.lineTo(x + w, y + r);
+                g.lineTo(x + width, y + cornerRadius[1]);
             }
-            else
-            {
-                g.curveTo( x+w-s,y,x+w-a,y+a);
-                g.curveTo( x + w, y + s, x + w, y + r);
+            else{
+                g.curveTo( x+width-s,y,x+width-a,y+a);
+                g.curveTo( x + width, y + s, x + width, y + cornerRadius[1]);
             }
         }
 
-        if (px > x + w && (py - y - r) > (x - px + w) && (px - x - w) > (py - y - h + r) )
-        {
-// right edge
-            g.lineTo(x + w, top);
+	    // right edge
+        if (px > x + width && (py - y - cornerRadius[1]) > (x - px + width) && (px - x - width) > (py - y - height + cornerRadius[1]) ){
+            g.lineTo(x + width, top);
             g.lineTo(px, py);
-            g.lineTo(x + w, bottom);
+            g.lineTo(x + width, bottom);
         }
-        g.lineTo ( x+w,y+h-r );
-
+        g.lineTo ( x+width,y+height-cornerRadius[2] );
     }
-
 }
 

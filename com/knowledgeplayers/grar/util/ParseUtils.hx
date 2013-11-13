@@ -50,6 +50,16 @@ class ParseUtils {
 		return result;
 	}
 
+	public static inline function parseListOfFloatValues(list: String, separator: String = ","):Array<Float>
+	{
+		var result = new Array<Float>();
+		var list = parseListOfValues(list, separator);
+		for(elem in list){
+			result.push(Std.parseFloat(elem));
+		}
+		return result;
+	}
+
 	public static function updateIconsXml(value:String, xmls:GenericStack<Xml>):Void
 	{
 		for(elem in xmls){
@@ -66,6 +76,19 @@ class ParseUtils {
 				}
 			}
 		}
+	}
+
+	public static inline function formatToFour<A>(array:Array<A>):Array<A>
+	{
+		switch(array.length){
+			case 1:
+				while(array.length < 4)
+					array.push(array[0]);
+			case 2:
+				array.push(array[0]);
+				array.push(array[1]);
+		}
+		return array;
 	}
 
 	public static function parseColor(value: String): Color

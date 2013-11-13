@@ -459,6 +459,9 @@ class PartDisplay extends KpDisplay {
 						}
 					}
 				}
+				else if(elem.widget.ref == "$nameRef"){
+					elem.widget = displays.get(currentSpeaker.nameRef);
+				}
 			}
 		}
 	}

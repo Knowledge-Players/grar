@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
+import com.knowledgeplayers.grar.display.component.container.SimpleBubble;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
@@ -32,7 +33,20 @@ class Image extends Widget{
 	private function createImg(xml:Fast, ?tilesheet: TilesheetEx):Void
 	{
 		if(xml.has.src){
-            if(xml.att.src.indexOf(".") < 0)
+			if(xml.has.radius){
+				var stringColor = ParseUtils.parseListOfValues(xml.att.src);
+				var colors = new Array<Int>();
+				var alphas = new Array<Float>();
+				for(color in stringColor){
+					var c = ParseUtils.parseColor(color);
+					colors.push(c.color);
+					alphas.push(c.alpha);
+				}
+				var radius = ParseUtils.parseListOfFloatValues(xml.att.radius);
+				ParseUtils.formatToFour(radius);
+				addChild(new SimpleBubble(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), colors, radius,alphas));
+			}
+			else if(xml.att.src.indexOf(".") < 0)
             {
                 var color = ParseUtils.parseColor(xml.att.src);
                 addChild(DisplayUtils.initSprite(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), color.color, color.alpha));

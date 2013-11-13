@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.style;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import haxe.ds.StringMap;
 import openfl.Assets;
 import flash.display.Bitmap;
@@ -75,14 +76,7 @@ class Style extends StringMap<String> {
 			for(margin in string.split(" ")){
 				iconMargin.push(Std.parseFloat(margin));
 			}
-			switch(iconMargin.length){
-				case 1:
-					while(iconMargin.length < 4)
-						iconMargin.push(iconMargin[0]);
-				case 2:
-					iconMargin.push(iconMargin[0]);
-					iconMargin.push(iconMargin[1]);
-			}
+			ParseUtils.formatToFour(iconMargin);
 		}
 		else{
 			iconMargin = [0, 0, 0, 0];

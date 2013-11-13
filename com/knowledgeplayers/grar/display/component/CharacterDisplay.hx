@@ -2,8 +2,6 @@ package com.knowledgeplayers.grar.display.component;
 
 import haxe.xml.Fast;
 import aze.display.TileLayer;
-import aze.display.TilesheetEx;
-import aze.display.TileSprite;
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
 
 /**

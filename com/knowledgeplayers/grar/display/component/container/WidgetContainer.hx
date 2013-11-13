@@ -1,24 +1,23 @@
 package com.knowledgeplayers.grar.display.component.container;
 
-import com.knowledgeplayers.grar.display.element.ChronoCircle;
-import com.knowledgeplayers.grar.util.ParseUtils;
-import flash.display.BitmapData;
-import flash.geom.Rectangle;
-import com.knowledgeplayers.grar.display.part.PartDisplay;
-import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import haxe.ds.GenericStack;
-import flash.events.Event;
-import com.knowledgeplayers.grar.factory.UiFactory;
-import flash.display.Sprite;
-import flash.events.MouseEvent;
-import com.knowledgeplayers.grar.factory.UiFactory;
+import Array;
+import flash.display.Bitmap;
 import aze.display.TileSprite;
+import flash.display.BitmapData;
+import com.knowledgeplayers.grar.display.element.ChronoCircle;
+import com.knowledgeplayers.grar.event.ButtonActionEvent;
+import flash.events.Event;
+import flash.events.MouseEvent;
+import haxe.xml.Fast;
+import com.knowledgeplayers.grar.factory.UiFactory;
+import com.knowledgeplayers.grar.util.ParseUtils;
+import flash.geom.Rectangle;
+import haxe.ds.GenericStack;
+import flash.display.Sprite;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.util.DisplayUtils;
-import flash.display.Bitmap;
-import haxe.xml.Fast;
 
 /**
 * Base for widget that can contain other widget
@@ -90,7 +89,7 @@ class WidgetContainer extends Widget{
 		return content.alpha = contentAlpha = alpha;
 	}
 
-	public function setBackground(bkg:String, alpha: Float = 1,?color:Array<String>,?arrowX:Float,?arrowY:Float,?radius:Float,?line:Float,?colorLine:Int,?bubbleWidth:Float,?bubbleHeight:Float,?shadow:Float,?gap:Float,?alphasBubble:Array<String>,?bubbleX:Float,?bubbleY:Float, resize: Bool = false):String
+	public function setBackground(bkg:String, ?color:Array<String>,?arrowX:Float,?arrowY:Float,?radius:Array<Float>,?line:Float,?colorLine:Int,?bubbleWidth:Float,?bubbleHeight:Float,?shadow:Float,?gap:Float,?bubbleX:Float,?bubbleY:Float, resize: Bool = false):String
 	{
 		if(bkg != null){
 			if(Std.parseInt(bkg) != null){
@@ -98,7 +97,17 @@ class WidgetContainer extends Widget{
 				DisplayUtils.initSprite(this, maskWidth, maskHeight, bkgColor.color, bkgColor.alpha);
 			}
             else if(bkg == "bubble"){
-                var bubble:SimpleBubble = new SimpleBubble(bubbleWidth!=0 ? bubbleWidth:maskWidth,bubbleHeight!=0 ? bubbleHeight:maskHeight,color,arrowX,arrowY,radius,line,colorLine,shadow,gap,alphasBubble,bubbleX,bubbleY);
+				var colors = new Array<Int>();
+				var alphas = new Array<Float>();
+				for(i in 0...color.length){
+					var c = ParseUtils.parseColor(color[i]);
+					colors.push(c.color);
+					alphas.push(c.alpha);
+				}
+				if(radius == null)
+					radius = [0.0, 0.0, 0.0, 0.0];
+				ParseUtils.formatToFour(radius);
+                var bubble:SimpleBubble = new SimpleBubble(bubbleWidth!=0 ? bubbleWidth:maskWidth,bubbleHeight!=0 ? bubbleHeight:maskHeight,colors,arrowX,arrowY,radius,line,colorLine,shadow,gap,alphas,bubbleX,bubbleY);
                 addChildAt(bubble,0);
             }
 			else{
@@ -212,18 +221,16 @@ class WidgetContainer extends Widget{
 			setBackground
             (
                 xml.has.background ? xml.att.background:null,
-                xml.has.alpha ? Std.parseFloat(xml.att.alpha) : 1,
                 xml.has.color ? Std.string(xml.att.color).split(","):null,
                 xml.has.arrowX ? Std.parseFloat(xml.att.arrowX):0,
                 xml.has.arrowY ? Std.parseFloat(xml.att.arrowY):0,
-                xml.has.radius ? Std.parseFloat(xml.att.radius):0,
+                xml.has.radius ? ParseUtils.parseListOfFloatValues(xml.att.radius):null,
                 xml.has.line ? Std.parseFloat(xml.att.line):0,
                 xml.has.colorLine ? Std.parseInt(xml.att.colorLine):0xFFFFFF,
                 xml.has.bubbleWidth ? Std.parseInt(xml.att.bubbleWidth):0,
                 xml.has.bubbleHeight ? Std.parseInt(xml.att.bubbleHeight):0,
                 xml.has.shadow ? Std.parseFloat(xml.att.shadow):0,
                 xml.has.gap ? Std.parseFloat(xml.att.gap):5,
-                xml.has.alphasBubble ? Std.string(xml.att.alphasBubble).split(","):["1","1"],
                 xml.has.bubbleX ? Std.parseFloat(xml.att.bubbleX):0,
                 xml.has.bubbleY ? Std.parseFloat(xml.att.bubbleY):0,
 				xml.has.resize ? xml.att.resize == "true" : false
