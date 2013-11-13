@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
+import flash.filters.BitmapFilter;
 import flash.display.Sprite;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
@@ -48,6 +49,12 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		}, 1000);
 	}
 
+	@:setter(filters)
+	public function set_filters(filters:Array<BitmapFilter>):Void
+	{
+		trueLayer.view.filters = filters;
+	}
+
 	#if !flash override #end public function set_x(x:Float):Float
 	{
 		tileSprite.x = x;
@@ -82,7 +89,7 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 			if(actuator != null && onComplete != null)
 				actuator.onComplete(onComplete);
 
-			transform = TweenManager.applyTransition(tileSprite.layer.view, transformation);
+			transform = TweenManager.applyTransition(tileSprite, transformation);
 			//if(transform != null)
 			//	transform.onUpdate(renderNeeded);
 		}
