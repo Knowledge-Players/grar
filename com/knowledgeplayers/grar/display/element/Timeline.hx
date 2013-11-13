@@ -5,6 +5,8 @@ import flash.events.Event;
 import flash.events.EventDispatcher;
 import com.knowledgeplayers.grar.display.component.Widget;
 
+using StringTools;
+
 class Timeline extends EventDispatcher
 {
 	/**
@@ -27,10 +29,12 @@ class Timeline extends EventDispatcher
 
     }
 
-    public function addElement(_widget:Widget,_transition:String,_delay:Float):Void{
-
-          elements.push({widget:_widget,transition:_transition,delay:_delay});
-
+    public function addElement(widget: Widget, transition:String, delay: Float):Void
+    {
+        var dynValue: String = null;
+		if(widget.ref.startsWith("$"))
+			dynValue = widget.ref;
+        elements.push({widget: widget, transition: transition, delay: delay, dynamicValue: dynValue});
     }
 
     public function play():Void
@@ -39,14 +43,14 @@ class Timeline extends EventDispatcher
 
          for (elem in elements){
             if (Std.is(elem.widget, TileImage)) {
-                TweenManager.applyTransition(cast(elem.widget,TileImage).tileSprite,elem.transition,elem.delay).onComplete(onCompleteTransition).onUpdate(function(){
-                    cast(elem.widget,TileImage).tileSprite.layer.render();
-                    cast(elem.widget,TileImage).trueLayer.render();
-                });
+	            TweenManager.applyTransition(cast(elem.widget,TileImage).tileSprite,elem.transition,elem.delay).onComplete(onCompleteTransition).onUpdate(function(){
+		            cast(elem.widget,TileImage).tileSprite.layer.render();
+		            cast(elem.widget,TileImage).trueLayer.render();
+	            });
             }else{
-                var actuator = TweenManager.applyTransition(elem.widget,elem.transition,elem.delay);
-                if(actuator != null)
-	                actuator.onComplete(onCompleteTransition);
+	            var actuator = TweenManager.applyTransition(elem.widget,elem.transition,elem.delay);
+	            if(actuator != null)
+		            actuator.onComplete(onCompleteTransition);
             }
          }
     }
@@ -55,15 +59,14 @@ class Timeline extends EventDispatcher
         nbCompleteTransitions++;
         if(nbCompleteTransitions == elements.length){
             dispatchEvent(new Event(Event.COMPLETE));
-
         }
     }
 
 }
 
-typedef TimelineElement =
-{
+typedef TimelineElement = {
     var widget:Widget;
     var transition:String;
     var delay:Float;
+	var dynamicValue: String;
 }

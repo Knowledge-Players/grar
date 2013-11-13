@@ -58,6 +58,8 @@ class PartDisplay extends KpDisplay {
 	private var inventory:InventoryDisplay;
 	private var itemSound:Sound;
 	private var itemSoundChannel:SoundChannel;
+	private var numWidgetAdded: Int;
+	private var numWidgetReady: Int;
 
 	/**
      * Constructor
@@ -409,6 +411,7 @@ class PartDisplay extends KpDisplay {
 				{
 					introScreenOn = false;
 					setText(text, isFirst);
+					displayPart();
 				});
 				introScreenOn = true;
 				addChild(introDisplay);
@@ -422,48 +425,17 @@ class PartDisplay extends KpDisplay {
 			var video = cast(item, VideoItem);
 
 			cast(displays.get(item.ref), VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture,video.autoFullscreen);
-			displayPart();
 		}  else {
 
             if(!displays.exists(item.ref))
                 throw "[PartDisplay] There is no SoundPlayer with ref '"+ item.ref+"'.";
             var sound = cast(item, SoundItem);
             cast(displays.get(item.ref), SoundPlayer).setSound(sound.content, sound.autoStart, sound.loop, sound.defaultVolume);
-            displayPart();
         }
 
-		// Dynamic timeline
-		var tl: Timeline = timelines.get(currentItem.timelineIn);
-		if(tl != null){
-			for(elem in tl.elements){
-				var bkgRegExp: EReg = ~/\$currentBackground/;
-				if(elem.widget.ref == "$currentSpeaker"){
-					elem.widget = currentSpeaker;
-				}
-				else if(bkgRegExp.match(elem.widget.ref)){
-					var bkgs = previousBackground.split(",");
-					var index = 0;
-					if(Std.parseInt(bkgRegExp.matchedRight()) != null)
-						index = Std.parseInt(bkgRegExp.matchedRight());
-					elem.widget = displays.get(bkgs[index]);
-				}
-				else if(elem.widget.ref.startsWith("$character")){
-					var index = Std.parseInt(elem.widget.ref.replace("$character", ""));
-					var i = 0;
-					for(item in currentItems){
-						if(Std.is(item, CharacterDisplay))
-							i++;
-						if(i == index){
-							elem.widget = item;
-							break;
-						}
-					}
-				}
-				else if(elem.widget.ref == "$nameRef"){
-					elem.widget = displays.get(currentSpeaker.nameRef);
-				}
-			}
-		}
+		// Display Part
+		if(isFirst || !item.isText())
+			displayPart();
 	}
 
 	private function setText(item:TextItem, isFirst:Bool = true):Void
@@ -486,8 +458,6 @@ class PartDisplay extends KpDisplay {
 				i++;
 			}
 		}
-		else
-			displayPart();
 	}
 
 	private function displayPart():Void
@@ -502,22 +472,52 @@ class PartDisplay extends KpDisplay {
 				array.push(displays.get(key));
 		}
 
+		// Dynamic timeline
+		var tl: Timeline = timelines.get(currentItem.timelineIn);
+		if(tl != null){
+			for(elem in tl.elements){
+				if(elem.dynamicValue == null)
+					continue;
+				var bkgRegExp: EReg = ~/\$currentBackground/;
+				if(elem.dynamicValue == "$currentSpeaker"){
+					elem.widget = currentSpeaker;
+				}
+				else if(bkgRegExp.match(elem.dynamicValue)){
+					var bkgs = previousBackground.split(",");
+					var index = 0;
+					if(Std.parseInt(bkgRegExp.matchedRight()) != null)
+						index = Std.parseInt(bkgRegExp.matchedRight());
+					elem.widget = displays.get(bkgs[index]);
+				}
+				else if(elem.dynamicValue.startsWith("$character")){
+					var index = Std.parseInt(elem.dynamicValue.replace("$character", ""));
+					var i = 0;
+					for(item in currentItems){
+						if(Std.is(item, CharacterDisplay))
+							i++;
+						if(i == index){
+							elem.widget = item;
+							break;
+						}
+					}
+				}
+				else if(elem.dynamicValue == "$nameRef"){
+					elem.widget = displays.get(currentSpeaker.nameRef);
+				}
+			}
+		}
+
 		array.sort(sortDisplayObjects);
-		var objAdded = 0;
-		var timelineIn = null;
-		if(currentItem != null)
-			timelineIn = currentItem.timelineIn;
+		numWidgetReady = 0;
+		numWidgetAdded = array.length;
 		for(obj in array){
-			obj.onComplete = function(){
-				objAdded++;
-				if(objAdded == array.length && timelineIn != null)
-					timelines.get(timelineIn).play();
-			};
+			obj.onComplete = onWidgetAdded;
 			if(obj.zz == 0)
 				addChildAt(obj, 0);
 			else
 				addChild(obj);
 		}
+
 
 		if(inventory != null && currentSpeaker != null)
 			addChild(inventory);
@@ -540,9 +540,17 @@ class PartDisplay extends KpDisplay {
 				removeChild(obj);
 	}
 
+	private inline function onWidgetAdded():Void
+	{
+		numWidgetReady++;
+		if(numWidgetAdded == numWidgetReady && currentItem.timelineIn != null){
+			timelines.get(currentItem.timelineIn).play();
+		}
+	}
+
 	private function mustBeDisplayed(key:String):Bool
 	{
-		var object = displays.get(key);
+		var object: Widget = displays.get(key);
 		#if flash
 		if(Std.is(object, VideoPlayer)){
 			return currentItem.ref == key;
@@ -550,7 +558,7 @@ class PartDisplay extends KpDisplay {
 		#end
 
 		// If the object is already displayed
-		if(!Std.is(object, Image) && contains(object)){
+		if(contains(object)){
 			return false;
 		}
 		if(Std.is(object, DefaultButton)){
