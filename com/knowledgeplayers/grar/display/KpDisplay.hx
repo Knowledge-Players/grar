@@ -229,6 +229,7 @@ class KpDisplay extends Sprite {
 
 	private function createButton(buttonNode:Fast):Widget
 	{
+		var ref = buttonNode.att.ref;
 		var button:DefaultButton = new DefaultButton(buttonNode);
 		if(buttonNode.has.action)
 			setButtonAction(button, buttonNode.att.action);

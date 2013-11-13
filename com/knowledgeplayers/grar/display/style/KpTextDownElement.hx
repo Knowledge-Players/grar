@@ -169,7 +169,7 @@ class KpTextDownElement {
 		if(!trim)
 			tf.width = width;
 		else
-			tf.width += iconWidth;
+			tf.width += (iconWidth + 5);
 		tf.wordWrap = true;
 		#if flash
             tf.autoSize = style.getAlignment();

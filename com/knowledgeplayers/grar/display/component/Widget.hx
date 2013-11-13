@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.display.component;
 
+import com.knowledgeplayers.grar.display.component.container.DropdownMenu;
 import com.knowledgeplayers.grar.util.ParseUtils;
-import flash.filters.BitmapFilter;
 import motion.actuators.GenericActuator;
 import haxe.xml.Fast;
 import flash.events.Event;
@@ -57,6 +57,11 @@ class Widget extends Sprite{
 	**/
 	public var zz: Int;
 
+	/**
+	* Positionement of the widget
+	**/
+	public var position (default, set_position):Positioning;
+
 	private var origin: {x: Float, y: Float, scaleX: Float, scaleY: Float, alpha: Float};
 	private var lockPosition: Bool = false;
 	private var currentX: String;
@@ -84,6 +89,16 @@ class Widget extends Sprite{
 			}
 		}
 		return mirror;
+	}
+
+	public function set_position(position:Positioning):Positioning
+	{
+		if(position == Positioning.FIXED){
+			addEventListener(Event.ADDED_TO_STAGE, function(e){
+				flash.Lib.current.addChild(this);
+			}, 1000);
+		}
+		return this.position = position;
 	}
 
 	public function set_transformation(transformation: String):String
@@ -175,7 +190,7 @@ class Widget extends Sprite{
 		if(parent.numChildren > 1){
 			var maxWidth: Float = 0;
 			for(i in 0...parent.numChildren){
-				if(parent.getChildAt(i) != this && maxX < parent.getChildAt(i).x){
+				if(parent.getChildAt(i) != this && !Std.is(parent.getChildAt(i), DropdownMenu) && maxX < parent.getChildAt(i).x){
 					maxX = parent.getChildAt(i).x;
 					maxWidth = parent.getChildAt(i).width;
 				}
@@ -244,6 +259,14 @@ class Widget extends Sprite{
 					graphics.drawRect(-thickness, -thickness, width/scaleX+(2*thickness), height/scaleY+(2*thickness));
 				});
 			}
+			if(xml.has.position){
+				position = Type.createEnum(Positioning, xml.att.position.toUpperCase());
+			}
 		}
 	}
+}
+
+@:fakeEnum(String)
+enum Positioning {
+	FIXED;
 }
