@@ -61,8 +61,11 @@ class Image extends Widget{
 
 
 		}
-		else
+		else{
 			bitmap = new Bitmap(DisplayUtils.getBitmapDataFromLayer(tilesheet != null ?tilesheet : UiFactory.tilesheet, xml.att.tile));
+			if(bitmap != null)
+				addChild(bitmap);
+		}
 
 		if(xml.has.mirror){
 			mirror = switch(xml.att.mirror.toLowerCase()){
@@ -71,8 +74,6 @@ class Image extends Widget{
 				case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
 			}
 		}
-		if(bitmap != null)
-			addChild(bitmap);
 
 	}
 }

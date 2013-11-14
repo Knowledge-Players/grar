@@ -14,8 +14,8 @@ class ResizeManager {
      */
 	public static var instance (get_instance, null):ResizeManager;
 
-	private var resizedObjects:List<Dynamic>;
-	private var replacedObjects:List<Dynamic>;
+	private var resizedObjects:List<Resizable>;
+	private var replacedObjects:List<Resizable>;
 
 	private var originW:Int = 0;
 	private var originH:Int = 0;
@@ -27,8 +27,8 @@ class ResizeManager {
 		Lib.current.stage.addEventListener(Event.RESIZE, onResize);
 		originW = Lib.current.stage.stageWidth;
 		originH = Lib.current.stage.stageHeight;
-		resizedObjects = new List<Dynamic>();
-		replacedObjects = new List<Dynamic>();
+		resizedObjects = new List<Resizable>();
+		replacedObjects = new List<Resizable>();
 	}
 
 	/**
@@ -54,15 +54,15 @@ class ResizeManager {
 		ratioH = Lib.current.stage.stageHeight / originH;
 
 		for(obj in resizedObjects){
-			obj.dp.scaleX = ratioW;
-			obj.dp.scaleY = ratioH;
+			obj.display.scaleX *= ratioW;
+			obj.display.scaleY *= ratioH;
 
-			obj.dp.x = ratioW * obj.originX;
-			obj.dp.y = ratioH * obj.originY;
+			obj.display.x = ratioW * obj.originalX;
+			obj.display.y = ratioH * obj.originalY;
 		}
 		for(obj in replacedObjects){
-			obj.dp.x = ratioW * obj.originX;
-			obj.dp.y = ratioH * obj.originY;
+			obj.display.x = ratioW * obj.originalX;
+			obj.display.y = ratioH * obj.originalY;
 		}
 	}
 
@@ -74,12 +74,7 @@ class ResizeManager {
 
 	public function addDisplayObjects(dp:DisplayObject, ?node:Fast):Void
 	{
-		var obj:Dynamic = {};
-		obj.dp = dp;
-		obj.originW = dp.width;
-		obj.originH = dp.height;
-		obj.originX = dp.x;
-		obj.originY = dp.y;
+		var obj:Resizable = {display: dp, originalWidth: dp.width, originalHeight: dp.height, originalX: dp.x, originalY: dp.y};
 
 		if(!node.has.resize){
 			resizedObjects.add(obj);
@@ -91,4 +86,12 @@ class ResizeManager {
 			replacedObjects.add(obj);
 		}
 	}
+}
+
+typedef Resizable = {
+	var display: DisplayObject;
+	var originalWidth: Float;
+	var originalHeight: Float;
+	var originalX: Float;
+	var originalY: Float;
 }

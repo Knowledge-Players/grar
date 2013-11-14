@@ -258,10 +258,7 @@ class TweenManager {
 	{
 		var transform = transitions.get(ref);
 		if(Std.is(display, TileSprite)){
-			var r = transform.color >> 16;
-			var g = transform.color >> 8 & 0xFF;
-			var b = transform.color & 0xFF;
-			Actuate.apply(display, {r: r/100, g: g/100, b: b/100});
+			Actuate.apply(display, {color: transform.color}).onComplete(function(){cast(display, TileSprite).layer.render();});
 		}
 		return Actuate.transform(display, transform.duration).color(transform.color).ease(getEasing(transform));
 	}
