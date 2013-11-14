@@ -228,11 +228,6 @@ class PartDisplay extends KpDisplay {
 			removeChild(child);
 			child = null;
 		}
-		while(numChildren > 0){
-			var child = getChildAt(numChildren - 1);
-			removeChild(child);
-			child = null;
-		}
 		if(parent != null)
 			parent.removeChild(this);
 		currentElement = null;

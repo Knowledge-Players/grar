@@ -53,6 +53,7 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 	public function set_filters(filters:Array<BitmapFilter>):Void
 	{
 		trueLayer.view.filters = filters;
+		super.filters = filters;
 	}
 
 	#if !flash override #end public function set_x(x:Float):Float
@@ -142,6 +143,9 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		for(field in Reflect.fields(origin)){
 			Reflect.setProperty(tileSprite, field, Reflect.field(origin, field));
 		}
+
+		// Reset filters
+		trueLayer.view.filters = filters;
 	}
 
 	// Private

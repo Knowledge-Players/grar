@@ -380,6 +380,7 @@ class GameManager extends EventDispatcher {
 		else if(!parts.isEmpty() && parts.first().part == finishedPart.part.parent){
 			parts.first().visible = true;
 			parts.first().nextElement();
+			changeLayout(parts.first().layout);
 		}
 		else{
 			displayPart(finishedPart.part.parent, false, finishedPart.part.parent.getElementIndex(finishedPart.part));

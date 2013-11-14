@@ -89,7 +89,6 @@ class TweenManager {
 
 	/**
 	 * Creates a new tween
-	 * @example		<code>Actuate.tween (MyClip, 1, { alpha: 1 } ).onComplete (trace, [ "MyClip is now visible" ]);</code>
 	 * @param	target		The object to tween
 	 * @param	duration		The length of the tween in seconds
 	 * @param	properties		The end values to tween the target to
