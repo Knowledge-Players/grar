@@ -48,8 +48,15 @@ class Image extends Widget{
 			}
 			else if(xml.att.src.indexOf(".") < 0)
             {
-                var color = ParseUtils.parseColor(xml.att.src);
-                addChild(DisplayUtils.initSprite(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), color.color, color.alpha));
+	            var stringColor = ParseUtils.parseListOfValues(xml.att.src);
+	            var colors = new Array<Int>();
+	            var alphas = new Array<Float>();
+	            for(color in stringColor){
+		            var c = ParseUtils.parseColor(color);
+		            colors.push(c.color);
+		            alphas.push(c.alpha);
+	            }
+                addChild(DisplayUtils.initGradientSprite(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), colors, alphas));
             }else{
                 #if flash
 	                bitmap = new Bitmap(AssetsStorage.getBitmapData(xml.att.src));

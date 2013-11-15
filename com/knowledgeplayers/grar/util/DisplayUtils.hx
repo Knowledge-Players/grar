@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.util;
 
+import flash.geom.Matrix;
+import flash.display.GradientType;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 import aze.display.TileSprite;
@@ -58,12 +60,24 @@ class DisplayUtils {
 	{
 		var s: Sprite = sprite != null ? sprite : new Sprite();
 		s.graphics.beginFill(color, alpha);
-		if(width > 0 && height > 0)
-			s.graphics.drawRect(x, y, width, height);
-		else
-			s.graphics.drawRect(x, y, 1, 1);
+		s.graphics.drawRect(x, y, width, height);
 		s.graphics.endFill();
 		return s;
+	}
+
+	public static function initGradientSprite(?sprite: Sprite, width: Float = 1, height: Float = 1, colors: Array<Int>, alphas: Array<Float>, x: Float = 0, y: Float = 0): Sprite
+	{
+		if(colors.length == 1)
+			return initSprite(sprite, width, height, colors[0], alphas[0], x, y);
+		else{
+			var s: Sprite = sprite != null ? sprite : new Sprite();
+			var matrix:Matrix = new Matrix();
+			matrix.createGradientBox(width, height, Math.PI/2, 0, 0);
+			s.graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, [0x00, 0xFF], matrix);
+			s.graphics.drawRect(x, y, width, height);
+			s.graphics.endFill();
+			return s;
+		}
 	}
 
 	public static inline function maskSprite(sprite: Sprite, maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0):Void
