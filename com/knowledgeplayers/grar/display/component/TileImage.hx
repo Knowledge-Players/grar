@@ -90,7 +90,8 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 			if(actuator != null && onComplete != null)
 				actuator.onComplete(onComplete);
 
-			transform = TweenManager.applyTransition(tileSprite, transformation);
+			TweenManager.resetTransform(trueLayer.view);
+			transform = TweenManager.applyTransition(trueLayer.view, transformation);
 			//if(transform != null)
 			//	transform.onUpdate(renderNeeded);
 		}

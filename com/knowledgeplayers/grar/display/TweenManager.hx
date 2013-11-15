@@ -256,9 +256,6 @@ class TweenManager {
 	public static function transform(display:Dynamic, ref:String):IGenericActuator
 	{
 		var transform = transitions.get(ref);
-		if(Std.is(display, TileSprite)){
-			Actuate.apply(display, {color: transform.color}).onComplete(function(){cast(display, TileSprite).layer.render();});
-		}
 		return Actuate.transform(display, transform.duration).color(transform.color).ease(getEasing(transform));
 	}
 
