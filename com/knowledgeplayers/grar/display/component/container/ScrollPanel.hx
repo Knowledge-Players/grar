@@ -1,11 +1,7 @@
 package com.knowledgeplayers.grar.display.component.container;
 
-import com.knowledgeplayers.grar.display.text.StyledTextField;
 import com.knowledgeplayers.grar.display.style.KpTextDownElement;
-import aze.display.TileSprite;
-import flash.display.Bitmap;
 import flash.display.BitmapData;
-import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;

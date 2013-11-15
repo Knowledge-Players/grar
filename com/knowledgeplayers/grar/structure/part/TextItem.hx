@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import haxe.ds.GenericStack;
 import haxe.xml.Fast;
 
@@ -28,7 +29,7 @@ class TextItem extends Item {
 	/**
 	* Introduction screen to show before this item
 	**/
-	public var introScreen (default, default):{ref:String, content:String};
+	public var introScreen (default, default):{ref:String, content:Map<String, String>};
 
 	/**
      * Constructor
@@ -48,7 +49,7 @@ class TextItem extends Item {
 			if(xml.hasNode.Sound)
 				sound = xml.node.Sound.att.src;
 			if(xml.hasNode.Intro)
-				introScreen = {ref: xml.node.Intro.att.ref, content: xml.node.Intro.att.content};
+				introScreen = {ref: xml.node.Intro.att.ref, content: ParseUtils.parseHash(xml.node.Intro.att.content)};
 
 			for(elem in xml.elements){
 				if(elem.name.toLowerCase() == "image" || elem.name.toLowerCase() == "character" || elem.name.toLowerCase() == "div" )

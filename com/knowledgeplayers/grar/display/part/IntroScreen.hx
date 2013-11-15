@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
@@ -12,37 +11,31 @@ import flash.events.Event;
 class IntroScreen extends WidgetContainer {
 
 	/**
-	* Text to display in the intro
-	**/
-	public var text (default, set_text):String;
-
-	/**
 	* Time (in ms) before the screen disappear
 	**/
 	public var duration (default, default):Int;
 
-	private var textZone:ScrollPanel;
-
 	public function new(?xml:Fast)
 	{
 		super(xml);
-		y = Std.parseFloat(xml.att.y);
 		duration = Std.parseInt(xml.att.duration);
-		if(xml.hasNode.Text){
-			var textNode:Fast = xml.node.Text;
-			textZone = new ScrollPanel(textNode);
-			addChild(textZone);
-		}
-		for(item in xml.nodes.Item){
-			var bitmap:Image = new Image(item);
-			addChild(bitmap);
-		}
 	}
 
-	public function set_text(text:String):String
+	public function setText(content:String, ?key:String):Void
 	{
-		textZone.setContent(text);
-		return this.text = text;
+		var i = 0;
+		var firstText: Int = -1;
+		while(i < children.length && key != children[i].ref){
+			if(Std.is(children[i], ScrollPanel) && firstText == -1)
+				firstText = i;
+			i++;
+		}
+		if(key == null || StringTools.trim(key) == "")
+			cast(children[firstText], ScrollPanel).setContent(content);
+		else if(i == children.length)
+			throw "[IntroScreen] Unable to find a Text field with ref '"+key+"'.";
+		else
+			cast(children[i], ScrollPanel).setContent(content);
 	}
 
 	// Privates

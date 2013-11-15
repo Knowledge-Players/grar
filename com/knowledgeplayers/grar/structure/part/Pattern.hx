@@ -75,7 +75,7 @@ class Pattern implements PartElement {
 		}
 		for(child in xml.elements){
 			if(child.name.toLowerCase() == "button" || child.name.toLowerCase() == "choice"){
-				buttons.set(child.att.ref, ParseUtils.parseButtonContent(child));
+				buttons.set(child.att.ref, ParseUtils.parseHash(child.att.content));
 			}
 		}
 		nextPattern = xml.att.next;

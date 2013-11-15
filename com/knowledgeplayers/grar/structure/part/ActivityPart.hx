@@ -199,7 +199,7 @@ class ActivityPart extends StructurePart
 			values = ParseUtils.parseListOfValues(xml.att.values);
 		else
 			values = new Array<String>();
-		return {id: xml.att.id, ref: xml.att.ref, content: ParseUtils.parseButtonContent(xml), values: values, selected: false};
+		return {id: xml.att.id, ref: xml.att.ref, content: ParseUtils.parseHash(xml.att.content), values: values, selected: false};
 	}
 
 	private function getAllInputs():Array<Input>

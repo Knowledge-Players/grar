@@ -1,25 +1,22 @@
 package com.knowledgeplayers.grar.util;
 
 import haxe.ds.GenericStack;
-import haxe.xml.Fast;
 
 using StringTools;
 
 class ParseUtils {
 
-	public static inline function parseButtonContent(fast: Fast): Map<String, String>
+	public static inline function parseHash(string: String): Map<String, String>
 	{
 		var content = new Map<String, String>();
-		if(fast.has.content){
-			if(fast.att.content.indexOf("{") == 0){
-				var contentString:String = fast.att.content.substr(1, fast.att.content.length - 2);
-				var contents = contentString.split(",");
-				for(c in contents)
-					content.set(c.split(":")[0].trim(), c.split(":")[1].trim());
-			}
-			else
-				content.set(" ", fast.att.content);
+		if(string.indexOf("{") == 0){
+			var contentString:String = string.substr(1, string.length - 2);
+			var contents = contentString.split(",");
+			for(c in contents)
+				content.set(c.split(":")[0].trim(), c.split(":")[1].trim());
 		}
+		else
+			content.set(" ", string);
 
 		return content;
 	}

@@ -60,6 +60,7 @@ class PartDisplay extends KpDisplay {
 	private var itemSoundChannel:SoundChannel;
 	private var numWidgetAdded: Int;
 	private var numWidgetReady: Int;
+	private var nextTimeline: String;
 
 	/**
      * Constructor
@@ -384,7 +385,6 @@ class PartDisplay extends KpDisplay {
 		if(item.isText()){
 			var text = cast(item, TextItem);
 
-			setSpeaker(text.author, text.transition);
 			if(text.introScreen != null){
 
 				for(i in 0...numChildren){
@@ -401,18 +401,22 @@ class PartDisplay extends KpDisplay {
 				// The intro screen automatically removes itself after its duration
 				var intro = text.introScreen;
 				var introDisplay:IntroScreen = cast(displays.get(intro.ref), IntroScreen);
-				introDisplay.set_text(Localiser.instance.getItemContent(intro.content));
+				for(field in intro.content.keys())
+					introDisplay.setText(Localiser.instance.getItemContent(intro.content.get(field)), field);
 				introDisplay.addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
 				{
 					introScreenOn = false;
+					setSpeaker(text.author, text.transition);
 					setText(text, isFirst);
 					displayPart();
 				});
 				introScreenOn = true;
 				addChild(introDisplay);
 			}
-			else
+			else{
+				setSpeaker(text.author, text.transition);
 				setText(text, isFirst);
+			}
 		}
 		else if(item.isVideo()){
 			if(!displays.exists(item.ref))
@@ -420,8 +424,8 @@ class PartDisplay extends KpDisplay {
 			var video = cast(item, VideoItem);
 
 			cast(displays.get(item.ref), VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture,video.autoFullscreen);
-		}  else {
-
+		}
+		else {
             if(!displays.exists(item.ref))
                 throw "[PartDisplay] There is no SoundPlayer with ref '"+ item.ref+"'.";
             var sound = cast(item, SoundItem);
@@ -429,7 +433,7 @@ class PartDisplay extends KpDisplay {
         }
 
 		// Display Part
-		if(isFirst || !item.isText())
+		if(!introScreenOn && (isFirst || !item.isText()))
 			displayPart();
 	}
 
@@ -505,6 +509,7 @@ class PartDisplay extends KpDisplay {
 		array.sort(sortDisplayObjects);
 		numWidgetReady = 0;
 		numWidgetAdded = array.length;
+		nextTimeline = currentItem.timelineIn;
 		for(obj in array){
 			obj.onComplete = onWidgetAdded;
 			if(obj.zz == 0)
@@ -512,7 +517,6 @@ class PartDisplay extends KpDisplay {
 			else
 				addChild(obj);
 		}
-
 
 		if(inventory != null && currentSpeaker != null)
 			addChild(inventory);
@@ -538,8 +542,8 @@ class PartDisplay extends KpDisplay {
 	private inline function onWidgetAdded():Void
 	{
 		numWidgetReady++;
-		if(numWidgetAdded == numWidgetReady && currentItem.timelineIn != null){
-			timelines.get(currentItem.timelineIn).play();
+		if(numWidgetAdded == numWidgetReady && nextTimeline != null){
+			timelines.get(nextTimeline).play();
 		}
 	}
 
@@ -556,6 +560,8 @@ class PartDisplay extends KpDisplay {
 		if(contains(object)){
 			return false;
 		}
+
+		// Buttons
 		if(Std.is(object, DefaultButton)){
 
 			var button: Map<String, Map<String, String>> = null;
@@ -578,6 +584,7 @@ class PartDisplay extends KpDisplay {
 			else
 				return false;
 		}
+
 		// If the character is present on the scene
 		if(Std.is(object, CharacterDisplay)){
 			if(object == currentSpeaker)
@@ -590,6 +597,7 @@ class PartDisplay extends KpDisplay {
 				return false;
 		}
 
+		// Image displayed with text items
 		if(currentItem != null && currentItem.isText()){
 			var text = cast(currentItem, TextItem);
 			if(currentSpeaker != null && Std.is(object, ScrollPanel) && key == currentSpeaker.nameRef)
@@ -609,6 +617,11 @@ class PartDisplay extends KpDisplay {
 			if(Std.is(object, ScrollPanel))
 				return false;
 		}
+
+		// Exclude IntroScreen
+		if(Std.is(object, IntroScreen))
+			return false;
+
 		return true;
 	}
 }

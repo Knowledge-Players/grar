@@ -436,7 +436,10 @@ class StructurePart extends EventDispatcher implements Part{
 			case "sound":
 				soundLoop = AssetsStorage.getSound(node.att.content);
 			case "button":
-				buttons.set(node.att.ref, ParseUtils.parseButtonContent(node));
+				var content = null;
+				if(node.has.content)
+					content = ParseUtils.parseHash(node.att.content);
+				buttons.set(node.att.ref, content);
 				if(node.has.goTo){
 					if(node.att.goTo == "")
 						buttonTargets.set(node.att.ref, null);
