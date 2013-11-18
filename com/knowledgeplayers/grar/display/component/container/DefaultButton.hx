@@ -54,6 +54,7 @@ class DefaultButton extends WidgetContainer {
     private var timelines: Map<String, Timeline>;
 	private var tmpXml: Fast;
 	private var defaultState: String;
+	private var enabledState: Map<String, Bool>;
 
 	/**
      * Action to execute on click
@@ -70,6 +71,7 @@ class DefaultButton extends WidgetContainer {
 	{
 		super(xml);
 		timelines = new Map<String, Timeline>();
+		enabledState = new Map<String, Bool>();
 
 		if(pStates != null)
 			states = pStates;
@@ -120,6 +122,10 @@ class DefaultButton extends WidgetContainer {
 			for(state in tmpXml.elements){
 				if(timelines != null && state.has.timeline)
 					this.timelines.set(state.name, timelines.get(state.att.timeline));
+				if(state.has.enable)
+					enabledState.set(state.name, state.att.enable == "true");
+				else
+					enabledState.set(state.name, true);
 				for(elem in state.elements){
 					states.set(state.name+"_" + elem.name, createStates(elem));
 				}
@@ -136,7 +142,7 @@ class DefaultButton extends WidgetContainer {
 	@:setter(alpha)
 	override public function set_alpha(alpha:Float):Void
 	{
-		enabled = alpha == 1;
+		enabled = enabled ? alpha == 1 : false;
 		super.alpha = alpha;
 	}
 
@@ -280,6 +286,7 @@ class DefaultButton extends WidgetContainer {
 			}
 
 			renderNeeded = true;
+			enabled = enabledState.get(toggleState);
 			displayContent();
 			dispatchEvent(new Event(Event.CHANGE));
 		}
