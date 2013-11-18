@@ -124,39 +124,38 @@ class PartDisplay extends KpDisplay {
 			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
 		}
 
-		if(currentElement.isText()){
+		if(Std.is(currentElement, Item)){
 			var groupKey = "";
 			if(textGroups != null){
 
 				for(key in textGroups.keys()){
 
-					if(textGroups.get(key).exists(cast(currentElement, TextItem).ref)){
+					if(textGroups.get(key).exists(cast(currentElement, Item).ref)){
 
 						groupKey = key;
 					}
 				}
 
 				if(groupKey != ""){
-
-					var isFirst = true;
 					var textItem = null;
-					for(keyG in textGroups.get(groupKey).keys()){
-						if(!isFirst){
+					var i = 0;
+					while(i < Lambda.count(textGroups.get(groupKey))){
+						if(i > 0){
 							textItem = cast(part.getNextElement(), Item);
-
 						}
 						else{
 							textItem = cast(currentElement, Item);
 						}
-						setupItem(cast(textItem, Item), isFirst);
-						isFirst = false;
+						setupItem(cast(textItem, Item), (i == 0));
+						i++;
 					}
 				}
 				else{
-					setupItem(cast(currentElement, TextItem));
+					setupItem(cast(currentElement, Item));
 				}
 
-				GameManager.instance.playSound(cast(currentElement, TextItem).sound);
+				if(Std.is(currentElement, TextItem))
+					GameManager.instance.playSound(cast(currentElement, TextItem).sound);
 			}
 		}
 
@@ -171,11 +170,6 @@ class PartDisplay extends KpDisplay {
 			event.part = cast(currentElement, Part);
 			dispatchEvent(event);
 		}
-		else if(currentElement.isVideo()){
-
-            setupItem(cast(currentElement, Item));
-		}
-
 	}
 
 	/**

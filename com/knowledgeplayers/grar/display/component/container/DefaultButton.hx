@@ -142,7 +142,7 @@ class DefaultButton extends WidgetContainer {
 	@:setter(alpha)
 	override public function set_alpha(alpha:Float):Void
 	{
-		enabled = enabled ? alpha == 1 : false;
+		enabled = enabledState.get(toggleState) ? alpha == 1 : false;
 		super.alpha = alpha;
 	}
 
@@ -155,7 +155,6 @@ class DefaultButton extends WidgetContainer {
 	public inline function set_enabled(activate:Bool):Bool
 	{
 		enabled = buttonMode = mouseEnabled = activate;
-
 		return activate;
 	}
 
