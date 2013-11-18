@@ -104,7 +104,8 @@ class ScrollPanel extends WidgetContainer {
 					var m = new Sprite();
 					m.y = item.y + (i * element.lineHeight);
 					m.x = item.x;
-					DisplayUtils.initSprite(m, element.lineWidth, element.lineHeight + 2);
+                    // 2px margin
+					DisplayUtils.initSprite(m, element.lineWidth + 2, element.lineHeight + 2);
 					maskLine.addChild(m);
 				}
 			}
