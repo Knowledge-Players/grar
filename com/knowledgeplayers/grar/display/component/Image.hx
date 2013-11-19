@@ -81,6 +81,5 @@ class Image extends Widget{
 				case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
 			}
 		}
-
 	}
 }

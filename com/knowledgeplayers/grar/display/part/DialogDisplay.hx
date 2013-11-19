@@ -77,14 +77,16 @@ class DialogDisplay extends PartDisplay {
 
 	// Privates
 
-	override private function setButtonAction(button:DefaultButton, action:String):Void
+	override private function setButtonAction(button:DefaultButton, action:String):Bool
 	{
-		super.setButtonAction(button, action);
 		if(action.toLowerCase() == ButtonActionEvent.GOTO){
 			button.buttonAction = onChoice;
 			button.addEventListener(MouseEvent.MOUSE_OVER, onOverChoice);
 			button.addEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
+			return true;
 		}
+		else
+			return super.setButtonAction(button, action);
 	}
 
 	private function onChoice(?choice: DefaultButton):Void

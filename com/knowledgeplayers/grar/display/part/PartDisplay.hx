@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
 import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.SoundPlayer;
 import com.knowledgeplayers.grar.structure.part.sound.item.SoundItem;
@@ -277,36 +278,27 @@ class PartDisplay extends KpDisplay {
 		currentElement = pattern;
 	}
 
-	override private function setButtonAction(button:DefaultButton, action:String):Void
+	override private function setButtonAction(button:DefaultButton, action:String):Bool
 	{
-
-		if(action.toLowerCase() == ButtonActionEvent.NEXT){
+		if(super.setButtonAction(button, action))
+			return true;
+		else if(action.toLowerCase() == ButtonActionEvent.NEXT){
 			button.buttonAction = next;
-		}
-		else if(action.toLowerCase() == "open_notebook"){
-			button.buttonAction = function(?target: DefaultButton){
-				GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
-			};
+			return true;
 		}
 		else if(action.toLowerCase() == ButtonActionEvent.GOTO){
 			button.buttonAction = function(?target: DefaultButton){
-				if(part.buttonTargets.get(button.ref) == null)
+				var goToTarget: PartElement = part.buttonTargets.get(button.ref);
+				if(goToTarget == null)
 					exitPart();
 				else {
-					nextElement(part.getElementIndex(part.buttonTargets.get(button.ref))-1);
+					nextElement(part.getElementIndex(goToTarget)-1);
 
                 }
 			};
+			return true;
 		}
-        else if (action.toLowerCase() == ButtonActionEvent.QUIT){
-            button.buttonAction = quit;
-
-        }
-	}
-
-	private function quit(?target: DefaultButton):Void
-	{
-		GameManager.instance.quitGame();
+		return false;
 	}
 
 
@@ -482,14 +474,15 @@ class PartDisplay extends KpDisplay {
 						index = Std.parseInt(bkgRegExp.matchedRight());
 					elem.widget = displays.get(bkgs[index]);
 				}
-				else if(elem.dynamicValue.startsWith("$character")){
+				else if(elem.dynamicValue.startsWith("$character") && currentItem.isText()){
 					var index = Std.parseInt(elem.dynamicValue.replace("$character", ""));
 					var i = 0;
-					for(item in currentItems){
-						if(Std.is(item, CharacterDisplay))
+					for(item in cast(currentItem, TextItem).images){
+						var object: Widget = displays.get(item);
+						if(Std.is(object, CharacterDisplay))
 							i++;
 						if(i == index){
-							elem.widget = item;
+							elem.widget = object;
 							break;
 						}
 					}

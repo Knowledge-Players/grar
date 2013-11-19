@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
+import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
 import com.knowledgeplayers.grar.display.component.container.SoundPlayer;
 import com.knowledgeplayers.grar.display.element.ChronoCircle;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
@@ -326,9 +328,27 @@ class KpDisplay extends Sprite {
 		zIndex++;
 	}
 
-	private function setButtonAction(button:DefaultButton, action:String):Void
+	private function setButtonAction(button:DefaultButton, action:String):Bool
 	{
-		// override in subclass
+		var actionSet = true;
+		if(action.toLowerCase() == "open_menu")
+			button.buttonAction = function(?target){
+				GameManager.instance.displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout);
+			}
+		else if(action.toLowerCase() == "open_inventory")
+			button.buttonAction = function(?target){
+				GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
+			}
+		else if(action.toLowerCase() == "close_menu")
+			button.buttonAction = function(?target){
+				GameManager.instance.hideContextual(MenuDisplay.instance);
+			}
+		else if(action.toLowerCase() == ButtonActionEvent.QUIT)
+			button.buttonAction = quit;
+		else
+			actionSet = false;
+
+		return actionSet;
     }
 
 	private function onButtonToggle(e:ButtonActionEvent):Void
@@ -358,6 +378,11 @@ class KpDisplay extends Sprite {
 			return 1;
 		else
 			return 0;
+	}
+
+	private inline function quit(?target: DefaultButton):Void
+	{
+		GameManager.instance.quitGame();
 	}
 
 	private function new()

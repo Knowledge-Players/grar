@@ -2,10 +2,7 @@ package com.knowledgeplayers.grar;
 
 import flash.display.MovieClip;
 import flash.text.TextFormat;
-import com.knowledgeplayers.grar.display.text.StyledTextField;
-import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import haxe.ds.GenericStack;
-import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.utils.assets.AssetsConfig;
 import com.knowledgeplayers.utils.assets.AssetsLoader;
 import com.knowledgeplayers.utils.assets.interfaces.IAsset;
@@ -14,7 +11,6 @@ import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
-import flash.Lib;
 import flash.text.TextField;
 
 class GRARPreloader extends NMEPreloader {

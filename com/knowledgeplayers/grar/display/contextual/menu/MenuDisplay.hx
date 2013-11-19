@@ -83,12 +83,6 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		return this.orientation;
 	}
 
-    override private function setButtonAction(button:DefaultButton, action:String):Void
-	{
-		switch(action){
-			case "close_menu": button.buttonAction = closeMenu;
-		}
-	}
     override public function parseContent(content:Xml):Void
     {
 		// BAAAAAAAAAAHHH: remove singleton
@@ -148,10 +142,6 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 		GameManager.instance.menuLoaded = true;
 	}
-
-    private function closeMenu(?_target:DefaultButton):Void{
-        GameManager.instance.hideContextual(MenuDisplay.instance);
-    }
 
 	// Private
 

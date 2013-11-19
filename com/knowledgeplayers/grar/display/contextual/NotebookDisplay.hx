@@ -190,8 +190,10 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		Localiser.instance.popLocale();
 	}
 
-	override private function setButtonAction(button:DefaultButton, action:String):Void
+	override private function setButtonAction(button:DefaultButton, action:String):Bool
 	{
+		if(super.setButtonAction(button, action))
+			return true;
 		button.buttonAction = switch(action.toLowerCase()){
 			case "close" : function(?t: DefaultButton){GameManager.instance.hideContextual(this);};
 			case "show" : onSelectChapter;
@@ -199,6 +201,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			case "gotonote": changeNote;
 			default: throw "[NotebookDisplay] Unknown action '"+action+"'.";
 		}
+		return true;
 	}
 
 	private function onSelectChapter(?target: DefaultButton):Void

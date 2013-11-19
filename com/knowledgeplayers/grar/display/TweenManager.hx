@@ -227,10 +227,7 @@ class TweenManager {
 		display.y = inOutY[0];
 		display.width = inOutWidth[0];
 		display.height = inOutHeight[0];
-		if(Reflect.hasField(display, "scale"))
-			return Actuate.tween(display, zoom.duration, {x: inOutX[1], y: inOutY[1], scale: inOutHeight[1] / inOutHeight[0]}).ease(getEasing(zoom));
-		else
-			return Actuate.tween(display, zoom.duration, {x: inOutX[1], y: inOutY[1], width: inOutWidth[1], height: inOutHeight[1]}).ease(getEasing(zoom));
+		return Actuate.tween(display, zoom.duration, {x: inOutX[1], y: inOutY[1], width: inOutWidth[1], height: inOutHeight[1]}).ease(getEasing(zoom));
 	}
 
 	/**

@@ -120,21 +120,17 @@ class Zone extends KpDisplay {
 		menuXml = element;
 	}
 
-	override private function setButtonAction(button:DefaultButton, action:String):Void
+	override private function setButtonAction(button:DefaultButton, action:String):Bool
 	{
+		if(super.setButtonAction(button, action))
+			return true;
 		button.buttonAction = switch(action){
-			case "open_menu": showMenu;
-			case "open_inventory":  function(?target: DefaultButton){
-				GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
-			};
 			case "sound_toggle": activeSound;
 			default: null;
 		}
-	}
 
-    private function showMenu(?_target:DefaultButton):Void{
-        GameManager.instance.displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout);
-    }
+		return button.buttonAction != null;
+	}
 
 	private function activeSound(?_target:DefaultButton):Void
 	{
