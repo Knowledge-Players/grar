@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import haxe.ds.GenericStack;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
@@ -53,9 +54,13 @@ class DialogDisplay extends PartDisplay {
 		// Check if minimum choices requirements is met
 		var exitPattern = false;
 		if(Std.is(currentPattern, ChoicePattern)){
-			var choice = cast(currentPattern, ChoicePattern);
-			if(choice.minimumChoice == choice.numChoices)
+			var choicePattern = cast(currentPattern, ChoicePattern);
+			// Init button with choice's view state
+			for(choice in choicePattern.choices.keys())
+				cast(displays.get(choice), DefaultButton).toggle(!choicePattern.choices.get(choice).viewed);
+			if(choicePattern.minimumChoice == choicePattern.numChoices){
 				exitPattern = true;
+			}
 		}
 
 		var nextItem = pattern.getNextItem();
