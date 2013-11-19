@@ -32,6 +32,7 @@ import flash.media.Video;
 import flash.net.NetConnection;
 import flash.net.NetStream;
 
+
 class VideoPlayer extends WidgetContainer
 {
 	public var playButtons (default, default): GenericStack<DefaultButton>;
@@ -48,7 +49,7 @@ class VideoPlayer extends WidgetContainer
 
 	private var loop : Bool;
 	private var autoStart : Bool;
-	private var autoFullscreen : Bool = false;
+	private var autoFullscreen : Bool = true;
 	private var progressBar: Image;
 	private var controls: GenericStack<Widget>;
 	private var timeArea: ScrollPanel;
@@ -126,7 +127,7 @@ class VideoPlayer extends WidgetContainer
 
 		if(xml.has.autoFullscreen)
 			autoFullscreen = xml.att.autoFullscreen=="true";
-
+        trace("init autoFullscreen : "+autoFullscreen);
 		init();
 	}
 
@@ -138,8 +139,11 @@ class VideoPlayer extends WidgetContainer
 		stream = new NetStream(connection);
 		this.loop = loop;
 		this.autoStart = autoStart;
-		if(autoFullscreen !=null)
-			this.autoFullscreen = autoFullscreen;
+
+        //TODO passe l'autoFullscreen tout le temps à false
+
+		//if(autoFullscreen !=null)
+		//	this.autoFullscreen = autoFullscreen;
 
 		changeVolume(defaultVolume);
 		stream.client = {onMetaData: function(data){ totalLength = Math.round(data.duration*100/100); }};
@@ -164,6 +168,8 @@ class VideoPlayer extends WidgetContainer
 
 	public function playVideo(?target: DefaultButton):Void
 	{
+
+        trace("autoFullscreen : "+autoFullscreen);
 		if(autoFullscreen){
 			setFullscreen(true);
 			autoFullscreen = false;
@@ -236,9 +242,10 @@ class VideoPlayer extends WidgetContainer
 
 			containerVideo.x = Lib.current.stage.stageWidth/2-containerVideo.width/2;
 			containerVideo.y = Lib.current.stage.stageHeight/2-containerVideo.height/2;
+            containerControls.x = Lib.current.stage.stageWidth/2-containerControls.width/2;
 
-			containerControls.x = Lib.current.stage.stageWidth/2-containerControls.width/2;
-			containerControls.y =  Lib.current.stage.stageHeight-containerControls.height-10;
+			containerControls.y = Lib.current.stage.stageHeight-containerControls.height-10;
+
 			displays.get("bigPlay").y = Lib.current.stage.stageHeight/2-displays.get("bigPlay").height/2-containerControls.y ;
 			fullscreenButton.toggle();
 
