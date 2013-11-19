@@ -63,7 +63,7 @@ class Grid implements Guide {
 	/**
 	* @inherits
 	**/
-	public function add(object:DisplayObject, withTween:Bool = true, tile: Bool = false):DisplayObject
+	public function add(object:DisplayObject, ?tween:String, tile: Bool = false):DisplayObject
 	{
 		if(cellSize.width == 0){
 			cellSize.width = object.width;
@@ -98,30 +98,26 @@ class Grid implements Guide {
 		else
 			throw "This grid is already full!";
 
-		if(withTween){
-			var params: Dynamic;
-			if(resize)
-				params = {x: targetX, y: targetY, width: cellSize.width, height: cellSize.height};
-			else
-				params = {x: targetX, y: targetY};
-			TweenManager.tween(object, 0.5, params);
+		if(tween != null){
+		    TweenManager.applyTransition(object,tween);
 		}
-		else{
-			if(tile){
-				cast(object, TileImage).set_x(targetX);
-				cast(object, TileImage).set_y(targetY);
-			}
-			else{
-				object.x = targetX;
-				object.y = targetY;
-			}
-			if(resize)
-				fitInGrid(object);
-		}
-		if(resize)
-			object.addEventListener(Event.CHANGE, function(e){
-				fitInGrid(object);
-			});
+
+        if(tile){
+            cast(object, TileImage).set_x(targetX);
+            cast(object, TileImage).set_y(targetY);
+        }
+        else{
+            object.x = targetX;
+            object.y = targetY;
+        }
+        if(resize){
+
+        fitInGrid(object);
+        object.addEventListener(Event.CHANGE, function(e){
+            fitInGrid(object);
+        });
+
+        }
 		return object;
 	}
 

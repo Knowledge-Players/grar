@@ -32,7 +32,7 @@ class Line implements Guide{
 	* @inherits
 	**/
 	// TODO tweens
-	public function add(object:DisplayObject, withTween: Bool = true, tile: Bool = false):DisplayObject
+	public function add(object:DisplayObject, ?tween:String, tile: Bool = false):DisplayObject
 	{
 		objects.push(object);
 		var step = getFragment(startPoint, endPoint, objects.length+1);

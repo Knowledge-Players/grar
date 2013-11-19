@@ -157,7 +157,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		buttonGroups.set(noteGroupName, new GenericStack<DefaultButton>());
 		chapterMap = new Map<DefaultButton, Chapter>();
 		cast(displays.get(currentPage.contentRef), ScrollPanel).setContent("");
-		if(contains(displays.get("player")))
+        if(contains(displays.get("player")))
 			removeChild(displays.get("player"));
 
 		var offsetY: Float = 0;
@@ -223,7 +223,9 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				var step: DefaultButton = cast(createButton(bookmark.node.Step), DefaultButton);
 				step.setText(Std.string(i+1));
 				step.name = Std.string(i);
-				guide.add(step, false);
+                if(bookmark.node.Step.has.transitionIn) {
+				    //guide.add(step,bookmark.node.Step.att.transitionIn);
+                }
 				if(i == 0)
 					step.toggle();
 				addChild(step);

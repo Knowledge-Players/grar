@@ -9,5 +9,5 @@ interface Guide{
 	* @param withTween  :   Play a tween when adding. Default is true
 	* @return the added object
 	**/
-	public function add(object:DisplayObject, withTween: Bool = true, tile: Bool = false):DisplayObject;
+	public function add(object:DisplayObject, ?tween:String, tile: Bool = false):DisplayObject;
 }

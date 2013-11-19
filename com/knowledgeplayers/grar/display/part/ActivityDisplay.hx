@@ -93,9 +93,17 @@ class ActivityDisplay extends PartDisplay {
 				throw "[ActivityDisplay] Unsupported guide '"+guideNode.name+"'.";
 		}
 		// Create inputs, place & display them
+
 		for(input in activity.getInputs()){
 			var button:DefaultButton = new DefaultButton(displayTemplates.get(input.ref));
-			guide.add(button);
+
+            var transitionIn:String= null;
+            if(guideNode.has.transitionIn) {
+                transitionIn =guideNode.att.transitionIn;
+            }
+
+            guide.add(button,transitionIn);
+
 			buttonsToInputs.set(button, input);
 			for(contentKey in input.content.keys())
 				button.setText(Localiser.instance.getItemContent(input.content.get(contentKey)), contentKey);
