@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.structure;
 
+import com.knowledgeplayers.grar.util.DisplayUtils;
+import com.knowledgeplayers.utils.assets.loaders.concrete.TextAsset;
 import com.knowledgeplayers.grar.display.contextual.ContextualDisplay.ContextualType;
 import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
 import com.knowledgeplayers.grar.structure.contextual.Bibliography;
@@ -117,6 +119,13 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         mode = Type.createEnum(Mode, parametersNode.node.Mode.innerData);
         state = parametersNode.node.State.innerData;
 	    id = parametersNode.node.Id.innerData;
+
+	    var templateFolder = displayNode.node.Templates.att.folder;
+	    var templates = AssetsStorage.getFolderContent(templateFolder, "xml");
+	    var xmlList = new List<Xml>();
+	    for(temp in templates)
+			xmlList.add(cast(temp, TextAsset).getXml());
+	    DisplayUtils.loadTemplates(xmlList);
 
     	// Start Tracking
 

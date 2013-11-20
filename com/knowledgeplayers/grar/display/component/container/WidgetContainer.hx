@@ -288,7 +288,7 @@ class WidgetContainer extends Widget{
 
 		scrollBar.setHeight(maskHeight);
 		scrollBar.set_ratio(maskHeight / content.height);
-		scrollBar.x = content.x+maskWidth;
+		scrollBar.x = content.x + maskWidth;
 		scrollBar.y = content.y;
 		scrollBar.scrolled = scrollToRatio;
 		scrollNeeded = true;
@@ -309,6 +309,13 @@ class WidgetContainer extends Widget{
 			case "button": createButton(elemNode);
 			case "text": createText(elemNode);
             case "timer":createTimer(elemNode);
+			case "include" :
+				var tmpXml = Xml.parse(DisplayUtils.templates.get(elemNode.att.ref).toString()).firstElement();
+				for(att in elemNode.x.attributes()){
+					if(att != "ref")
+						tmpXml.set(att, elemNode.x.get(att));
+				}
+				createElement(new Fast(tmpXml));
 			default: null;
 		 }
 	}

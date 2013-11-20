@@ -179,6 +179,13 @@ class KpDisplay extends Sprite {
 				case "template":
 					displayTemplates.set(elemNode.att.ref, elemNode);
 					null;
+				case "include" :
+					var tmpXml = Xml.parse(DisplayUtils.templates.get(elemNode.att.ref).toString()).firstElement();
+					for(att in elemNode.x.attributes()){
+						if(att != "ref")
+							tmpXml.set(att, elemNode.x.get(att));
+					}
+					createElement(new Fast(tmpXml));
 				default: null;
 			}
 		}
@@ -286,7 +293,12 @@ class KpDisplay extends Sprite {
 		var numIndex = 0;
 		var hashTextGroup = new Map<String, {obj:Fast, z:Int}>();
 
-		for(child in textNode.nodes.Text){
+		for(child in textNode.elements){
+			createElement(child);
+			hashTextGroup.set(child.att.ref, {obj:child, z:numIndex});
+			numIndex++;
+		}
+		/*for(child in textNode.nodes.Text){
 			createText(child);
 			hashTextGroup.set(child.att.ref, {obj:child, z:numIndex});
 			numIndex++;
@@ -301,7 +313,7 @@ class KpDisplay extends Sprite {
         if(textNode.hasNode.Sound){
             createSound(textNode.node.Sound);
             hashTextGroup.set(textNode.node.Sound.att.ref, {obj: textNode.node.Sound, z: numIndex});
-        }
+        }*/
 
 		textGroups.set(textNode.att.ref, hashTextGroup);
 	}

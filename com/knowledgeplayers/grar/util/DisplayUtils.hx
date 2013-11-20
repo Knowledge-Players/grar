@@ -15,6 +15,8 @@ import flash.display.Sprite;
  */
 class DisplayUtils {
 
+	public static var templates: Map<String, Xml> = new Map<String, Xml>();
+
 	private function new()
 	{}
 
@@ -54,8 +56,9 @@ class DisplayUtils {
     * @param    height : Height of the rectangle
     * @param    color : Color of the rectangle
     * @param    alpha : Alpha of the color
+    * @param    x : x of the top left corner
+    * @param    y : y of the top left corner
     **/
-
 	public static inline function initSprite(?sprite:Sprite, width:Float = 1, height:Float = 1, color:Int = 0, alpha:Float = 1, x:Float = 0, y:Float = 0):Sprite
 	{
 		var s: Sprite = sprite != null ? sprite : new Sprite();
@@ -65,6 +68,16 @@ class DisplayUtils {
 		return s;
 	}
 
+	/**
+    * Init a sprite with a vertical top to bottom gradient filled rectangle
+    * @param    sprite : Sprite to init
+    * @param    width : Width of the rectangle
+    * @param    height : Height of the rectangle
+    * @param    colors : Colors of the gradient.
+    * @param    alphas : Alpha of the gradient.
+    * @param    x : x of the top left corner
+    * @param    y : y of the top left corner
+    **/
 	public static function initGradientSprite(?sprite: Sprite, width: Float = 1, height: Float = 1, colors: Array<Int>, alphas: Array<Float>, x: Float = 0, y: Float = 0): Sprite
 	{
 		if(colors.length == 1)
@@ -80,6 +93,14 @@ class DisplayUtils {
 		}
 	}
 
+	/**
+	* Mask the given sprite with the rectangle specified
+	* @param    sprite : Sprite to mask
+	* @param    maskWidth : Width of the mask
+	* @param    maskHeight : Height of the mask
+	* @param    maskX : x of the top left corner of the mask
+	* @param    maskY : y of the top left corner of the mask
+	**/
 	public static inline function maskSprite(sprite: Sprite, maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0):Void
 	{
 		var mask = new Sprite();
@@ -93,11 +114,10 @@ class DisplayUtils {
 	}
 
 	/**
-    * @param    layer : Layer with all tiles
+    * @param    tilesheet : Tilesheet with all tiles
     * @param    tileId : Id of the tile to get
     * @return the bitmapData in the given tile
     **/
-
 	public static function getBitmapDataFromLayer(tilesheet:TilesheetEx, tileId:String):BitmapData
 	{
 		var tmpLayer = new TileLayer(tilesheet);
@@ -111,5 +131,15 @@ class DisplayUtils {
 		tmpLayer.view.y = tile.height / 2;
 		bmpData.draw(tmpSprite);
 		return bmpData;
+	}
+
+	/**
+	* Load the templates files. Update templates hash accordingly
+	* @param    templateList : List of the template to add
+	**/
+	public static function loadTemplates(templatesList:List<Xml>):Void
+	{
+		for(temp in templatesList)
+			templates.set(temp.firstElement().get("ref"), temp);
 	}
 }
