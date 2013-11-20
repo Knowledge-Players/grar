@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import flash.Lib;
+import flash.net.URLRequest;
+import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.util.guide.Guide;
 import com.knowledgeplayers.grar.display.component.Widget;
 import flash.geom.Point;
@@ -22,6 +25,11 @@ import flash.display.Sprite;
 
 class NotebookDisplay extends KpDisplay implements ContextualDisplay
 {
+
+	private inline static var noteGroupName: String = "notes";
+	private inline static var tabGroupName: String = "tabs";
+	private inline static var stepGroupName: String = "steps";
+
 	/**
 	* Instance of the display
 	**/
@@ -39,10 +47,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 	private var bookmark: Fast;
 	private var bookmarkBkg: Widget;
 	private var currentChapter: DefaultButton;
-
-	private inline static var noteGroupName: String = "notes";
-	private inline static var tabGroupName: String = "tabs";
-	private inline static var stepGroupName: String = "steps";
 
 		/**
 	* @return the instance
@@ -134,6 +138,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		GameManager.instance.addEventListener(TokenEvent.ADD, onUnlocked);
 		buttonGroups.set(noteGroupName, new GenericStack<DefaultButton>());
 		buttonGroups.set(tabGroupName, new GenericStack<DefaultButton>());
+		buttonGroups.set(stepGroupName, new GenericStack<DefaultButton>());
 	}
 
 	private function displayPage(page:Page):Void
@@ -170,15 +175,14 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			var button: DefaultButton = new DefaultButton(chapterTemplate);
 			button.y += offsetY;
 			offsetY += button.height + Std.parseFloat(chapterTemplate.att.offsetY);
-			button.setText(Localiser.instance.getItemContent(chapter.name), "title");
+			var chapterTitle = Localiser.instance.getItemContent(chapter.name);
+			button.setText(chapterTitle, "title");
 			button.setText(Localiser.instance.getItemContent(chapter.subtitle), "subtitle");
 			buttonGroups.get(noteGroupName).add(button);
 			button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 			// Fill hit box
 			DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
-			button.visible = button.enabled = chapter.isActivated;
-			// I don't know why visible doesn't do the job
-			button.alpha = button.visible ? 1 : 0;
+			button.alpha = chapter.isActivated ? 1 : 0;
 			addChild(button);
 			setButtonAction(button, "show");
 			chapterMap.set(button, chapter);
@@ -222,17 +226,27 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 					new Line(new Point(start[0], start[1]), new Point(end[0], end[1]), guideFast.has.center?guideFast.att.center=="true":false);
 				default: null;
 			}
+			clearSteps();
+			// Create steps
 			for(i in 0...numActive){
 				var step: DefaultButton = cast(createButton(bookmark.node.Step), DefaultButton);
 				step.setText(Std.string(i+1));
 				step.name = Std.string(i);
-                if(bookmark.node.Step.has.transitionIn) {
-				    //guide.add(step,bookmark.node.Step.att.transitionIn);
-                }
+				var transitionIn = null;
+                if(bookmark.node.Step.has.transitionIn)
+                    transitionIn = bookmark.node.Step.att.transitionIn;
+				guide.add(step,transitionIn);
 				if(i == 0)
 					step.toggle();
 				addChild(step);
+				buttonGroups.get(stepGroupName).add(step);
 			}
+			var chapter: Chapter = chapterMap.get(target);
+			Localiser.instance.pushLocale();
+			Localiser.instance.layoutPath = model.file;
+			cast(displays.get(chapter.titleRef), ScrollPanel).setContent(Localiser.instance.getItemContent(chapter.name));
+			Localiser.instance.popLocale();
+			addChild(displays.get(chapter.titleRef));
 		}
 		var i = 0;
 		while(i < notes.length && notes[i].isActivated)
@@ -246,21 +260,31 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		Localiser.instance.pushLocale();
 		Localiser.instance.layoutPath = model.file;
 		var panel = cast(displays.get(currentPage.contentRef), ScrollPanel);
-		var title = cast(displays.get(currentPage.titleRef), ScrollPanel);
 
-		panel.setContent(Localiser.instance.getItemContent(note.content));
-		title.setContent(Localiser.instance.getItemContent(note.name));
-		Localiser.instance.popLocale();
-		if(!contains(panel))
-			addChild(panel);
-		if(!contains(title))
-			addChild(title);
+		if(note.content.indexOf("/") < 1){
+			panel.setContent(Localiser.instance.getItemContent(note.content));
 
-		if(note.video != null){
-			var player = cast(displays.get("player"), VideoPlayer);
-			player.setVideo(note.video);
-			player.scale = 0.5;
-			addChild(player);
+			Localiser.instance.popLocale();
+			if(!contains(panel))
+				addChild(panel);
+
+			if(note.video != null){
+				var player = cast(displays.get("player"), VideoPlayer);
+				player.setVideo(note.video);
+				// TODO remove and replace by dynamic scale
+				player.scale = 0.7;
+				addChild(player);
+			}
+			else if(displays.exists("player")){
+				var player = cast(displays.get("player"), VideoPlayer);
+				player.stopVideo();
+				if(contains(player))
+					removeChild(player);
+			}
+		}
+		else{
+			var url = new URLRequest(note.content);
+			Lib.getURL(url, "_blank");
 		}
 	}
 
@@ -275,6 +299,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			if(page.tabContent == target.name)
 				displayPage(page);
 		}
+		clearSteps();
 	}
 
 	private function onUnlocked(e:TokenEvent):Void
@@ -294,6 +319,16 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 					}
 				}
 			}
+		}
+	}
+
+	private inline function clearSteps():Void
+	{
+		while(!buttonGroups.get(stepGroupName).isEmpty()){
+			var step = buttonGroups.get(stepGroupName).pop();
+			if(contains(step))
+				removeChild(step);
+			step = null;
 		}
 	}
 }

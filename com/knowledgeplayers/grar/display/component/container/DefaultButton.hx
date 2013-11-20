@@ -364,6 +364,7 @@ class DefaultButton extends WidgetContainer {
 	private inline function createStates(node:Fast):Map<String, Widget>
 	{
 		var list = new Map<String, Widget>();
+		// TODO remove
 		if(node.has.background){
 			var bkg = new Image();
 			background = node.att.background;

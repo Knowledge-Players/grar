@@ -49,7 +49,7 @@ class VideoPlayer extends WidgetContainer
 
 	private var loop : Bool;
 	private var autoStart : Bool;
-	private var autoFullscreen : Bool = true;
+	private var autoFullscreen : SuperBool;
 	private var progressBar: Image;
 	private var controls: GenericStack<Widget>;
 	private var timeArea: ScrollPanel;
@@ -86,7 +86,7 @@ class VideoPlayer extends WidgetContainer
 		yVideo = containerVideo.y;
 		xControls = containerControls.x;
 		yControls = containerControls.y;
-
+		autoFullscreen = {isSet: false, value: false};
 
 
 		super(xml, tilesheet);
@@ -122,28 +122,32 @@ class VideoPlayer extends WidgetContainer
 
 		if(xml.has.controlsHidden){
 
-			controlsHidden = xml.att.controlsHidden=="true";
+			controlsHidden = xml.att.controlsHidden == "true";
 		}
 
-		if(xml.has.autoFullscreen)
-			autoFullscreen = xml.att.autoFullscreen=="true";
-        trace("init autoFullscreen : "+autoFullscreen);
+		if(xml.has.autoFullscreen){
+			autoFullscreen.value = xml.att.autoFullscreen == "true";
+			autoFullscreen.isSet = true;
+		}
+        //trace("init autoFullscreen : "+autoFullscreen);
 		init();
 	}
 
-	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 0, capture:Float = 0,?autoFullscreen:Bool): Void
+	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1, capture:Float = 0, autoFullscreen:Bool = false): Void
 	{
 		if(url == null || url == "")
 			throw '[VideoPlayer] Invalid url "$url" for video stream.';
+		if(stream != null)
+			init();
 		//_timeToCapture = capture
 		stream = new NetStream(connection);
 		this.loop = loop;
 		this.autoStart = autoStart;
 
-        //TODO passe l'autoFullscreen tout le temps à false
-
-		//if(autoFullscreen !=null)
-		//	this.autoFullscreen = autoFullscreen;
+		if(!this.autoFullscreen.isSet){
+			this.autoFullscreen.value = autoFullscreen;
+			this.autoFullscreen.isSet = true;
+		}
 
 		changeVolume(defaultVolume);
 		stream.client = {onMetaData: function(data){ totalLength = Math.round(data.duration*100/100); }};
@@ -168,11 +172,10 @@ class VideoPlayer extends WidgetContainer
 
 	public function playVideo(?target: DefaultButton):Void
 	{
-
-        trace("autoFullscreen : "+autoFullscreen);
-		if(autoFullscreen){
+		//trace("autoFullscreen : "+autoFullscreen);
+		if(autoFullscreen.value){
 			setFullscreen(true);
-			autoFullscreen = false;
+			//autoFullscreen = false;
 		}
 		addEventListener(Event.ENTER_FRAME, enterFrame);
 		setPlaying(true);
@@ -184,6 +187,14 @@ class VideoPlayer extends WidgetContainer
 		removeEventListener(Event.ENTER_FRAME, enterFrame);
 		setPlaying(false);
 		stream.pause();
+	}
+
+	public function stopVideo():Void
+	{
+		removeEventListener(Event.ENTER_FRAME, enterFrame);
+		setPlaying(false);
+		stream.pause();
+		fastForward(0);
 	}
 
 	private function playOrPause(?target: DefaultButton)
@@ -403,7 +414,7 @@ class VideoPlayer extends WidgetContainer
 		containerControls.addEventListener(MouseEvent.MOUSE_OUT,hideControls);
 
 		containerVideo.addEventListener(MouseEvent.MOUSE_MOVE,onMouseMove);
-		containerControls.alpha =0;
+		containerControls.alpha = 0;
 	}
 
 	private function onMouseMove(e:MouseEvent):Void{
@@ -633,5 +644,10 @@ class VideoPlayer extends WidgetContainer
 
 
 	}
+}
+
+typedef SuperBool = {
+	var isSet: Bool;
+	var value : Bool;
 }
 #end

@@ -70,7 +70,7 @@ class Notebook
 			var titleRef = page.node.Chapter.att.titleRef;
 			var newPage:Page = {title: title, contentRef: contentRef, titleRef: titleRef, tabContent: page.att.tabContent, icon: page.att.icon, chapters: new Array<Chapter>()};
 			for(chapter in page.nodes.Chapter){
-				var chap: Chapter = {notes: new Array<Note>(), icon: chapter.att.icon, name: chapter.att.name, subtitle: chapter.att.subtitle, isActivated: chapter.has.unlocked ? chapter.att.unlocked == "true" : false};
+				var chap: Chapter = {notes: new Array<Note>(), titleRef: chapter.att.titleRef, icon: chapter.att.icon, name: chapter.att.name, subtitle: chapter.att.subtitle, isActivated: chapter.has.unlocked ? chapter.att.unlocked == "true" : false};
 				for(noteFast in chapter.nodes.Note){
 					var note = new Note(noteFast);
 					chap.notes.push(note);
@@ -99,4 +99,5 @@ typedef Chapter = {
 	var name: String;
 	var subtitle: String;
 	var isActivated: Bool;
+	var titleRef: String;
 }
