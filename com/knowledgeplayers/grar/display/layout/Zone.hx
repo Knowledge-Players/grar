@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.display.layout;
 
-import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import com.knowledgeplayers.grar.display.contextual.menu.MenuSphericalDisplay;
 import com.knowledgeplayers.grar.display.component.container.DropdownMenu;
@@ -8,9 +7,7 @@ import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import com.knowledgeplayers.grar.display.component.Image;
 import aze.display.TileLayer;
-import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
-import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.component.ProgressBar;
 import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
 import com.knowledgeplayers.grar.event.LayoutEvent;
@@ -100,6 +97,14 @@ class Zone extends KpDisplay {
 		else{
 			trace("[Zone] This zone is empty. Are you sure your XML is correct ?");
 		}
+
+		// Listeners on menu state
+		if(buttonGroups.exists(groupMenu)){
+			MenuSphericalDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
+			MenuDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
+		}
+		if(buttonGroups.exists(groupNotebook))
+			NotebookDisplay.instance.addEventListener(PartEvent.EXIT_PART, exitNotebook);
 	}
 
 	private function createProgressBar(element:Fast):ProgressBar
@@ -113,11 +118,41 @@ class Zone extends KpDisplay {
 
 	public function createMenu(element:Fast):Void
 	{
-		if(element.att.type == "spheric")
+		if(element.att.type == "spheric"){
 			MenuSphericalDisplay.instance.parseContent(element.x);
-		else
+		}
+		else{
 			MenuDisplay.instance.parseContent(element.x);
+		}
 		menuXml = element;
+	}
+
+	// Private
+
+	private function exitNotebook(e:Event):Void
+	{
+		for(button in buttonGroups.get(groupNotebook))
+			button.toggle(true);
+	}
+
+	private function exitMenu(e:Event):Void
+	{
+		for(button in buttonGroups.get(groupMenu))
+			button.toggle(true);
+		MenuSphericalDisplay.instance.removeEventListener(PartEvent.EXIT_PART, exitMenu);
+		MenuDisplay.instance.removeEventListener(PartEvent.EXIT_PART, exitMenu);
+		MenuSphericalDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
+		MenuDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
+	}
+
+	private function enterMenu(e:Event):Void
+	{
+		for(button in buttonGroups.get(groupMenu))
+			button.toggle(false);
+		MenuSphericalDisplay.instance.removeEventListener(PartEvent.ENTER_PART, enterMenu);
+		MenuDisplay.instance.removeEventListener(PartEvent.ENTER_PART, enterMenu);
+		MenuSphericalDisplay.instance.addEventListener(PartEvent.EXIT_PART, exitMenu);
+		MenuDisplay.instance.addEventListener(PartEvent.EXIT_PART, exitMenu);
 	}
 
 	override private function setButtonAction(button:DefaultButton, action:String):Bool
@@ -173,7 +208,9 @@ class Zone extends KpDisplay {
 	{
 		var elem = super.createElement(elemNode);
 		switch(elemNode.name.toLowerCase()){
-			case "menu":createMenu(elemNode);
+			case "menu":
+				trace("create menu");
+				createMenu(elemNode);
 			case "progressbar": createProgressBar(elemNode);
 			case "fastnav":	fastnav = new DropdownMenu(elemNode, true);
 		}

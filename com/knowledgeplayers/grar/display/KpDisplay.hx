@@ -34,6 +34,10 @@ import flash.display.Sprite;
 using StringTools;
 
 class KpDisplay extends Sprite {
+
+	// Should not be written. Can't be inlined because of inheritance
+	private var groupMenu: String = "menu";
+	private var groupNotebook: String = "notebook";
 	/**
     * All the spritesheets used here
     **/
@@ -59,7 +63,14 @@ class KpDisplay extends Sprite {
 	**/
 	public var dynamicFields (default, null): Array<{field: ScrollPanel, content: String}>;
 
+	/**
+	* Map for layer render needed
+	**/
 	public var renderLayers (default, null):Map<TileLayer, Bool>;
+
+	/**
+	* Scroll bars
+	**/
 	public var scrollBars (default, null):Map<String, ScrollBar>;
 
 	private var displays:Map<String, Widget>;
@@ -73,11 +84,10 @@ class KpDisplay extends Sprite {
 	private var timelines: Map<String, Timeline>;
 
 
-		/**
+	/**
     * Parse the content of a display XML
     * @param    content : Content of the XML
     **/
-
 	public function parseContent(content:Xml):Void
 	{
 		displayFast = new Fast(content.firstElement());
@@ -298,22 +308,6 @@ class KpDisplay extends Sprite {
 			hashTextGroup.set(child.att.ref, {obj:child, z:numIndex});
 			numIndex++;
 		}
-		/*for(child in textNode.nodes.Text){
-			createText(child);
-			hashTextGroup.set(child.att.ref, {obj:child, z:numIndex});
-			numIndex++;
-		}
-		#if flash
-			if(textNode.hasNode.Video){
-				createVideo(textNode.node.Video);
-				hashTextGroup.set(textNode.node.Video.att.ref, {obj: textNode.node.Video, z: numIndex});
-			}
-		#end
-
-        if(textNode.hasNode.Sound){
-            createSound(textNode.node.Sound);
-            hashTextGroup.set(textNode.node.Sound.att.ref, {obj: textNode.node.Sound, z: numIndex});
-        }*/
 
 		textGroups.set(textNode.att.ref, hashTextGroup);
 	}
@@ -343,14 +337,22 @@ class KpDisplay extends Sprite {
 	private function setButtonAction(button:DefaultButton, action:String):Bool
 	{
 		var actionSet = true;
-		if(action.toLowerCase() == "open_menu")
+		if(action.toLowerCase() == "open_menu"){
 			button.buttonAction = function(?target){
 				GameManager.instance.displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout);
 			}
-		else if(action.toLowerCase() == "open_inventory")
+			if(!buttonGroups.exists(groupMenu))
+				buttonGroups.set(groupMenu, new GenericStack<DefaultButton>());
+			buttonGroups.get(groupMenu).add(button);
+		}
+		else if(action.toLowerCase() == "open_inventory"){
 			button.buttonAction = function(?target){
 				GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
 			}
+			if(!buttonGroups.exists(groupNotebook))
+				buttonGroups.set(groupNotebook, new GenericStack<DefaultButton>());
+			buttonGroups.get(groupNotebook).add(button);
+		}
 		else if(action.toLowerCase() == "close_menu")
 			button.buttonAction = function(?target){
 				GameManager.instance.hideContextual(MenuDisplay.instance);

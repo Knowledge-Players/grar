@@ -166,12 +166,12 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
 			var contextualType: ContextualType = Type.createEnum(ContextualType, contextual.att.type.toUpperCase());
 			switch(contextualType){
 				case NOTEBOOK:    NotebookDisplay.instance.parseContent(display);
-									NotebookDisplay.instance.model = new Notebook(contextual.att.file);
+								  NotebookDisplay.instance.model = new Notebook(contextual.att.file);
 				case GLOSSARY:    Glossary.instance.fillWithXml(contextual.att.file);
 				case BIBLIOGRAPHY:Bibliography.instance.fillWithXml(contextual.att.file);
 				case MENU :       MenuDisplay.instance.parseContent(display);
-									if(contextual.has.file)
-										menu = AssetsStorage.getXml(contextual.att.file);
+								  if(contextual.has.file)
+								    menu = AssetsStorage.getXml(contextual.att.file);
 				default: null;
 			}
 		}

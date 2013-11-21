@@ -16,8 +16,6 @@ import com.knowledgeplayers.grar.event.PartEvent;
 import haxe.xml.Fast;
 import flash.display.Shape;
 import flash.events.Event;
-import aze.display.TileLayer;
-import aze.display.TileSprite;
 
 using StringTools;
 
@@ -37,6 +35,11 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 	* Tell wether or not there is a menu in the module
 	**/
 	public var exists(default,null):Bool=false;
+
+	/**
+	* Buttons that open and close the menu. Not set internally
+	**/
+	public var menuButtons:GenericStack<DefaultButton>;
 
 	private var levelDisplays:Map<String, Fast>;
 	private var xOffset:Float = 0;
@@ -269,7 +272,8 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 				GameManager.instance.displayPartById(key, true);
 		}
 
-		TweenManager.applyTransition(this, transitionOut);
+		//TweenManager.applyTransition(this, transitionOut);
+		GameManager.instance.hideContextual(instance);
 	}
 
 	private function onOver(e: Event):Void
@@ -368,6 +372,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		if (timelines.exists("in")){
 			timelines.get("in").play();
 		}
+		dispatchEvent(new PartEvent(PartEvent.ENTER_PART));
 	}
 
 	private function onRemove(e:Event):Void
@@ -376,6 +381,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
             for(elem in timelines.get("in").elements)
                 elem.widget.reset();
         }
+		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 	}
 
 	override private function addElement(elem:Widget, node:Fast):Void

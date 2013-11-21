@@ -193,8 +193,10 @@ class VideoPlayer extends WidgetContainer
 	{
 		removeEventListener(Event.ENTER_FRAME, enterFrame);
 		setPlaying(false);
-		stream.pause();
-		fastForward(0);
+		if(stream != null){
+			stream.pause();
+			fastForward(0);
+		}
 	}
 
 	private function playOrPause(?target: DefaultButton)

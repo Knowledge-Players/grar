@@ -159,10 +159,16 @@ class KpTextDownElement {
 				return -1;
 		});
 
-		if(style.getCase() == "upper")
-			tf.text = content.toUpperCase();
-		else if(style.getCase() == "lower")
-			tf.text = content.toLowerCase();
+		if(style.exists("case")){
+			if(style.getCase().toLowerCase() == "upper")
+				tf.text = content.toUpperCase();
+			else if(style.getCase().toLowerCase() == "lower")
+				tf.text = content.toLowerCase();
+			else if(style.getCase().toLowerCase() == "title")
+				tf.text = content.substr(0,1).toUpperCase() + content.substr(1).toLowerCase();
+			else
+				tf.text = content;
+		}
 		else
 			tf.text = content;
 

@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import com.knowledgeplayers.grar.event.PartEvent;
+import flash.events.Event;
 import flash.Lib;
 import flash.net.URLRequest;
 import com.knowledgeplayers.grar.localisation.Localiser;
@@ -40,7 +42,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 	**/
 	public var model (default, set_model): Notebook;
 
-	private var chapterTemplate: Fast;
+	private var chapterTemplates: Map<String, Fast>;
 	private var chapterMap: Map<DefaultButton, Chapter>;
 	private var currentPage: Page;
 	private var tabTemplate: Fast;
@@ -63,7 +65,9 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		super.parseContent(content);
 		if(displayFast.has.layout)
 			layout = displayFast.att.layout;
-		chapterTemplate = displayFast.node.Chapter;
+		chapterTemplates = new Map<String,Fast>();
+		for(chapter in displayFast.nodes.Chapter)
+			chapterTemplates.set(chapter.att.ref, chapter);
 		chapterMap = new Map<DefaultButton, Chapter>();
 		tabTemplate = displayFast.node.Tab;
 		bookmark = displayFast.node.Bookmark;
@@ -139,6 +143,10 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		buttonGroups.set(noteGroupName, new GenericStack<DefaultButton>());
 		buttonGroups.set(tabGroupName, new GenericStack<DefaultButton>());
 		buttonGroups.set(stepGroupName, new GenericStack<DefaultButton>());
+
+		addEventListener(Event.REMOVED_FROM_STAGE, function(e){
+			dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+		});
 	}
 
 	private function displayPage(page:Page):Void
@@ -161,7 +169,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		}
 		buttonGroups.set(noteGroupName, new GenericStack<DefaultButton>());
 		chapterMap = new Map<DefaultButton, Chapter>();
-		cast(displays.get(currentPage.contentRef), ScrollPanel).setContent("");
         if(contains(displays.get("player")))
 			removeChild(displays.get("player"));
 
@@ -169,12 +176,12 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 
 		// Fill every occurences of "icon" element with the proper tile/img
 		for(chapter in currentPage.chapters){
-			var icons = ParseUtils.selectByAttribute("ref", "icon", chapterTemplate.x);
+			var icons = ParseUtils.selectByAttribute("ref", "icon", chapterTemplates.get(chapter.ref).x);
 			ParseUtils.updateIconsXml(chapter.icon, icons);
 			// Clickable note
-			var button: DefaultButton = new DefaultButton(chapterTemplate);
+			var button: DefaultButton = new DefaultButton(chapterTemplates.get(chapter.ref));
 			button.y += offsetY;
-			offsetY += button.height + Std.parseFloat(chapterTemplate.att.offsetY);
+			offsetY += button.height + Std.parseFloat(chapterTemplates.get(chapter.ref).att.offsetY);
 			var chapterTitle = Localiser.instance.getItemContent(chapter.name);
 			button.setText(chapterTitle, "title");
 			button.setText(Localiser.instance.getItemContent(chapter.subtitle), "subtitle");
@@ -259,14 +266,13 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 	{
 		Localiser.instance.pushLocale();
 		Localiser.instance.layoutPath = model.file;
-		var panel = cast(displays.get(currentPage.contentRef), ScrollPanel);
+		var panel = cast(displays.get(note.ref), ScrollPanel);
 
 		if(note.content.indexOf("/") < 1){
 			panel.setContent(Localiser.instance.getItemContent(note.content));
 
 			Localiser.instance.popLocale();
-			if(!contains(panel))
-				addChild(panel);
+			addChild(panel);
 
 			if(note.video != null){
 				var player = cast(displays.get("player"), VideoPlayer);
@@ -295,11 +301,21 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 
 	private function changePage(?target:DefaultButton):Void
 	{
+		// Clear page
+		clearSteps();
+		var scrollPanels = new GenericStack<DisplayObject>();
+		for(i in 0...numChildren){
+			if(Std.is(getChildAt(i), ScrollPanel))
+				scrollPanels.add(getChildAt(i));
+		}
+		for(panel in scrollPanels)
+			removeChild(panel);
+		scrollPanels = null;
+
 		for(page in model.pages){
 			if(page.tabContent == target.name)
 				displayPage(page);
 		}
-		clearSteps();
 	}
 
 	private function onUnlocked(e:TokenEvent):Void
@@ -307,11 +323,12 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		if(e.token.type == "note"){
 			var notes = model.getAllNotes();
 			var i = 0;
-			while(i < notes.length && notes[i].ref != e.token.ref){
+			while(i < notes.length && notes[i].name != e.token.name){
 				i++;
 			}
 			if(i != notes.length){
-				notes[i].isActivated = true;
+				trace(notes[i].isActivated);
+				//notes[i].isActivated = true;
 				for(button in chapterMap.keys()){
 					if(Lambda.has(chapterMap.get(button).notes, notes[i])){
 						button.visible = button.enabled = true;

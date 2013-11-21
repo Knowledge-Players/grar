@@ -295,13 +295,13 @@ class DefaultButton extends WidgetContainer {
 
 	private function onClick(event:MouseEvent):Void
 	{
+		if(isToggleEnabled)
+			onToggle();
 		if(timeline != null){
 			timeline.addEventListener(Event.COMPLETE,function(e){buttonAction(this);});
 			timeline.play();
 		}else
 			buttonAction(this);
-		if(isToggleEnabled)
-			onToggle();
 	}
 
 	// Private

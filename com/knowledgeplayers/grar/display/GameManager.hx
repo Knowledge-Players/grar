@@ -137,7 +137,6 @@ class GameManager extends EventDispatcher {
     * Load the tokens descriptor file
     * @param    path : Path to the file
     **/
-
 	public function loadTokens(path:String):Void
 	{
 		parseTokens(AssetsStorage.getXml(path));
@@ -261,6 +260,7 @@ class GameManager extends EventDispatcher {
 			changeLayout(layout);
 		this.layout.zones.get(game.ref).addChild(cast(contextual, KpDisplay));
 		lastContextual = cast(contextual, KpDisplay);
+		this.layout.updateDynamicFields();
 	}
 
 	public function hideContextual(contextual:ContextualDisplay):Void

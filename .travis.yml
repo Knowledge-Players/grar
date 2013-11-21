@@ -13,8 +13,7 @@ before_install:
   - haxelib install tilelayer
   - wget http://lib.haxe.org/files/3.0/nme-3,5,6.zip
   - haxelib local nme-3,5,6.zip
-  - wget http://lib.haxe.org/files/3.0/ExAM-2,0,1.zip
-  - haxelib local ExAM-2,0,1.zip
+  - haxelib git ExAM https://github.com/Knowledge-Players/ExAM.git src
 
 script:
   - haxe build.hxml
