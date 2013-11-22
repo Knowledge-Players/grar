@@ -60,13 +60,11 @@ class DefaultButton extends WidgetContainer {
      * Action to execute on click
      */
 	public dynamic function buttonAction(?target: DefaultButton): Void{}
-
 	/**
      * Constructor.
      * @param	tilesheet : UI Sheet
      * @param	tile : Tile containing the upstate
      */
-
 	public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>)
 	{
 		super(xml);
@@ -291,20 +289,21 @@ class DefaultButton extends WidgetContainer {
 		}
 	}
 
-	// Abstract
+	// Private
 
 	private function onClick(event:MouseEvent):Void
 	{
+		var timelineOut = timeline;
 		if(isToggleEnabled)
 			onToggle();
-		if(timeline != null){
-			timeline.addEventListener(Event.COMPLETE,function(e){buttonAction(this);});
-			timeline.play();
+		if(timelineOut != null){
+			timelineOut.addEventListener(Event.COMPLETE,function(e){
+				buttonAction(this);
+			});
+			timelineOut.play();
 		}else
 			buttonAction(this);
 	}
-
-	// Private
 
 	private function setAllListeners(listener:MouseEvent -> Void):Void
 	{

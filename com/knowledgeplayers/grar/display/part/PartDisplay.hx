@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.display.part;
 
-import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
 import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.SoundPlayer;
 import com.knowledgeplayers.grar.structure.part.sound.item.SoundItem;
@@ -11,7 +10,6 @@ import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.Image;
 import com.knowledgeplayers.grar.display.GameManager;
-import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.contextual.InventoryDisplay;
@@ -363,8 +361,6 @@ class PartDisplay extends KpDisplay {
 
 		currentItem = item;
 
-		var toRemove = new GenericStack<DisplayObject>();
-
 		if(isFirst)
 			setBackground(item.background);
 
@@ -372,6 +368,8 @@ class PartDisplay extends KpDisplay {
 			var text = cast(item, TextItem);
 
 			if(text.introScreen != null){
+
+				/*var toRemove = new GenericStack<DisplayObject>();
 
 				for(i in 0...numChildren){
 					if(Std.is(getChildAt(i), DefaultButton))
@@ -382,7 +380,8 @@ class PartDisplay extends KpDisplay {
 				for(obj in toRemove){
 					if(contains(obj))
 						removeChild(obj);
-				}
+				}*/
+				cleanDisplay();
 
 				// The intro screen automatically removes itself after its duration
 				var intro = text.introScreen;
@@ -513,7 +512,7 @@ class PartDisplay extends KpDisplay {
 	{
 		var toRemove = new GenericStack<DisplayObject>();
 		for(i in 0...numChildren){
-			if(Std.is(getChildAt(i), DefaultButton) || Std.is(getChildAt(i), ScrollPanel))
+			if(Std.is(getChildAt(i), DefaultButton) || Std.is(getChildAt(i), ScrollPanel)#if flash || Std.is(getChildAt(i), VideoPlayer)#end)
 				toRemove.add(getChildAt(i));
 		}
 		for(item in currentItems){
