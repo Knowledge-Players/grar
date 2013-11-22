@@ -208,6 +208,7 @@ class VideoPlayer extends WidgetContainer
 		removeEventListener(Event.ENTER_FRAME, enterFrame);
 		setPlaying(false);
         containerThumbnail.visible=true;
+        displays.get("bigPlay").visible=true;
 		if(stream != null){
 			stream.pause();
 			fastForward(0);
@@ -217,6 +218,7 @@ class VideoPlayer extends WidgetContainer
 	private function playOrPause(?target: DefaultButton)
 	{
         containerThumbnail.visible=false;
+        displays.get("bigPlay").visible=false;
 		if(!isPlaying)
 			playVideo();
 		else
@@ -359,7 +361,7 @@ class VideoPlayer extends WidgetContainer
 					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
 					cursor = new Widget();
 					cursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile)));
-					cursor.x = (child.has.x ? Std.parseFloat(child.att.x) : 0) + progressBar.x;
+					cursor.x = (child.has.x ? Std.parseFloat(child.att.x) : 0) + progressBar.x-cursor.width/2;
 					cursor.y = progressBar.y-cursor.height/3;
 					addElement(cursor);
 				}
@@ -571,6 +573,7 @@ class VideoPlayer extends WidgetContainer
 				fastForward(0);
 				setFullscreen(false);
                 containerThumbnail.visible=true;
+                displays.get("bigPlay").visible=true;
 				if(!loop)
 					pauseVideo();
 			}
