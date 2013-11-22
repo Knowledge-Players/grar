@@ -4,7 +4,6 @@ package com.knowledgeplayers.grar.display;
 import flash.system.System;
 import flash.external.ExternalInterface;
 #end
-import com.knowledgeplayers.grar.structure.part.ActivityPart;
 import com.knowledgeplayers.grar.display.contextual.BibliographyDisplay;
 import com.knowledgeplayers.grar.display.contextual.GlossaryDisplay;
 import com.knowledgeplayers.grar.display.contextual.GlossaryDisplay;
@@ -195,9 +194,7 @@ class GameManager extends EventDispatcher {
 			itemSound = new Sound(new URLRequest(soundRef));
 			itemSoundChannel = itemSound.play();
 			changeVolume(nbVolume);
-
 		}
-
 	}
 
 	/**
@@ -209,8 +206,8 @@ class GameManager extends EventDispatcher {
 	public function displayPart(part:Part, interrupt:Bool = false, startPosition:Int = -1):Void
 	{
 		// TODO better user feedback
-		if(!part.canStart())
-			trace("Et non !");
+		/*if(!part.canStart())
+			trace("Et non !");*/
 
 		if(interrupt){
 			var oldPart = parts.pop();
@@ -253,7 +250,7 @@ class GameManager extends EventDispatcher {
 	public function displayContextual(contextual:ContextualDisplay, ?layout: String):Void
 	{
 		// Remove previous one
-		if(lastContextual != null && this.layout.zones.get(game.ref).contains(lastContextual))
+		if(lastContextual != null && this.layout.zones.get(game.ref).contains(lastContextual) && !parts.isEmpty())
 			hideContextual(cast(lastContextual, ContextualDisplay));
 		// Change to selected layout
 		if(layout != null)
@@ -265,7 +262,7 @@ class GameManager extends EventDispatcher {
 
 	public function hideContextual(contextual:ContextualDisplay):Void
 	{
-		this.layout.zones.get(game.ref).removeChild(cast(contextual, KpDisplay));
+		layout.zones.get(game.ref).removeChild(cast(contextual, KpDisplay));
 		changeLayout(previousLayout);
 	}
 
@@ -380,7 +377,9 @@ class GameManager extends EventDispatcher {
 		else if(!parts.isEmpty() && parts.first().part == finishedPart.part.parent){
 			parts.first().visible = true;
 			parts.first().nextElement();
-			changeLayout(parts.first().layout);
+			// if this part is not finished too
+			if(parts.first() != null)
+				changeLayout(parts.first().layout);
 		}
 		else{
 			displayPart(finishedPart.part.parent, false, finishedPart.part.parent.getElementIndex(finishedPart.part));

@@ -80,7 +80,7 @@ class DropdownMenu extends WidgetContainer {
 		if(!blank)
 			set_currentLabel(items.first());
 		else{
-			labelSprite.graphics.beginFill(0x000000, 0.1);
+			labelSprite.graphics.beginFill(0xFFFFFF, 1);
 			labelSprite.graphics.drawRect(0, 0, list.getChildAt(0).width, list.getChildAt(0).height);
 			labelSprite.graphics.endFill();
 		}

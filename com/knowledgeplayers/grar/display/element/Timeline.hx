@@ -44,7 +44,7 @@ class Timeline extends EventDispatcher
          for (elem in elements){
             if (Std.is(elem.widget, TileImage)) {
 	            TweenManager.applyTransition(cast(elem.widget,TileImage).tileSprite,elem.transition,elem.delay).onComplete(onCompleteTransition).onUpdate(function(){
-		            cast(elem.widget,TileImage).tileSprite.layer.render();
+		            //cast(elem.widget,TileImage).tileSprite.layer.render();
 		            cast(elem.widget,TileImage).trueLayer.render();
 	            });
             }
