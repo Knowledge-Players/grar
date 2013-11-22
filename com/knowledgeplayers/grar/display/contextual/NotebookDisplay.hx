@@ -146,6 +146,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 
 		addEventListener(Event.REMOVED_FROM_STAGE, function(e){
 			dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+			clearPage();
 		});
 	}
 
@@ -224,6 +225,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			if(note.isActivated)
 				numActive++;
 		if(numActive > 1){
+			clearPage(target);
 			addChild(bookmarkBkg);
 			var guideFast = bookmark.node.Guide;
 			// TODO check other guide  type
@@ -233,7 +235,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 					new Line(new Point(start[0], start[1]), new Point(end[0], end[1]), guideFast.has.center?guideFast.att.center=="true":false);
 				default: null;
 			}
-			clearSteps();
 			// Create steps
 			for(i in 0...numActive){
 				var step: DefaultButton = cast(createButton(bookmark.node.Step), DefaultButton);
@@ -302,15 +303,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 	private function changePage(?target:DefaultButton):Void
 	{
 		// Clear page
-		clearSteps();
-		var scrollPanels = new GenericStack<DisplayObject>();
-		for(i in 0...numChildren){
-			if(Std.is(getChildAt(i), ScrollPanel))
-				scrollPanels.add(getChildAt(i));
-		}
-		for(panel in scrollPanels)
-			removeChild(panel);
-		scrollPanels = null;
+		clearPage();
 
 		for(page in model.pages){
 			if(page.tabContent == target.name)
@@ -327,8 +320,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				i++;
 			}
 			if(i != notes.length){
-				trace(notes[i].isActivated);
-				//notes[i].isActivated = true;
 				for(button in chapterMap.keys()){
 					if(Lambda.has(chapterMap.get(button).notes, notes[i])){
 						button.visible = button.enabled = true;
@@ -339,6 +330,20 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		}
 	}
 
+	private inline function clearPage(?activeChapter: DefaultButton):Void
+	{
+		clearSteps();
+		if(currentChapter != null){
+			for(note in chapterMap.get(currentChapter).notes){
+				if(contains(displays.get(note.ref)))
+					removeChild(displays.get(note.ref));
+			}
+		}
+		for(chapter in chapterMap.keys())
+			if(chapter != activeChapter)
+				chapter.toggle(false);
+	}
+
 	private inline function clearSteps():Void
 	{
 		while(!buttonGroups.get(stepGroupName).isEmpty()){
@@ -347,5 +352,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				removeChild(step);
 			step = null;
 		}
+		if(contains(bookmarkBkg))
+			removeChild(bookmarkBkg);
 	}
 }

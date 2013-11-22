@@ -56,6 +56,13 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		super.filters = filters;
 	}
 
+	@:setter(width)
+	public function set_width(width:Float):Void
+	{
+		tileSprite.scaleX = width / tileSprite.width;
+		trueLayer.render();
+	}
+
 	#if !flash override #end public function set_x(x:Float):Float
 	{
 		tileSprite.x = x;
