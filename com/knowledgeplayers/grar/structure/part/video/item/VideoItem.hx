@@ -27,6 +27,10 @@ class VideoItem extends Item {
 	* Time to capture an image
 	**/
 	public var capture (default, default):Float;
+	/**
+	* Thumbnail
+	**/
+	public var thumbnail (default, default):String;
 
 	/**
      * Constructor
@@ -42,6 +46,8 @@ class VideoItem extends Item {
 			this.loop = xml.has.loop ? xml.att.loop == "true" : false;
 			this.defaultVolume = xml.has.volume ? Std.parseFloat(xml.att.volume) : 1;
 			this.capture = xml.has.capture ? Std.parseFloat(xml.att.capture) : 0;
+			this.thumbnail = xml.has.thumbnail ? xml.att.thumbnail : null;
+
 		}
 		else{
 			this.autoStart = autoStart;

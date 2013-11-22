@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
+import flash.display.BitmapData;
 import com.knowledgeplayers.grar.display.component.container.SimpleBubble;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import aze.display.TilesheetEx;
@@ -29,6 +30,39 @@ class Image extends Widget{
 				height = Std.parseFloat(xml.att.height);
 		}
 	}
+
+    public function setBmp(_bmpData:String):Void{
+         if(_bmpData.indexOf(".")<0){
+
+             var stringColor = ParseUtils.parseListOfValues(_bmpData);
+             var colors = new Array<Int>();
+             var alphas = new Array<Float>();
+             for(color in stringColor){
+                 var c = ParseUtils.parseColor(color);
+                 colors.push(c.color);
+                 alphas.push(c.alpha);
+             }
+             var w = width;
+             var h = height;
+             while(numChildren>0)removeChildAt(numChildren-1);
+
+             addChild(DisplayUtils.initGradientSprite(w, h, colors, alphas));
+
+         }   else{
+            if (bitmap == null){
+                bitmap = new Bitmap();
+                addChild(bitmap);
+            }
+            #if flash
+	                bitmap.bitmapData = AssetsStorage.getBitmapData(_bmpData);
+	            #else
+                bitmap.bitmapData = Assets.getBitmapData(_bmpData);
+             #end
+
+
+         }
+
+    }
 
 	private function createImg(xml:Fast, ?tilesheet: TilesheetEx):Void
 	{

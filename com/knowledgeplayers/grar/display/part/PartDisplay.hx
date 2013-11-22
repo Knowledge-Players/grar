@@ -409,7 +409,7 @@ class PartDisplay extends KpDisplay {
 				throw "[PartDisplay] There is no VideoPlayer with ref '"+ item.ref+"'.";
 			var video = cast(item, VideoItem);
 
-			cast(displays.get(item.ref), VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture,video.autoFullscreen);
+			cast(displays.get(item.ref), VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture,video.autoFullscreen,video.thumbnail);
 		}
 		else {
             if(!displays.exists(item.ref))
