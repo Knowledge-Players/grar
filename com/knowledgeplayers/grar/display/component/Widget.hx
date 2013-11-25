@@ -172,7 +172,7 @@ class Widget extends Sprite{
 					if(parent != null)
 						setXLeft();
 				else
-					addEventListener(Event.ADDED_TO_STAGE, function(e){setXLeft();}, false, 100);
+					addEventListener(Event.ADDED_TO_STAGE, onAddedToStage, false, 100);
 				case "center": addEventListener(Event.ADDED_TO_STAGE, function(e){
 					x = parent.width /2 - width/2;
 				}, false, 100);
@@ -189,8 +189,9 @@ class Widget extends Sprite{
 		var maxX: Float = 0;
 		if(parent.numChildren > 1){
 			var maxWidth: Float = 0;
-			for(i in 0...parent.numChildren){
-				if(parent.getChildAt(i) != this && !Std.is(parent.getChildAt(i), DropdownMenu) && maxX < parent.getChildAt(i).x){
+			// Only look for widget under itself
+			for(i in 0...parent.getChildIndex(this)){
+				if(!Std.is(parent.getChildAt(i), DropdownMenu) && maxX < parent.getChildAt(i).x){
 					maxX = parent.getChildAt(i).x;
 					maxWidth = parent.getChildAt(i).width;
 				}
@@ -198,6 +199,12 @@ class Widget extends Sprite{
 			maxX += maxWidth;
 		}
 		x = maxX;
+	}
+
+	private function onAddedToStage(e:Event):Void
+	{
+		setXLeft();
+		removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 	}
 
 	private function new(?xml: Fast)
@@ -209,10 +216,12 @@ class Widget extends Sprite{
 				throw Type.getClassName(Type.getClass(this))+" must have a ref attribute: "+xml.x;
 			else
 				ref = xml.att.ref;
+			var xTmp = "0";
 			if(xml.has.x){
 				currentX = xml.att.x;
-				setX(xml.att.x);
+				xTmp = xml.att.x;
 			}
+			setX(xTmp);
 			if(xml.has.y){
 				if(!Math.isNaN(Std.parseFloat(xml.att.y)))
 					y = Std.parseFloat(xml.att.y);
@@ -229,6 +238,8 @@ class Widget extends Sprite{
 					}
 				}
 			}
+			else
+				y = 0;
 			if(xml.has.scale)
 				scale = Std.parseFloat(xml.att.scale);
 			else

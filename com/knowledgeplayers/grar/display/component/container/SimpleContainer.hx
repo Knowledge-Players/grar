@@ -62,8 +62,8 @@ class SimpleContainer extends WidgetContainer{
 			for(child in xml.elements){
 				createElement(child);
 			}
-			dispatchEvent(new DisplayEvent(DisplayEvent.LOADED));
 		}
+		dispatchEvent(new DisplayEvent(DisplayEvent.LOADED));
 	}
 
 	public function setMask(e: Event):Void

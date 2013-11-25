@@ -7,7 +7,6 @@ import com.knowledgeplayers.grar.structure.part.dialog.Character;
 /**
  * Graphic representation of a character of the game
  */
-
 class CharacterDisplay extends TileImage {
 
 	/**

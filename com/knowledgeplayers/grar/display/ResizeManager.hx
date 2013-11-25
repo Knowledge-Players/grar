@@ -50,7 +50,8 @@ class ResizeManager {
 
 	public function onResize(?e:Event):Void
 	{
-		ratioW = Lib.current.stage.stageWidth / originW;
+		// Reactivate when it works
+		/*ratioW = Lib.current.stage.stageWidth / originW;
 		ratioH = Lib.current.stage.stageHeight / originH;
 
 		for(obj in resizedObjects){
@@ -63,7 +64,7 @@ class ResizeManager {
 		for(obj in replacedObjects){
 			obj.display.x = ratioW * obj.originalX;
 			obj.display.y = ratioH * obj.originalY;
-		}
+		}*/
 	}
 
 	/**

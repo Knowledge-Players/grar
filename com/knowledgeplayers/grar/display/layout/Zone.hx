@@ -208,18 +208,20 @@ class Zone extends KpDisplay {
 	{
 		var elem = super.createElement(elemNode);
 		switch(elemNode.name.toLowerCase()){
-			case "menu":
-				trace("create menu");
-				createMenu(elemNode);
+			case "menu": createMenu(elemNode);
 			case "progressbar": createProgressBar(elemNode);
 			case "fastnav":	fastnav = new DropdownMenu(elemNode, true);
 		}
 
-		for(widget in displays){
-			layer.render();
-			addChild(widget);
-		}
+		layer.render();
+
 		return elem;
+	}
+
+	override private function addElement(elem:Widget, node:Fast):Void
+	{
+		super.addElement(elem, node);
+		addChild(elem);
 	}
 
 	// TODO is this still useful ?

@@ -279,7 +279,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				var player = cast(displays.get("player"), VideoPlayer);
 				player.setVideo(note.video);
 				// TODO remove and replace by dynamic scale
-				player.scale = 0.7;
+				//player.scale = 0.7;
 				addChild(player);
 			}
 			else if(displays.exists("player")){

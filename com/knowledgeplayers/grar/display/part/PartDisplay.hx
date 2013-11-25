@@ -368,19 +368,6 @@ class PartDisplay extends KpDisplay {
 			var text = cast(item, TextItem);
 
 			if(text.introScreen != null){
-
-				/*var toRemove = new GenericStack<DisplayObject>();
-
-				for(i in 0...numChildren){
-					if(Std.is(getChildAt(i), DefaultButton))
-						toRemove.add(getChildAt(i));
-				}
-				if(inventory != null && contains(inventory))
-					toRemove.add(inventory);
-				for(obj in toRemove){
-					if(contains(obj))
-						removeChild(obj);
-				}*/
 				cleanDisplay();
 
 				// The intro screen automatically removes itself after its duration
@@ -528,7 +515,7 @@ class PartDisplay extends KpDisplay {
 	private inline function onWidgetAdded():Void
 	{
 		numWidgetReady++;
-		if(numWidgetAdded == numWidgetReady && nextTimeline != null){
+		if(numWidgetAdded == numWidgetReady && timelines.exists(nextTimeline)){
 			timelines.get(nextTimeline).play();
 		}
 	}

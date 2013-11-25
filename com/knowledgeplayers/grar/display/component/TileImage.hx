@@ -38,12 +38,11 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
             init();
 		}
 		super(xml);
-		x = y = 0;
-		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
+		addEventListener(Event.REMOVED_FROM_STAGE, onRemove, 1000);
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
 			if(tileSprite != null)
 				origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY, alpha: tileSprite.alpha};
-			set_visible(true);
+			this.visible = true;
 			if(onComplete != null)
 				onComplete();
 		}, 1000);
@@ -56,36 +55,99 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		super.filters = filters;
 	}
 
+	@:getter(width)
+	public function get_width():Float
+	{
+		return tileSprite.width;
+	}
+
 	@:setter(width)
 	public function set_width(width:Float):Void
 	{
 		tileSprite.scaleX = width / tileSprite.width;
-		trueLayer.render();
+		renderNeeded();
+		super.width = width;
 	}
 
-	#if !flash override #end public function set_x(x:Float):Float
+	@:getter(height)
+	public function get_height():Float
 	{
-		tileSprite.x = x;
-		trueLayer.render();
-		return x;
+		return tileSprite.height;
 	}
 
-	#if !flash override #end public function get_x():Float
+	@:setter(height)
+	public function set_height(height:Float):Void
 	{
+		tileSprite.scaleY = height / tileSprite.height;
+		renderNeeded();
+		super.height = height;
+	}
+
+	#if flash
+	@:setter(x)
+	public function set_x(x:Float):Void
+	#else
+	override public function set_x(x:Float):Float
+	#end
+	{
+		tileSprite.x = x + tileSprite.width/2;
+		renderNeeded();
+		#if !flash
 		return tileSprite.x;
+		#else
+		super.x = x;
+		#end
 	}
 
-	#if !flash override #end public function set_y(y:Float):Float
+	#if flash
+	@:setter(y)
+	public function set_y(y: Float):Void
+	#else
+	override public function set_y(y:Float):Float
+	#end
 	{
-		tileSprite.y = y;
+		tileSprite.y = y + tileSprite.height/2;
+		renderNeeded();
+		#if !flash
+		return tileSprite.y;
+		#else
+		super.y = y;
+		#end
+	}
+
+	// TODO scale
+	/*override public function set_scale(scale:Float):Float
+	{
+		tileSprite.scale = scale;
+		super.set_scale(scale);
+		return scale;
+	}
+
+	@:setter(scaleX)
+	public function set_scaleX(scaleX:Float):Void
+	{
+		super.scaleX = scaleX;
+		tileSprite.scaleX = scaleX;
 		trueLayer.render();
-		return y;
 	}
 
-	public function set_visible(visible:Bool):Bool
+	@:setter(scaleY)
+	public function set_scaleY(scaleY:Float):Void
 	{
-		if(tileSprite == null)
-			return isVisible = visible;
+		super.scaleY = scaleY;
+		tileSprite.scaleY = scaleY;
+		trueLayer.render();
+	}*/
+
+	@:setter(visible)
+	public function set_visible(visible:Bool):Void
+	{
+		super.visible = visible;
+
+		if(tileSprite == null){
+			isVisible = visible;
+			return ;
+		}
 
 		tileSprite.visible = visible;
 		var actuator: IGenericActuator = null;
@@ -110,7 +172,6 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 			actuator.onUpdate(renderNeeded);
 		else if(transform != null)
 			transform.onUpdate(renderNeeded);
-		return visible;
 	}
 
 	public function getMask():Sprite
@@ -119,8 +180,8 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		var tile = new TileSprite(layer, tileSprite.tile);
 		layer.addChild(tile);
 		layer.render();
-		layer.view.x = tileSprite.x;
-		layer.view.y = tileSprite.y;
+		layer.view.x = x;
+		layer.view.y = y;
 		tileSprite.visible = false;
 		tileSprite.layer.render();
 		return layer.view;
@@ -158,20 +219,18 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 
 	// Private
 
-	private function init():Void
+	private inline function init():Void
 	{
 		tileSprite = new TileSprite(trueLayer, xml.att.tile);
 
+		// TODO scale
 		if(xml.has.scale)
 			tileSprite.scale = Std.parseFloat(xml.att.scale);
 		if(xml.has.scaleX)
 			tileSprite.scaleX = Std.parseFloat(xml.att.scaleX);
 		if(xml.has.scaleY)
 			tileSprite.scaleY = Std.parseFloat(xml.att.scaleY);
-		if(xml.has.width)
-			tileSprite.scaleX = Std.parseFloat(xml.att.width)/tileSprite.width;
-		if(xml.has.height)
-			tileSprite.scaleY = Std.parseFloat(xml.att.height)/tileSprite.height;
+
 		if(xml.has.mirror){
 			tileSprite.mirror = switch(xml.att.mirror.toLowerCase()){
 				case "horizontal": 1;
@@ -180,19 +239,10 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 			}
 		}
 
-		if(xml.has.x)
-			tileSprite.x = Std.parseFloat(xml.att.x) + tileSprite.width/2;
-		else
-			tileSprite.x = tileSprite.width/2;
-		if(xml.has.y)
-			tileSprite.y = Std.parseFloat(xml.att.y)+ tileSprite.height/2;
-		else
-			tileSprite.y = tileSprite.height/2;
-
 		tileSprite.visible = isVisible;
 
         trueLayer.addChild(tileSprite);
-        trueLayer.render();
+		renderNeeded();
 
         xml = null;
 	}
@@ -212,19 +262,23 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 			if(hasEventListener(Event.ADDED_TO_STAGE))
 				removeEventListener(Event.ADDED_TO_STAGE, renderNeeded);
 
+			var container = parent;
+			while(container != null && !Std.is(container, KpDisplay) && !Std.is(container, WidgetContainer))
+				container = container.parent;
+
 			// TODO unify
-			if(Std.is(parent, KpDisplay)){
-				cast(parent, KpDisplay).renderLayers.set(tileSprite.layer, true);
+			if(Std.is(container, KpDisplay)){
+				cast(container, KpDisplay).renderLayers.set(tileSprite.layer, true);
 			}
-			if(Std.is(parent, WidgetContainer)){
-				cast(parent, WidgetContainer).renderNeeded = true;
+			if(Std.is(container, WidgetContainer)){
+				cast(container, WidgetContainer).renderNeeded = true;
 			}
 		}
 	}
 
 	private inline function onRemove(e:Event):Void
 	{
-		set_visible(false);
+		visible = false;
 	}
 
 	private function setTilesheet(e:Event):Void

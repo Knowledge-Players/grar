@@ -255,7 +255,7 @@ class DefaultButton extends WidgetContainer {
 				if(!Std.is(widget, TileImage))
 					array.push(widget);
 				else{
-					cast(widget, TileImage).set_visible(true);
+					widget.visible = true;
 					if(layerIndex == -1) layerIndex = widget.zz;
 				}
 			}

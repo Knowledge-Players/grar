@@ -4,6 +4,7 @@ package com.knowledgeplayers.grar.display;
 import flash.system.System;
 import flash.external.ExternalInterface;
 #end
+import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.contextual.BibliographyDisplay;
 import com.knowledgeplayers.grar.display.contextual.GlossaryDisplay;
 import com.knowledgeplayers.grar.display.contextual.GlossaryDisplay;
@@ -201,13 +202,15 @@ class GameManager extends EventDispatcher {
     * Display a graphic representation of the given part
     * @param    part : The part to display
     * @param    interrupt : Stop current part to display the new one
+    * @return true if the part can be displayed.
     **/
-
-	public function displayPart(part:Part, interrupt:Bool = false, startPosition:Int = -1):Void
+	public function displayPart(part:Part, interrupt:Bool = false, startPosition:Int = -1):Bool
 	{
-		// TODO better user feedback
-		/*if(!part.canStart())
-			trace("Et non !");*/
+		#if !kpdebug
+		// Part doesn't meet the requirements to start
+		if(!part.canStart())
+			return false;
+		#end
 
 		if(interrupt){
 			var oldPart = parts.pop();
@@ -229,28 +232,31 @@ class GameManager extends EventDispatcher {
 			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
 		});
 		parts.first().init();
+		return true;
 	}
 
 	/**
     * Display a graphic representation of the part with the given ID
     * @param id : The ID of the part to display
+    * @return true if the part can be displayed.
     **/
-
-	public function displayPartById(?id:String, interrupt:Bool = false):Void
+	public function displayPartById(?id:String, interrupt:Bool = false):Bool
 	{
-		displayPart(game.start(id), interrupt);
+		return displayPart(game.start(id), interrupt);
 	}
 
-	public function displayTrackable(item: Trackable):Void
+	public function displayTrackable(item: Trackable):Bool
 	{
 		if(Std.is(item, Part))
-			displayPart(cast(item, Part), true);
+			return displayPart(cast(item, Part), true);
+		else
+			return false;
 	}
 
-	public function displayContextual(contextual:ContextualDisplay, ?layout: String):Void
+	public function displayContextual(contextual:ContextualDisplay, ?layout: String, hideOther: Bool = true):Void
 	{
 		// Remove previous one
-		if(lastContextual != null && this.layout.zones.get(game.ref).contains(lastContextual) && !parts.isEmpty())
+		if(hideOther && lastContextual != null && this.layout.zones.get(game.ref).contains(lastContextual) && !parts.isEmpty())
 			hideContextual(cast(lastContextual, ContextualDisplay));
 		// Change to selected layout
 		if(layout != null)
@@ -262,8 +268,10 @@ class GameManager extends EventDispatcher {
 
 	public function hideContextual(contextual:ContextualDisplay):Void
 	{
-		layout.zones.get(game.ref).removeChild(cast(contextual, KpDisplay));
-		changeLayout(previousLayout);
+		if(layout.name == contextual.layout){
+			layout.zones.get(game.ref).removeChild(cast(contextual, KpDisplay));
+			changeLayout(previousLayout);
+		}
 	}
 
 	/**
@@ -356,19 +364,24 @@ class GameManager extends EventDispatcher {
 		var finishedPart = parts.pop();
 		if(finishedPart.part.parent == null){
 			if(finishedPart.part.next != null){
-				var next = game.start(finishedPart.part.next);
-				if(next != null)
-					displayPart(next);
-				else{
-					var contextual: ContextualType = Type.createEnum(ContextualType, finishedPart.part.next.toUpperCase());
-					switch(contextual){
-						case MENU : displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout);
-						case NOTEBOOK : displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
-						case GLOSSARY : displayContextual(GlossaryDisplay.instance, GlossaryDisplay.instance.layout);
-						case BIBLIOGRAPHY : displayContextual(BibliographyDisplay.instance, BibliographyDisplay.instance.layout);
-						// TODO à gérer
-						case INVENTORY : null;
+				var nexts = ParseUtils.parseListOfValues(finishedPart.part.next);
+				var i = 0;
+				for(next in nexts){
+					var nextPart = game.start(next);
+					if(nextPart != null)
+						displayPart(nextPart);
+					else{
+						var contextual: ContextualType = Type.createEnum(ContextualType, next.toUpperCase());
+						switch(contextual){
+							case MENU : displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout, (i == 0));
+							case NOTEBOOK : displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout, (i == 0));
+							case GLOSSARY : displayContextual(GlossaryDisplay.instance, GlossaryDisplay.instance.layout, (i == 0));
+							case BIBLIOGRAPHY : displayContextual(BibliographyDisplay.instance, BibliographyDisplay.instance.layout, (i == 0));
+							// TODO à gérer
+							case INVENTORY : null;
+						}
 					}
+					i++;
 				}
 			}
 			else
@@ -394,7 +407,7 @@ class GameManager extends EventDispatcher {
 
 		partDisplay.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		partDisplay.startPart(startIndex);
-		if(partDisplay.visible)
+		if(partDisplay.visible && partDisplay.layout != null)
 			changeLayout(partDisplay.layout);
 		layout.zones.get(game.ref).addChild(partDisplay);
 		layout.updateDynamicFields();

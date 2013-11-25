@@ -42,17 +42,17 @@ class Timeline extends EventDispatcher
          nbCompleteTransitions=0;
 
          for (elem in elements){
-            if (Std.is(elem.widget, TileImage)) {
+            /*if (Std.is(elem.widget, TileImage)) {
 	            TweenManager.applyTransition(cast(elem.widget,TileImage).tileSprite,elem.transition,elem.delay).onComplete(onCompleteTransition).onUpdate(function(){
 		            //cast(elem.widget,TileImage).tileSprite.layer.render();
 		            cast(elem.widget,TileImage).trueLayer.render();
 	            });
             }
-            else{
+            else{*/
 	            var actuator = TweenManager.applyTransition(elem.widget,elem.transition,elem.delay);
 	            if(actuator != null)
 		            actuator.onComplete(onCompleteTransition);
-            }
+            //}
          }
     }
 

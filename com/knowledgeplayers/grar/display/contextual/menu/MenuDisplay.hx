@@ -267,13 +267,21 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 	private function onClick(?_target:DefaultButton):Void
 	{
 		var target = _target;
+		var canStart = false;
 		for(key in buttons.keys()){
 			if(buttons.get(key) == target)
-				GameManager.instance.displayPartById(key, true);
+				canStart = GameManager.instance.displayPartById(key, true);
 		}
 
-		//TweenManager.applyTransition(this, transitionOut);
-		GameManager.instance.hideContextual(instance);
+		if(canStart){
+			var actuator = TweenManager.applyTransition(this, transitionOut);
+			if(actuator != null)
+				actuator.onComplete(function(){
+					GameManager.instance.hideContextual(instance);
+				});
+			else
+				GameManager.instance.hideContextual(instance);
+		}
 	}
 
 	private function onOver(e: Event):Void

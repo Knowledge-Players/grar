@@ -101,28 +101,28 @@ class VideoPlayer extends WidgetContainer
 		super(xml, tilesheet);
 		video = new Video();
 
-        containerThumbnail.addChild(cast(displays.get("thumbnail")));
+        containerThumbnail.addChild(displays.get("thumbnail"));
 		connection = new NetConnection();
 		connection.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 		addEventListener(Event.REMOVED_FROM_STAGE , unsetVideo, false, 0, true);
 		connection.connect(null);
 
-		for(i in 0...numChildren){
-			if(Std.is(getChildAt(i), Widget)){
-				controls.add(cast(getChildAt(i), Widget));
+		for(i in 0...content.numChildren){
+			if(Std.is(content.getChildAt(i), Widget)){
+				controls.add(cast(content.getChildAt(i), Widget));
 			}
 		}
-		if (cast(displays.get("time"))!=null){
+		if(displays.exists("time")){
 			timeArea = cast(displays.get("time"), ScrollPanel);
 			controls.add(timeArea);
 		}
 
-		if (cast(displays.get("timeCurrent"))!=null){
+		if (displays.exists("timeCurrent")){
 			timeCurrent = cast(displays.get("timeCurrent"), ScrollPanel);
 			controls.add(timeCurrent);
 		}
 
-		if (cast(displays.get("timeTotal"))!=null){
+		if (displays.exists("timeTotal")){
 			timeTotal = cast(displays.get("timeTotal"), ScrollPanel);
 			controls.add(timeTotal);
 		}
@@ -130,7 +130,6 @@ class VideoPlayer extends WidgetContainer
 		yBigPlay =  displays.get("bigPlay").y;
 
 		if(xml.has.controlsHidden){
-
 			controlsHidden = xml.att.controlsHidden == "true";
 		}
 
@@ -138,8 +137,11 @@ class VideoPlayer extends WidgetContainer
 			autoFullscreen.value = xml.att.autoFullscreen == "true";
 			autoFullscreen.isSet = true;
 		}
-        //trace("init autoFullscreen : "+autoFullscreen);
+
 		init();
+
+		//layer.render();
+
 	}
 
 	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1, capture:Float = 0, autoFullscreen:Bool = false,?thumbnail:String): Void
@@ -335,6 +337,7 @@ class VideoPlayer extends WidgetContainer
 		}
 		else if(elemNode.name.toLowerCase() == "progressbar"){
 			progressBar = new Image();
+			//progressBar.ref = elemNode.att.ref;
 			progressBar.x = Std.parseFloat(elemNode.att.x);
 			progressBar.y = Std.parseFloat(elemNode.att.y);
 			addElement(progressBar);
@@ -342,10 +345,10 @@ class VideoPlayer extends WidgetContainer
 			for(child in elemNode.elements){
 				if(child.name.toLowerCase() == "mask"){
 					var tile = new TileImage(child, layer);
-					tile.set_x(progressBar.x + tile.tileSprite.width/2);
-					tile.set_y(progressBar.y + tile.tileSprite.height/2);
+					tile.x = (progressBar.x + tile.width/2);
+					tile.y = (progressBar.y + tile.height/2);
 					mask = tile.getMask();
-					mask.width = child.has.width ? Std.parseFloat(child.att.width) : tile.tileSprite.width;
+					mask.width = child.has.width ? Std.parseFloat(child.att.width) : tile.width;
 				}
 				if(child.name.toLowerCase() == "bar"){
 					var bar = new Sprite();
@@ -360,6 +363,7 @@ class VideoPlayer extends WidgetContainer
 				if(child.name.toLowerCase() == "cursor"){
 					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
 					cursor = new Widget();
+					cursor.ref = child.att.ref;
 					cursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile)));
 					cursor.x = (child.has.x ? Std.parseFloat(child.att.x) : 0) + progressBar.x-cursor.width/2;
 					cursor.y = progressBar.y-cursor.height/3;
@@ -378,6 +382,7 @@ class VideoPlayer extends WidgetContainer
 		}
 		else if(elemNode.name.toLowerCase() == "slider"){
 			soundSlider = new Image();
+			//soundSlider.ref = elemNode.att.ref;
 			soundSlider.x = Std.parseFloat(elemNode.att.x);
 			soundSlider.y = Std.parseFloat(elemNode.att.y);
 			for(child in elemNode.elements){
@@ -392,6 +397,7 @@ class VideoPlayer extends WidgetContainer
 				if(child.name.toLowerCase() == "cursor"){
 					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
 					soundCursor = new Widget();
+					soundCursor.ref = child.att.ref;
 					soundCursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile)));
 					soundCursor.x = (child.has.x ? Std.parseFloat(child.att.x) : 0) + soundSlider.x + (child.has.vol ? Std.parseFloat(child.att.vol)/100 : 1)*soundSlider.width - soundCursor.width/2;
 					soundCursor.y = (child.has.y ? Std.parseFloat(child.att.y) : 0) + soundSlider.y;
