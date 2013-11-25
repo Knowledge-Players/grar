@@ -116,11 +116,13 @@ class Image extends Widget{
 				case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
 			}
 		}
-        if(xml.has.smoothing){
-            bitmap.smoothing = xml.has.smoothing ? xml.att.smoothing == "true" : true;
-        }
-        else{
-            bitmap.smoothing = true;
+        if(bitmap != null){
+            if(xml.has.smoothing){
+                bitmap.smoothing = xml.has.smoothing ? xml.att.smoothing == "true" : true;
+            }
+            else{
+                bitmap.smoothing = true;
+            }
         }
 	}
 }
