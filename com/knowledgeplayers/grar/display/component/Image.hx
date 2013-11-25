@@ -62,6 +62,7 @@ class Image extends Widget{
 
          }
 
+
     }
 
 	private function createImg(xml:Fast, ?tilesheet: TilesheetEx):Void
@@ -115,5 +116,11 @@ class Image extends Widget{
 				case _ : throw '[KpDisplay] Unsupported mirror $xml.att.mirror';
 			}
 		}
+        if(xml.has.smoothing){
+            bitmap.smoothing = xml.has.smoothing ? xml.att.smoothing == "true" : true;
+        }
+        else{
+            bitmap.smoothing = true;
+        }
 	}
 }
