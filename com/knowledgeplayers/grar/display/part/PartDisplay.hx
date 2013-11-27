@@ -361,11 +361,17 @@ class PartDisplay extends KpDisplay {
 
 		currentItem = item;
 
+		if(item.token != null && item.token != ""){
+			for(token in item.token.split(","))
+				GameManager.instance.activateToken(token);
+		}
+
 		if(isFirst)
 			setBackground(item.background);
 
 		if(item.isText()){
 			var text = cast(item, TextItem);
+			GameManager.instance.playSound(cast(item, TextItem).sound);
 
 			if(text.introScreen != null){
 				cleanDisplay();

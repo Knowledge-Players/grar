@@ -2,7 +2,6 @@ package com.knowledgeplayers.grar.display.contextual;
 
 import com.knowledgeplayers.grar.event.PartEvent;
 import flash.events.Event;
-import flash.Lib;
 import flash.net.URLRequest;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.util.guide.Guide;
@@ -144,6 +143,10 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		buttonGroups.set(tabGroupName, new GenericStack<DefaultButton>());
 		buttonGroups.set(stepGroupName, new GenericStack<DefaultButton>());
 
+		addEventListener(Event.ADDED_TO_STAGE, function(e){
+			dispatchEvent(new PartEvent(PartEvent.ENTER_PART));
+		});
+
 		addEventListener(Event.REMOVED_FROM_STAGE, function(e){
 			dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 			clearPage();
@@ -197,7 +200,8 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		}
 
 		// Build Bookmark container
-		bookmarkBkg = createImage(bookmark);
+		if(bookmarkBkg == null)
+			bookmarkBkg = createImage(bookmark);
 
 		Localiser.instance.popLocale();
 	}
@@ -257,7 +261,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			addChild(displays.get(chapter.titleRef));
 		}
 		var i = 0;
-		while(i < notes.length && notes[i].isActivated)
+		while(i < notes.length && !notes[i].isActivated)
 			i++;
 		if(i < notes.length)
 			displayNote(chapterMap.get(target).notes[i]);
@@ -289,15 +293,25 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 					removeChild(player);
 			}
 		}
+		#if flash
 		else{
 			var url = new URLRequest(note.content);
-			Lib.getURL(url, "_blank");
+			flash.Lib.getURL(url, "_blank");
 		}
+		#end
 	}
 
 	private function changeNote(?target:DefaultButton):Void
 	{
-		displayNote(chapterMap.get(currentChapter).notes[Std.parseInt(target.name)]);
+		var notes = Lambda.filter(chapterMap.get(currentChapter).notes, function(note: Note){
+			return note.isActivated;
+		});
+		var i = 0;
+		while(i < Std.parseInt(target.name)){
+			i++;
+			notes.pop();
+		}
+		displayNote(notes.first());
 	}
 
 	private function changePage(?target:DefaultButton):Void
@@ -305,25 +319,38 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		// Clear page
 		clearPage();
 
-		for(page in model.pages){
-			if(page.tabContent == target.name)
-				displayPage(page);
-		}
+		var i = 0;
+		while(i < model.pages.length && model.pages[i].tabContent != target.name)
+			i++;
+		if(i < model.pages.length)
+			displayPage(model.pages[i]);
 	}
 
 	private function onUnlocked(e:TokenEvent):Void
 	{
 		if(e.token.type == "note"){
 			var notes = model.getAllNotes();
-			var i = 0;
-			while(i < notes.length && notes[i].name != e.token.name){
-				i++;
+			var k = 0;
+			while(k < notes.length && notes[k].name != e.token.name){
+				k++;
 			}
-			if(i != notes.length){
-				for(button in chapterMap.keys()){
-					if(Lambda.has(chapterMap.get(button).notes, notes[i])){
-						button.visible = button.enabled = true;
-						button.alpha = 1;
+			if(k != notes.length){
+				var chapter: Chapter = null;
+				var i = 0;
+				while(i < model.pages.length && chapter == null){
+					var j = 0;
+					while(j < model.pages[i].chapters.length && !Lambda.has(model.pages[i].chapters[j].notes, notes[k]))
+						j++;
+					chapter = j == model.pages[i].chapters.length ? null : model.pages[i].chapters[j];
+					i++;
+				}
+				if(chapter != null){
+					chapter.isActivated = true;
+					for(button in chapterMap.keys()){
+						if(chapterMap.get(button) == chapter){
+							button.alpha = 1;
+							break ;
+						}
 					}
 				}
 			}
@@ -333,7 +360,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 	private inline function clearPage(?activeChapter: DefaultButton):Void
 	{
 		clearSteps();
-		if(currentChapter != null){
+		if(chapterMap.exists(currentChapter)){
 			for(note in chapterMap.get(currentChapter).notes){
 				if(contains(displays.get(note.ref)))
 					removeChild(displays.get(note.ref));

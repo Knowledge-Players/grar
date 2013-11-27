@@ -103,8 +103,10 @@ class Zone extends KpDisplay {
 			MenuSphericalDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
 			MenuDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
 		}
-		if(buttonGroups.exists(groupNotebook))
+		if(buttonGroups.exists(groupNotebook)){
 			NotebookDisplay.instance.addEventListener(PartEvent.EXIT_PART, exitNotebook);
+			NotebookDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterNotebook);
+		}
 	}
 
 	private function createProgressBar(element:Fast):ProgressBar
@@ -133,6 +135,12 @@ class Zone extends KpDisplay {
 	{
 		for(button in buttonGroups.get(groupNotebook))
 			button.toggle(true);
+	}
+
+	private function enterNotebook(e:Event):Void
+	{
+		for(button in buttonGroups.get(groupNotebook))
+			button.toggle(false);
 	}
 
 	private function exitMenu(e:Event):Void

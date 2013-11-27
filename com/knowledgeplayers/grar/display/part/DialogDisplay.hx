@@ -66,12 +66,6 @@ class DialogDisplay extends PartDisplay {
 		var nextItem = pattern.getNextItem();
 		if(nextItem != null && !exitPattern){
 			setupItem(nextItem);
-			if(nextItem.isText())
-				GameManager.instance.playSound(cast(nextItem, TextItem).sound);
-			if(nextItem.token != null && nextItem.token != ""){
-				for(token in nextItem.token.split(","))
-					GameManager.instance.activateToken(token);
-			}
 		}
 		else if(currentPattern.nextPattern != "")
 			goToPattern(currentPattern.nextPattern);
