@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import Std;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
@@ -130,7 +131,7 @@ class DefaultButton extends WidgetContainer {
 			}
 			// Simplified XML
 			if(Lambda.count(states) == 0)
-				states.set(defaultState+"_out", createStates(tmpXml));
+				states.set(defaultState+"_default", createStates(tmpXml));
 			tmpXml = null;
 			toggleState = defaultState;
 		}
@@ -158,11 +159,15 @@ class DefaultButton extends WidgetContainer {
 
 	public inline function set_toggleState(state:String):String
 	{
-		if(states.exists(state+"_out")){
+		if(states.exists(state+"_default")){
 			toggleState = state;
 			timeline = timelines.get(toggleState);
-			renderState("out");
-		}
+			renderState("default");
+		}else if(states.exists(state+"_out")){
+            toggleState = state;
+            timeline = timelines.get(toggleState);
+            renderState("out");
+        }
 		return toggleState;
 	}
 
@@ -213,7 +218,13 @@ class DefaultButton extends WidgetContainer {
 				changeState = true;
 			}
 		}
-		else if(states.exists(toggleState + "_" + "out")){
+		else if(states.exists(toggleState + "_" + "default")){
+			list = states.get(toggleState + "_" + "default");
+			if(currentState != toggleState + "_" + "default"){
+				currentState = toggleState + "_" + "default";
+				changeState = true;
+			}
+		}else if(states.exists(toggleState + "_" + "out")){
 			list = states.get(toggleState + "_" + "out");
 			if(currentState != toggleState + "_" + "out"){
 				currentState = toggleState + "_" + "out";
@@ -228,9 +239,9 @@ class DefaultButton extends WidgetContainer {
 			}
 		}
 		else{
-			list = states.get("active_out");
-			if(currentState != "active_out"){
-				currentState = "active_out";
+			list = states.get("active_default");
+			if(currentState != "active_default"){
+				currentState = "active_default";
 				changeState = true;
 			}
 		}
@@ -271,8 +282,9 @@ class DefaultButton extends WidgetContainer {
 				j++;
 			content.addChildAt(layer.view, j);
 
-			TweenManager.stop(layer.view);
+			//TweenManager.stop(layer.view);
 
+            //TODO delete
 			if(list.exists("backgroundDrawn")){
 				var image: Image = cast(list.get("backgroundDrawn"), Image);
 				var bg = ParseUtils.parseColor(background);
@@ -285,6 +297,8 @@ class DefaultButton extends WidgetContainer {
 			renderNeeded = true;
 			enabled = enabledState.get(toggleState);
 			displayContent();
+
+
 			dispatchEvent(new Event(Event.CHANGE));
 		}
 	}

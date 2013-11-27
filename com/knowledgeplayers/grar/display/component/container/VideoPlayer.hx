@@ -277,7 +277,8 @@ class VideoPlayer extends WidgetContainer
 			containerVideo.y = Lib.current.stage.stageHeight/2-containerVideo.height/2;
             containerControls.x = Lib.current.stage.stageWidth/2-containerControls.width/2;
 
-			containerControls.y = Lib.current.stage.stageHeight/2;
+
+            containerControls.y =  Lib.current.stage.stageHeight-containerControls.height-10;
 
 			displays.get("bigPlay").y = Lib.current.stage.stageHeight/2-displays.get("bigPlay").height/2-containerControls.y ;
 			fullscreenButton.toggle();
@@ -440,7 +441,6 @@ class VideoPlayer extends WidgetContainer
 
 		containerControls.addEventListener(MouseEvent.MOUSE_OVER,showControls);
 		containerControls.addEventListener(MouseEvent.MOUSE_OUT,hideControls);
-
 		containerVideo.addEventListener(MouseEvent.MOUSE_MOVE,onMouseMove);
 		containerControls.alpha = 0;
 	}
