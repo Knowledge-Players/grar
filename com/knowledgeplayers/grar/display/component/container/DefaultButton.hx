@@ -181,23 +181,33 @@ class DefaultButton extends WidgetContainer {
 
 	public inline function toggle(?toggle:Bool):Void
 	{
-		if(toggle == null)
-			toggle = toggleState == "inactive";
-		toggleState = toggle ? "active" : "inactive";
+		// Don't do anything if the toggle doesn't change
+		if(toggle != (toggleState == "active")){
+			// If param is null, switch state
+			if(toggle == null)
+				toggle = toggleState == "inactive";
+			toggleState = toggle ? "active" : "inactive";
+		}
 	}
 
 	public function setText(pContent:String, ?pKey:String):Void
 	{
-		for(state in states){
-			if(pKey == null || !state.exists(pKey)){
+		if(pKey != null && pKey != " "){
+			for(state in states){
+				if(state.exists(pKey)){
+					cast(state.get(pKey), ScrollPanel).setContent(pContent);
+					break;
+				}
+			}
+		}
+		else{
+			for(state in states){
 				for(elem in state){
 					if(Std.is(elem, ScrollPanel)){
 						cast(elem, ScrollPanel).setContent(pContent);
+						break;
 					}
 				}
-			}
-			else{
-				cast(state.get(pKey), ScrollPanel).setContent(pContent);
 			}
 		}
 	}

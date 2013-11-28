@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.structure.part.Item;
 import haxe.ds.GenericStack;
@@ -99,7 +100,7 @@ class ActivityDisplay extends PartDisplay {
 
             var transitionIn:String= null;
             if(guideNode.has.transitionIn) {
-                transitionIn =guideNode.att.transitionIn;
+                transitionIn = guideNode.att.transitionIn;
             }
 
             guide.add(button,transitionIn);
@@ -108,7 +109,6 @@ class ActivityDisplay extends PartDisplay {
 			for(contentKey in input.content.keys())
 				button.setText(Localiser.instance.getItemContent(input.content.get(contentKey)), contentKey);
 			button.buttonAction = onInputClick;
-			button.mouseChildren = false;
 			addChild(button);
 			inputs.add(button);
 		}
@@ -153,8 +153,9 @@ class ActivityDisplay extends PartDisplay {
 			}
 			else
 				throw "[ActivityDisplay] There is more than 2 limits of selection in activity '"+part.id+"'. Just set a minimum and a maximum.";
-			if(minSelect > 0 && validationButton != null)
-				validationButton.enabled = false;
+			if(minSelect > 0 && validationButton != null){
+				validationButton.toggle(false);
+			}
 		}
 
 
@@ -218,11 +219,17 @@ class ActivityDisplay extends PartDisplay {
 
 	override private function mustBeDisplayed(key:String):Bool
 	{
-		var object = displays.get(key);
+		var object: Widget = displays.get(key);
 
 		// Display all buttons/inputs
-		if(Std.is(object, DefaultButton))
-			return part.buttons.exists(key);
+		if(Std.is(object, DefaultButton)){
+			if(part.buttons.exists(key)){
+				setButtonText(key, part.buttons.get(key));
+				return true;
+			}
+			else
+				return false;
+		}
 
 		return super.mustBeDisplayed(key);
 	}
@@ -259,8 +266,8 @@ class ActivityDisplay extends PartDisplay {
 						GameManager.instance.displayPart(cast(target, Part));
 				case "toggle":
 					target.toggle();
-					buttonsToInputs.get(target).selected = target.toggleState == "active";
-					validatedInputs.set(target, buttonsToInputs.get(target).selected);
+					var selected = buttonsToInputs.get(target).selected = target.toggleState == "active";
+					validatedInputs.set(target, selected);
 			}
 		}
 		if(autoCorrect)
@@ -272,8 +279,9 @@ class ActivityDisplay extends PartDisplay {
 		});
 
 		// Activate validation button
-		if(validationButton != null)
-			validationButton.enabled = (validated >= minSelect);
+		if(validationButton != null){
+			validationButton.toggle(validated >= minSelect);
+		}
 		// Toggle inputs
 		if(validated == maxSelect)
 			disableInputs();
