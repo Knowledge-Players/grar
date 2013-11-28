@@ -4,8 +4,6 @@ import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import com.knowledgeplayers.grar.display.contextual.menu.MenuSphericalDisplay;
 import com.knowledgeplayers.grar.display.component.container.DropdownMenu;
 import com.knowledgeplayers.grar.display.component.Widget;
-import com.knowledgeplayers.grar.display.component.TileImage;
-import com.knowledgeplayers.grar.display.component.Image;
 import aze.display.TileLayer;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.ProgressBar;
@@ -230,29 +228,6 @@ class Zone extends KpDisplay {
 	{
 		super.addElement(elem, node);
 		addChild(elem);
-	}
-
-	// TODO is this still useful ?
-	override private function createImage(itemNode:Fast):Widget
-	{
-		var spritesheet = itemNode.has.spritesheet ? itemNode.att.spritesheet:"ui";
-		var img: Widget;
-
-		if(itemNode.has.src || itemNode.has.filters || (itemNode.has.extract && itemNode.att.extract == "true")){
-			img = new Image(itemNode, spritesheets.get(spritesheet));
-			addElement(img, itemNode);
-			return img;
-		}
-		else{
-			if(!layers.exists(spritesheet)){
-				var layer = new TileLayer(UiFactory.tilesheet);
-				layers.set(spritesheet, layer);
-				addChild(layers.get(spritesheet).view);
-			}
-			var tile = new TileImage(itemNode, layers.get(spritesheet));
-			addElement(tile, itemNode);
-			return tile;
-		}
 	}
 
 	// Handlers

@@ -103,14 +103,16 @@ class DisplayUtils {
 	**/
 	public static inline function maskSprite(sprite: Sprite, maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0):Void
 	{
-		var mask = new Sprite();
-		initSprite(mask, maskWidth, maskHeight, 0, 1, maskX == 0 ? sprite.x : maskX, maskY == 0 ? sprite.y : maskY);
-		if(sprite.parent != null){
-			if(sprite.mask != null && sprite.parent.contains(sprite.mask))
-				sprite.parent.removeChild(sprite.mask);
-			sprite.parent.addChild(mask);
+		if(maskWidth > 0 && maskHeight > 0){
+			var mask = new Sprite();
+			initSprite(mask, maskWidth, maskHeight, 0, 1, maskX == 0 ? sprite.x : maskX, maskY == 0 ? sprite.y : maskY);
+			if(sprite.parent != null){
+				if(sprite.mask != null && sprite.parent.contains(sprite.mask))
+					sprite.parent.removeChild(sprite.mask);
+				sprite.parent.addChild(mask);
+			}
+			sprite.mask = mask;
 		}
-		sprite.mask = mask;
 	}
 
 	/**

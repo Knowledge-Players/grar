@@ -277,7 +277,7 @@ class VideoPlayer extends WidgetContainer
 			containerVideo.y = Lib.current.stage.stageHeight/2-containerVideo.height/2;
             containerControls.x = Lib.current.stage.stageWidth/2-containerControls.width/2;
 
-			containerControls.y = Lib.current.stage.stageHeight/2;
+			containerControls.y = Lib.current.stage.stageHeight - containerControls.height - 20;
 
 			displays.get("bigPlay").y = Lib.current.stage.stageHeight/2-displays.get("bigPlay").height/2-containerControls.y ;
 			fullscreenButton.toggle();
@@ -575,13 +575,14 @@ class VideoPlayer extends WidgetContainer
 				lockCursor = false;
 			}
 			if(stream.time>=totalLength){
-				dispatchEvent(new Event(Event.COMPLETE));
+				cursor.x = progressBar.x-cursor.width/2;
 				fastForward(0);
 				setFullscreen(false);
                 containerThumbnail.visible=true;
                 displays.get("bigPlay").visible=true;
 				if(!loop)
 					pauseVideo();
+				dispatchEvent(new Event(Event.COMPLETE));
 			}
 		}
 	}

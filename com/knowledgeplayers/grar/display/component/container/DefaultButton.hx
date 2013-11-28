@@ -273,15 +273,6 @@ class DefaultButton extends WidgetContainer {
 
 			TweenManager.stop(layer.view);
 
-			if(list.exists("backgroundDrawn")){
-				var image: Image = cast(list.get("backgroundDrawn"), Image);
-				var bg = ParseUtils.parseColor(background);
-				image.graphics.beginFill(bg.color, bg.alpha);
-				image.graphics.drawRect(0, 0, width, height);
-				image.graphics.endFill();
-				content.addChildAt(image, 0);
-			}
-
 			renderNeeded = true;
 			enabled = enabledState.get(toggleState);
 			displayContent();
@@ -363,12 +354,6 @@ class DefaultButton extends WidgetContainer {
 	private inline function createStates(node:Fast):Map<String, Widget>
 	{
 		var list = new Map<String, Widget>();
-		// TODO remove
-		if(node.has.background){
-			var bkg = new Image();
-			background = node.att.background;
-			list.set("backgroundDrawn", bkg);
-		}
 
 		for(elem in node.elements){
 			var widget = createElement(elem);
@@ -405,9 +390,4 @@ class DefaultButton extends WidgetContainer {
 		elem.zz = zIndex;
 		zIndex++;
 	}
-
-	override public function maskSprite(sprite:Sprite,  maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0): Void
-	{
-	}
-
 }

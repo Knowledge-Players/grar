@@ -120,12 +120,15 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         state = parametersNode.node.State.innerData;
 	    id = parametersNode.node.Id.innerData;
 
-	    var templateFolder = displayNode.node.Templates.att.folder;
-	    var templates = AssetsStorage.getFolderContent(templateFolder, "xml");
-	    var xmlList = new List<Xml>();
-	    for(temp in templates)
-			xmlList.add(cast(temp, TextAsset).getXml());
-	    DisplayUtils.loadTemplates(xmlList);
+	    // Load Xml templates
+	    if(displayNode.hasNode.Templates){
+		    var templateFolder = displayNode.node.Templates.att.folder;
+		    var templates = AssetsStorage.getFolderContent(templateFolder, "xml");
+		    var xmlList = new List<Xml>();
+		    for(temp in templates)
+				xmlList.add(cast(temp, TextAsset).getXml());
+		    DisplayUtils.loadTemplates(xmlList);
+	    }
 
     	// Start Tracking
 

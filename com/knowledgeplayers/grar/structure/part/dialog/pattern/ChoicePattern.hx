@@ -49,7 +49,7 @@ class ChoicePattern extends Pattern {
 			tooltipRef = xml.att.toolTip;
 		if(xml.has.toolTipTransition && xml.att.toolTipTransition != "")
 			tooltipTransition = xml.att.toolTipTransition;
-		minimumChoice = xml.has.minChoice ? Std.parseInt(xml.att.minChoice) : 1;
+		minimumChoice = xml.has.minChoice ? Std.parseInt(xml.att.minChoice) : -1;
 
 		for(choiceNode in xml.nodes.Choice){
 			var tooltip = null;

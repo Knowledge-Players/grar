@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.structure.part.PartElement;
+import flash.events.Event;
+import com.knowledgeplayers.grar.structure.part.video.item.VideoItem;
 import haxe.ds.GenericStack;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.structure.part.TextItem;
@@ -35,7 +38,14 @@ class DialogDisplay extends PartDisplay {
 
 	override public function next(?target: DefaultButton):Void
 	{
-		startPattern(currentPattern);
+		if(currentPattern != null)
+			startPattern(currentPattern);
+		else{
+			var patterns: List<PartElement> = Lambda.filter(part.elements, function(elem: PartElement){
+				return elem.isPattern();
+			});
+			startPattern(cast(patterns.first(), Pattern));
+		}
 	}
 
 	// Private
@@ -86,6 +96,12 @@ class DialogDisplay extends PartDisplay {
 		}
 		else
 			return super.setButtonAction(button, action);
+	}
+
+	override private function onVideoComplete(e: Event):Void
+	{
+		super.onVideoComplete(e);
+		next();
 	}
 
 	private function onChoice(?choice: DefaultButton):Void

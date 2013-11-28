@@ -402,6 +402,7 @@ class PartDisplay extends KpDisplay {
 			var video = cast(item, VideoItem);
 
 			cast(displays.get(item.ref), VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture,video.autoFullscreen,video.thumbnail);
+			cast(displays.get(item.ref), VideoPlayer).addEventListener(Event.COMPLETE, onVideoComplete);
 		}
 		else {
             if(!displays.exists(item.ref))
@@ -413,6 +414,11 @@ class PartDisplay extends KpDisplay {
 		// Display Part
 		if(!introScreenOn && (isFirst || !item.isText()))
 			displayPart();
+	}
+
+	private function onVideoComplete(e:Event):Void
+	{
+		// Nothing. See subclass
 	}
 
 	private function setText(item:TextItem, isFirst:Bool = true):Void

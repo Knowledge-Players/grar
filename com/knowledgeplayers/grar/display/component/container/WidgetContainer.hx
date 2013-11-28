@@ -200,8 +200,6 @@ class WidgetContainer extends Widget{
 				this.tilesheet = UiFactory.tilesheet;
 
 			content.addChild(layer.view);
-			maskWidth = xml.has.width ? Std.parseFloat(xml.att.width) : 1;
-			maskHeight = xml.has.height ? Std.parseFloat(xml.att.height) : 1;
 
 			contentAlpha = xml.has.contentAlpha ? Std.parseFloat(xml.att.contentAlpha) : 1;
 			scrollBarName = xml.has.scrollBar ? xml.att.scrollBar : null;
@@ -218,26 +216,28 @@ class WidgetContainer extends Widget{
 					grid.push(Std.parseFloat(number));
 				grid9 = new Rectangle(grid[0], grid[1], grid[2], grid[3]);
 			}
-			setBackground
-            (
-                xml.has.background ? xml.att.background:null,
-                xml.has.color ? Std.string(xml.att.color).split(","):null,
-                xml.has.arrowX ? Std.parseFloat(xml.att.arrowX):0,
-                xml.has.arrowY ? Std.parseFloat(xml.att.arrowY):0,
-                xml.has.radius ? ParseUtils.parseListOfFloatValues(xml.att.radius):null,
-                xml.has.line ? Std.parseFloat(xml.att.line):0,
-                xml.has.colorLine ? Std.parseInt(xml.att.colorLine):0xFFFFFF,
-                xml.has.bubbleWidth ? Std.parseInt(xml.att.bubbleWidth):0,
-                xml.has.bubbleHeight ? Std.parseInt(xml.att.bubbleHeight):0,
-                xml.has.shadow ? Std.parseFloat(xml.att.shadow):0,
-                xml.has.gap ? Std.parseFloat(xml.att.gap):5,
-                xml.has.bubbleX ? Std.parseFloat(xml.att.bubbleX):0,
-                xml.has.bubbleY ? Std.parseFloat(xml.att.bubbleY):0,
-				xml.has.resize ? xml.att.resize == "true" : false
-            );
 			for(child in xml.elements){
 				createElement(child);
 			}
+			maskWidth = xml.has.width ? Std.parseFloat(xml.att.width) : width;
+			maskHeight = xml.has.height ? Std.parseFloat(xml.att.height) : height;
+			setBackground
+			(
+				xml.has.background ? xml.att.background:null,
+				xml.has.color ? Std.string(xml.att.color).split(","):null,
+				xml.has.arrowX ? Std.parseFloat(xml.att.arrowX):0,
+				xml.has.arrowY ? Std.parseFloat(xml.att.arrowY):0,
+				xml.has.radius ? ParseUtils.parseListOfFloatValues(xml.att.radius):null,
+				xml.has.line ? Std.parseFloat(xml.att.line):0,
+				xml.has.colorLine ? Std.parseInt(xml.att.colorLine):0xFFFFFF,
+				xml.has.bubbleWidth ? Std.parseInt(xml.att.bubbleWidth):0,
+				xml.has.bubbleHeight ? Std.parseInt(xml.att.bubbleHeight):0,
+				xml.has.shadow ? Std.parseFloat(xml.att.shadow):0,
+				xml.has.gap ? Std.parseFloat(xml.att.gap):5,
+				xml.has.bubbleX ? Std.parseFloat(xml.att.bubbleX):0,
+				xml.has.bubbleY ? Std.parseFloat(xml.att.bubbleY):0,
+				xml.has.resize ? xml.att.resize == "true" : false
+			);
 		}
 		addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
 		addEventListener(Event.ENTER_FRAME, checkRender);

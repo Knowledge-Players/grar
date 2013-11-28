@@ -41,7 +41,7 @@ class VideoItem extends Item {
 	{
 		super(xml, content);
 		if(xml != null){
-			this.autoStart = xml.has.autostart ? xml.att.autostart == "true" : false;
+			this.autoStart = xml.has.autoStart ? xml.att.autoStart == "true" : false;
 			this.autoFullscreen = xml.has.autoFullscreen ? xml.att.autoFullscreen == "true" : false;
 			this.loop = xml.has.loop ? xml.att.loop == "true" : false;
 			this.defaultVolume = xml.has.volume ? Std.parseFloat(xml.att.volume) : 1;

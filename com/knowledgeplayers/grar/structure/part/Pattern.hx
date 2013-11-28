@@ -101,7 +101,7 @@ class Pattern implements PartElement {
     * Restart a pattern
 **/
 
-	public function restart():Void
+	public inline function restart():Void
 	{
 		itemIndex = 0;
 	}
