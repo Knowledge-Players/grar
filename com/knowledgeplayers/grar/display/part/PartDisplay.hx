@@ -218,8 +218,7 @@ class PartDisplay extends KpDisplay {
 	private function unLoad():Void
 	{
 		while(numChildren > 0){
-			var child = getChildAt(numChildren - 1);
-			removeChild(child);
+			var child = removeChildAt(numChildren - 1);
 			child = null;
 		}
 		if(parent != null)
@@ -532,6 +531,16 @@ class PartDisplay extends KpDisplay {
 		}
 	}
 
+	private function setButtonText(buttonRef: String, buttonContent: Map<String, String>):Void
+	{
+		for(contentKey in buttonContent.keys()){
+			var targetedText: String = null;
+			if(contentKey != " ")
+				targetedText = contentKey;
+			cast(displays.get(buttonRef), DefaultButton).setText(Localiser.instance.getItemContent(buttonContent.get(contentKey)), targetedText);
+		}
+	}
+
 	private function mustBeDisplayed(key:String):Bool
 	{
 		var object: Widget = displays.get(key);
@@ -556,12 +565,7 @@ class PartDisplay extends KpDisplay {
 				button = cast(currentElement, Pattern).buttons;
 
 			if(button.exists(key)){
-				for(contentKey in button.get(key).keys()){
-					var targetedText: String = null;
-					if(contentKey != " ")
-						targetedText = contentKey;
-					cast(displays.get(key), DefaultButton).setText(Localiser.instance.getItemContent(button.get(key).get(contentKey)), targetedText);
-				}
+				setButtonText(key, button.get(key));
 				if(timelines.get(currentItem.timelineOut) != null)
 					cast(displays.get(key), DefaultButton).timeline = timelines.get(currentItem.timelineOut);
 				return true;
