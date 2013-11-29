@@ -194,6 +194,7 @@ class VideoPlayer extends WidgetContainer
 		//trace("autoFullscreen : "+autoFullscreen);
 
 		addEventListener(Event.ENTER_FRAME, enterFrame);
+        stream.addEventListener(NetStatusEvent.NET_STATUS,statusHandler);
 		setPlaying(true);
 		stream.resume();
         if(autoFullscreen.value){
@@ -205,6 +206,27 @@ class VideoPlayer extends WidgetContainer
     //TODO FULL ... wait for it ... SCREEN
     public function waitForIt():Void{
         setFullscreen(true);
+    }
+
+    public function statusHandler(event:NetStatusEvent):Void
+    {
+        switch (event.info.code)
+        {
+            //case "NetStream.Play.Start":
+
+            case "NetStream.Play.Stop":
+
+                    cursor.x = progressBar.x-cursor.width/2;
+                    fastForward(0);
+                    setFullscreen(false);
+                    containerThumbnail.visible=true;
+                    displays.get("bigPlay").visible=true;
+                    if(!loop)
+                        pauseVideo();
+
+                    dispatchEvent(new Event(Event.COMPLETE));
+                    trace('dispatch COMPLETE');
+        }
     }
 
 	public function pauseVideo():Void
@@ -584,6 +606,9 @@ class VideoPlayer extends WidgetContainer
 				cursor.x = progressBar.getChildAt(1).width + progressBar.x - cursor.width/2;
 				lockCursor = false;
 			}
+
+            /*
+
 			if(stream.time>=totalLength){
 				cursor.x = progressBar.x-cursor.width/2;
 				fastForward(0);
@@ -592,8 +617,12 @@ class VideoPlayer extends WidgetContainer
                 displays.get("bigPlay").visible=true;
 				if(!loop)
 					pauseVideo();
+
 				dispatchEvent(new Event(Event.COMPLETE));
+                trace('dispatch COMPLETE');
 			}
+
+			*/
 		}
 	}
 
