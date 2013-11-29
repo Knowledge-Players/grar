@@ -127,7 +127,6 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		xOffset += xBase;
 		yOffset += yBase;
 
-		Localiser.instance.pushLocale();
 		Localiser.instance.layoutPath = LayoutManager.instance.interfaceLocale;
 
 		addChild(layers.get("ui").view);

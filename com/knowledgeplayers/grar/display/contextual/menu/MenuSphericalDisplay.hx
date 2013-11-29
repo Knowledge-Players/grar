@@ -75,7 +75,6 @@ public static function get_instance():MenuSphericalDisplay
 			var tree = new XmlTree(GameManager.instance.game.menu);
 			var i = 0;
 			var nodes = tree.getDepth(i);
-			Localiser.instance.pushLocale();
 			Localiser.instance.layoutPath = LayoutManager.instance.interfaceLocale;
 			while(!nodes.isEmpty()){
 				for(level in nodes)

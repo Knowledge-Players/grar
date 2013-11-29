@@ -94,7 +94,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			displayPage(model.pages[0]);
 
 			// Set Locale
-			Localiser.instance.pushLocale();
 			Localiser.instance.layoutPath = model.file;
 
 			// Display close button
@@ -158,7 +157,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		currentPage = page;
 
 		// Set Locale
-		Localiser.instance.pushLocale();
 		Localiser.instance.layoutPath = model.file;
 
 		// Display title
@@ -254,7 +252,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				buttonGroups.get(stepGroupName).add(step);
 			}
 			var chapter: Chapter = chapterMap.get(target);
-			Localiser.instance.pushLocale();
 			Localiser.instance.layoutPath = model.file;
 			cast(displays.get(chapter.titleRef), ScrollPanel).setContent(Localiser.instance.getItemContent(chapter.name));
 			Localiser.instance.popLocale();
@@ -269,7 +266,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 
 	private function displayNote(note: Note):Void
 	{
-		Localiser.instance.pushLocale();
 		Localiser.instance.layoutPath = model.file;
 		var panel = cast(displays.get(note.ref), ScrollPanel);
 

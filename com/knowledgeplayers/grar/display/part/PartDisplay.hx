@@ -81,8 +81,7 @@ class PartDisplay extends KpDisplay {
 	public function init():Void
 	{
 		if(part.file != null){
-			Localiser.instance.pushLocale();
-			Localiser.instance.set_layoutPath(part.file);
+			Localiser.instance.layoutPath = part.file;
 		}
 		else
 			localeLoaded = true;
@@ -447,12 +446,7 @@ class PartDisplay extends KpDisplay {
 		// Clean-up buttons
 		cleanDisplay();
 
-		var array = new Array<Widget>();
-
-		for(key in displays.keys()){
-			if(mustBeDisplayed(key))
-				array.push(displays.get(key));
-		}
+		var array = selectElements();
 
 		// Dynamic timeline
 		var tl: Timeline = timelines.get(currentItem.timelineIn);
@@ -533,12 +527,24 @@ class PartDisplay extends KpDisplay {
 
 	private function setButtonText(buttonRef: String, buttonContent: Map<String, String>):Void
 	{
-		for(contentKey in buttonContent.keys()){
-			var targetedText: String = null;
-			if(contentKey != " ")
-				targetedText = contentKey;
-			cast(displays.get(buttonRef), DefaultButton).setText(Localiser.instance.getItemContent(buttonContent.get(contentKey)), targetedText);
+		if(buttonContent != null){
+			for(contentKey in buttonContent.keys()){
+				var targetedText: String = null;
+				if(contentKey != " ")
+					targetedText = contentKey;
+				cast(displays.get(buttonRef), DefaultButton).setText(Localiser.instance.getItemContent(buttonContent.get(contentKey)), targetedText);
+			}
 		}
+	}
+
+	private function selectElements():Array<Widget>
+	{
+		var array = new Array<Widget    >();
+		for(key in displays.keys()){
+			if(mustBeDisplayed(key))
+				array.push(displays.get(key));
+		}
+		return array;
 	}
 
 	private function mustBeDisplayed(key:String):Bool

@@ -34,6 +34,7 @@ class Localiser extends EventDispatcher {
 	private var outroId:String;
 	private var localisation:Localisation;
 	private var stashedLocale:GenericStack<Localisation>;
+	private var sameLocale:Bool;
 
 	private function new()
 	{
@@ -62,8 +63,14 @@ class Localiser extends EventDispatcher {
 
 	public function set_layoutPath(path:String):String
 	{
-		layoutPath = path;
-		setLocalisationFile(path);
+		if(layoutPath != path){
+			pushLocale();
+			layoutPath = path;
+			setLocalisationFile(path);
+			sameLocale = false;
+		}
+		else
+			sameLocale = true;
 		return layoutPath;
 	}
 
@@ -120,21 +127,19 @@ class Localiser extends EventDispatcher {
 	}
 
 	/**
-    * Store the current locale
+    * Restore the previously stored locale
     **/
-
 	public function popLocale():Void
 	{
-		if(!stashedLocale.isEmpty()){
+		if(!sameLocale && !stashedLocale.isEmpty()){
 			localisation = stashedLocale.pop();
 		}
 	}
 
 	/**
-    * Restore the previously stored locale
+    * Store the current locale
     **/
-
-	public function pushLocale():Void
+	private function pushLocale():Void
 	{
 		stashedLocale.add(localisation);
 	}

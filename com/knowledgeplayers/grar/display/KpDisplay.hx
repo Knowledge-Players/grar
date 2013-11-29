@@ -80,7 +80,7 @@ class KpDisplay extends Sprite {
 	private var totalSpriteSheets:Int = 0;
 	private var textGroups:Map<String, Map<String, {obj:Fast, z:Int}>>;
 	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
-	private var displayTemplates: Map<String, Fast>;
+	private var displayTemplates: Map<String, Template>;
 	private var timelines: Map<String, Timeline>;
 
 
@@ -187,7 +187,7 @@ class KpDisplay extends Sprite {
 		            addElement(timer, elemNode);
 					timer;
 				case "template":
-					displayTemplates.set(elemNode.att.ref, elemNode);
+					displayTemplates.set(elemNode.att.ref, {fast: elemNode, z: zIndex++});
 					null;
 				case "include" :
 					var tmpXml = Xml.parse(DisplayUtils.templates.get(elemNode.att.ref).toString()).firstElement();
@@ -411,8 +411,13 @@ class KpDisplay extends Sprite {
 		scrollBars = new Map<String, ScrollBar>();
         timelines = new Map<String, Timeline>();
 		dynamicFields = new Array<{field: ScrollPanel, content: String}>();
-		displayTemplates = new Map<String, Fast>();
+		displayTemplates = new Map<String, {fast: Fast, z: Int}>();
 
 		addEventListener(Event.ENTER_FRAME, checkRender);
 	}
+}
+
+typedef Template = {
+	var fast: Fast;
+	var z: Int;
 }

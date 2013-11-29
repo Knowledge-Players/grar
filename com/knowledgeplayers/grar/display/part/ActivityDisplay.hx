@@ -96,7 +96,7 @@ class ActivityDisplay extends PartDisplay {
 		// Create inputs, place & display them
 
 		for(input in activity.getInputs()){
-			var button:DefaultButton = new DefaultButton(displayTemplates.get(input.ref));
+			var button:DefaultButton = new DefaultButton(displayTemplates.get(input.ref).fast);
 
             var transitionIn:String= null;
             if(guideNode.has.transitionIn) {
@@ -109,12 +109,14 @@ class ActivityDisplay extends PartDisplay {
 			for(contentKey in input.content.keys())
 				button.setText(Localiser.instance.getItemContent(input.content.get(contentKey)), contentKey);
 			button.buttonAction = onInputClick;
-			addChild(button);
+			button.zz = displayTemplates.get(input.ref).z;
 			inputs.add(button);
 		}
-		var lastTemplate = displayTemplates.get(inputs.first().ref);
-		if(lastTemplate.has.validation)
-			validationRef = displayTemplates.get(inputs.first().ref).att.validation;
+		if(!inputs.isEmpty()){
+			var lastTemplate = displayTemplates.get(inputs.first().ref).fast;
+			if(lastTemplate.has.validation)
+				validationRef = displayTemplates.get(inputs.first().ref).fast.att.validation;
+		}
 
 		// Checking rules
 		// Validation
@@ -147,7 +149,7 @@ class ActivityDisplay extends PartDisplay {
 				if(Std.parseInt(limits[1]) != null)
 					maxSelect = Std.parseInt(limits[1]);
 				else if(limits[1] == "*")
-					maxSelect = 0; // Won't ever trigger limits, so unlimited selection
+					maxSelect = -1; // Won't ever trigger limits, so unlimited selection
 				else
 					throw "[ActivityDisplay] Unknown character '"+limits[1]+"' for selection limits in activity '"+part.id+"'.";
 			}
@@ -232,6 +234,14 @@ class ActivityDisplay extends PartDisplay {
 		}
 
 		return super.mustBeDisplayed(key);
+	}
+
+	override private function selectElements():Array<Widget>
+	{
+		var array = super.selectElements();
+		for(input in inputs)
+			array.push(input);
+		return array;
 	}
 
 	override private function cleanDisplay():Void
