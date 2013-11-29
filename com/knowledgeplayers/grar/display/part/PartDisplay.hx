@@ -428,7 +428,7 @@ class PartDisplay extends KpDisplay {
 		// Nothing. See subclass
 	}
 
-	private inline function setText(item:TextItem, isFirst:Bool = true):Void
+	private function setText(item:TextItem, isFirst:Bool = true):Void
 	{
 		var content = Localiser.get_instance().getItemContent(item.content);
 		if(item.ref != null){
