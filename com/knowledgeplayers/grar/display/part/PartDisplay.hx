@@ -123,18 +123,16 @@ class PartDisplay extends KpDisplay {
 		}
 
 		if(Std.is(currentElement, Item)){
-			var groupKey = "";
 			if(textGroups != null){
-
+				var groupKey: String = null;
 				for(key in textGroups.keys()){
-
 					if(textGroups.get(key).exists(cast(currentElement, Item).ref)){
-
 						groupKey = key;
+						break;
 					}
 				}
 
-				if(groupKey != ""){
+				if(groupKey != null){
 					var textItem = null;
 					var i = 0;
 					while(i < Lambda.count(textGroups.get(groupKey))){
@@ -410,8 +408,19 @@ class PartDisplay extends KpDisplay {
         }
 
 		// Display Part
-		if(!introScreenOn && (isFirst || !item.isText()))
+		if(!introScreenOn && isFirst)
 			displayPart();
+		else if(!introScreenOn){
+			var i = 0;
+			var found = false;
+			while(i < numChildren && !found){
+				if(Std.is(getChildAt(i),Widget) && (cast(getChildAt(i),Widget).zz > displays.get(item.ref).zz)){
+					addChildAt(displays.get(item.ref),i);
+					found = true;
+				}
+				i++;
+			}
+		}
 	}
 
 	private function onVideoComplete(e:Event):Void
@@ -419,25 +428,13 @@ class PartDisplay extends KpDisplay {
 		// Nothing. See subclass
 	}
 
-	private function setText(item:TextItem, isFirst:Bool = true):Void
+	private inline function setText(item:TextItem, isFirst:Bool = true):Void
 	{
 		var content = Localiser.get_instance().getItemContent(item.content);
 		if(item.ref != null){
 			if(!displays.exists(item.ref))
 				throw "[PartDisplay] There is no TextArea with ref " + item.ref;
 			cast(displays.get(item.ref), ScrollPanel).setContent(content);
-		}
-
-		if(!isFirst){
-			var i = 0;
-			var found = false;
-			while(i < numChildren && !found){
-				if(Std.is(getChildAt(i),Widget) && (cast(getChildAt(i),Widget).zz > displays.get(item.ref).zz)){
-					addChildAt(cast(displays.get(item.ref), ScrollPanel),i);
-					found = true;
-				}
-				i++;
-			}
 		}
 	}
 
@@ -525,7 +522,7 @@ class PartDisplay extends KpDisplay {
 		}
 	}
 
-	private function setButtonText(buttonRef: String, buttonContent: Map<String, String>):Void
+	private inline function setButtonText(buttonRef: String, buttonContent: Map<String, String>):Void
 	{
 		if(buttonContent != null){
 			for(contentKey in buttonContent.keys()){

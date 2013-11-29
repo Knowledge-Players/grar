@@ -50,9 +50,7 @@ class SoundPlayer extends WidgetContainer
     public function setSound(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 0, capture:Float = 0,?autoFullscreen:Bool): Void{
 
         if(url == null || url == "")
-            throw '[SoundPlayer] Invalid url "$url" for video stream.';
-
-            trace("url : "+url);
+            throw '[SoundPlayer] Invalid url "$url" for audio stream.';
 
             var req:URLRequest = new URLRequest();
             req.url = url;

@@ -4,8 +4,8 @@
     "license": "MIT",
     "tags": [ "flash" ],
     "description": "GRAR is a powerful engine designed for training applications. Create an e-learning app just with XML",
-    "version": "2.0.0",
-    "releasenote": "OpenFL, better customization, simplified XMLs",
+    "version": "2.1.0",
+    "releasenote": "New activities, video dialog, plugins support and lots of bugs fixing",
     "contributors": [ "knowledge-players" ],
     "dependencies": {
         "openfl": "1.0.6",
