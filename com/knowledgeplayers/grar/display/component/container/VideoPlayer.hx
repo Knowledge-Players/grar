@@ -5,6 +5,8 @@ class VideoPlayer extends WidgetContainer {
 	{}
 }
 #else
+import motion.Actuate;
+import com.knowledgeplayers.grar.display.TweenManager;
 import flash.Lib;
 import flash.display.Bitmap;
 import aze.display.TileLayer;
@@ -181,6 +183,7 @@ class VideoPlayer extends WidgetContainer
 		video.smoothing = true;
 		video.width = maskWidth;
 		video.height = maskHeight;
+
 		containerVideo.addChildAt(video, 0);
 		addEventListener(Event.ENTER_FRAME, enterFrame);
 
@@ -189,14 +192,20 @@ class VideoPlayer extends WidgetContainer
 	public function playVideo(?target: DefaultButton):Void
 	{
 		//trace("autoFullscreen : "+autoFullscreen);
-		if(autoFullscreen.value){
-			setFullscreen(true);
-			//autoFullscreen = false;
-		}
+
 		addEventListener(Event.ENTER_FRAME, enterFrame);
 		setPlaying(true);
 		stream.resume();
+        if(autoFullscreen.value){
+           Actuate.timer(0.01,null).onComplete(waitForIt);
+
+            //autoFullscreen = false;
+        }
 	}
+    //TODO FULL ... wait for it ... SCREEN
+    public function waitForIt():Void{
+        setFullscreen(true);
+    }
 
 	public function pauseVideo():Void
 	{
@@ -262,6 +271,7 @@ class VideoPlayer extends WidgetContainer
 		isFullscreen = fullscreen;
 
 		if (isFullscreen) {
+
 			blackScreen = new Sprite();
 			blackScreen.graphics.beginFill(0);
 			blackScreen.graphics.drawRect(0,0,Lib.current.width,Lib.current.height);
