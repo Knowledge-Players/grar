@@ -196,7 +196,6 @@ class DefaultButton extends WidgetContainer {
 			for(state in states){
 				if(state.exists(pKey)){
 					cast(state.get(pKey), ScrollPanel).setContent(pContent);
-					break;
 				}
 			}
 		}

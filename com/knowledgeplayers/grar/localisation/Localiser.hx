@@ -141,6 +141,7 @@ class Localiser extends EventDispatcher {
     **/
 	private function pushLocale():Void
 	{
-		stashedLocale.add(localisation);
+		if(localisation != null)
+			stashedLocale.add(localisation);
 	}
 }
