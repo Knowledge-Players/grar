@@ -181,17 +181,27 @@ class VideoPlayer extends WidgetContainer
 		}
 		video.attachNetStream(stream);
 		video.smoothing = true;
-		video.width = maskWidth;
-		video.height = maskHeight;
 
-		containerVideo.addChildAt(video, 0);
+		containerVideo.addChild(video);
+		DisplayUtils.initSprite(containerVideo, maskWidth, maskHeight);
 		addEventListener(Event.ENTER_FRAME, enterFrame);
 
 	}
 
 	public function playVideo(?target: DefaultButton):Void
 	{
-		//trace("autoFullscreen : "+autoFullscreen);
+		// Resizing video with original ratio
+		var ratio = video.videoWidth / video.videoHeight;
+		if(maskWidth/video.width > maskHeight/video.height){
+			video.scaleX = maskWidth/video.width;
+			video.scaleY = (video.width / ratio) / video.height;
+		}
+		else{
+			video.scaleY = maskHeight/video.height;
+			video.scaleX = (video.height / ratio) / video.width;
+		}
+		video.x = (containerVideo.width - video.width) / 2;
+		video.y = (containerVideo.height - video.height) / 2;
 
 		addEventListener(Event.ENTER_FRAME, enterFrame);
         stream.addEventListener(NetStatusEvent.NET_STATUS,statusHandler);
@@ -199,12 +209,12 @@ class VideoPlayer extends WidgetContainer
 		stream.resume();
         if(autoFullscreen.value){
            Actuate.timer(0.01,null).onComplete(waitForIt);
-
-            //autoFullscreen = false;
         }
 	}
+
     //TODO FULL ... wait for it ... SCREEN
-    public function waitForIt():Void{
+    public function waitForIt():Void
+    {
         setFullscreen(true);
     }
 
@@ -225,7 +235,6 @@ class VideoPlayer extends WidgetContainer
                         pauseVideo();
 
                     dispatchEvent(new Event(Event.COMPLETE));
-                    trace('dispatch COMPLETE');
         }
     }
 
@@ -319,8 +328,6 @@ class VideoPlayer extends WidgetContainer
 			if (blackScreen !=null)
 				Lib.current.stage.removeChild(blackScreen);
 
-			containerVideo.scaleX =1;
-			containerVideo.scaleY = 1;
 			addChild(containerVideo);
             addChild(containerThumbnail);
 			addChild(containerControls);
