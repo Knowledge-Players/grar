@@ -63,14 +63,18 @@ class Localiser extends EventDispatcher {
 
 	public function set_layoutPath(path:String):String
 	{
-		if(layoutPath != path){
-			pushLocale();
-			layoutPath = path;
-			setLocalisationFile(path);
-			sameLocale = false;
+		if(path != null){
+			if(layoutPath != path){
+				pushLocale();
+				layoutPath = path;
+				setLocalisationFile(path);
+				sameLocale = false;
+			}
+			else
+				sameLocale = true;
 		}
 		else
-			sameLocale = true;
+			layoutPath = path;
 		return layoutPath;
 	}
 
@@ -133,6 +137,7 @@ class Localiser extends EventDispatcher {
 	{
 		if(!sameLocale && !stashedLocale.isEmpty()){
 			localisation = stashedLocale.pop();
+			layoutPath = null;
 		}
 	}
 
