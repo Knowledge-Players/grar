@@ -199,8 +199,6 @@ class WidgetContainer extends Widget{
 			else
 				this.tilesheet = UiFactory.tilesheet;
 
-			content.addChild(layer.view);
-
 			contentAlpha = xml.has.contentAlpha ? Std.parseFloat(xml.att.contentAlpha) : 1;
 			scrollBarName = xml.has.scrollBar ? xml.att.scrollBar : null;
 			if(xml.has.contentTransition)
@@ -221,6 +219,9 @@ class WidgetContainer extends Widget{
 			}
 			maskWidth = xml.has.width ? Std.parseFloat(xml.att.width) : width;
 			maskHeight = xml.has.height ? Std.parseFloat(xml.att.height) : height;
+
+			content.addChildAt(layer.view, 0);
+
 			setBackground
 			(
 				xml.has.background ? xml.att.background:null,
@@ -358,7 +359,7 @@ class WidgetContainer extends Widget{
 		elem.zz = zIndex;
         displays.set(elem.ref,elem);
 
-		content.addChildAt(elem,zIndex);
+		content.addChild(elem);
 		children.push(elem);
         zIndex++;
 		dispatchEvent(new Event(Event.CHANGE));
