@@ -17,11 +17,6 @@ class TextItem extends Item {
 	public var transition (default, default):String;
 
 	/**
-    * Graphicals items associated with this item
-    **/
-	public var images (default, default):GenericStack<String>;
-
-	/**
     * Sound to play during this item
     **/
 	public var sound (default, default):String;
@@ -40,7 +35,6 @@ class TextItem extends Item {
 	public function new(?xml:Fast, content:String = "")
 	{
 		super(xml, content);
-		images = new GenericStack<String>();
 		if(xml != null){
 			if(xml.has.author)
 				author = xml.att.author;
@@ -50,11 +44,6 @@ class TextItem extends Item {
 				sound = xml.node.Sound.att.src;
 			if(xml.hasNode.Intro)
 				introScreen = {ref: xml.node.Intro.att.ref, content: ParseUtils.parseHash(xml.node.Intro.att.content)};
-
-			for(elem in xml.elements){
-				images.add(elem.att.ref);
-
-			}
 		}
 
 		// Reverse pile order to match XML order

@@ -196,7 +196,7 @@ class PartDisplay extends KpDisplay {
 	public function goToPattern(target:String):Void
 	{
 		var i = 0;
-		while(i < part.elements.length && !(part.elements[i].isPattern() && cast(part.elements[i], Pattern).name == target)){
+		while(i < part.elements.length && !(part.elements[i].isPattern() && cast(part.elements[i], Pattern).id == target)){
 			i++;
 		}
 		if(i == part.elements.length)
@@ -357,10 +357,8 @@ class PartDisplay extends KpDisplay {
 
 		currentItem = item;
 
-		if(item.token != null && item.token != ""){
-			for(token in item.token.split(","))
-				GameManager.instance.activateToken(token);
-		}
+		for(token in item.tokens)
+			GameManager.instance.activateToken(token);
 
 		if(isFirst)
 			setBackground(item.background);

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import haxe.ds.GenericStack;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.factory.ItemFactory;
 import haxe.xml.Fast;
@@ -20,12 +21,6 @@ class Pattern implements PartElement {
 	public var ref (default, default):String;
 
 	/**
-     * Name of the pattern
-     */
-	// TODO change to id
-	public var name (default, default):String;
-
-	/**
     * Current item index
 **/
 	public var itemIndex (default, default):Int;
@@ -41,9 +36,9 @@ class Pattern implements PartElement {
 	public var buttons (default, null):Map<String, Map<String, String>>;
 
 	/**
-    * Implements PartElement. Always null
+    * Implements PartElement.
     **/
-	public var token (default, null):String;
+	public var tokens (default, null):GenericStack<String>;
 
 	public var endScreen (default, null):Bool = false;
 
@@ -54,10 +49,10 @@ class Pattern implements PartElement {
 
 	public function new(name:String)
 	{
-		this.name = name;
-		id = "";
+		this.id = name;
 		patternContent = new Array<Item>();
 		buttons = new Map<String, Map<String, String>>();
+		tokens = new GenericStack<String>();
 		restart();
 	}
 

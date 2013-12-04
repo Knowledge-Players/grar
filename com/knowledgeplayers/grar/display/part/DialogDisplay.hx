@@ -2,13 +2,9 @@ package com.knowledgeplayers.grar.display.part;
 
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import flash.events.Event;
-import com.knowledgeplayers.grar.structure.part.video.item.VideoItem;
-import haxe.ds.GenericStack;
 import com.knowledgeplayers.grar.structure.part.Part;
-import com.knowledgeplayers.grar.structure.part.TextItem;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.localisation.Localiser;

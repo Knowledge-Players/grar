@@ -1,10 +1,12 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import haxe.ds.GenericStack;
+
 interface PartElement extends Identifiable{
 	/**
-	* Token contains into the part element
+	* Tokens contained into the part element
 	**/
-	public var token (default, null):String;
+	public var tokens (default, null):GenericStack<String>;
 	/**
 	* This element is an endScreen ?
 	**/

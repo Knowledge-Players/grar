@@ -1,7 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
 import com.knowledgeplayers.grar.tracking.Trackable;
-import haxe.ds.GenericStack;
 import haxe.xml.Fast;
 import flash.events.IEventDispatcher;
 import flash.media.Sound;
@@ -15,9 +14,6 @@ interface Part extends IEventDispatcher extends PartElement extends Trackable {
 
 	public var buttons (default, default):Map<String, Map<String, String>>;
 	public var elements (default, null):Array<PartElement>;
-	// TODO merge PartElement.token and Part.tokens
-	public var token (default, null):String;
-	public var tokens (default, null):GenericStack<String>;
 	public var buttonTargets (default, null): Map<String, PartElement>;
 	public var perks (default, null): Map<String, Int>;
 	public var soundLoop (default, default):Sound;

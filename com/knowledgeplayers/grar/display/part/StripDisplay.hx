@@ -65,16 +65,15 @@ class StripDisplay extends PartDisplay {
 		super.startPattern(pattern);
 		currentBox = cast(pattern, BoxPattern);
 
-		var nextItem = pattern.getNextItem();
+		var nextItem: Item = pattern.getNextItem();
 		if(nextItem != null){
 			currentBoxItem = nextItem;
 			setupItem(nextItem);
 			if(nextItem.isText())
 				GameManager.instance.playSound(cast(nextItem, TextItem).sound);
-			if(nextItem.token != null && nextItem.token != ""){
-				for(token in nextItem.token.split(","))
-					GameManager.instance.activateToken(token);
-			}
+
+			for(token in nextItem.tokens)
+				GameManager.instance.activateToken(token);
 		}
 		else if(currentBox.nextPattern != "")
 			goToPattern(currentBox.nextPattern);
@@ -102,6 +101,7 @@ class StripDisplay extends PartDisplay {
 
 	override private function setupItem(item:Item, ?isFirst:Bool = true):Void
 	{
+		currentItem = item;
 		if(isFirst)
 			setBackground(item.background);
 
@@ -114,31 +114,37 @@ class StripDisplay extends PartDisplay {
 
 	override private function displayPart():Void
 	{
-        var box: BoxDisplay = boxes.get(currentBox.name);
-		if(!box.textFields.exists(currentBoxItem.ref))
-			throw "[StripDisplay] There is no TextField with ref \""+currentBoxItem.ref+"\"";
-		else
-			box.textFields.get(currentBoxItem.ref).setContent(Localiser.instance.getItemContent(currentBoxItem.content));
-		var tfCount = 1;
-		while(tfCount < Lambda.count(box.textFields)){
-			var nextItem = currentBox.getNextItem();
-			if(nextItem != null){
-				currentBoxItem = nextItem;
+		if(currentBox != null){
+	        var box: BoxDisplay = boxes.get(currentBox.id);
+			if(!box.textFields.exists(currentBoxItem.ref))
+				throw "[StripDisplay] There is no TextField with ref \""+currentBoxItem.ref+"\"";
+			else
 				box.textFields.get(currentBoxItem.ref).setContent(Localiser.instance.getItemContent(currentBoxItem.content));
+			var tfCount = 1;
+			while(tfCount < Lambda.count(box.textFields)){
+				var nextItem = currentBox.getNextItem();
+				if(nextItem != null){
+					currentBoxItem = nextItem;
+					box.textFields.get(currentBoxItem.ref).setContent(Localiser.instance.getItemContent(currentBoxItem.content));
+				}
+				tfCount++;
 			}
-			tfCount++;
-		}
-		if(Lambda.count(currentBox.buttons) == 0){
-			box.onComplete = onBoxVisible;
-			addChild(box);
+			if(Lambda.count(currentBox.buttons) == 0){
+				box.onComplete = onBoxVisible;
+				addChild(box);
+			}
+			else{
+				addChild(box);
+				for(key in currentBox.buttons.keys()){
+					if(!displays.exists(key))
+						throw "[StripDisplay] There is no Button with ref \""+key+"\"";
+					addChild(displays.get(key));
+				}
+			}
 		}
 		else{
-			addChild(box);
-			for(key in currentBox.buttons.keys()){
-				if(!displays.exists(key))
-					throw "[StripDisplay] There is no Button with ref \""+key+"\"";
-				addChild(displays.get(key));
-			}
+			super.displayPart();
+			nextElement();
 		}
 	}
 

@@ -54,11 +54,6 @@ class StructurePart extends EventDispatcher implements Part{
 	public var tokens (default, default):GenericStack<String>;
 
 		/**
-	     * Implements PartElement. Always null
-	     */
-	public var token (default, default):String;
-
-		/**
 	     * Sound playing during the part
 	     */
 	public var soundLoop (default, default):Sound;
@@ -413,13 +408,12 @@ class StructurePart extends EventDispatcher implements Part{
 			}
 			if(elem.isPattern()){
 				for(item in cast(elem, Pattern).patternContent){
-					if(item.token != null){
-						tokens.add(item.token);
-					}
+					for(image in item.tokens)
+						tokens.add(image);
 				}
 			}
-			if(elem.token != null)
-				tokens.add(elem.token);
+			for(image in elem.tokens)
+				tokens.add(image);
 		}
 		loaded = true;
 		if(nbSubPartLoaded == nbSubPartTotal)

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.structure.part;
 
+import haxe.ds.GenericStack;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import haxe.xml.Fast;
 
@@ -30,9 +31,13 @@ class Item implements PartElement {
 	public var ref (default, default):String;
 
 	/**
-    * Reference to the token in this item
+    * Reference to the tokens in this item
     **/
-	public var token(default, null):String;
+	public var tokens (default, null):GenericStack<String>;
+	/**
+    * Graphicals items associated with this item
+    **/
+	public var images (default, default):GenericStack<String>;
 
 	public var endScreen (default, null):Bool = false;
 
@@ -46,6 +51,8 @@ class Item implements PartElement {
      */
 	private function new(?xml:Fast, content:String = "")
 	{
+		tokens = new GenericStack<String>();
+		images = new GenericStack<String>();
 		if(xml != null){
 			if(xml.has.content)
 				this.content = xml.att.content;
@@ -57,13 +64,9 @@ class Item implements PartElement {
 				timelineIn = xml.att.timelineIn;
 			if(xml.has.timelineOut)
 				timelineOut = xml.att.timelineOut;
-			var tokens = new StringBuf();
 			for(node in xml.nodes.Token){
 				tokens.add(node.att.ref);
-				tokens.add(",");
 			}
-			token = tokens.toString();
-			token = token.substr(0, token.length-1);
             button = new Map<String, Map<String, String>>();
 
             for(elem in xml.nodes.Button){
@@ -71,6 +74,9 @@ class Item implements PartElement {
 			}
 			if(xml.has.endScreen)
 				endScreen = xml.att.endScreen == "true";
+			for(elem in xml.elements){
+				images.add(elem.att.ref);
+			}
 		}
 		else{
 			this.content = content;
