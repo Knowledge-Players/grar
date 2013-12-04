@@ -168,24 +168,30 @@ class VideoPlayer extends WidgetContainer
         }
 
 		changeVolume(defaultVolume);
-		stream.client = {onMetaData: function(data){ totalLength = Math.round(data.duration*100/100); }};
+		var videoWidth = 0;
+		var videoHeight = 0;
+		stream.client = {onMetaData: function(data){
+			totalLength = Math.round(data.duration);
+			videoWidth = data.width;
+			videoHeight = data.height;
+
+			// When ready, start video
+			if(autoStart)
+				playVideo();
+			else{
+				pauseVideo();
+			}
+		}};
 		stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 		// TODO bufferTime en fonction de la BP
 		//stream.bufferTime = startBufferLength;
 		stream.play(url);
 		stream.seek(0);
-		if(autoStart)
-			playVideo();
-		else{
-			pauseVideo();
-		}
 		video.attachNetStream(stream);
 		video.smoothing = true;
 
 		containerVideo.addChild(video);
 		DisplayUtils.initSprite(containerVideo, maskWidth, maskHeight);
-		addEventListener(Event.ENTER_FRAME, enterFrame);
-
 	}
 
 	public function playVideo(?target: DefaultButton):Void
@@ -316,8 +322,10 @@ class VideoPlayer extends WidgetContainer
 
 			containerVideo.x = Lib.current.stage.stageWidth/2-containerVideo.width/2;
 			containerVideo.y = Lib.current.stage.stageHeight/2-containerVideo.height/2;
-            containerControls.x = Lib.current.stage.stageWidth/2-containerControls.width/2;
+			trace(Lib.current.stage.stageWidth, Lib.current.stage.stageHeight/2);
+			trace(containerVideo.x, containerVideo.y);
 
+            containerControls.x = Lib.current.stage.stageWidth/2-containerControls.width/2;
 			containerControls.y = Lib.current.stage.stageHeight - containerControls.height - 20;
 
 			displays.get("bigPlay").y = Lib.current.stage.stageHeight/2-displays.get("bigPlay").height/2-containerControls.y ;

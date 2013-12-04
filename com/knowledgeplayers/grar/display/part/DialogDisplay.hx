@@ -73,15 +73,19 @@ class DialogDisplay extends PartDisplay {
 			}
 		}
 
-		var nextItem = pattern.getNextItem();
-		if(nextItem != null && !exitPattern){
-			setupItem(nextItem);
+		if(pattern != null){
+			var nextItem = pattern.getNextItem();
+			if(nextItem != null && !exitPattern){
+				setupItem(nextItem);
+			}
+			else if(currentPattern.nextPattern != "")
+				goToPattern(currentPattern.nextPattern);
+			else{
+				nextElement(part.getElementIndex(currentPattern));
+			}
 		}
-		else if(currentPattern.nextPattern != "")
-			goToPattern(currentPattern.nextPattern);
-		else{
-			nextElement(part.getElementIndex(currentPattern));
-		}
+		else
+			nextElement();
 	}
 
 	// Privates
