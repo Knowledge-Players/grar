@@ -322,8 +322,6 @@ class VideoPlayer extends WidgetContainer
 
 			containerVideo.x = Lib.current.stage.stageWidth/2-containerVideo.width/2;
 			containerVideo.y = Lib.current.stage.stageHeight/2-containerVideo.height/2;
-			trace(Lib.current.stage.stageWidth, Lib.current.stage.stageHeight/2);
-			trace(containerVideo.x, containerVideo.y);
 
             containerControls.x = Lib.current.stage.stageWidth/2-containerControls.width/2;
 			containerControls.y = Lib.current.stage.stageHeight - containerControls.height - 20;

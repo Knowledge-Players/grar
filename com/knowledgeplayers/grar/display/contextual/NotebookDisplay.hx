@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import com.knowledgeplayers.grar.factory.GuideFactory;
 import com.knowledgeplayers.grar.event.PartEvent;
 import flash.events.Event;
 import flash.net.URLRequest;
@@ -229,14 +230,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		if(numActive > 1){
 			clearPage(target);
 			addChild(bookmarkBkg);
-			var guideFast = bookmark.node.Guide;
-			// TODO check other guide  type
-			var guide: Guide = switch(guideFast.att.type.toLowerCase()){
-				case "line": var start = ParseUtils.parseListOfIntValues(guideFast.att.start, ";");
-					var end = ParseUtils.parseListOfIntValues(guideFast.att.end, ";");
-					new Line(new Point(start[0], start[1]), new Point(end[0], end[1]), guideFast.has.center?guideFast.att.center=="true":false);
-				default: null;
-			}
+			var guide: Guide = GuideFactory.createGuideFromXml(bookmark.node.Guide);
 			// Create steps
 			for(i in 0...numActive){
 				var step: DefaultButton = cast(createButton(bookmark.node.Step), DefaultButton);

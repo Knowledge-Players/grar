@@ -25,11 +25,11 @@ class Grid implements Guide {
 	/**
     * X of the grid
     **/
-	public var x (default, default):Float;
+	public var x (default, set_x):Float;
 	/**
     * Y of the grid
     **/
-	public var y (default, default):Float;
+	public var y (default, set_y):Float;
 	/**
 	* Space between columns
 	**/
@@ -39,18 +39,21 @@ class Grid implements Guide {
 	**/
 	public var gapRow (default, default):Float;
 
+	public var transitionIn (default, default):String;
+
 	private var nextCell:Point;
 
 	private var alignment: GridAlignment;
 	private var resize: Bool;
 
-	public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?alignment:GridAlignment, resize: Bool = true)
+	public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?alignment:GridAlignment, resize: Bool = true, ?transitionIn: String)
 	{
 		this.numRow = numRow;
 		this.numCol = numCol;
 		this.gapCol = gapCol;
 		this.gapRow = gapRow;
 		this.resize = resize;
+		this.transitionIn = transitionIn;
 
 		this.alignment = alignment != null ? alignment : GridAlignment.TOP_LEFT;
 
@@ -58,6 +61,16 @@ class Grid implements Guide {
 
 		// Initialize nextCell to (0;0)
 		empty();
+	}
+
+	public function set_x(x:Float):Float
+	{
+		return this.x = x;
+	}
+
+	public function set_y(y:Float):Float
+	{
+		return this.y = y;
 	}
 
 	/**
@@ -98,9 +111,10 @@ class Grid implements Guide {
 		else
 			throw "This grid is already full!";
 
-		if(tween != null){
+		if(tween != null)
 		    TweenManager.applyTransition(object,tween);
-		}
+		else if(transitionIn != null)
+			TweenManager.applyTransition(object,transitionIn);
 
         if(tile){
             cast(object, TileImage).set_x(targetX);

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.util.guide;
 
+import com.knowledgeplayers.grar.display.TweenManager;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import flash.display.DisplayObject;
 import flash.geom.Point;
@@ -7,7 +8,18 @@ import flash.geom.Point;
 /**
 * Utility to place items on a line
 **/
-class Line implements Guide{
+class Line implements Guide
+{
+	/**
+    * X of the grid
+    **/
+	public var x (default, set_x):Float;
+	/**
+    * Y of the grid
+    **/
+	public var y (default, set_y):Float;
+
+	public var transitionIn (default, default):String;
 
 	private var startPoint: Point;
 	private var endPoint: Point;
@@ -21,17 +33,29 @@ class Line implements Guide{
 	* @param    end: End point of the line
 	* @param    centerObject:  Place center of the object on the curve instead of the top left corner. Default is false
 	**/
-	public function new(start: Point, end: Point, centerObject: Bool = false)
+	public function new(start: Point, end: Point, centerObject: Bool = false, ?transitionIn: String)
 	{
 		startPoint = start;
 		endPoint = end;
 		objects = new Array<DisplayObject>();
+		this.transitionIn = transitionIn;
+	}
+
+	public function set_x(x:Float):Float
+	{
+		startPoint.x = x;
+		return this.x = x;
+	}
+
+	public function set_y(y:Float):Float
+	{
+		startPoint.y = y;
+		return this.y = y;
 	}
 
 	/**
 	* @inherits
 	**/
-	// TODO tweens
 	public function add(object:DisplayObject, ?tween:String, tile: Bool = false):DisplayObject
 	{
 		objects.push(object);
@@ -48,6 +72,11 @@ class Line implements Guide{
 				obj.y = nextPoint.y + (center ? obj.height/2 : 0);
 			}
 		}
+		if(tween != null)
+			TweenManager.applyTransition(object, tween);
+		else if(transitionIn != null)
+			TweenManager.applyTransition(object, transitionIn);
+
 		return object;
 	}
 

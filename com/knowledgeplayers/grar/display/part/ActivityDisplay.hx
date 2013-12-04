@@ -1,14 +1,12 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.factory.GuideFactory;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.structure.part.Item;
 import haxe.ds.GenericStack;
 import com.knowledgeplayers.grar.localisation.Localiser;
 import com.knowledgeplayers.grar.display.GameManager;
-import flash.geom.Point;
-import com.knowledgeplayers.grar.util.guide.Curve;
-import com.knowledgeplayers.grar.util.guide.Grid;
 import com.knowledgeplayers.grar.util.guide.Guide;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
@@ -64,47 +62,13 @@ class ActivityDisplay extends PartDisplay {
 
 		var currentGroup: Fast = groups.get(activity.getNextGroup().ref);
 		// Set guide to place inputs
-		var guideNode = new Fast(currentGroup.x.firstElement());
-		var guide: Guide = switch(guideNode.name.toLowerCase()){
-			case "grid":
-				var grid = new Grid(Std.parseInt(guideNode.att.numRow), Std.parseInt(guideNode.att.numCol), guideNode.has.resize?guideNode.att.resize=="true":true);
-				if(guideNode.has.width)
-					grid.cellSize = {width: Std.parseFloat(guideNode.att.width), height: Std.parseFloat(guideNode.att.height)};
-				if(guideNode.has.gapCol)
-					grid.gapCol = Std.parseFloat(guideNode.att.gapCol);
-				if(guideNode.has.gapRow)
-					grid.gapRow = Std.parseFloat(guideNode.att.gapRow);
-				if(guideNode.has.alignment)
-					grid.setAlignment(guideNode.att.alignment);
-				grid.x = Std.parseFloat(currentGroup.att.x);
-				grid.y = Std.parseFloat(currentGroup.att.y);
-				grid;
-			case "curve":
-				var curve = new Curve(new Point(Std.parseFloat(currentGroup.att.x), Std.parseFloat(currentGroup.att.y)));
-				if(guideNode.has.radius)
-					curve.radius = Std.parseFloat(guideNode.att.radius);
-				if(guideNode.has.minAngle)
-					curve.minAngle = Std.parseFloat(guideNode.att.minAngle);
-				if(guideNode.has.maxAngle)
-					curve.maxAngle = Std.parseFloat(guideNode.att.maxAngle);
-				if(guideNode.has.centerObject)
-					curve.centerObject = guideNode.att.centerObject == "true";
-				curve;
-			default:
-				throw "[ActivityDisplay] Unsupported guide '"+guideNode.name+"'.";
-		}
+		var guide: Guide = GuideFactory.createGuideFromXml(new Fast(currentGroup.x.firstElement()));
+		guide.x = Std.parseFloat(currentGroup.att.x);
+		guide.y = Std.parseFloat(currentGroup.att.y);
 		// Create inputs, place & display them
-
 		for(input in activity.getInputs()){
 			var button:DefaultButton = new DefaultButton(displayTemplates.get(input.ref).fast);
-
-            var transitionIn:String= null;
-            if(guideNode.has.transitionIn) {
-                transitionIn = guideNode.att.transitionIn;
-            }
-
-            guide.add(button,transitionIn);
-
+            guide.add(button);
 			buttonsToInputs.set(button, input);
 			for(contentKey in input.content.keys())
 				button.setText(Localiser.instance.getItemContent(input.content.get(contentKey)), contentKey);

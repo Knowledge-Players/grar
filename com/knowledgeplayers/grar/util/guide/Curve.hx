@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.util.guide;
 
+import com.knowledgeplayers.grar.display.TweenManager;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import flash.Lib;
 import flash.display.Shape;
@@ -10,7 +11,8 @@ import flash.geom.Point;
 /**
 * Utility to place items on a curve
 **/
-class Curve implements Guide{
+class Curve implements Guide
+{
 	/**
 	* Upper value of the angle defining the curve
 	**/
@@ -31,6 +33,16 @@ class Curve implements Guide{
 	* Center the object on the curve. Default is false
 	**/
 	public var centerObject (default, default):Bool;
+	/**
+    * X of the curve
+    **/
+	public var x (default, set_x):Float;
+	/**
+    * Y of the curve
+    **/
+	public var y (default, set_y):Float;
+
+	public var transitionIn (default, default):String;
 
 	private var objects: Array<DisplayObject>;
 	private var objToAngles : Map<DisplayObject, Float>;
@@ -43,7 +55,7 @@ class Curve implements Guide{
 	* @param maxAngle   :   Ending angle. Default is 360
 	* @param centerObject:  Place center of the object on the curve instead of the top left corner. Default is false
 	**/
-	public function new(center: Point, radius: Float = 1, minAngle: Float = 0, maxAngle: Float = 360, centerObject: Bool = false)
+	public function new(?center: Point, radius: Float = 1, minAngle: Float = 0, maxAngle: Float = 360, centerObject: Bool = false)
 	{
 		this.center = center;
 		this.radius = radius;
@@ -53,6 +65,18 @@ class Curve implements Guide{
 
 		objects = new Array<DisplayObject>();
 		objToAngles = new Map<DisplayObject, Float>();
+	}
+
+	public function set_x(x:Float):Float
+	{
+		center.x = x;
+		return this.x = x;
+	}
+
+	public function set_y(y:Float):Float
+	{
+		center.y = y;
+		return this.y = y;
 	}
 
 	/**
@@ -74,6 +98,12 @@ class Curve implements Guide{
 			}
 			objToAngles.set(objects[i], a);
 		}
+
+		if(tween != null)
+			TweenManager.applyTransition(object, tween);
+		else if(transitionIn != null)
+			TweenManager.applyTransition(object, transitionIn);
+
 		return object;
 	}
 
