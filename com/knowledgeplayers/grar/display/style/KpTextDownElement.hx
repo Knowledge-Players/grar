@@ -198,12 +198,13 @@ class KpTextDownElement {
 			var style: Style = StyleParser.getStyle(mod.style);
 			tf.setPartialStyle(style, position, position + mod.match.len - mod.offset);
 		}
-		// TODO merge highlight and ruled
+
 		if(style.exists("highlight")){
 			var currentY = 0.0;
 			for(i in 0...tf.numLines){
 				var textField = new StyledTextField(tf.style);
 				textField.text = tf.getLineText(i);
+
 				setHighlight(style.get("highlight"), container, Math.max(textField.textWidth, textField.width), Math.max(textField.textHeight, textField.height), 0, currentY);
 				currentY += textField.textHeight;
 			}
@@ -213,11 +214,13 @@ class KpTextDownElement {
 			for(i in 0...tf.numLines){
 				var textField = new StyledTextField(tf.style);
 				textField.text = tf.getLineText(i);
+
 				if(i == 0)
 					currentY += textField.textHeight/2;
 				var rulingLine = style.get("ruled").split(" "); // 0 is thickness in px, 1 is color/bmp
 				if(rulingLine.length == 1)
 					rulingLine.push("0"); // Default color
+
 				setHighlight(rulingLine[1], container, Math.max(textField.textWidth, textField.width), Std.parseFloat(rulingLine[0]), 0, currentY, false);
 				currentY += textField.textHeight;
 			}

@@ -11,8 +11,7 @@ import flash.geom.Rectangle;
 /**
  * Scrollbar for text overflow
  */
-
-class ScrollBar extends Sprite
+class ScrollBar extends Widget
 {
 	public var ratio(default, set_ratio):Float;
 

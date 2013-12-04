@@ -212,10 +212,24 @@ class Widget extends Sprite{
 		super();
 
 		if(xml != null){
+			// Ref
 			if(!xml.has.ref)
 				throw Type.getClassName(Type.getClass(this))+" must have a ref attribute: "+xml.x;
 			else
 				ref = xml.att.ref;
+
+			// Scales
+			if(xml.has.scale)
+				scale = Std.parseFloat(xml.att.scale);
+			else
+				scale = 1;
+
+			if(xml.has.scaleX)
+				scaleX = Std.parseFloat(xml.att.scaleX);
+			if(xml.has.scaleY)
+				scaleY = Std.parseFloat(xml.att.scaleY);
+
+			// Coordinates
 			var xTmp = "0";
 			if(xml.has.x){
 				currentX = xml.att.x;
@@ -240,18 +254,11 @@ class Widget extends Sprite{
 			}
 			else
 				y = 0;
-			if(xml.has.scale)
-				scale = Std.parseFloat(xml.att.scale);
-			else
-				scale = 1;
 
-			if(xml.has.scaleX)
-				scaleX = Std.parseFloat(xml.att.scaleX);
-			if(xml.has.scaleY)
-				scaleY = Std.parseFloat(xml.att.scaleY);
-
+			// Transitions
 			transitionIn = xml.has.transitionIn ? xml.att.transitionIn : "";
 			transitionOut = xml.has.transitionOut ? xml.att.transitionOut : "";
+
 			if(xml.has.alpha)
 				alpha = Std.parseFloat(xml.att.alpha);
 			if(xml.has.rotation)

@@ -116,10 +116,11 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 	}
 
 	// TODO scale
-	/*override public function set_scale(scale:Float):Float
+	override public function set_scale(scale:Float):Float
 	{
 		tileSprite.scale = scale;
 		super.set_scale(scale);
+		renderNeeded();
 		return scale;
 	}
 
@@ -128,7 +129,7 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 	{
 		super.scaleX = scaleX;
 		tileSprite.scaleX = scaleX;
-		trueLayer.render();
+		renderNeeded();
 	}
 
 	@:setter(scaleY)
@@ -136,8 +137,8 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 	{
 		super.scaleY = scaleY;
 		tileSprite.scaleY = scaleY;
-		trueLayer.render();
-	}*/
+		renderNeeded();
+	}
 
 	@:setter(visible)
 	public function set_visible(visible:Bool):Void
@@ -161,8 +162,6 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 
 			TweenManager.resetTransform(trueLayer.view);
 			transform = TweenManager.applyTransition(trueLayer.view, transformation);
-			//if(transform != null)
-			//	transform.onUpdate(renderNeeded);
 		}
 		else{
 			actuator = TweenManager.applyTransition(tileSprite, transitionOut);
@@ -224,12 +223,12 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		tileSprite = new TileSprite(trueLayer, xml.att.tile);
 
 		// TODO scale
-		if(xml.has.scale)
+		/*if(xml.has.scale)
 			tileSprite.scale = Std.parseFloat(xml.att.scale);
 		if(xml.has.scaleX)
 			tileSprite.scaleX = Std.parseFloat(xml.att.scaleX);
 		if(xml.has.scaleY)
-			tileSprite.scaleY = Std.parseFloat(xml.att.scaleY);
+			tileSprite.scaleY = Std.parseFloat(xml.att.scaleY);*/
 
 		if(xml.has.mirror){
 			tileSprite.mirror = switch(xml.att.mirror.toLowerCase()){
@@ -266,7 +265,7 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 			while(container != null && !Std.is(container, KpDisplay) && !Std.is(container, WidgetContainer))
 				container = container.parent;
 
-			// TODO unify
+			// TODO unify (MVP)
 			if(Std.is(container, KpDisplay)){
 				cast(container, KpDisplay).renderLayers.set(tileSprite.layer, true);
 			}

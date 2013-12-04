@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.component;
 
+import com.knowledgeplayers.grar.util.DisplayUtils;
+import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import aze.display.TileClip;
 import aze.display.TileLayer;
 import com.knowledgeplayers.grar.event.GameEvent;
@@ -9,22 +11,19 @@ import com.knowledgeplayers.grar.tracking.Trackable;
 import haxe.xml.Fast;
 import flash.display.Sprite;
 
-// TODO extends Widget
-class ProgressBar extends Sprite {
+class ProgressBar extends WidgetContainer {
 
 	private var backgroundColor:Int;
 	private var progressColor:Int;
 	private var layerProgressBar:TileLayer;
 	private var icons:Map<String, TileClip>;
-	private var barWidth:Float = 0;
-	private var barHeight:Float = 0;
 	private var iconScale:Float;
 	private var xProgress:Float = 0;
 	private var allItems:Array<Trackable>;
 
-	public function new():Void
+	public function new(_node:Fast):Void
 	{
-		super();
+		super(_node);
 
 		layerProgressBar = new TileLayer(UiFactory.tilesheet);
 		addChild(layerProgressBar.view);
@@ -32,32 +31,17 @@ class ProgressBar extends Sprite {
 		GameManager.instance.addEventListener(PartEvent.ENTER_PART, onEnterPart);
 		GameManager.instance.addEventListener(GameEvent.GAME_OVER, function(e:GameEvent)
 		{
-			fillBar(barWidth);
+			fillBar(maskWidth);
 		});
 		allItems = GameManager.instance.game.getAllItems();
-	}
-
-	public function init(_node:Fast):Void
-	{
-
-		this.x = Std.parseFloat(_node.att.x);
-		this.y = Std.parseFloat(_node.att.y);
-		barWidth = Std.parseFloat(_node.att.width);
-		barHeight = Std.parseFloat(_node.att.height);
-		backgroundColor = Std.parseInt(_node.att.background);
-		graphics.beginFill(backgroundColor);
-		graphics.drawRect(0, 0, barWidth, barHeight);
-		graphics.endFill();
-
 		iconScale = _node.has.iconScale ? Std.parseFloat(_node.att.iconScale) : 1;
 		progressColor = Std.parseInt(_node.att.progressColor);
-
 		addIcons(_node.att.icon);
 	}
 
 	private function addIcons(prefix:String):Void
 	{
-		var xPos:Float = barWidth / (2 * allItems.length);
+		var xPos:Float = maskWidth / (2 * allItems.length);
 		var isFirst = true;
 		for(item in allItems){
 			var icon = new TileClip(layerProgressBar, prefix + "_" + item.id);
@@ -72,7 +56,7 @@ class ProgressBar extends Sprite {
 				icon.currentFrame++;
 				isFirst = false;
 			}
-			xPos += barWidth / allItems.length;
+			xPos += maskWidth / allItems.length;
 		}
 
 		layerProgressBar.render();
@@ -105,7 +89,7 @@ class ProgressBar extends Sprite {
 			else
 				unfillBar(icon.x);
 		}
-		else{//} if(e.partId != GameManager.instance.game.getAllParts()[0].id){
+		else{
 			var allPart = GameManager.instance.game.getAllParts();
 			var index = allPart.length;
 			var lastActive:String = null;
@@ -133,17 +117,13 @@ class ProgressBar extends Sprite {
 
 	private function fillBar(end:Float):Void
 	{
-		graphics.beginFill(progressColor);
-		graphics.drawRect(xProgress, 0, end - xProgress, barHeight);
-		graphics.endFill();
+		DisplayUtils.initSprite(this, end - xProgress, maskHeight, progressColor, xProgress, 0);
 		xProgress = end;
 	}
 
 	private function unfillBar(end:Float):Void
 	{
-		graphics.beginFill(backgroundColor);
-		graphics.drawRect(barWidth, 0, -(barWidth - end), barHeight);
-		graphics.endFill();
+		DisplayUtils.initSprite(this, -(maskWidth - end), maskHeight, backgroundColor, maskWidth, 0);
 		xProgress = end;
 	}
 

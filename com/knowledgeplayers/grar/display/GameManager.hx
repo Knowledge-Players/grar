@@ -126,7 +126,7 @@ class GameManager extends EventDispatcher {
 
 		if(tokenNotification != null){
 			layout.zones.get(game.ref).addChild(tokenNotification);
-			tokenNotification.showNotification(tokenName);
+			tokenNotification.setToken(tokenName);
 		}
 
 		tokenEvent.token = inventory.get(tokenName);
@@ -219,6 +219,8 @@ class GameManager extends EventDispatcher {
 				oldPart.exitPart();
 			}
 		}
+		if(!parts.isEmpty())
+			parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		// Display the new part
 		parts.add(DisplayFactory.createPartDisplay(part));
 		startIndex = startPosition;
@@ -399,9 +401,13 @@ class GameManager extends EventDispatcher {
 		}
 	}
 
+	public function onEnterSubPart(event:PartEvent):Void
+	{
+		displayPartById(event.part.id);
+	}
+
 	private function onPartLoaded(event:PartEvent):Void
 	{
-		// TODO add a subpart in its parent display (embed)
 		setBookmark(event.partId);
 		var partDisplay = cast(event.target, PartDisplay);
 
@@ -414,14 +420,6 @@ class GameManager extends EventDispatcher {
 		var event = new PartEvent(PartEvent.ENTER_PART);
 		event.part = partDisplay.part;
 		dispatchEvent(event);
-	}
-
-	// TODO include in displayPart
-	public function onEnterSubPart(event:PartEvent):Void
-	{
-		//parts.first().visible = false;
-		parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
-		displayPartById(event.part.id);
 	}
 
 	private function setBookmark(partId:String):Void

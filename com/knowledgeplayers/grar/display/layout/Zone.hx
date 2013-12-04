@@ -18,7 +18,7 @@ import flash.events.Event;
 
 /**
 * Graphic zone in the layout
-* //TODO extends WidgetContainer
+* //TODO MVP
 **/
 class Zone extends KpDisplay {
 
@@ -109,8 +109,7 @@ class Zone extends KpDisplay {
 
 	private function createProgressBar(element:Fast):ProgressBar
 	{
-		var progress = new ProgressBar();
-		progress.init(element);
+		var progress = new ProgressBar(element);
 		addChild(progress);
 
 		return progress;

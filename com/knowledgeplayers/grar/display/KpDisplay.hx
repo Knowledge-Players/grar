@@ -223,8 +223,7 @@ class KpDisplay extends Sprite {
 			bg9Grid = cursor9Grid;
 		var scroll = new ScrollBar(Std.parseFloat(barNode.att.width), tilesheet, barNode.att.tile, bgTile, cursor9Grid, bg9Grid, cursorColor, bgColor);
 		scrollBars.set(barNode.att.ref, scroll);
-		// TODO widgetize
-		return null; //scroll;
+		return scroll;
 	}
 
 	private function createImage(itemNode:Fast):Widget
