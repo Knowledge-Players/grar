@@ -280,8 +280,6 @@ class DefaultButton extends WidgetContainer {
 				j++;
 			content.addChildAt(layer.view, j);
 
-			TweenManager.stop(layer.view);
-
 			renderNeeded = true;
 			enabled = enabledState.get(toggleState);
 			displayContent();

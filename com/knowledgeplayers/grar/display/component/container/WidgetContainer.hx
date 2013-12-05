@@ -271,17 +271,11 @@ class WidgetContainer extends Widget{
 
         TweenManager.applyTransition(content, contentTransition);
 
-        for(j in 0...content.numChildren){
-
-            if(Std.is(content.getChildAt(j),Widget)){
-                if(cast(content.getChildAt(j),Widget).transformation != null)
-                {
-                    TweenManager.applyTransition(cast(content.getChildAt(j), Widget),cast(content.getChildAt(j), Widget).transformation);
-                }
+		for(child in children){
+            if(child.transformation != null){
+                TweenManager.applyTransition(child, child.transformation);
             }
         }
-
-
 	}
 
 	private inline function setScrollBar(?e: Event):Void
