@@ -64,7 +64,7 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 	@:setter(width)
 	public function set_width(width:Float):Void
 	{
-		tileSprite.scaleX = width / tileSprite.width;
+		tileSprite.scaleX *= width / tileSprite.width;
 		renderNeeded();
 		super.width = width;
 	}
@@ -78,7 +78,7 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 	@:setter(height)
 	public function set_height(height:Float):Void
 	{
-		tileSprite.scaleY = height / tileSprite.height;
+		tileSprite.scaleY *= height / tileSprite.height;
 		renderNeeded();
 		super.height = height;
 	}
@@ -115,7 +115,6 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		#end
 	}
 
-	// TODO scale
 	override public function set_scale(scale:Float):Float
 	{
 		tileSprite.scale = scale;
@@ -221,14 +220,6 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 	private inline function init():Void
 	{
 		tileSprite = new TileSprite(trueLayer, xml.att.tile);
-
-		// TODO scale
-		/*if(xml.has.scale)
-			tileSprite.scale = Std.parseFloat(xml.att.scale);
-		if(xml.has.scaleX)
-			tileSprite.scaleX = Std.parseFloat(xml.att.scaleX);
-		if(xml.has.scaleY)
-			tileSprite.scaleY = Std.parseFloat(xml.att.scaleY);*/
 
 		if(xml.has.mirror){
 			tileSprite.mirror = switch(xml.att.mirror.toLowerCase()){
