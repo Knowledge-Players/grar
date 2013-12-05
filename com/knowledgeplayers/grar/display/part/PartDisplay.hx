@@ -499,7 +499,7 @@ class PartDisplay extends KpDisplay {
 	{
 		var toRemove = new GenericStack<DisplayObject>();
 		for(i in 0...numChildren){
-			if(Std.is(getChildAt(i), DefaultButton) || Std.is(getChildAt(i), ScrollPanel)#if flash || Std.is(getChildAt(i), VideoPlayer)#end)
+			if(Std.is(getChildAt(i), DefaultButton) || Std.is(getChildAt(i), ScrollPanel))
 				toRemove.add(getChildAt(i));
 		}
 		for(item in currentItems){

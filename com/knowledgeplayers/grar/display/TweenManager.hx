@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
@@ -75,10 +76,12 @@ class TweenManager {
 			actuator = transform(display, ref);
 		else if(Reflect.hasField(transition, "shutterTransitions"))
 			actuator = discover(display, ref, 0);
+        else if(Reflect.hasField(transition, "rotation"))
+			actuator = rotate(display, ref);
 		else
 			actuator = slide(display, ref);
 
-		actuator.delay(totalDelay);
+        actuator.delay(totalDelay);
 		if(transition.repeat != null)
 			actuator.repeat(transition.repeat);
 		if(transition.reflect != null && transition.reflect)
@@ -227,7 +230,7 @@ class TweenManager {
 		display.y = inOutY[0];
 		display.width = inOutWidth[0];
 		display.height = inOutHeight[0];
-		return Actuate.tween(display, zoom.duration, {x: inOutX[1], y: inOutY[1], width: inOutWidth[1], height: inOutHeight[1]}).ease(getEasing(zoom));
+		return Actuate.tween(display, zoom.duration, {x: inOutX[1], y: inOutY[1], scaleX: inOutWidth[1], scalY: inOutHeight[1]}).ease(getEasing(zoom));
 	}
 
 	/**
@@ -245,15 +248,27 @@ class TweenManager {
 		var inOutY = parseValue("y", slide.y, display);
 		display.x = inOutX[0];
 		display.y = inOutY[0];
+
 		return Actuate.tween(display, slide.duration, {x: inOutX[1], y: inOutY[1]}).ease(getEasing(slide));
 	}
 
+    public static function rotate(display:Dynamic, ref:String):IGenericActuator
+    {
+        var rotate= transitions.get(ref);
+        var inOutX = parseValue("x", rotate.x, display);
+        var inOutY = parseValue("y", rotate.y, display);
+        var inOutRotate = parseValue("rotation", rotate.rotation, display);
+        display.x = inOutX[0];
+        display.y = inOutY[0];
+        display.rotation = inOutRotate[0];
 
+        return Actuate.tween(display, rotate.duration, {x: inOutX[1], y: inOutY[1], rotation: inOutRotate[1]}).ease(getEasing(rotate)).smartRotation();
+    }
 
 	public static function transform(display:Dynamic, ref:String):IGenericActuator
 	{
 		var transform = transitions.get(ref);
-		return Actuate.transform(display, transform.duration).color(transform.color).ease(getEasing(transform));
+        return Actuate.transform(display, transform.duration).color(ParseUtils.parseColor(transform.color).color,ParseUtils.parseColor(transform.color).alpha).ease(getEasing(transform));
 	}
 
 	public static function resetTransform(display:Dynamic):Void
@@ -304,8 +319,13 @@ class TweenManager {
 				case "slide":
 					transition.x = child.has.x ? child.att.x : "x";
 					transition.y = child.has.y ? child.att.y : "y";
+                case "rotate":
+					transition.x = child.has.x ? child.att.x : "x";
+					transition.y = child.has.y ? child.att.y : "y";
+					transition.rotation = child.has.rotation ? child.att.rotation : "rotation";
 				case "transform":
-					transition.color = Std.parseInt(child.att.color);
+					transition.color = child.att.color;
+
 				case "mask":
 					transition.shutterTransitions = child.att.shutterTransitions.split(",");
 					transition.shutterChaining = child.att.shutterChaining;
