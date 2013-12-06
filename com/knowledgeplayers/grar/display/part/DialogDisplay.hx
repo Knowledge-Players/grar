@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.structure.part.Item;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import flash.events.Event;
 import com.knowledgeplayers.grar.structure.part.Part;
@@ -34,14 +35,7 @@ class DialogDisplay extends PartDisplay {
 
 	override public function next(?target: DefaultButton):Void
 	{
-		if(currentPattern != null)
-			startPattern(currentPattern);
-		else{
-			var patterns: List<PartElement> = Lambda.filter(part.elements, function(elem: PartElement){
-				return elem.isPattern();
-			});
-			startPattern(cast(patterns.first(), Pattern));
-		}
+		startPattern(currentPattern);
 	}
 
 	// Private
@@ -70,14 +64,16 @@ class DialogDisplay extends PartDisplay {
 		}
 
 		if(pattern != null){
-			var nextItem = pattern.getNextItem();
+			var nextItem: Item = pattern.getNextItem();
 			if(nextItem != null && !exitPattern){
 				setupItem(nextItem);
 			}
 			else if(currentPattern.nextPattern != "")
 				goToPattern(currentPattern.nextPattern);
 			else{
-				nextElement(part.getElementIndex(currentPattern));
+				var nextIndex = part.getElementIndex(currentPattern);
+				currentPattern = null;
+				nextElement(nextIndex);
 			}
 		}
 		else

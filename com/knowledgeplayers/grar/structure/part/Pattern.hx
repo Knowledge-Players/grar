@@ -21,11 +21,6 @@ class Pattern implements PartElement {
 	public var ref (default, default):String;
 
 	/**
-    * Current item index
-**/
-	public var itemIndex (default, default):Int;
-
-	/**
     * Id of the next pattern
 **/
 	public var nextPattern (default, default):String;
@@ -43,10 +38,14 @@ class Pattern implements PartElement {
 	public var endScreen (default, null):Bool = false;
 
 	/**
+    * Current item index
+**/
+	private var itemIndex: Int;
+
+	/**
     * Constructor
     * @param name : Name of the pattern
 **/
-
 	public function new(name:String)
 	{
 		this.id = name;

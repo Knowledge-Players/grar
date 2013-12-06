@@ -168,15 +168,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 			var button = addButton(fast.node.Button, partName, level.get("icon"));
 			buttons.set(level.get("id"), button);
-			for(part in GameManager.instance.game.getAllParts()){
-				if(part.name == level.get("id")){
-					if(!part.canStart())
-						button.toggleState = "lock";
-					else
-						button.toggle(!part.isDone);
-					break;
-				}
-			}
+			setButtonState(button, level);
 			buttons.set(level.get("id"), button);
 
             button.x += xOffset;
@@ -197,6 +189,19 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		}
 		for(elem in level.elements())
 			createMenuLevel(elem);
+	}
+
+	private function setButtonState(button:DefaultButton, level: Xml):Void
+	{
+		for(part in GameManager.instance.game.getAllParts()){
+			if(part.name == level.get("id")){
+				if(!part.canStart())
+					button.toggleState = "lock";
+				else
+					button.toggle(!part.isDone);
+				break;
+			}
+		}
 	}
 
 	private function addSeparator(fast:Fast):Widget
@@ -315,28 +320,30 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 	private inline function getUnlockCounterInfos(partId:String):String
 	{
-		var output: String;
+		var output: String = "";
 		var parent: Part = GameManager.instance.game.getPart(partId);
 		var numUnlocked = 0;
-		var children = parent.getAllParts();
-		if(children.length <= 1){
-			var totalChildren = 0;
-			var allParts = GameManager.instance.game.getAllParts();
-			for(part in allParts){
-				if(part.id.startsWith(partId) && part.id != partId){
-					totalChildren++;
-					if(part.canStart())
+		if(parent != null){
+			var children = parent.getAllParts();
+			if(children.length <= 1){
+				var totalChildren = 0;
+				var allParts = GameManager.instance.game.getAllParts();
+				for(part in allParts){
+					if(part.id.startsWith(partId) && part.id != partId){
+						totalChildren++;
+						if(part.canStart())
+							numUnlocked++;
+					}
+				}
+				output = numUnlocked+"/"+totalChildren;
+			}
+			else{
+				for(child in children){
+					if(child.canStart())
 						numUnlocked++;
 				}
+				output = numUnlocked+"/"+children.length;
 			}
-			output = numUnlocked+"/"+totalChildren;
-		}
-		else{
-			for(child in children){
-				if(child.canStart())
-					numUnlocked++;
-			}
-			output = numUnlocked+"/"+children.length;
 		}
 
 		return output;
@@ -373,7 +380,8 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 			part = GameManager.instance.game.getAllParts()[i];
 		if(part != null){
 			currentPartButton = buttons.get(part.id);
-			bookmark.updatePosition(currentPartButton.x, currentPartButton.y);
+			if(bookmark != null)
+				bookmark.updatePosition(currentPartButton.x, currentPartButton.y);
 		}
 
 		if (timelines.exists("in")){

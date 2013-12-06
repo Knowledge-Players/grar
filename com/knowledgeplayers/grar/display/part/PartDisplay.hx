@@ -95,9 +95,9 @@ class PartDisplay extends KpDisplay {
 		checkPartLoaded();
 	}
 
-	public function exitPart():Void
+	public function exitPart(completed: Bool = true):Void
 	{
-		part.end();
+		part.end(completed);
 		unLoad();
 		if(part.file != null)
 			Localiser.instance.popLocale();
@@ -276,21 +276,26 @@ class PartDisplay extends KpDisplay {
 	{
 		if(super.setButtonAction(button, action))
 			return true;
-		else if(action.toLowerCase() == ButtonActionEvent.NEXT){
-			button.buttonAction = next;
-			return true;
-		}
-		else if(action.toLowerCase() == ButtonActionEvent.GOTO){
-			button.buttonAction = function(?target: DefaultButton){
-				var goToTarget: PartElement = part.buttonTargets.get(button.ref);
-				if(goToTarget == null)
-					exitPart();
-				else {
-					nextElement(part.getElementIndex(goToTarget)-1);
-
-                }
-			};
-			return true;
+		else{
+			switch(action.toLowerCase()){
+				case ButtonActionEvent.NEXT:
+					button.buttonAction = next;
+					return true;
+				case ButtonActionEvent.GOTO:
+					button.buttonAction = function(?target: DefaultButton){
+					var goToTarget: PartElement = part.buttonTargets.get(button.ref);
+					if(goToTarget == null)
+						exitPart();
+					else
+						nextElement(part.getElementIndex(goToTarget)-1);
+					};
+					return true;
+				case ButtonActionEvent.EXIT:
+					button.buttonAction = function(?target){
+						exitPart(false);
+					};
+					return true;
+			}
 		}
 		return false;
 	}

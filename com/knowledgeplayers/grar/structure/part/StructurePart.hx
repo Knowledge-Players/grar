@@ -161,11 +161,16 @@ class StructurePart extends EventDispatcher implements Part{
 		* End the part
 		**/
 
-	public function end():Void
+	public function end(completed: Bool = true):Void
 	{
-		isDone = true;
-		for(perk in perks.keys())
-			ScoreChart.instance.addScoreToPerk(perk, perks.get(perk));
+		isDone = completed;
+		// Add bounty to the right perks
+		if(isDone){
+			for(perk in perks.keys())
+				ScoreChart.instance.addScoreToPerk(perk, perks.get(perk));
+		}
+
+		// Stop sound loop
 		if(soundLoopChannel != null)
 			soundLoopChannel.stop();
 
@@ -513,19 +518,11 @@ class StructurePart extends EventDispatcher implements Part{
 
 	private function setPerks(perks: String, ?hash: Map<String, Int>):Void
 	{
-		var couples: Array<String>;
-		if(perks.indexOf('{') > -1){
-			var hash = perks.substr(1, perks.length-2);
-			couples = hash.split(",");
-		}
-		else
-			couples = [perks];
-
-		for(couple in couples){
-			var keyValue = couple.split(":");
+		var map = ParseUtils.parseHash(perks);
+		for(perk in map.keys()){
 			if(hash == null)
 				hash = this.perks;
-			hash.set(StringTools.trim(keyValue[0]), Std.parseInt(keyValue[1]));
+			hash.set(perk, Std.parseInt(map.get(perk)));
 		}
 	}
 }

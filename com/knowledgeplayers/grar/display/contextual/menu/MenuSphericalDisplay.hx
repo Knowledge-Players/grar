@@ -101,6 +101,7 @@ public static function get_instance():MenuSphericalDisplay
 		else{
 
 			levelDisplay = addButton(fast.node.Button, GameManager.instance.getItemName(level.value.get("id")), level.value.get("icon"));
+			setButtonState(cast(levelDisplay, DefaultButton), level.value);
 			buttons.set(level.value.get("id"), cast(levelDisplay, DefaultButton));
 		}
 

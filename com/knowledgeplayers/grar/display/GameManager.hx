@@ -364,30 +364,30 @@ class GameManager extends EventDispatcher {
 	{
 		finishPart(cast(event.target.part, Part).id);
 		var finishedPart = parts.pop();
-		if(finishedPart.part.parent == null){
-			if(finishedPart.part.next != null){
-				var nexts = ParseUtils.parseListOfValues(finishedPart.part.next);
-				var i = 0;
-				for(next in nexts){
-					var nextPart = game.start(next);
-					if(nextPart != null)
-						displayPart(nextPart);
-					else{
-						var contextual: ContextualType = Type.createEnum(ContextualType, next.toUpperCase());
-						switch(contextual){
-							case MENU : displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout, (i == 0));
-							case NOTEBOOK : displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout, (i == 0));
-							case GLOSSARY : displayContextual(GlossaryDisplay.instance, GlossaryDisplay.instance.layout, (i == 0));
-							case BIBLIOGRAPHY : displayContextual(BibliographyDisplay.instance, BibliographyDisplay.instance.layout, (i == 0));
-							// TODO à gérer
-							case INVENTORY : null;
-						}
+
+		if(finishedPart.part.next != null){
+			var nexts = ParseUtils.parseListOfValues(finishedPart.part.next);
+			var i = 0;
+			for(next in nexts){
+				var nextPart = game.start(next);
+				if(nextPart != null)
+					displayPart(nextPart);
+				else{
+					var contextual: ContextualType = Type.createEnum(ContextualType, next.toUpperCase());
+					switch(contextual){
+						case MENU : displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout, (i == 0));
+						case NOTEBOOK : displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout, (i == 0));
+						case GLOSSARY : displayContextual(GlossaryDisplay.instance, GlossaryDisplay.instance.layout, (i == 0));
+						case BIBLIOGRAPHY : displayContextual(BibliographyDisplay.instance, BibliographyDisplay.instance.layout, (i == 0));
+						// TODO à gérer
+						case INVENTORY : null;
 					}
-					i++;
 				}
+				i++;
 			}
-			else
-				dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+		}
+		else if(finishedPart.part.parent == null){
+			displayPart(finishedPart.part.parent, false, finishedPart.part.parent.getElementIndex(finishedPart.part));
 		}
 		else if(!parts.isEmpty() && parts.first().part == finishedPart.part.parent){
 			parts.first().visible = true;
@@ -396,12 +396,11 @@ class GameManager extends EventDispatcher {
 			if(parts.first() != null)
 				changeLayout(parts.first().layout);
 		}
-		else{
-			displayPart(finishedPart.part.parent, false, finishedPart.part.parent.getElementIndex(finishedPart.part));
-		}
+		else
+			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
 	}
 
-	public function onEnterSubPart(event:PartEvent):Void
+	public inline function onEnterSubPart(event:PartEvent):Void
 	{
 		displayPartById(event.part.id);
 	}

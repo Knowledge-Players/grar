@@ -22,7 +22,7 @@ interface Part extends IEventDispatcher extends PartElement extends Trackable {
 
 	public function start(forced:Bool = false):Null<Part>;
 
-	public function end():Void;
+	public function end(completed: Bool = false):Void;
 
 	public function restart():Void;
 

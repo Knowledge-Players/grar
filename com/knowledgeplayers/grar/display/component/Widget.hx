@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component;
 
+import flash.events.Event;
 import com.knowledgeplayers.grar.display.component.container.DropdownMenu;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import motion.actuators.GenericActuator;
@@ -62,6 +63,10 @@ class Widget extends Sprite{
 	**/
 	public var position (default, set_position):Positioning;
 
+	/**
+	* Style of the border surrounding widget
+	**/
+	private var borderStyle: BorderStyle;
 	private var origin: {x: Float, y: Float, scaleX: Float, scaleY: Float, alpha: Float};
 	private var lockPosition: Bool = false;
 	private var currentX: String;
@@ -158,6 +163,12 @@ class Widget extends Sprite{
 	{
 		for(field in Reflect.fields(origin))
 			Reflect.setField(this, field, Reflect.field(origin, field));
+	}
+
+	public function setBorders(thickness:Float, color:Int = 0, alpha:Float = 1):Void
+	{
+		borderStyle = {thickness: thickness, color: {color: color, alpha: alpha}};
+		drawBorders();
 	}
 
 	// Privates
@@ -272,16 +283,28 @@ class Widget extends Sprite{
 				var params = xml.att.border.split(",");
 				var thickness = Std.parseFloat(params[0].trim());
 				var borderColor = ParseUtils.parseColor(params[1].trim());
-				addEventListener(Event.ADDED_TO_STAGE, function(e){
-					graphics.lineStyle(thickness, borderColor.color, borderColor.alpha);
-					graphics.drawRect(-thickness, -thickness, width/scaleX+(2*thickness), height/scaleY+(2*thickness));
-				});
+				borderStyle = {thickness: thickness, color: borderColor};
+				addEventListener(Event.ADDED_TO_STAGE, drawBorders);
 			}
 			if(xml.has.position){
 				position = Type.createEnum(Positioning, xml.att.position.toUpperCase());
 			}
 		}
 	}
+
+	private function drawBorders(?e:Event):Void
+	{
+		graphics.clear();
+		graphics.lineStyle(borderStyle.thickness, borderStyle.color.color, borderStyle.color.alpha);
+		graphics.drawRect(-borderStyle.thickness, -borderStyle.thickness, width/scaleX+(2*borderStyle.thickness), height/scaleY+(2*borderStyle.thickness));
+		if(e != null)
+			removeEventListener(Event.ADDED_TO_STAGE, drawBorders);
+	}
+}
+
+typedef BorderStyle = {
+	var thickness: Float;
+	var color: Color;
 }
 
 @:fakeEnum(String)

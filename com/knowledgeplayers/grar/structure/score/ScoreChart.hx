@@ -49,9 +49,8 @@ class ScoreChart {
 
 	public function addScoreToPerk(perk:String, score:Int):Void
 	{
-		if(!perks.exists(perk)){
-			throw '[ScoreChart] There is no perk "$perk".';
-		}
+		if(!perks.exists(perk))
+			perks.set(perk, new Perk(perk));
 		else
 			perks.get(perk).addToScore(score);
 	}

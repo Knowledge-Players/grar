@@ -181,6 +181,7 @@ class VideoPlayer extends WidgetContainer
 			else{
 				pauseVideo();
 			}
+			stream.client = {};
 		}};
 		stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 		// TODO bufferTime en fonction de la BP

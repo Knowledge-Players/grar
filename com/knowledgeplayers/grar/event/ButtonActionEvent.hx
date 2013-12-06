@@ -27,6 +27,11 @@ class ButtonActionEvent extends Event {
 	**/
 	public static inline var OVER: String = "over";
 
+	/**
+	* Exit the current part
+	**/
+	public static var EXIT: String = "exit";
+
     /**
 	* Quit Application
 	**/
