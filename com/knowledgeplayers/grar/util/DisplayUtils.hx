@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.util;
 
+import Array;
 import flash.geom.Matrix;
 import flash.display.GradientType;
 import aze.display.TileLayer;
@@ -78,6 +79,7 @@ class DisplayUtils {
     * @param    x : x of the top left corner
     * @param    y : y of the top left corner
     **/
+	// TODO merge with initSprite
 	public static function initGradientSprite(?sprite: Sprite, width: Float = 1, height: Float = 1, colors: Array<Int>, alphas: Array<Float>, x: Float = 0, y: Float = 0): Sprite
 	{
 		if(colors.length == 1)
@@ -113,6 +115,33 @@ class DisplayUtils {
 			}
 			sprite.mask = mask;
 		}
+	}
+
+	public static inline function drawElipse(?sprite:Sprite, colors:Array<Int>, ?alphas:Array<Float>, radius: Array<Float>, x: Float = 0, y: Float = 0):Sprite
+	{
+		var s: Sprite;
+		if(sprite == null)
+			s = new Sprite();
+		else
+			s = sprite;
+
+		if(colors.length > 1){
+			var matrix:Matrix = new Matrix();
+			matrix.createGradientBox(radius[0], radius[0], Math.PI/2, 0, 0);
+			s.graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, [0x00, 0xFF], matrix);
+		}
+		else
+			s.graphics.beginFill(colors[0], alphas[0]);
+
+		if(radius.length == 1){
+			s.graphics.drawCircle(x, y, radius[0]);
+		}
+		else{
+			s.graphics.drawEllipse(x, y, radius[0], radius[1]);
+		}
+		s.graphics.endFill();
+
+		return s;
 	}
 
 	/**

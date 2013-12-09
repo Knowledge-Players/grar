@@ -78,8 +78,13 @@ class Image extends Widget{
 					alphas.push(c.alpha);
 				}
 				var radius = ParseUtils.parseListOfFloatValues(xml.att.radius);
-				ParseUtils.formatToFour(radius);
-				addChild(new SimpleBubble(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), colors, radius,alphas));
+				if(xml.has.width && xml.has.height){
+					ParseUtils.formatToFour(radius);
+					addChild(new SimpleBubble(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), colors, radius,alphas));
+				}
+				else{
+					addChild(DisplayUtils.drawElipse(colors, alphas, radius));
+				}
 			}
 			else if(xml.att.src.indexOf(".") < 0)
             {

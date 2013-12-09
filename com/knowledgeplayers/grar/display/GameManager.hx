@@ -365,7 +365,7 @@ class GameManager extends EventDispatcher {
 		finishPart(cast(event.target.part, Part).id);
 		var finishedPart = parts.pop();
 
-		if(finishedPart.part.next != null){
+		if(finishedPart.part.next != null && finishedPart.part.next != ""){
 			var nexts = ParseUtils.parseListOfValues(finishedPart.part.next);
 			var i = 0;
 			for(next in nexts){
