@@ -165,6 +165,12 @@ class ActivityDisplay extends PartDisplay {
 			validationButton.buttonAction = endActivity;
 			disableInputs();
 		}
+		var debriefRules = cast(part, ActivityPart).getRulesByType("debrief");
+		for(rule in debriefRules){
+			switch(rule.value.toLowerCase()){
+				case "onvalidate": cast(displays.get(rule.id), DefaultButton).toggle();
+			}
+		}
 	}
 
 	private function endActivity(?target:DefaultButton):Void
@@ -233,7 +239,7 @@ class ActivityDisplay extends PartDisplay {
 	{
 		var clickRules = cast(part, ActivityPart).getRulesByType("onclick");
 		for(rule in clickRules){
-			switch(rule.value){
+			switch(rule.value.toLowerCase()){
 				case "goto":
 					var target = part.getElementById(buttonsToInputs.get(target).values[0]);
 					if(target.isPart())
