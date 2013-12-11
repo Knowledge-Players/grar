@@ -149,9 +149,6 @@ class PartDisplay extends KpDisplay {
 				else{
 					setupItem(cast(currentElement, Item));
 				}
-
-				if(Std.is(currentElement, TextItem))
-					GameManager.instance.playSound(cast(currentElement, TextItem).sound);
 			}
 		}
 
@@ -176,7 +173,6 @@ class PartDisplay extends KpDisplay {
 	public function startPart(startPosition:Int = -1):Void
 	{
 		TweenManager.applyTransition(this, transitionIn);
-
 		nextElement(startPosition);
 	}
 
@@ -202,6 +198,7 @@ class PartDisplay extends KpDisplay {
 		if(i == part.elements.length)
 			throw "[PartDisplay] There is no pattern with ref \""+target+"\"";
 
+		part.startElement(part.elements[i].id);
 		cast(part.elements[i], Pattern).restart();
 		startPattern(cast(part.elements[i], Pattern));
 	}
@@ -370,7 +367,6 @@ class PartDisplay extends KpDisplay {
 
 		if(item.isText()){
 			var text = cast(item, TextItem);
-			GameManager.instance.playSound(cast(item, TextItem).sound);
 
 			if(text.introScreen != null){
 				cleanDisplay();
@@ -439,6 +435,7 @@ class PartDisplay extends KpDisplay {
 				throw "[PartDisplay] There is no TextArea with ref " + item.ref;
 			cast(displays.get(item.ref), ScrollPanel).setContent(content);
 		}
+		GameManager.instance.loadSound(item.sound);
 	}
 
 	private function displayPart():Void
@@ -482,6 +479,12 @@ class PartDisplay extends KpDisplay {
 					elem.widget = displays.get(currentSpeaker.nameRef);
 				}
 			}
+		}
+		if(tl != null && currentItem.isText()){
+			tl.addEventListener(currentItem.ref, function(e){
+				if(currentItem != null)
+					GameManager.instance.playSound(cast(currentItem, TextItem).sound);
+			});
 		}
 
 		array.sort(sortDisplayObjects);

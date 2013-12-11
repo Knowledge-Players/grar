@@ -42,22 +42,15 @@ class Timeline extends EventDispatcher
          nbCompleteTransitions=0;
 
          for (elem in elements){
-            /*if (Std.is(elem.widget, TileImage)) {
-	            TweenManager.applyTransition(cast(elem.widget,TileImage).tileSprite,elem.transition,elem.delay).onComplete(onCompleteTransition).onUpdate(function(){
-		            //cast(elem.widget,TileImage).tileSprite.layer.render();
-		            cast(elem.widget,TileImage).trueLayer.render();
-	            });
-            }
-            else{*/
-	            var actuator = TweenManager.applyTransition(elem.widget,elem.transition,elem.delay);
-	            if(actuator != null)
-		            actuator.onComplete(onCompleteTransition);
-            //}
+            var actuator = TweenManager.applyTransition(elem.widget,elem.transition,elem.delay);
+            if(actuator != null)
+	            actuator.onComplete(onCompleteTransition, [elem.widget.ref]);
          }
     }
 
-    private function onCompleteTransition():Void {
+    private function onCompleteTransition(elemRef: String):Void {
         nbCompleteTransitions++;
+		dispatchEvent(new Event(elemRef));
         if(nbCompleteTransitions == elements.length){
             dispatchEvent(new Event(Event.COMPLETE));
         }

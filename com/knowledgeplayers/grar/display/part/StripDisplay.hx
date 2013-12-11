@@ -32,7 +32,10 @@ class StripDisplay extends PartDisplay {
 
 	override public function next(?target: DefaultButton):Void
 	{
-		startPattern(currentBox);
+		if(Lambda.count(currentBox.buttons) == 0)
+			startPattern(currentBox);
+		else
+			exitPart();
 	}
 
 	// Private
@@ -69,17 +72,12 @@ class StripDisplay extends PartDisplay {
 		if(nextItem != null){
 			currentBoxItem = nextItem;
 			setupItem(nextItem);
-			if(nextItem.isText())
-				GameManager.instance.playSound(cast(nextItem, TextItem).sound);
 
 			for(token in nextItem.tokens)
 				GameManager.instance.activateToken(token);
 		}
 		else if(currentBox.nextPattern != "")
 			goToPattern(currentBox.nextPattern);
-		else{
-			exitPart();
-		}
 	}
 
 	override private function setBackground(background:String):Void
@@ -116,18 +114,15 @@ class StripDisplay extends PartDisplay {
 	{
 		if(currentBox != null){
 	        var box: BoxDisplay = boxes.get(currentBox.id);
-			if(!box.textFields.exists(currentBoxItem.ref))
-				throw "[StripDisplay] There is no TextField with ref \""+currentBoxItem.ref+"\"";
-			else
-				box.textFields.get(currentBoxItem.ref).setContent(Localiser.instance.getItemContent(currentBoxItem.content));
-			var tfCount = 1;
-			while(tfCount < Lambda.count(box.textFields)){
-				var nextItem = currentBox.getNextItem();
+			var nextItem: Item = currentBoxItem;
+			while(nextItem != null){
 				if(nextItem != null){
-					currentBoxItem = nextItem;
-					box.textFields.get(currentBoxItem.ref).setContent(Localiser.instance.getItemContent(currentBoxItem.content));
+					box.textFields.get(nextItem.ref).setContent(Localiser.instance.getItemContent(nextItem.content));
+					if(Std.is(nextItem, TextItem))
+						GameManager.instance.playSound(cast(nextItem, TextItem).sound);
 				}
-				tfCount++;
+
+				nextItem = currentBox.getNextItem();
 			}
 			if(Lambda.count(currentBox.buttons) == 0){
 				box.onComplete = onBoxVisible;

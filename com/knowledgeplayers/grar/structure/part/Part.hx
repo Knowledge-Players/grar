@@ -28,6 +28,8 @@ interface Part extends IEventDispatcher extends PartElement extends Trackable {
 
 	public function getNextElement(startIndex:Int = - 1):Null<PartElement>;
 
+	public function startElement(elemId: String):Void;
+
 	public function getElementIndex(element:PartElement):Int;
 
 	public function getAllParts():Array<Part>;

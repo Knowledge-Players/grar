@@ -8,8 +8,8 @@
     "releasenote": "New activities, video dialog, plugins support and lots of bugs fixing",
     "contributors": [ "knowledge-players" ],
     "dependencies": {
-        "openfl": "1.0.6",
-        "actuate": "1.6.4",
+        "openfl": "",
+        "actuate": "",
         "ExAM": ""
     }
 }

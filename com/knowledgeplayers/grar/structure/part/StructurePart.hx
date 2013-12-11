@@ -2,7 +2,6 @@ package com.knowledgeplayers.grar.structure.part;
 
 import com.knowledgeplayers.grar.structure.score.Perk;
 import com.knowledgeplayers.grar.structure.score.ScoreChart;
-import StringTools;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.factory.ItemFactory;
@@ -141,12 +140,11 @@ class StructurePart extends EventDispatcher implements Part{
 			fireLoaded();
 	}
 
-		/**
-	     * Start the part if it hasn't been done
-	     * @param	forced : true to start the part even if it has already been done
-	     * @return this part, or null if it can't be start
-	     */
-
+	/**
+     * Start the part if it hasn't been done
+     * @param	forced : true to start the part even if it has already been done
+     * @return this part, or null if it can't be start
+     */
 	public function start(forced:Bool = false):Null<Part>
 	{
 		if(elemIndex == elements.length && !forced)
@@ -157,10 +155,22 @@ class StructurePart extends EventDispatcher implements Part{
 		}
 	}
 
-		/**
-		* End the part
-		**/
+	public function startElement(elemId: String):Void
+	{
+		if(elemId != elements[elemIndex-1].id){
+			var tmpIndex = 0;
+			while(tmpIndex < elements.length && elements[tmpIndex].id != elemId)
+				tmpIndex++;
+			if(tmpIndex < elements.length)
+				elemIndex = tmpIndex;
+			if(elements[elemIndex].isPart() && (cast(elements[elemIndex], Part).next == null || cast(elements[elemIndex], Part).next == ""))
+				elemIndex++;
+		}
+	}
 
+	/**
+	* End the part
+	**/
 	public function end(completed: Bool = true):Void
 	{
 		isDone = completed;
@@ -175,18 +185,17 @@ class StructurePart extends EventDispatcher implements Part{
 			soundLoopChannel.stop();
 
 	}
-	/**
-		* @param    startIndex : Next element after this position
-	    * @return the next element in the part or null if the part is over
-	    */
 
+	/**
+	* @param    startIndex : Next element after this position
+    * @return the next element in the part or null if the part is over
+    */
 	public function getNextElement(startIndex:Int = - 1):Null<PartElement>
 	{
 		if(startIndex > - 1)
 			elemIndex = startIndex;
 		if(elemIndex < elements.length){
-			elemIndex++;
-			return elements[elemIndex - 1];
+			return elements[elemIndex++];
 		}
 		else{
 			return null;
@@ -497,6 +506,8 @@ class StructurePart extends EventDispatcher implements Part{
 
 	private function enterPart():Void
 	{
+		if(parent != null)
+			parent.startElement(id);
 		if(soundLoop != null)
 			soundLoopChannel = soundLoop.play();
 	}

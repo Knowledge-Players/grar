@@ -35,6 +35,7 @@ class DialogDisplay extends PartDisplay {
 
 	override public function next(?target: DefaultButton):Void
 	{
+		GameManager.instance.stopSound();
 		startPattern(currentPattern);
 	}
 

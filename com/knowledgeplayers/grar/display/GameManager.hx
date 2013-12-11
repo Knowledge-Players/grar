@@ -4,6 +4,7 @@ package com.knowledgeplayers.grar.display;
 import flash.system.System;
 import flash.external.ExternalInterface;
 #end
+import flash.net.URLRequest;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.contextual.BibliographyDisplay;
 import com.knowledgeplayers.grar.display.contextual.GlossaryDisplay;
@@ -79,12 +80,11 @@ class GameManager extends EventDispatcher {
 	private var previousLayout: String;
 
 	private var nbVolume:Float = 1;
-	private var soundControl:SoundTransform;
-	private var itemSound:Sound;
 	private var itemSoundChannel:SoundChannel;
 
 	private var startIndex:Int;
 	private var lastContextual: KpDisplay;
+	private var sounds:Map<String, Sound>;
 
 		/**
     * @return the instance of the singleton
@@ -175,27 +175,45 @@ class GameManager extends EventDispatcher {
 	{
 		nbVolume = nb;
 		if(itemSoundChannel != null){
-			soundControl = itemSoundChannel.soundTransform;
+			var soundControl = itemSoundChannel.soundTransform;
 			soundControl.volume = nbVolume;
 			itemSoundChannel.soundTransform = soundControl;
 		}
 	}
 
 	/**
-    * Play a sound
-    **/
-
-	public function playSound(soundRef):Void
+	* Pre load a sound. Then use playSound with the same url to play it
+	* @param soundUrl : Path to the sound file
+	**/
+	public function loadSound(soundUrl:String):Void
 	{
+		if(soundUrl != null && soundUrl != ""){
+			var sound = new Sound(new URLRequest(soundUrl));
+			sounds.set(soundUrl, sound);
+		}
+	}
 
-		if(itemSoundChannel != null){
+	/**
+    * Play a sound. May cause error if the sound is not preloaded with loadSound()
+    * @param soundUrl : Path to the sound file
+    **/
+	public function playSound(soundUrl: String):Void
+	{
+		stopSound();
+		if(soundUrl != null){
+			if(!sounds.exists(soundUrl))
+				loadSound(soundUrl);
+			itemSoundChannel = sounds.get(soundUrl).play();
+		}
+	}
+
+	/**
+	* Stop currently playing sound
+	**/
+	public function stopSound():Void
+	{
+		if(itemSoundChannel != null)
 			itemSoundChannel.stop();
-		}
-		if(soundRef != null){
-			itemSound = new Sound(new URLRequest(soundRef));
-			itemSoundChannel = itemSound.play();
-			changeVolume(nbVolume);
-		}
 	}
 
 	/**
@@ -331,15 +349,6 @@ class GameManager extends EventDispatcher {
 		displayPartById(startingPart);
 	}
 
-	private function new()
-	{
-		super();
-		parts = new GenericStack<PartDisplay>();
-		inventory = new Map<String, Token>();
-		tokensImages = new Map<String, {small:BitmapData, large:BitmapData}>();
-		KeyboardManager.init();
-	}
-
 	private function parseTokens(tokens:Xml):Void
 	{
 		var tokenFast = new Fast(tokens.firstElement());
@@ -375,7 +384,7 @@ class GameManager extends EventDispatcher {
 				else{
 					var contextual: ContextualType = Type.createEnum(ContextualType, next.toUpperCase());
 					switch(contextual){
-						case MENU : displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout, (i == 0));
+		case MENU : displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout, (i == 0));
 						case NOTEBOOK : displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout, (i == 0));
 						case GLOSSARY : displayContextual(GlossaryDisplay.instance, GlossaryDisplay.instance.layout, (i == 0));
 						case BIBLIOGRAPHY : displayContextual(BibliographyDisplay.instance, BibliographyDisplay.instance.layout, (i == 0));
@@ -400,20 +409,20 @@ class GameManager extends EventDispatcher {
 			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
 	}
 
-	public inline function onEnterSubPart(event:PartEvent):Void
+	public inline function onEnterSubPart(e:PartEvent):Void
 	{
-		displayPartById(event.part.id);
+		displayPartById(e.part.id);
 	}
 
-	private function onPartLoaded(event:PartEvent):Void
+	private function onPartLoaded(e:PartEvent):Void
 	{
-		setBookmark(event.partId);
-		var partDisplay = cast(event.target, PartDisplay);
+		setBookmark(e.partId);
+		var partDisplay = cast(e.target, PartDisplay);
 
 		partDisplay.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		partDisplay.startPart(startIndex);
 		if(partDisplay.visible && partDisplay.layout != null)
-			changeLayout(partDisplay.layout);
+		changeLayout(partDisplay.layout);
 		layout.zones.get(game.ref).addChild(partDisplay);
 		layout.updateDynamicFields();
 		var event = new PartEvent(PartEvent.ENTER_PART);
@@ -431,5 +440,15 @@ class GameManager extends EventDispatcher {
 			game.stateInfos.bookmark = i;
 			game.connection.computeTracking(game.stateInfos);
 		}
+	}
+
+	private function new()
+	{
+		super();
+		parts = new GenericStack<PartDisplay>();
+		inventory = new Map<String, Token>();
+		tokensImages = new Map<String, {small:BitmapData, large:BitmapData}>();
+		sounds = new Map<String, Sound>();
+		KeyboardManager.init();
 	}
 }

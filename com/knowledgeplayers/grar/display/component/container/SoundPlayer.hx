@@ -14,11 +14,14 @@ class SoundPlayer extends WidgetContainer
 {
     public var playButtons (default, default): GenericStack<DefaultButton>;
 
+	public var autoPlay (default, default):Bool;
+
     private var isPlaying: Bool = false;
     private var sound:Sound;
     private var soundChannel:SoundChannel;
     private var pausePosition:Float=0;
     private var chrono:ChronoCircle;
+	private var loaded:Bool;
 
     public function new(?xml: Fast, ?tilesheet: TilesheetEx)
     {
@@ -27,8 +30,7 @@ class SoundPlayer extends WidgetContainer
         super(xml, tilesheet);
 
         soundChannel = new SoundChannel();
-
-	    //content.setChildIndex(layer.view,1);
+	    autoPlay = false;
     }
 
     public function setSound(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 0, capture:Float = 0,?autoFullscreen:Bool): Void{
@@ -36,12 +38,15 @@ class SoundPlayer extends WidgetContainer
         if(url == null || url == "")
             throw '[SoundPlayer] Invalid url "$url" for audio stream.';
 
-            var req:URLRequest = new URLRequest();
-            req.url = url;
-            sound = new Sound();
-            //sound.addEventListener(Event.COMPLETE,onLoadComplete);
-            sound.load(req);
-
+	    loaded = false;
+	    var req:URLRequest = new URLRequest(url);
+	    sound = new Sound();
+	    sound.addEventListener(Event.COMPLETE, function(e){
+	        loaded = true;
+		    if(autoPlay)
+			    playSound();
+	    });
+	    sound.load(req);
     }
 
     override public function createElement(elemNode:Fast):Widget
@@ -76,9 +81,14 @@ class SoundPlayer extends WidgetContainer
 
     private function playSound():Void
     {
-        setPlaying(true);
-        soundChannel = sound.play(pausePosition);
-	    soundChannel.addEventListener(Event.SOUND_COMPLETE,onSoundComplete);
+        if(loaded){
+	        setPlaying(true);
+	        soundChannel = sound.play(pausePosition);
+		    soundChannel.addEventListener(Event.SOUND_COMPLETE,onSoundComplete);
+        }
+	    else{
+			autoPlay = true;
+        }
     }
 
     private function pauseSound():Void
