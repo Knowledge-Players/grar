@@ -238,7 +238,9 @@ class KpDisplay extends Sprite {
 			if(!layers.exists(spritesheet)){
 				var layer = new TileLayer(UiFactory.tilesheet);
 				layers.set(spritesheet, layer);
+
 			}
+
 			img = new TileImage(itemNode, layers.get(spritesheet), false);
 		}
 		addElement(img, itemNode);

@@ -1,7 +1,10 @@
 package com.knowledgeplayers.grar.display.layout;
 
+
+import flash.ui.Keyboard;
+import flash.Lib;
+import flash.events.KeyboardEvent;
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
-import com.knowledgeplayers.grar.display.contextual.menu.MenuSphericalDisplay;
 import com.knowledgeplayers.grar.display.component.container.DropdownMenu;
 import com.knowledgeplayers.grar.display.component.Widget;
 import aze.display.TileLayer;
@@ -26,13 +29,13 @@ class Zone extends KpDisplay {
 	* Reference
 	**/
 	public var ref:String;
+	public var fastnav(default,null): DropdownMenu;
 
 	private var zoneWidth:Float;
 	private var zoneHeight:Float;
 	private var layer:TileLayer;
 	private var soundState:Bool = true;
 	private var menuXml:Fast;
-	private var fastnav: DropdownMenu;
 
 	public function new(_width:Float, _height:Float):Void
 	{
@@ -98,8 +101,7 @@ class Zone extends KpDisplay {
 
 		// Listeners on menu state
 		if(buttonGroups.exists(groupMenu)){
-			MenuSphericalDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
-			MenuDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
+		    MenuDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
 		}
 		if(buttonGroups.exists(groupNotebook)){
 			NotebookDisplay.instance.addEventListener(PartEvent.EXIT_PART, exitNotebook);
@@ -117,12 +119,8 @@ class Zone extends KpDisplay {
 
 	public function createMenu(element:Fast):Void
 	{
-		if(element.att.type == "spheric"){
-			MenuSphericalDisplay.instance.parseContent(element.x);
-		}
-		else{
-			MenuDisplay.instance.parseContent(element.x);
-		}
+
+	    MenuDisplay.instance.parseContent(element.x);
 		menuXml = element;
 	}
 
@@ -144,9 +142,9 @@ class Zone extends KpDisplay {
 	{
 		for(button in buttonGroups.get(groupMenu))
 			button.toggle(true);
-		MenuSphericalDisplay.instance.removeEventListener(PartEvent.EXIT_PART, exitMenu);
+
 		MenuDisplay.instance.removeEventListener(PartEvent.EXIT_PART, exitMenu);
-		MenuSphericalDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
+
 		MenuDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
 	}
 
@@ -154,9 +152,9 @@ class Zone extends KpDisplay {
 	{
 		for(button in buttonGroups.get(groupMenu))
 			button.toggle(false);
-		MenuSphericalDisplay.instance.removeEventListener(PartEvent.ENTER_PART, enterMenu);
+
 		MenuDisplay.instance.removeEventListener(PartEvent.ENTER_PART, enterMenu);
-		MenuSphericalDisplay.instance.addEventListener(PartEvent.EXIT_PART, exitMenu);
+
 		MenuDisplay.instance.addEventListener(PartEvent.EXIT_PART, exitMenu);
 	}
 
@@ -216,12 +214,13 @@ class Zone extends KpDisplay {
 			case "menu": createMenu(elemNode);
 			case "progressbar": createProgressBar(elemNode);
 			case "fastnav":	fastnav = new DropdownMenu(elemNode, true);
+
 		}
 
 		layer.render();
-
 		return elem;
 	}
+
 
 	override private function addElement(elem:Widget, node:Fast):Void
 	{
@@ -236,14 +235,19 @@ class Zone extends KpDisplay {
 		dispatchEvent(e);
 	}
 
-	private function onGameLoaded(e:PartEvent):Void
+	private function onGameLoaded(e:PartEvent =null):Void
 	{
-		if(fastnav != null){
+
+        if(fastnav != null){
+
 			for(item in GameManager.instance.game.getAllItems()){
 				fastnav.addItem(item.name);
 			}
-			addChild(fastnav);
+
 			fastnav.addEventListener(Event.CHANGE, onFastNav);
+			fastnav.addEventListener(Event.ADDED_TO_STAGE, fastnav.onAdd);
+			addChild(fastnav);
+            fastnav.visible = false;
 		}
 	}
 
@@ -257,5 +261,7 @@ class Zone extends KpDisplay {
 		if(i == items.length)
 			throw '[Zone] There is no trackable item with the name "$track".';
 		GameManager.instance.displayTrackable(items[i]);
+
+        fastnav.visible = false;
 	}
 }

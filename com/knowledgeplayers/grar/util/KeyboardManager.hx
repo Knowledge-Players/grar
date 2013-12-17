@@ -35,6 +35,18 @@ class KeyboardManager {
 			case Keyboard.D: for(part in GameManager.instance.game.getAllParts()){
 				GameManager.instance.finishPart(part.id);
 			}
+
+            case Keyboard.X:
+             if (e.ctrlKey)
+                 for (zone in  GameManager.instance.layout.zones){
+                      if(zone.fastnav!=null){
+                          trace(zone.fastnav.ref + " : "+zone.fastnav.visible);
+                          zone.fastnav.visible = !zone.fastnav.visible;
+
+                          //zone.fastnav.onAdd();
+                      }
+                 }
+
 		}
 	}
 

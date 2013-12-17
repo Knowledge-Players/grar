@@ -124,7 +124,6 @@ class ActivityDisplay extends PartDisplay {
 			}
 		}
 
-
 		super.startPart(0);
 	}
 

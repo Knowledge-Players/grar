@@ -88,13 +88,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
     override public function parseContent(content:Xml):Void
     {
-		// BAAAAAAAAAAHHH: remove singleton
-        if(!Std.is(this, MenuSphericalDisplay) && content.firstElement().get("type") == "spheric"){
-	        instance = MenuSphericalDisplay.instance;
-	        instance.parseContent(content);
-        }
-	    else
-            super.parseContent(content);
+        super.parseContent(content);
 
 		if(displayFast == null)
 			displayFast = new Fast(content.firstElement());

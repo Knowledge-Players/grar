@@ -76,7 +76,7 @@ class GameManager extends EventDispatcher {
 
 	public var menuLoaded (default, set_menuLoaded):Bool = false;
 
-	private var layout:Layout;
+	public var layout(default,null):Layout;
 	private var previousLayout: String;
 
 	private var nbVolume:Float = 1;
@@ -162,6 +162,7 @@ class GameManager extends EventDispatcher {
 				Lib.current.removeChild(this.layout.content);
 			this.layout = LayoutManager.instance.getLayout(layout);
 			Lib.current.addChild(this.layout.content);
+
 		}
 		else
 			previousLayout = this.layout == null ? "default" : this.layout.name;

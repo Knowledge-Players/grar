@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import flash.geom.Point;
 import haxe.xml.Fast;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
@@ -21,6 +22,7 @@ class DropdownMenu extends WidgetContainer {
 	private var labelSprite:Sprite;
 	private var sprites:Map<String, Sprite>;
 	private var blank:Bool;
+	private var color:String;
 
 	public function new(?xml: Fast, blankItem = false)
 	{
@@ -34,6 +36,13 @@ class DropdownMenu extends WidgetContainer {
 		list.visible = false;
 		addEventListener(Event.ADDED_TO_STAGE, onAdd);
 		addEventListener(MouseEvent.CLICK, onClick);
+
+        if (xml.has.color){
+              color = xml.att.color;
+        }
+        else{
+              color = "0x02000000";
+        }
 	}
 
 	/**
@@ -58,9 +67,8 @@ class DropdownMenu extends WidgetContainer {
 		return label;
 	}
 
-	private function onAdd(e:Event):Void
+	public function onAdd(e:Event):Void
 	{
-
 		var yOffset:Float = 0;
 		for(item in items){
 			if(item != null){
@@ -75,18 +83,22 @@ class DropdownMenu extends WidgetContainer {
 		}
 		if(localToGlobal(new Point(0, 0)).y+list.height > stage.stageHeight)
 			list.y = y - list.height;
-		list.visible = false;
+
+        list.visible = false;
 
 		if(!blank)
 			set_currentLabel(items.first());
 		else{
-			labelSprite.graphics.beginFill(0xFFFFFF, 1);
+			labelSprite.graphics.beginFill(ParseUtils.parseColor(color).color, ParseUtils.parseColor(color).alpha);
 			labelSprite.graphics.drawRect(0, 0, list.getChildAt(0).width, list.getChildAt(0).height);
 			labelSprite.graphics.endFill();
+
 		}
 		addChild(labelSprite);
 
 		addChild(list);
+
+
 	}
 
 	private function onItemClick(e:MouseEvent):Void
