@@ -157,7 +157,8 @@ class StructurePart extends EventDispatcher implements Part{
 
 	public function startElement(elemId: String):Void
 	{
-		if(elemId != elements[elemIndex-1].id){
+		if(elemIndex== 0 || elemId != elements[elemIndex-1].id){
+
 			var tmpIndex = 0;
 			while(tmpIndex < elements.length && elements[tmpIndex].id != elemId)
 				tmpIndex++;
