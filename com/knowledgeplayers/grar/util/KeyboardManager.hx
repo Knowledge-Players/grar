@@ -22,6 +22,7 @@ class KeyboardManager {
 
 	private static function keyDownHandler(e:KeyboardEvent):Void
 	{
+		#if kpdebug
 		switch(e.keyCode){
 			case Keyboard.S: TweenManager.fastForwardDiscover();
 			case Keyboard.RIGHT: if(GameManager.instance.parts != null && !GameManager.instance.parts.isEmpty() && !GameManager.instance.parts.first().introScreenOn){
@@ -48,6 +49,7 @@ class KeyboardManager {
                  }
 
 		}
+		#end
 	}
 
 	private static function keyUpHandler(ev:KeyboardEvent):Void

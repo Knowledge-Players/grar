@@ -16,28 +16,19 @@ class ActivityPart extends StructurePart
 	public var rules (default, null): Map<String, Rule>;
 
 	/**
-	* Inputs at the root of the activity (aka not in groups)
-	**/
-	public var inputs (default, null):Array<Input>;
-
-	/**
 	* Groups of input in this activity
 	**/
 	private var groups: Array<Group>;
 	private var groupIndex: Int;
+	private var numRightAnswers:Int;
 
 	public function new()
 	{
 		super();
 		groups = new Array<Group>();
 		rules = new Map<String, Rule>();
-		inputs = new Array<Input>();
 		groupIndex = -1;
-	}
-
-	public inline function getInputs():Array<Input>
-	{
-		return inputs.concat(groups[groupIndex].inputs);
+		numRightAnswers = 0;
 	}
 
 	public inline function hasNextGroup():Bool
@@ -54,14 +45,15 @@ class ActivityPart extends StructurePart
 	{
 		var selectedRules = new Array<Rule>();
 		var rulesSet = new Map<String, Rule>();
-		if(group != null){
+		if(group != null && group.rules != null){
 			for(id in group.rules)
-				rulesSet.set(id, rules.get(id));
+				if(rules.exists(id))
+					rulesSet.set(id, rules.get(id));
 		}
 		else
 			rulesSet = rules;
 		for(rule in rulesSet){
-			if(rule.type == type){
+			if(rule.type == type.toLowerCase()){
 				selectedRules.push(rule);
 			}
 		}
@@ -75,7 +67,7 @@ class ActivityPart extends StructurePart
 			i++;
 		var result = i != input.values.length;
 		if(result)
-			score++;
+			numRightAnswers++;
 		input.selected = value == "true";
 		return result;
 	}
@@ -86,10 +78,17 @@ class ActivityPart extends StructurePart
 	**/
 	public function endActivity():String
 	{
+		score = Math.round(numRightAnswers * 100 / groups[groupIndex].inputs.length);
 		var contextuals = getRulesByType("contextual");
 		for(rule in contextuals){
 			if(rule.value == "addtonotebook"){
-				var inputs = getInputs();
+				var currentGroup = groups[groupIndex];
+				var inputs = currentGroup.inputs;
+				if(currentGroup.groups != null){
+					for(group in currentGroup.groups){
+						inputs.concat(group.inputs);
+					}
+				}
 				for(input in inputs){
 					if(input.selected)
 						GameManager.instance.activateToken(input.id);
@@ -130,7 +129,7 @@ class ActivityPart extends StructurePart
 
 	override public function toString():String
 	{
-		return 'ref: $ref, groups: $groups, rules: $rules, inputs: $inputs';
+		return 'ref: $ref, groups: $groups, rules: $rules';
 	}
 
 	override public function isActivity():Bool
@@ -146,21 +145,12 @@ class ActivityPart extends StructurePart
 		for(child in partFast.elements){
 			switch(child.name.toLowerCase()){
 				case "group":
-					var rules: Array<String> = null;
-					if(child.has.rules){
-						rules = ParseUtils.parseListOfValues(child.att.rules);
-					}
-					var inputs = new Array<Input>();
-					for(input in child.elements)
-						inputs.push(createInput(input));
-					var group: Group = {id: child.att.id, ref: child.att.ref, rules: rules, inputs: inputs};
+					var group: Group = createGroup(child);
 					groups.push(group);
 
 				case "rule":
 					var rule: Rule = {id: child.att.id, type: child.att.type.toLowerCase(), value: child.att.value.toLowerCase()};
 					rules.set(rule.id, rule);
-
-				case "input": inputs.push(createInput(child));
 			}
 		}
 		// If no rules has been set on a group, all applies
@@ -192,14 +182,37 @@ class ActivityPart extends StructurePart
 		}
 	}
 
-	private function createInput(xml:Fast):Input
+	private function createInput(xml:Fast, ?group: Group):Input
 	{
 		var values;
 		if(xml.has.values)
 			values = ParseUtils.parseListOfValues(xml.att.values);
 		else
 			values = new Array<String>();
-		return {id: xml.att.id, ref: xml.att.ref, content: ParseUtils.parseHash(xml.att.content), values: values, selected: false};
+		return {id: xml.att.id, ref: xml.att.ref, content: ParseUtils.parseHash(xml.att.content), values: values, selected: false, group: group};
+	}
+
+	private inline function createGroup(xml: Fast): Group
+	{
+		var rules: Array<String> = null;
+		if(xml.has.rules){
+			rules = ParseUtils.parseListOfValues(xml.att.rules);
+		}
+		if(xml.hasNode.Group){
+			var groups = new Array<Group>();
+			for(group in xml.nodes.Group)
+				groups.push(createGroup(group));
+			var group:Group = {id: xml.att.id, ref: xml.att.ref, rules: rules, groups: groups};
+			return group;
+		}
+		else{
+			var inputs = new Array<Input>();
+			var group: Group = {id: xml.att.id, ref: xml.att.ref, rules: rules, inputs: inputs};
+			for(input in xml.elements){
+				inputs.push(createInput(input, group));
+			}
+			return group;
+		}
 	}
 
 	private function getAllInputs():Array<Input>
@@ -207,7 +220,7 @@ class ActivityPart extends StructurePart
 		var inputsGroup = new Array<Input>();
 		for(group in groups)
 			inputsGroup = inputsGroup.concat(group.inputs);
-		return inputs.concat(inputsGroup);
+		return inputsGroup;
 	}
 }
 
@@ -215,7 +228,8 @@ typedef Group = {
 	var id: String;
 	var ref: String;
 	var rules: Array<String>;
-	var inputs: Array<Input>;
+	@:optional var groups: Array<Dynamic>;
+	@:optional var inputs: Array<Input>;
 }
 
 typedef Rule = {
@@ -230,4 +244,5 @@ typedef Input = {
 	var content: Map<String, String>;
 	var values: Array<String>;
 	var selected: Bool;
+	@:optional var group: Group;
 }

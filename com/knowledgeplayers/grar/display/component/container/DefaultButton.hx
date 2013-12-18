@@ -248,8 +248,9 @@ class DefaultButton extends WidgetContainer {
 			while(content.numChildren > 0){
 				content.removeChildAt(content.numChildren - 1);
 			}
-			for(child in layer.children)
-				child.visible = false;
+			if(layer != null)
+				for(child in layer.children)
+					child.visible = false;
 			scale = scaleX = scaleY = 1;
 
 			// Reset children
@@ -287,6 +288,24 @@ class DefaultButton extends WidgetContainer {
 		}
 	}
 
+	public function setAllListeners(listener:MouseEvent -> Void):Void
+	{
+		removeAllEventsListeners(listener);
+		addEventListener(MouseEvent.MOUSE_OUT, listener);
+		addEventListener(MouseEvent.MOUSE_OVER, listener);
+		addEventListener(MouseEvent.ROLL_OVER, listener);
+		addEventListener(MouseEvent.ROLL_OUT, listener);
+		addEventListener(MouseEvent.CLICK, listener);
+		addEventListener(MouseEvent.DOUBLE_CLICK, listener);
+		addEventListener(MouseEvent.MOUSE_DOWN, listener);
+		addEventListener(MouseEvent.MOUSE_UP, listener);
+	}
+
+	public inline function resetToggle():Void
+	{
+		toggleState = defaultState;
+	}
+
 	// Private
 
 	private function onClick(event:MouseEvent):Void
@@ -301,19 +320,6 @@ class DefaultButton extends WidgetContainer {
 			timelineOut.play();
 		}else
 			buttonAction(this);
-	}
-
-	private function setAllListeners(listener:MouseEvent -> Void):Void
-	{
-		removeAllEventsListeners(listener);
-		addEventListener(MouseEvent.MOUSE_OUT, listener);
-		addEventListener(MouseEvent.MOUSE_OVER, listener);
-		addEventListener(MouseEvent.ROLL_OVER, listener);
-		addEventListener(MouseEvent.ROLL_OUT, listener);
-		addEventListener(MouseEvent.CLICK, listener);
-		addEventListener(MouseEvent.DOUBLE_CLICK, listener);
-		addEventListener(MouseEvent.MOUSE_DOWN, listener);
-		addEventListener(MouseEvent.MOUSE_UP, listener);
 	}
 
 	private inline function onOver(event:MouseEvent):Void

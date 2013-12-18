@@ -31,9 +31,9 @@ class Image extends Widget{
 		}
 	}
 
-    public function setBmp(_bmpData:String):Void{
+    public function setBmp(_bmpData:String):Void
+    {
          if(_bmpData.indexOf(".")<0){
-
              var stringColor = ParseUtils.parseListOfValues(_bmpData);
              var colors = new Array<Int>();
              var alphas = new Array<Float>();
@@ -44,25 +44,23 @@ class Image extends Widget{
              }
              var w = width;
              var h = height;
-             while(numChildren>0)removeChildAt(numChildren-1);
+             while(numChildren>0)
+	             removeChildAt(numChildren-1);
 
              addChild(DisplayUtils.initGradientSprite(w, h, colors, alphas));
 
-         }   else{
+         }
+         else{
             if (bitmap == null){
                 bitmap = new Bitmap();
                 addChild(bitmap);
             }
             #if flash
-	                bitmap.bitmapData = AssetsStorage.getBitmapData(_bmpData);
-	            #else
+                bitmap.bitmapData = AssetsStorage.getBitmapData(_bmpData);
+            #else
                 bitmap.bitmapData = Assets.getBitmapData(_bmpData);
-             #end
-
-
+            #end
          }
-
-
     }
 
 	private function createImg(xml:Fast, ?tilesheet: TilesheetEx):Void

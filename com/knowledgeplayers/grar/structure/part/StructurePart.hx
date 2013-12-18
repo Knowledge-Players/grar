@@ -23,48 +23,48 @@ class StructurePart extends EventDispatcher implements Part{
 	public var name (default, default):String;
 
 	/**
-	     * ID of the part
-	     */
+     * ID of the part
+     */
 	public var id (default, default):String;
 
-		/**
-	     * Path to the XML structure file
-	     */
+	/**
+     * Path to the XML structure file
+     */
 	public var file (default, null):String;
 
-		/**
-	     * Path to the XML display file
-	     */
+	/**
+     * Path to the XML display file
+     */
 	public var display (default, default):String;
 
-		/**
-		* Parent of this part
-		**/
+	/**
+	* Parent of this part
+	**/
 	public var parent (default, default):Part;
 
-		/**
-	     * True if the part is done
-	     */
+	/**
+     * True if the part is done
+     */
 	public var isDone (default, default):Bool;
 
-		/**
-	     * Tokens in this part
-	     */
+	/**
+     * Tokens in this part
+     */
 	public var tokens (default, default):GenericStack<String>;
 
-		/**
-	     * Sound playing during the part
-	     */
+	/**
+     * Sound playing during the part
+     */
 	public var soundLoop (default, default):Sound;
 
-		/**
-	    * Elements of the part
+	/**
+    * Elements of the part
 	**/
 	public var elements (default, null):Array<PartElement>;
 
-		/**
-	    * Button of the part
-	    **/
+	/**
+    * Button of the part
+    **/
 	public var buttons (default, default):Map<String, Map<String, String>>;
 
 	/**
@@ -157,8 +157,7 @@ class StructurePart extends EventDispatcher implements Part{
 
 	public function startElement(elemId: String):Void
 	{
-		if(elemIndex== 0 || elemId != elements[elemIndex-1].id){
-
+		if(elemIndex == 0 || elemId != elements[elemIndex-1].id){
 			var tmpIndex = 0;
 			while(tmpIndex < elements.length && elements[tmpIndex].id != elemId)
 				tmpIndex++;

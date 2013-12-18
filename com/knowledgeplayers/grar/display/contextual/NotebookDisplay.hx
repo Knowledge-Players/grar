@@ -71,6 +71,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		chapterMap = new Map<DefaultButton, Chapter>();
 		tabTemplate = displayFast.node.Tab;
 		bookmark = displayFast.node.Bookmark;
+		buttonGroups.set(noteGroupName, new GenericStack<DefaultButton>());
 	}
 
 	public function set_model(model:Notebook):Notebook
@@ -91,8 +92,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 					throw '[NotebookDisplay] There is no item with ref "$item."';
 			}
 
-			// Display page
-			displayPage(model.pages[0]);
 
 			// Set Locale
 			Localiser.instance.layoutPath = model.file;
@@ -127,7 +126,34 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 					first = false;
 				}
 				tab.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+
+				var offsetY: Float = 0;
+				// Fill every occurences of "icon" element with the proper tile/img
+				for(chapter in page.chapters){
+					var icons = ParseUtils.selectByAttribute("ref", "icon", chapterTemplates.get(chapter.ref).x);
+					ParseUtils.updateIconsXml(chapter.icon, icons);
+					// Clickable note
+					var button: DefaultButton = new DefaultButton(chapterTemplates.get(chapter.ref));
+					button.y += offsetY;
+					offsetY += button.height + Std.parseFloat(chapterTemplates.get(chapter.ref).att.offsetY);
+					var chapterTitle = Localiser.instance.getItemContent(chapter.name);
+					button.setText(chapterTitle, "title");
+					button.setText(Localiser.instance.getItemContent(chapter.subtitle), "subtitle");
+					buttonGroups.get(noteGroupName).add(button);
+					button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+					// Fill hit box
+					DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
+					//button.alpha = chapter.isActivated ? 1 : 0;
+					//addChild(button);
+					setButtonAction(button, "show");
+					chapterMap.set(button, chapter);
+				}
 			}
+
+			currentPage = model.pages[0];
+			// Display page
+			//displayPage(model.pages[0]);
+
 			Localiser.instance.popLocale();
 		}
 		return model;
@@ -144,6 +170,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		buttonGroups.set(stepGroupName, new GenericStack<DefaultButton>());
 
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
+			displayPage(currentPage);
 			dispatchEvent(new PartEvent(PartEvent.ENTER_PART));
 		});
 
@@ -165,42 +192,26 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		title.setContent(Localiser.instance.getItemContent(currentPage.title.content));
 		addChild(title);
 
-		// Clean previous note
-		for(note in buttonGroups.get(noteGroupName)){
-			removeChild(note);
-			note = null;
-		}
-		buttonGroups.set(noteGroupName, new GenericStack<DefaultButton>());
-		chapterMap = new Map<DefaultButton, Chapter>();
-        if(contains(displays.get("player")))
-			removeChild(displays.get("player"));
-
-		var offsetY: Float = 0;
-
-		// Fill every occurences of "icon" element with the proper tile/img
-		for(chapter in currentPage.chapters){
-			var icons = ParseUtils.selectByAttribute("ref", "icon", chapterTemplates.get(chapter.ref).x);
-			ParseUtils.updateIconsXml(chapter.icon, icons);
-			// Clickable note
-			var button: DefaultButton = new DefaultButton(chapterTemplates.get(chapter.ref));
-			button.y += offsetY;
-			offsetY += button.height + Std.parseFloat(chapterTemplates.get(chapter.ref).att.offsetY);
-			var chapterTitle = Localiser.instance.getItemContent(chapter.name);
-			button.setText(chapterTitle, "title");
-			button.setText(Localiser.instance.getItemContent(chapter.subtitle), "subtitle");
-			buttonGroups.get(noteGroupName).add(button);
-			button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
-			// Fill hit box
-			DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
-			button.alpha = chapter.isActivated ? 1 : 0;
-			addChild(button);
-			setButtonAction(button, "show");
-			chapterMap.set(button, chapter);
-		}
-
 		// Build Bookmark container
 		if(bookmarkBkg == null)
 			bookmarkBkg = createImage(bookmark);
+
+		// Clean previous note
+		/*for(note in buttonGroups.get(noteGroupName)){
+			removeChild(note);
+			note = null;
+		}*/
+		clearPage();
+
+        if(contains(displays.get("player")))
+			removeChild(displays.get("player"));
+
+		for(chapter in chapterMap.keys()){
+			if(Lambda.has(currentPage.chapters, chapterMap.get(chapter)) && chapterMap.get(chapter).isActivated)
+				addChild(chapter);
+			else if(contains(chapter))
+				removeChild(chapter);
+		}
 
 		Localiser.instance.popLocale();
 	}

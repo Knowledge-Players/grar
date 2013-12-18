@@ -482,7 +482,7 @@ class PartDisplay extends KpDisplay {
 		}
 		if(tl != null && currentItem.isText()){
 			tl.addEventListener(currentItem.ref, function(e){
-				if(currentItem != null)
+				if(currentItem != null && Std.is(currentItem, TextItem))
 					GameManager.instance.playSound(cast(currentItem, TextItem).sound);
 			});
 		}

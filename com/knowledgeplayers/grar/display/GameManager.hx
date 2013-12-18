@@ -120,7 +120,7 @@ class GameManager extends EventDispatcher {
 	public function activateToken(tokenName:String):Void
 	{
 		if(!inventory.exists(tokenName))
-			throw '[GameManager] Unknown token "tokenName".';
+			throw '[GameManager] Unknown token "$tokenName".';
 		inventory.get(tokenName).isActivated = true;
 		var tokenEvent = new TokenEvent(TokenEvent.ADD);
 
@@ -200,8 +200,8 @@ class GameManager extends EventDispatcher {
     **/
 	public function playSound(soundUrl: String):Void
 	{
-		stopSound();
 		if(soundUrl != null){
+			stopSound();
 			if(!sounds.exists(soundUrl))
 				loadSound(soundUrl);
 			itemSoundChannel = sounds.get(soundUrl).play();
@@ -395,9 +395,6 @@ class GameManager extends EventDispatcher {
 				}
 				i++;
 			}
-		}
-		else if(finishedPart.part.parent == null){
-			displayPart(finishedPart.part.parent, false, finishedPart.part.parent.getElementIndex(finishedPart.part));
 		}
 		else if(!parts.isEmpty() && parts.first().part == finishedPart.part.parent){
 			parts.first().visible = true;

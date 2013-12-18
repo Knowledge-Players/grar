@@ -1,5 +1,9 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.component.Image;
+import flash.display.DisplayObject;
+import flash.events.Event;
+import flash.events.MouseEvent;
 import com.knowledgeplayers.grar.factory.GuideFactory;
 import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.util.ParseUtils;
@@ -14,10 +18,16 @@ import com.knowledgeplayers.grar.structure.part.ActivityPart;
 import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.display.part.PartDisplay;
 
+using Lambda;
+using Std;
+using com.knowledgeplayers.grar.util.DisplayUtils;
+
 /**
  * Display of an activity
  */
 class ActivityDisplay extends PartDisplay {
+
+	private static inline var dropRef: String = "dropZone";
 
 	private var groups: Map<String, Fast>;
 	private var buttonsToInputs: Map<DefaultButton, Input>;
@@ -29,6 +39,7 @@ class ActivityDisplay extends PartDisplay {
 	private var minSelect: Int;
 	private var maxSelect: Int;
 	private var validationButton: DefaultButton;
+	private var dragOrigin:Coordinates;
 
 	public function new(model: Part)
 	{
@@ -50,37 +61,16 @@ class ActivityDisplay extends PartDisplay {
 					setupItem(cast(elem, Item));
 				}
 			}
+			displayInputs();
 			displayPart();
 		}
 		else
-			endActivity();
+			exitPart();
 	}
 
 	override public function startPart(startPosition:Int = -1):Void
 	{
-		var activity = cast(part, ActivityPart);
-
-		var currentGroup: Fast = groups.get(activity.getNextGroup().ref);
-		// Set guide to place inputs
-		var guide: Guide = GuideFactory.createGuideFromXml(new Fast(currentGroup.x.firstElement()));
-		guide.x = Std.parseFloat(currentGroup.att.x);
-		guide.y = Std.parseFloat(currentGroup.att.y);
-		// Create inputs, place & display them
-		for(input in activity.getInputs()){
-			var button:DefaultButton = new DefaultButton(displayTemplates.get(input.ref).fast);
-            guide.add(button);
-			buttonsToInputs.set(button, input);
-			for(contentKey in input.content.keys())
-				button.setText(Localiser.instance.getItemContent(input.content.get(contentKey)), contentKey);
-			button.buttonAction = onInputClick;
-			button.zz = displayTemplates.get(input.ref).z;
-			inputs.add(button);
-		}
-		if(!inputs.isEmpty()){
-			var lastTemplate = displayTemplates.get(inputs.first().ref).fast;
-			if(lastTemplate.has.validation)
-				validationRef = displayTemplates.get(inputs.first().ref).fast.att.validation;
-		}
+		//displayInputs();
 
 		// Checking rules
 		// Validation
@@ -94,7 +84,7 @@ class ActivityDisplay extends PartDisplay {
 			switch(validationRules[0].value){
 				case "auto": autoCorrect = true;
 				case "onvalidate":
-					validationButton.buttonAction = validate;
+					validationButton.buttonAction = onValidate;
 				case "off": hasCorrection = false;
 					validationButton.buttonAction = endActivity;
 				default: trace("Unknown value '"+validationRules[0].value+"' as a validation rule");
@@ -137,11 +127,64 @@ class ActivityDisplay extends PartDisplay {
 
 	// Private
 
-	private function validate(?target: DefaultButton):Void
+	private function displayInputs():Void
 	{
+		var activity = cast(part, ActivityPart);
+
+		var currentGroup: Group = activity.getNextGroup();
+		// Create inputs, place & display them
+		if(currentGroup.inputs != null){
+			var guide = createGroupGuide(currentGroup);
+			for(input in currentGroup.inputs){
+				createInput(input, guide);
+			}
+		}
+		if(currentGroup.groups != null){
+			for(group in currentGroup.groups){
+				var guide = createGroupGuide(group);
+				// Specify inputs because of an "Can't iterate on a Dynamic value" error
+				var inputs: Array<Input> = group.inputs;
+				for(input in inputs)
+					createInput(input, guide);
+			}
+		}
+		if(!inputs.isEmpty()){
+			var lastTemplate: Fast = displayTemplates.get(inputs.first().ref).fast;
+			if(lastTemplate.has.validation)
+				validationRef = displayTemplates.get(inputs.first().ref).fast.att.validation;
+		}
+	}
+
+	private inline function createInput(input:Input, guide: Guide):Void
+	{
+		var button:DefaultButton = new DefaultButton(displayTemplates.get(input.ref).fast);
+		guide.add(button);
+		buttonsToInputs.set(button, input);
+		for(contentKey in input.content.keys())
+			button.setText(Localiser.instance.getItemContent(input.content.get(contentKey)), contentKey);
+		button.setAllListeners(onInputEvents);
+		button.zz = displayTemplates.get(input.ref).z;
+		inputs.add(button);
+	}
+
+	private inline function createGroupGuide(groupe: Group):Guide
+	{
+		var groupTemplate: Fast = groups.get(groupe.ref);
+		// Set guide to place inputs
+		var guide: Guide = GuideFactory.createGuideFromXml(new Fast(groupTemplate.x.firstElement()));
+		guide.x = Std.parseFloat(groupTemplate.att.x);
+		guide.y = Std.parseFloat(groupTemplate.att.y);
+
+		return guide;
+	}
+
+	private function validate(?target: DefaultButton, value: String):Bool
+	{
+		var result: Bool = true;
 		if(autoCorrect){
 			for(child in target.children){
-				var correction = cast(part, ActivityPart).validate(buttonsToInputs.get(target), Std.string(target.toggleState == "inactive"));
+				var correction = cast(part, ActivityPart).validate(buttonsToInputs.get(target), value);
+				result = correction;
 				if(child.ref == validationRef && Std.is(child, DefaultButton))
 					cast(child, DefaultButton).toggleState = Std.string(correction);
 			}
@@ -156,7 +199,7 @@ class ActivityDisplay extends PartDisplay {
 		}
 		else if(hasCorrection){
 			for(button in inputs){
-				var correction = cast(part, ActivityPart).validate(buttonsToInputs.get(button), Std.string(button.toggleState == "inactive"));
+				var correction = cast(part, ActivityPart).validate(buttonsToInputs.get(button), value);
 				for(child in button.children)
 					if(child.ref == validationRef && Std.is(child, DefaultButton))
 						cast(child, DefaultButton).toggleState = Std.string(correction);
@@ -170,12 +213,26 @@ class ActivityDisplay extends PartDisplay {
 				case "onvalidate": cast(displays.get(rule.id), DefaultButton).toggle();
 			}
 		}
+
+		return result;
 	}
 
 	private function endActivity(?target:DefaultButton):Void
 	{
+		if(!hasCorrection){
+			for(button in inputs){
+				cast(part, ActivityPart).validate(buttonsToInputs.get(button), Std.string(button.toggleState == "active"));
+				button.resetToggle();
+			}
+		}
 		var idNext = cast(part, ActivityPart).endActivity();
-		part.restart();
+		var restartRules: Array<Rule> = cast(part, ActivityPart).getRulesByType("restart");
+		var i = 0;
+		while(i < restartRules.length && restartRules[i].value != idNext)
+			i++;
+		if(i != restartRules.length)
+			part.restart();
+
 
 		if(idNext != null){
 			var target = part.getElementById(idNext);
@@ -233,24 +290,51 @@ class ActivityDisplay extends PartDisplay {
 	}
 
 	// Handler
-
-	private function onInputClick(?target: DefaultButton):Void
+	private function onInputEvents(e: MouseEvent):Void
 	{
-		var clickRules = cast(part, ActivityPart).getRulesByType("onclick");
+		var needValidation = false;
+		var input: Input = buttonsToInputs.get(e.target);
+		var clickRules = cast(part, ActivityPart).getRulesByType(e.type, input.group);
 		for(rule in clickRules){
 			switch(rule.value.toLowerCase()){
 				case "goto":
-					var target = part.getElementById(buttonsToInputs.get(target).values[0]);
+					var target = part.getElementById(buttonsToInputs.get(e.target).values[0]);
 					if(target.isPart())
-						GameManager.instance.displayPart(cast(target, Part));
+						GameManager.instance.displayPart(cast(e.target, Part));
+					needValidation = true;
 				case "toggle":
-					target.toggle();
-					var selected = buttonsToInputs.get(target).selected = target.toggleState == "active";
-					validatedInputs.set(target, selected);
+					e.target.toggle();
+					var selected = buttonsToInputs.get(e.target).selected = e.target.toggleState == "active";
+					validatedInputs.set(e.target, selected);
+					needValidation = true;
+				case "drag":
+					e.target.startDrag();
+					e.target.parent.setChildIndex(e.target, e.target.parent.numChildren-1);
+					dragOrigin = {x: e.target.x, y: e.target.y};
+				case "drop":
+					e.target.stopDrag();
+					var drop: DisplayObject = cast(e.target.dropTarget, DisplayObject);
+					while(drop != null && !(drop.is(DefaultButton) && (inputs.has(cast(drop, DefaultButton)) || cast(drop, Widget).ref == dropRef)))
+						drop = drop.parent;
+					if(drop != null && validate(e.target, (buttonsToInputs.exists(cast(drop, DefaultButton)) ? buttonsToInputs.get(cast(drop, DefaultButton)).id : drop.name))){
+						copyCoordinates(e.target, drop);
+						if(buttonsToInputs.exists(cast(drop, DefaultButton))){
+							var dropZone = new DefaultButton();
+							dropZone.enabled = false;
+							dropZone.initSprite(drop.width, drop.height, 0.001);
+							dropZone.ref = dropRef;
+							dropZone.name = buttonsToInputs.get(cast(drop, DefaultButton)).id;
+							copyCoordinates(dropZone, drop);
+							drop.parent.addChild(dropZone);
+						}
+					}
+					else{
+						copyCoordinates(e.target, dragOrigin);
+					}
 			}
 		}
-		if(autoCorrect)
-			validate(target);
+		if(needValidation && autoCorrect)
+			validate(e.target, Std.string(e.target.toggleState == "active"));
 
 		// Selection limits
 		var validated = Lambda.count(validatedInputs, function(input){
@@ -258,13 +342,28 @@ class ActivityDisplay extends PartDisplay {
 		});
 
 		// Activate validation button
-		if(validationButton != null){
+		if(validationButton != null)
 			validationButton.toggle(validated >= minSelect);
-		}
 		// Toggle inputs
 		if(validated == maxSelect)
 			disableInputs();
 		else
 			enableInputs();
 	}
+
+	private inline function onValidate(?target:DefaultButton):Void
+	{
+		validate(target, Std.string(target.toggleState == "active"));
+	}
+
+	private inline function copyCoordinates(object: DisplayObject, src: Dynamic):Void
+	{
+		object.x = src.x;
+		object.y = src.y;
+	}
+}
+
+typedef Coordinates = {
+	var x: Float;
+	var y: Float;
 }

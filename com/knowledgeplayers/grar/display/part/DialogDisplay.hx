@@ -103,6 +103,7 @@ class DialogDisplay extends PartDisplay {
 
 	private function onChoice(?choice: DefaultButton):Void
 	{
+		GameManager.instance.stopSound();
 		cast(currentPattern, ChoicePattern).numChoices++;
 		var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
 		cast(currentPattern, ChoicePattern).choices.get(choice.ref).viewed = true;
