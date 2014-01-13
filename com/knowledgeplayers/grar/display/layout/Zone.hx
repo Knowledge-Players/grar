@@ -213,8 +213,9 @@ class Zone extends KpDisplay {
 		switch(elemNode.name.toLowerCase()){
 			case "menu": createMenu(elemNode);
 			case "progressbar": createProgressBar(elemNode);
+			#if kpdebug
 			case "fastnav":	fastnav = new DropdownMenu(elemNode, true);
-
+			#end
 		}
 
 		layer.render();

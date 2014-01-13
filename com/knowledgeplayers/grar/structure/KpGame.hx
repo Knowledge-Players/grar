@@ -282,6 +282,9 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
         if(stateInfos.isEmpty()){
             stateInfos.loadStateInfos(state);
         }
+	    var status = connection.tracking.getStatus();
+	    if(status == null || status == "")
+		    connection.tracking.setStatus(false);
 		Localiser.instance.currentLocale = stateInfos.currentLanguage;
     }
 

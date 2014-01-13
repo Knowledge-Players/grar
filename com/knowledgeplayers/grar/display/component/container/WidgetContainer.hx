@@ -73,6 +73,7 @@ class WidgetContainer extends Widget{
 	**/
 	public var children (default, default):Array<Widget>;
 
+	public var zIndex: Int = 0;
 	public var renderNeeded: Bool = false;
 
 	private var scrollBarName: String;
@@ -81,7 +82,6 @@ class WidgetContainer extends Widget{
 	private var layer: TileLayer;
 	private var displays: Map<String, Widget>;
 	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
-	private var zIndex: Int = 0;
 
 	public function set_contentAlpha(alpha: Float):Float
 	{
@@ -322,6 +322,10 @@ class WidgetContainer extends Widget{
 						tmpXml.set(att, elemNode.x.get(att));
 				}
 				createElement(new Fast(tmpXml));
+			 case "div":
+				 var div = new SimpleContainer(elemNode);
+				 addElement(div);
+				 div;
 			default: null;
 		 }
 	}

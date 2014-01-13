@@ -130,6 +130,8 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				var offsetY: Float = 0;
 				// Fill every occurences of "icon" element with the proper tile/img
 				for(chapter in page.chapters){
+					if(!chapterTemplates.exists(chapter.ref))
+						throw "[NotebookDisplay] There is no template for chapter with ref '"+chapter.ref+"'.";
 					var icons = ParseUtils.selectByAttribute("ref", "icon", chapterTemplates.get(chapter.ref).x);
 					ParseUtils.updateIconsXml(chapter.icon, icons);
 					// Clickable note
@@ -203,7 +205,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		}*/
 		clearPage();
 
-        if(contains(displays.get("player")))
+        if(displays.exists("player") && contains(displays.get("player")))
 			removeChild(displays.get("player"));
 
 		for(chapter in chapterMap.keys()){

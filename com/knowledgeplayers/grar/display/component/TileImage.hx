@@ -245,8 +245,6 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 	{
 		if(parent == null){
 			addEventListener(Event.ADDED_TO_STAGE, renderNeeded);
-			//TweenManager.stop(tileSprite);
-			//TweenManager.stop(tileSprite.layer.view);
 		}
 		else{
 			if(hasEventListener(Event.ADDED_TO_STAGE))

@@ -142,6 +142,10 @@ class PartDisplay extends KpDisplay {
 						else{
 							textItem = cast(currentElement, Item);
 						}
+						if(textItem.endScreen){
+							part.isDone = true;
+							dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+						}
 						setupItem(cast(textItem, Item), (i == 0));
 						i++;
 					}

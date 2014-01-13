@@ -142,7 +142,7 @@ class KpTextDownElement {
 		}
 
 		// Custom Style
-		var regexStyle:EReg = ~/\[(.+)\](.+)\[\/(.+)\]/;
+		var regexStyle:EReg = ~/\[(.+)\]([^\[\]]+)\[\/(.+)\]/;
 		while(regexStyle.match(content)){
 			var customPos:{pos:Int, len:Int};
 			customPos = regexStyle.matchedPos();
@@ -196,6 +196,8 @@ class KpTextDownElement {
 			var position = mod.match.pos - offset;
 			offset += mod.offset;
 			var style: Style = StyleParser.getStyle(mod.style);
+			if(style == null)
+				throw "[Style] There is no style named '"+mod.style+"'.";
 			tf.setPartialStyle(style, position, position + mod.match.len - mod.offset);
 		}
 

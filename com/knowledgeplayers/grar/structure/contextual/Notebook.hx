@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.structure.contextual;
 
+import com.knowledgeplayers.grar.factory.ItemFactory;
+import com.knowledgeplayers.grar.structure.part.Item;
 import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.structure.contextual.Note;
 import haxe.ds.GenericStack;
@@ -27,6 +29,7 @@ class Notebook
 	* Items to display with the notebook
 	**/
 	public var items (default, default):GenericStack<String>;
+	public var texts (default, default):GenericStack<Item>;
 
 	public var pages (default, null): Array<Page>;
 
@@ -34,6 +37,7 @@ class Notebook
 	{
 		items = new GenericStack<String>();
 		pages = new Array<Page>();
+		texts = new GenericStack<Item>();
 
 		this.file = file;
 		parseContent(AssetsStorage.getXml(file));
@@ -64,6 +68,13 @@ class Notebook
 		background = fast.att.background;
 		for(item in fast.nodes.Image)
 			items.add(item.att.ref);
+		for(txt in fast.nodes.Text)
+			texts.add(ItemFactory.createItemFromXml(txt));
+		// Reverse pile order to match XML order
+		var tmpStack = new GenericStack<String>();
+		for(img in items)
+			tmpStack.add(img);
+		items = tmpStack;
 		for(page in fast.nodes.Page){
 			var title = {ref: page.node.Title.att.ref, content: page.node.Title.att.content};
 			var contentRef = page.node.Chapter.att.ref;

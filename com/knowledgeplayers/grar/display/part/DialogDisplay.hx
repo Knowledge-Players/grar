@@ -57,8 +57,11 @@ class DialogDisplay extends PartDisplay {
 		if(Std.is(currentPattern, ChoicePattern)){
 			var choicePattern = cast(currentPattern, ChoicePattern);
 			// Init button with choice's view state
-			for(choice in choicePattern.choices.keys())
+			for(choice in choicePattern.choices.keys()){
+				if(!displays.exists(choice))
+					throw "[DialogDisplay] There is no template for choice named '"+choice+"'.";
 				cast(displays.get(choice), DefaultButton).toggle(!choicePattern.choices.get(choice).viewed);
+			}
 			if(choicePattern.minimumChoice == choicePattern.numChoices){
 				exitPattern = true;
 			}

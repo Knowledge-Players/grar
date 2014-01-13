@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display.component;
 
+import flash.display.GradientType;
+import flash.geom.Matrix;
+import flash.display.Shape;
 import flash.display.BitmapData;
 import com.knowledgeplayers.grar.display.component.container.SimpleBubble;
 import com.knowledgeplayers.grar.util.ParseUtils;
@@ -10,6 +13,8 @@ import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.util.DisplayUtils;
 import flash.display.Bitmap;
 import haxe.xml.Fast;
+
+using Lambda;
 
 /**
 * Image widget
@@ -66,7 +71,42 @@ class Image extends Widget{
 	private function createImg(xml:Fast, ?tilesheet: TilesheetEx):Void
 	{
 		if(xml.has.src){
-			if(xml.has.radius){
+			if(xml.has.vertices){
+				var vertices = new List<Point2D>();
+				ParseUtils.parseListOfValues(xml.att.vertices).iter(function(vertex: String){
+					var v = vertex.split(";");
+					vertices.add({x: Std.parseFloat(v[0]), y: Std.parseFloat(v[1])});
+				});
+				var shape = new Shape();
+				if(xml.att.src.indexOf(",") < 0){
+					var color = ParseUtils.parseColor(xml.att.src);
+					shape.graphics.beginFill(color.color, color.alpha);
+				}
+				else{
+					var stringColor = ParseUtils.parseListOfValues(xml.att.src);
+					var colors = new Array<Int>();
+					var alphas = new Array<Float>();
+					for(color in stringColor){
+						var c = ParseUtils.parseColor(color);
+						colors.push(c.color);
+						alphas.push(c.alpha);
+					}
+					var matrix:Matrix = new Matrix();
+					matrix.createGradientBox(width, height, Math.PI/2, 0, 0);
+					shape.graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, [0x00, 0xFF], matrix);
+				}
+				var origin = vertices.pop();
+				shape.graphics.moveTo(origin.x, origin.y);
+				while(!vertices.isEmpty()){
+					var next = vertices.pop();
+					shape.graphics.lineTo(next.x, next.y);
+				}
+				// Close polygon
+				shape.graphics.lineTo(origin.x, origin.y);
+				shape.graphics.endFill();
+				addChild(shape);
+			}
+			else if(xml.has.radius){
 				var stringColor = ParseUtils.parseListOfValues(xml.att.src);
 				var colors = new Array<Int>();
 				var alphas = new Array<Float>();
@@ -128,4 +168,9 @@ class Image extends Widget{
             }
         }
 	}
+}
+
+typedef Point2D = {
+	var x: Float;
+	var y: Float;
 }

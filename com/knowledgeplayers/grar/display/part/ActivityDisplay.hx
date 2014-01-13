@@ -157,6 +157,8 @@ class ActivityDisplay extends PartDisplay {
 
 	private inline function createInput(input:Input, guide: Guide):Void
 	{
+		if(!displayTemplates.exists(input.ref))
+			throw "[ActivityDisplay] There is no template for input named "+input.ref+".";
 		var button:DefaultButton = new DefaultButton(displayTemplates.get(input.ref).fast);
 		guide.add(button);
 		buttonsToInputs.set(button, input);
@@ -300,7 +302,7 @@ class ActivityDisplay extends PartDisplay {
 				case "goto":
 					var target = part.getElementById(buttonsToInputs.get(e.target).values[0]);
 					if(target.isPart())
-						GameManager.instance.displayPart(cast(e.target, Part));
+						GameManager.instance.displayPart(cast(target, Part));
 					needValidation = true;
 				case "toggle":
 					e.target.toggle();

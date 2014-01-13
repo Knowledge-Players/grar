@@ -67,6 +67,7 @@ class TweenManager {
 
 		stop(display, true, true);
 
+		// TODO use transition as parameter instead of ref
 		var actuator: IGenericActuator;
 		if(Reflect.hasField(transition, "alpha"))
 			actuator = fade(display, ref);

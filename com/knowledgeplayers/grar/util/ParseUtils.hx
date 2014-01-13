@@ -57,6 +57,14 @@ class ParseUtils {
 		return result;
 	}
 
+	public inline static function updateAttribute(attr:String, value:String, xmls:GenericStack<Xml>):Void
+	{
+		for(elem in xmls){
+			if(value != null)
+				elem.set(attr, value);
+		}
+	}
+
 	public static function updateIconsXml(value:String, xmls:GenericStack<Xml>):Void
 	{
 		for(elem in xmls){

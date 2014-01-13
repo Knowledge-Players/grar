@@ -81,7 +81,7 @@ class Item implements PartElement {
 		else{
 			this.content = content;
 		}
-		id = "";
+		id = this.content;
 	}
 
 	/**

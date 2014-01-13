@@ -161,6 +161,8 @@ class GameManager extends EventDispatcher {
 			if(this.layout != null)
 				Lib.current.removeChild(this.layout.content);
 			this.layout = LayoutManager.instance.getLayout(layout);
+			if(this.layout == null)
+				throw "[GameManager] There is no layout '"+layout+"'.";
 			Lib.current.addChild(this.layout.content);
 
 		}
