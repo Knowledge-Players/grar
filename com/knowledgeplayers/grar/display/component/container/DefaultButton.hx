@@ -288,6 +288,12 @@ class DefaultButton extends WidgetContainer {
 		}
 	}
 
+	public function addState(stateName: String, stateXml:Xml, enable: Bool = true):Void
+	{
+		states.set(stateName, createStates(new Fast(stateXml.firstElement())));
+		enabledState.set(stateName, enable);
+	}
+
 	public function setAllListeners(listener:MouseEvent -> Void):Void
 	{
 		removeAllEventsListeners(listener);

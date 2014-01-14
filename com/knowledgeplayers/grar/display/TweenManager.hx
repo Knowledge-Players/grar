@@ -354,15 +354,17 @@ class TweenManager {
 		var inOut:Array<String> = value.split(":");
 		var output:Array<Float> = new Array<Float>();
 
-		var ereg:EReg = new EReg(parameter + "([+*/-])([0-9]+\\.?[0-9]*)", "i");
+		var ereg:EReg = new EReg(parameter + "([+*/-])(.+)", "i");
 		for(val in inOut){
 			if(ereg.match(val)){
-				switch(ereg.matched(1)){
-					case "+" : output.push(Reflect.getProperty(display, parameter) + Std.parseFloat(ereg.matched(2)));
-					case "-" : output.push(Reflect.getProperty(display, parameter) - Std.parseFloat(ereg.matched(2)));
-					case "*" : output.push(Reflect.getProperty(display, parameter) * Std.parseFloat(ereg.matched(2)));
-					case "/" : output.push(Reflect.getProperty(display, parameter) / Std.parseFloat(ereg.matched(2)));
+				var result = switch(ereg.matched(1)){
+					case "+" : Reflect.getProperty(display, parameter) + Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2));
+					case "-" : Reflect.getProperty(display, parameter) - (Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2)));
+					case "*" : Reflect.getProperty(display, parameter) * Std.parseFloat(ereg.matched(2));
+					case "/" : Reflect.getProperty(display, parameter) / Std.parseFloat(ereg.matched(2));
+					default: null;
 				}
+				output.push(result);
 			}
 			else if(val == parameter)
 				output.push(Reflect.field(display, parameter));
