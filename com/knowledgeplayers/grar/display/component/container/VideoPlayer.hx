@@ -164,7 +164,7 @@ class VideoPlayer extends WidgetContainer
         if (thumbnail != null){
             var thumb:Image =   cast(displays.get("thumbnail"),Image);
             thumb.setBmp(thumbnail);
-
+            video.visible =false;
         }
 
 		changeVolume(defaultVolume);
@@ -192,12 +192,15 @@ class VideoPlayer extends WidgetContainer
 		video.smoothing = true;
 
 		containerVideo.addChild(video);
+
 		DisplayUtils.initSprite(containerVideo, maskWidth, maskHeight);
+
 	}
 
 	public function playVideo(?target: DefaultButton):Void
 	{
 		// Resizing video with original ratio
+        video.visible =true;
 		var ratio = video.videoWidth / video.videoHeight;
 		if(maskWidth/video.width > maskHeight/video.height){
 			video.scaleX = maskWidth/video.width;
