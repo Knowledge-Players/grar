@@ -172,8 +172,13 @@ class VideoPlayer extends WidgetContainer
 		var videoHeight = 0;
 		stream.client = {onMetaData: function(data){
 			totalLength = Math.round(data.duration);
-			videoWidth = data.width;
-			videoHeight = data.height;
+
+			// Resizing video with original ratio
+			var ratio = video.videoWidth / video.videoHeight;
+			video.width = maskWidth;
+			video.height = maskWidth/ratio;
+			video.x = (containerVideo.width - video.width) / 2;
+			video.y = (containerVideo.height - video.height) / 2;
 
 			// When ready, start video
 			if(autoStart)
@@ -199,19 +204,7 @@ class VideoPlayer extends WidgetContainer
 
 	public function playVideo(?target: DefaultButton):Void
 	{
-		// Resizing video with original ratio
         video.visible =true;
-		var ratio = video.videoWidth / video.videoHeight;
-		if(maskWidth/video.width > maskHeight/video.height){
-			video.scaleX = maskWidth/video.width;
-			video.scaleY = (video.width / ratio) / video.height;
-		}
-		else{
-			video.scaleY = maskHeight/video.height;
-			video.scaleX = (video.height / ratio) / video.width;
-		}
-		video.x = (containerVideo.width - video.width) / 2;
-		video.y = (containerVideo.height - video.height) / 2;
 
 		addEventListener(Event.ENTER_FRAME, enterFrame);
         stream.addEventListener(NetStatusEvent.NET_STATUS,statusHandler);

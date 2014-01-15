@@ -302,12 +302,16 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 	private function onFinishPart(e:PartEvent):Void
 	{
+		// Set to finish
+		if(buttons.exists(e.partId))
+			buttons.get(e.partId).toggle(false);
+		// Unlock next parts
 		for(part in GameManager.instance.game.getAllParts()){
-			if(buttons.exists(part.id)){
+			if(buttons.exists(part.id) && part.id != e.partId && !part.isDone){
 				if(!part.canStart())
 					buttons.get(part.id).toggleState = "lock";
 				else
-					buttons.get(part.id).toggle(!part.isDone);
+					buttons.get(part.id).toggle(true);
 			}
 		}
 	}
