@@ -358,10 +358,10 @@ class TweenManager {
 		for(val in inOut){
 			if(ereg.match(val)){
 				var result = switch(ereg.matched(1)){
-					case "+" : Reflect.getProperty(display, parameter) + Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2));
+					case "+" : Reflect.getProperty(display, parameter) + (Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2)));
 					case "-" : Reflect.getProperty(display, parameter) - (Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2)));
-					case "*" : Reflect.getProperty(display, parameter) * Std.parseFloat(ereg.matched(2));
-					case "/" : Reflect.getProperty(display, parameter) / Std.parseFloat(ereg.matched(2));
+					case "*" : Reflect.getProperty(display, parameter) * (Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2)));
+					case "/" : Reflect.getProperty(display, parameter) / (Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2)));
 					default: null;
 				}
 				output.push(result);

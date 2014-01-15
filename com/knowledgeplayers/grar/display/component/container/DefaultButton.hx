@@ -291,20 +291,18 @@ class DefaultButton extends WidgetContainer {
 	public function addState(stateName: String, stateXml:Xml, enable: Bool = true):Void
 	{
 		states.set(stateName, createStates(new Fast(stateXml.firstElement())));
-		enabledState.set(stateName, enable);
+		enabledState.set(stateName.split("_")[0], enable);
 	}
 
 	public function setAllListeners(listener:MouseEvent -> Void):Void
 	{
 		removeAllEventsListeners(listener);
-		addEventListener(MouseEvent.MOUSE_OUT, listener);
-		addEventListener(MouseEvent.MOUSE_OVER, listener);
 		addEventListener(MouseEvent.ROLL_OVER, listener);
 		addEventListener(MouseEvent.ROLL_OUT, listener);
 		addEventListener(MouseEvent.CLICK, listener);
 		addEventListener(MouseEvent.DOUBLE_CLICK, listener);
-		addEventListener(MouseEvent.MOUSE_DOWN, listener);
 		addEventListener(MouseEvent.MOUSE_UP, listener);
+		addEventListener(MouseEvent.MOUSE_DOWN, listener);
 	}
 
 	public inline function resetToggle():Void
@@ -366,8 +364,8 @@ class DefaultButton extends WidgetContainer {
 		removeEventListener(MouseEvent.ROLL_OUT, listener);
 		removeEventListener(MouseEvent.CLICK, listener);
 		removeEventListener(MouseEvent.DOUBLE_CLICK, listener);
-		removeEventListener(MouseEvent.MOUSE_DOWN, listener);
 		removeEventListener(MouseEvent.MOUSE_UP, listener);
+		removeEventListener(MouseEvent.MOUSE_DOWN, listener);
 	}
 
 	private inline function createStates(node:Fast):Map<String, Widget>
@@ -382,6 +380,13 @@ class DefaultButton extends WidgetContainer {
 	}
 
 	// Listener
+
+	override private function createButton(buttonNode:Fast):Widget
+	{
+		mouseChildren = true;
+		removeEventListener(MouseEvent.MOUSE_DOWN, onMouseEvent);
+		return super.createButton(buttonNode);
+	}
 
 	private inline function onMouseEvent(event:MouseEvent):Void
 	{
