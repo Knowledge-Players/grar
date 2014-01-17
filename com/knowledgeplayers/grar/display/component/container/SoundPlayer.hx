@@ -30,7 +30,6 @@ class SoundPlayer extends WidgetContainer
         super(xml, tilesheet);
 
         soundChannel = new SoundChannel();
-	    autoPlay = false;
     }
 
     public function setSound(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 0, capture:Float = 0,?autoFullscreen:Bool): Void{
@@ -38,6 +37,7 @@ class SoundPlayer extends WidgetContainer
         if(url == null || url == "")
             throw '[SoundPlayer] Invalid url "$url" for audio stream.';
 
+	    autoPlay = autoStart;
 	    loaded = false;
 	    var req:URLRequest = new URLRequest(url);
 	    sound = new Sound();
