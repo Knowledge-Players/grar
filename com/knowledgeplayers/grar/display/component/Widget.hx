@@ -128,6 +128,8 @@ class Widget extends Sprite{
 				else if(onComplete != null)
 					onComplete();
 			}
+			else if(onComplete != null)
+				onComplete();
 		}, 1000);
 
 		return transitionIn = transition;

@@ -8,7 +8,7 @@ import flash.media.Sound;
 interface Part extends IEventDispatcher extends PartElement extends Trackable {
 	public var file (default, null):String;
 	public var display (default, default):String;
-	public var isDone (default, default):Bool;
+	public var isDone (default, set_isDone):Bool;
 	public var parent (default, default):Part;
 	public var next (default, default):String;
 
@@ -21,8 +21,6 @@ interface Part extends IEventDispatcher extends PartElement extends Trackable {
 	public function init(xml:Fast, ?filePath:String):Void;
 
 	public function start(forced:Bool = false):Null<Part>;
-
-	public function end(completed: Bool = false):Void;
 
 	public function restart():Void;
 

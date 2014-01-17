@@ -99,7 +99,7 @@ class ActivityPart extends StructurePart
 		var idNext: String = null;
 		var thresholds = getRulesByType("threshold");
 		if(thresholds.length == 0){
-			end();
+			set_isDone();
 			getNextElement();
 		}
 		else{

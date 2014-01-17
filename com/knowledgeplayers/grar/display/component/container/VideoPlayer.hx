@@ -91,7 +91,6 @@ class VideoPlayer extends WidgetContainer
 
 		addChild(containerVideo);
         addChild(containerThumbnail);
-        addChild(containerControls);
 
 		xVideo = containerVideo.x;
 		yVideo = containerVideo.y;
@@ -146,7 +145,7 @@ class VideoPlayer extends WidgetContainer
 
 	}
 
-	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1, capture:Float = 0, autoFullscreen:Bool = false,?thumbnail:String): Void
+	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1, capture:Float = 0, autoFullscreen:Bool = false,?thumbnail:String, ?onVideoPlay: Void -> Void): Void
 	{
 		if(url == null || url == "")
 			throw '[VideoPlayer] Invalid url "$url" for video stream.';
@@ -199,13 +198,13 @@ class VideoPlayer extends WidgetContainer
 		containerVideo.addChild(video);
 
 		DisplayUtils.initSprite(containerVideo, maskWidth, maskHeight);
-
+		onVideoPlay();
 	}
 
 	public function playVideo(?target: DefaultButton):Void
 	{
         video.visible =true;
-
+		addChild(containerControls);
 		addEventListener(Event.ENTER_FRAME, enterFrame);
         stream.addEventListener(NetStatusEvent.NET_STATUS,statusHandler);
 		setPlaying(true);
@@ -252,6 +251,7 @@ class VideoPlayer extends WidgetContainer
 	{
 		removeEventListener(Event.ENTER_FRAME, enterFrame);
 		setPlaying(false);
+		removeChild(containerControls);
         containerThumbnail.visible=true;
         displays.get("bigPlay").visible=true;
 		if(stream != null){

@@ -45,7 +45,7 @@ class StructurePart extends EventDispatcher implements Part{
 	/**
      * True if the part is done
      */
-	public var isDone (default, default):Bool;
+	public var isDone (default, set_isDone):Bool;
 
 	/**
      * Tokens in this part
@@ -171,7 +171,7 @@ class StructurePart extends EventDispatcher implements Part{
 	/**
 	* End the part
 	**/
-	public function end(completed: Bool = true):Void
+	public function set_isDone(completed: Bool = true):Bool
 	{
 		isDone = completed;
 		// Add bounty to the right perks
@@ -184,6 +184,7 @@ class StructurePart extends EventDispatcher implements Part{
 		if(soundLoopChannel != null)
 			soundLoopChannel.stop();
 
+		return completed;
 	}
 
 	/**

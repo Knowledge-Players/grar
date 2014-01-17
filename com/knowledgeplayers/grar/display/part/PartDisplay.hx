@@ -97,7 +97,7 @@ class PartDisplay extends KpDisplay {
 
 	public function exitPart(completed: Bool = true):Void
 	{
-		part.end(completed);
+		part.set_isDone(completed);
 		unLoad();
 		if(part.file != null)
 			Localiser.instance.popLocale();

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.event.GameEvent;
 import com.knowledgeplayers.grar.structure.part.Item;
 import com.knowledgeplayers.grar.structure.part.PartElement;
 import flash.events.Event;
@@ -68,9 +69,9 @@ class DialogDisplay extends PartDisplay {
 		}
 
 		if(pattern != null){
-			var nextItem: Item = pattern.getNextItem();
-			if(nextItem != null && !exitPattern){
-				setupItem(nextItem);
+			var next: Item = pattern.getNextItem();
+			if(next != null && !exitPattern){
+				crawlTextGroup(next, pattern);
 			}
 			else if(currentPattern.nextPattern != "")
 				goToPattern(currentPattern.nextPattern);
