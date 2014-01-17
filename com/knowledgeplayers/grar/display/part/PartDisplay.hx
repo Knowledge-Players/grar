@@ -97,7 +97,7 @@ class PartDisplay extends KpDisplay {
 
 	public function exitPart(completed: Bool = true):Void
 	{
-		part.set_isDone(completed);
+		part.isDone = completed;
 		unLoad();
 		if(part.file != null)
 			Localiser.instance.popLocale();
@@ -123,37 +123,7 @@ class PartDisplay extends KpDisplay {
 		}
 
 		if(Std.is(currentElement, Item)){
-			if(textGroups != null){
-				var groupKey: String = null;
-				for(key in textGroups.keys()){
-					if(textGroups.get(key).exists(cast(currentElement, Item).ref)){
-						groupKey = key;
-						break;
-					}
-				}
-
-				if(groupKey != null){
-					var textItem = null;
-					var i = 0;
-					while(i < Lambda.count(textGroups.get(groupKey))){
-						if(i > 0){
-							textItem = cast(part.getNextElement(), Item);
-						}
-						else{
-							textItem = cast(currentElement, Item);
-						}
-						if(textItem.endScreen){
-							part.isDone = true;
-							dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
-						}
-						setupItem(cast(textItem, Item), (i == 0));
-						i++;
-					}
-				}
-				else{
-					setupItem(cast(currentElement, Item));
-				}
-			}
+			crawlTextGroup(cast(currentElement, Item));
 		}
 
 		else if(currentElement.isPattern()){
@@ -232,6 +202,44 @@ class PartDisplay extends KpDisplay {
 		inventory = null;
 		itemSound = null;
 		itemSoundChannel = null;
+	}
+
+	private function crawlTextGroup(item: Item, ?pattern: Pattern):Void
+	{
+		if(textGroups != null){
+			var groupKey: String = null;
+			for(key in textGroups.keys()){
+				if(textGroups.get(key).exists(item.ref)){
+					groupKey = key;
+					break;
+				}
+			}
+
+			if(groupKey != null){
+				var textItem = null;
+				var i = 0;
+				while(i < Lambda.count(textGroups.get(groupKey))){
+					if(i > 0){
+						if(pattern != null)
+							textItem = pattern.getNextItem();
+						else
+							textItem = cast(part.getNextElement(), Item);
+					}
+					else{
+						textItem = item;
+					}
+					if(textItem != null && textItem.endScreen){
+						part.isDone = true;
+						dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+					}
+					setupItem(cast(textItem, Item), (i == 0));
+					i++;
+				}
+			}
+			else{
+				setupItem(item);
+			}
+		}
 	}
 
 	override private function createElement(elemNode:Fast):Widget
