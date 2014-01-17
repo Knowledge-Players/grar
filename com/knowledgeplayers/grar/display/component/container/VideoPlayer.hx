@@ -264,7 +264,7 @@ class VideoPlayer extends WidgetContainer
 	private function playOrPause(?target: DefaultButton)
 	{
 		displays.get("bigPlay").visible = false;
-		containerThumbnail.visible=true;
+		containerThumbnail.visible=false;
 		if(!isPlaying)
 			playVideo();
 		else
