@@ -78,6 +78,7 @@ class VideoPlayer extends WidgetContainer
     private var volumeEnCours:Float = 0;
     private var ratioEnCours:Float = 1;
 
+	dynamic private function onVideoPlay(){};
 
 	public function new(?xml: Fast, ?tilesheet: TilesheetEx)
 	{
@@ -149,8 +150,8 @@ class VideoPlayer extends WidgetContainer
 	{
 		if(url == null || url == "")
 			throw '[VideoPlayer] Invalid url "$url" for video stream.';
-		if(stream != null)
-			init();
+		//if(stream != null)
+		//	init();
 		//_timeToCapture = capture
 		stream = new NetStream(connection);
 		this.loop = loop;
@@ -198,7 +199,7 @@ class VideoPlayer extends WidgetContainer
 		containerVideo.addChild(video);
 
 		DisplayUtils.initSprite(containerVideo, maskWidth, maskHeight);
-		onVideoPlay();
+		this.onVideoPlay = onVideoPlay;
 	}
 
 	public function playVideo(?target: DefaultButton):Void
@@ -207,6 +208,7 @@ class VideoPlayer extends WidgetContainer
 		addChild(containerControls);
 		addEventListener(Event.ENTER_FRAME, enterFrame);
         stream.addEventListener(NetStatusEvent.NET_STATUS,statusHandler);
+		onVideoPlay();
 		setPlaying(true);
 		stream.resume();
         if(autoFullscreen.value){
@@ -232,9 +234,8 @@ class VideoPlayer extends WidgetContainer
                     fastForward(0);
                     setFullscreen(false);
                     containerThumbnail.visible=true;
-                    displays.get("bigPlay").visible=true;
                     if(!loop)
-                        pauseVideo();
+                        stopVideo();
 
                     dispatchEvent(new Event(Event.COMPLETE));
         }
@@ -262,8 +263,8 @@ class VideoPlayer extends WidgetContainer
 
 	private function playOrPause(?target: DefaultButton)
 	{
-        containerThumbnail.visible=false;
-        displays.get("bigPlay").visible=false;
+		displays.get("bigPlay").visible = false;
+		containerThumbnail.visible=true;
 		if(!isPlaying)
 			playVideo();
 		else
@@ -294,6 +295,12 @@ class VideoPlayer extends WidgetContainer
             volumeEnCours = ratioEnCours;
         }
         changeVolume(volumeEnCours);
+	}
+
+	public function hideControllers():Void
+	{
+		removeChild(displays.get("bigPlay"));
+		containerControls.visible = false;
 	}
 
 	public function setFullscreen(fullscreen:Bool):Void
@@ -616,23 +623,6 @@ class VideoPlayer extends WidgetContainer
 				cursor.x = progressBar.getChildAt(1).width + progressBar.x - cursor.width/2;
 				lockCursor = false;
 			}
-
-            /*
-
-			if(stream.time>=totalLength){
-				cursor.x = progressBar.x-cursor.width/2;
-				fastForward(0);
-				setFullscreen(false);
-                containerThumbnail.visible=true;
-                displays.get("bigPlay").visible=true;
-				if(!loop)
-					pauseVideo();
-
-				dispatchEvent(new Event(Event.COMPLETE));
-                trace('dispatch COMPLETE');
-			}
-
-			*/
 		}
 	}
 
