@@ -29,10 +29,25 @@ class Image extends Widget{
 		if(xml != null){
 			createImg(xml, tilesheet);
 
-			if(xml.has.width)
-				width = Std.parseFloat(xml.att.width);
-			if(xml.has.height)
-				height = Std.parseFloat(xml.att.height);
+			if(xml.has.clip){
+				var mask = new Shape();
+				var clipOrigin = ParseUtils.parseListOfFloatValues(xml.att.clip, ";");
+				for(i in 0...numChildren){
+					getChildAt(i).x -= clipOrigin[0];
+					getChildAt(i).y -= clipOrigin[1];
+				}
+				mask.graphics.beginFill(0);
+				mask.graphics.drawRect(0, 0, Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height));
+				mask.graphics.endFill();
+				this.mask = mask;
+				addChild(mask);
+			}
+			else{
+				if(xml.has.width)
+					width = Std.parseFloat(xml.att.width);
+				if(xml.has.height)
+					height = Std.parseFloat(xml.att.height);
+			}
 		}
 	}
 

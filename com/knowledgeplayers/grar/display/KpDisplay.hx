@@ -190,6 +190,8 @@ class KpDisplay extends Sprite {
 					displayTemplates.set(elemNode.att.ref, {fast: elemNode, z: zIndex++});
 					null;
 				case "include" :
+					if(!DisplayUtils.templates.exists(elemNode.att.ref))
+						throw "[KpDisplay] There is no template '"+elemNode.att.ref+"'.";
 					var tmpXml = Xml.parse(DisplayUtils.templates.get(elemNode.att.ref).toString()).firstElement();
 					for(att in elemNode.x.attributes()){
 						if(att != "ref")

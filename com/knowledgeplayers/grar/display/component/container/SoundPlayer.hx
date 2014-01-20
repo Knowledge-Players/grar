@@ -49,6 +49,25 @@ class SoundPlayer extends WidgetContainer
 	    sound.load(req);
     }
 
+	public function playSound():Void
+	{
+		if(loaded){
+			setPlaying(true);
+			soundChannel = sound.play(pausePosition);
+			soundChannel.addEventListener(Event.SOUND_COMPLETE,onSoundComplete);
+		}
+		else{
+			autoPlay = true;
+		}
+	}
+
+	public function pauseSound():Void
+	{
+		pausePosition = soundChannel.position;
+		setPlaying(false);
+		soundChannel.stop();
+	}
+
     override public function createElement(elemNode:Fast):Widget
     {
         var widget = super.createElement(elemNode);
@@ -56,6 +75,8 @@ class SoundPlayer extends WidgetContainer
 			chrono = cast(widget, ChronoCircle);
         return widget;
     }
+
+	// Privates
 
     override private function setButtonAction(button:DefaultButton, action:String):Void
     {
@@ -77,25 +98,6 @@ class SoundPlayer extends WidgetContainer
     {
         pausePosition = 0;
 	    setPlaying(false);
-    }
-
-    private function playSound():Void
-    {
-        if(loaded){
-	        setPlaying(true);
-	        soundChannel = sound.play(pausePosition);
-		    soundChannel.addEventListener(Event.SOUND_COMPLETE,onSoundComplete);
-        }
-	    else{
-			autoPlay = true;
-        }
-    }
-
-    private function pauseSound():Void
-    {
-        pausePosition = soundChannel.position;
-        setPlaying(false);
-        soundChannel.stop();
     }
 
     private function setPlaying(isPlaying: Bool)

@@ -78,9 +78,9 @@ class ActivityDisplay extends PartDisplay {
 		if(validationRules.length > 1)
 			throw "[ActivityDisplay] Multiple correction rules in activity '"+part.id+"'. Pick only one!";
 		if(validationRules.length == 1){
-			if(!displays.exists("validate"))
-				throw "[ActivityDisplay] You must have a button with ref 'validate' in order to use the correction rule.";
-			validationButton = cast(displays.get("validate"), DefaultButton);
+			if(!displays.exists(validationRules[0].id))
+				throw "[ActivityDisplay] You must have a button with ref '"+validationRules[0].id+"' in order to use the correction rule.";
+			validationButton = cast(displays.get(validationRules[0].id), DefaultButton);
 			switch(validationRules[0].value){
 				case "auto": autoCorrect = true;
 				case "onvalidate":
