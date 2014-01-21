@@ -79,7 +79,7 @@ class ActivityDisplay extends PartDisplay {
 			throw "[ActivityDisplay] Multiple correction rules in activity '"+part.id+"'. Pick only one!";
 		if(validationRules.length == 1){
 			if(!displays.exists(validationRules[0].id))
-				throw "[ActivityDisplay] You must have a button with ref '"+validationRules[0].id+"' in order to use the correction rule.";
+				throw "[ActivityDisplay] You must have a button with ref '"+validationRules[0].id+"' (same as the id of your rule) in order to use the correction rule.";
 			validationButton = cast(displays.get(validationRules[0].id), DefaultButton);
 			switch(validationRules[0].value){
 				case "auto": autoCorrect = true;
@@ -201,12 +201,14 @@ class ActivityDisplay extends PartDisplay {
 		}
 		else if(hasCorrection){
 			for(button in inputs){
-				var correction = cast(part, ActivityPart).validate(buttonsToInputs.get(button), value);
+				var input: Input = buttonsToInputs.get(button);
+				var correction = cast(part, ActivityPart).validate(input, Std.string(input.selected));
 				for(child in button.children)
 					if(child.ref == validationRef && Std.is(child, DefaultButton))
 						cast(child, DefaultButton).toggleState = Std.string(correction);
 			}
 			validationButton.buttonAction = endActivity;
+			validationButton.toggleState = "end";
 			disableInputs();
 		}
 		var debriefRules = cast(part, ActivityPart).getRulesByType("debrief");
