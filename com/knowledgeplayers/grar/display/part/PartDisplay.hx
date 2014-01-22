@@ -383,6 +383,9 @@ class PartDisplay extends KpDisplay {
 			if(text.introScreen != null){
 				cleanDisplay();
 
+				setSpeaker(text.author, text.transition);
+				setText(text, isFirst);
+
 				// The intro screen automatically removes itself after its duration
 				var intro = text.introScreen;
 				var introDisplay:IntroScreen = cast(displays.get(intro.ref), IntroScreen);
@@ -391,8 +394,6 @@ class PartDisplay extends KpDisplay {
 				introDisplay.addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
 				{
 					introScreenOn = false;
-					setSpeaker(text.author, text.transition);
-					setText(text, isFirst);
 					displayPart();
 				});
 				introScreenOn = true;

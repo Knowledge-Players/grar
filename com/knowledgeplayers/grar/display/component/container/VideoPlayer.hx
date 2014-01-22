@@ -252,7 +252,8 @@ class VideoPlayer extends WidgetContainer
 	{
 		removeEventListener(Event.ENTER_FRAME, enterFrame);
 		setPlaying(false);
-		removeChild(containerControls);
+		if(contains(containerControls))
+			removeChild(containerControls);
         containerThumbnail.visible=true;
         displays.get("bigPlay").visible=true;
 		if(stream != null){
