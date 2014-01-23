@@ -65,7 +65,7 @@ class TweenManager {
 			return null;
         var totalDelay:Float = delay + transition.delay;
 
-		stop(display, null, true, true);
+		//stop(display, null, true, true);
 
 		// TODO use transition as parameter instead of ref
 		var actuator: IGenericActuator;
