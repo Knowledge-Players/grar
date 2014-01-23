@@ -27,7 +27,6 @@ class UrlField extends Sprite {
 	{
 		super();
 		this.url = url;
-        trace('url  : '+url);
 		mouseEnabled = false;
 		buttonMode = true;
 		addEventListener(MouseEvent.CLICK, onClick);
