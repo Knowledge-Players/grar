@@ -23,14 +23,12 @@ class UrlField extends Sprite {
      * @param	text : text to display instead of the URL
      */
 
-	public function new(url:String, ?text:String)
+	public function new(url:String)
 	{
 		super();
 		this.url = url;
-		textField = new StyledTextField(StyleParser.getStyle("url"));
-		textField.text = (text == null ? url : text);
-		textField.mouseEnabled = false;
-		addChild(textField);
+        trace('url  : '+url);
+		mouseEnabled = false;
 		buttonMode = true;
 		addEventListener(MouseEvent.CLICK, onClick);
 	}
