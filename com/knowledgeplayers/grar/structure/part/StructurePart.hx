@@ -47,6 +47,11 @@ class StructurePart extends EventDispatcher implements Part{
      */
 	public var isDone (default, set_isDone):Bool;
 
+    /**
+     * True if the part is started
+     */
+    public var isStarted (default, set_isStarted):Bool;
+
 	/**
      * Tokens in this part
      */
@@ -171,21 +176,30 @@ class StructurePart extends EventDispatcher implements Part{
 	/**
 	* End the part
 	**/
-	public function set_isDone(completed: Bool = true):Bool
-	{
-		isDone = completed;
-		// Add bounty to the right perks
-		if(isDone){
-			for(perk in perks.keys())
-				ScoreChart.instance.addScoreToPerk(perk, perks.get(perk));
-		}
+    public function set_isDone(completed: Bool = true):Bool
+    {
+        isDone = completed;
+// Add bounty to the right perks
+        if(isDone){
+            for(perk in perks.keys())
+                ScoreChart.instance.addScoreToPerk(perk, perks.get(perk));
+        }
 
-		// Stop sound loop
-		if(soundLoopChannel != null)
-			soundLoopChannel.stop();
+// Stop sound loop
+        if(soundLoopChannel != null)
+            soundLoopChannel.stop();
 
-		return completed;
-	}
+        return completed;
+    }
+
+    /**
+	* Start the part
+	**/
+    public function set_isStarted(completed: Bool = true):Bool
+    {
+        isStarted = completed;
+        return completed;
+    }
 
 	/**
 	* @param    startIndex : Next element after this position
