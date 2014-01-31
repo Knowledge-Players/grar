@@ -51,7 +51,7 @@ class ScoreChart {
 	{
 		if(!perks.exists(perk))
 			perks.set(perk, new Perk(perk));
-		else
+		//else
 			perks.get(perk).addToScore(score);
 	}
 

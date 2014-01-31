@@ -9,6 +9,7 @@ interface Part extends IEventDispatcher extends PartElement extends Trackable {
 	public var file (default, null):String;
 	public var display (default, default):String;
 	public var isDone (default, set_isDone):Bool;
+    public var isStarted (default, set_isStarted):Bool;
 	public var parent (default, default):Part;
 	public var next (default, default):String;
 

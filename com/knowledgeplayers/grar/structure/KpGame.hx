@@ -406,6 +406,7 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
     private function checkLoading():Void
     {
         if(getLoadingCompletion() == 1 && (numStyleSheet == numStyleSheetLoaded)){
+
         	//checkIntegrity();
         	// Menu hasn't been set, creating the default
             if(menu == null){
@@ -417,10 +418,15 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
                 menu = menuXml;
             }
             if(!layoutLoaded){
-	            if(stateInfos.tmpState != null)
+	            if(stateInfos.tmpState != null) {
+                    //stateInfos.initTrackable();
 	                stateInfos.loadStateInfos(stateInfos.tmpState);
-	            for(part in getAllParts())
+                }
+
+	            for(part in getAllParts()) {
                     part.isDone = stateInfos.isPartFinished(part.id);
+                    part.isStarted = stateInfos.isPartStarted(part.id);
+                }
                 // Load Layout
                 LayoutManager.instance.parseXml(AssetsStorage.getXml(structureXml.node.Grar.node.Parameters.node.Layout.att.file));
             }

@@ -27,7 +27,10 @@ class StateInfos {
 		bookmark = Std.parseInt(stateInfosArray[1]);
 
 		var trackable:Array<String> = stateInfosArray[2].split("-");
+
 		if(allItem.length > 0){
+            if (allItem.length != trackable.length)
+                trackable = initTrackable();
 			for(i in 0...trackable.length){
 				if(i < allItem.length){
 					completion.set(allItem[i].id, Std.parseInt(trackable[i]));
@@ -41,6 +44,16 @@ class StateInfos {
 
 		checksum = Std.parseInt(stateInfosArray[3]);
 	}
+
+    public function initTrackable():Array<String>
+    {
+        var a:Array<String> = new Array<String>();
+        allItem = GameManager.instance.game.getAllItems();
+        for(i in 0...allItem.length){
+            a.push("0");
+        }
+        return a;
+    }
 
 	public function saveStateInfos():String
 	{
@@ -56,14 +69,24 @@ class StateInfos {
 		return stringBuf.toString();
 	}
 
+    public function setPartStarted(partId:String):Void
+    {
+        completion.set(partId, 1);
+    }
+
 	public function setPartFinished(partId:String):Void
 	{
-		completion.set(partId, 1);
+		completion.set(partId, 2);
 	}
+
+    public function isPartStarted(partId:String):Bool
+    {
+        return completion.get(partId) == 1;
+    }
 
 	public function isPartFinished(partId:String):Bool
 	{
-		return completion.get(partId) == 1;
+		return completion.get(partId) == 2;
 	}
 
 	public function isEmpty():Bool
