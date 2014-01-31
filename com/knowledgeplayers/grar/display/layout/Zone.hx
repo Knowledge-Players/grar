@@ -33,7 +33,7 @@ class Zone extends KpDisplay {
 
 	private var zoneWidth:Float;
 	private var zoneHeight:Float;
-	private var layer:TileLayer;
+//	private var layer:TileLayer;
 	private var soundState:Bool = true;
 	private var menuXml:Fast;
 
@@ -53,16 +53,16 @@ class Zone extends KpDisplay {
 		else
 			DisplayUtils.initSprite(this, zoneWidth, zoneHeight);
 		if(_zone.has.ref){
-			layer = new TileLayer(UiFactory.tilesheet);
+			layers.set("ui", new TileLayer(UiFactory.tilesheet));
 
 			ref = _zone.att.ref;
 			dispatchEvent(new LayoutEvent(LayoutEvent.NEW_ZONE, ref, this));
-			addChild(layer.view);
+			addChild(layers.get("ui").view);
 			for(element in _zone.elements){
 				createElement(element);
 			}
 
-			layer.render();
+			//layer.render();
 
 		}
 		else if(_zone.has.rows){
@@ -218,7 +218,7 @@ class Zone extends KpDisplay {
 			#end
 		}
 
-		layer.render();
+		//layer.render();
 		return elem;
 	}
 

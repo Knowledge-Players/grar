@@ -1,5 +1,4 @@
 package com.knowledgeplayers.grar.display.text;
-import com.knowledgeplayers.grar.display.style.StyleParser;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.Lib;

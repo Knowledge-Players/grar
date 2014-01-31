@@ -112,8 +112,12 @@ class KpDisplay extends Sprite {
 
 		createDisplay();
 
-		if(displayFast.has.transitionIn)
+		if(displayFast.has.transitionIn){
 			transitionIn = displayFast.att.transitionIn;
+			addEventListener(Event.ADDED_TO_STAGE, function(e){
+				TweenManager.applyTransition(this, transitionIn);
+			});
+		}
 		if(displayFast.has.transitionOut)
 			transitionOut = displayFast.att.transitionOut;
 		if(displayFast.has.layout)

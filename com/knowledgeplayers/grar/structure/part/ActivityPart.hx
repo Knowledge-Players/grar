@@ -96,10 +96,16 @@ class ActivityPart extends StructurePart
 			}
 		}
 
+		// Reset inputs
+		for(group in groups){
+			for(input in group.inputs)
+				input.selected = false;
+		}
+
 		var idNext: String = null;
 		var thresholds = getRulesByType("threshold");
 		if(thresholds.length == 0){
-			set_isDone();
+			isDone = true;
 			getNextElement();
 		}
 		else{

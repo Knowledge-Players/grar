@@ -199,7 +199,8 @@ class VideoPlayer extends WidgetContainer
 		containerVideo.addChild(video);
 
 		DisplayUtils.initSprite(containerVideo, maskWidth, maskHeight);
-		this.onVideoPlay = onVideoPlay;
+		if(onVideoPlay != null)
+			this.onVideoPlay = onVideoPlay;
 	}
 
 	public function playVideo(?target: DefaultButton):Void

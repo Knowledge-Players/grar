@@ -166,15 +166,15 @@ class PartDisplay extends KpDisplay {
 	public function goToPattern(target:String):Void
 	{
 		var i = 0;
-		while(i < part.elements.length && !(part.elements[i].isPattern() && cast(part.elements[i], Pattern).id == target)){
+		while(i < part.elements.length && part.elements[i].id != target){
 			i++;
 		}
 		if(i == part.elements.length)
 			throw "[PartDisplay] There is no pattern with ref \""+target+"\"";
 
-		part.startElement(part.elements[i].id);
-		cast(part.elements[i], Pattern).restart();
-		startPattern(cast(part.elements[i], Pattern));
+		var elem = part.elements[i];
+		part.startElement(elem.id);
+		nextElement(part.getElementIndex(elem)-1);
 	}
 
 	// Privates
@@ -247,6 +247,7 @@ class PartDisplay extends KpDisplay {
 		if(elemNode.name.toLowerCase() == "inventory"){
 			inventory = new InventoryDisplay(elemNode);
 			inventory.init(part.tokens);
+			addElement(inventory, elemNode);
 			return null;
 		}
 		else if(elemNode.name.toLowerCase() == "intro"){
@@ -329,10 +330,6 @@ class PartDisplay extends KpDisplay {
 				for(b in bkgs){
 					if(!displays.exists(b))
 						throw '[PartDisplay] There is no background with ref "$b"';
-					var bkg:Image = cast(displays.get(b), Image);
-					if(bkg != null){
-						addChildAt(bkg, 0);
-					}
 				}
 				previousBackground = background;
 			}
@@ -347,7 +344,7 @@ class PartDisplay extends KpDisplay {
 			var char = cast(displays.get(author), CharacterDisplay);
 
 			if(char != currentSpeaker){
-				if(currentSpeaker != null && !Std.is(this, StripDisplay)){
+				if(currentSpeaker != null && contains(currentSpeaker) && !Std.is(this, StripDisplay)){
 					removeChild(currentSpeaker);
 				}
 				currentSpeaker = char;
@@ -459,7 +456,12 @@ class PartDisplay extends KpDisplay {
 		var array = selectElements();
 
 		// Dynamic timeline
-		var tl: Timeline = timelines.get(currentItem.timelineIn);
+		var tl: Timeline = null;
+		if(currentItem != null){
+			nextTimeline = currentItem.timelineIn;
+			tl = currentItem != null ? timelines.get(nextTimeline) : null;
+		}
+
 		if(tl != null){
 			for(elem in tl.elements){
 				if(elem.dynamicValue == null)
@@ -494,16 +496,19 @@ class PartDisplay extends KpDisplay {
 			}
 		}
 		if(tl != null && currentItem.isText()){
-			tl.addEventListener(currentItem.ref, function(e){
+			var listener: Event -> Void = null;
+			var ref = currentItem.ref;
+			listener = function(e){
 				if(currentItem != null && Std.is(currentItem, TextItem))
 					GameManager.instance.playSound(cast(currentItem, TextItem).sound);
-			});
+				tl.removeEventListener(ref, listener);
+			}
+			tl.addEventListener(ref, listener);
 		}
 
 		array.sort(sortDisplayObjects);
 		numWidgetReady = 0;
 		numWidgetAdded = array.length;
-		nextTimeline = currentItem.timelineIn;
 		for(obj in array){
 			obj.onComplete = onWidgetAdded;
 			if(obj.zz == 0)
@@ -577,6 +582,10 @@ class PartDisplay extends KpDisplay {
 			return false;
 		}
 
+		// Background
+		if(key == previousBackground)
+			return true;
+
 		// Buttons
 		if(Std.is(object, DefaultButton)){
 
@@ -631,6 +640,10 @@ class PartDisplay extends KpDisplay {
 
 		// Exclude IntroScreen
 		if(Std.is(object, IntroScreen))
+			return false;
+
+		// Exclude Inventory
+		if(Std.is(object, InventoryDisplay))
 			return false;
 
 		return true;

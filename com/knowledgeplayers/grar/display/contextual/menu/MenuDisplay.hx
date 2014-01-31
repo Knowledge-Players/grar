@@ -88,7 +88,14 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
     override public function parseContent(content:Xml):Void
     {
-        super.parseContent(content);
+        var root: Xml;
+        if(content.nodeType != Xml.Document){
+            root = Xml.createDocument();
+	        root.addChild(content);
+        }
+	    else
+            root = content;
+        super.parseContent(root);
 
 		if(displayFast == null)
 			displayFast = new Fast(content.firstElement());

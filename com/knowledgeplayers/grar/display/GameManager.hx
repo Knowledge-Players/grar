@@ -357,7 +357,7 @@ class GameManager extends EventDispatcher {
 		var tokenFast = new Fast(tokens.firstElement());
 		parseDisplayTokens(AssetsStorage.getXml(tokenFast.att.display));
 		for(token in tokenFast.nodes.Token){
-			inventory.set(token.att.ref, new Token(token));
+			inventory.set(token.att.id, new Token(token));
 		}
 	}
 

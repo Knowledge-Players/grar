@@ -51,35 +51,50 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 	@:setter(filters)
 	public function set_filters(filters:Array<BitmapFilter>):Void
 	{
-		trueLayer.view.filters = filters;
-		super.filters = filters;
+		super.filters = trueLayer.view.filters = filters;
 	}
 
 	@:getter(width)
 	public function get_width():Float
 	{
-		return tileSprite.width;
+		return tileSprite != null ? tileSprite.width : 0;
 	}
 
 	@:setter(width)
 	public function set_width(width:Float):Void
 	{
-		tileSprite.scaleX *= width / tileSprite.width;
-		renderNeeded();
+		if(tileSprite != null){
+			tileSprite.scaleX *= width / tileSprite.width;
+			renderNeeded();
+		}
+		else{
+			addEventListener(Event.ADDED_TO_STAGE, function(e){
+				tileSprite.scaleX *= width / tileSprite.width;
+				renderNeeded();
+			});
+		}
 		super.width = width;
 	}
 
 	@:getter(height)
 	public function get_height():Float
 	{
-		return tileSprite.height;
+		return tileSprite != null ? tileSprite.height : 0;
 	}
 
 	@:setter(height)
 	public function set_height(height:Float):Void
 	{
-		tileSprite.scaleY *= height / tileSprite.height;
-		renderNeeded();
+		if(tileSprite != null){
+			tileSprite.scaleY *= height / tileSprite.height;
+			renderNeeded();
+		}
+		else{
+			addEventListener(Event.ADDED_TO_STAGE, function(e){
+				tileSprite.scaleY *= height / tileSprite.height;
+				renderNeeded();
+			});
+		}
 		super.height = height;
 	}
 
@@ -90,8 +105,16 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 	override public function set_x(x:Float):Float
 	#end
 	{
-		tileSprite.x = x + tileSprite.width/2;
-		renderNeeded();
+		if(tileSprite != null){
+			tileSprite.x = x + tileSprite.width/2;
+			renderNeeded();
+		}
+		else{
+			addEventListener(Event.ADDED_TO_STAGE, function(e){
+				tileSprite.x = x + tileSprite.width/2;
+				renderNeeded();
+			});
+		}
 		#if !flash
 		return tileSprite.x;
 		#else
@@ -106,8 +129,16 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 	override public function set_y(y:Float):Float
 	#end
 	{
-		tileSprite.y = y + tileSprite.height/2;
-		renderNeeded();
+		if(tileSprite != null){
+			tileSprite.y = y + tileSprite.height/2;
+			renderNeeded();
+		}
+		else{
+			addEventListener(Event.ADDED_TO_STAGE, function(e){
+				tileSprite.y = y + tileSprite.height/2;
+				renderNeeded();
+			});
+		}
 		#if !flash
 		return tileSprite.y;
 		#else
@@ -117,9 +148,17 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 
 	override public function set_scale(scale:Float):Float
 	{
-		tileSprite.scale = scale;
 		super.set_scale(scale);
-		renderNeeded();
+		if(tileSprite != null){
+			tileSprite.scale = scale;
+			renderNeeded();
+		}
+		else{
+			addEventListener(Event.ADDED_TO_STAGE, function(e){
+				tileSprite.scale = scale;
+				renderNeeded();
+			});
+		}
 		return scale;
 	}
 
@@ -127,16 +166,33 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 	public function set_scaleX(scaleX:Float):Void
 	{
 		super.scaleX = scaleX;
-		tileSprite.scaleX = scaleX;
-		renderNeeded();
+		if(tileSprite != null){
+			super.scaleX = tileSprite.scaleX = scaleX;
+			renderNeeded();
+		}
+		else{
+			addEventListener(Event.ADDED_TO_STAGE, function(e){
+				tileSprite.scaleX = scaleX;
+				renderNeeded();
+			});
+		}
 	}
 
 	@:setter(scaleY)
 	public function set_scaleY(scaleY:Float):Void
 	{
 		super.scaleY = scaleY;
-		tileSprite.scaleY = scaleY;
-		renderNeeded();
+		if(tileSprite != null){
+			super.scaleY = scaleY;
+			tileSprite.scaleY = scaleY;
+			renderNeeded();
+		}
+		else{
+			addEventListener(Event.ADDED_TO_STAGE, function(e){
+				tileSprite.scaleY = scaleY;
+				renderNeeded();
+			});
+		}
 	}
 
 	@:setter(visible)
@@ -170,6 +226,13 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 			actuator.onUpdate(renderNeeded);
 		else if(transform != null)
 			transform.onUpdate(renderNeeded);
+	}
+
+	@:setter(alpha)
+	override public function set_alpha(alpha:Float):Void
+	{
+		super.alpha = tileSprite.alpha = alpha;
+		renderNeeded();
 	}
 
 	public function getMask():Sprite
