@@ -110,6 +110,10 @@ class DefaultButton extends WidgetContainer {
 			graphics.drawRect (-width/2, -height/2, width, height);
 			graphics.endFill();
 		#end
+
+		addEventListener(Event.ADDED_TO_STAGE, function(e){
+			toggleState = defaultState;
+		});
 	}
 
 	public function initStates(?xml: Fast, ?timelines: Map<String, Timeline>):Void
@@ -132,7 +136,6 @@ class DefaultButton extends WidgetContainer {
 			if(Lambda.count(states) == 0)
 				states.set(defaultState+"_out", createStates(tmpXml));
 			tmpXml = null;
-			toggleState = defaultState;
 		}
 
 	}
@@ -262,18 +265,16 @@ class DefaultButton extends WidgetContainer {
 			var array = new Array<Widget>();
 			var layerIndex: Int = -1;
 			for(widget in list){
-				if(!Std.is(widget, TileImage))
-					array.push(widget);
-				else{
-					widget.visible = true;
-					if(layerIndex == -1) layerIndex = widget.zz;
-				}
+				array.push(widget);
 			}
 
 			array.sort(sortDisplayObjects);
 			for(obj in array){
 				content.addChild(obj);
 				children.push(obj);
+				if(Std.is(obj, TileImage)){
+					if(layerIndex == -1) layerIndex = obj.zz;
+				}
 			}
 
 			var j = 0;

@@ -43,6 +43,9 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 			if(tileSprite != null)
 				origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY, alpha: tileSprite.alpha};
 			this.visible = true;
+
+			TweenManager.applyTransition(this, transformation);
+
 			if(onComplete != null)
 				onComplete();
 		}, 1000);
@@ -207,16 +210,12 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 
 		tileSprite.visible = visible;
 		var actuator: IGenericActuator = null;
-		var transform: IGenericActuator = null;
 
 		if(visible){
 			reset();
 			actuator = TweenManager.applyTransition(tileSprite, transitionIn);
 			if(actuator != null && onComplete != null)
 				actuator.onComplete(onComplete);
-
-			TweenManager.resetTransform(trueLayer.view);
-			transform = TweenManager.applyTransition(trueLayer.view, transformation);
 		}
 		else{
 			actuator = TweenManager.applyTransition(tileSprite, transitionOut);
@@ -224,8 +223,6 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		renderNeeded();
 		if(actuator != null)
 			actuator.onUpdate(renderNeeded);
-		else if(transform != null)
-			transform.onUpdate(renderNeeded);
 	}
 
 	@:setter(alpha)

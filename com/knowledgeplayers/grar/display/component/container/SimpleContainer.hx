@@ -62,6 +62,7 @@ class SimpleContainer extends WidgetContainer{
 			for(child in xml.elements){
 				createElement(child);
 			}
+			removeEventListener(Event.ADDED_TO_STAGE, onAdded);
 		}
 		dispatchEvent(new DisplayEvent(DisplayEvent.LOADED));
 	}
@@ -120,6 +121,40 @@ class SimpleContainer extends WidgetContainer{
 			addElement(widget);
 		}
 		return widget;
+	}
+
+	public function setText(pContent:String, ?pKey:String):Void
+	{
+		if(pKey != null && pKey != " "){
+			if(displays.exists(pKey)){
+					cast(displays.get(pKey), ScrollPanel).setContent(pContent);
+			}
+		}
+		else{
+			for(elem in displays){
+				if(Std.is(elem, ScrollPanel)){
+					cast(elem, ScrollPanel).setContent(pContent);
+					break;
+				}
+			}
+		}
+	}
+
+	// Private
+
+	override private function setButtonAction(button:DefaultButton, action:String):Void
+	{
+		if(action == "close"){
+			button.buttonAction = function(?target: DefaultButton){
+				if(transitionOut != null){
+					TweenManager.applyTransition(this, transitionOut).onComplete(function(){
+						parent.removeChild(this);
+					});
+				}
+				else
+					parent.removeChild(this);
+			}
+		}
 	}
 
 	override private function createText(textNode:Fast):Widget
