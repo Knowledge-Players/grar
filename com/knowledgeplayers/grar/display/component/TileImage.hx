@@ -40,7 +40,7 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		super(xml);
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove, 1000);
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
-			if(tileSprite != null)
+			if(tileSprite != null && origin == null)
 				origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY, alpha: tileSprite.alpha};
 			this.visible = true;
 
@@ -123,6 +123,32 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		#else
 		super.x = x;
 		#end
+	}
+
+	#if flash
+	@:getter(x)
+	public function get_x():Float
+	#else
+	override public function get_x():Float
+	#end
+	{
+		if(tileSprite != null)
+			return tileSprite.x - tileSprite.width/2;
+		else
+			return -1;
+	}
+
+	#if flash
+	@:getter(y)
+	public function get_y():Float
+	#else
+	override public function get_y():Float
+	#end
+	{
+		if(tileSprite != null)
+			return tileSprite.y - tileSprite.height/2;
+		else
+			return -1;
 	}
 
 	#if flash

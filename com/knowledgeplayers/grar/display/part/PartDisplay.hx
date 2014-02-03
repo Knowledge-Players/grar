@@ -533,9 +533,11 @@ class PartDisplay extends KpDisplay {
 		}
 		if(inventory != null && contains(inventory))
 			toRemove.add(inventory);
-		for(obj in toRemove)
+		for(obj in toRemove){
+			TweenManager.stop(obj, null, true);
 			if(contains(obj))
 				removeChild(obj);
+		}
 	}
 
 	private inline function onWidgetAdded():Void

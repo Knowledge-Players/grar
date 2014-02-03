@@ -34,6 +34,8 @@ class TokenNotification extends WidgetContainer {
 
 	public function hideNotification():Void
 	{
-		parent.removeChild(this);
+		TweenManager.applyTransition(this, transitionOut).onComplete(function(){
+			parent.removeChild(this);
+		});
 	}
 }

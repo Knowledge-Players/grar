@@ -1,8 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
 import com.knowledgeplayers.grar.util.ParseUtils;
-import aze.display.TileSprite;
-import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import motion.actuators.GenericActuator.IGenericActuator;
 import flash.display.Sprite;
@@ -65,9 +63,6 @@ class TweenManager {
 			return null;
         var totalDelay:Float = delay + transition.delay;
 
-		//stop(display, null, true, true);
-
-		// TODO use transition as parameter instead of ref
 		var actuator: IGenericActuator;
 		if(Reflect.hasField(transition, "alpha"))
 			actuator = fade(display, ref);
@@ -244,7 +239,6 @@ class TweenManager {
 	public static function slide(display:Dynamic, ref:String):IGenericActuator
 	{
 		var slide = transitions.get(ref);
-
 		var inOutX = parseValue("x", slide.x, display);
 		var inOutY = parseValue("y", slide.y, display);
 		display.x = inOutX[0];
@@ -351,18 +345,23 @@ class TweenManager {
 
 	private static function parseValue(parameter:String, value:String, display:Dynamic):Array<Float>
 	{
+		// Reset widget to clean previous tweens
+		if(Std.is(display, Widget))
+			cast(display, Widget).reset();
+
 		var inOut:Array<String> = value.split(":");
 		var output:Array<Float> = new Array<Float>();
 
 		var ereg:EReg = new EReg(parameter + "([+*/-])(.+)", "i");
 		for(val in inOut){
 			if(ereg.match(val)){
-				var result = switch(ereg.matched(1)){
-					case "+" : Reflect.getProperty(display, parameter) + (Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2)));
-					case "-" : Reflect.getProperty(display, parameter) - (Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2)));
-					case "*" : Reflect.getProperty(display, parameter) * (Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2)));
-					case "/" : Reflect.getProperty(display, parameter) / (Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2)));
-					default: null;
+				var result:Float =  Reflect.getProperty(display, parameter);
+				result = switch(ereg.matched(1)){
+					case "+" : result + (Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2)));
+					case "-" : result - (Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2)));
+					case "*" : result * (Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2)));
+					case "/" : result / (Reflect.hasField(display, ereg.matched(2)) ? Reflect.getProperty(display, ereg.matched(2)) : Std.parseFloat(ereg.matched(2)));
+					default: throw "[TweenManager] Unknown operation symbol '"+ereg.matched(1)+"'.";
 				}
 				output.push(result);
 			}

@@ -112,7 +112,8 @@ class DefaultButton extends WidgetContainer {
 		#end
 
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
-			toggleState = defaultState;
+			if(toggleState == null)
+				toggleState = defaultState;
 		});
 	}
 
