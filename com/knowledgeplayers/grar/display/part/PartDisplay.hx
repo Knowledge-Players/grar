@@ -345,6 +345,7 @@ class PartDisplay extends KpDisplay {
 
 			if(char != currentSpeaker){
 				if(currentSpeaker != null && contains(currentSpeaker) && !Std.is(this, StripDisplay)){
+					TweenManager.stop(currentSpeaker, null, true);
 					removeChild(currentSpeaker);
 				}
 				currentSpeaker = char;

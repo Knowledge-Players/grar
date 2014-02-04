@@ -40,8 +40,6 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		super(xml);
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove, 1000);
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
-			if(tileSprite != null && origin == null)
-				origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY, alpha: tileSprite.alpha};
 			this.visible = true;
 
 			TweenManager.applyTransition(this, transformation);
@@ -238,7 +236,6 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		var actuator: IGenericActuator = null;
 
 		if(visible){
-			reset();
 			actuator = TweenManager.applyTransition(tileSprite, transitionIn);
 			if(actuator != null && onComplete != null)
 				actuator.onComplete(onComplete);
@@ -293,9 +290,12 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 
 	override public function reset():Void
 	{
-		for(field in Reflect.fields(origin)){
-			Reflect.setProperty(tileSprite, field, Reflect.field(origin, field));
-		}
+		if(origin == null)
+			origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY, alpha: tileSprite.alpha};
+		else
+			for(field in Reflect.fields(origin)){
+				Reflect.setProperty(tileSprite, field, Reflect.field(origin, field));
+			}
 
 		// Reset filters
 		trueLayer.view.filters = filters;

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display;
 
+import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import motion.actuators.GenericActuator.IGenericActuator;
@@ -45,7 +46,11 @@ class TweenManager {
 	{
 		var transition:IGenericActuator = null;
 
-		if(refs != null && display != null){
+		if(refs != null && refs != "" && display != null){
+			// Reset widget to clean previous tweens
+			if(Std.is(display, Widget))
+				cast(display, Widget).reset();
+
 			var arrayRef:Array<String> = ParseUtils.parseListOfValues(refs);
 			for(ref in arrayRef){
 				transition = startTransition(display, ref,delay);
@@ -345,10 +350,6 @@ class TweenManager {
 
 	private static function parseValue(parameter:String, value:String, display:Dynamic):Array<Float>
 	{
-		// Reset widget to clean previous tweens
-		if(Std.is(display, Widget))
-			cast(display, Widget).reset();
-
 		var inOut:Array<String> = value.split(":");
 		var output:Array<Float> = new Array<Float>();
 

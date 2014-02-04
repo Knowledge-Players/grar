@@ -75,15 +75,6 @@ class InventoryDisplay extends WidgetContainer {
 			button.buttonAction = onClickToken;
 			button.setText(Localiser.instance.getItemContent(token.name), "tooltip");
 		}
-
-		addEventListener(Event.ADDED_TO_STAGE, function(e:Event)
-		{
-			TweenManager.applyTransition(this, transitionIn);
-		});
-		addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
-		{
-			TweenManager.applyTransition(this, transitionOut);
-		});
 	}
 
 	// Handlers

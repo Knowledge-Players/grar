@@ -116,11 +116,6 @@ class Widget extends Sprite{
 	{
 		addEventListener(Event.ADDED_TO_STAGE, function(e:Event)
 		{
-			if(!lockPosition){
-				origin = {x: x, y: y, scaleX: scaleX, scaleY: scaleY, alpha: alpha};
-				lockPosition = true;
-			}
-			reset();
 			if(visible){
 				var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
 				if(actuator != null && onComplete != null)
@@ -163,8 +158,11 @@ class Widget extends Sprite{
 
 	public function reset(): Void
 	{
-		for(field in Reflect.fields(origin))
-			Reflect.setField(this, field, Reflect.field(origin, field));
+		if(origin == null)
+			origin = {x: x, y: y, scaleX: scaleX, scaleY: scaleY, alpha: alpha};
+		else
+			for(field in Reflect.fields(origin))
+				Reflect.setField(this, field, Reflect.field(origin, field));
 	}
 
 	public function setBorders(thickness:Float, color:Int = 0, alpha:Float = 1):Void
