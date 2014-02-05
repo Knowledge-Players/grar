@@ -1,5 +1,7 @@
 package com.knowledgeplayers.grar.display.part;
 
+import List;
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.Image;
 import flash.display.DisplayObject;
 import flash.events.Event;
@@ -40,6 +42,7 @@ class ActivityDisplay extends PartDisplay {
 	private var maxSelect: Int;
 	private var validationButton: DefaultButton;
 	private var dragOrigin:Coordinates;
+    private var dropped:Map<String,List<DefaultButton>>;
 
 	public function new(model: Part)
 	{
@@ -50,6 +53,7 @@ class ActivityDisplay extends PartDisplay {
 		buttonsToInputs = new Map<DefaultButton, Input>();
 		inputs = new GenericStack<DefaultButton>();
 		validatedInputs = new Map<DefaultButton, Bool>();
+        dropped = new Map<String,List<DefaultButton>>();
 	}
 
 	override public function nextElement(startIndex:Int = -1):Void
@@ -318,10 +322,64 @@ class ActivityDisplay extends PartDisplay {
 				case "drop":
 					e.target.stopDrag();
 					var drop: DisplayObject = cast(e.target.dropTarget, DisplayObject);
+
 					while(drop != null && !(drop.is(DefaultButton) && (inputs.has(cast(drop, DefaultButton)) || cast(drop, Widget).ref == dropRef)))
 						drop = drop.parent;
+
 					if(drop != null && validate(e.target, (buttonsToInputs.exists(cast(drop, DefaultButton)) ? buttonsToInputs.get(cast(drop, DefaultButton)).id : drop.name))){
-						copyCoordinates(e.target, drop);
+						copyCoordinates(e.target, cast(drop, DefaultButton));
+                        cast(e.target,DefaultButton).toggle();
+
+
+
+                        var folder:Input = null;
+                        if(buttonsToInputs.exists(cast(drop, DefaultButton)))
+                            folder = buttonsToInputs.get(cast(drop, DefaultButton));
+                        else{
+                            for(input in buttonsToInputs){
+                                if(input.id == drop.name){
+                                    folder =input;
+                                }
+                            }
+                        }
+                        if(!dropped.exists(folder.id))
+                            dropped.set(folder.id,new List<DefaultButton>());
+                        var listDrag:List<DefaultButton> = dropped.get(folder.id);
+                        listDrag.add(e.target);
+
+                        var bool:Bool = true;
+                        var goodInputs:List<DefaultButton> = new List<DefaultButton>();
+                        trace('listdrag : '+listDrag);
+
+                        for(val in folder.values){
+
+                             for(drag in buttonsToInputs.keys()){
+                                if(buttonsToInputs.get(drag).id == val){
+                                    goodInputs.add(drag);
+
+                                }
+                             }
+
+
+                        }
+                        for (input in goodInputs){
+                            if(!listDrag.has(input)){
+                                bool =false;
+
+                            }else{
+
+                            }
+                        }
+                        trace('boobool : '+bool);
+                        if(bool){
+                            for(drag in buttonsToInputs.keys()){
+                                if(buttonsToInputs.get(drag).id == folder.id){
+
+                                    drag.toggleState='true';
+                                }
+                            }
+
+                        }
 						if(buttonsToInputs.exists(cast(drop, DefaultButton))){
 							var dropZone = new DefaultButton();
 							dropZone.enabled = false;
@@ -334,6 +392,8 @@ class ActivityDisplay extends PartDisplay {
 					}
 					else{
 						copyCoordinates(e.target, dragOrigin);
+                        cast(e.target,DefaultButton).toggleState='false';
+
 					}
 			}
 		}
