@@ -116,13 +116,9 @@ class Widget extends Sprite{
 	{
 		addEventListener(Event.ADDED_TO_STAGE, function(e:Event)
 		{
-			if(visible){
-				var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
-				if(actuator != null && onComplete != null)
-					actuator.onComplete(onComplete);
-				else if(onComplete != null)
-					onComplete();
-			}
+			var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
+			if(actuator != null && onComplete != null)
+				actuator.onComplete(onComplete);
 			else if(onComplete != null)
 				onComplete();
 		}, 1000);

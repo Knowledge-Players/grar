@@ -85,7 +85,7 @@ class Notebook
 				for(noteFast in chapter.nodes.Note){
 					var note = new Note(noteFast);
 					chap.notes.push(note);
-					GameManager.instance.inventory.set(note.name, note);
+					GameManager.instance.inventory.set(note.id, note);
 				}
 				newPage.chapters.push(chap);
 			}

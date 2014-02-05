@@ -145,16 +145,12 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 					button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 					// Fill hit box
 					DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
-					//button.alpha = chapter.isActivated ? 1 : 0;
-					//addChild(button);
 					setButtonAction(button, "show");
 					chapterMap.set(button, chapter);
 				}
 			}
 
 			currentPage = model.pages[0];
-			// Display page
-			//displayPage(model.pages[0]);
 
 			Localiser.instance.popLocale();
 		}
@@ -198,11 +194,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		if(bookmarkBkg == null)
 			bookmarkBkg = createImage(bookmark);
 
-		// Clean previous note
-		/*for(note in buttonGroups.get(noteGroupName)){
-			removeChild(note);
-			note = null;
-		}*/
 		clearPage();
 
         if(displays.exists("player") && contains(displays.get("player")))
@@ -332,7 +323,7 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 		if(e.token.type == "note"){
 			var notes = model.getAllNotes();
 			var k = 0;
-			while(k < notes.length && notes[k].name != e.token.name){
+			while(k < notes.length && notes[k].id != e.token.id){
 				k++;
 			}
 			if(k != notes.length){
@@ -347,12 +338,6 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 				}
 				if(chapter != null){
 					chapter.isActivated = true;
-					for(button in chapterMap.keys()){
-						if(chapterMap.get(button) == chapter){
-							button.alpha = 1;
-							break ;
-						}
-					}
 				}
 			}
 		}

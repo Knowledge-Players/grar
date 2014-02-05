@@ -330,6 +330,10 @@ class PartDisplay extends KpDisplay {
 				for(b in bkgs){
 					if(!displays.exists(b))
 						throw '[PartDisplay] There is no background with ref "$b"';
+					var bkg:Image = cast(displays.get(b), Image);
+					if(bkg != null){
+						addChildAt(bkg, 0);
+					}
 				}
 				previousBackground = background;
 			}
@@ -535,7 +539,7 @@ class PartDisplay extends KpDisplay {
 		if(inventory != null && contains(inventory))
 			toRemove.add(inventory);
 		for(obj in toRemove){
-			TweenManager.stop(obj, null, true);
+			TweenManager.stop(obj, null, true, false);
 			if(contains(obj))
 				removeChild(obj);
 		}
@@ -584,10 +588,6 @@ class PartDisplay extends KpDisplay {
 		if(contains(object)){
 			return false;
 		}
-
-		// Background
-		if(key == previousBackground)
-			return true;
 
 		// Buttons
 		if(Std.is(object, DefaultButton)){

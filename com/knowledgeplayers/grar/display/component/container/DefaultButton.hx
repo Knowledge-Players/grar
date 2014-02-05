@@ -112,9 +112,9 @@ class DefaultButton extends WidgetContainer {
 		#end
 
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
-			if(toggleState == null)
-				toggleState = defaultState;
-		});
+					if(toggleState == null)
+						toggleState = defaultState;
+});
 	}
 
 	public function initStates(?xml: Fast, ?timelines: Map<String, Timeline>):Void
@@ -185,6 +185,9 @@ class DefaultButton extends WidgetContainer {
 
 	public inline function toggle(?toggle:Bool):Void
 	{
+		// Init toggle
+		if(toggleState == null)
+			toggleState = defaultState;
 		// Don't do anything if the toggle doesn't change
 		if(toggle != (toggleState == "active")){
 			// If param is null, switch state

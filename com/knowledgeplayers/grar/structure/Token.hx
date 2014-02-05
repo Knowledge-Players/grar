@@ -62,8 +62,8 @@ class Token {
 			type = _fast.has.type ? _fast.att.type : null;
 			name = _fast.has.name ?_fast.att.name : null;
 			content = _fast.att.content;
-			icon = _fast.att.icon;
-			image = _fast.att.src;
+			icon = _fast.has.icon ? _fast.att.icon : null;
+			image = _fast.has.src ? _fast.att.src : null;
 			fullScreenContent = _fast.has.fullScreenContent ? _fast.att.fullScreenContent : null;
 			isActivated = _fast.has.unlocked ? _fast.att.unlocked == "true" : false;
 		}
