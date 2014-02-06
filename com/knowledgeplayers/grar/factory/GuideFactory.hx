@@ -22,6 +22,8 @@ class GuideFactory
 					grid.cellSize = {width: Std.parseFloat(guideFast.att.width), height: Std.parseFloat(guideFast.att.height)};
 				if(guideFast.has.gapCol)
 					grid.gapCol = Std.parseFloat(guideFast.att.gapCol);
+                if(guideFast.has.decal)
+                    grid.decal = Std.parseFloat(guideFast.att.decal);
 				if(guideFast.has.gapRow)
 					grid.gapRow = Std.parseFloat(guideFast.att.gapRow);
 				if(guideFast.has.alignment)

@@ -43,6 +43,9 @@ class ActivityDisplay extends PartDisplay {
 	private var validationButton: DefaultButton;
 	private var dragOrigin:Coordinates;
     private var dropped:Map<String,List<DefaultButton>>;
+    private var zButton:Int;
+    private var goodReps:Int;
+    private var nbDrops:Int;
 
 	public function new(model: Part)
 	{
@@ -54,6 +57,9 @@ class ActivityDisplay extends PartDisplay {
 		inputs = new GenericStack<DefaultButton>();
 		validatedInputs = new Map<DefaultButton, Bool>();
         dropped = new Map<String,List<DefaultButton>>();
+        zButton = 1;
+        goodReps=0;
+        nbDrops=0;
 	}
 
 	override public function nextElement(startIndex:Int = -1):Void
@@ -127,6 +133,7 @@ class ActivityDisplay extends PartDisplay {
 		for(group in displayFast.nodes.Group){
 			groups.set(group.att.ref, group);
 		}
+
 	}
 
 	// Private
@@ -136,6 +143,7 @@ class ActivityDisplay extends PartDisplay {
 		var activity = cast(part, ActivityPart);
 
 		var currentGroup: Group = activity.getNextGroup();
+
 		// Create inputs, place & display them
 		if(currentGroup.inputs != null){
 			var guide = createGroupGuide(currentGroup);
@@ -144,10 +152,15 @@ class ActivityDisplay extends PartDisplay {
 			}
 		}
 		if(currentGroup.groups != null){
+
 			for(group in currentGroup.groups){
 				var guide = createGroupGuide(group);
+
 				// Specify inputs because of an "Can't iterate on a Dynamic value" error
 				var inputs: Array<Input> = group.inputs;
+                if(currentGroup.id=='dossier'){
+                    nbDrops = inputs.length;
+                };
 				for(input in inputs)
 					createInput(input, guide);
 			}
@@ -169,7 +182,10 @@ class ActivityDisplay extends PartDisplay {
 		for(contentKey in input.content.keys())
 			button.setText(Localiser.instance.getItemContent(input.content.get(contentKey)), contentKey);
 		button.setAllListeners(onInputEvents);
-		button.zz = displayTemplates.get(input.ref).z;
+
+        //button.zz = displayTemplates.get(input.ref).z;
+		button.zz =zButton;
+        zButton++;
 		inputs.add(button);
 	}
 
@@ -193,6 +209,7 @@ class ActivityDisplay extends PartDisplay {
 				result = correction;
 				if(child.ref == validationRef && Std.is(child, DefaultButton))
 					cast(child, DefaultButton).toggleState = Std.string(correction);
+
 			}
 			var allValidated = true;
 			for(input in inputs){
@@ -328,35 +345,34 @@ class ActivityDisplay extends PartDisplay {
 
 					if(drop != null && validate(e.target, (buttonsToInputs.exists(cast(drop, DefaultButton)) ? buttonsToInputs.get(cast(drop, DefaultButton)).id : drop.name))){
 						copyCoordinates(e.target, cast(drop, DefaultButton));
+
                         cast(e.target,DefaultButton).toggle();
-
-
-
+                        cast(drop, DefaultButton).toggleState='uncomplete';
                         var folder:Input = null;
-                        if(buttonsToInputs.exists(cast(drop, DefaultButton)))
+                        if(buttonsToInputs.exists(cast(drop, DefaultButton))) {
                             folder = buttonsToInputs.get(cast(drop, DefaultButton));
-                        else{
+
+                        }else{
                             for(input in buttonsToInputs){
                                 if(input.id == drop.name){
                                     folder =input;
                                 }
                             }
                         }
-                        if(!dropped.exists(folder.id))
+                        if(!dropped.exists(folder.id)){
                             dropped.set(folder.id,new List<DefaultButton>());
+
+                        }
                         var listDrag:List<DefaultButton> = dropped.get(folder.id);
                         listDrag.add(e.target);
 
                         var bool:Bool = true;
                         var goodInputs:List<DefaultButton> = new List<DefaultButton>();
-                        trace('listdrag : '+listDrag);
-
                         for(val in folder.values){
 
                              for(drag in buttonsToInputs.keys()){
                                 if(buttonsToInputs.get(drag).id == val){
                                     goodInputs.add(drag);
-
                                 }
                              }
 
@@ -370,16 +386,25 @@ class ActivityDisplay extends PartDisplay {
 
                             }
                         }
-                        trace('boobool : '+bool);
+
                         if(bool){
                             for(drag in buttonsToInputs.keys()){
+
                                 if(buttonsToInputs.get(drag).id == folder.id){
 
-                                    drag.toggleState='true';
+                                    drag.toggleState='complete';
+                                    goodReps ++;
                                 }
                             }
 
                         }
+
+
+                        //trace("goodReps : "+goodReps);
+                        //trace("nbDrops : "+nbDrops);
+                        if(goodReps==nbDrops){
+                            cast(displays.get('button_continue_folder'), DefaultButton).toggleState ='continue';
+                        };
 						if(buttonsToInputs.exists(cast(drop, DefaultButton))){
 							var dropZone = new DefaultButton();
 							dropZone.enabled = false;
@@ -395,6 +420,7 @@ class ActivityDisplay extends PartDisplay {
                         cast(e.target,DefaultButton).toggleState='false';
 
 					}
+
 			}
 		}
 		if(needValidation && autoCorrect)

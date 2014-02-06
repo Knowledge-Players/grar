@@ -38,6 +38,10 @@ class Grid implements Guide {
 	* Space between rows
 	**/
 	public var gapRow (default, default):Float;
+    /**
+	* Decal on the second line between rows
+	**/
+    public var decal (default, default):Float;
 
 	public var transitionIn (default, default):String;
 
@@ -46,12 +50,13 @@ class Grid implements Guide {
 	private var alignment: GridAlignment;
 	private var resize: Bool;
 
-	public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?alignment:GridAlignment, resize: Bool = true, ?transitionIn: String)
+	public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0,decal:Float = 0, ?alignment:GridAlignment, resize: Bool = true, ?transitionIn: String)
 	{
 		this.numRow = numRow;
 		this.numCol = numCol;
 		this.gapCol = gapCol;
 		this.gapRow = gapRow;
+		this.decal = decal;
 		this.resize = resize;
 		this.transitionIn = transitionIn;
 
@@ -78,7 +83,8 @@ class Grid implements Guide {
 	**/
 	public function add(object:DisplayObject, ?tween:String, tile: Bool = false):DisplayObject
 	{
-		if(cellSize.width == 0){
+
+        if(cellSize.width == 0){
 			cellSize.width = object.width;
 		}
 		if(cellSize.height == 0){
@@ -86,7 +92,11 @@ class Grid implements Guide {
 		}
 
 		var targetX:Float = x + nextCell.x * cellSize.width;
+        if(nextCell.y >0){
+            targetX += gapCol * nextCell.x+decal;
+        }else{
 		targetX += gapCol * nextCell.x;
+        }
 		targetX += switch(alignment){
 			case CENTER, TOP_MIDDLE, BOTTOM_MIDDLE: cellSize.width / 2 - object.width / 2;
 			case TOP_RIGHT, MIDDLE_RIGHT, BOTTOM_RIGHT: cellSize.width - object.width;
@@ -105,6 +115,7 @@ class Grid implements Guide {
 			nextCell.x++;
 		}
 		else if(nextCell.y < numRow){
+
 			nextCell.x = 0;
 			nextCell.y++;
 		}
@@ -122,6 +133,7 @@ class Grid implements Guide {
         }
         else{
             object.x = targetX;
+
             object.y = targetY;
         }
         if(resize){
