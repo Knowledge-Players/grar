@@ -4,6 +4,8 @@ import haxe.Timer;
 
 enum Type {
 	Aicc( url : String, is : String );
+	Auto( lesson_location : String );
+	Scorm( is2004 : Bool, success_status : String, suspend_data : String );
 }
 
 class Tracking {
@@ -32,7 +34,7 @@ class Tracking {
 		}
 		this.type = t;
 
-		if (isActive) {
+		if (isActive && Type.enumConstructor(t) != Type.enumConstructor(Auto(""))) {
 			this.timer = new Timer(TIME_INTERVAL);
 			this.timer.run = updateCurrentTime;
 		}
@@ -41,7 +43,7 @@ class Tracking {
 	public var studentId : String;
 	public var studentName : String;
 	public var lessonStatus : String = "";
-	public var location : String = "";
+	public var location (get,set) : String = "";
 	public var score : String = "0";
 	public var masteryScore : Int = 0;
 	public var suivi : String;
@@ -56,4 +58,37 @@ class Tracking {
 
 		currentTime += TIME_INTERVAL;
 	}
+
+
+	///
+	// GETTERS / SETTERS
+	//
+
+	public function get_location() : String {
+
+		switch(t) {
+
+			case Scorm( b, ss, sd ), Aicc( u, i ):
+
+				return location;
+
+			case Auto( lesson_location ):
+
+				return lesson_location;
+		}
+	}
+
+	public function set_location(v : String) : String {
+
+		location = v;
+
+		onLocationChanged();
+	}
+
+
+	///
+	// CALLBACKS
+	//
+
+	public dynamic function onLocationChanged() : Void { }
 }

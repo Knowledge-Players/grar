@@ -4,6 +4,10 @@ import haxe.Http;
 
 import grar.model.Tracking;
 
+#if flash
+import flash.external.ExternalInterface;
+#end
+
 class AiccService {
 
 	public function new() { }
@@ -11,7 +15,7 @@ class AiccService {
 	/**
 	 * Attempts to init an Aicc-typed Tracking object.
 	 */
-	public function init( isNote : Bool, activation : String, onSuccess : Tracking -> Void, onError : String -> Void ) : Tracking {
+	public function init( isNote : Bool, activation : String, onSuccess : Tracking -> Void, onError : String -> Void ) : Void {
 	//	init(isNote:Bool = false, activation:String = "on"):Void
 
 		var _aicc_sid : String = "undefined";

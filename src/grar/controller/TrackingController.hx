@@ -2,6 +2,8 @@ package grar.controller;
 
 import grar.Controller;
 
+import grar.model.State;
+import grar.model.Config;
 import grar.model.Grar;
 
 class TrackingController {
@@ -10,10 +12,18 @@ class TrackingController {
 
 		this.parent = parent;
 
+		this.config = parent.config;
+		this.state = parent.state;
+
 		this.aiccSrv = new AiccService();
 		this.autoSrv = new AutoService();
 		this.scormSrv = new ScormService();
+
+		init();
 	}
+
+	var state : State;
+	var config : Config;
 
 	var parent : Controller;
 
@@ -22,22 +32,55 @@ class TrackingController {
 	var scormSrv : ScormService;
 
 
+	public function init() {
+
+		state.onTrackingLocationChanged = {
+
+				switch(state.tracking.type) {
+
+					case Scorm( is2004, ss, sd ):
+
+						// WIP
+
+						var success:Bool;
+						//if(isActive){
+							if(is2004){
+								success = scormSrv.set("cmi.location", state.tracking.location);
+							}
+							else{
+								success = scormSrv.set("cmi.core.lesson_location", state.tracking.location);
+							}
+						//}
+
+					case Aicc( u, i ):
+
+						// TODO
+
+					case Auto( lesson_location ):
+
+						// TODO
+
+
+				}				
+			}
+	}
+
 	public function initTracking(m : Grar) : Void {
 
         //connection.initConnection(this.mode,false,activationTracking);
         switch (m.mode) {
 
 			case AICC :
-				aiccSrv.init( false, m.state.tracking, function(t:Tracking){ /* TODO */ initFromState(m, t); }, parent.onError );
+				aiccSrv.init( false, m.state.tracking, function(t:Tracking){ state.tracking = t; initFromState(m, t); }, parent.onError );
 
 			case SCORM:
-				scormSrv.init( false, m.state.tracking, function(t:Tracking){ /* TODO */ initFromState(m, t); }, parent.onError );
+				scormSrv.init( false, m.state.tracking, false, function(t:Tracking){ state.tracking = t; initFromState(m, t); }, parent.onError );
 
 			case SCORM2004:
-				scormSrv.init( false, m.state.tracking, true, function(t:Tracking){ /* TODO */ initFromState(m, t); }, parent.onError );
+				scormSrv.init( false, m.state.tracking, true, function(t:Tracking){ state.tracking = t; initFromState(m, t); }, parent.onError );
 
 			case AUTO:
-				autoSrv.init( false, m.state.tracking, function(t:Tracking){ /* TODO */ initFromState(m, t); }, parent.onError );
+				autoSrv.init( false, m.state.tracking, function(t:Tracking){ state.tracking = t; initFromState(m, t); }, parent.onError );
 		}
 		//tracking.init(isNote, activation);
 	}
@@ -45,6 +88,35 @@ class TrackingController {
 	///
 	// Internals
 	//
+
+	function loadStateInfos(stateStr : String) : Void {
+		
+		// TODO commented code
+		//allItem = GameManager.instance.game.getAllItems();
+		var stateInfosArray : Array<String> = stateStr.split("@");
+		state.currentLanguage = stateInfosArray[0];
+		state.bookmark = Std.parseInt(stateInfosArray[1]);
+
+		/*
+		var trackable:Array<String> = stateInfosArray[2].split("-");
+
+		if(allItem.length > 0){
+            if (allItem.length != trackable.length)
+                trackable = initTrackable();
+			for(i in 0...trackable.length){
+				if(i < allItem.length){
+					completion.set(allItem[i].id, Std.parseInt(trackable[i]));
+					completionOrdered.push(allItem[i].id);
+				}
+			}
+
+		} else {
+
+			tmpState = stateStr;
+		}
+		*/
+		state.checksum = Std.parseInt(stateInfosArray[3]);
+	}
 
 	function initFromState(m : Grar, t : Tracking) : Void {
 
@@ -57,17 +129,14 @@ class TrackingController {
 
         //stateInfos = connection.revertTracking();
         var s : String = t.location;
-		var stateInfos : StateInfos = new StateInfos();
 
-		if(s != "" && s != "undefined" && s != "null" && s != null){
+		if (s != "" && s != "undefined" && s != "null" && s != null) {
 
-			stateInfos.loadStateInfos(s);
+			loadStateInfos(s);
 		}
+        if (state.currentLanguage == null && state.bookmark == -1 && state.completionOrdered.length == 0) {
 
-
-        if(stateInfos.isEmpty()) {
-
-            stateInfos.loadStateInfos(m.state.value);
+            loadStateInfos(m.state.value);
         }
 	    var status = t.getStatus();
 	    if(status == null || status == "") {
@@ -75,6 +144,5 @@ class TrackingController {
 		    t.setStatus(false);
 	    }
 		//Localiser.instance.currentLocale = stateInfos.currentLanguage;
-		state.locale = stateInfos.currentLanguage;
 	}
 }
