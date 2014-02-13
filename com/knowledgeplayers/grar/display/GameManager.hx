@@ -243,18 +243,21 @@ class GameManager extends EventDispatcher {
 		if(!parts.isEmpty())
 			parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		// Display the new part
-		parts.add(DisplayFactory.createPartDisplay(part));
+		var newPart: PartDisplay = DisplayFactory.createPartDisplay(part);
+		parts.add(newPart);
 		startIndex = startPosition;
-		parts.first().addEventListener(PartEvent.EXIT_PART, onExitPart);
-		parts.first().addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
-		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-		parts.first().addEventListener(GameEvent.GAME_OVER, function(e:GameEvent)
+		newPart.addEventListener(PartEvent.EXIT_PART, onExitPart);
+		newPart.addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
+		newPart.addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+		var endListener: GameEvent -> Void = null;
+		endListener = function(e:GameEvent)
 		{
 			game.connection.tracking.setStatus(true);
 			game.connection.computeTracking(game.stateInfos);
 			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
-		});
-		parts.first().init();
+		}
+		newPart.addEventListener(GameEvent.GAME_OVER, endListener);
+		newPart.init();
 		return true;
 	}
 
@@ -381,9 +384,9 @@ class GameManager extends EventDispatcher {
 			var nexts = ParseUtils.parseListOfValues(finishedPart.part.next);
 			var i = 0;
 			for(next in nexts){
-				var nextPart = game.start(next);
+				var nextPart: Part = game.start(next);
 				if(nextPart != null)
-					displayPart(nextPart);
+					displayPart(nextPart, nextPart.elemIndex);
 				else{
 					var contextual: ContextualType = Type.createEnum(ContextualType, next.toUpperCase());
 					switch(contextual){

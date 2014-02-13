@@ -154,7 +154,8 @@ class KpDisplay extends Sprite {
 					timeline.addElement(mock, elem.att.transition, delay);
 				}
 				else if(!displays.exists(elem.att.ref))
-					throw "[KpDisplay] Can't add unexistant widget '"+elem.att.ref+"' in timeline '"+child.att.ref+"'.";
+					//throw "[KpDisplay] Can't add unexistant widget '"+elem.att.ref+"' in timeline '"+child.att.ref+"'.";
+					trace("[KpDisplay] Can't add unexistant widget '"+elem.att.ref+"' in timeline '"+child.att.ref+"'.");
 				else
 					timeline.addElement(displays.get(elem.att.ref),elem.att.transition,delay);
 			}

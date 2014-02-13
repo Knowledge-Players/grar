@@ -34,6 +34,7 @@ import flash.media.Sound;
 import flash.media.SoundChannel;
 
 using StringTools;
+using Lambda;
 
 /**
  * Display of a part
@@ -93,6 +94,7 @@ class PartDisplay extends KpDisplay {
 
 		localeLoaded = true;
 		checkPartLoaded();
+		part.isStarted = true;
 	}
 
 	public function exitPart(completed: Bool = true):Void

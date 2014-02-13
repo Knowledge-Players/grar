@@ -1,8 +1,9 @@
 package com.knowledgeplayers.grar.structure.part;
 
-import haxe.ds.GenericStack;
+import com.knowledgeplayers.grar.factory.ItemFactory;
 import com.knowledgeplayers.grar.display.GameManager;
 import com.knowledgeplayers.grar.util.ParseUtils;
+import com.knowledgeplayers.grar.structure.part.Button;
 import haxe.xml.Fast;
 
 using StringTools;
@@ -14,6 +15,8 @@ class ActivityPart extends StructurePart
 	* Rules of this activity
 	**/
 	public var rules (default, null): Map<String, Rule>;
+
+	public var globalImages (default, default):List<String>;
 
 	/**
 	* Groups of input in this activity
@@ -27,6 +30,7 @@ class ActivityPart extends StructurePart
 		super();
 		groups = new Array<Group>();
 		rules = new Map<String, Rule>();
+		globalImages = new List<String>();
 		groupIndex = -1;
 		numRightAnswers = 0;
 	}
@@ -62,14 +66,23 @@ class ActivityPart extends StructurePart
 
 	public function validate(input: Input, value: String): Bool
 	{
-		var i = 0;
-		while(i < input.values.length && input.values[i] != value)
-			i++;
-		var result = i != input.values.length;
-		if(result)
-			numRightAnswers++;
-		input.selected = value == "true";
-		return result;
+		if(input.values.length == 1 && Std.parseInt(input.values[0]) != null){
+			// Init score to 0
+			if(score == -1)
+				score = 0;
+			score += Std.parseInt(input.values[0]);
+			return true;
+		}
+		else{
+			var i = 0;
+			while(i < input.values.length && input.values[i] != value)
+				i++;
+			var result = i != input.values.length;
+			if(result)
+				numRightAnswers++;
+			input.selected = value == "true";
+			return result;
+		}
 	}
 
 	/**
@@ -78,7 +91,9 @@ class ActivityPart extends StructurePart
 	**/
 	public function endActivity():String
 	{
-		score = Math.round(numRightAnswers * 100 / groups[groupIndex].inputs.length);
+		// Score wasn't set before, take good answers percentage
+		if(score == -1)
+			score = Math.round(numRightAnswers * 100 / groups[groupIndex].inputs.length);
 		var contextuals = getRulesByType("contextual");
 		for(rule in contextuals){
 			if(rule.value == "addtonotebook"){
@@ -102,10 +117,16 @@ class ActivityPart extends StructurePart
 				input.selected = false;
 		}
 
+		isDone = true;
+		var i = 0;
+		while(i < parent.elements.length && parent.elements[i].id != id)
+			i++;
+		if(i == parent.elements.length)
+			parent.isDone = true;
+
 		var idNext: String = null;
 		var thresholds = getRulesByType("threshold");
 		if(thresholds.length == 0){
-			isDone = true;
 			getNextElement();
 		}
 		else{
@@ -147,6 +168,8 @@ class ActivityPart extends StructurePart
 
 	override private function parseContent(content:Xml):Void
 	{
+		super.parseContent(content);
+
 		var partFast:Fast = (content.nodeType == Xml.Element && content.nodeName == "Part") ? new Fast(content) : new Fast(content).node.Part;
 		for(child in partFast.elements){
 			switch(child.name.toLowerCase()){
@@ -157,6 +180,7 @@ class ActivityPart extends StructurePart
 				case "rule":
 					var rule: Rule = {id: child.att.id, type: child.att.type.toLowerCase(), value: child.att.value.toLowerCase()};
 					rules.set(rule.id, rule);
+				case "image": globalImages.add(child.att.ref);
 			}
 		}
 		// If no rules has been set on a group, all applies
@@ -166,8 +190,6 @@ class ActivityPart extends StructurePart
 					group.rules.push(rule.id);
 			}
 		}
-
-		super.parseContent(content);
 
 		// Ordering Inputs
 		var orderingRules = getRulesByType("ordering");
@@ -204,21 +226,22 @@ class ActivityPart extends StructurePart
 		if(xml.has.rules){
 			rules = ParseUtils.parseListOfValues(xml.att.rules);
 		}
-		if(xml.hasNode.Group){
-			var groups = new Array<Group>();
-			for(group in xml.nodes.Group)
-				groups.push(createGroup(group));
-			var group:Group = {id: xml.att.id, ref: xml.att.ref, rules: rules, groups: groups};
-			return group;
-		}
-		else{
-			var inputs = new Array<Input>();
-			var group: Group = {id: xml.att.id, ref: xml.att.ref, rules: rules, inputs: inputs};
-			for(input in xml.elements){
-				inputs.push(createInput(input, group));
+		var group: Group = {id: xml.att.id, ref: xml.att.ref, rules: rules, groups: new Array<Group>(), inputs: new Array<Input>(), items: new Array<Item>(), buttons: new Array<Button>()};
+		for(elem in xml.elements){
+			switch(elem.name.toLowerCase()){
+				case "group":   group.groups.push(createGroup(elem));
+				case "input":   group.inputs.push(createInput(elem, group));
+				case "button":
+					var content = null;
+					if(elem.has.content)
+						content = ParseUtils.parseHash(elem.att.content);
+					group.buttons.push({ref: elem.att.ref, content: content});
+				default:        group.items.push(ItemFactory.createItemFromXml(elem));
+
 			}
-			return group;
 		}
+
+		return group;
 	}
 
 	private function getAllInputs():Array<Input>
@@ -236,6 +259,8 @@ typedef Group = {
 	var rules: Array<String>;
 	@:optional var groups: Array<Dynamic>;
 	@:optional var inputs: Array<Input>;
+	@:optional var items: Array<Item>;
+	@:optional var buttons: Array<Button>;
 }
 
 typedef Rule = {
@@ -252,3 +277,4 @@ typedef Input = {
 	var selected: Bool;
 	@:optional var group: Group;
 }
+

@@ -16,7 +16,6 @@ import flash.events.MouseEvent;
 /**
  * Custom base button class
  */
-
 class DefaultButton extends WidgetContainer {
 
 	/**
@@ -112,9 +111,9 @@ class DefaultButton extends WidgetContainer {
 		#end
 
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
-					if(toggleState == null)
-						toggleState = defaultState;
-});
+			if(toggleState == null)
+				toggleState = defaultState;
+		});
 	}
 
 	public function initStates(?xml: Fast, ?timelines: Map<String, Timeline>):Void
@@ -286,7 +285,7 @@ class DefaultButton extends WidgetContainer {
 				j++;
 			content.addChildAt(layer.view, j);
 
-			renderNeeded = true;
+			layer.render();
 			enabled = enabledState.get(toggleState);
 			displayContent();
 			dispatchEvent(new Event(Event.CHANGE));

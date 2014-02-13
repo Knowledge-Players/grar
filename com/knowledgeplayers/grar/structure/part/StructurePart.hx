@@ -98,10 +98,14 @@ class StructurePart extends EventDispatcher implements Part{
 
 	public var buttonTargets (default, null): Map<String, PartElement>;
 
+	/**
+	* Position in the part
+	**/
+	public var elemIndex (default, null):Int = 0;
+
 	private var nbSubPartLoaded:Int = 0;
 	private var nbSubPartTotal:Int = 0;
 	private var partIndex:Int = 0;
-	private var elemIndex:Int = 0;
 	private var soundLoopChannel:SoundChannel;
 	private var loaded:Bool = false;
 
@@ -114,6 +118,7 @@ class StructurePart extends EventDispatcher implements Part{
 		buttonTargets = new Map<String, PartElement>();
 		perks = new Map<String, Int>();
 		requirements = new Map<String, Int>();
+		score = -1;
 	}
 
 		/**

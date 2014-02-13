@@ -43,7 +43,10 @@ class TextItem extends Item {
 			if(xml.hasNode.Sound)
 				sound = xml.node.Sound.att.src;
 			if(xml.hasNode.Intro)
-				introScreen = {ref: xml.node.Intro.att.ref, content: ParseUtils.parseHash(xml.node.Intro.att.content)};
+				if(xml.node.Intro.has.content)
+					introScreen = {ref: xml.node.Intro.att.ref, content: ParseUtils.parseHash(xml.node.Intro.att.content)};
+				else
+					introScreen = {ref: xml.node.Intro.att.ref, content: new Map<String, String>()};
 		}
 
 		// Reverse pile order to match XML order

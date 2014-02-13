@@ -2,7 +2,6 @@ package com.knowledgeplayers.grar.display.part;
 
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.utils.assets.AssetsStorage;
 import haxe.Timer;
 import haxe.xml.Fast;
 import flash.display.DisplayObject;
@@ -23,19 +22,21 @@ class IntroScreen extends WidgetContainer {
 
 	public function setText(content:String, ?key:String):Void
 	{
-		var i = 0;
-		var firstText: Int = -1;
-		while(i < children.length && key != children[i].ref){
-			if(Std.is(children[i], ScrollPanel) && firstText == -1)
-				firstText = i;
-			i++;
+		if(content != null && content != ""){
+			var i = 0;
+			var firstText: Int = -1;
+			while(i < children.length && key != children[i].ref){
+				if(Std.is(children[i], ScrollPanel) && firstText == -1)
+					firstText = i;
+				i++;
+			}
+			if(key == null || StringTools.trim(key) == "")
+				cast(children[firstText], ScrollPanel).setContent(content);
+			else if(i == children.length)
+				throw "[IntroScreen] Unable to find a Text field with ref '"+key+"'.";
+			else
+				cast(children[i], ScrollPanel).setContent(content);
 		}
-		if(key == null || StringTools.trim(key) == "")
-			cast(children[firstText], ScrollPanel).setContent(content);
-		else if(i == children.length)
-			throw "[IntroScreen] Unable to find a Text field with ref '"+key+"'.";
-		else
-			cast(children[i], ScrollPanel).setContent(content);
 	}
 
 	// Privates

@@ -18,6 +18,7 @@ interface Part extends IEventDispatcher extends PartElement extends Trackable {
 	public var buttonTargets (default, null): Map<String, PartElement>;
 	public var perks (default, null): Map<String, Int>;
 	public var soundLoop (default, default):Sound;
+	public var elemIndex (default, null):Int;
 
 	public function init(xml:Fast, ?filePath:String):Void;
 

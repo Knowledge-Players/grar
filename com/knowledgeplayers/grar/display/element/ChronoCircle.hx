@@ -17,6 +17,7 @@ class ChronoCircle extends WidgetContainer
     private var colorCircle:Color;
     private var minRadius:Int;
     private var maxRadius:Int;
+	private var step:Float;
 
     public function new(_node:Fast):Void
     {
@@ -58,8 +59,12 @@ class ChronoCircle extends WidgetContainer
 		shFill.graphics.moveTo(0,0);
 		shFill.graphics.beginFill(0xFF00FF,1);
 
-		for (i in 0...Math.floor(ratio*360)) {
+		// Minimize this to get more precise drawing
+		var step = 0.5;
+		var i = 0.0;
+		while(i < ratio*360){
 			shFill.graphics.lineTo(maxRadius*Math.cos(i*Math.PI/180), -maxRadius*Math.sin(i*Math.PI/180));
+			i += step;
 		}
 		shFill.graphics.lineTo(0,0);
 		shFill.graphics.endFill();
