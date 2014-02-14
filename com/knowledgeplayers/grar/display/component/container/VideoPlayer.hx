@@ -12,10 +12,8 @@ import flash.display.Bitmap;
 import aze.display.TileLayer;
 import flash.display.Bitmap;
 import com.knowledgeplayers.grar.util.DisplayUtils;
-import flash.geom.Point;
 import flash.display.Sprite;
 import haxe.ds.GenericStack;
-import aze.display.TileClip;
 import aze.display.TileSprite;
 import aze.display.TilesheetEx;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
@@ -75,8 +73,8 @@ class VideoPlayer extends WidgetContainer
 	private var blackScreen:Sprite;
 	//private var _timeToCapture : Float = 0;
 	private var backgroundControls:Widget;
-    private var volumeEnCours:Float = 0;
-    private var ratioEnCours:Float = 1;
+    private var currentVolume:Float = 0;
+    private var currentRatio:Float = 1;
 
 	dynamic private function onVideoPlay(){};
 
@@ -288,15 +286,15 @@ class VideoPlayer extends WidgetContainer
     public function toggleSound(?target: DefaultButton)
 	{
 
-        if(target.toggleState=="active"){
+        if(target.toggleState != "active"){
 
-            volumeEnCours = 0;
+            currentVolume = 0;
         }
         else{
 
-            volumeEnCours = ratioEnCours;
+            currentVolume = currentRatio;
         }
-        changeVolume(volumeEnCours);
+        changeVolume(currentVolume);
 	}
 
 	public function hideControllers():Void
@@ -436,6 +434,7 @@ class VideoPlayer extends WidgetContainer
 			//soundSlider.ref = elemNode.att.ref;
 			soundSlider.x = Std.parseFloat(elemNode.att.x);
 			soundSlider.y = Std.parseFloat(elemNode.att.y);
+			addElement(soundSlider);
 			for(child in elemNode.elements){
 				if(child.name.toLowerCase() == "bar"){
 					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
@@ -457,7 +456,6 @@ class VideoPlayer extends WidgetContainer
 			}
 			soundSlider.mouseChildren = false;
 			controls.add(soundSlider);
-			addElement(soundSlider);
 
 		}
 
@@ -526,7 +524,7 @@ class VideoPlayer extends WidgetContainer
 		removeEventListener(MouseEvent.MOUSE_UP, dropSoundCursor);
 		var ratio = (soundCursor.x + soundCursor.width/2 - soundSlider.x) / soundSlider.width;
         if(ratio>0.2){
-            ratioEnCours = (soundCursor.x + soundCursor.width/2 - soundSlider.x) / soundSlider.width;
+            currentRatio = (soundCursor.x + soundCursor.width/2 - soundSlider.x) / soundSlider.width;
             soundButton.toggle(true);
         }
         else {
@@ -544,18 +542,17 @@ class VideoPlayer extends WidgetContainer
 
 	private function changeVolume(ratio:Float, moveCursor: Bool = true):Void
 	{
-        if(ratio <0.2){
-
+        if(ratio < 0.05){
             ratio = 0;
-        }else
-        {
-
+	        soundButton.toggle(false);
         }
+		else
+            soundButton.toggle(true);
 		stream.soundTransform = new SoundTransform(ratio);
 		if(moveCursor)
 			soundCursor.x = soundSlider.width*ratio+soundSlider.x - soundCursor.width /2;
 
-        volumeEnCours = ratio;
+        currentVolume = ratio;
 
 
 	}
@@ -571,7 +568,7 @@ class VideoPlayer extends WidgetContainer
 		var ratio = e.localX / soundSlider.width;
 
         if(ratio>0.2){
-            ratioEnCours = ratio;
+            currentRatio = ratio;
             soundButton.toggle(true);
         }
         else {
