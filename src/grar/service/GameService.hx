@@ -3,17 +3,20 @@ package grar.service;
 import grar.model.Grar;
 import grar.model.TransitionTemplate;
 import grar.model.FilterType;
-import grar.model.Style;
+import grar.model.StyleSheet;
+import grar.model.Locale;
 
 import grar.parser.XmlToGrar;
 import grar.parser.XmlToTransition;
 import grar.parser.XmlToFilter;
-import grar.parser.XmlToStyle;
-import grar.parser.JsonToStyle;
+import grar.parser.XmlToStyleSheet;
+import grar.parser.JsonToStyleSheet;
 
 import aze.display.TilesheetEx;
 
 import com.knowledgeplayers.utils.assets.AssetsStorage;
+
+import haxe.ds.StringMap;
 
 class GameService {
 
@@ -87,19 +90,14 @@ class GameService {
 		onSuccess(t);
 	}
 
-	public function fetchLangs(uri : String, onSuccess :  -> Void, onError : String -> Void) : Void {
+	public function fetchLangs(uri : String, onSuccess : StringMap<Locale> -> Void, onError : String -> Void) : Void {
 
-		//var l : ;
+		var l : StringMap<Locale>;
 
 		try {
 
 			// at the moment, grar fetches its data from embedded assets only
-			var ll : List<{ k:String, l:String, p:String }> = XmlToLangs(AssetsStorage.getXml(uri));
-
-	        for (l in ll) {
-
-	            addLanguage(lang.att.value, lang.att.folder, lang.att.pic);
-	        }
+			l = XmlToLangs(AssetsStorage.getXml(uri));
 
 		} catch (e:String) {
 
@@ -109,19 +107,25 @@ class GameService {
 		onSuccess(l);
 	}
 
-	public function fetchStyle(path : String, ext : String, onSuccess : Style -> Void, onError : String -> Void) : Void {
+	public function loadLang(path : String, onSuccess : -> Void, onError : String -> Void) : Void {
 
-		var s : Style;
+
+	}
+
+	public function fetchStyle(path : String, ext : String, tilesheet : aze.display.TilesheetEx, 
+		onSuccess : StyleSheet -> Void, onError : String -> Void) : Void {
+
+		var s : StyleSheet;
 
 		try {
 			// at the moment, grar fetches its data from embedded assets only
 			switch(ext.toLowerCase()) {
 
 				case "json":
-					s = JsonToStyle(AssetsStorage.getText(path));
+					s = JsonToStyleSheet(AssetsStorage.getText(path), tilesheet);
 
 				case "xml":
-					s = XmlToStyle(AssetsStorage.getXml(path));
+					s = XmlToStyleSheet(AssetsStorage.getXml(path), tilesheet);
 
 				default:
 					throw "unsupported style format "+ext;

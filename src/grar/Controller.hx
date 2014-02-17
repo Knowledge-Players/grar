@@ -2,7 +2,7 @@ package grar;
 
 import grar.model.Config;
 import grar.model.State;
-import grar.model.Structure;
+import grar.model.Grar;
 
 import grar.service.GameService;
 
@@ -12,8 +12,6 @@ import grar.controller.TrackingController;
  * GRAR main controller
  */
 class Controller {
-
-
 
 	public function new(c : Config) {
 
@@ -54,10 +52,10 @@ class Controller {
 					case Loading(langsUri, layoutUri, displayXml, structureXml):
 
 						// langs
-						gameSrv.fetchLangs( langs, function(){  }, onError );
+						gameSrv.fetchLangs( langs, function(l : StringMap<Locale>){ state.locales = l; }, onError );
 
 						// display (styles, ui, transitions, filters, templates)
-						gameSrv.fetchSpriteSheet( display.node.Ui.att.display, function(t:TilesheetEx){  }, onError );
+						gameSrv.fetchSpriteSheet( display.node.Ui.att.display, function(t:TilesheetEx){ state.module.tilesheet = t; }, onError );
 
 						gameSrv.fetchTransitions( display.node.Transitions.att.display, function(t:TransitionTemplate){  }, onError );
 
@@ -65,22 +63,33 @@ class Controller {
 
 						// structure (parts, contextuals)
 
-					case LoadingStyles(displayXml):
+					case LoadingStyles(displayXml): // only when tilesheet loaded and currentLocale known
+
+						var onStyle = function(s : StyleSheet) {
+
+								state.module.setStyleSheet(currentLocale, stylesheet);
+
+								if (state.module.countStyleSheet(currentLocale) == 0) {
+
+									state.currentStyleSheet = stylesheet.name;
+								}
+							}
 
 						for (s in display.nodes.Style) {
 
 				            var fullPath = s.att.file.split("/");
-
 				            var localePath : String = "";
+
 				            for (i in 0...fullPath.length - 1) {
+
 				                localePath += fullPath[i] + "/";
 				            }
-				            localePath += Localiser.instance.currentLocale + "/";
+				            localePath += state.currentLocale + "/";
 				            localePath += fullPath[fullPath.length - 1];
 
 					        var extension : String = localePath.substr(localePath.lastIndexOf(".") + 1);
 
-							gameSrv.fetchStyle( localePath, extension, function(){  }, onError );
+							gameSrv.fetchStyle( localePath, extension, state.module.tilesheet, onStyle, onError );
 				        }
 				}
 			}
@@ -90,9 +99,30 @@ class Controller {
 				trackingCtrl.initTracking(state.module);
 			}
 
+		state.onCurrentLanguageChanged = function() {
+
+				loadCurrentLocale();
+			}
+
+		state.onLocalesAdded = function() {
+
+				// TODO 
+				// for each lang, flags.set(value, flagIconPath);
+
+				loadCurrentLocale();
+			}
+
 		state.readyState = true;
 	}
 
+	function loadCurrentLocale() {
+
+		if (state.currentLocale == null || state.locales == null) {
+
+			return;
+		}
+		// TODO load lang file for current "view"
+	}
 
 	function onError(e:String) : Void {
 

@@ -13,6 +13,10 @@ class AutoService {
 
 	public function new() { }
 
+#if flash
+	var mySo : SharedObject;
+#end
+
 	/**
 	 * Attempts to init an Auto-typed Tracking object.
 	 */
@@ -44,7 +48,7 @@ class AutoService {
 
 			try {
 #if flash
-				var mySo : SharedObject = SharedObject.getLocal("saveFile");
+				mySo = SharedObject.getLocal("saveFile");
 			
 				lessonStatus = mySo.data.lessonStatus;
 				score = mySo.data.score;
@@ -59,7 +63,34 @@ class AutoService {
 // dispatchEvent(new Event(Event.INIT));
 //		} else {
 // dispatchEvent(new Event(Event.INIT));
-//		}
+		}
 		onSuccess( new Tracking(isActive, studentId, studentName, null, score, masteryScore, lessonStatus, isNote, Auto(lesson_location)) );
+	}
+
+	public function setLocation(isActive : Bool, location : String) : Void {
+
+		if (isActive) {
+#if flash
+			mySo.data.lesson_location = location;
+#end
+		}
+	}
+
+	public function setStatus(isActive : Bool, status : String) : Void {
+
+		if (isActive) {
+#if flash
+			mySo.data.lessonStatus = status;
+#end
+		}
+	}
+
+	public function setScore(isActive : Bool, score : Int) : Void {
+
+		if (isActive) {
+#if flash
+			mySo.data.score = Std.string(score);
+#end
+		}
 	}
 }

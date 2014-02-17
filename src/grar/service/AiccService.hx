@@ -8,6 +8,8 @@ import grar.model.Tracking;
 import flash.external.ExternalInterface;
 #end
 
+using grar.util.TimeTools;
+
 class AiccService {
 
 	public function new() { }
@@ -138,5 +140,51 @@ class AiccService {
 		}
 		onSuccess( new Tracking(isActive, studentId, studentName, location, score, masteryScore, lessonStatus, isNote, Aicc(_aicc_url, _aicc_sid)) );
 // dispatchEvent(new Event(Event.INIT));
+	}
+
+	public function putParams(t : Tracking, onSuccess : Tracking -> Void, onError : String -> Void) : Void {
+
+		if (!t.isActive) {
+
+			return;
+		}
+		var _aicc_sid : String;
+		var _aicc_url : String;
+
+		switch(t.type) {
+
+			case Aicc(u, i):
+
+				_aicc_url = u;
+				_aicc_sid = i;
+
+			default: return;
+		}
+		if (_aicc_sid == "undefined" || _aicc_url == "undefined") {
+
+			return;
+		}
+		var aicc_data : String = "[core]";
+		aicc_data += "\r\nstudentId=" + t.studentId;
+		aicc_data += "\r\nstudentName=" + t.studentName;
+		aicc_data += "\r\nlesson_location=" + t.location;
+		aicc_data += "\r\ncredit=no-credit";
+		aicc_data += "\r\nlessonStatus=" + t.lessonStatus;
+		aicc_data += "\r\nscore=" + t.score;
+		aicc_data += "\r\ntime=" + Std.int(t.currentTime / 1000).getFormatTime();
+		aicc_data += "\r\n[core_lesson]";
+
+		var http : Http = new Http(_aicc_url);
+
+		http.onData = function(d:String) {
+
+				onSuccess(t);
+			}
+
+		http.onError = onError;
+
+		http.setPostData("command=putparam&session_id="+_aicc_sid+"&version=2.2&aicc_data="+aicc_data);
+
+		http.request(true);
 	}
 }

@@ -3,6 +3,9 @@ package grar.model;
 import grar.model.Grar;
 import grar.model.Tracking;
 
+import haxe.ds.StringMap;
+
+
 /**
  * Stores the current GRAR module state.
  */
@@ -19,9 +22,12 @@ class State {
 	public var tracking (default,set) : Null<Tracking> = null;
 
 	// From StateInfos
-	public var currentLanguage (default,set) : Null<String> = null;
+	public var currentLocale (default,set) : Null<String> = null;
+
 	public var bookmark (default,default) : Int = -1;
+
 	public var checksum (default,default) : Int;
+
 	//public var tmpState (default, null) : String;
 
 	//private var completion : Map<String, Int>;
@@ -30,15 +36,52 @@ class State {
 
 	/*********/
 
+	public var currentStyleSheet (default, set) : Null<String> = null;
+
+	public var locales (default, set) : Null<StringMap<Locale>> = null;
+
+	public var localeStrings (default, set) : Null<StringMap<String>> = null;
+
+
 	///
-	// getter / setter
+	// GETTER / SETTER
 	//
+
+	function set_currentStyleSheet( v : Null<String> ) : Null<String> {
+
+		currentStyleSheet = v;
+
+		onCurrentStyleSheetChanged();
+
+		return currentStyleSheet;
+	}
+
+	function set_locales( v : Null<StringMap<Locale>> ) : Null<StringMap<Locale>> {
+
+		locales = v;
+
+		onLocalesAdded();
+
+		return locales;
+	}
+
+	function set_localeStrings( v : Null<StringMap<String>> ) : Null<StringMap<String>> {
+
+		localeStrings = v;
+
+		onLocaleLoaded();
+
+		return localeStrings;
+	}
 
 	function set_tracking( v : Tracking ) : Tracking {
 
 		tracking = v;
 
 		tracking.onLocationChanged = onTrackingLocationChanged;
+		tracking.onStatusChanged = onTrackingStatusChanged;
+		tracking.onSuccessStatusChanged = onTrackingSuccessStatusChanged;
+		tracking.onSuspendDataChanged = onTrackingSuspendDataChanged;
 
 		onTrackingChanged();
 
@@ -81,6 +124,7 @@ class State {
 		return module;
 	}
 
+
 	///
 	// CALLBACKS
 	//
@@ -89,6 +133,12 @@ class State {
 
 	public dynamic function onTrackingLocationChanged() : Void { }
 
+	public dynamic function onTrackingStatusChanged() : Void { }
+
+	public dynamic function onTrackingSuccessStatusChanged() : Void { }
+
+	public dynamic function onTrackingSuspendDataChanged() : Void { }
+
 	public dynamic function onCurrentLanguageChanged() : Void { }
 
 	public dynamic function onReadyStateChanged() : Void { }
@@ -96,4 +146,10 @@ class State {
 	public dynamic function onModuleChanged() : Void { }
 
 	public dynamic function onModuleStateChanged() : Void { }
+
+	public dynamic function onCurrentStyleSheetChanged() : Void { }
+
+	public dynamic function onLocalesAdded() : Void { }
+
+	public dynamic function onLocaleLoaded() : Void { }
 }

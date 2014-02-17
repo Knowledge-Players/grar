@@ -4,7 +4,7 @@ import haxe.ds.StringMap;
 
 import aze.display.TilesheetEx;
 
-typedef State = {
+typedef InitState = {
 
 	var value : String;
 	var tracking : String;
@@ -12,7 +12,7 @@ typedef State = {
 
 enum ReadyState {
 
-	Loading(langs : String, layout : String, displayNode : Fast, structureNode : Fast);
+	Loading(langs : String, layout : String, displayNode : haxe.xml.Fast, structureNode : haxe.xml.Fast);
 }
 
 /**
@@ -26,6 +26,7 @@ class Grar {
 		this.id = id;
 		this.state = s;
 		this.readyState = rs;
+		this.styles = new StringMap();
 	}
 
 	public var readyState (default, set) : ReadyState;
@@ -34,9 +35,12 @@ class Grar {
 
 	public var id (default, null) : String;
 
-	public var state (default, null) : State;
+	public var state (default, null) : InitState;
 
 	public var tilesheet (default, null) : TilesheetEx;
+
+
+	private var styles : StringMap<StringMap<StyleSheet>>;
 
 
 	///
@@ -56,7 +60,38 @@ class Grar {
 
 
 	///
-	// CALLBACKS / API
+	// API
+	//
+
+	public function getStyleSheet(locale : String, sn : String) : Null<StyleSheet> {
+
+		if (!styles.exists(locale)) {
+
+			return null;
+		}
+		return styles.get(locale).get(sn);
+	}
+
+	public function setStyleSheet(locale : String, s : StyleSheet) : Void {
+
+		if (!styles.exists(locale) ) {
+
+			styles.set(locale, new StringMap());
+		}
+		styles.get(locale).set(s.name, s);
+	}
+
+	public function countStyleSheet(locale : String) : Int {
+
+		if (!styles.exists(locale) ) {
+
+			return 0;
+		}
+		return Lambda.count(styles.get(locale));
+	}
+
+	///
+	// CALLBACKS
 	//
 
 	public dynamic function onReadyStateChanged() { }
