@@ -3,10 +3,13 @@ package grar;
 import grar.model.Config;
 import grar.model.State;
 import grar.model.Grar;
+import grar.model.ContextualType;
 
 import grar.service.GameService;
 
 import grar.controller.TrackingController;
+
+import grar.view.Application;
 
 /**
  * GRAR main controller
@@ -22,6 +25,8 @@ class Controller {
 
 		trackingCtrl = new TrackingController(this);
 
+		application = new Application();
+
 		init();
 	}
 
@@ -31,6 +36,8 @@ class Controller {
 	var gameSrv : GameService;
 
 	var trackingCtrl : TrackingController;
+
+	var application : Application;
 
 	/**
 	 * Inits the MVC part of the Controller
@@ -51,17 +58,106 @@ class Controller {
 
 					case Loading(langsUri, layoutUri, displayXml, structureXml):
 
+						var changeState = function() {
+
+								if (state.currentLocale != null && state.module.tilesheet != null) {
+
+									state.module.readyState = LoadingStyles(displayXml);
+								}
+							}
+
+
+						// tracking
+						trackingCtrl.initTracking(state.module, function(){ changeState(); }, onError);
+
+
 						// langs
-						gameSrv.fetchLangs( langs, function(l : StringMap<Locale>){ state.locales = l; }, onError );
+						gameSrv.fetchLangs( langs, function(l:StringMap<Locale>){ state.locales = l; }, onError );
+
 
 						// display (styles, ui, transitions, filters, templates)
-						gameSrv.fetchSpriteSheet( display.node.Ui.att.display, function(t:TilesheetEx){ state.module.tilesheet = t; }, onError );
+						gameSrv.fetchSpriteSheet( displayXml.node.Ui.att.display, function(t:TilesheetEx){
 
-						gameSrv.fetchTransitions( display.node.Transitions.att.display, function(t:TransitionTemplate){  }, onError );
+									state.module.tilesheet = t;
 
-						gameSrv.fetchFilters( display.node.Filters.att.display, function(f:FilterTemplate){  }, onError );
+									changeState();
+
+								}, onError );
+
+						gameSrv.fetchTransitions( displayXml.node.Transitions.att.display, function(t:StringMap<TransitionTemplate>){ state.module.transitions = t; }, onError );
+
+						gameSrv.fetchFilters( displayXml.node.Filters.att.display, function(f:StringMap<FilterType>){ state.module.filters = f; }, onError );
+
+						if (displayXml.hasNode.Templates) {
+
+							gameSrv.fetchTemplates( displayXml.node.Templates.att.folder, function(tmpls:StringMap<Xml>){ state.module.templates = tmpls; }, onError );
+					    }
+
 
 						// structure (parts, contextuals)
+
+						for (contextual in structureXml.nodes.Contextual) {
+
+							var contextualType : ContextualType = Type.createEnum(ContextualType, contextual.att.type.toUpperCase());
+
+							switch(contextualType) {
+
+								case NOTEBOOK:
+
+									gameSrv.fetchNotebook(contextual.att.file, contextual.att.display, function(m:Notebook,v:NotebookDisplay){
+
+											// TODO NotebookDisplay.instance.parseContent(d);
+											// TODO NotebookDisplay.instance.model = new Notebook(c);
+
+										}, onError);
+								
+								case GLOSSARY:
+
+									gameSrv.fetchContextual(contextual.att.file, function(c:Xml){
+			
+											// TODO Glossary.instance.fillWithXml(c);
+
+										}, onError);
+								
+								case BIBLIOGRAPHY:
+
+									gameSrv.fetchContextual(contextual.att.file, function(c:Xml){
+			
+											// TODO Bibliography.instance.fillWithXml(c);
+
+										}, onError);
+								
+								case MENU:
+
+									gameSrv.fetchContextual(contextual.att.display, function(d:Xml){
+
+											// TODO MenuDisplay.instance.parseContent(d);
+											
+											if(contextual.has.file) {
+
+												gameSrv.fetchContextual(contextual.att.file, function(c:Xml){
+					
+														// TODO menu = AssetsStorage.getXml(c);
+
+													}, onError);
+											}
+										}
+
+								default: // nothing
+							}
+						}
+				        if (structureXml.has.inventory) {
+#if (flash || openfl)
+				        	gameSrv.fetchInventory(structureNode.att.inventory, function(i:StringMap<InventoryToken>, tn:TokenNotification, ti:StringMap<{ small:flash.display.BitmapData, large:flash.display.BitmapData }>){
+#else
+				        	gameSrv.fetchInventory(structureNode.att.inventory, function(i:StringMap<InventoryToken>, tn:TokenNotification, ti:StringMap<{ small:String, large:String }>){
+#end
+				        			state.module.inventory = i;
+				        			application.tokenNotification = tn;
+									application.tokensImages = ti;
+
+				        		}, onError);
+				        }
 
 					case LoadingStyles(displayXml): // only when tilesheet loaded and currentLocale known
 
@@ -96,10 +192,17 @@ class Controller {
 
 		state.onModuleChanged = function() {
 
-				trackingCtrl.initTracking(state.module);
+				// place here cleaning code for any potential previous module
+
+				state.currentLocale = null;
 			}
 
-		state.onCurrentLanguageChanged = function() {
+		state.onCurrentLocaleChanged = function() {
+
+				if (state.currentLocale == null) {
+
+					return;
+				}
 
 				loadCurrentLocale();
 			}

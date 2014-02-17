@@ -21,10 +21,10 @@ class XmlToFilter {
 		var root : Fast = new Fast(xml).node.Filters;
 		var filters : StringMap<FilterType> = new StringMap();
 
-		for(child in root.elements) {
+		for (child in root.elements) {
 
 			var filter : Null<FilterType>;
-	#if flash
+#if flash
 			switch(child.name.toLowerCase()) {
 
 				case NODE_NAME_DROPSHADOW:
@@ -67,9 +67,9 @@ class XmlToFilter {
 				default:
 					throw "unexpected node " + child.name;
 			}
-	#else
+#else
 			filter = null;
-	#end
+#end
 			filters.set(child.att.ref, filter);
 		}
         return filters;

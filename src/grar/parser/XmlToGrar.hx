@@ -22,8 +22,10 @@ class XmlToGrar {
         var layout : String = parametersNode.node.Layout.att.file;
         var langs : String = parametersNode.node.Languages.att.file;
         var displayNode : Fast = sFast.node.Grar.node.Display;
-        var structureNode:Fast = sFast.node.Grar.node.Structure;
+        var structureNode : Fast = sFast.node.Grar.node.Structure;
 
-        return new Grar(m, id, s, Loading(langs, layout, displayNode, structureNode));
+        var ref : String = structureNode.att.ref;
+
+        return new Grar(m, id, s, ref, Loading(langs, layout, displayNode, structureNode));
     }
 }

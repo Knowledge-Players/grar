@@ -88,16 +88,16 @@ class State {
 		return tracking;
 	}
 
-	function set_currentLanguage( v : String ) : String {
+	function set_currentLocale( v : String ) : String {
 
-		if (v == currentLanguage) {
+		if (v == currentLocale) {
 			return v;
 		}
-		currentLanguage = v;
+		currentLocale = v;
 
-		onCurrentLanguageChanged();
+		onCurrentLocaleChanged();
 
-		return currentLanguage;
+		return currentLocale;
 	}
 
 	function set_readyState( v : Bool ) : Bool {
@@ -139,7 +139,7 @@ class State {
 
 	public dynamic function onTrackingSuspendDataChanged() : Void { }
 
-	public dynamic function onCurrentLanguageChanged() : Void { }
+	public dynamic function onCurrentLocaleChanged() : Void { }
 
 	public dynamic function onReadyStateChanged() : Void { }
 

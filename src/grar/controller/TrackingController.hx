@@ -138,9 +138,9 @@ class TrackingController {
 			}
 	}
 
-	public function initTracking(m : Grar) : Void {
+	public function initTracking(m : Grar, onSuccess : Void -> Void, onError : Void -> Void ) : Void {
 
-		var loadStateInfos = function(stateStr : String) : Void {
+		var loadStateInfos = function(stateStr:String):Void {
 				
 				// TODO commented code
 				//allItem = GameManager.instance.game.getAllItems();
@@ -167,15 +167,13 @@ class TrackingController {
 				}
 				*/
 				state.checksum = Std.parseInt(stateInfosArray[3]);
+
+				//state.module.readyState = 
+
+				onSuccess();
 			}
 
 		var onTrackingObject = function(t : Tracking) : Void {
-
-				/** WIP **
-				- sort out MVC Tracking layer
-				- Explode StateInfos, Trackings
-				- init Styles on currentLang
-				*********/
 
 				state.tracking = t;
 
@@ -202,16 +200,16 @@ class TrackingController {
         switch (m.mode) {
 
 			case AICC :
-				aiccSrv.init( false, m.state.tracking, onTrackingObject, parent.onError );
+				aiccSrv.init( false, m.state.tracking, onTrackingObject, onError );
 
 			case SCORM:
-				scormSrv.init( false, m.state.tracking, false, onTrackingObject, parent.onError );
+				scormSrv.init( false, m.state.tracking, false, onTrackingObject, onError );
 
 			case SCORM2004:
-				scormSrv.init( false, m.state.tracking, true, onTrackingObject, parent.onError );
+				scormSrv.init( false, m.state.tracking, true, onTrackingObject, onError );
 
 			case AUTO:
-				autoSrv.init( false, m.state.tracking, onTrackingObject, parent.onError );
+				autoSrv.init( false, m.state.tracking, onTrackingObject, onError );
 		}
 		//tracking.init(isNote, activation);
 	}

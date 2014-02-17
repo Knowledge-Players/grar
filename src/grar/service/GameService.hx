@@ -5,12 +5,16 @@ import grar.model.TransitionTemplate;
 import grar.model.FilterType;
 import grar.model.StyleSheet;
 import grar.model.Locale;
+import grar.model.InventoryToken;
+
+import grar.view.TokenNotification;
 
 import grar.parser.XmlToGrar;
 import grar.parser.XmlToTransition;
 import grar.parser.XmlToFilter;
 import grar.parser.XmlToStyleSheet;
 import grar.parser.JsonToStyleSheet;
+import grar.parser.XmlToInventory;
 
 import aze.display.TilesheetEx;
 
@@ -107,9 +111,109 @@ class GameService {
 		onSuccess(l);
 	}
 
+	public function fetchTemplates( path : String, onSuccess : StringMap<Xml> -> Void, onError : String -> Void ) : Void {		
+
+	    var tmpls : StringMap<Xml> = new StringMap();
+
+		try {
+
+			// at the moment, grar fetches its data from embedded assets only
+	    	var templates = AssetsStorage.getFolderContent(path, "xml");
+
+		    for (temp in templates) {
+
+		    	tmpls.set( temp.firstElement().get("ref"), cast(temp, TextAsset).getXml() );
+		    }
+
+		} catch (e:String) {
+
+			onError(e);
+			return;
+		}
+		onSuccess(tmpls);
+	}
+
+	public function fetchNotebook(mPath : String, vPath : String, onSuccess : Notebook -> NotebookDisplay -> Void, onError : String -> Void) : Void {
+
+		var m : Notebook;
+		var v : NotebookDisplay;
+
+		try {
+
+			// at the moment, grar fetches its data from embedded assets only
+			var mXml : Xml = AssetsStorage.getXml(mPath);
+
+			m = XmlToNotebook.parseModel(mXml);
+
+			var vXml : Xml = AssetsStorage.getXml(vPath);
+
+			v = XmlToNotebook.parseView(vXml);
+
+		} catch (e:String) {
+
+			onError(e);
+			return;
+		}
+		onSuccess(m, v);
+	}
+
+	public function fetchContextual(path : String, onSuccess : Xml -> Void, onError : String -> Void) : Void {
+
+		var c : Xml;
+
+		try {
+
+			// at the moment, grar fetches its data from embedded assets only
+			c = AssetsStorage.getXml(path);
+
+		} catch (e:String) {
+
+			onError(e);
+			return;
+		}
+		onSuccess(c);
+	}
+
+#if (flash || openfl)
+	public function fetchInventory(path : String, onSuccess : StringMap<InventoryToken> -> TokenNotification -> StringMap<{ small : flash.display.BitmapData, large : flash.display.BitmapData }> -> Void, onError : String -> Void) : Void {
+#else
+	public function fetchInventory(path : String, onSuccess : StringMap<InventoryToken> -> TokenNotification -> StringMap<{ small : String, large : String }> -> Void, onError : String -> Void) : Void {
+#end
+		var i : { m : StringMap<InventoryToken>, d : String };
+		var id : { tn : TokenNotification, ti : StringMap<{ small : String, large : String }> };
+#if (flash || openfl)
+		var ti : StringMap<{ small : String, large : String }> = new StringMap();
+#end
+		try {
+
+			var tXml : Xml = AssetsStorage.getXml(path);
+
+			i = XmlToInventory.parse(tXml);
+
+			var dtXml : Xml = AssetsStorage.getXml(i.d);
+
+			id = XmlToInventory.parseDisplayToken(dtXml);
+#if (flash || openfl)
+			for (k in id.ti.keys()) {
+
+				ti.set(k, { small: AssetsStorage.getBitmapData(id.ti.get(k.small)), large: AssetsStorage.getBitmapData(id.ti.get(k.large)) });
+			}
+#end
+		} catch (e:String) {
+
+			onError(e);
+			return;
+		}
+#if (flash || openfl)
+		onSuccess(i.m, id.tn, ti);
+#else
+		onSuccess(i.m, id.tn, id.ti);
+#end
+	}
+
 	public function loadLang(path : String, onSuccess : -> Void, onError : String -> Void) : Void {
 
-
+		// TODO
 	}
 
 	public function fetchStyle(path : String, ext : String, tilesheet : aze.display.TilesheetEx, 
@@ -118,6 +222,7 @@ class GameService {
 		var s : StyleSheet;
 
 		try {
+
 			// at the moment, grar fetches its data from embedded assets only
 			switch(ext.toLowerCase()) {
 

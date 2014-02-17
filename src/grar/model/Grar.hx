@@ -20,11 +20,12 @@ enum ReadyState {
  */
 class Grar {
 
-	public function new(m : TrackingMode, id : String, s : State, rs : ReadyState) {
+	public function new(m : TrackingMode, id : String, s : State, r : String, rs : ReadyState) {
 
 		this.mode = m;
 		this.id = id;
 		this.state = s;
+		this.ref = r;
 		this.readyState = rs;
 		this.styles = new StringMap();
 	}
@@ -37,7 +38,16 @@ class Grar {
 
 	public var state (default, null) : InitState;
 
-	public var tilesheet (default, null) : TilesheetEx;
+	public var tilesheet (default, default) : TilesheetEx;
+
+	public var transitions (default, default) : StringMap<TransitionTemplate>;
+
+	public var filters (default, default) : StringMap<FilterType>;
+
+	public var ref (default, set) : String; // ref for the layout (?)
+
+	public var notebook (default, set) : Notebook;
+
 
 
 	private var styles : StringMap<StringMap<StyleSheet>>;
@@ -56,6 +66,28 @@ class Grar {
 		onReadyStateChanged();
 
 		return readyState;
+	}
+
+	public function set_ref(v : String) : String {
+
+		if (ref == v) {
+			return ref;
+		}
+		ref = v;
+		onRefChanged();
+
+		return ref;
+	}
+
+	public function set_notebook(v : Notebook) : Notebook {
+
+		if (notebook == v) {
+			return notebook;
+		}
+		notebook = v;
+		onNotebookChanged();
+
+		return notebook;
 	}
 
 
@@ -95,4 +127,8 @@ class Grar {
 	//
 
 	public dynamic function onReadyStateChanged() { }
+
+	public dynamic function onRefChanged() { }
+
+	public dynamic function onNotebookChanged() { }
 }
