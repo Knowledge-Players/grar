@@ -1,6 +1,7 @@
 package grar.model;
 
 import grar.model.InventoryToken;
+import grar.model.contextual.Glossary;
 
 import haxe.ds.StringMap;
 
@@ -53,6 +54,8 @@ class Grar {
 
 	public var inventory (default, null) : StringMap<InventoryToken>;
 
+	public var glossary (default, set) : Null<Glossary> = null;
+
 
 
 	private var styles : StringMap<StringMap<StyleSheet>>;
@@ -61,6 +64,17 @@ class Grar {
 	///
 	// GETTERS / SETTERS
 	//
+
+	public function set_glossary(v : Null<Glossary>) : Null<Glossary> {
+
+		if (glossary == v) {
+			return glossary;
+		}
+		glossary = v;
+		onGlossaryChanged();
+
+		return glossary;
+	}
 
 	public function set_readyState(v : ReadyState) : ReadyState {
 
@@ -144,4 +158,6 @@ class Grar {
 	public dynamic function onRefChanged() { }
 
 	public dynamic function onNotebookChanged() { }
+
+	public dynamic function onGlossaryChanged() { }
 }

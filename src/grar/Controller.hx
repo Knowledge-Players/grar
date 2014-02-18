@@ -114,9 +114,9 @@ class Controller {
 								
 								case GLOSSARY:
 
-									gameSrv.fetchContextual(contextual.att.file, function(c:Xml){
+									gameSrv.fetchGlossary(contextual.att.file, function(g:grar.model.contextual.Glossary){
 			
-											// TODO Glossary.instance.fillWithXml(c);
+											state.module.glossary = g;
 
 										}, onError);
 								

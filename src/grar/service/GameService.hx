@@ -153,21 +153,21 @@ class GameService {
 		onSuccess(m.n, m.i, v);
 	}
 
-	public function fetchContextual(path : String, onSuccess : Xml -> Void, onError : String -> Void) : Void {
+	public function fetchGlossary(path : String, onSuccess : grar.model.contextual.Glossary -> Void, onError : String -> Void) : Void {
 
-		var c : Xml;
+		var g : grar.model.contextual.Glossary;
 
 		try {
 
 			// at the moment, grar fetches its data from embedded assets only
-			c = AssetsStorage.getXml(path);
+			g = grar.parser.XmlToGlossary(AssetsStorage.getXml(path));
 
 		} catch (e:String) {
 
 			onError(e);
 			return;
 		}
-		onSuccess(c);
+		onSuccess(g);
 	}
 
 #if (flash || openfl)
