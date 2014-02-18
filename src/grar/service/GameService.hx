@@ -279,4 +279,41 @@ class GameService {
 		}
 		onSuccess(s);
 	}
+
+	public function fetchPart(xml : Xml, path : String, onSuccess : Part -> Void, onError : String -> Void) : Void {
+
+		var p : Part;
+
+		try {
+
+			if (xml != null) {
+
+				p = XmlToPart.parse(xml);
+			}
+			// FIXME
+			//if (display == null && parent != null) {
+
+			//	display = parent.display;
+			//}
+			if (file != null) {
+
+				p = XmlToPart.parse(AssetsStorage.getXml(path));
+			
+			} else if (xml.elements.hasNext()) {
+
+				parseContent(xml.x);
+				
+				if (parent != null) {
+
+					file = parent.file;
+				}
+			}
+
+		} catch (e:String) {
+
+			onError(e);
+			return;
+		}
+		onSuccess(p);
+	}
 }

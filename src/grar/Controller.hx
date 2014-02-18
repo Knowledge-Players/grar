@@ -154,6 +154,14 @@ class Controller {
 				        		}, onError);
 				        }
 
+				        // Load parts
+				        for (partXml in structureXml.nodes.Part) {
+
+				            var part : Part = PartFactory.createPartFromXml(partXml);
+					        addPart(part.att.id, part);
+					        part.init(partXml);
+				        }
+
 					case LoadingStyles(displayXml): // only when tilesheet loaded and currentLocale known
 
 						var onStyle = function(s : StyleSheet) {
