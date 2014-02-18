@@ -99,6 +99,10 @@ class Zone extends KpDisplay {
 			trace("[Zone] This zone is empty. Are you sure your XML is correct ?");
 		}
 
+        if (_zone.has.transitionIn){
+            addEventListener(Event.ADDED_TO_STAGE,function(e){TweenManager.applyTransition(this,_zone.att.transitionIn);});
+        }
+
 		// Listeners on menu state
 		if(buttonGroups.exists(groupMenu)){
 		    MenuDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
