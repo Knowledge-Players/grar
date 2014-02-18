@@ -1,6 +1,5 @@
 package com.knowledgeplayers.grar.display.element;
 
-import com.knowledgeplayers.grar.display.component.TileImage;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import com.knowledgeplayers.grar.display.component.Widget;
@@ -20,6 +19,8 @@ class Timeline extends EventDispatcher
     public var elements (default, null):Array<TimelineElement>;
 
     private var nbCompleteTransitions:Float = 0;
+
+	dynamic public function onComplete():Void {}
 
     public function new(?name:String):Void
 	{
@@ -53,6 +54,7 @@ class Timeline extends EventDispatcher
 		dispatchEvent(new Event(elemRef));
         if(nbCompleteTransitions == elements.length){
             dispatchEvent(new Event(Event.COMPLETE));
+	        onComplete();
         }
     }
 

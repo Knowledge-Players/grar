@@ -1,5 +1,8 @@
 package com.knowledgeplayers.grar.display;
 
+#if flash
+import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
+#end
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
 import com.knowledgeplayers.grar.display.component.container.SoundPlayer;
@@ -9,9 +12,6 @@ import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
 import flash.geom.Rectangle;
 import com.knowledgeplayers.grar.display.component.ScrollBar;
-#if flash
-import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
-#end
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import haxe.ds.GenericStack;
 import flash.events.Event;
@@ -154,7 +154,6 @@ class KpDisplay extends Sprite {
 					timeline.addElement(mock, elem.att.transition, delay);
 				}
 				else if(!displays.exists(elem.att.ref))
-					//throw "[KpDisplay] Can't add unexistant widget '"+elem.att.ref+"' in timeline '"+child.att.ref+"'.";
 					trace("[KpDisplay] Can't add unexistant widget '"+elem.att.ref+"' in timeline '"+child.att.ref+"'.");
 				else
 					timeline.addElement(displays.get(elem.att.ref),elem.att.transition,delay);

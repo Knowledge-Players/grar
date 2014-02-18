@@ -31,7 +31,7 @@ class DefaultButton extends WidgetContainer {
 	/**
     * Different states of the button
     **/
-	public var states (default, null):Map<String, Map<String, Widget>>;
+	public var states (default, null):Map<String, State>;
 
 	/**
 	* Group of buttons containing it
@@ -54,6 +54,8 @@ class DefaultButton extends WidgetContainer {
 	private var tmpXml: Fast;
 	private var defaultState: String;
 	private var enabledState: Map<String, Bool>;
+	private var innerTimelines: Map<String, Timeline>;
+	private var tmpContent:Sprite;
 
 	/**
      * Action to execute on click
@@ -64,16 +66,17 @@ class DefaultButton extends WidgetContainer {
      * @param	tilesheet : UI Sheet
      * @param	tile : Tile containing the upstate
      */
-	public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>)
+	public function new(?xml: Fast, ?pStates:Map<String, State>)
 	{
 		super(xml);
 		timelines = new Map<String, Timeline>();
 		enabledState = new Map<String, Bool>();
+		innerTimelines = new Map<String, Timeline>();
 
 		if(pStates != null)
 			states = pStates;
 		else
-			states = new Map<String, Map<String, Widget>>();
+			states = new Map<String, State>();
 
 		if(xml != null){
 			for(state in xml.elements){
@@ -122,14 +125,28 @@ class DefaultButton extends WidgetContainer {
 			tmpXml = xml;
 		if(tmpXml != null){
 			for(state in tmpXml.elements){
-				if(timelines != null && state.has.timeline)
-					this.timelines.set(state.name, timelines.get(state.att.timeline));
-				if(state.has.enable)
-					enabledState.set(state.name, state.att.enable == "true");
-				else
-					enabledState.set(state.name, true);
-				for(elem in state.elements){
-					states.set(state.name+"_" + elem.name, createStates(elem));
+				if(state.name.toLowerCase() != "timeline"){
+					if(timelines != null && state.has.timeline)
+						this.timelines.set(state.name, timelines.get(state.att.timeline));
+					if(state.has.enable)
+						enabledState.set(state.name, state.att.enable == "true");
+					else
+						enabledState.set(state.name, true);
+					for(elem in state.elements){
+						states.set(state.name+"_" + elem.name, createStates(elem));
+					}
+				}
+				else{
+					var timeline = new Timeline(state.att.ref);
+
+					for (elem in state.elements){
+						var delay = elem.has.delay?Std.parseFloat(elem.att.delay):0;
+						var mock = new Image();
+						mock.ref = elem.att.ref;
+						timeline.addElement(mock, elem.att.transition, delay);
+					}
+
+					innerTimelines.set(state.att.ref,timeline);
 				}
 			}
 			// Simplified XML
@@ -200,14 +217,14 @@ class DefaultButton extends WidgetContainer {
 	{
 		if(pKey != null && pKey != " "){
 			for(state in states){
-				if(state.exists(pKey)){
-					cast(state.get(pKey), ScrollPanel).setContent(pContent);
+				if(state.widgets.exists(pKey)){
+					cast(state.widgets.get(pKey), ScrollPanel).setContent(pContent);
 				}
 			}
 		}
 		else{
 			for(state in states){
-				for(elem in state){
+				for(elem in state.widgets){
 					if(Std.is(elem, ScrollPanel)){
 						cast(elem, ScrollPanel).setContent(pContent);
 						break;
@@ -217,63 +234,53 @@ class DefaultButton extends WidgetContainer {
 		}
 	}
 
-	public function renderState(state:String)
+	public function renderState(stateName:String)
 	{
 		var changeState = false;
-		var list:Map<String, Widget>;
-		if(states.exists(toggleState + "_" + state)){
-			list = states.get(toggleState + "_" + state);
-			if(currentState != toggleState + "_" + state){
-				currentState = toggleState + "_" + state;
+		var oldState: State = states[currentState];
+		var state:State = null;
+		if(states.exists(toggleState + "_" + stateName)){
+			state = states.get(toggleState + "_" + stateName);
+			if(currentState != toggleState + "_" + stateName){
+				currentState = toggleState + "_" + stateName;
 				changeState = true;
 			}
 		}
 		else if(states.exists(toggleState + "_" + "out")){
-			list = states.get(toggleState + "_" + "out");
+			state = states.get(toggleState + "_" + "out");
 			if(currentState != toggleState + "_" + "out"){
 				currentState = toggleState + "_" + "out";
 				changeState = true;
 			}
 		}
-		else if(states.exists("active" + "_" + state)){
-			list = states.get("active" + "_" + state);
-			if(currentState != "active" + "_" + state){
-				currentState = "active" + "_" + state;
+		else if(states.exists("active" + "_" + stateName)){
+			state = states.get("active" + "_" + stateName);
+			if(currentState != "active" + "_" + stateName){
+				currentState = "active" + "_" + stateName;
 				changeState = true;
 			}
 		}
 		else{
-			list = states.get("active_out");
+			state = states.get("active_out");
 			if(currentState != "active_out"){
 				currentState = "active_out";
 				changeState = true;
 			}
 		}
 		if(changeState){
-			// Clear state
-			while(content.numChildren > 0){
-				content.removeChildAt(content.numChildren - 1);
-			}
-			if(layer != null)
-				for(child in layer.children)
-					child.visible = false;
-			scale = scaleX = scaleY = 1;
-
-			// Reset children
-			children = new Array<Widget>();
-
-			if(list == null)
+			tmpContent = new Sprite();
+			if(state == null)
 				throw "There is no information for state \"" + currentState + "\" for button \"" + ref + "\".";
 
 			var array = new Array<Widget>();
 			var layerIndex: Int = -1;
-			for(widget in list){
+			for(widget in state.widgets){
 				array.push(widget);
 			}
 
 			array.sort(sortDisplayObjects);
 			for(obj in array){
-				content.addChild(obj);
+				tmpContent.addChild(obj);
 				children.push(obj);
 				if(Std.is(obj, TileImage)){
 					if(layerIndex == -1) layerIndex = obj.zz;
@@ -281,14 +288,35 @@ class DefaultButton extends WidgetContainer {
 			}
 
 			var j = 0;
-			while(j < content.numChildren && cast(content.getChildAt(j), Widget).zz < layerIndex)
+			while(j < tmpContent.numChildren && cast(tmpContent.getChildAt(j), Widget).zz < layerIndex)
 				j++;
-			content.addChildAt(layer.view, j);
+			tmpContent.addChildAt(layer.view, j);
 
 			layer.render();
 			enabled = enabledState.get(toggleState);
-			displayContent();
-			dispatchEvent(new Event(Event.CHANGE));
+
+			if(oldState != null && oldState.timelineOut != null){
+				// Update timeline
+				for(elem in oldState.widgets){
+					insertWidget(elem, oldState.timelineOut);
+				}
+				oldState.timelineOut.onComplete = onChangeStateFinished;
+				oldState.timelineOut.play();
+			}
+			else{
+				onChangeStateFinished();
+			}
+
+			if(tmpContent != content)
+				addChildAt(tmpContent, getChildIndex(content));
+
+			if(state.timelineIn != null){
+				// Update timeline
+				for(elem in state.widgets){
+					insertWidget(elem, state.timelineIn);
+				}
+				state.timelineIn.play();
+			}
 		}
 	}
 
@@ -315,6 +343,27 @@ class DefaultButton extends WidgetContainer {
 	}
 
 	// Private
+
+	private inline function onChangeStateFinished():Void
+	{
+		// Clear state
+		while(content.numChildren > 0){
+			content.removeChildAt(content.numChildren - 1);
+		}
+		if(layer != null)
+			for(child in layer.children)
+				child.visible = false;
+		scale = scaleX = scaleY = 1;
+
+		// Reset children
+		children = new Array<Widget>();
+
+		addChildAt(tmpContent, getChildIndex(content));
+		content = tmpContent;
+
+		displayContent();
+		dispatchEvent(new Event(Event.CHANGE));
+	}
 
 	private function onClick(event:MouseEvent):Void
 	{
@@ -372,15 +421,17 @@ class DefaultButton extends WidgetContainer {
 		removeEventListener(MouseEvent.MOUSE_DOWN, listener);
 	}
 
-	private inline function createStates(node:Fast):Map<String, Widget>
+	private inline function createStates(node:Fast):State
 	{
 		var list = new Map<String, Widget>();
+		var timelineIn: Timeline = node.has.timelineIn ? innerTimelines.get(node.att.timelineIn) : null;
+		var timelineOut: Timeline = node.has.timelineOut ? innerTimelines.get(node.att.timelineOut) : null;
 
 		for(elem in node.elements){
 			var widget = createElement(elem);
 			list.set(widget.ref, widget);
 		}
-		return list;
+		return {name: node.name, timelineIn: timelineIn, timelineOut: timelineOut, widgets: list};
 	}
 
 	// Listener
@@ -418,4 +469,19 @@ class DefaultButton extends WidgetContainer {
 		elem.zz = zIndex;
 		zIndex++;
 	}
+
+	private inline function insertWidget(widget: Widget, timeline:Timeline):Void
+	{
+		if(timeline != null)
+			for(elem in timeline.elements)
+				if(elem.widget.ref == widget.ref)
+					elem.widget = widget;
+	}
+}
+
+typedef State = {
+	var name: String;
+	var timelineIn: Timeline;
+	var timelineOut: Timeline;
+	var widgets: Map<String, Widget>;
 }
