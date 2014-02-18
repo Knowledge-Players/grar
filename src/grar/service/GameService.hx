@@ -133,28 +133,24 @@ class GameService {
 		onSuccess(tmpls);
 	}
 
-	public function fetchNotebook(mPath : String, vPath : String, onSuccess : Notebook -> NotebookDisplay -> Void, onError : String -> Void) : Void {
+	public function fetchNotebook(mPath : String, vPath : String, onSuccess : Notebook -> StringMap<InventoryToken> -> NotebookDisplay -> Void, onError : String -> Void) : Void {
 
-		var m : Notebook;
+		var m : { n: Notebook, i: StringMap<InventoryToken> };
 		var v : NotebookDisplay;
 
 		try {
 
 			// at the moment, grar fetches its data from embedded assets only
-			var mXml : Xml = AssetsStorage.getXml(mPath);
+			m = XmlToNotebook.parseModel(AssetsStorage.getXml(mPath));
 
-			m = XmlToNotebook.parseModel(mXml);
-
-			var vXml : Xml = AssetsStorage.getXml(vPath);
-
-			v = XmlToNotebook.parseView(vXml);
+			v = XmlToNotebook.parseView(AssetsStorage.getXml(vPath));
 
 		} catch (e:String) {
 
 			onError(e);
 			return;
 		}
-		onSuccess(m, v);
+		onSuccess(m.n, m.i, v);
 	}
 
 	public function fetchContextual(path : String, onSuccess : Xml -> Void, onError : String -> Void) : Void {

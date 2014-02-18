@@ -104,10 +104,11 @@ class Controller {
 
 								case NOTEBOOK:
 
-									gameSrv.fetchNotebook(contextual.att.file, contextual.att.display, function(m:Notebook,v:NotebookDisplay){
+									gameSrv.fetchNotebook(contextual.att.file, contextual.att.display, function(m:grar.model.Notebook,i:StringMap<grar.model.InventoryToken>,v:grar.view.NotebookDisplay){
 
-											// TODO NotebookDisplay.instance.parseContent(d);
-											// TODO NotebookDisplay.instance.model = new Notebook(c);
+											application.notebook = v;
+											state.module.addInventoryTokens(i);
+											state.module.notebook = m;
 
 										}, onError);
 								
@@ -152,7 +153,7 @@ class Controller {
 #else
 				        	gameSrv.fetchInventory(structureNode.att.inventory, function(i:StringMap<InventoryToken>, tn:TokenNotification, ti:StringMap<{ small:String, large:String }>){
 #end
-				        			state.module.inventory = i;
+				        			state.module.addInventoryTokens(i);
 				        			application.tokenNotification = tn;
 									application.tokensImages = ti;
 

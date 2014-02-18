@@ -1,5 +1,7 @@
 package grar.model;
 
+import grar.model.InventoryToken;
+
 import haxe.ds.StringMap;
 
 import aze.display.TilesheetEx;
@@ -28,6 +30,7 @@ class Grar {
 		this.ref = r;
 		this.readyState = rs;
 		this.styles = new StringMap();
+		this.inventory = new StringMap();
 	}
 
 	public var readyState (default, set) : ReadyState;
@@ -47,6 +50,8 @@ class Grar {
 	public var ref (default, set) : String; // ref for the layout (?)
 
 	public var notebook (default, set) : Notebook;
+
+	public var inventory (default, null) : StringMap<InventoryToken>;
 
 
 
@@ -94,6 +99,14 @@ class Grar {
 	///
 	// API
 	//
+
+	public function addInventoryTokens(t : StringMap<InventoryToken>) : Void {
+
+		for (k in t.keys()) {
+
+			inventory.set(k, t.get(k));
+		}
+	}
 
 	public function getStyleSheet(locale : String, sn : String) : Null<StyleSheet> {
 
