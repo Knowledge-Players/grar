@@ -160,7 +160,7 @@ class GameService {
 		try {
 
 			// at the moment, grar fetches its data from embedded assets only
-			g = grar.parser.XmlToGlossary(AssetsStorage.getXml(path));
+			g = grar.parser.XmlToGlossary.parse(AssetsStorage.getXml(path));
 
 		} catch (e:String) {
 
@@ -168,6 +168,23 @@ class GameService {
 			return;
 		}
 		onSuccess(g);
+	}
+
+	public function fetchBibliography(path : String, onSuccess : grar.model.contextual.Bibliography -> Void, onError : String -> Void) : Void {
+
+		var b : grar.model.contextual.Bibliography;
+
+		try {
+
+			// at the moment, grar fetches its data from embedded assets only
+			b = grar.parser.XmlToBibliography.parse(AssetsStorage.getXml(path));
+
+		} catch (e:String) {
+
+			onError(e);
+			return;
+		}
+		onSuccess(b);
 	}
 
 #if (flash || openfl)

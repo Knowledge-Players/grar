@@ -2,6 +2,7 @@ package grar.model;
 
 import grar.model.InventoryToken;
 import grar.model.contextual.Glossary;
+import grar.model.contextual.Bibliography;
 
 import haxe.ds.StringMap;
 
@@ -56,6 +57,8 @@ class Grar {
 
 	public var glossary (default, set) : Null<Glossary> = null;
 
+	public var bibliography (default, set) : Null<Bibliography> = null;
+
 
 
 	private var styles : StringMap<StringMap<StyleSheet>>;
@@ -64,6 +67,17 @@ class Grar {
 	///
 	// GETTERS / SETTERS
 	//
+
+	public function set_bibliography(v : Null<Bibliography>) : Null<Bibliography> {
+
+		if (bibliography == v) {
+			return bibliography;
+		}
+		bibliography = v;
+		onBibliographyChanged();
+
+		return bibliography;
+	}
 
 	public function set_glossary(v : Null<Glossary>) : Null<Glossary> {
 
@@ -160,4 +174,6 @@ class Grar {
 	public dynamic function onNotebookChanged() { }
 
 	public dynamic function onGlossaryChanged() { }
+
+	public dynamic function onBibliographyChanged() { }
 }

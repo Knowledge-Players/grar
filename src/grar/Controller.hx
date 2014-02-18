@@ -122,9 +122,9 @@ class Controller {
 								
 								case BIBLIOGRAPHY:
 
-									gameSrv.fetchContextual(contextual.att.file, function(c:Xml){
+									gameSrv.fetchBibliography(contextual.att.file, function(b:grar.model.contextual.Bibliography){
 			
-											// TODO Bibliography.instance.fillWithXml(c);
+											state.module.bibliography = b;
 
 										}, onError);
 								
