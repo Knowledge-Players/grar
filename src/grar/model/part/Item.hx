@@ -20,7 +20,7 @@ typedef ItemData = {
 class Item /* implements PartElement */ {
 
 	/**
-     * Never called directly (only in sub-classes)
+     * Nerver called directly (only in sub-classes)
      */
 	private function new( o : ItemData ) {
 
@@ -54,7 +54,7 @@ class Item /* implements PartElement */ {
 	/**
      * ID of the button that will appear with this item
      **/
-	public var button (default, default) : StringMap<StringMap<String>>;
+	public var button (default, default) : Null<StringMap<StringMap<String>>>;
 
 	/**
      * Unique ref that will match the display
@@ -65,7 +65,6 @@ class Item /* implements PartElement */ {
      * Reference to the tokens in this item
      **/
 	public var tokens (default, null) : GenericStack<String>;
-
 	/**
      * Graphicals items associated with this item
      **/
@@ -74,21 +73,22 @@ class Item /* implements PartElement */ {
 	public var endScreen (default, null) : Bool = false;
 
 	public var timelineIn (default, default) : String;
+
 	public var timelineOut (default, default) : String;
 
 	/**
      * @return true if the item starts a vertical flow
      */
-	public function hasVerticalFlow() : Bool {
-
+	public function hasVerticalFlow():Bool
+	{
 		return false;
 	}
 
 	/**
      * @return true if the item starts an activity
      */
-	public function hasActivity() : Bool {
-
+	public function hasActivity():Bool
+	{
 		return false;
 	}
 

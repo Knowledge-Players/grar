@@ -23,7 +23,7 @@ class XmlToNotebook {
 		var items : GenericStack<String> = new GenericStack();
 		var texts : GenericStack<Item> = new GenericStack();
 		var pages : Array<Page> = new Array();
-		var closeButton : {ref: String, content: String};
+		var closeButton : { ref : String, content : String };
 
 		for (item in f.nodes.Image) {
 
@@ -31,7 +31,7 @@ class XmlToNotebook {
 		}
 		for (txt in f.nodes.Text) {
 
-			// TODO texts.add(ItemFactory.createItemFromXml(txt));
+			texts.add(XmlToItem.parse(txt));
 		}
 		// Reverse pile order to match XML order
 		var tmpStack : GenericStack<String> = new GenericStack();

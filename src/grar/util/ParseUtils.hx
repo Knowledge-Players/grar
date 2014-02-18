@@ -1,23 +1,30 @@
 package grar.util;
 
 import haxe.ds.GenericStack;
+import haxe.ds.StringMap;
 
 using StringTools;
 
 class ParseUtils {
 
-	public static inline function parseHash(string: String): Map<String, String>
-	{
-		var content = new Map<String, String>();
-		if(string.indexOf("{") == 0){
-			var contentString:String = string.substr(1, string.length - 2);
-			var contents = contentString.split(",");
-			for(c in contents)
-				content.set(c.split(":")[0].trim(), c.split(":")[1].trim());
-		}
-		else
-			content.set(" ", string);
+	public static inline function parseHash(s : String) : StringMap<String> {
 
+		var content : StringMap<String> = new StringMap();
+
+		if (s.indexOf("{") == 0) {
+
+			var contentString : String = s.substr(1, s.length - 2);
+			var contents = contentString.split(",");
+			
+			for (c in contents) {
+
+				content.set(c.split(":")[0].trim(), c.split(":")[1].trim());
+			}
+		
+		} else {
+
+			content.set(" ", s);
+		}
 		return content;
 	}
 

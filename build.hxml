@@ -7,7 +7,7 @@
 # uncomment the following to disable traces
 #--no-traces
 
---next
+#--next
 -main grar.App
 -swf bin/grar.swf
 -lib nme
