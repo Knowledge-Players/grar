@@ -153,6 +153,29 @@ class GameService {
 		onSuccess(m.n, m.i, v);
 	}
 
+	public function fetchMenu(vPath : String, mPath : Null<String>, onSuccess : grar.view.contextual.menu.MenuDisplay -> Null<Xml> -> Void, onError : String -> Void) : Void {
+
+		var v : MenuDisplay;
+		var m : Null<Xml> = null;
+
+		try {
+
+			// at the moment, grar fetches its data from embedded assets only
+			v = XmlToMenu.parseView(AssetsStorage.getXml(vPath));
+
+			if (mPath != null) {
+
+				m = AssetsStorage.getXml(mPath);
+			}
+
+		} catch (e:String) {
+
+			onError(e);
+			return;
+		}
+		onSuccess(v, m);
+	}
+
 	public function fetchGlossary(path : String, onSuccess : grar.model.contextual.Glossary -> Void, onError : String -> Void) : Void {
 
 		var g : grar.model.contextual.Glossary;

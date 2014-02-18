@@ -130,19 +130,13 @@ class Controller {
 								
 								case MENU:
 
-									gameSrv.fetchContextual(contextual.att.display, function(d:Xml){
+									gameSrv.fetchMenu(contextual.att.display, contextual.has.file ? contextual.att.file : null, function(d:MenuDisplay, m:Xml){
 
-											// TODO MenuDisplay.instance.parseContent(d);
-											
-											if(contextual.has.file) {
+											application.menu = d;
+											// FIXME What is this menu Xml ??????
+											// TODO menu = AssetsStorage.getXml(c);
 
-												gameSrv.fetchContextual(contextual.att.file, function(c:Xml){
-					
-														// TODO menu = AssetsStorage.getXml(c);
-
-													}, onError);
-											}
-										}
+										}, onError);
 
 								default: // nothing
 							}

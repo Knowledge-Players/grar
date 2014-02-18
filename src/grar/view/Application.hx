@@ -1,6 +1,7 @@
 package grar.view;
 
 import grar.view.contextual.NotebookDisplay;
+import grar.view.contextual.menu.MenuDisplay;
 
 import grar.view.element.TokenNotification;
 
@@ -19,19 +20,12 @@ class Application {
 		// the GRAR instance.
 	}
 
-	/**
-	 * Notebook instance
-	 **/
+	public var menu (default, set) : MenuDisplay;
+
 	public var notebook (default, set) : NotebookDisplay;
 
-	/**
-     * Notification display of a token
-     **/
 	public var tokenNotification (default, set) : TokenNotification;
 
-	/**
-     * Tokens images
-     **/
 #if (flash || openfl)
 	public var tokensImages (default, set) : StringMap<{ small : BitmapData, large : BitmapData }>;
 #else
@@ -42,6 +36,19 @@ class Application {
 	///
 	// GETTER / SETTER
 	//
+
+	public function set_menu(v : MenuDisplay) : MenuDisplay {
+
+		if (v == menu) {
+
+			return menu;
+		}
+		menu = v;
+
+		onMenuChanged();
+
+		return menu;
+	}
 
 	public function set_notebook(v : NotebookDisplay) : NotebookDisplay {
 
@@ -94,6 +101,8 @@ class Application {
 	public dynamic function onTokenNotificationChanged() : Void { }
 
 	public dynamic function onNotebookChanged() : Void { }
+
+	public dynamic function onMenuChanged() : Void { }
 
 	public dynamic function onTokensImageChanged() : Void { }
 
