@@ -2,14 +2,14 @@ package grar.model.part;
 
 import com.knowledgeplayers.grar.structure.score.Perk;
 import com.knowledgeplayers.grar.structure.score.ScoreChart;
-import com.knowledgeplayers.grar.structure.part.Pattern;
-import com.knowledgeplayers.grar.structure.part.TextItem;
-import com.knowledgeplayers.grar.util.ParseUtils;
-import com.knowledgeplayers.grar.event.PartEvent;
-import com.knowledgeplayers.grar.factory.ItemFactory;
-import com.knowledgeplayers.grar.factory.PartFactory;
+import grar.model.part.Pattern;
+import grar.model.part.TextItem;
+import grar.util.ParseUtils;
+//import com.knowledgeplayers.grar.event.PartEvent;
+//import com.knowledgeplayers.grar.factory.ItemFactory;
+//import com.knowledgeplayers.grar.factory.PartFactory;
 import com.knowledgeplayers.grar.tracking.Trackable;
-import com.knowledgeplayers.utils.assets.AssetsStorage;
+//import com.knowledgeplayers.utils.assets.AssetsStorage;
 
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
@@ -30,7 +30,8 @@ typedef PartData = {
 	var isDone : Bool;
 	var isStarted : Bool;
 	var tokens : GenericStack<String>;
-	var soundLoop : Sound;
+	//var soundLoop : Sound; FIXME
+	var soundLoop : String;
 	var elements : Array<PartElement>;
 	var buttons : StringMap<StringMap<String>>;
 	var perks : StringMap<Int>;
@@ -95,36 +96,40 @@ class Part /* implements Part */ {
 	/**
      * Sound playing during the part
      */
+#if (flash || openfl)
 	public var soundLoop (default, default) : Sound;
+#else
+	public var soundLoop (default, default) : String;
+#end
 
 	/**
-    * Elements of the part
-	**/
+     * Elements of the part
+	 **/
 	public var elements (default, null) : Array<PartElement>;
 
 	/**
-    * Button of the part
-    **/
+     * Button of the part
+     **/
 	public var buttons (default, default) : StringMap<StringMap<String>>;
 
 	/**
-	* Perks of this part
-	**/
+	 * Perks of this part
+	 **/
 	public var perks (default, null) : StringMap<Int>;
 
 	/**
-	* Score of this part
-	**/
+	 * Score of this part
+	 **/
 	public var score (default, default) : Int;
 
 	/**
-	* @inheritDoc
-	**/
+	 * @inheritDoc
+	 **/
 	public var ref (default, default) : String;
 
 	/**
-	* Perks requirements to start the part
-	**/
+	 * Perks requirements to start the part
+	 **/
 	public var requirements (default, null) : StringMap<Int>;
 
 	public var next (default, default) : String;
@@ -158,7 +163,11 @@ class Part /* implements Part */ {
 				isDone : this.isDone,
 				isStarted : this.isStarted,
 				tokens : this.tokens,
+#if (flash || openfl)
+				soundLoop : "", // we should not need the original string anyway
+#else
 				soundLoop : this.soundLoop,
+#end
 				elements : this.elements,
 				buttons : this.buttons,
 				perks : this.perks,
@@ -187,7 +196,11 @@ class Part /* implements Part */ {
 		this.isDone = pd.isDone;
 		this.isStarted = pd.isStarted;
 		this.tokens = pd.tokens;
+#if (flash || openfl)
+		//this.soundLoop = pd.soundLoop; // FIXME
+#else
 		this.soundLoop = pd.soundLoop;
+#end
 		this.elements = pd.elements;
 		this.buttons = pd.buttons;
 		this.perks = pd.perks;
@@ -426,49 +439,10 @@ class Part /* implements Part */ {
 		return false;
 	}
 
-		// Implements PartElement
-
-		/**
-	    * @return false
-	**/
-
-	public function isActivity():Bool
-	{
-		return false;
-	}
-
-		/**
-	    * @return false
-	**/
-
-	public function isText():Bool
-	{
-		return false;
-	}
-
-		/**
-	    * @return false
-	**/
-
-	public function isPattern():Bool
-	{
-		return false;
-	}
-
-		/**
-	    * @return true
-	**/
-
-	public function isPart():Bool
-	{
-		return true;
-	}
-
-		/**
-	    * @param    id : Id of the item
-	    * @return the name of the item
-	    **/
-
+	/**
+     * @param    id : Id of the item
+     * @return the name of the item
+     **/
 	public function getItemName(id:String):Null<String>
 	{
 		if(this.id == id)
@@ -483,9 +457,10 @@ class Part /* implements Part */ {
 		return name;
 	}
 
-	// Private
 
-		// Handlers
+	///
+	// INTERNALS
+	//
 
 	private function enterPart():Void
 	{
@@ -495,11 +470,11 @@ class Part /* implements Part */ {
 			soundLoopChannel = soundLoop.play();
 	}
 
-	private function onPartLoaded(event:PartEvent):Void
-	{
-		nbSubPartLoaded++;
-		if(nbSubPartLoaded == nbSubPartTotal && loaded){
-			fireLoaded();
-		}
-	}
+	// private function onPartLoaded(event:PartEvent):Void
+	// {
+	// 	nbSubPartLoaded++;
+	// 	if(nbSubPartLoaded == nbSubPartTotal && loaded){
+	// 		fireLoaded();
+	// 	}
+	// }
 }

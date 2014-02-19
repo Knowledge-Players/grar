@@ -44,6 +44,19 @@ class XmlToPart {
 		return p;
 	}
 
+	/**
+	 * @param existing Part
+	 * @param Xml describing the Part contents
+	 */
+	static public function parseContent(p : Part, xml : Xml) : Part {
+
+		var f : Fast = new Fast(xml);
+
+		p = parsePartContent(p, xml);
+
+		return p;
+	}
+
 	static function parsePartPerks(pd : PartData, perks : String, ? hash : Null<StringMap<Int>> = null) : PartData {
 
 		var map = ParseUtils.parseHash(perks);
@@ -109,7 +122,8 @@ class XmlToPart {
 
 		if (f.hasNode.Sound) {
 
-			pd.soundLoop = AssetsStorage.getSound(f.node.Sound.att.content); // FIXME
+			//pd.soundLoop = AssetsStorage.getSound(f.node.Sound.att.content); // FIXME
+			pd.soundLoop = f.node.Sound.att.content;
 		}
 		if (f.hasNode.Part && pd.file != null) {
 
@@ -126,21 +140,6 @@ class XmlToPart {
 
 			pd.display = pd.parent.display;
 		}
-		if (pd.file != null) {
-
-			parseContent(AssetsStorage.getXml(pd.file)); // FIXME
-		
-		} else if (xml.elements.hasNext()) {
-		//if (pd.file == null && xml.elements.hasNext()) {
-
-			parseContent(xml);
-			
-			if (pd.parent != null) {
-
-				pd.file = pd.parent.file;
-			}
-		}
-
 		p.data = pd;
 
 		return p;
@@ -152,6 +151,10 @@ class XmlToPart {
 
 		var pd : PartData = p.data;
 
+		if (pd.parent != null) {
+
+			pd.file = pd.parent.file;
+		}
 		pd = parsePartHeader(pd, f);
 
 		for (child in f.elements) {
@@ -160,28 +163,39 @@ class XmlToPart {
 		}
 		for (elem in pd.elements) {
 
-			if (elem.isText() || elem.isVideo()|| elem.isSound()) {
+			switch (elem) {
 
-				var text = cast(elem, Item);
-				
-				if (text.button == null || Lambda.empty(text.button)) {
+				case Item(i):
 
-					text.button = pd.buttons;
-				}
-			}
-			if (elem.isPattern()) {
+					if (i.button == null || Lambda.empty(i.button)) {
 
-				for (item in cast(elem, Pattern).patternContent) {
-
-					for (image in item.tokens) {
+						i.button = pd.buttons;
+					}
+					for (image in i.tokens) {
 
 						pd.tokens.add(image);
 					}
-				}
-			}
-			for (image in elem.tokens) {
 
-				pd.tokens.add(image);
+				case Pattern(p):
+
+					for (item in p.patternContent) {
+
+						for (image in item.tokens) {
+
+							pd.tokens.add(image);
+						}
+					}
+					for (image in p.tokens) {
+
+						pd.tokens.add(image);
+					}
+
+				case Part(p):
+
+					for (image in p.tokens) {
+
+						pd.tokens.add(image);
+					}
 			}
 		}
 		pd.loaded = true;
@@ -214,6 +228,7 @@ class XmlToPart {
 			case "sound":
 
 				//pd.soundLoop = AssetsStorage.getSound(node.att.content); FIXME
+				pd.soundLoop = node.att.content;
 			
 			case "button":
 
@@ -233,20 +248,25 @@ class XmlToPart {
 					
 					} else {
 
-						var i = 0;
-						
-						// FIXME
-						while ((!pd.elements[i].isText() || 
-								cast(pd.elements[i], TextItem).content != node.att.goTo) && i < pd.elements.length) {
+						for (elt in pd.elements) {
 
-							i++;
-						}
-						if (i != pd.elements.length) {
+							switch (elt) {
 
-							pd.buttonTargets.set(node.att.ref, elements[i]);
+								case Item(i) if (i.isText() || i.content == node.att.goTo):
+
+									pd.buttonTargets.set(node.att.ref, elt);
+
+								default: // nothing
+							}
 						}
 					}
 				}
+			
+			case "pattern": // should happen only for DialogParts
+			
+				var pat : Pattern = PatternFactory.createPatternFromXml(node); // FIXME
+				pat.init(node);
+				pd.elements.push(Pattern(pat));
 		}
 
 		return pd;

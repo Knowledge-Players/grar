@@ -286,27 +286,16 @@ class GameService {
 
 		try {
 
-			if (xml != null) {
+			p = XmlToPart.parse(xml);
 
-				p = XmlToPart.parse(xml);
-			}
-			// FIXME
-			//if (display == null && parent != null) {
+			if (p.file != null) {
 
-			//	display = parent.display;
-			//}
-			if (file != null) {
+				p = XmlToPart.parseContent(AssetsStorage.getXml(pd.file)); // at the moment, grar fetches its data from embedded assets only
 
-				p = XmlToPart.parse(AssetsStorage.getXml(path));
-			
 			} else if (xml.elements.hasNext()) {
 
-				parseContent(xml.x);
+				p = XmlToPart.parseContent(xml);
 				
-				if (parent != null) {
-
-					file = parent.file;
-				}
 			}
 
 		} catch (e:String) {
