@@ -15,6 +15,7 @@ import grar.parser.XmlToFilter;
 import grar.parser.XmlToStyleSheet;
 import grar.parser.JsonToStyleSheet;
 import grar.parser.XmlToInventory;
+import grar.parser.XmlToPart;
 
 import aze.display.TilesheetEx;
 
@@ -280,29 +281,67 @@ class GameService {
 		onSuccess(s);
 	}
 
-	public function fetchPart(xml : Xml, path : String, onSuccess : Part -> Void, onError : String -> Void) : Void {
+	public function fetchPart(xml : Xml, onSuccess : Part -> Void, onError : String -> Void) : Void {
 
-		var p : Part;
+		var fetchPartContent = function(innerXml : Xml, pp : PartialPart, onInnerSuccess : Part -> Void, onInnerError : String -> Void) {
+
+				var ret : { p : Part, pps : Array<PartialPart> };
+#if (flash || openfl)
+				pp.pd.soundLoop = AssetsStorage.getSound(soundLoopSrc);
+#end
+				if (pp.pd.file != null) {
+
+					// at the moment, grar fetches its data from embedded assets only
+					ret = XmlToPart.parseContent(pp, AssetsStorage.getXml(pd.file)); // { p : Part, pps : Array<PartialPart> }
+
+				} else if (xml.elements.hasNext()) {
+
+					ret = XmlToPart.parseContent(pp, innerXml);
+					
+				}
+				var cnt : Int = pp.pd.partialSubParts.length;
+
+				if (cnt == 0) {
+
+					ret.p.loaded = true; // TODO check if still useful
+					onInnerSuccess( ret.p );
+
+				} else {
+
+					for ( spp in pp.pd.partialSubParts ) {
+
+						fetchPartContent( spp.pd.xml, spp, function(sp : Part) {
+
+								cnt--;
+
+								ret.p.elements.push(Part(sp));
+								sp.parent = ret.p;
+
+								if (sp.file == null) {
+
+									sp.file = ret.p.file;
+								}
+								if (cnt == 0) {
+
+									onInnerSuccess( ret.p );
+
+								}
+
+							}, onInnerError );
+					}
+				}
+			}
 
 		try {
 
-			p = XmlToPart.parse(xml);
+			var pp : PartialPart = XmlToPart.parse(xml);
 
-			if (p.file != null) {
-
-				p = XmlToPart.parseContent(AssetsStorage.getXml(pd.file)); // at the moment, grar fetches its data from embedded assets only
-
-			} else if (xml.elements.hasNext()) {
-
-				p = XmlToPart.parseContent(xml);
-				
-			}
+			fetchPartContent( xml, pp, onSuccess, onError );
 
 		} catch (e:String) {
 
-			onError(e);
+			onInnerError(e);
 			return;
 		}
-		onSuccess(p);
 	}
 }

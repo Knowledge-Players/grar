@@ -2,19 +2,42 @@ package grar.parser;
 
 import grar.model.part.Part;
 import grar.model.part.PartElement;
+import grar.model.part.ActivityPart;
+import grar.model.part.dialog.DialogPart;
+import grar.model.part.strip.StripPart;
+
+import grar.parser.XmlToPattern;
 
 import haxe.xml.Fast;
 
+enum PartType {
+
+	Part;
+	Activity;
+	Dialog;
+	Strip;
+}
+
+typedef PartialPart = {
+
+	var pd : PartData;
+	var type : PartType;
+}
+
 class XmlToPart {
+
+	///
+	// API
+	//
 
 	/**
 	 * @param Xml describing the part
-	 * @param parent Part if any
 	 */
-	static public function parse(xml : Xml, ? parent : Null<Part>) : Part {
+	static public function parse(xml : Xml) : PartialPart {
 
 		var f : Fast = new Fast(xml);
-		var p : Part;
+		var pp : PartialPart = { };
+		pp.xml = xml;
 
 		var t : String = f.has.type ? f.att.type.toLowerCase() : "";
 
@@ -22,39 +45,299 @@ class XmlToPart {
 
 			case "dialog":
 
-				// TODO creation = new DialogPart();
+				pp.type = Dialog;
+				pp.pd = parsePartData( xml );
 
 			case "strip" :
 
-				// TODO creation = new StripPart();
+				pp.type = Strip;
+				pp.pd = parsePartData( xml );
 
 			case "activity":
 
-				// TODO creation = new ActivityPart();
+				pp.type = Activity;
+				pp.pd = parsePartData( xml );
 
 			case "" :
 
-				p = parsePart( xml, parent );
+				pp.type = Part;
+				pp.pd = parsePartData( xml );
 
 			default: 
 
 				throw "unexpected type attribute value $t";
 		}
 
-		return p;
+		return pp;
 	}
 
-	/**
-	 * @param existing Part
-	 * @param Xml describing the Part contents
-	 */
-	static public function parseContent(p : Part, xml : Xml) : Part {
+	static public function parseContent(pp : PartialPart, xml : Xml) : { p : Part, pps : Array<PartialPart> } {
 
 		var f : Fast = new Fast(xml);
 
-		p = parsePartContent(p, xml);
+		var p : Part;
+		var pps : Array<PartialPart>;
 
-		return p;
+		switch (pp.type) {
+
+			case Dialog:
+
+				var pd : PartData = parsePartContentData(pp.pd, xml);
+				pps = pd.partialSubParts;
+				p = new DialogPart(pd);
+
+			case Strip:
+
+				var pd : PartData = parsePartContentData(pp.pd, xml);
+				pps = pd.partialSubParts;
+				p = new StripPart(pd);
+
+			case Activity:
+
+				var apd : { pd : PartData, g : Array<Group>, r : StringMap<Rule>, gi : Int, nra : Int } = parseActivityPartContent(pp.pd, xml);
+				pps = apd.pd.partialSubParts;
+				p = new ActivityPart(apd.pd, apd.g, apd.r, apd.gi, apd.nra);
+
+			case Part:
+
+				var pd : PartData = parsePartContentData(pp.pd, xml);
+				pps = pd.partialSubParts;
+				p = new Part(pd);
+		}
+
+		return { p: p, pps: pps };
+	}
+
+
+	///
+	// INTERNALS
+	//
+
+	static function parsePartContentData(pd : PartData, xml : Xml) : PartData {
+
+		var f : Fast = (xml.nodeType == Xml.Element && xml.nodeName == "Part") ? new Fast(xml) : new Fast(xml).node.Part;
+
+		pd = parsePartHeader(pd, f);
+
+		for (child in f.elements) {
+
+			pd = parsePartElement(pd, child);
+		}
+		for (elem in pd.elements) {
+
+			switch (elem) {
+
+				case Item(i):
+
+					if (i.button == null || Lambda.empty(i.button)) {
+
+						i.button = pd.buttons;
+					}
+					for (image in i.tokens) {
+
+						pd.tokens.add(image);
+					}
+
+				case Pattern(p):
+
+					for (item in p.patternContent) {
+
+						for (image in item.tokens) {
+
+							pd.tokens.add(image);
+						}
+					}
+					for (image in p.tokens) {
+
+						pd.tokens.add(image);
+					}
+
+				case Part(p):
+
+					for (image in p.tokens) {
+
+						pd.tokens.add(image);
+					}
+			}
+		}
+
+		return pd;
+	}
+
+	static function parsePartElement(pd : PartData, node : Fast) : PartData {
+
+		switch (node.name.toLowerCase()) {
+
+			case "text":
+
+				pd.elements.push( Item(XmlToItem.parse(node.x)) );
+			
+			case "part":
+
+				pd.nbSubPartTotal++;
+
+				pd.partialSubParts.push( parse(node.x) );
+			
+			case "sound":
+
+#if (flash || openfl)
+				pd.soundLoopSrc = node.att.content;
+#else
+				pd.soundLoop = node.att.content;
+#end
+			case "button":
+
+				var content = null;
+				
+				if (node.has.content) {
+
+					content = ParseUtils.parseHash(node.att.content);
+				}
+				pd.buttons.set(node.att.ref, content);
+				
+				if (node.has.goTo) {
+
+					if (node.att.goTo == "") {
+
+						pd.buttonTargets.set(node.att.ref, null);
+					
+					} else {
+
+						for (elt in pd.elements) {
+
+							switch (elt) {
+
+								case Item(i) if (i.isText() || i.content == node.att.goTo):
+
+									pd.buttonTargets.set(node.att.ref, elt);
+
+								default: // nothing
+							}
+						}
+					}
+				}
+			
+			case "pattern": // should happen only for DialogParts and StripParts
+			
+				pd.elements.push(Pattern(XmlToPattern.parse(node)));
+		}
+
+		return pd;
+	}
+
+	static function parseActivityPartContent(pd : PartData, xml : Xml) : { pd : PartData, g : Array<Group>, r : StringMap<Rule>, gi : Int, nra : Int } {
+
+		var f : Fast = (xml.nodeType == Xml.Element && xml.nodeName == "Part") ? new Fast(xml) : new Fast(xml).node.Part;
+		
+		var groups : Array<Group> = new Array();
+		var rules : StringMap<Rule> = new StringMap();
+		var groupIndex : Int = -1;
+		var numRightAnswers : Int = 0;
+
+		for (child in f.elements) {
+
+			switch (child.name.toLowerCase()) {
+
+				case "group":
+
+					var group : Group = createGroup(child);
+					groups.push(group);
+
+				case "rule" :
+
+					var rule : Rule = { id: child.att.id, type: child.att.type.toLowerCase(), value: child.att.value.toLowerCase() };
+					rules.set(rule.id, rule);
+			}
+		}
+		// If no rules has been set on a group, all applies
+		for (group in groups) {
+
+			if (group.rules != null) {
+
+				for (rule in rules) {
+
+					group.rules.push(rule.id);
+				}
+			}
+		}
+
+		parsePartContentData(pd, xml);
+
+		// Ordering Inputs
+		var orderingRules = getRulesByType("ordering");
+
+		if (orderingRules.length > 1) {
+
+			throw "[ActivityPart] Multiple ordering rules in activity '"+id+"'. Pick only one!";
+		}
+		if (orderingRules.length == 1) {
+
+			if (orderingRules[0].value == "shuffle") {
+
+				for (group in groups) {
+
+					var inputs: Array<Input> =  group.inputs;
+					
+					for (i in 0...inputs.length) {
+
+						var rand = Math.floor(Math.random()*inputs.length);
+						var tmp = inputs[i];
+						inputs[i] = inputs[rand];
+						inputs[rand] = tmp;
+					}
+				}
+			}
+		}
+	}
+
+	static function createInput(f : Fast, ? group : Group) : Input {
+
+		var values;
+
+		if (f.has.values) {
+
+			values = ParseUtils.parseListOfValues(f.att.values);
+		
+		} else {
+
+			values = new Array<String>();
+		}
+		return {id: f.att.id, ref: f.att.ref, content: ParseUtils.parseHash(f.att.content), values: values, selected: false, group: group};
+	}
+
+	static inline function createGroup(f : Fast) : Group {
+
+		var rules : Array<String> = null;
+		
+		if (f.has.rules) {
+
+			rules = ParseUtils.parseListOfValues(f.att.rules);
+		}
+		if (f.hasNode.Group) {
+
+			var groups : Array<Group> = [];
+
+			for (group in f.nodes.Group) {
+
+				groups.push(createGroup(group));
+			}
+			var group : Group = {id: f.att.id, ref: f.att.ref, rules: rules, groups: groups};
+
+			return group;
+		
+		} else {
+
+			var inputs : Array<Input> = [];
+
+			var group: Group = {id: f.att.id, ref: f.att.ref, rules: rules, inputs: inputs};
+			
+			for (input in f.elements) {
+
+				inputs.push(createInput(input, group));
+			}
+
+			return group;
+		}
 	}
 
 	static function parsePartPerks(pd : PartData, perks : String, ? hash : Null<StringMap<Int>> = null) : PartData {
@@ -101,11 +384,10 @@ class XmlToPart {
 		return pd;
 	}
 
-	static public function parsePart(xml : Xml, ? parent : Null<Part>) : Part {
+	static public function parsePartData(xml : Xml) : PartData {
 
 		var f : Fast = new Fast(xml);
 
-		var p : Part = new Part();
 		var pd : PartData = {};
 
 		pd.id = f.att.id;
@@ -116,14 +398,16 @@ class XmlToPart {
 		pd.buttonTargets = new StringMap();
 		pd.perks = new StringMap();
 		pd.requirements = new StringMap();
-		pd.parent = parent;
 
 		pd = parsePartHeader(pd, f);
 
 		if (f.hasNode.Sound) {
 
-			//pd.soundLoop = AssetsStorage.getSound(f.node.Sound.att.content); // FIXME
+#if (flash || openfl)
+			pd.soundLoopSrc = f.node.Sound.att.content;
+#else
 			pd.soundLoop = f.node.Sound.att.content;
+#end
 		}
 		if (f.hasNode.Part && pd.file != null) {
 
@@ -139,134 +423,6 @@ class XmlToPart {
 		if (pd.display == null && pd.parent != null) {
 
 			pd.display = pd.parent.display;
-		}
-		p.data = pd;
-
-		return p;
-	}
-
-	static public function parsePartContent(p : Part, xml : Xml) : Part {
-
-		var f : Fast = (xml.nodeType == Xml.Element && xml.nodeName == "Part") ? new Fast(xml) : new Fast(xml).node.Part;
-
-		var pd : PartData = p.data;
-
-		if (pd.parent != null) {
-
-			pd.file = pd.parent.file;
-		}
-		pd = parsePartHeader(pd, f);
-
-		for (child in f.elements) {
-
-			pd = parsePartElement(p, pd, child);
-		}
-		for (elem in pd.elements) {
-
-			switch (elem) {
-
-				case Item(i):
-
-					if (i.button == null || Lambda.empty(i.button)) {
-
-						i.button = pd.buttons;
-					}
-					for (image in i.tokens) {
-
-						pd.tokens.add(image);
-					}
-
-				case Pattern(p):
-
-					for (item in p.patternContent) {
-
-						for (image in item.tokens) {
-
-							pd.tokens.add(image);
-						}
-					}
-					for (image in p.tokens) {
-
-						pd.tokens.add(image);
-					}
-
-				case Part(p):
-
-					for (image in p.tokens) {
-
-						pd.tokens.add(image);
-					}
-			}
-		}
-		pd.loaded = true;
-
-		p.data = pd;
-
-		return p;
-		
-		// FIXME
-		//if (nbSubPartLoaded == nbSubPartTotal) {
-
-		//	fireLoaded();
-		//}
-	}
-
-	static function parsePartElement(p : Part, pd : PartData, node : Fast) : PartData {
-
-		switch (node.name.toLowerCase()) {
-
-			case "text":
-
-				pd.elements.push( Item(XmlToItem.parse(node)) );
-			
-			case "part":
-
-				pd.nbSubPartTotal++;
-
-				pd.elements.push( Part(parse(partNode, p)) );
-			
-			case "sound":
-
-				//pd.soundLoop = AssetsStorage.getSound(node.att.content); FIXME
-				pd.soundLoop = node.att.content;
-			
-			case "button":
-
-				var content = null;
-				
-				if (node.has.content) {
-
-					content = ParseUtils.parseHash(node.att.content);
-				}
-				pd.buttons.set(node.att.ref, content);
-				
-				if (node.has.goTo) {
-
-					if (node.att.goTo == "") {
-
-						pd.buttonTargets.set(node.att.ref, null);
-					
-					} else {
-
-						for (elt in pd.elements) {
-
-							switch (elt) {
-
-								case Item(i) if (i.isText() || i.content == node.att.goTo):
-
-									pd.buttonTargets.set(node.att.ref, elt);
-
-								default: // nothing
-							}
-						}
-					}
-				}
-			
-			case "pattern": // should happen only for DialogParts
-			
-				var pat : Pattern = PatternFactory.createPatternFromXml(node); // FIXME
-				pat.init(node);
-				pd.elements.push(Pattern(pat));
 		}
 
 		return pd;

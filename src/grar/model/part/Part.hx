@@ -30,8 +30,12 @@ typedef PartData = {
 	var isDone : Bool;
 	var isStarted : Bool;
 	var tokens : GenericStack<String>;
-	//var soundLoop : Sound; FIXME
+#if (flash || openfl)
+	var soundLoop : Sound;
+	var soundLoopSrc : String;
+#else
 	var soundLoop : String;
+#end
 	var elements : Array<PartElement>;
 	var buttons : StringMap<StringMap<String>>;
 	var perks : StringMap<Int>;
@@ -47,11 +51,40 @@ typedef PartData = {
 	var elemIndex : Int = 0;
 	var soundLoopChannel : SoundChannel;
 	var loaded : Bool = false;
+	// partial data
+	var partialSubParts : Array<grar.parser.XmlToPart.PartialPart> = [];
+	var xml : Xml;
 }
 
 class Part /* implements Part */ {
 
-	public function new() { }
+	public function new(pd : PartData) {
+
+		this.name = pd.name;
+		this.id = pd.id;
+		this.file = pd.file;
+		this.display = pd.display;
+		this.parent = pd.parent;
+		this.isDone = pd.isDone;
+		this.isStarted = pd.isStarted;
+		this.tokens = pd.tokens;
+		this.soundLoop = pd.soundLoop;
+		this.elements = pd.elements;
+		this.buttons = pd.buttons;
+		this.perks = pd.perks;
+		this.score = pd.score;
+		this.ref = pd.ref;
+		this.requirements = pd.requirements;
+		this.next = pd.next;
+		this.endScreen = pd.endScreen;
+		this.buttonTargets = pd.buttonTargets;
+		this.nbSubPartLoaded = pd.nbSubPartLoaded;
+		this.nbSubPartTotal = pd.nbSubPartTotal;
+		this.partIndex = pd.partIndex;
+		this.elemIndex = pd.elemIndex;
+		this.soundLoopChannel = pd.soundLoopChannel;
+		this.loaded = pd.loaded;
+	}
 
 	/**
      * Name of the part
@@ -152,75 +185,6 @@ class Part /* implements Part */ {
 	// GETTER / SETTER
 	//
 
-	public function get_data() : PartData {
-		
-		return {
-				name : this.name,
-				id : this.id,
-				file : this.file,
-				display : this.display,
-				parent : this.parent,
-				isDone : this.isDone,
-				isStarted : this.isStarted,
-				tokens : this.tokens,
-#if (flash || openfl)
-				soundLoop : "", // we should not need the original string anyway
-#else
-				soundLoop : this.soundLoop,
-#end
-				elements : this.elements,
-				buttons : this.buttons,
-				perks : this.perks,
-				score : this.score,
-				ref : this.ref,
-				requirements : this.requirements,
-				next : this.next,
-				endScreen : this.endScreen,
-				buttonTargets : this.buttonTargets,
-				nbSubPartLoaded : this.nbSubPartLoaded,
-				nbSubPartTotal : this.nbSubPartTotal,
-				partIndex : this.partIndex,
-				elemIndex : this.elemIndex,
-				soundLoopChannel : this.soundLoopChannel,
-				loaded : this.loaded
-			};
-	}
-
-	public function set_data(pd : PartData) : PartData {
-
-		this.name = pd.name;
-		this.id = pd.id;
-		this.file = pd.file;
-		this.display = pd.display;
-		this.parent = pd.parent;
-		this.isDone = pd.isDone;
-		this.isStarted = pd.isStarted;
-		this.tokens = pd.tokens;
-#if (flash || openfl)
-		//this.soundLoop = pd.soundLoop; // FIXME
-#else
-		this.soundLoop = pd.soundLoop;
-#end
-		this.elements = pd.elements;
-		this.buttons = pd.buttons;
-		this.perks = pd.perks;
-		this.score = pd.score;
-		this.ref = pd.ref;
-		this.requirements = pd.requirements;
-		this.next = pd.next;
-		this.endScreen = pd.endScreen;
-		this.buttonTargets = pd.buttonTargets;
-		this.nbSubPartLoaded = pd.nbSubPartLoaded;
-		this.nbSubPartTotal = pd.nbSubPartTotal;
-		this.partIndex = pd.partIndex;
-		this.elemIndex = pd.elemIndex;
-		this.soundLoopChannel = pd.soundLoopChannel;
-		this.loaded = pd.loaded;
-	}
-
-	/**
-	* End the part
-	**/
     public function set_isDone(completed: Bool = true):Bool
     {
         isDone = completed;
