@@ -265,10 +265,13 @@ class TweenManager {
         return Actuate.tween(display, rotate.duration, {x: inOutX[1], y: inOutY[1], rotation: inOutRotate[1]}).ease(getEasing(rotate)).smartRotation();
     }
 
-	public static function transform(display:Dynamic, ref:String):IGenericActuator
+	public static function transform(display:Dynamic, ref:String, ?color: String):IGenericActuator
 	{
 		var transform = transitions.get(ref);
-        return Actuate.transform(display, transform.duration).color(ParseUtils.parseColor(transform.color).color,ParseUtils.parseColor(transform.color).alpha).ease(getEasing(transform));
+		if(color != null)
+            return Actuate.transform(display, 0).color(ParseUtils.parseColor(color).color,ParseUtils.parseColor(color).alpha);
+		else
+            return Actuate.transform(display, transform.duration).color(ParseUtils.parseColor(transform.color).color,ParseUtils.parseColor(transform.color).alpha).ease(getEasing(transform));
 	}
 
 	public static function resetTransform(display:Dynamic):Void

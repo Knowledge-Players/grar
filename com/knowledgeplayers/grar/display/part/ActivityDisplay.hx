@@ -47,6 +47,9 @@ class ActivityDisplay extends PartDisplay {
     private var goodReps:Int;
     private var nbDrops:Int;
 
+	private var savedData:String;
+	private var roundIndex:Int;
+
 	public function new(model: Part)
 	{
 		super(model);
@@ -59,10 +62,19 @@ class ActivityDisplay extends PartDisplay {
         zButton = 1;
         goodReps = 0;
         nbDrops = 0;
+		roundIndex = -1;
+		savedData = GameManager.instance.game.stateInfos.getActivityData(part.id);
 	}
 
 	override public function nextElement(startIndex:Int = -1):Void
 	{
+		if(validatedInputs != null){
+			var selection = new List<Int>();
+			for(input in validatedInputs.keys())
+				if(validatedInputs.get(input))
+					selection.add(inputs.indexOf(input));
+			GameManager.instance.game.stateInfos.storeActivityData(part.id, selection.toString());
+		}
 		// If startIndex == 0, it's called from startPart, no verification needed
 		if(startIndex == 0 || cast(part, ActivityPart).hasNextGroup()){
 			for(elem in part.elements){
@@ -95,6 +107,7 @@ class ActivityDisplay extends PartDisplay {
 
 	private function displayInputs():Void
 	{
+		roundIndex++;
 		var activity = cast(part, ActivityPart);
 		var needDisplay = true;
 
@@ -112,6 +125,11 @@ class ActivityDisplay extends PartDisplay {
 				createInput(input, guide);
 			}
 		}
+
+		// Apply saved data
+		if(savedData != null)
+			savedData.split("-")[roundIndex];
+
 		for(group in currentGroup.groups){
 			var guide = createGroupGuide(group);
 			// Specify inputs because of an "Can't iterate on a Dynamic value" error
@@ -149,7 +167,9 @@ class ActivityDisplay extends PartDisplay {
 				case "onvalidate":
 					validationButton.buttonAction = onValidate;
 				case "off": hasCorrection = false;
-					validationButton.buttonAction = endActivity;
+					validationButton.buttonAction = function(?target: DefaultButton){
+						nextElement();
+					};
 				default: trace("Unknown value '"+validationRules[0].value+"' as a validation rule");
 			}
 		}
@@ -415,9 +435,6 @@ class ActivityDisplay extends PartDisplay {
 
                         }
 
-
-                        //trace("goodReps : "+goodReps);
-                        //trace("nbDrops : "+nbDrops);
                         if(goodReps==nbDrops){
                             cast(displays.get('button_continue_folder'), DefaultButton).toggleState ='continue';
                         };

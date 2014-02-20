@@ -491,7 +491,7 @@ class StructurePart extends EventDispatcher implements Part{
 		if(xml.has.name) name = xml.att.name;
 		if(xml.has.file) file = xml.att.file;
 		if(xml.has.display) display = xml.att.display;
-		if(xml.has.next) next = xml.att.next;
+		if(xml.has.next) next = xml.has.next ? xml.att.next : null;
 		if(xml.has.bounty) setPerks(xml.att.bounty);
 		if(xml.has.requires) setPerks(xml.att.requires, requirements);
 	}

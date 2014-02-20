@@ -292,7 +292,6 @@ class DefaultButton extends WidgetContainer {
 				j++;
 			tmpContent.addChildAt(layer.view, j);
 
-			layer.render();
 			enabled = enabledState.get(toggleState);
 
 			if(oldState != null && oldState.timelineOut != null){
@@ -354,6 +353,7 @@ class DefaultButton extends WidgetContainer {
 			for(child in layer.children)
 				child.visible = false;
 		scale = scaleX = scaleY = 1;
+		layer.render();
 
 		// Reset children
 		children = new Array<Widget>();

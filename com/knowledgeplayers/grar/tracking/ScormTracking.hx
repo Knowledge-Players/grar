@@ -1,8 +1,5 @@
 package com.knowledgeplayers.grar.tracking;
 
-import flash.events.Event;
-import flash.utils.Timer;
-
 class ScormTracking extends Tracking {
 
 	public var success_status:String = "";
@@ -52,16 +49,11 @@ class ScormTracking extends Tracking {
 					suspend_data = scorm.get("cmi.suspend_data");
 				}
 
-				dispatchEvent(new Event(Event.INIT));
 			}
 			else{
 				init(isNote, "off");
 			}
 		}
-		else{
-			dispatchEvent(new Event(Event.INIT));
-		}
-
 	}
 
 	override function getLocation():String

@@ -425,7 +425,7 @@ class GameManager extends EventDispatcher {
 		partDisplay.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		partDisplay.startPart(startIndex);
 		if(partDisplay.visible && partDisplay.layout != null)
-		changeLayout(partDisplay.layout);
+			changeLayout(partDisplay.layout);
 		layout.zones.get(game.ref).addChild(partDisplay);
 		layout.updateDynamicFields();
 		var event = new PartEvent(PartEvent.ENTER_PART);

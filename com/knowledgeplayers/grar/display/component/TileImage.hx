@@ -22,6 +22,7 @@ class TileImage extends Image{
 	public var trueLayer: TileLayer;
 	private var xml: Fast;
 	private var isVisible: Bool;
+	private var color:String;
 
 public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=false)
 	{
@@ -38,11 +39,16 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
             init();
 		}
 		super(xml);
+		if(xml.has.color)
+			color = xml.att.color;
+
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove, 1000);
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
 			this.visible = true;
 
 			TweenManager.applyTransition(this, transformation);
+			if(color != null)
+				TweenManager.transform(trueLayer.view, null, color);
 
 			if(onComplete != null)
 				onComplete();
