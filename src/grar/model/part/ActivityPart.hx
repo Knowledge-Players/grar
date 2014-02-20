@@ -44,6 +44,32 @@ class ActivityPart extends Part {
 		this.rules = r;
 		this.groupIndex = gi;
 		this.numRightAnswers = nra;
+
+		// Ordering Inputs
+		var orderingRules = getRulesByType("ordering");
+
+		if (orderingRules.length > 1) {
+
+			throw "[ActivityPart] Multiple ordering rules in activity '"+id+"'. Pick only one!";
+		}
+		if (orderingRules.length == 1) {
+
+			if (orderingRules[0].value == "shuffle") {
+
+				for (group in groups) {
+
+					var inputs : Array<Input> =  group.inputs;
+					
+					for (i in 0...inputs.length) {
+
+						var rand = Math.floor( Math.random() * inputs.length );
+						var tmp = inputs[i];
+						inputs[i] = inputs[rand];
+						inputs[rand] = tmp;
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -75,8 +101,8 @@ class ActivityPart extends Part {
 
 	public function getRulesByType( type : String, ? group : Group ) : Array<Rule> {
 
-		var selectedRules = new Array<Rule>();
-		var rulesSet = new Map<String, Rule>();
+		var selectedRules : Array<Rule> = new Array();
+		var rulesSet : StringMap<Rule> = new StringMap();
 		
 		if (group != null && group.rules != null) {
 

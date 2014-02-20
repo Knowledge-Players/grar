@@ -5,8 +5,13 @@ import grar.model.part.PartElement;
 import grar.model.part.ActivityPart;
 import grar.model.part.dialog.DialogPart;
 import grar.model.part.strip.StripPart;
+import grar.model.part.Pattern;
+import grar.model.part.Item;
 
 import grar.parser.XmlToPattern;
+import grar.parser.XmlToItem;
+
+import grar.util.ParseUtils;
 
 import haxe.xml.Fast;
 
@@ -261,33 +266,9 @@ class XmlToPart {
 			}
 		}
 
-		parsePartContentData(pd, xml);
+		pd = parsePartContentData(pd, xml);
 
-		// Ordering Inputs
-		var orderingRules = getRulesByType("ordering");
-
-		if (orderingRules.length > 1) {
-
-			throw "[ActivityPart] Multiple ordering rules in activity '"+id+"'. Pick only one!";
-		}
-		if (orderingRules.length == 1) {
-
-			if (orderingRules[0].value == "shuffle") {
-
-				for (group in groups) {
-
-					var inputs: Array<Input> =  group.inputs;
-					
-					for (i in 0...inputs.length) {
-
-						var rand = Math.floor(Math.random()*inputs.length);
-						var tmp = inputs[i];
-						inputs[i] = inputs[rand];
-						inputs[rand] = tmp;
-					}
-				}
-			}
-		}
+		return { pd: pd, g: groups, r: rules, gi: groupIndex, nra: numRightAnswers };
 	}
 
 	static function createInput(f : Fast, ? group : Group) : Input {
@@ -352,6 +333,7 @@ class XmlToPart {
 			}
 			hash.set(perk, Std.parseInt(map.get(perk)));
 		}
+
 		return pd;
 	}
 
@@ -381,6 +363,7 @@ class XmlToPart {
 
 			pd = parsePartPerks(pd, f.att.requires, pd.requirements);
 		}
+
 		return pd;
 	}
 
