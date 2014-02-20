@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.contextual;
 
+import com.knowledgeplayers.grar.structure.part.Part;
 import com.knowledgeplayers.grar.factory.GuideFactory;
 import com.knowledgeplayers.grar.event.PartEvent;
 import flash.events.Event;
@@ -155,6 +156,16 @@ class NotebookDisplay extends KpDisplay implements ContextualDisplay
 			Localiser.instance.popLocale();
 		}
 		return model;
+	}
+
+	public function stockPart(part:Part):Void
+	{
+
+	}
+
+	public function hasPart(part:Part):Bool
+	{
+		return false;
 	}
 
 	// Privates
