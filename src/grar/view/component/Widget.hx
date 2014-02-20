@@ -1,102 +1,107 @@
 package grar.view.component;
 
-import grar.util.ParseUtils;
-import com.knowledgeplayers.grar.display.component.container.DropdownMenu;
+import com.knowledgeplayers.grar.display.component.container.DropdownMenu; // FIXME
 
 import motion.actuators.GenericActuator;
 
 import flash.events.Event;
-import flash.events.Event;
-import flash.display.Bitmap;
 import flash.geom.Matrix;
+import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Sprite;
 
-import haxe.xml.Fast;
-
 using StringTools;
+
+typedef WidgetData = {
+
+	var ref : String;
+	var scale : Float;
+	var scaleX : Null<Float> = null;
+	var scaleY : Null<Float> = null;
+	var x : String = "0";
+	var currentX : Null<String> = null;
+	var y : String = "0";
+	var transitionIn : String;
+	var transitionOut : String;
+	var alpha : Null<Float> = null;
+	var rotation : Null<Float> = null;
+	var transformation : Null<String> = null;
+	var borderStyle : Null<{ thickness : Float, color : Color }> = null;
+	var position : Null<Positioning> = null;
+}
+
+typedef BorderStyle = {
+
+	var thickness : Float;
+	var color : Color;
+}
+
+@:fakeEnum(String)
+enum Positioning {
+
+	FIXED;
+}
 
 /**
  * Base class for all graphical elements
  **/
 class Widget extends Sprite {
 
-	private function new( ? xml : Fast) {
+	/**
+	 * Never called directly (only in sub-classes)
+	 */
+	private function new(wd : WidgetData) {
 
 		super();
 
-		if (xml != null) {
+		this.ref  = wd.ref;
+		this.scale = wd.scale;
+		wd.scaleX != null ? this.scaleX = wd.scaleX;
+		wd.scaleY != null ? this.scaleY = wd.scaleY;
+		wd.currentX != null ? this.currentX = wd.currentX;
+		this.transitionIn = wd.transitionIn;
+		this.transitionOut = wd.transitionOut;
+		wd.alpha != null ? this.alpha = wd.alpha;
+		wd.rotation != null ? this.rotation = wd.rotation;
+		wd.transformation != null ? this.transformation = wd.transformation;
+		wd.position != null ? this.position = wd.position;
 
-			// Ref
-			if (!xml.has.ref) {
+		setX(wd.x);
 
-				throw Type.getClassName(Type.getClass(this))+" must have a ref attribute: "+xml.x;
-			
-			} else {
+		if (!Math.isNaN(Std.parseFloat(wd.y))) {
 
-				ref = xml.att.ref;
+			wd.y = Std.parseFloat(wd.y);
+		
+		} else {
+
+			switch (wd.y.toLowerCase()) {
+
+				case "top":
+
+					y = 0;
+				
+				case "middle":
+
+					addEventListener(Event.ADDED_TO_STAGE, function(e){
+						y = parent.height / 2 - height / 2;
+					}, false, 100);
+				
+				case "bottom":
+
+					addEventListener(Event.ADDED_TO_STAGE, function(e){
+						y = parent.height - height;
+					}, false, 100);
+				
+				default:
+
+					throw '[Widget] Unsupported position "'+wd.y+'".';
 			}
+		}
 
-			// Scales
-			if(xml.has.scale)
-				scale = Std.parseFloat(xml.att.scale);
-			else
-				scale = 1;
+		if (wd.borderStyle != null) {
 
-			if(xml.has.scaleX)
-				scaleX = Std.parseFloat(xml.att.scaleX);
-			if(xml.has.scaleY)
-				scaleY = Std.parseFloat(xml.att.scaleY);
-
-			// Coordinates
-			var xTmp = "0";
-			if(xml.has.x){
-				currentX = xml.att.x;
-				xTmp = xml.att.x;
-			}
-			setX(xTmp);
-			if(xml.has.y){
-				if(!Math.isNaN(Std.parseFloat(xml.att.y)))
-					y = Std.parseFloat(xml.att.y);
-				else{
-					switch(xml.att.y.toLowerCase()){
-						case "top": y = 0;
-						case "middle": addEventListener(Event.ADDED_TO_STAGE, function(e){
-							y = parent.height /2 - height/2;
-						}, false, 100);
-						case "bottom": addEventListener(Event.ADDED_TO_STAGE, function(e){
-							y = parent.height - height;
-						}, false, 100);
-						default: throw '[Widget] Unsupported position "'+xml.att.y+'".';
-					}
-				}
-			}
-			else
-				y = 0;
-
-			// Transitions
-			transitionIn = xml.has.transitionIn ? xml.att.transitionIn : "";
-			transitionOut = xml.has.transitionOut ? xml.att.transitionOut : "";
-
-			if(xml.has.alpha)
-				alpha = Std.parseFloat(xml.att.alpha);
-			if(xml.has.rotation)
-				rotation = Std.parseFloat(xml.att.rotation);
-			if(xml.has.transformation)
-				transformation = xml.att.transformation;
-			if(xml.has.filters){
-				filters = FilterManager.getFilter(xml.att.filters);
-			}
-			if(xml.has.border){
-				var params = xml.att.border.split(",");
-				var thickness = Std.parseFloat(params[0].trim());
-				var borderColor = ParseUtils.parseColor(params[1].trim());
-				borderStyle = {thickness: thickness, color: borderColor};
-				addEventListener(Event.ADDED_TO_STAGE, drawBorders);
-			}
-			if(xml.has.position){
-				position = Type.createEnum(Positioning, xml.att.position.toUpperCase());
-			}
+			this.borderStyle = wd.borderStyle;
+			addEventListener(Event.ADDED_TO_STAGE, drawBorders);
 		}
 	}
 
@@ -310,14 +315,4 @@ class Widget extends Sprite {
 		if(e != null)
 			removeEventListener(Event.ADDED_TO_STAGE, drawBorders);
 	}
-}
-
-typedef BorderStyle = {
-	var thickness: Float;
-	var color: Color;
-}
-
-@:fakeEnum(String)
-enum Positioning {
-	FIXED;
 }

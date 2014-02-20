@@ -6,6 +6,10 @@ import grar.model.FilterType;
 import grar.model.StyleSheet;
 import grar.model.Locale;
 import grar.model.InventoryToken;
+import grar.model.contextual.Glossary;
+import grar.model.contextual.Bibliography;
+import grar.model.contextual.Notebook;
+import grar.model.part.Part;
 
 import grar.view.TokenNotification;
 
@@ -15,7 +19,10 @@ import grar.parser.XmlToFilter;
 import grar.parser.XmlToStyleSheet;
 import grar.parser.JsonToStyleSheet;
 import grar.parser.XmlToInventory;
-import grar.parser.XmlToPart;
+import grar.parser.contextual.XmlToBibliography;
+import grar.parser.contextual.XmlToGlossary;
+import grar.parser.contextual.XmlToNotebook;
+import grar.parser.part.XmlToPart;
 
 import aze.display.TilesheetEx;
 
@@ -153,7 +160,7 @@ class GameService {
 		}
 		onSuccess(m.n, m.i, v);
 	}
-
+/* FIXME
 	public function fetchMenu(vPath : String, mPath : Null<String>, onSuccess : grar.view.contextual.menu.MenuDisplay -> Null<Xml> -> Void, onError : String -> Void) : Void {
 
 		var v : MenuDisplay;
@@ -176,15 +183,15 @@ class GameService {
 		}
 		onSuccess(v, m);
 	}
+*/
+	public function fetchGlossary(path : String, onSuccess : Glossary -> Void, onError : String -> Void) : Void {
 
-	public function fetchGlossary(path : String, onSuccess : grar.model.contextual.Glossary -> Void, onError : String -> Void) : Void {
-
-		var g : grar.model.contextual.Glossary;
+		var g : Glossary;
 
 		try {
 
 			// at the moment, grar fetches its data from embedded assets only
-			g = grar.parser.XmlToGlossary.parse(AssetsStorage.getXml(path));
+			g = XmlToGlossary.parse(AssetsStorage.getXml(path));
 
 		} catch (e:String) {
 
@@ -194,14 +201,14 @@ class GameService {
 		onSuccess(g);
 	}
 
-	public function fetchBibliography(path : String, onSuccess : grar.model.contextual.Bibliography -> Void, onError : String -> Void) : Void {
+	public function fetchBibliography(path : String, onSuccess : Bibliography -> Void, onError : String -> Void) : Void {
 
-		var b : grar.model.contextual.Bibliography;
+		var b : Bibliography;
 
 		try {
 
 			// at the moment, grar fetches its data from embedded assets only
-			b = grar.parser.XmlToBibliography.parse(AssetsStorage.getXml(path));
+			b = XmlToBibliography.parse(AssetsStorage.getXml(path));
 
 		} catch (e:String) {
 
@@ -254,7 +261,7 @@ class GameService {
 	}
 
 	public function fetchStyle(path : String, ext : String, tilesheet : aze.display.TilesheetEx, 
-		onSuccess : StyleSheet -> Void, onError : String -> Void) : Void {
+									onSuccess : StyleSheet -> Void, onError : String -> Void) : Void {
 
 		var s : StyleSheet;
 
@@ -343,5 +350,21 @@ class GameService {
 			onInnerError(e);
 			return;
 		}
+	}
+
+	public function fetchLayouts(path : String, onSuccess : StringMap<Layout> -> Void, onError : String -> Void) : Void {
+
+		var l : StringMap<Layout>;
+
+		try {
+
+			l = XmlToLayouts.parse(AssetsStorage.getXml(path));
+
+		} catch(e:String) {
+
+			onError(e);
+			return;
+		}
+		onSuccess(l);
 	}
 }

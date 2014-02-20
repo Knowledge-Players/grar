@@ -116,6 +116,8 @@ class State {
 
 		module = s;
 
+		module.onPartsChanged = onModulePartsChanged;
+
 		onModuleChanged();
 
 		module.onReadyStateChanged = onModuleStateChanged;
@@ -146,6 +148,8 @@ class State {
 	public dynamic function onModuleChanged() : Void { }
 
 	public dynamic function onModuleStateChanged() : Void { }
+
+	public dynamic function onModulePartsChanged() : Void { }
 
 	public dynamic function onCurrentStyleSheetChanged() : Void { }
 

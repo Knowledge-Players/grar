@@ -3,127 +3,163 @@ package grar.view;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 
-import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
 import com.knowledgeplayers.grar.display.element.ChronoCircle;
 import com.knowledgeplayers.grar.display.element.Timeline;
-import com.knowledgeplayers.grar.display.component.ScrollBar;
-import com.knowledgeplayers.grar.display.component.TileImage;
-import com.knowledgeplayers.grar.display.component.Widget;
-import com.knowledgeplayers.grar.display.component.Image;
-import com.knowledgeplayers.grar.display.component.CharacterDisplay;
-import com.knowledgeplayers.grar.display.component.container.DefaultButton;
-import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.display.component.container.SoundPlayer;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
+import com.knowledgeplayers.grar.display.component.ScrollBar;
 #if flash
 import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
 #end
-
-import com.knowledgeplayers.grar.event.ButtonActionEvent;
-
+import com.knowledgeplayers.grar.display.component.TileImage;
+import com.knowledgeplayers.grar.display.component.Widget;
+import com.knowledgeplayers.grar.display.component.Image;
+import com.knowledgeplayers.grar.display.component.container.DefaultButton;
+import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
+import com.knowledgeplayers.grar.display.component.CharacterDisplay;
+import com.knowledgeplayers.grar.factory.UiFactory; // FIXME
+import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
 import com.knowledgeplayers.grar.structure.part.dialog.Character;
-
 import com.knowledgeplayers.grar.util.DisplayUtils;
-
-import com.knowledgeplayers.utils.assets.AssetsStorage;
+import com.knowledgeplayers.utils.assets.AssetsStorage; // FIXME
 
 import flash.geom.Rectangle;
 import flash.events.Event;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
-import haxe.xml.Fast;
 import haxe.ds.GenericStack;
+import haxe.ds.StringMap;
+
+import haxe.xml.Fast;
 
 using StringTools;
 
-typedef KpDisplayData = {
+typedef Template = {
 
-	var x : Float;
-	var y : Float;
-	var w : Float;
-	var h : Float;
-	var ss : StringMap<String>; 
-	var ti : Null<String>;
-	var to : Null<String>;
-	var l : Null<String>;
-	var f : Null<String>;
+	var fast : Fast;
+	var z : Int;
 }
 
-class KpDisplay extends Sprite {
+class Display extends Sprite {
 
 	/**
-	 * Never instanciated directly (only sub-classes)
+	 * Never instanciated directly (only in sub-classes)
 	 */
-	private function new(d : KpDisplayData) {
+	private function new() {
 
 		super();
 		
-		displays = new Map<String, Widget>();
-		spritesheets = new Map<String, TilesheetEx>();
-		textGroups = new Map<String, Map<String, {obj:Fast, z:Int}>>();
-		buttonGroups = new Map<String, GenericStack<DefaultButton>>();
-		layers = new Map<String, TileLayer>();
-		renderLayers = new Map<TileLayer, Bool>();
-		scrollBars = new Map<String, ScrollBar>();
-        timelines = new Map<String, Timeline>();
-		dynamicFields = new Array<{field: ScrollPanel, content: String}>();
-		displayTemplates = new Map<String, {fast: Fast, z: Int}>();
+		this.displays = new StringMap();
+		this.spritesheets = new StringMap();
+		this.textGroups = new StringMap();
+		this.buttonGroups = new StringMap();
+		this.layers = new StringMap();
+		this.renderLayers = new Map();
+		this.scrollBars = new StringMap();
+        this.timelines = new StringMap();
+		this.dynamicFields = new Array();
+		this.displayTemplates = new StringMap();
 
 		addEventListener(Event.ENTER_FRAME, checkRender);
 	}
 
 	// Should not be written. Can't be inlined because of inheritance
-	private var groupMenu : String = "menu";
-	private var groupNotebook : String = "notebook";
-
+	private var groupMenu: String = "menu";
+	private var groupNotebook: String = "notebook";
 	/**
     * All the spritesheets used here
     **/
-	public var spritesheets : Map<String, TilesheetEx>;
+	public var spritesheets:Map<String, TilesheetEx>;
 
 	/**
     * Transition to play at the beginning of the part
     **/
-	public var transitionIn (default, default) : String;
+	public var transitionIn (default, default):String;
 
 	/**
     * Transition to play at the end of the part
     **/
-	public var transitionOut (default, default) : String;
+	public var transitionOut (default, default):String;
 
 	/**
 	* Layout where to display this widget
 	**/
-	public var layout (default, default) : String;
+	public var layout (default, default):String;
 
 	/**
 	* Fields with dynamic content that need to be update while loading a new part
 	**/
-	public var dynamicFields (default, null) : Array<{field : ScrollPanel, content : String}>;
+	public var dynamicFields (default, null): Array<{field: ScrollPanel, content: String}>;
 
 	/**
 	* Map for layer render needed
 	**/
-	public var renderLayers (default, null) : Map<TileLayer, Bool>;
+	public var renderLayers (default, null):Map<TileLayer, Bool>;
 
 	/**
 	* Scroll bars
 	**/
-	public var scrollBars (default, null) : Map<String, ScrollBar>;
+	public var scrollBars (default, null):Map<String, ScrollBar>;
 
-	private var displays : Map<String, Widget>;
-	private var zIndex : Int = 0;
-	private var layers : Map<String, TileLayer>;
-	private var displayFast : Fast;
-	private var totalSpriteSheets : Int = 0;
-	private var textGroups : Map<String, Map<String, {obj:Fast, z:Int}>>;
-	private var buttonGroups : Map<String, GenericStack<DefaultButton>>;
-	private var displayTemplates : Map<String, Template>;
-	private var timelines : Map<String, Timeline>;
+	private var displays:Map<String, Widget>;
+	private var zIndex:Int = 0;
+	private var layers:Map<String, TileLayer>;
+	private var displayFast:Fast;
+	private var totalSpriteSheets:Int = 0;
+	private var textGroups:Map<String, Map<String, {obj:Fast, z:Int}>>;
+	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
+	private var displayTemplates: Map<String, Template>;
+	private var timelines: Map<String, Timeline>;
+
+
+	/**
+    * Parse the content of a display XML
+    * @param    content : Content of the XML
+    **/
+	public function parseContent(content:Xml):Void
+	{
+		displayFast = new Fast(content.firstElement());
+
+		if(displayFast.has.x)
+			x = Std.parseFloat(displayFast.att.x);
+		if(displayFast.has.y)
+			y = Std.parseFloat(displayFast.att.y);
+		if(displayFast.has.width && displayFast.has.height)
+			DisplayUtils.initSprite(this, Std.parseFloat(displayFast.att.width), Std.parseFloat(displayFast.att.height), 0, 0.001);
+		var i: Int = 0;
+		for(child in displayFast.nodes.SpriteSheet){
+			spritesheets.set(child.att.id, AssetsStorage.getSpritesheet(child.att.src));
+			var layer = new TileLayer(AssetsStorage.getSpritesheet(child.att.src));
+			layers.set(child.att.id, layer);
+			addChild(layer.view);
+			i++;
+		}
+		var uiLayer = new TileLayer(UiFactory.tilesheet);
+		layers.set("ui", uiLayer);
+		addChild(uiLayer.view);
+
+		createDisplay();
+
+		if(displayFast.has.transitionIn){
+			transitionIn = displayFast.att.transitionIn;
+			addEventListener(Event.ADDED_TO_STAGE, function(e){
+				TweenManager.applyTransition(this, transitionIn);
+			});
+		}
+		if(displayFast.has.transitionOut)
+			transitionOut = displayFast.att.transitionOut;
+		if(displayFast.has.layout)
+			layout = displayFast.att.layout;
+		if(displayFast.has.filters){
+			filters = FilterManager.getFilter(displayFast.att.filters);
+		}
+
+		ResizeManager.instance.onResize();
+	}
 
 	public function getLayer(id:String):TileLayer
 	{
@@ -324,7 +360,7 @@ class KpDisplay extends Sprite {
 		return char;
 	}
 
-	private function addElement(elem:Widget, node:Fast):Void
+	private function addElement(elem:Widget, node:Fast):Void // FIXME
 	{
 		if(node.name.toLowerCase() == "background")
 			elem.zz = 0;
@@ -401,9 +437,4 @@ class KpDisplay extends Sprite {
 	{
 		GameManager.instance.quitGame();
 	}
-}
-
-typedef Template = {
-	var fast: Fast;
-	var z: Int;
 }

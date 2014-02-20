@@ -1,9 +1,10 @@
-package grar.parser;
+package grar.parser.contextual;
 
 import grar.model.contextual.Glossary;
 
-import haxe.xml.Fast;
 import haxe.ds.StringMap;
+
+import haxe.xml.Fast;
 
 class XmlToGlossary {
 	

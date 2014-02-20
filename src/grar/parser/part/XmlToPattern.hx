@@ -1,4 +1,4 @@
-package grar.parser;
+package grar.parser.part;
 
 import grar.model.part.Pattern;
 import grar.model.part.dialog.ChoicePattern;

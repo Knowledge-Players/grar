@@ -1,11 +1,9 @@
-package grar.model;
+package grar.model.contextual;
 
 import grar.model.Item;
 import grar.model.Note;
 
 import haxe.ds.GenericStack;
-
-import com.knowledgeplayers.utils.assets.AssetsStorage;
 
 typedef Page = {
 

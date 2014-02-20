@@ -129,7 +129,7 @@ class Controller {
 										}, onError);
 								
 								case MENU:
-
+/* FIXME
 									gameSrv.fetchMenu(contextual.att.display, contextual.has.file ? contextual.att.file : null, function(d:MenuDisplay, m:Xml){
 
 											application.menu = d;
@@ -137,7 +137,7 @@ class Controller {
 											// TODO menu = AssetsStorage.getXml(c);
 
 										}, onError);
-
+*/
 								default: // nothing
 							}
 						}
@@ -155,12 +155,18 @@ class Controller {
 				        }
 
 				        // Load parts
+				        var parts : Array<Part> = [];
+
 				        for (partXml in structureXml.nodes.Part) {
 
-				            var part : Part = PartFactory.createPartFromXml(partXml);
-					        addPart(part.att.id, part);
-					        part.init(partXml);
+				        	var part : Part = gameSrv.fetchPart(partXml, function(p:Part){
+
+				        			parts.push(p);
+
+				        		}, onError);
 				        }
+				        state.module.parts = parts;
+
 
 					case LoadingStyles(displayXml): // only when tilesheet loaded and currentLocale known
 
@@ -216,6 +222,51 @@ class Controller {
 				// for each lang, flags.set(value, flagIconPath);
 
 				loadCurrentLocale();
+			}
+
+		state.onModulePartsChanged = function() {
+
+			// WIP **********************
+				// if (getLoadingCompletion() == 1 && (numStyleSheet == numStyleSheetLoaded)) {
+
+		        	// Menu hasn't been set, creating the default
+		            if (menu == null) {
+
+		                var menuXml = Xml.createDocument();
+			            menuXml.addChild(Xml.createElement("menu"));
+		                for (part in parts) {
+
+		                    createMenuXml(menuXml, part);
+		                }
+		                menu = menuXml;
+		            }
+		            if (!layoutLoaded) {
+
+			            if (stateInfos.tmpState != null) {
+
+		                    //stateInfos.initTrackable();
+			                stateInfos.loadStateInfos(stateInfos.tmpState);
+		                }
+			            for (part in getAllParts()) {
+
+		                    part.isDone = stateInfos.isPartFinished(part.id);
+		                    part.isStarted = stateInfos.isPartStarted(part.id);
+		                }
+		                // Load Layout
+		                LayoutManager.instance.parseXml(AssetsStorage.getXml(structureXml.node.Grar.node.Parameters.node.Layout.att.file));
+		            
+		            } else {
+
+		                // Menu must be init after the event is dispatched. Trust me.
+			            dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
+			            
+			            if (MenuDisplay.instance.exists) {
+
+		                    MenuDisplay.instance.init();
+			            }
+		            }
+		        // }
+		    // *****************************
 			}
 
 		state.readyState = true;

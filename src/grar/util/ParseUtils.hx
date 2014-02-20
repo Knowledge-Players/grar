@@ -5,6 +5,12 @@ import haxe.ds.StringMap;
 
 using StringTools;
 
+typedef Color = {
+
+	var color : Int;
+	var alpha : Float;
+}
+
 class ParseUtils {
 
 	public static inline function parseHash(s : String) : StringMap<String> {
@@ -123,9 +129,4 @@ class ParseUtils {
 			}
 		}
 	}
-}
-
-typedef Color = {
-	var color: Int;
-	var alpha: Float;
 }

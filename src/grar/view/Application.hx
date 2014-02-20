@@ -2,6 +2,7 @@ package grar.view;
 
 import grar.view.contextual.NotebookDisplay;
 import grar.view.contextual.menu.MenuDisplay;
+import grar.view.layout.Layout;
 
 import grar.view.element.TokenNotification;
 
@@ -20,24 +21,39 @@ class Application {
 		// the GRAR instance.
 	}
 
-	public var menu (default, set) : MenuDisplay;
+	public var menu (default, set) : Null<MenuDisplay>;
 
-	public var notebook (default, set) : NotebookDisplay;
+	public var notebook (default, set) : Null<NotebookDisplay>;
 
-	public var tokenNotification (default, set) : TokenNotification;
+	public var tokenNotification (default, set) : Null<TokenNotification>;
 
 #if (flash || openfl)
-	public var tokensImages (default, set) : StringMap<{ small : BitmapData, large : BitmapData }>;
+	public var tokensImages (default, set) : Null<StringMap<{ small : BitmapData, large : BitmapData }>>;
 #else
-	public var tokensImages (default, set) : StringMap<{ small : String, large : String }>;
+	public var tokensImages (default, set) : Null<StringMap<{ small : String, large : String }>>;
 #end
+
+	public var layouts (default, set) : Null<StringMap<Layout>> = null;
 
 	
 	///
 	// GETTER / SETTER
 	//
 
-	public function set_menu(v : MenuDisplay) : MenuDisplay {
+	public function set_layouts(v : Null<StringMap<Layout>>) : Null<StringMap<Layout>> {
+
+		if (v == layouts) {
+
+			return layouts;
+		}
+		layouts = v;
+
+		onLayoutsChanged();
+
+		return layouts;
+	}
+
+	public function set_menu(v : Null<MenuDisplay>) : Null<MenuDisplay> {
 
 		if (v == menu) {
 
@@ -50,7 +66,7 @@ class Application {
 		return menu;
 	}
 
-	public function set_notebook(v : NotebookDisplay) : NotebookDisplay {
+	public function set_notebook(v : Null<NotebookDisplay>) : Null<NotebookDisplay> {
 
 		if (v == notebook) {
 
@@ -63,7 +79,7 @@ class Application {
 		return notebook;
 	}
 
-	public function set_tokenNotification(v : TokenNotification) : TokenNotification {
+	public function set_tokenNotification(v : Null<TokenNotification>) : Null<TokenNotification> {
 
 		if (v == tokenNotification) {
 
@@ -77,9 +93,9 @@ class Application {
 	}
 
 #if (flash || openfl)
-	public function set_tokensImages(v : StringMap<small:BitmapData,large:BitmapData}>) : StringMap<{small:BitmapData,large:BitmapData}> {
+	public function set_tokensImages(v : Null<StringMap<small:BitmapData,large:BitmapData}>>) : Null<StringMap<{small:BitmapData,large:BitmapData}>> {
 #else
-	public function set_tokensImages(v : StringMap<small:String,large:String}>) : StringMap<{small:String,large:String}> {
+	public function set_tokensImages(v : Null<StringMap<small:String,large:String}>>) : Null<StringMap<{small:String,large:String}>> {
 #end
 
 		if (v == tokensImage) {
@@ -103,6 +119,8 @@ class Application {
 	public dynamic function onNotebookChanged() : Void { }
 
 	public dynamic function onMenuChanged() : Void { }
+
+	public dynamic function onLayoutsChanged() : Void { }
 
 	public dynamic function onTokensImageChanged() : Void { }
 

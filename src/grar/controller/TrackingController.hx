@@ -148,7 +148,7 @@ class TrackingController {
 				state.currentLanguage = stateInfosArray[0];
 				state.bookmark = Std.parseInt(stateInfosArray[1]);
 
-				/*
+				/* TODO This will have to be done once parts loaded !!!
 				var trackable:Array<String> = stateInfosArray[2].split("-");
 
 				if(allItem.length > 0){

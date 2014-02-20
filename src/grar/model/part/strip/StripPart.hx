@@ -1,6 +1,6 @@
 package grar.model.part.strip;
 
-import grar.structure.part.Part;
+import grar.model.part.Part;
 
 class StripPart extends Part {
 

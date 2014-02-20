@@ -1,7 +1,7 @@
-package grar.view;
+package grar.parser.contextual;
 
-import grar.model.Notebook;
-import grar.model.Note;
+import grar.model.contextual.Notebook;
+import grar.model.contextual.Note;
 import grar.model.InventoryToken;
 import grar.model.part.Item;
 
@@ -10,9 +10,10 @@ import grar.view.NoteBookDisplay;
 
 import grar.parser.XmlToKpDisplay;
 
-import haxe.xml.Fast;
 import haxe.ds.StringMap;
 import haxe.ds.GenericStack;
+
+import haxe.xml.Fast;
 
 class XmlToNotebook {
 	

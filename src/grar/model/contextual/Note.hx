@@ -1,4 +1,4 @@
-package grar.model;
+package grar.model.contextual;
 
 import grar.model.InventoryToken;
 

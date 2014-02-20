@@ -1,4 +1,4 @@
-package grar.parser;
+package grar.parser.part;
 
 import grar.model.part.Item;
 import grar.model.part.TextItem;

@@ -20,7 +20,7 @@ typedef ItemData = {
 class Item /* implements PartElement */ {
 
 	/**
-     * Nerver called directly (only in sub-classes)
+     * Never called directly (only in sub-classes)
      */
 	private function new( o : ItemData ) {
 

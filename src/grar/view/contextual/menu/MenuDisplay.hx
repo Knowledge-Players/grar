@@ -18,7 +18,6 @@ import flash.events.Event;
 
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
-import haxe.xml.Fast;
 
 using StringTools;
 
@@ -27,13 +26,12 @@ using StringTools;
  */
 class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
-	public function new(kd : KpDisplayData, o : String, b : Null<BookmarkDisplay>, ld : StringMap<Fast>, xb : Float, yb : Float, xo : Float, yo : Float) {
+	public function new(kd : KpDisplayData, o : String, b : Null<BookmarkDisplay>, xb : Float, yb : Float, xo : Float, yo : Float) {
 		
 		super(kd);
 
 		this.orientation = o;
 		this.bookmark = b;
-		this.levelDisplays = ld;
 		this.xBase = xb;
 		this.yBase = yb;
 		this.xOffset = xo;
@@ -62,7 +60,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 	**/
 	public var menuButtons : GenericStack<DefaultButton>;
 
-	private var levelDisplays : StringMap<Fast>;
+	// private var levelDisplays : StringMap<Fast>; TODO check but we should not need this anymore
 	private var xOffset : Float = 0;
 	private var yOffset : Float = 0;
 
@@ -98,123 +96,8 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 
 	// Private
 
-	override private function createDisplay():Void
+	override private function createDisplay():Void // TODO check what's the consequence
 	{
-	}
-
-	private function createMenuLevel(level:Xml):Void
-	{
-		if(!levelDisplays.exists(level.nodeName))
-			throw "Display not specified for tag " + level.nodeName;
-
-		var fast:Fast = levelDisplays.get(level.nodeName);
-
-		if(level.nodeName == "hr"){
-			addSeparator(fast);
-		}
-		else{
-			var partName = GameManager.instance.getItemName(level.get("id"));
-			if(partName == null)
-				throw "[MenuDisplay] Can't find a name for '"+level.get("id")+"'.";
-
-			var button = addButton(fast.node.Button, partName, level.get("icon"));
-			buttons.set(level.get("id"), button);
-			setButtonState(button, level);
-			buttons.set(level.get("id"), button);
-
-            button.x += xOffset;
-            button.y += yOffset;
-			if(orientation == "vertical"){
-				yOffset += button.height+Std.parseFloat(fast.att.yOffset);
-			}
-			else if(fast.has.width){
-				xOffset += xOffset+Std.parseFloat(fast.att.width);
-			}
-			else if(orientation == "horizontal")
-			    xOffset += button.width+Std.parseFloat(fast.att.xOffset);
-
-            addChild(button);
-			if(currentPartButton == null){
-				currentPartButton = button;
-			}
-		}
-		for(elem in level.elements())
-			createMenuLevel(elem);
-	}
-
-	private function setButtonState(button:DefaultButton, level: Xml):Void
-	{
-		for(part in GameManager.instance.game.getAllParts()){
-			if(part.name == level.get("id")){
-				if(!part.canStart())
-					button.toggleState = "lock";
-				else
-					button.toggle(!part.isDone);
-				break;
-			}
-		}
-	}
-
-	private function addSeparator(fast:Fast):Widget
-	{
-		var hasChildren = fast.elements.hasNext();
-		var separator: Widget;
-		if(hasChildren)
-			separator = new SimpleContainer(fast);
-		else{
-			separator = new Image();
-			if(fast.has.thickness){
-				var line = new Shape();
-				line.graphics.lineStyle(Std.parseFloat(fast.att.thickness), Std.parseInt(fast.att.color), Std.parseFloat(fast.att.alpha));
-				var originCoord:Array<String> = fast.att.origin.split(';');
-				var origin = {x: Std.parseFloat(originCoord[0]), y: Std.parseFloat(originCoord[1])};
-				line.graphics.moveTo(origin.x, origin.y);
-				var destCoord = fast.att.destination.split(";");
-				var dest = {x: Std.parseFloat(destCoord[0]), y: Std.parseFloat(destCoord[1])};
-				line.graphics.lineTo(dest.x, dest.y);
-
-				line.x = Std.parseFloat(fast.att.x);
-				line.y = Std.parseFloat(fast.att.y) + yOffset;
-				separator.addChild(line);
-			}
-		}
-		separator.addEventListener(Event.CHANGE, updateDynamicFields);
-		return separator;
-	}
-
-	private function addButton(fast:Fast, text:String, iconId: String):DefaultButton
-	{
-		var icons = ParseUtils.selectByAttribute("ref", "icon", fast.x);
-		ParseUtils.updateIconsXml(iconId, icons);
-		var button:DefaultButton = new DefaultButton(fast);
-
-		button.setText(text, "partName");
-		button.buttonAction = onClick;
-		button.addEventListener(MouseEvent.MOUSE_OVER, onOver);
-		button.addEventListener(MouseEvent.MOUSE_OUT, onOut);
-		button.transitionOut = transitionOut;
-		button.name = text;
-		buttonGroups.get(btnGroupName).add(button);
-
-		return button;
-	}
-
-	private inline function findIcon(xml:Xml):GenericStack<Xml>
-	{
-		var results = new GenericStack<Xml>();
-		findIconRec(xml, results);
-		return results;
-	}
-
-	private inline function findIconRec(xml: Xml, res: GenericStack<Xml>):Void
-	{
-		if(xml.get("ref") == "icon")
-			res.add(xml);
-		else{
-			for(elem in xml.elements()){
-				findIconRec(elem, res);
-			}
-		}
 	}
 
 	// Handlers
@@ -352,12 +235,6 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
                 elem.widget.reset();
         }
 		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
-	}
-
-	override private function addElement(elem:Widget, node:Fast):Void
-	{
-		super.addElement(elem, node);
-		addChild(elem);
 	}
 
 }

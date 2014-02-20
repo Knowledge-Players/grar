@@ -1,19 +1,13 @@
 package grar.model.part;
 
-import com.knowledgeplayers.grar.structure.score.Perk;
-import com.knowledgeplayers.grar.structure.score.ScoreChart;
+import grar.model.score.Perk;
+import grar.model.score.ScoreChart;
 import grar.model.part.Pattern;
 import grar.model.part.TextItem;
-import grar.util.ParseUtils;
-//import com.knowledgeplayers.grar.event.PartEvent;
-//import com.knowledgeplayers.grar.factory.ItemFactory;
-//import com.knowledgeplayers.grar.factory.PartFactory;
-import com.knowledgeplayers.grar.tracking.Trackable;
-//import com.knowledgeplayers.utils.assets.AssetsStorage;
+import grar.model.tracking.Trackable;
 
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
-import haxe.xml.Fast;
 
 #if (flash || openfl)
 import flash.media.Sound;
@@ -178,34 +172,36 @@ class Part /* implements Part */ {
 	private var soundLoopChannel : SoundChannel;
 	private var loaded : Bool = false;
 
-	public var data (get, set) : PartData;
-
 
 	///
 	// GETTER / SETTER
 	//
 
-    public function set_isDone(completed: Bool = true):Bool
-    {
+    public function set_isDone(completed : Bool = true) : Bool {
+
         isDone = completed;
 // Add bounty to the right perks
-        if(isDone){
-            for(perk in perks.keys())
-                ScoreChart.instance.addScoreToPerk(perk, perks.get(perk));
+        if (isDone) {
+
+            for (perk in perks.keys()) {
+
+                //ScoreChart.instance.addScoreToPerk(perk, perks.get(perk)); // FIXME
+            }
         }
 
 // Stop sound loop
-        if(soundLoopChannel != null)
-            soundLoopChannel.stop();
+        if (soundLoopChannel != null) {
 
+            soundLoopChannel.stop();
+        }
         return completed;
     }
 
     /**
-	* Start the part
-	**/
-    public function set_isStarted(completed: Bool = true):Bool
-    {
+	 * Start the part
+	 **/
+    public function set_isStarted(completed : Bool = true) : Bool {
+
         isStarted = completed;
         return completed;
     }
@@ -274,71 +270,94 @@ class Part /* implements Part */ {
 		return i == elements.length ? - 1 : i + 1;
 	}
 
-		/**
-	     * Tell if this part has sub-part or not
-	     * @return true if it has sub-part
-	     */
+	/**
+     * Tell if this part has sub-part or not
+     * @return true if it has sub-part
+     */
+	public function hasParts() : Bool {
 
-	public function hasParts():Bool
-	{
-		var i = 0;
-		while(i < elements.length && !elements[i].isPart())
-			i++;
-		return i < elements.length;
-	}
+		for (e in elements) {
 
-		/**
-	     * @return all the sub-part of this part
-	     */
+			switch (e) {
 
-	public function getAllParts():Array<Part>
-	{
-		var array = new Array<Part>();
-		//if(elements.length > 0)
-		array.push(this);
-		if(hasParts()){
-			for(elem in elements){
-				if(elem.isPart())
-					array = array.concat(cast(elem, Part).getAllParts());
+				case Part(p):
+
+					return true;
+
+				default: // nothing
 			}
 		}
-		return array;
+		return false;
 	}
 
-		/**
-	    * @return all the trackable items of this part
-	    **/
+	/**
+     * @return all the sub-part of this part
+     */
+	public function getAllParts() : Array<Part> {
 
-	public function getAllItems():Array<Trackable>
-	{
-		var items = new Array<Trackable>();
+		var a : Array<Part> = [];
 
-		for(elem in elements){
-			if(Std.is(elem, Trackable)){
-				if(elem.isPart()){
-					if(!cast(elem, Part).hasParts()){
-						items.push(cast(elem, Trackable));
+		a.push(this);
+		
+		for (e in elements) {
+
+			switch (e) {
+
+				case Part(p):
+
+					a = a.concat(p.getAllParts());
+
+				default: // nothing
+			}
+		}
+		return a;
+	}
+
+	/**
+     * @return all the trackable items of this part
+     **/
+	public function getAllItems() : Array<Trackable> {
+
+		var items : Array<Trackable> = [];
+
+		for (elem in elements) {
+
+			switch (elem) {
+
+				case Part(p):
+
+					if (!p.hasParts()) {
+
+						items.push(Part(p));
+
+					} else {
+
+						items = items.concat( p.getAllItems() );
 					}
-					else
-						items = items.concat(cast(elem, Part).getAllItems());
-				}
+
+				default: // nothing
 			}
 		}
-		items.push(this);
+		items.push(Part(this));
 
 		return items;
 	}
 
-	public function canStart():Bool
-	{
-		var can: Bool = true;
-		for(perk in requirements.keys()){
-			if(!ScoreChart.instance.perks.exists(perk))
-				ScoreChart.instance.perks.set(perk, new Perk(perk));
-			if(ScoreChart.instance.perks.get(perk).getScore() < requirements.get(perk))
-				can = false;
-		}
+	public function canStart() : Bool {
 
+		var can : Bool = true;
+
+		for (perk in requirements.keys()) {
+
+			// FIXME if (!ScoreChart.instance.perks.exists(perk)) {
+
+			// FIXME 	ScoreChart.instance.perks.set(perk, new Perk(perk));
+			// FIXME }
+			// FIXME if (ScoreChart.instance.perks.get(perk).getScore() < requirements.get(perk)) {
+
+			// FIXME 	can = false;
+			// FIXME }
+		}
 		return can;
 	}
 
@@ -356,13 +375,13 @@ class Part /* implements Part */ {
 	     * @return a string-based representation of the part
 	     */
 
-	override public function toString():String
-	{
+	override public function toString() : String {
+
 		return "Part " + name + " " + file + " : " + elements.toString();
 	}
 
-	public function restart():Void
-	{
+	public function restart() : Void {
+
 		elemIndex = 0;
 	}
 
@@ -430,15 +449,11 @@ class Part /* implements Part */ {
 	{
 		if(parent != null)
 			parent.startElement(id);
+#if (flash || openfl)
 		if(soundLoop != null)
 			soundLoopChannel = soundLoop.play();
+#else
+		// TODO
+#end
 	}
-
-	// private function onPartLoaded(event:PartEvent):Void
-	// {
-	// 	nbSubPartLoaded++;
-	// 	if(nbSubPartLoaded == nbSubPartTotal && loaded){
-	// 		fireLoaded();
-	// 	}
-	// }
 }

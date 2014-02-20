@@ -1,4 +1,4 @@
-package grar.parser;
+package grar.parser.contextual;
 
 import grar.model.contextual.Bibliography;
 

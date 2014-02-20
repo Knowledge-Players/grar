@@ -3,6 +3,8 @@ package grar.model;
 import grar.model.InventoryToken;
 import grar.model.contextual.Glossary;
 import grar.model.contextual.Bibliography;
+import grar.model.contextual.Notebook;
+import grar.model.score.ScoreChart;
 
 import haxe.ds.StringMap;
 
@@ -14,7 +16,7 @@ typedef InitState = {
 	var tracking : String;
 }
 
-enum ReadyState {
+enum ReadyState { // FIXME
 
 	Loading(langs : String, layout : String, displayNode : haxe.xml.Fast, structureNode : haxe.xml.Fast);
 }
@@ -33,6 +35,7 @@ class Grar {
 		this.readyState = rs;
 		this.styles = new StringMap();
 		this.inventory = new StringMap();
+		this.scoreChart = new ScoreChart();
 	}
 
 	public var readyState (default, set) : ReadyState;
@@ -59,6 +62,10 @@ class Grar {
 
 	public var bibliography (default, set) : Null<Bibliography> = null;
 
+	public var parts (default, set) : Null<Array<Part>> = null;
+
+	public var scoreChart (default, null) : ScoreChart;
+
 
 
 	private var styles : StringMap<StringMap<StyleSheet>>;
@@ -67,6 +74,17 @@ class Grar {
 	///
 	// GETTERS / SETTERS
 	//
+
+	public function set_parts(v : Null<Array<Part>>) : Null<Array<Part>> {
+
+		if (parts == v) {
+			return parts;
+		}
+		parts = v;
+		onPartsChanged();
+
+		return parts;
+	}
 
 	public function set_bibliography(v : Null<Bibliography>) : Null<Bibliography> {
 
@@ -163,6 +181,7 @@ class Grar {
 		return Lambda.count(styles.get(locale));
 	}
 
+
 	///
 	// CALLBACKS
 	//
@@ -176,4 +195,6 @@ class Grar {
 	public dynamic function onGlossaryChanged() { }
 
 	public dynamic function onBibliographyChanged() { }
+
+	public dynamic function onPartsChanged() { }
 }

@@ -1,4 +1,4 @@
-package grar.parser;
+package grar.parser.part;
 
 import grar.model.part.Part;
 import grar.model.part.PartElement;
@@ -8,8 +8,8 @@ import grar.model.part.strip.StripPart;
 import grar.model.part.Pattern;
 import grar.model.part.Item;
 
-import grar.parser.XmlToPattern;
-import grar.parser.XmlToItem;
+import grar.parser.part.XmlToPattern;
+import grar.parser.part.XmlToItem;
 
 import grar.util.ParseUtils;
 
