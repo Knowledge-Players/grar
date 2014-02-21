@@ -8,8 +8,6 @@ import grar.model.score.ScoreChart;
 
 import haxe.ds.StringMap;
 
-import aze.display.TilesheetEx;
-
 typedef InitState = {
 
 	var value : String;
@@ -45,8 +43,6 @@ class Grar {
 	public var id (default, null) : String;
 
 	public var state (default, null) : InitState;
-
-	public var tilesheet (default, default) : TilesheetEx;
 
 	public var transitions (default, default) : StringMap<TransitionTemplate>;
 

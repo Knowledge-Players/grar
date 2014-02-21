@@ -1,30 +1,30 @@
 package grar.view.element;
 
-
-// TODO
-//import grar.view.component.container.WidgetContainer;
-//import com.knowledgeplayers.grar.display.component.Image;
-//import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-//import com.knowledgeplayers.grar.localisation.Localiser;
+import grar.view.component.container.WidgetContainer;
+import grar.view.component.Image;
+import grar.view.component.container.ScrollPanel;
+// FIXME import com.knowledgeplayers.grar.localisation.Localiser;
 
 import haxe.Timer;
-import haxe.xml.Fast;
 
 /**
  * Graphic representation of a token of the game
  */
-class TokenNotification { // TODO extends WidgetContainer {
+class TokenNotification extends WidgetContainer {
+
+	//public function new(fast : Fast) : Void {
+	public function new(tnd : WidgetContainerData) : Void {
+
+		//super(fast);
+		super(tnd);
+
+		this.duration = switch(tnd.type){ case TokenNotification(d): d; default: null; };
+	}
 
 	/**
      * Time (in ms) before the notification disappear
      **/
 	public var duration (default, default) : Int;
-
-	public function new(d : Int) : Void {
-
-		// TODO super(fast);
-		duration = d;
-	}
 
 	public function setToken(tokenName : String) : Void {
 /* TODO

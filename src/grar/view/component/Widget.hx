@@ -50,58 +50,62 @@ class Widget extends Sprite {
 	/**
 	 * Never called directly (only in sub-classes)
 	 */
-	private function new(wd : WidgetData) {
+	//private function new(?xml: Fast)
+	private function new(? wd : Null<WidgetData>) {
 
 		super();
 
-		this.ref  = wd.ref;
-		this.scale = wd.scale;
-		wd.scaleX != null ? this.scaleX = wd.scaleX;
-		wd.scaleY != null ? this.scaleY = wd.scaleY;
-		wd.currentX != null ? this.currentX = wd.currentX;
-		this.transitionIn = wd.transitionIn;
-		this.transitionOut = wd.transitionOut;
-		wd.alpha != null ? this.alpha = wd.alpha;
-		wd.rotation != null ? this.rotation = wd.rotation;
-		wd.transformation != null ? this.transformation = wd.transformation;
-		wd.position != null ? this.position = wd.position;
+		if (wd != null) {
 
-		setX(wd.x);
+			this.ref  = wd.ref;
+			this.scale = wd.scale;
+			wd.scaleX != null ? this.scaleX = wd.scaleX;
+			wd.scaleY != null ? this.scaleY = wd.scaleY;
+			wd.currentX != null ? this.currentX = wd.currentX;
+			this.transitionIn = wd.transitionIn;
+			this.transitionOut = wd.transitionOut;
+			wd.alpha != null ? this.alpha = wd.alpha;
+			wd.rotation != null ? this.rotation = wd.rotation;
+			wd.transformation != null ? this.transformation = wd.transformation;
+			wd.position != null ? this.position = wd.position;
 
-		if (!Math.isNaN(Std.parseFloat(wd.y))) {
+			setX(wd.x);
 
-			wd.y = Std.parseFloat(wd.y);
-		
-		} else {
+			if (!Math.isNaN(Std.parseFloat(wd.y))) {
 
-			switch (wd.y.toLowerCase()) {
+				wd.y = Std.parseFloat(wd.y);
+			
+			} else {
 
-				case "top":
+				switch (wd.y.toLowerCase()) {
 
-					y = 0;
-				
-				case "middle":
+					case "top":
 
-					addEventListener(Event.ADDED_TO_STAGE, function(e){
-						y = parent.height / 2 - height / 2;
-					}, false, 100);
-				
-				case "bottom":
+						y = 0;
+					
+					case "middle":
 
-					addEventListener(Event.ADDED_TO_STAGE, function(e){
-						y = parent.height - height;
-					}, false, 100);
-				
-				default:
+						addEventListener(Event.ADDED_TO_STAGE, function(e){
+							y = parent.height / 2 - height / 2;
+						}, false, 100);
+					
+					case "bottom":
 
-					throw '[Widget] Unsupported position "'+wd.y+'".';
+						addEventListener(Event.ADDED_TO_STAGE, function(e){
+							y = parent.height - height;
+						}, false, 100);
+					
+					default:
+
+						throw '[Widget] Unsupported position "'+wd.y+'".';
+				}
 			}
-		}
 
-		if (wd.borderStyle != null) {
+			if (wd.borderStyle != null) {
 
-			this.borderStyle = wd.borderStyle;
-			addEventListener(Event.ADDED_TO_STAGE, drawBorders);
+				this.borderStyle = wd.borderStyle;
+				addEventListener(Event.ADDED_TO_STAGE, drawBorders);
+			}
 		}
 	}
 
@@ -157,6 +161,11 @@ class Widget extends Sprite {
 	private var origin: {x: Float, y: Float, scaleX: Float, scaleY: Float, alpha: Float};
 	private var lockPosition: Bool = false;
 	private var currentX: String;
+
+
+	///
+	// GETTER / SETTER
+	//
 
 	public function set_scale(scale:Float):Float
 	{
@@ -260,7 +269,10 @@ class Widget extends Sprite {
 		drawBorders();
 	}
 
-	// Privates
+
+	///
+	// INTERNALS
+	//
 
 	private function setX(xString:String):Void
 	{

@@ -12,9 +12,9 @@ class XmlToWidget {
 	// API
 	//
 
-	static public function parseWidgetData(xml : Xml) : WidgetData {
+	static public function parseWidgetData(f : Fast) : WidgetData {
 
-		var f : Fast = new Fast(xml);
+		//var f : Fast = new Fast(xml);
 
 		var wd : WidgetData = { };
 

@@ -60,7 +60,7 @@ class Controller {
 
 						var changeState = function() {
 
-								if (state.currentLocale != null && state.module.tilesheet != null) {
+								if (state.currentLocale != null && application.tilesheet != null) {
 
 									state.module.readyState = LoadingStyles(displayXml);
 								}
@@ -78,7 +78,7 @@ class Controller {
 						// display (styles, ui, transitions, filters, templates)
 						gameSrv.fetchSpriteSheet( displayXml.node.Ui.att.display, function(t:TilesheetEx){
 
-									state.module.tilesheet = t;
+									application.tilesheet = t;
 
 									changeState();
 
@@ -154,7 +154,7 @@ class Controller {
 				        		}, onError);
 				        }
 
-				        // Load parts
+				        // Load part models
 				        var parts : Array<Part> = [];
 
 				        for (partXml in structureXml.nodes.Part) {
@@ -194,7 +194,7 @@ class Controller {
 
 					        var extension : String = localePath.substr(localePath.lastIndexOf(".") + 1);
 
-							gameSrv.fetchStyle( localePath, extension, state.module.tilesheet, onStyle, onError );
+							gameSrv.fetchStyle( localePath, extension, application.tilesheet, onStyle, onError );
 				        }
 				}
 			}
@@ -224,7 +224,7 @@ class Controller {
 				loadCurrentLocale();
 			}
 
-		state.onModulePartsChanged = function() {
+		state.onModulePartsChanged = function() { // actually code below also require the templates to be fetch already
 
 			// WIP **********************
 				// if (getLoadingCompletion() == 1 && (numStyleSheet == numStyleSheetLoaded)) {

@@ -1,6 +1,9 @@
 package grar.parser;
 
 import grar.view.Display;
+import grar.view.component.Image;
+import grar.view.component.TileImage;
+import grar.view.component.CharacterDisplay;
 
 import haxe.ds.StringMap;
 
@@ -10,11 +13,14 @@ enum DisplayType {
 
 	Display; // TODO remove
 	Zone;
+	Menu;
 	Notebook;
+	Part;
 	// TODO find others
 }
 
 class XmlToDisplay {
+
 
 	///
 	// API
@@ -23,7 +29,7 @@ class XmlToDisplay {
 	/**
 	 * You should call this method only from GameService as there is a two-step loading because of assets
 	 */
-	static public function parse(xml : Xml, type : DisplayType) : Display {
+	static public function parse(xml : Xml, type : DisplayType) : DisplayData {
 
 		var f : Fast = new Fast(xml.firstElement());
 
@@ -32,7 +38,7 @@ class XmlToDisplay {
 
 		var dd : DisplayData = parseContent(f : Fast, type);
 
-
+		return dd;
 	}
 
 
@@ -42,8 +48,9 @@ class XmlToDisplay {
 
 	enum ElementData = {
 
-		Image(i : grar.view.component.Image.ImageData);
-		TileImage(ti : grar.view.component.Image.TileImageData);
+		Image(i : ImageData);
+		TileImage(ti : TileImageData);
+		CharacterData(c : CharacterData);
 	}
 
 	typedef DisplayData = {
@@ -52,14 +59,16 @@ class XmlToDisplay {
 		var y : Null<Float> = null;
 		var width : Null<Float> = null;
 		var height : Null<Float> = null;
-		var spritesheets : Null<StringMap<TilesheetEx>>;
-		//var spritesheetsSrc : Null<StringMap<String>>;
+		var spritesheets : Null<StringMap<TilesheetEx>>; // set in second step
+		var spritesheetsSrc : StringMap<String>;
 		var transitionIn : Null<String>;
 		var transitionOut : Null<String>;
 		var layout : Null<String>;
 		var filters : Null<String>;
 		var timelines : StringMap<TimelineData>;
-		var display : StringMap<ElementData>;
+		var displays : StringMap<ElementData>;
+		var layers : Null<StringMap<TileLayer>>; // set in second step
+		var layersSrc : StringMap<String>;
 	}
 
 	static function parseContent(f : Fast, type : DisplayType) : DisplayData {
@@ -69,7 +78,10 @@ class XmlToDisplay {
 
 		var dd : DisplayData = { };
 
-		dd.display = new StringMap();
+		dd.spritesheetsSrc = new StringMap();
+		dd.timelines = new StringMap();
+		dd.displays = new StringMap();
+		dd.layersSrc = new StringMap();
 
 		if (f.has.x) {
 
@@ -87,13 +99,16 @@ class XmlToDisplay {
 		}
 		for (child in f.nodes.SpriteSheet) {
 
-			dd.spritesheets.set(child.att.id, AssetsStorage.getSpritesheet(child.att.src)); // FIXME
-			// TODO dd.spritesheetsSrc.set(child.att.id, child.att.src);
+			//dd.spritesheets.set(child.att.id, AssetsStorage.getSpritesheet(child.att.src)); // FIXME
+			dd.spritesheetsSrc.set(child.att.id, child.att.src);
+
+			dd.layersSrc.set(child.att.id, child.att.src);
 
 			// FIXME var layer = new TileLayer(AssetsStorage.getSpritesheet(child.att.src));
 			// FIXME layers.set(child.att.id, layer);
 			// FIXME addChild(layer.view);
 		}
+		dd.layersSrc.set("ui", "");
 		// FIXME var uiLayer = new TileLayer(UiFactory.tilesheet);
 		// FIXME layers.set("ui", uiLayer);
 		// FIXME addChild(uiLayer.view);
@@ -160,11 +175,11 @@ class XmlToDisplay {
 			
 			case "character":
 
-				createCharacter(f);
+				dd = createCharacter(f, type, dd);
 			
 			case "button":
 
-				createButton(f);
+				dd = createButton(f, type, dd);
 			
 			case "text":
 
@@ -252,7 +267,7 @@ class XmlToDisplay {
 		if (f.has.src || f.has.filters || (f.has.extract && f.att.extract == "true")) {
 
 			//img = new Image(f, dd.spritesheets.get(spritesheet));
-			img = Image( XmlToImage.parseImageData(f, dd.spritesheets.get(spritesheet)) );
+			img = Image( XmlToImage.parseImageData(f, spritesheet );
 		
 		} else {
 
@@ -262,16 +277,62 @@ class XmlToDisplay {
 // FIXME				layers.set(spritesheet, layer);
 // FIXME			}
 			//img = new TileImage(f, layers.get(spritesheet), false);
-			img = TileImage( XmlToImage.parseTileImageData(f, dd.spritesheets.get(spritesheet)) );
+			img = TileImage( XmlToImage.parseTileImageData(f, spritesheet );
 		}
 		// addElement(img, f);
-		dd.elements.push(img);
+		dd.displays.set(f.att.ref, img);
 		
-		return img;
+		return dd;
 	}
 
-	static function createScrollBar(barNode:Fast):Widget
-	{
+	//static function createCharacter(character:Fast): Widget
+	static function createCharacter(f : Fast, type : DisplayType, dd : DisplayData) : DisplayData {
+
+		var c : CharacterData = XmlToCharacter.parseCharacterData(f);
+		
+		//addElement(char, character);
+		dd.displays.set(Character(c));
+		
+		return dd;
+	}
+
+	//static function createButton(buttonNode:Fast):Widget
+	static function createButton(f : Fast, type : DisplayType, dd : DisplayData) : DisplayData {
+
+		var ref = f.att.ref;
+		var button : DefaultButton = new DefaultButton(f);
+		
+		if (f.has.action) {
+
+			setButtonAction(button, f.att.action);
+		}
+		if (f.has.group) {
+
+			if (buttonGroups.exists(f.att.group.toLowerCase())) {
+
+				buttonGroups.get(f.att.group.toLowerCase()).add(button);
+			
+			} else {
+
+				var stack = new GenericStack<DefaultButton>();
+				stack.add(button);
+				buttonGroups.set(f.att.group.toLowerCase(), stack);
+			}
+		}
+		if (button.group != null) {
+
+			button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+		}
+		//addElement(button, f);
+		dd.displays.set(Button(b));
+
+		return dd;
+	}
+
+
+
+	static function createScrollBar(barNode : Fast) : Widget {
+
 		var bgColor = barNode.has.bgColor ? barNode.att.bgColor : null;
 		var cursorColor = barNode.has.cursorColor ? barNode.att.cursorColor : null;
 		var bgTile = barNode.has.bgTile ? barNode.att.bgTile : null;
@@ -293,27 +354,6 @@ class XmlToDisplay {
 		var scroll = new ScrollBar(Std.parseFloat(barNode.att.width), tilesheet, barNode.att.tile, bgTile, cursor9Grid, bg9Grid, cursorColor, bgColor);
 		scrollBars.set(barNode.att.ref, scroll);
 		return scroll;
-	}
-
-	static function createButton(buttonNode:Fast):Widget
-	{
-		var ref = buttonNode.att.ref;
-		var button:DefaultButton = new DefaultButton(buttonNode);
-		if(buttonNode.has.action)
-			setButtonAction(button, buttonNode.att.action);
-		if(buttonNode.has.group){
-			if(buttonGroups.exists(buttonNode.att.group.toLowerCase()))
-				buttonGroups.get(buttonNode.att.group.toLowerCase()).add(button);
-			else{
-				var stack = new GenericStack<DefaultButton>();
-				stack.add(button);
-				buttonGroups.set(buttonNode.att.group.toLowerCase(), stack);
-			}
-		}
-		if(button.group != null)
-			button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
-		addElement(button, buttonNode);
-		return button;
 	}
 
 	static function createVideo(videoNode: Fast):Widget
@@ -345,14 +385,5 @@ class XmlToDisplay {
 			dynamicFields.push({field: panel, content: textNode.att.content.substr(1)});
 		}
 		return panel;
-	}
-
-	static function createCharacter(character:Fast): Widget
-	{
-		var char:CharacterDisplay = new CharacterDisplay(character, layers.get(character.att.spritesheet), new Character(character.att.ref));
-		if(character.has.nameRef)
-			char.nameRef = character.att.nameRef;
-		addElement(char, character);
-		return char;
 	}
 }

@@ -38,7 +38,8 @@ typedef ImageData = {
 	var smoothing : Bool = true;
 	var mirror : Null<Int> = null;
 	var clipOrigin : Null<Array<Float>> = null;
-	var tilesheet : Null<TilesheetEx> = null;
+	var tilesheetRef : Null<String> = null;
+	var tilesheet : Null<TilesheetEx> = null; // set in second step (instanciation)
 	var tile : Null<String> = null;
 }
 

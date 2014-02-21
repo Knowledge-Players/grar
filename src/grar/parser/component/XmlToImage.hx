@@ -12,27 +12,30 @@ import haxe.xml.Fast;
 
 class XmlToImage {
 
-	static public function parseTileImageData( xml : Fast, layer : TileLayer, visible : Bool = true, ? div : Bool = false ) : TileImageData {
+	static public function parseTileImageData( f : Fast, ? layerRef : Null<String>, visible : Bool = true, ? div : Bool = false ) : TileImageData {
 
 		var tid : TileImageData = { };
 
-		tid.layer = layer;
+		tid.layerRef = layer;
 		tid.visible = visible;
 		tid.div = div;
-		tid.tilesheetName = xml.has.spritesheet ? xml.att.spritesheet : null;
+		tid.tilesheetName = f.has.spritesheet ? f.att.spritesheet : null;
 
-		tid.id = parseImageData( xml, tilesheet );
+		tid.id = parseImageData(f);
+
+		return tid;
 	}
 
-	static public function parseImageData( xml : Xml, ? tilesheet : Null<TilesheetEx> ) : ImageData {
+	static public function parseImageData( f : Fast, ? tilesheetRef : Null<String> ) : ImageData {
 
 		var id : ImageData = { };
 
-		id.tilesheet = tilesheet;
+		id.wd = XmlToWidget.parseWidgetData(f);
+		id.tilesheetRef = tilesheetRef;
 		
-		if (xml != null) {
+		if (f != null) {
 
-			var f : Fast = new Fast(xml);
+			//var f : Fast = new Fast(xml);
 
 			if (f.has.vertices) {
 
@@ -85,5 +88,6 @@ class XmlToImage {
 			
 			}
 		}
+		return id;
 	}
 }

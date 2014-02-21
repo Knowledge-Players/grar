@@ -1,5 +1,7 @@
 package grar.view;
 
+import aze.display.TilesheetEx;
+
 import grar.view.contextual.NotebookDisplay;
 import grar.view.contextual.menu.MenuDisplay;
 import grar.view.layout.Layout;
@@ -20,6 +22,8 @@ class Application {
 		// we should pass here the targetted API's root element of 
 		// the GRAR instance.
 	}
+
+	public var tilesheet (default, default) : TilesheetEx;
 
 	public var menu (default, set) : Null<MenuDisplay>;
 
@@ -107,6 +111,21 @@ class Application {
 		onTokensImageChanged();
 
 		return tokensImage;
+	}
+
+
+	///
+	// API
+	//
+
+	public function createMenu(md : MenuDisplayData) : Void {
+
+		var m : MenuDisplay = new MenuDisplay(md);
+
+		// set callbacks on m
+		// ...
+
+		menu = m;
 	}
 
 

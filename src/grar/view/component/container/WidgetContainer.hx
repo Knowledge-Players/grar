@@ -1,15 +1,15 @@
 package grar.view.component.container;
 
+import aze.display.TileSprite;
+import aze.display.TileLayer;
+import aze.display.TilesheetEx;
+
 import com.knowledgeplayers.grar.display.element.ChronoCircle;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
 import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.util.DisplayUtils;
-
-import aze.display.TileSprite;
-import aze.display.TileLayer;
-import aze.display.TilesheetEx;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -18,77 +18,126 @@ import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.display.Sprite;
 
-import haxe.xml.Fast;
 import haxe.ds.GenericStack;
+import haxe.ds.StringMap;
+
+typedef BackgroundData = {
+
+	var background : Null<String>;
+	var color : Null<Array<String>>;
+	var arrowX : Float;
+	var arrowY : Float;
+	var radius : Null<Array<Float>>;
+	var line : Float;
+	var colorLine : Int;
+	var bubbleWidth : Int;
+	var bubbleHeight : Int;
+	var shadow : Float;
+	var gap : Float;
+	var bubbleX : Float;
+	var bubbleY : Float;
+	var resize : Bool;
+}
+
+enum ElementData {
+
+	Image(d:ImageData);
+	TileImage(d:TileImageData);
+	DefaultButton(d:WidgetContainerData);
+	ScrollPanel(d:WidgetContainerData);
+	ChronoCircle(d:WidgetContainerData);
+	SimpleContainer(d:WidgetContainerData);
+
+	// VideoPlayer only
+	
+}
+
+enum WidgetContainerType {
+
+	WidgetContainer; // TODO remove ?
+	SimpleContainer(spritesheet : Null<String>, mask : Null<String>);
+	BoxDisplay;
+	DefaultButton(defaultState : String, isToggleEnabled : Bool, action : Null<String>, group : Null<String>);
+	DropdownMenu(color : String);
+	ScrollPanel(styleSheet : Null<String>, style : Null<String>, content : Null<String>, trim : Bool);
+/* ? */ SimpleBubble(width : Null<Float>, height : Null<Float>, colors : Null<Array<Int>>, ? arrowX : Float = 0, ? arrowY : Float = 0, ? radius : Null<Array<Float>>, ? line : Float = 0, ? colorLine : Int = 0xFFFFFF, ? shadow : Float = 0, ? gap : Float = 5, ? alphas : Null<Array<Float>>, ? bubbleX : Float = 0, ? bubbleY : Float = 0);
+	SoundPlayer;
+	ChronoCircle(colorCircle : Null<Color>, minRadius : Null<Int>, maxRadius : Null<Int>, colorBackground : Null<Color>, centerCircle : Null<Color>);
+	VideoPlayer(controlsHidden : Bool, autoFullscreen : Null<Bool>);
+	ProgressBar(iconScale : Float, progressColor : Int, icon : String);
+	InventoryDisplay;
+	BookmarkDisplay(animation : Null<String>, xOffset : Float, yOffset : Float);
+	IntroScreen(duration : Int);
+	AnimationDisplay;
+	TokenNotification(duration : Int);
+}
+
+typedef WidgetContainerData = {
+
+	var wd : WidgetData;
+	var type : WidgetContainerType;
+	var tilesheet : Null<TilesheetEx> = null; // set in a second step (instanciation)
+	var contentAlpha : Float;
+	var scrollBarName : String;
+	var contentTransition : String;
+	var scrollable : Bool;
+	var grid9 : { g0 : Float, g1 : Float, g2 : Float, g3 : Float };
+	var maskWidth : Null<Float> = null;
+	var maskHeight : Null<Float> = null;
+	var background : BackgroundData;
+	var displays : StringMap<ElementData>;
+}
 
 /**
  * Base for widget that can contain other widget
  **/
 class WidgetContainer extends Widget {
 
-	private function new( ? xml : Fast, ? tilesheet : TilesheetEx ) {
+	//private function new( ? xml : Fast, ? tilesheet : TilesheetEx ) {
+	private function new( wcd : WidgetContainerData ) {
 
-		super(xml);
-		content = new Sprite();
-		displays = new Map<String, Widget>();
-		buttonGroups = new Map<String, GenericStack<DefaultButton>>();
-		children = new Array<Widget>();
+		super(wcd.wd);
+
+		this.content = new Sprite();
+		this.displays = new StringMap();
+		this.buttonGroups = new StringMap();
+		this.children = new Array();
 
 		addChild(content);
 
-		if (xml != null) {
+		// TODO check if necessary: if (xml != null) {
 
 			// Default tilesheet
-			if (tilesheet != null) {
+			//FIXME do at instanciation if (tilesheet != null) {
 
-				this.tilesheet = tilesheet;
+			//FIXME do at instanciation 	this.tilesheet = tilesheet;
 			
-			} else {
+			//FIXME do at instanciation } else {
 				
-				this.tilesheet = UiFactory.tilesheet;
-			}
+			//FIXME do at instanciation 	this.tilesheet = UiFactory.tilesheet;
+			//FIXME do at instanciation }
 
-			contentAlpha = xml.has.contentAlpha ? Std.parseFloat(xml.att.contentAlpha) : 1;
-			scrollBarName = xml.has.scrollBar ? xml.att.scrollBar : null;
-			if(xml.has.contentTransition)
-				contentTransition = xml.att.contentTransition;
-			if(xml.has.scrollable)
-				scrollable =  xml.att.scrollable == "true";
-			else
-				scrollable = false;
+			this.contentAlpha = wcd.contentAlpha;
+			this.scrollBarName = wcd.scrollBarName;
+			this.contentTransition = wcd.contentTransition;
+			this.scrollable =  wcd.scrollable;
 
-			if(xml.has.grid){
-				var grid = new Array<Float>();
-				for(number in xml.att.grid.split(","))
-					grid.push(Std.parseFloat(number));
-				grid9 = new Rectangle(grid[0], grid[1], grid[2], grid[3]);
+			if (wcd.grid9 != null) {
+
+				this.grid9 = new Rectangle(wcd.grid9.g0, wcd.grid9.g1, wcd.grid9.g2, wcd.grid9.g3);
 			}
-			for(child in xml.elements){
-				createElement(child);
+			for (de in wcd.displays) {
+
+				createElement(de);
 			}
-			maskWidth = xml.has.width ? Std.parseFloat(xml.att.width) : width;
-			maskHeight = xml.has.height ? Std.parseFloat(xml.att.height) : height;
+			this.maskWidth = wcd.maskWidth != null ? wcd.maskWidth : width;
+			this.maskHeight = wcd.maskHeight != null ? wcd.maskHeight : height;
 
 			content.addChildAt(layer.view, 0);
 
-			setBackground
-			(
-				xml.has.background ? xml.att.background:null,
-				xml.has.color ? Std.string(xml.att.color).split(","):null,
-				xml.has.arrowX ? Std.parseFloat(xml.att.arrowX):0,
-				xml.has.arrowY ? Std.parseFloat(xml.att.arrowY):0,
-				xml.has.radius ? ParseUtils.parseListOfFloatValues(xml.att.radius):null,
-				xml.has.line ? Std.parseFloat(xml.att.line):0,
-				xml.has.colorLine ? Std.parseInt(xml.att.colorLine):0xFFFFFF,
-				xml.has.bubbleWidth ? Std.parseInt(xml.att.bubbleWidth):0,
-				xml.has.bubbleHeight ? Std.parseInt(xml.att.bubbleHeight):0,
-				xml.has.shadow ? Std.parseFloat(xml.att.shadow):0,
-				xml.has.gap ? Std.parseFloat(xml.att.gap):5,
-				xml.has.bubbleX ? Std.parseFloat(xml.att.bubbleX):0,
-				xml.has.bubbleY ? Std.parseFloat(xml.att.bubbleY):0,
-				xml.has.resize ? xml.att.resize == "true" : false
-			);
-		}
+			setBackground(wcd.background);
+		// TODO check if necessary }
+
 		addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
 		addEventListener(Event.ENTER_FRAME, checkRender);
 	}
@@ -116,7 +165,7 @@ class WidgetContainer extends Widget {
 	/**
 	* Tilesheet for the container
 	**/
-	public var tilesheet (default, set_tilesheet):TilesheetEx;
+	public var tilesheet (default, set):TilesheetEx;
 
 	/**
 	* Enable the scroll. True by default
@@ -126,7 +175,7 @@ class WidgetContainer extends Widget {
 	/**
 	* Content alpha
 	**/
-	public var contentAlpha (default, set_contentAlpha):Float;
+	public var contentAlpha (default, set):Float;
 
 	/**
 	* Content transition
@@ -143,76 +192,91 @@ class WidgetContainer extends Widget {
 	**/
 	public var children (default, default):Array<Widget>;
 
-	public var zIndex: Int = 0;
-	public var renderNeeded: Bool = false;
+	public var zIndex : Int = 0;
+	public var renderNeeded : Bool = false;
 
-	private var scrollBarName: String;
-	private var scrollBar:ScrollBar;
-	private var scrollNeeded:Bool;
-	private var layer: TileLayer;
-	private var displays: Map<String, Widget>;
-	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
+	private var scrollBarName : String;
+	private var scrollBar : ScrollBar;
+	private var scrollNeeded : Bool;
+	private var layer : TileLayer;
+	private var displays : StringMap<Widget>;
+	private var buttonGroups : StringMap<GenericStack<DefaultButton>>;
 
-	public function set_contentAlpha(alpha: Float):Float
+	public function set_contentAlpha(alpha : Float) : Float
 	{
 		return content.alpha = contentAlpha = alpha;
 	}
 
-	public function setBackground(bkg:String, ?color:Array<String>,?arrowX:Float,?arrowY:Float,?radius:Array<Float>,?line:Float,?colorLine:Int,?bubbleWidth:Float,?bubbleHeight:Float,?shadow:Float,?gap:Float,?bubbleX:Float,?bubbleY:Float, resize: Bool = false):String
-	{
-		if(bkg != null){
-			if(Std.parseInt(bkg) != null){
-				var bkgColor = ParseUtils.parseColor(bkg);
+	public function setBackground(b : BackgroundData) : String  {
+
+		if (b.background != null) {
+
+			if (Std.parseInt(b.background) != null) {
+
+				var bkgColor = ParseUtils.parseColor(b.background);
 				DisplayUtils.initSprite(this, maskWidth, maskHeight, bkgColor.color, bkgColor.alpha);
-			}
-            else if(bkg == "bubble"){
+			
+			} else if(b.background == "bubble") {
+
 				var colors = new Array<Int>();
 				var alphas = new Array<Float>();
-				for(i in 0...color.length){
-					var c = ParseUtils.parseColor(color[i]);
+				
+				for (i in 0...b.color.length) {
+
+					var c = ParseUtils.parseColor(b.color[i]);
 					colors.push(c.color);
 					alphas.push(c.alpha);
 				}
-				if(radius == null)
-					radius = [0.0, 0.0, 0.0, 0.0];
-				ParseUtils.formatToFour(radius);
-                var bubble:SimpleBubble = new SimpleBubble(bubbleWidth!=0 ? bubbleWidth:maskWidth,bubbleHeight!=0 ? bubbleHeight:maskHeight,colors,arrowX,arrowY,radius,line,colorLine,shadow,gap,alphas,bubbleX,bubbleY);
+				if (b.radius == null) {
+
+					b.radius = [0.0, 0.0, 0.0, 0.0];
+				}
+				ParseUtils.formatToFour(b.radius);
+                var bubble:SimpleBubble = new SimpleBubble(b.bubbleWidth!=0 ? b.bubbleWidth:maskWidth,b.bubbleHeight!=0 ? b.bubbleHeight:maskHeight,colors,b.arrowX,b.arrowY,b.radius,b.line,b.colorLine,b.shadow,b.gap,alphas,b.bubbleX,b.bubbleY);
                 addChildAt(bubble,0);
-            }
-			else{
-				if(grid9 != null){
+            
+            } else {
+
+				if (grid9 != null) {
+
 					var bmpData: BitmapData;
-					if(AssetsStorage.hasAsset(bkg))
-						bmpData = AssetsStorage.getBitmapData(bkg);
-					else
-						bmpData = DisplayUtils.getBitmapDataFromLayer(layer.tilesheet, bkg);
+					
+					if (AssetsStorage.hasAsset(b.background)) {
+
+						bmpData = AssetsStorage.getBitmapData(b.background);
+					
+					} else {
+
+						bmpData = DisplayUtils.getBitmapDataFromLayer(layer.tilesheet, b.background);
+					}
 					var background = new ScaleBitmap(bmpData);
 					background.bitmapScale9Grid = grid9;
 					background.setSize(maskWidth, maskHeight);
 					background.alpha = alpha;
 					addChildAt(background, 0);
-				}
-				else if(bkg.indexOf(".") < 0){
-					var tile = new TileSprite(layer, bkg);
+				
+				} else if(b.background.indexOf(".") < 0) {
+
+					var tile = new TileSprite(layer, b.background);
 					tile.alpha = alpha;
 					layer.addChild(tile);
-					if(resize){
+					if(b.resize){
 						tile.scaleX = maskWidth / tile.width;
 						tile.scaleY = maskHeight / tile.height;
 					}
 					tile.x = tile.width / 2;
 					tile.y = tile.height / 2;
 					layer.render();
-				}
-				else if(AssetsStorage.hasAsset(bkg)){
-					var bkg = new Bitmap(AssetsStorage.getBitmapData(bkg));
+				
+				} else if(AssetsStorage.hasAsset(b.background)) {
+
+					var bkg = new Bitmap(AssetsStorage.getBitmapData(b.background));
 					bkg.alpha = alpha;
 					addChildAt(bkg, 0);
 				}
 			}
 		}
-
-		return background = bkg;
+		return background = b.background;
 	}
 
 	public function set_tilesheet(tilesheet:TilesheetEx):TilesheetEx
@@ -317,59 +381,113 @@ class WidgetContainer extends Widget {
 		layer.render();
 	}
 
-	public function createElement(elemNode:Fast):Widget
-	{
-		 return switch(elemNode.name.toLowerCase()){
-			case "background" | "image": createImage(elemNode);
-			case "button": createButton(elemNode);
-			case "text": createText(elemNode);
-            case "timer":createTimer(elemNode);
-			case "include" :
-				var tmpXml = Xml.parse(DisplayUtils.templates.get(elemNode.att.ref).toString()).firstElement();
-				for(att in elemNode.x.attributes()){
-					if(att != "ref")
-						tmpXml.set(att, elemNode.x.get(att));
-				}
-				createElement(new Fast(tmpXml));
-			 case "div":
-				 var div = new SimpleContainer(elemNode);
-				 addElement(div);
-				 div;
-			default: null;
-		 }
+//	public function createElement(elemNode:Fast):Widget
+	public function createElement(de : ElementData) : Widget {
+
+		switch(de) {
+
+			case Image(d):
+
+				var img : Image = new Image(d);
+	            addElement(img);
+				return img;
+
+			case TileImage(d):
+
+				d.layer = layer;
+				d.visible = d.div = true;
+
+	            var tileImg : TileImage = new TileImage(d);
+	            addElement(tileImg);
+		        return tileImg;
+
+			case DefaultButton(d:WidgetContainerData):
+
+				return createButton(d);
+
+			case ScrollPanel(d:WidgetContainerData):
+
+				return createText(d);
+
+			case ChronoCircle(d:WidgetContainerData):
+
+				return createTimer(d);
+
+			case SimpleContainer(d:WidgetContainerData):
+
+				return createSimpleContainer(d);
+/* FIXME
+		case "include" :
+			var tmpXml = Xml.parse(DisplayUtils.templates.get(elemNode.att.ref).toString()).firstElement();
+			for(att in elemNode.x.attributes()){
+				if(att != "ref")
+					tmpXml.set(att, elemNode.x.get(att));
+			}
+			createElement(new Fast(tmpXml));
+*/
+			default:
+
+				return null;
+		}
 	}
 
-    private function createImage(itemNode:Fast):Widget
-    {
 
-        if(itemNode.has.src){
-            var img:Image = new Image(itemNode);
-            addElement(img);
-			return img;
-        }
-        else{
+	///
+	// INTERNALS
+	//
 
-            var tileImg:TileImage = new TileImage(itemNode, layer,true,true);
-            addElement(tileImg);
-	        return tileImg;
-        }
+	private function createTimer(d : WidgetContainerData) : ChronoCircle {
 
-    }
+		var timer = new ChronoCircle(d);
+		addElement(timer);
+        return timer;
+	}
 
-	private function createText(textNode: Fast):Widget
-	{
-		var text = new ScrollPanel(textNode);
+	private function createSimpleContainer(d : WidgetContainerData) : Widget {
+
+		var div = new SimpleContainer(d);
+		addElement(div);
+		return div;
+	}
+
+	private function createButton(d : WidgetContainerData) : Widget {
+
+		var button : DefaultButton = new DefaultButton(d);
+
+		switch(d.type) {
+
+			case DefaultButton(ds, ite, a, g):
+
+				if (a != null) {
+
+					setButtonAction(button, a);
+				}
+				if (g != null) {
+
+					if (buttonGroups.exists(g)) {
+
+						buttonGroups.get(g).add(button);
+					
+					} else {
+
+						var stack = new GenericStack();
+						stack.add(button);
+						buttonGroups.set(g, stack);
+					}
+				}
+			default: // nothing
+		}
+		button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+		addElement(button);
+		return button;
+	}
+
+	//private function createText(textNode : Fast) : Widget {
+	private function createText(d : WidgetContainerData) : ScrollPanel {
+
+		var text = new ScrollPanel(d);
 		addElement(text);
         return text;
-	}
-
-    private function createTimer(timerNode: Fast):Widget
-	{
-        var timer = new ChronoCircle(timerNode);
-
-		addElement(timer);
-
-        return timer;
 	}
 
 	private function addElement(elem:Widget):Void
@@ -383,28 +501,8 @@ class WidgetContainer extends Widget {
 		dispatchEvent(new Event(Event.CHANGE));
 	}
 
-	private function createButton(buttonNode:Fast):Widget
-	{
-		var button:DefaultButton = new DefaultButton(buttonNode);
+	private function setButtonAction(button : DefaultButton, action : String) : Void { }
 
-		if(buttonNode.has.action)
-			setButtonAction(button, buttonNode.att.action);
-		if(buttonNode.has.group){
-			if(buttonGroups.exists(buttonNode.att.group.toLowerCase()))
-				buttonGroups.get(buttonNode.att.group.toLowerCase()).add(button);
-			else{
-				var stack = new GenericStack<DefaultButton>();
-				stack.add(button);
-				buttonGroups.set(buttonNode.att.group.toLowerCase(), stack);
-			}
-		}
-		button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
-		addElement(button);
-		return button;
-	}
-
-	private function setButtonAction(button:DefaultButton, action:String):Void
-	{}
 
 	// Handlers
 

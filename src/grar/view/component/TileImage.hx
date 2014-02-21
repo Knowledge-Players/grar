@@ -19,7 +19,8 @@ typedef TileImageData = {
 	var id : ImageData;
 
 	var tilesheetName : Null<String> = null;
-	var layer : TileLayer;
+	var layerRef : Null<String> = null;
+	var layer : Null<TileLayer> = null; // set in second step
 	var visible : Bool = true;
 	var div : Bool = false;
 }
@@ -29,7 +30,7 @@ typedef TileImageData = {
  **/
 class TileImage extends Image {
 
-	//public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=false)
+	//public function new(xml: Fast, layer: TileLayer, visible: Bool = true, ?div:Bool=false)
 	public function new(tid : TileImageData) {
 
 		this.isVisible = tid.visible;
