@@ -12,7 +12,12 @@ import haxe.xml.Fast;
 
 class XmlToWidgetContainer {
 
-	static public function parseWidgetContainerData( ? f : Fast, ? type : WidgetContainerType = WidgetContainer /*, ? tilesheet : TilesheetEx */ ) : WidgetContainerData {
+	static public function parseWidgetContainerData( ? f : Fast, ? type : WidgetContainerType = WidgetContainer /*, ? tilesheet : TilesheetEx */ ) : Null<WidgetContainerData> {
+
+		switch (wcd.type) {
+			case SimpleBubble: return null;
+			default: // nothing
+		}
 
 		var wcd : WidgetContainerData = { };
 
