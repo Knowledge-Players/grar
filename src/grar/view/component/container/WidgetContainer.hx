@@ -58,21 +58,21 @@ enum ElementData {
 enum WidgetContainerType {
 
 	WidgetContainer; // TODO remove ?
-	SimpleContainer(spritesheet : Null<String>, mask : Null<String>);
+	SimpleContainer(? spritesheet : Null<String>, ? mask : Null<String>);
 	BoxDisplay;
-	DefaultButton(defaultState : String, isToggleEnabled : Bool, action : Null<String>, group : Null<String>, enabled : Bool);
-	DropdownMenu(color : String);
-	ScrollPanel(styleSheet : Null<String>, style : Null<String>, content : Null<String>, trim : Bool);
-/* ? */ SimpleBubble(width : Null<Float>, height : Null<Float>, colors : Null<Array<Int>>, ? arrowX : Float = 0, ? arrowY : Float = 0, ? radius : Null<Array<Float>>, ? line : Float = 0, ? colorLine : Int = 0xFFFFFF, ? shadow : Float = 0, ? gap : Float = 5, ? alphas : Null<Array<Float>>, ? bubbleX : Float = 0, ? bubbleY : Float = 0);
+	DefaultButton(? defaultState : String, ? isToggleEnabled : Bool, ? action : Null<String>, ? group : Null<String>, ? enabled : Bool);
+	DropdownMenu(? color : String);
+	ScrollPanel(? styleSheet : Null<String>, ? style : Null<String>, ? content : Null<String>, ? trim : Bool);
+/* ? */ SimpleBubble(? width : Null<Float>, ? height : Null<Float>, ? colors : Null<Array<Int>>, ? arrowX : Float = 0, ? arrowY : Float = 0, ? radius : Null<Array<Float>>, ? line : Float = 0, ? colorLine : Int = 0xFFFFFF, ? shadow : Float = 0, ? gap : Float = 5, ? alphas : Null<Array<Float>>, ? bubbleX : Float = 0, ? bubbleY : Float = 0);
 	SoundPlayer;
-	ChronoCircle(colorCircle : Null<Color>, minRadius : Null<Int>, maxRadius : Null<Int>, colorBackground : Null<Color>, centerCircle : Null<Color>);
-	VideoPlayer(controlsHidden : Bool, autoFullscreen : Null<Bool>);
-	ProgressBar(iconScale : Float, progressColor : Int, icon : String);
+	ChronoCircle(? colorCircle : Null<Color>, ? minRadius : Null<Int>, ? maxRadius : Null<Int>, ? colorBackground : Null<Color>, ? centerCircle : Null<Color>);
+	VideoPlayer(? controlsHidden : Bool, ? autoFullscreen : Null<Bool>);
+	ProgressBar(? iconScale : Float, ? progressColor : Int, ? icon : String);
 	InventoryDisplay;
-	BookmarkDisplay(animation : Null<String>, xOffset : Float, yOffset : Float);
-	IntroScreen(duration : Int);
+	BookmarkDisplay(? animation : Null<String>, ? xOffset : Float, ? yOffset : Float);
+	IntroScreen(? duration : Int);
 	AnimationDisplay;
-	TokenNotification(duration : Int);
+	TokenNotification(? duration : Int);
 }
 
 typedef WidgetContainerData = {

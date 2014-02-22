@@ -85,14 +85,14 @@ class XmlToWidgetContainer {
 		// additional parsing specific to each WidgetContainer type
 		switch (wcd.type) {
 
-			case SimpleContainer(s, m):
+			case SimpleContainer:
 
 				var ns : Null<String> = f.has.spritesheet ? f.att.spritesheet : null;
 				var nm : Null<String> = f.has.mask ? f.att.mask : null;
 
 				wcd.type = SimpleContainer(ns, nm);
 
-			case DefaultButton(ds, ite, a, g) :
+			case DefaultButton:
 
 				var defaultState : String = f.has.defaultState ? f.att.defaultState : "active";
 				var isToggleEnabled : Bool = f.has.toggle ? (f.att.toggle == "true") : false;
@@ -102,13 +102,13 @@ class XmlToWidgetContainer {
 
 				wcd.type = DefaultButton(defaultState, isToggleEnabled, action, group, enabled);
 
-			case DropdownMenu(c):
+			case DropdownMenu:
 
 				var color : String = f.has.color ? f.att.color : "0x02000000";
 
 				wcd.type = DropdownMenu(color);
 
-			case ScrollPanel(ss, s, c, t):
+			case ScrollPanel:
 
 				var styleSheet : Null<String> = f.has.styleSheet ? f.att.styleSheet : null;
 				var style : Null<String> = f.has.style ? f.att.style : null;
@@ -117,7 +117,7 @@ class XmlToWidgetContainer {
 
 				wcd.type = ScrollPanel(styleSheet, style, content, trim);
 
-			case ChronoCircle(cc, minR, maxR, cb, ctc):
+			case ChronoCircle:
 
 				var colorCircle : Null<Color> = null;
 				var minRadius : Null<Int> = null;
@@ -136,14 +136,14 @@ class XmlToWidgetContainer {
 
 		        wcd.type = ChronoCircle(colorCircle, minRadius, maxRadius, colorBackground, centerCircle);
 
-		    case VideoPlayer(ch, af):
+		    case VideoPlayer:
 
 		    	var controlsHidden : Bool = f.has.controlsHidden ? f.att.controlsHidden == "true" : false;
 				var autoFullscreen : Null<Bool> = f.has.autoFullscreen ? f.att.autoFullscreen == "true" : null;
 
 				wcd.type = VideoPlayer(controlsHidden, autoFullscreen);
 
-		    case ProgressBar(is, pc, i):
+		    case ProgressBar:
 
 		    	var iconScale : Float = f.has.iconScale ? Std.parseFloat(f.att.iconScale) : 1;
 				var progressColor : Int = Std.parseInt(f.att.progressColor);
@@ -151,7 +151,7 @@ class XmlToWidgetContainer {
 
 				wcd.type = ProgressBar(iconScale, progressColor, icon);
 
-			case BookmarkDisplay(a, xo, yo):
+			case BookmarkDisplay:
 
 				var animation : Null<String> = f.has.animation ? f.att.animation : null;
 				var xOffset : Float = f.has.xOffset ? Std.parseFloat(f.att.xOffset) : 0;
@@ -159,13 +159,13 @@ class XmlToWidgetContainer {
 
 				wcd.type = BookmarkDisplay(animation, xOffset, yOffset);
 
-			case IntroScreen(d):
+			case IntroScreen:
 
 				var duration : Int = Std.parseInt(f.att.duration);
 
 				wcd.type = IntroScreen(duration);
 
-			case TokenNotification(d):
+			case TokenNotification:
 
 				var duration : Int = Std.parseInt(f.att.duration);;
 
@@ -198,8 +198,8 @@ class XmlToWidgetContainer {
 		switch(wcd.type) {
 
 			case WidgetContainer, SimpleContainer, BoxDisplay, DefaultButton, DropdownMenu, ScrollPanel, 
-					SimpleBubble, SoundPlayer, ChronoCircle, ProgressBar, InventoryDisplay, 
-					BookmarkDisplay, IntroScreen, AnimationDisplay, TokenNotification:
+					SoundPlayer, ChronoCircle, ProgressBar, InventoryDisplay, BookmarkDisplay, IntroScreen, 
+					AnimationDisplay, TokenNotification:
 
 				switch (e.name.toLowerCase()) {
 

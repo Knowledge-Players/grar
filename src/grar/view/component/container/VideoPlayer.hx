@@ -425,7 +425,8 @@ class VideoPlayer extends WidgetContainer {
 				addElement(progressBar);
 				
 				var mask : Sprite = null;
-				var mt : TileImage = new TileImage(d.mask, layer);
+				d.mask.layer = layer;
+				var mt : TileImage = new TileImage(d.mask);
 				mt.x = (progressBar.x + mt.width/2);
 				mt.y = (progressBar.y + mt.height/2);
 				mask = mt.getMask();
@@ -436,7 +437,8 @@ class VideoPlayer extends WidgetContainer {
 				bar.scaleX = 0;
 				progressBar.addChild(bar);
 
-				var ct : TileImage = new TileImage(d.cursor.tile, new TileLayer(layer.tilesheet));
+				d.cursor.tile.layer = new TileLayer(layer.tilesheet);
+				var ct : TileImage = new TileImage(d.cursor.tile);
 				cursor = new Widget();
 				cursor.ref = d.cursor.ref;
 				cursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(ct.tileSprite.layer.tilesheet, ct.tileSprite.tile)));
@@ -459,13 +461,15 @@ class VideoPlayer extends WidgetContainer {
 				soundSlider.x = d.x;
 				soundSlider.y = d.y;
 
-				var bt : TileImage = new TileImage(d.bar.tile, new TileLayer(layer.tilesheet));
+				d.bar.tile.layer = new TileLayer(layer.tilesheet);
+				var bt : TileImage = new TileImage(d.bar.tile);
 				var cur = new Bitmap(DisplayUtils.getBitmapDataFromLayer(bt.tileSprite.layer.tilesheet, bt.tileSprite.tile));
 				cur.x = d.bar.x;
 				cur.y = d.bar.y;
 				soundSlider.addChild(cur);
 
-				var ct : TileImage = new TileImage(d.cursor.tile, new TileLayer(layer.tilesheet));
+				d.cursor.tile.layer = new TileLayer(layer.tilesheet);
+				var ct : TileImage = new TileImage(d.cursor.tile);
 				soundCursor = new Widget();
 				soundCursor.ref = d.cursor.ref;
 				soundCursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(ct.tileSprite.layer.tilesheet, ct.tileSprite.tile)));
