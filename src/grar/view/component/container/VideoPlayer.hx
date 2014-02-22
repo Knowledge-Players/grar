@@ -36,6 +36,23 @@ typedef SuperBool = {
 	var value : Bool;
 }
 
+typedef SliderData = {
+
+	var x : Float;
+	var y : Float;
+	var bar : { tile : TileImageData, x : Float, y : Float };
+	var cursor : { tile : TileImageData, ref : String, x : Float : 0, y : Float, vol : Float };
+}
+
+typedef ProgressBarData = {
+
+	var x : Float;
+	var y : Float;
+	var mask : TileImageData;
+	var bar : { color : Int, alpha : Float, x : Float, y : Float };
+	var cursor : { tile : TileImageData, ref : String, x : Float };
+}
+
 typedef BackgroundData = {
 
 	var color : Int;
@@ -380,99 +397,87 @@ class VideoPlayer extends WidgetContainer {
 		return bmp;
 	}
 
+
 	override public function createElement(de : ElementData) : Widget {
 
 		var widget : Widget = super.createElement(de);
 
-		if (elemNode.name.toLowerCase() == "backgroundcontrols") {
+		switch (de) {
 
-			backgroundControls = new Widget();
+			case VideoBackground(d):
 
-			var color = elemNode.has.color ? Std.parseInt(elemNode.att.color) : 0;
-			var alpha = elemNode.has.alpha ? Std.parseFloat(elemNode.att.alpha) : 1;
-			var x = elemNode.has.x ? Std.parseFloat(elemNode.att.x) : 0;
-			var y = elemNode.has.y ? Std.parseFloat(elemNode.att.y) : 0;
-			var w = elemNode.has.width ? Std.parseFloat(elemNode.att.width) : 0;
-			var h = elemNode.has.height ? Std.parseFloat(elemNode.att.height) : 0;
+				backgroundControls = new Widget();
 
-			backgroundControls.graphics.beginFill(color,alpha);
-			backgroundControls.graphics.drawRect(x,y,w,h);
-			backgroundControls.graphics.endFill();
+				backgroundControls.graphics.beginFill(d.color,d.alpha);
+				backgroundControls.graphics.drawRect(d.x,d.y,d.w,d.h);
+				backgroundControls.graphics.endFill();
 
-			controls.add(backgroundControls);
-			addElement(backgroundControls);
+				controls.add(backgroundControls);
+				addElement(backgroundControls);
 
-		} else if(elemNode.name.toLowerCase() == "progressbar") {
 
-			progressBar = new Image();
-			//progressBar.ref = elemNode.att.ref;
-			progressBar.x = Std.parseFloat(elemNode.att.x);
-			progressBar.y = Std.parseFloat(elemNode.att.y);
-			addElement(progressBar);
-			var mask: Sprite = null;
-			for(child in elemNode.elements){
-				if(child.name.toLowerCase() == "mask"){
-					var tile = new TileImage(child, layer);
-					tile.x = (progressBar.x + tile.width/2);
-					tile.y = (progressBar.y + tile.height/2);
-					mask = tile.getMask();
-					mask.width = child.has.width ? Std.parseFloat(child.att.width) : tile.width;
-				}
-				if(child.name.toLowerCase() == "bar"){
-					var bar = new Sprite();
-					var color = child.has.color ? Std.parseInt(child.att.color) : 0;
-					var alpha = child.has.alpha ? Std.parseFloat(child.att.alpha) : 1;
-					var x = child.has.x ? Std.parseFloat(child.att.x) : 0;
-					var y = child.has.y ? Std.parseFloat(child.att.y) : 0;
-					DisplayUtils.initSprite(bar, mask.width, mask.height, color, alpha, x, y);
-					bar.scaleX = 0;
-					progressBar.addChild(bar);
-				}
-				if(child.name.toLowerCase() == "cursor"){
-					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
-					cursor = new Widget();
-					cursor.ref = child.att.ref;
-					cursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile)));
-					cursor.x = (child.has.x ? Std.parseFloat(child.att.x) : 0) + progressBar.x-cursor.width/2;
-					cursor.y = progressBar.y-cursor.height/3;
-					addElement(cursor);
-				}
-			}
-			progressBar.mask = mask;
-			progressBar.mouseChildren = false;
-			mask.mouseEnabled = false;
-			content.addChild(mask);
+			case VideoProgressBar(d):
 
-			controls.add(progressBar);
-		
-		} else if(elemNode.name.toLowerCase() == "slider") {
+				progressBar = new Image();
+				//progressBar.ref = elemNode.att.ref;
+				progressBar.x = d.x;
+				progressBar.y = d.y;
+				addElement(progressBar);
+				
+				var mask : Sprite = null;
+				var mt : TileImage = new TileImage(d.mask, layer);
+				mt.x = (progressBar.x + mt.width/2);
+				mt.y = (progressBar.y + mt.height/2);
+				mask = mt.getMask();
+				mask.width = child.has.width ? Std.parseFloat(d.mask.id.width) : mt.width;
 
-			soundSlider = new Image();
-			//soundSlider.ref = elemNode.att.ref;
-			soundSlider.x = Std.parseFloat(elemNode.att.x);
-			soundSlider.y = Std.parseFloat(elemNode.att.y);
-			for(child in elemNode.elements){
-				if(child.name.toLowerCase() == "bar"){
-					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
-					var cur = new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile));
-					cur.x = child.has.x ? Std.parseFloat(child.att.x) : 0;
-					cur.y = child.has.y ? Std.parseFloat(child.att.y) : 0;
-					soundSlider.addChild(cur);
+				var bar = new Sprite();
+				DisplayUtils.initSprite(bar, mask.width, mask.height, d.bar.color, d.bar.alpha, d.bar.x, d.bar.y);
+				bar.scaleX = 0;
+				progressBar.addChild(bar);
 
-				}
-				if(child.name.toLowerCase() == "cursor"){
-					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
-					soundCursor = new Widget();
-					soundCursor.ref = child.att.ref;
-					soundCursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile)));
-					soundCursor.x = (child.has.x ? Std.parseFloat(child.att.x) : 0) + soundSlider.x + (child.has.vol ? Std.parseFloat(child.att.vol)/100 : 1)*soundSlider.width - soundCursor.width/2;
-					soundCursor.y = (child.has.y ? Std.parseFloat(child.att.y) : 0) + soundSlider.y;
-					addElement(soundCursor);
-				}
-			}
-			soundSlider.mouseChildren = false;
-			controls.add(soundSlider);
-			addElement(soundSlider);
+				var ct : TileImage = new TileImage(d.cursor.tile, new TileLayer(layer.tilesheet));
+				cursor = new Widget();
+				cursor.ref = d.cursor.ref;
+				cursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(ct.tileSprite.layer.tilesheet, ct.tileSprite.tile)));
+				cursor.x = d.cursor.x + progressBar.x - cursor.width / 2;
+				cursor.y = progressBar.y - cursor.height / 3;
+				addElement(cursor);
+
+				progressBar.mask = mask;
+				progressBar.mouseChildren = false;
+				mask.mouseEnabled = false;
+				content.addChild(mask);
+
+				controls.add(progressBar);
+
+
+			case VideoSlider(d):
+
+				soundSlider = new Image();
+				//soundSlider.ref = elemNode.att.ref;
+				soundSlider.x = d.x;
+				soundSlider.y = d.y;
+
+				var bt : TileImage = new TileImage(d.bar.tile, new TileLayer(layer.tilesheet));
+				var cur = new Bitmap(DisplayUtils.getBitmapDataFromLayer(bt.tileSprite.layer.tilesheet, bt.tileSprite.tile));
+				cur.x = d.bar.x;
+				cur.y = d.bar.y;
+				soundSlider.addChild(cur);
+
+				var ct : TileImage = new TileImage(d.cursor.tile, new TileLayer(layer.tilesheet));
+				soundCursor = new Widget();
+				soundCursor.ref = d.cursor.ref;
+				soundCursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(ct.tileSprite.layer.tilesheet, ct.tileSprite.tile)));
+				soundCursor.x = d.cursor.x + soundSlider.x + d.cursor.vol * soundSlider.width - soundCursor.width / 2;
+				soundCursor.y = d.cursor.y + soundSlider.y;
+				addElement(soundCursor);
+
+				soundSlider.mouseChildren = false;
+				controls.add(soundSlider);
+				addElement(soundSlider);
+
+			default: // nothing
 		}
 
 		return widget;

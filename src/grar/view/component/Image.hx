@@ -51,36 +51,43 @@ class Image extends Widget {
 	public var bitmap (default, null) : Bitmap;
 
 	//public function new( ? xml : Fast, ? tilesheet : TilesheetEx ) {
-	public function new( id : ImageData ) {
+	public function new( ? id : Null<ImageData> ) {
 
-		super(id.wd);
+		if (id == null) {
 
-		createImg(id);
+			super();
 
-		if (id.clipOrigin != null) {
-
-			var mask = new Shape();
-			
-			for (i in 0...numChildren) {
-
-				getChildAt(i).x -= clipOrigin[0];
-				getChildAt(i).y -= clipOrigin[1];
-			}
-			mask.graphics.beginFill(0);
-			mask.graphics.drawRect(0, 0, id.width, id.height);
-			mask.graphics.endFill();
-			this.mask = mask;
-			addChild(mask);
-		
 		} else {
 
-			if (id.width != null) {
+			super(id.wd);
 
-				width = id.width;
-			}
-			if (id.height != null) {
+			createImg(id);
 
-				height = id.height;
+			if (id.clipOrigin != null) {
+
+				var mask = new Shape();
+				
+				for (i in 0...numChildren) {
+
+					getChildAt(i).x -= clipOrigin[0];
+					getChildAt(i).y -= clipOrigin[1];
+				}
+				mask.graphics.beginFill(0);
+				mask.graphics.drawRect(0, 0, id.width, id.height);
+				mask.graphics.endFill();
+				this.mask = mask;
+				addChild(mask);
+			
+			} else {
+
+				if (id.width != null) {
+
+					width = id.width;
+				}
+				if (id.height != null) {
+
+					height = id.height;
+				}
 			}
 		}
 	}

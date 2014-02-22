@@ -20,24 +20,24 @@ import flash.events.MouseEvent;
 class DefaultButton extends WidgetContainer {
 
 
-// FIXME public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>)
-	public function new(dbd : WidgetContainerData) {
-
-		super(dbd);
+// FIXME public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>) // pStates never passed
+	public function new(? dbd : Null<WidgetContainerData>) {
 		
-		timelines = new Map<String, Timeline>();
-		enabledState = new Map<String, Bool>();
+		this.timelines = new Map<String, Timeline>();
+		this.enabledState = new Map<String, Bool>();
+		this.states = new Map<String, Map<String, Widget>>();
 
-		if (pStates != null) {
+		if (dbd == null) {
 
-			states = pStates;
-		
+			super();
+
+			this.defaultState = "active";
+			this.enabled = true;
+
 		} else {
 
-			states = new Map<String, Map<String, Widget>>();
-		}
+			super(dbd);
 
-		// ??? if (xml != null) {
 			// FIXME for(state in xml.elements){
 			// FIXME 	if(state.has.timeline){
 			// FIXME 		tmpXml = xml;
@@ -47,7 +47,7 @@ class DefaultButton extends WidgetContainer {
 
 			switch(dbd.type) {
 
-				case DefaultButton(ds, ite, g):
+				case DefaultButton(ds, ite, a, g, e):
 		
 					this.defaultState = ds;
 					this.isToggleEnabled = ite;
@@ -55,24 +55,15 @@ class DefaultButton extends WidgetContainer {
 
 				default: //nothing
 			}
-
-				
-				// FIXME if (tmpXml == null)
+	
+			// FIXME if (tmpXml == null)
 				// FIXME 	initStates(xml);
 
-
-
-			// FIXME ?? this.enabled = (xml.has.action || xml.name != "Button");
-			this.enabled = true;
-		
-		// ??? } else {
-
-		// ??? 	defaultState = "active";
-		// ??? 	enabled = true;
-		// ??? }
+			this.enabled = switch(dbd.type){ case DefaultButton(ds, ite, a, g, e): e; default: false; };
+		}
 
 		this.mouseChildren = false;
-		this.useHandCursor = this.buttonMode = enabled;
+		this.useHandCursor = this.buttonMode = this.enabled;
 
 		setAllListeners(onMouseEvent);
 
@@ -131,32 +122,6 @@ class DefaultButton extends WidgetContainer {
      * Action to execute on click
      */
 	public dynamic function buttonAction(?target: DefaultButton): Void{}
-
-/* FIXME  FIXME  FIXME  FIXME  FIXME  FIXME 
-	public function initStates(?xml: Fast, ?timelines: Map<String, Timeline>):Void
-	{
-		if(xml != null)
-			tmpXml = xml;
-		if(tmpXml != null){
-			for(state in tmpXml.elements){
-				if(timelines != null && state.has.timeline)
-					this.timelines.set(state.name, timelines.get(state.att.timeline));
-				if(state.has.enable)
-					enabledState.set(state.name, state.att.enable == "true");
-				else
-					enabledState.set(state.name, true);
-				for(elem in state.elements){
-					states.set(state.name+"_" + elem.name, createStates(elem));
-				}
-			}
-			// Simplified XML
-			if(Lambda.count(states) == 0)
-				states.set(defaultState+"_out", createStates(tmpXml));
-			tmpXml = null;
-		}
-
-	}
-*/
 
 	@:setter(alpha)
 	override public function set_alpha(alpha:Float):Void
@@ -306,11 +271,42 @@ class DefaultButton extends WidgetContainer {
 			dispatchEvent(new Event(Event.CHANGE));
 		}
 	}
-/* FIXME FIXME FIXME FIXME FIXME FIXME
-	public function addState(stateName: String, stateXml:Xml, enable: Bool = true):Void
+
+/* FIXME  FIXME  FIXME  FIXME  FIXME  FIXME 
+	public function initStates(?xml: Fast, ?timelines: Map<String, Timeline>):Void
 	{
-		states.set(stateName, createStates(new Fast(stateXml.firstElement())));
-		enabledState.set(stateName.split("_")[0], enable);
+		if(xml != null)
+			tmpXml = xml;
+		if(tmpXml != null){
+			for(state in tmpXml.elements){
+				if(timelines != null && state.has.timeline)
+					this.timelines.set(state.name, timelines.get(state.att.timeline));
+				if(state.has.enable)
+					enabledState.set(state.name, state.att.enable == "true");
+				else
+					enabledState.set(state.name, true);
+				for(elem in state.elements){
+					states.set(state.name+"_" + elem.name, createStates(elem));
+				}
+			}
+			// Simplified XML
+			if(Lambda.count(states) == 0)
+				states.set(defaultState+"_out", createStates(tmpXml));
+			tmpXml = null;
+		}
+
+	}
+*/
+/* FIXME FIXME FIXME FIXME FIXME FIXME 
+	private inline function createStates(node:Fast):Map<String, Widget>
+	{
+		var list = new Map<String, Widget>();
+
+		for(elem in node.elements){
+			var widget = createElement(elem);
+			list.set(widget.ref, widget);
+		}
+		return list;
 	}
 */
 	public function setAllListeners(listener:MouseEvent -> Void):Void
@@ -386,28 +382,17 @@ class DefaultButton extends WidgetContainer {
 		removeEventListener(MouseEvent.MOUSE_UP, listener);
 		removeEventListener(MouseEvent.MOUSE_DOWN, listener);
 	}
-/* FIXME FIXME FIXME FIXME FIXME FIXME 
-	private inline function createStates(node:Fast):Map<String, Widget>
-	{
-		var list = new Map<String, Widget>();
-
-		for(elem in node.elements){
-			var widget = createElement(elem);
-			list.set(widget.ref, widget);
-		}
-		return list;
-	}
-*/
 
 	// Listener
-/* FIXME FIXME FIXME FIXME FIXME FIXME 
-	override private function createButton(buttonNode:Fast):Widget
-	{
+
+	override private function createButton(d : WidgetContainerData) : Widget {
+
 		mouseChildren = true;
 		removeEventListener(MouseEvent.MOUSE_DOWN, onMouseEvent);
-		return super.createButton(buttonNode);
+
+		return super.createButton(d);
 	}
-*/
+
 	private inline function onMouseEvent(event:MouseEvent):Void
 	{
 		if(!enabled)

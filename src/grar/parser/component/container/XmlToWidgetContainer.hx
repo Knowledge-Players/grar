@@ -95,24 +95,25 @@ class XmlToWidgetContainer {
 			case DefaultButton(ds, ite, a, g) :
 
 				var defaultState : String = f.has.defaultState ? f.att.defaultState : "active";
-				var isToggleEnabled : Bool = f.has.toggle ? (xml.att.toggle == "true") : false;
-				var action : Null<String> = xml.has.action ? xml.att.action : null;
-				var group : Null<String> = xml.has.group ? xml.att.group.toLowerCase() : null;
+				var isToggleEnabled : Bool = f.has.toggle ? (f.att.toggle == "true") : false;
+				var action : Null<String> = f.has.action ? f.att.action : null;
+				var group : Null<String> = f.has.group ? f.att.group.toLowerCase() : null;
+				var enabled : Bool = f.has.action || f.name != "Button";
 
-				wcd.type = DefaultButton(defaultState, isToggleEnabled, action, group);
+				wcd.type = DefaultButton(defaultState, isToggleEnabled, action, group, enabled);
 
 			case DropdownMenu(c):
 
-				var color : String = xml.has.color ? xml.att.color : "0x02000000";
+				var color : String = f.has.color ? f.att.color : "0x02000000";
 
 				wcd.type = DropdownMenu(color);
 
 			case ScrollPanel(ss, s, c, t):
 
-				var styleSheet : Null<String> = xml.has.styleSheet ? xml.att.styleSheet : null;
-				var style : Null<String> = xml.has.style ? xml.att.style : null;
-				var content : Null<String> = xml.has.content ? xml.att.content : null;
-				var trim : Bool = xml.has.trim ? xml.att.trim == "true" : false;
+				var styleSheet : Null<String> = f.has.styleSheet ? f.att.styleSheet : null;
+				var style : Null<String> = f.has.style ? f.att.style : null;
+				var content : Null<String> = f.has.content ? f.att.content : null;
+				var trim : Bool = f.has.trim ? f.att.trim == "true" : false;
 
 				wcd.type = ScrollPanel(styleSheet, style, content, trim);
 
@@ -196,7 +197,9 @@ class XmlToWidgetContainer {
 
 		switch(wcd.type) {
 
-			case WidgetContainer:
+			case WidgetContainer, SimpleContainer, BoxDisplay, DefaultButton, DropdownMenu, ScrollPanel, 
+					SimpleBubble, SoundPlayer, ChronoCircle, ProgressBar, InventoryDisplay, 
+					BookmarkDisplay, IntroScreen, AnimationDisplay, TokenNotification:
 
 				switch (e.name.toLowerCase()) {
 
@@ -250,106 +253,118 @@ class XmlToWidgetContainer {
 
 					default:
 
-						throw "unexpected "+e.name+" tag";
+						//throw "unexpected "+e.name+" tag";
 				}
 
 
-			case VideoPlayer(ch, af):
+			case VideoPlayer:
 
 				wcd.type = WidgetContainer;
 
-				try {
+				wcd = parseElement(e, wcd);
 
-					wcd = parseElement(e, wcd);
-					
-				} catch(e:String) {
-
-					switch (e.name.toLowerCase()) {
-
-						case "backgroundcontrols":
-
-							var bd : grar.view.component.container.VideoPlayer.BackgroundData = {
-
-									color: f.has.color ? Std.parseInt(f.att.color) : 0,
-									alpha: f.has.alpha ? Std.parseFloat(f.att.alpha) : 1,
-									x: f.has.x ? Std.parseFloat(f.att.x) : 0,
-									y: f.has.y ? Std.parseFloat(f.att.y) : 0,
-									w: f.has.width ? Std.parseFloat(f.att.width) : 0,
-									h: f.has.height ? Std.parseFloat(f.att.height) : 0
-								};
-
-							// wcd.displays.set(scd.wd.ref, SimpleContainer(scd));
-
-
-						case "progressbar":
-
-
-			progressBar = new Image();
-			//progressBar.ref = f.att.ref;
-			progressBar.x = Std.parseFloat(f.att.x);
-			progressBar.y = Std.parseFloat(f.att.y);
-			addElement(progressBar);
-			var mask: Sprite = null;
-			for(child in f.elements){
-				if(child.name.toLowerCase() == "mask"){
-					var tile = new TileImage(child, layer);
-					tile.x = (progressBar.x + tile.width/2);
-					tile.y = (progressBar.y + tile.height/2);
-					mask = tile.getMask();
-					mask.width = child.has.width ? Std.parseFloat(child.att.width) : tile.width;
-				}
-				if(child.name.toLowerCase() == "bar"){
-					var bar = new Sprite();
-					var color = child.has.color ? Std.parseInt(child.att.color) : 0;
-					var alpha = child.has.alpha ? Std.parseFloat(child.att.alpha) : 1;
-					var x = child.has.x ? Std.parseFloat(child.att.x) : 0;
-					var y = child.has.y ? Std.parseFloat(child.att.y) : 0;
-					DisplayUtils.initSprite(bar, mask.width, mask.height, color, alpha, x, y);
-					bar.scaleX = 0;
-					progressBar.addChild(bar);
-				}
-				if(child.name.toLowerCase() == "cursor"){
-					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
-					cursor = new Widget();
-					cursor.ref = child.att.ref;
-					cursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile)));
-					cursor.x = (child.has.x ? Std.parseFloat(child.att.x) : 0) + progressBar.x-cursor.width/2;
-					cursor.y = progressBar.y-cursor.height/3;
-					addElement(cursor);
-				}
-			}
-			progressBar.mask = mask;
-			progressBar.mouseChildren = false;
-			mask.mouseEnabled = false;
-			content.addChild(mask);
-
-			controls.add(progressBar);
-
-						case "slider":
-
-
-						default: 
-					}
-				}
 				wcd.type = VideoPlayer(ch, af);
+					
+				switch (e.name.toLowerCase()) {
 
-/*
-			SimpleContainer(spritesheet : Null<String>, mask : Null<String>);
-			BoxDisplay;
-			DefaultButton(defaultState : String, isToggleEnabled : Bool, group : Null<String>);
-			DropdownMenu(color : String);
-			ScrollPanel(styleSheet : Null<String>, style : Null<String>, content : Null<String>, trim : Bool);
-			// SimpleBubble(width : Null<Float>, height : Null<Float>, colors : Null<Array<Int>>, ? arrowX : Float = 0, ? arrowY : Float = 0, ? radius : Null<Array<Float>>, ? line : Float = 0, ? colorLine : Int = 0xFFFFFF, ? shadow : Float = 0, ? gap : Float = 5, ? alphas : Null<Array<Float>>, ? bubbleX : Float = 0, ? bubbleY : Float = 0);
-			SoundPlayer;
-			ChronoCircle(colorCircle : Null<Color>, minRadius : Null<Int>, maxRadius : Null<Int>, colorBackground : Null<Color>, centerCircle : Null<Color>);
-			VideoPlayer(controlsHidden : Bool, autoFullscreen : Null<Bool>);
-			ProgressBar(iconScale : Float, progressColor : Int, icon : String);
-			InventoryDisplay;
-			BookmarkDisplay(animation : Null<String>, xOffset : Float, yOffset : Float);
-			IntroScreen(duration : Int);
-			AnimationDisplay;
-			TokenNotification(duration : Int);
-*/
+					case "backgroundcontrols":
+
+						var bd : grar.view.component.container.VideoPlayer.BackgroundData = {
+
+								color: e.has.color ? Std.parseInt(e.att.color) : 0,
+								alpha: e.has.alpha ? Std.parseFloat(e.att.alpha) : 1,
+								x: e.has.x ? Std.parseFloat(e.att.x) : 0,
+								y: e.has.y ? Std.parseFloat(e.att.y) : 0,
+								w: e.has.width ? Std.parseFloat(e.att.width) : 0,
+								h: e.has.height ? Std.parseFloat(e.att.height) : 0
+							};
+
+						wcd.displays.set(e.has.ref ? e.att.ref : "backgroundcontrols", VideoBackground(bd)); // no ref available here ?
+
+
+					case "progressbar":
+
+						var m : TileImageData;
+						var b : { color : Int, alpha : Float, x : Float, y : Float };
+						var csr : { tile : TileImageData, ref : String, x : Float };
+
+						for (c in f.elements) {
+
+							if (c.name.toLowerCase() == "mask") {
+
+								m = XmlToImage.parseTileImageData(c);
+								m.id.width = c.has.width ? Std.parseFloat(c.att.width);
+							}
+							if (c.name.toLowerCase() == "bar") {
+
+								b = {
+										color: c.has.color ? Std.parseInt(c.att.color) : 0;
+										alpha: c.has.alpha ? Std.parseFloat(c.att.alpha) : 1;
+										x: c.has.x ? Std.parseFloat(c.att.x) : 0;
+										y: c.has.y ? Std.parseFloat(c.att.y) : 0;
+									};
+							}
+							if (c.name.toLowerCase() == "cursor") {
+
+								csr = {
+										tile: XmlToImage.parseTileImageData(c),
+										ref: c.att.ref,
+										x: c.has.x ? Std.parseFloat(c.att.x) : 0
+									};
+							}
+						}
+
+						var pbd : grar.view.component.container.VideoPlayer.ProgressBarData = {
+
+								x: Std.parseFloat(e.att.x),
+								y: Std.parseFloat(e.att.y),
+								mask: m,
+								bar: b,
+								cursor: csr
+							};
+
+						wcd.displays.set(e.has.ref ? e.att.ref : "progressbar", VideoProgressBar(pbd)); // no ref available here ?
+
+
+					case "slider":
+
+						var b : { tile : TileImageData, x : Float, y : Float };
+						var csr : { tile : TileImageData, ref : String, x : Float : 0, y : Float };
+
+						for (child in elemNode.elements) {
+
+							if (c.name.toLowerCase() == "bar") {
+
+								b = {
+										tile: XmlToImage.parseTileImageData(c),
+										x: c.has.x ? Std.parseFloat(c.att.x) : 0,
+										y: c.has.y ? Std.parseFloat(c.att.y) : 0
+									};
+							}
+							if (c.name.toLowerCase() == "cursor") {
+
+								csr = {
+										tile: XmlToImage.parseTileImageData(c),
+										ref: c.att.ref,
+										x: c.has.x ? Std.parseFloat(c.att.x) : 0,
+										y: c.has.y ? Std.parseFloat(c.att.y) : 0,
+										vol: c.has.vol ? Std.parseFloat(c.att.vol) / 100 : 1
+									};
+							}
+						}
+
+						var sd : grar.view.component.container.VideoPlayer.SliderData = {
+
+								x: Std.parseFloat(e.att.x),
+								y: Std.parseFloat(e.att.y),
+								bar: b,
+								cursor: csr
+							};
+
+						wcd.displays.set(e.has.ref ? e.att.ref : "slider", VideoSlider(pbd)); // no ref available here ?
+
+					default: // nothing
+				}
 
 			default: // nothing
 		}
