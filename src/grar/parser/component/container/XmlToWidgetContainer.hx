@@ -26,16 +26,7 @@ class XmlToWidgetContainer {
 
 		if (f != null) {
 
-			// Default tilesheet
-// FIXME			if (tilesheet != null) { // TODO at instanciation
-
-// FIXME				this.tilesheet = tilesheet;
-			
-// FIXME			} else {
-				
-// FIXME				this.tilesheet = UiFactory.tilesheet;
-// FIXME			}
-
+			wcd.spritesheetRef = f.has.spritesheet ? f.att.spritesheet : null;
 			wcd.contentAlpha = f.has.contentAlpha ? Std.parseFloat(f.att.contentAlpha) : 1;
 			wcd.scrollBarName = f.has.scrollBar ? f.att.scrollBar : null;
 
@@ -92,10 +83,9 @@ class XmlToWidgetContainer {
 
 			case SimpleContainer:
 
-				var ns : Null<String> = f.has.spritesheet ? f.att.spritesheet : null;
 				var nm : Null<String> = f.has.mask ? f.att.mask : null;
 
-				wcd.type = SimpleContainer(ns, nm);
+				wcd.type = SimpleContainer(nm);
 
 			case DefaultButton:
 
@@ -225,19 +215,19 @@ class XmlToWidgetContainer {
 
 					case "button":
 
-						var dbd : WidgetContainerData = parseWidgetContainerData(e, DefaultButton("", false, null, null));
+						var dbd : WidgetContainerData = parseWidgetContainerData(e, DefaultButton);
 
 						wcd.displays.set(dbd.wd.ref, DefaultButton(dbd));
 
 					case "text":
 
-						var spd : WidgetContainerData = parseWidgetContainerData(e, ScrollPanel(null, null, null, false));
+						var spd : WidgetContainerData = parseWidgetContainerData(e, ScrollPanel);
 
 						wcd.displays.set(spd.wd.ref, ScrollPanel(sbd));
 
 				    case "timer":
 
-						var ccd : WidgetContainerData = parseWidgetContainerData(e, ChronoCircle(null, null, null, null, null));
+						var ccd : WidgetContainerData = parseWidgetContainerData(e, ChronoCircle);
 
 						wcd.displays.set(ccd.wd.ref, ChronoCircle(ccd));
 
@@ -252,7 +242,7 @@ class XmlToWidgetContainer {
 */
 					case "div":
 
-						var scd : WidgetContainerData = parseWidgetContainerData(e, SimpleContainer(null, null));
+						var scd : WidgetContainerData = parseWidgetContainerData(e, SimpleContainer);
 
 						wcd.displays.set(scd.wd.ref, SimpleContainer(scd));
 

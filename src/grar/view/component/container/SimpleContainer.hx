@@ -17,7 +17,7 @@ using StringTools;
 class SimpleContainer extends WidgetContainer {
 
 	//public function new( ? xml : Fast, ? tilesheet : TilesheetEx ) {
-	public function new(scd : WidgetContainerData) {
+	public function new(? scd : Null<WidgetContainerData>) {
 
         this.scd = scd;
 
@@ -25,14 +25,7 @@ class SimpleContainer extends WidgetContainer {
 
 		super(scd);
 		
-		switch (scd.type) {
-
-			case SimpleContainer(s) :
-
-				s != null ? this.tilesheetName = s;
-
-			default: // nothing
-		}
+		scd != null && scd.spritesheetRef != null ? this.tilesheetName = scd.spritesheetRef;
 
 		addEventListener(Event.ADDED_TO_STAGE, onAdded);
 	}

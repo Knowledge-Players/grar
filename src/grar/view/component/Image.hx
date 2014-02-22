@@ -4,17 +4,17 @@ import openfl.Assets;
 
 import aze.display.TilesheetEx;
 
-import com.knowledgeplayers.grar.display.component.container.SimpleBubble;
+import grar.view.component.container.SimpleBubble;
 //import com.knowledgeplayers.grar.factory.UiFactory; // FIXME
-import com.knowledgeplayers.grar.util.ParseUtils;
-import com.knowledgeplayers.grar.util.DisplayUtils;
+import grar.util.ParseUtils;
+import util.DisplayUtils;
 
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
 import flash.geom.Matrix;
-import flash.display.Bitmap;
 import flash.display.GradientType;
 import flash.display.Shape;
+import flash.display.Bitmap;
 import flash.display.BitmapData;
 
 import haxe.xml.Fast;
@@ -41,6 +41,7 @@ typedef ImageData = {
 	var tilesheetRef : Null<String> = null;
 	var tilesheet : Null<TilesheetEx> = null; // set in second step (instanciation)
 	var tile : Null<String> = null;
+	var isBackground : Bool = false;
 }
 
 /**

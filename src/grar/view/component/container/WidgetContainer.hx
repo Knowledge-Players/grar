@@ -52,13 +52,12 @@ enum ElementData {
 	VideoBackground(d:VideoPlayer.BackgroundData);
 	VideoProgressBar(d:VideoPlayer.ProgressBarData);
 	VideoProgressBar(d:VideoPlayer.SliderData);
-
 }
 
 enum WidgetContainerType {
 
 	WidgetContainer; // TODO remove ?
-	SimpleContainer(? spritesheet : Null<String>, ? mask : Null<String>);
+	SimpleContainer(? mask : Null<String>);
 	BoxDisplay;
 	DefaultButton(? defaultState : String, ? isToggleEnabled : Bool, ? action : Null<String>, ? group : Null<String>, ? enabled : Bool);
 	DropdownMenu(? color : String);
@@ -79,6 +78,7 @@ typedef WidgetContainerData = {
 
 	var wd : WidgetData;
 	var type : WidgetContainerType;
+	var spritesheetRef : Null<String>; 
 	var tilesheet : Null<TilesheetEx> = null; // set in a second step (instanciation)
 	var contentAlpha : Float;
 	var scrollBarName : String;
@@ -97,9 +97,16 @@ typedef WidgetContainerData = {
 class WidgetContainer extends Widget {
 
 	//private function new( ? xml : Fast, ? tilesheet : TilesheetEx ) {
-	private function new( wcd : WidgetContainerData ) {
+	private function new( ? wcd : Null<WidgetContainerData> ) {
 
-		super(wcd.wd);
+		if (wcd == null) {
+
+			super();
+
+		} else  {
+
+			super(wcd.wd);
+		}
 
 		this.content = new Sprite();
 		this.displays = new StringMap();
@@ -108,17 +115,17 @@ class WidgetContainer extends Widget {
 
 		addChild(content);
 
-		// TODO check if necessary: if (xml != null) {
+		if (wcd != null) {
 
 			// Default tilesheet
-			//FIXME do at instanciation if (tilesheet != null) {
+			if (wcd.tilesheet != null) {
 
-			//FIXME do at instanciation 	this.tilesheet = tilesheet;
+			 	this.tilesheet = wcd.tilesheet;
 			
-			//FIXME do at instanciation } else {
+			} else {
 				
-			//FIXME do at instanciation 	this.tilesheet = UiFactory.tilesheet;
-			//FIXME do at instanciation }
+//FIXME 	this.tilesheet = UiFactory.tilesheet;
+			}
 
 			this.contentAlpha = wcd.contentAlpha;
 			this.scrollBarName = wcd.scrollBarName;
@@ -139,7 +146,7 @@ class WidgetContainer extends Widget {
 			content.addChildAt(layer.view, 0);
 
 			setBackground(wcd.background);
-		// TODO check if necessary }
+		}
 
 		addEventListener(MouseEvent.MOUSE_WHEEL, onWheel);
 		addEventListener(Event.ENTER_FRAME, checkRender);

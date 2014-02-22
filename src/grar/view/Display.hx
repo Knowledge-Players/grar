@@ -3,28 +3,27 @@ package grar.view;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 
-import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
-import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
-import com.knowledgeplayers.grar.display.element.ChronoCircle;
-import com.knowledgeplayers.grar.display.element.Timeline;
-import com.knowledgeplayers.grar.display.component.container.SoundPlayer;
-import com.knowledgeplayers.grar.display.component.container.DefaultButton;
-import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
-import com.knowledgeplayers.grar.display.component.ScrollBar;
+import grar.view.contextual.NotebookDisplay;
+import grar.view.contextual.menu.MenuDisplay;
+import grar.view.element.ChronoCircle;
+import grar.view.element.Timeline;
+import grar.view.component.container.SoundPlayer;
+import grar.view.component.container.DefaultButton;
+import grar.view.component.container.SimpleContainer;
+import grar.view.component.ScrollBar;
 #if flash
-import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
+import grar.view.component.container.VideoPlayer;
 #end
-import com.knowledgeplayers.grar.display.component.TileImage;
-import com.knowledgeplayers.grar.display.component.Widget;
-import com.knowledgeplayers.grar.display.component.Image;
-import com.knowledgeplayers.grar.display.component.container.DefaultButton;
-import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.display.component.CharacterDisplay;
+import grar.view.component.TileImage;
+import grar.view.component.Widget;
+import grar.view.component.Image;
+import grar.view.component.container.DefaultButton;
+import grar.view.component.container.ScrollPanel;
+import grar.view.component.CharacterDisplay;
 import com.knowledgeplayers.grar.factory.UiFactory; // FIXME
 import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
-import com.knowledgeplayers.grar.structure.part.dialog.Character;
-import com.knowledgeplayers.grar.util.DisplayUtils;
-import com.knowledgeplayers.utils.assets.AssetsStorage; // FIXME
+import grar.util.DisplayUtils;
+import com.knowledgeplayers.utils.assets.AssetsStorage; // FIXME ?
 
 import flash.geom.Rectangle;
 import flash.events.Event;
@@ -34,14 +33,58 @@ import flash.display.Sprite;
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
 
-import haxe.xml.Fast;
+import haxe.xml.Fast; // FIXME
 
 using StringTools;
 
 typedef Template = {
 
-	var fast : Fast;
+	var data : { data : ElementData, validation : Null<String> };
 	var z : Int;
+}
+
+enum ElementData {
+
+	TextGroup({ data : StringMap<{ obj : ElementData, z : Int }> });
+	Image(i : ImageData);
+	TileImage(ti : TileImageData);
+	CharacterData(c : CharacterData);
+	DefaultButton(d : WidgetContainerData);
+	ScrollPanel(d : WidgetContainerData);
+	VideoPlayer(d : WidgetContainerData);
+	SoundPlayer(d : WidgetContainerData);
+	ScrollBar(d : { width : Float, bgColor : Null<String>, cursorColor : Null<String>, bgTile : Null<String>, tile : String, tilesheet : Null<String>, cursor9Grid : Array<Float>, bg9Grid : Null<Array<Float>> });
+	SimpleContainer(d : WidgetContainerData);
+	ChronoCircle(d : WidgetContainerData);
+	Template(d : { data : ElementData, validation : Null<String> });
+}
+
+enum DisplayType {
+
+	Display; // TODO remove ?
+	Zone;
+	Menu;
+	Notebook;
+	Part;
+	// TODO find others
+}
+
+typedef DisplayData = {
+
+	var x : Null<Float> = null;
+	var y : Null<Float> = null;
+	var width : Null<Float> = null;
+	var height : Null<Float> = null;
+	var spritesheets : Null<StringMap<TilesheetEx>>; // TODO set in second step
+	var spritesheetsSrc : StringMap<String>;
+	var transitionIn : Null<String>;
+	var transitionOut : Null<String>;
+	var layout : Null<String>;
+	var filters : Null<String>;
+	var timelines : StringMap<{ ref : String, elements : Array<{ ref : String, transition : String, delay : Float }> }>;
+	var displays : StringMap<ElementData>;
+	var layers : Null<StringMap<TileLayer>>; // TODO set in second step
+	var layersSrc : StringMap<String>;
 }
 
 class Display extends Sprite {
@@ -112,264 +155,386 @@ class Display extends Sprite {
 	private var totalSpriteSheets:Int = 0;
 	private var textGroups:Map<String, Map<String, {obj:Fast, z:Int}>>;
 	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
-	private var displayTemplates: Map<String, Template>;
+	private var displayTemplates: StringMap<Template>;
 	private var timelines: Map<String, Timeline>;
 
 
-	/**
-    * Parse the content of a display XML
-    * @param    content : Content of the XML
-    **/
-	public function parseContent(content:Xml):Void
-	{
-		displayFast = new Fast(content.firstElement());
+	///
+	// API
+	//
 
-		if(displayFast.has.x)
-			x = Std.parseFloat(displayFast.att.x);
-		if(displayFast.has.y)
-			y = Std.parseFloat(displayFast.att.y);
-		if(displayFast.has.width && displayFast.has.height)
-			DisplayUtils.initSprite(this, Std.parseFloat(displayFast.att.width), Std.parseFloat(displayFast.att.height), 0, 0.001);
-		var i: Int = 0;
-		for(child in displayFast.nodes.SpriteSheet){
-			spritesheets.set(child.att.id, AssetsStorage.getSpritesheet(child.att.src));
-			var layer = new TileLayer(AssetsStorage.getSpritesheet(child.att.src));
-			layers.set(child.att.id, layer);
+	//public function parseContent(content:Xml):Void
+	public function setContent(d : DisplayData) : Void {
+
+		d.x != null ? x = d.x;
+		d.y != null ? y = d.y;
+		d.width != null && d.height != null ? DisplayUtils.initSprite(this, d.width, d.height, 0, 0.001);
+
+		for (sk in d.spritesheets.keys) {
+
+			var layer = new TileLayer(d.spritesheets.get(sk));
+			layers.set(sk, layer);
 			addChild(layer.view);
-			i++;
 		}
-		var uiLayer = new TileLayer(UiFactory.tilesheet);
-		layers.set("ui", uiLayer);
-		addChild(uiLayer.view);
+		spritesheets = d.spritesheets;
 
-		createDisplay();
+// FIXME		var uiLayer = new TileLayer(UiFactory.tilesheet);
+// FIXME		layers.set("ui", uiLayer);
+// FIXME		addChild(uiLayer.view);
 
-		if(displayFast.has.transitionIn){
-			transitionIn = displayFast.att.transitionIn;
+		createDisplay(d);
+
+		if (d.transitionIn != null) {
+
+			transitionIn = d.transitionIn;
+
 			addEventListener(Event.ADDED_TO_STAGE, function(e){
-				TweenManager.applyTransition(this, transitionIn);
-			});
-		}
-		if(displayFast.has.transitionOut)
-			transitionOut = displayFast.att.transitionOut;
-		if(displayFast.has.layout)
-			layout = displayFast.att.layout;
-		if(displayFast.has.filters){
-			filters = FilterManager.getFilter(displayFast.att.filters);
-		}
 
-		ResizeManager.instance.onResize();
+					TweenManager.applyTransition(this, transitionIn);
+
+				});
+		}
+		if (d.transitionOut != null) {
+
+			transitionOut = d.transitionOut;
+		}
+		if (d.layout != null) {
+
+			layout = d.layout;
+		}
+		if (d.filters != null) {
+
+// FIXME			filters = FilterManager.getFilter(d.filters);
+		}
+// FIXME		ResizeManager.instance.onResize();
 	}
 
-	public function getLayer(id:String):TileLayer
-	{
+	public function getLayer(id : String) : TileLayer {
+
 		return layers.get(id);
 	}
 
-	// Privates
 
-	private function createDisplay():Void
-	{
-		for(child in displayFast.elements){
-			createElement(child);
+	///
+	// INTERNALS
+	//
+
+	private function createDisplay(d : DisplayData) : Void {
+
+		for (c in d.displays.keys) {
+
+			createElement(d.displays.get(c), c);
 		}
+		for (t in d.timelines) {
 
-		for(child in displayFast.nodes.Timeline){
-			var timeline = new Timeline(child.att.ref);
+			var timeline = new Timeline(t.ref);
 
-			for (elem in child.elements){
-				var delay = elem.has.delay?Std.parseFloat(elem.att.delay):0;
+			for (e in t.elements) {
+
 				// Creating mock widget for dynamic timeline
-				if(elem.att.ref.startsWith("$")){
+				if (e.ref.startsWith("$")) {
+
 					var mock = new Image();
-					mock.ref = elem.att.ref;
-					timeline.addElement(mock, elem.att.transition, delay);
+					mock.ref = e.ref;
+					timeline.addElement(mock, e.transition, e.delay);
+				
+				} else if(!displays.exists(e.ref)) {
+
+					throw "[Display] Can't add unexisting widget '"+e.ref+"' in timeline '"+t.ref+"'.";
+				
+				} else {
+
+					timeline.addElement(displays.get(e.ref), e.transition, e.delay);
 				}
-				else if(!displays.exists(elem.att.ref))
-					throw "[KpDisplay] Can't add unexistant widget '"+elem.att.ref+"' in timeline '"+child.att.ref+"'.";
-				else
-					timeline.addElement(displays.get(elem.att.ref),elem.att.transition,delay);
 			}
-
-			timelines.set(child.att.ref,timeline);
+			timelines.set(t.ref, timeline);
 		}
-		for (elem in displays){
-			if(Std.is(elem, DefaultButton))
+		for (elem in displays) {
+
+			if (Std.is(elem, DefaultButton)) { // could be avoided / improved with a collection of enums
+
 				cast(elem,DefaultButton).initStates(timelines);
-		}
-	}
-
-	private function createElement(elemNode:Fast):Widget
-	{
-		if(elemNode.name.toLowerCase() == "textgroup"){
-			createTextGroup(elemNode);
-			return null;
-		}
-		else{
-			return switch(elemNode.name.toLowerCase()){
-				case "background" | "image": createImage(elemNode);
-				case "character": createCharacter(elemNode);
-				case "button": createButton(elemNode);
-				case "text": createText(elemNode);
-				case "video": createVideo(elemNode);
-				case "sound": createSound(elemNode);
-				case "scrollbar": createScrollBar(elemNode);
-				case "div":
-					var div = new SimpleContainer(elemNode);
-					addElement(div, elemNode);
-					div;
-	            case "timer":
-		            var timer = new ChronoCircle(elemNode);
-		            addElement(timer, elemNode);
-					timer;
-				case "template":
-					displayTemplates.set(elemNode.att.ref, {fast: elemNode, z: zIndex++});
-					null;
-				case "include" :
-					if(!DisplayUtils.templates.exists(elemNode.att.ref))
-						throw "[KpDisplay] There is no template '"+elemNode.att.ref+"'.";
-					var tmpXml = Xml.parse(DisplayUtils.templates.get(elemNode.att.ref).toString()).firstElement();
-					for(att in elemNode.x.attributes()){
-						if(att != "ref")
-							tmpXml.set(att, elemNode.x.get(att));
-					}
-					createElement(new Fast(tmpXml));
-				default: null;
 			}
 		}
 	}
 
-	private function createScrollBar(barNode:Fast):Widget
-	{
-		var bgColor = barNode.has.bgColor ? barNode.att.bgColor : null;
-		var cursorColor = barNode.has.cursorColor ? barNode.att.cursorColor : null;
-		var bgTile = barNode.has.bgTile ? barNode.att.bgTile : null;
-		var tilesheet = barNode.has.spritesheet?spritesheets.get(barNode.att.spritesheet):UiFactory.tilesheet;
 
-		var grid = new Array<Float>();
-		for(number in barNode.att.cursor9Grid.split(","))
-			grid.push(Std.parseFloat(number));
-		var cursor9Grid = new Rectangle(grid[0], grid[1], grid[2], grid[3]);
-		var bg9Grid;
-		if(barNode.has.bg9Grid){
-			var bgGrid = new Array<Float>();
-			for(number in barNode.att.bg9Grid.split(","))
-				bgGrid.push(Std.parseFloat(number));
-			bg9Grid = new Rectangle(bgGrid[0], bgGrid[1], bgGrid[2], bgGrid[3]);
+
+
+typedef DisplayData = {
+
+	var x : Null<Float> = null;
+	var y : Null<Float> = null;
+	var width : Null<Float> = null;
+	var height : Null<Float> = null;
+	var spritesheets : Null<StringMap<TilesheetEx>>; // set in second step
+	var spritesheetsSrc : StringMap<String>;
+	var transitionIn : Null<String>;
+	var transitionOut : Null<String>;
+	var layout : Null<String>;
+	var filters : Null<String>;
+	var timelines : StringMap<{ ref : String, elements : Array<{ ref : String, transition : String, delay : Float }> }>;
+	var displays : StringMap<ElementData>;
+	var layers : Null<StringMap<TileLayer>>; // set in second step
+	var layersSrc : StringMap<String>;
+}
+
+	//private function createElement(elemNode:Fast):Widget
+	private function createElement(e : ElementData, r : String) : Widget {
+
+		switch (e) {
+
+			case TextGroup(d):
+
+				createTextGroup(r, d);
+				return null;
+
+			case Image(d):
+
+				return createImage(r, d);
+
+			case TileImage(d):
+
+				return createTileImage(r, d);
+
+			case CharacterData(d):
+
+				return createCharacter(r, d);
+
+			case DefaultButton(d):
+
+				return createButton(r, d);
+
+			case ScrollPanel(d):
+
+				return createText(r, d);
+
+			case VideoPlayer(d):
+
+				return createVideo(r, d);
+
+			case SoundPlayer(d):
+
+				return createSound(r, d);
+
+			case ScrollBar(d):
+
+				return createScrollBar(r, d);
+
+			case SimpleContainer(d):
+
+				var div = new SimpleContainer(d);
+				
+				addElement(div, r);
+				
+				return div;
+
+			case ChronoCircle(d):
+
+	            var timer = new ChronoCircle(d);
+
+	            addElement(timer, r);
+
+				return timer;
+
+			case Template(d : { data : ElementData, validation : Null<String> }):
+
+				displayTemplates.set(r, { data: d, z: zIndex++});
+
+				return null;
+
+/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME 
+
+			case "include" :
+				if(!DisplayUtils.templates.exists(elemNode.att.ref))
+					throw "[KpDisplay] There is no template '"+elemNode.att.ref+"'.";
+				var tmpXml = Xml.parse(DisplayUtils.templates.get(elemNode.att.ref).toString()).firstElement();
+				for(att in elemNode.x.attributes()){
+					if(att != "ref")
+						tmpXml.set(att, elemNode.x.get(att));
+				}
+				createElement(new Fast(tmpXml));
+*/
 		}
-		else
+	}
+
+	private function createScrollBar(r : String, d : { width : Float, bgColor : Null<String>, cursorColor : Null<String>, bgTile : Null<String>, tile : String, spritesheet : Null<String>, cursor9Grid : Array<Float>, bg9Grid : Null<Array<Float>> }) : Widget {
+
+		var tilesheet = d.spritesheet != null ? spritesheets.get(d.spritesheet) : null; // FIXME UiFactory.tilesheet;
+
+		var cursor9Grid : Rectangle = new Rectangle(d.cursor9Grid[0], d.cursor9Grid[1], d.cursor9Grid[2], d.cursor9Grid[3]);
+		
+		var bg9Grid : Rectangle;
+		
+		if (d.bg9Grid != null) {
+
+			bg9Grid = new Rectangle(d.bg9Grid[0], d.bg9Grid[1], d.bg9Grid[2], d.bg9Grid[3]);
+		
+		} else {
+
 			bg9Grid = cursor9Grid;
-		var scroll = new ScrollBar(Std.parseFloat(barNode.att.width), tilesheet, barNode.att.tile, bgTile, cursor9Grid, bg9Grid, cursorColor, bgColor);
-		scrollBars.set(barNode.att.ref, scroll);
+		}
+		var scroll = new ScrollBar(d.width, tilesheet, d.tile, d.bgTile, cursor9Grid, bg9Grid, d.cursorColor, d.bgColor);
+
+		scrollBars.set(r, scroll);
+
 		return scroll;
 	}
 
-	private function createImage(itemNode:Fast):Widget
-	{
-		var spritesheet = itemNode.has.spritesheet?itemNode.att.spritesheet:"ui";
-		var img = null;
+    private function createSound(r : String, d : WidgetContainerData) : Widget {
 
-		if(itemNode.has.src || itemNode.has.filters || (itemNode.has.extract && itemNode.att.extract == "true")){
-			img = new Image(itemNode, spritesheets.get(spritesheet));
+    	switch (d.type) {
+
+    		case SoundPlayer:
+
+				d.tilesheet = d.spritesheetRef != null ? spritesheets.get(d.spritesheetRef) : null;
+				var sound = new SoundPlayer(d);
+				addElement(sound, r);
+				return sound;
+
+    		default: throw "wrong WidgetContainerData type passed to createSound function: " + d.type;
+    	}
+
+		return null;
+	}
+
+	private function createVideo(r : String, d : WidgetContainerData) : Widget {
+#if flash
+		switch (d.type) {
+
+			case VideoPlayer(controlsHidden, autoFullscreen):
+
+				d.tilesheet = d.spritesheetRef != null ? spritesheets.get(d.spritesheetRef) : null;
+				var video = new VideoPlayer(d);
+
+				addElement(video, r);
+				
+				return video;
+
+			default: throw "wrong WidgetContainerData type passed to createVideo function: " + d.type;
 		}
-		else{
-			if(!layers.exists(spritesheet)){
-				var layer = new TileLayer(UiFactory.tilesheet);
-				layers.set(spritesheet, layer);
+#end
+		return null;
+	}
 
-			}
+	private function createText(r : String, d : WidgetContainerData) : Widget {
 
-			img = new TileImage(itemNode, layers.get(spritesheet), false);
+		switch(d.type) {
+
+			case ScrollPanel(styleSheet, style, content, trim):
+
+				var panel = new ScrollPanel(d);
+
+				addElement(panel, r);
+
+				if (content != null && content.startsWith("$")) {
+
+					dynamicFields.push({ field: panel, content: content.substr(1) });
+				}
+				return panel;
+
+			default: throw "wrong WidgetContainerData type passed to createText function: " + d.type;
 		}
-		addElement(img, itemNode);
+		return null;
+	}
+
+	//private function createButton(buttonNode : Fast) : Widget {
+	private function createButton(r : String, d : WidgetContainerData) : Widget {
+
+		switch (d.type) {
+
+			case DefaultButton(? defaultState : String, ? isToggleEnabled : Bool, ? action : Null<String>, ? group : Null<String>, ? enabled : Bool):
+				
+				var btn : DefaultButton = new DefaultButton(d);
+
+				if (action != null) {
+
+					setButtonAction(btn, action);
+				}
+				if (group != null) {
+
+					if (buttonGroups.exists(group)) {
+
+						buttonGroups.get(group).add(btn);
+					
+					} else {
+
+						var stack : GenericStack<DefaultButton> = new GenericStack();
+						stack.add(btn);
+						buttonGroups.set(group, stack);
+					}
+				}
+				if (btn.group != null) {
+
+					btn.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+				}
+
+				addElement(btn, r);
+				
+				return btn;
+
+			default: throw "wrong WidgetContainerData type passed to createButton function: "+d.type;
+		}
+		return null;
+	}
+
+	private function createCharacter(r : String, d : CharacterData) : Widget {
+
+		var c : CharacterDisplay = new CharacterDisplay(d);
+		
+		addElement(c, r);
+		
+		return c;
+	}
+
+	//private function createImage(itemNode:Fast):Widget // TODO check overrides
+	private function createTileImage(r : String, d : TileImageData) : Widget {
+
+		if (!layers.exists(d.tilesheetName)) {
+
+// FIXME			var layer = new TileLayer(UiFactory.tilesheet);
+// FIXME			layers.set(d.tilesheetName, layer);
+		}
+		var img = new TileImage(d);
+		
+		addElement(img, r, d.isBackground);
+		
+		return img;
+	}
+	private function createImage(r : String, d : ImageData) : Widget {
+
+		d.tilesheet = spritesheets.get(d.tilesheetRef);
+		var img =  new Image(d);
+
+		addElement(img, r, d.isBackground);
+		
 		return img;
 	}
 
-	private function createButton(buttonNode:Fast):Widget
-	{
-		var ref = buttonNode.att.ref;
-		var button:DefaultButton = new DefaultButton(buttonNode);
-		if(buttonNode.has.action)
-			setButtonAction(button, buttonNode.att.action);
-		if(buttonNode.has.group){
-			if(buttonGroups.exists(buttonNode.att.group.toLowerCase()))
-				buttonGroups.get(buttonNode.att.group.toLowerCase()).add(button);
-			else{
-				var stack = new GenericStack<DefaultButton>();
-				stack.add(button);
-				buttonGroups.set(buttonNode.att.group.toLowerCase(), stack);
-			}
+	//private function createTextGroup(textNode:Fast):Void
+	private function createTextGroup(r : String, d : { data : StringMap<{ obj : ElementData, z : Int }> }) : Void {
+
+		for (e in d.data) {
+
+			createElement(e.obj);
 		}
-		if(button.group != null)
-			button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
-		addElement(button, buttonNode);
-		return button;
+		textGroups.set(r, d.data); // FIXME
 	}
 
-	private function createVideo(videoNode: Fast):Widget
-	{
-		#if flash
-		var tilesheet = videoNode.has.spritesheet ? spritesheets.get(videoNode.att.spritesheet) : null;
-		var video = new VideoPlayer(videoNode, tilesheet);
-		addElement(video, videoNode);
-		return video;
-		#else
-		return null;
-		#end
-	}
-    private function createSound(soundNode: Fast):Widget
-	{
+	//private function addElement(elem:Widget, node:Fast):Void // FIXME
+	private function addElement(elem : Widget, ref : String, ? isBackground : Bool = false) : Void {
 
-		var tilesheet = soundNode.has.spritesheet ? spritesheets.get(soundNode.att.spritesheet) : null;
-		var sound = new SoundPlayer(soundNode, tilesheet);
-		addElement(sound, soundNode);
-		return sound;
-	}
+		if (isBackground) {
 
-	private function createText(textNode:Fast):Widget
-	{
-		var panel = new ScrollPanel(textNode);
-		addElement(panel, textNode);
-
-		if(textNode.has.content && textNode.att.content.startsWith("$")){
-			dynamicFields.push({field: panel, content: textNode.att.content.substr(1)});
-		}
-		return panel;
-	}
-
-	private function createTextGroup(textNode:Fast):Void
-	{
-		var numIndex = 0;
-		var hashTextGroup = new Map<String, {obj:Fast, z:Int}>();
-
-		for(child in textNode.elements){
-			createElement(child);
-			hashTextGroup.set(child.att.ref, {obj:child, z:numIndex});
-			numIndex++;
-		}
-
-		textGroups.set(textNode.att.ref, hashTextGroup);
-	}
-
-	private function createCharacter(character:Fast): Widget
-	{
-		var char:CharacterDisplay = new CharacterDisplay(character, layers.get(character.att.spritesheet), new Character(character.att.ref));
-		if(character.has.nameRef)
-			char.nameRef = character.att.nameRef;
-		addElement(char, character);
-		return char;
-	}
-
-	private function addElement(elem:Widget, node:Fast):Void // FIXME
-	{
-		if(node.name.toLowerCase() == "background")
 			elem.zz = 0;
-		else
+		
+		} else {
+
 			elem.zz = zIndex;
+		}
+		displays.set(ref, elem);
 
-		displays.set(node.att.ref, elem);
-
-		ResizeManager.instance.addDisplayObjects(elem, node);
+// FIXME		ResizeManager.instance.addDisplayObjects(elem, node);
 		zIndex++;
 	}
 
@@ -435,6 +600,6 @@ class Display extends Sprite {
 
 	private inline function quit(?target: DefaultButton):Void
 	{
-		GameManager.instance.quitGame();
+// FIXME		GameManager.instance.quitGame();
 	}
 }

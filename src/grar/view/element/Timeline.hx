@@ -1,7 +1,7 @@
 package grar.view.element;
 
-import com.knowledgeplayers.grar.display.component.TileImage; // FIXME
-import com.knowledgeplayers.grar.display.component.Widget; // FIXME
+import grar.view.component.TileImage;
+import grar.view.component.Widget;
 
 import flash.events.Event;
 import flash.events.EventDispatcher;
@@ -18,6 +18,14 @@ typedef TimelineElement = {
 
 class Timeline extends EventDispatcher {
 
+    public function new( ? name : String ) : Void {
+
+        super();
+
+        this.name = name;
+        this.elements = [];
+    }
+
 	/**
 	 * Name of the timeline
 	 **/
@@ -29,15 +37,6 @@ class Timeline extends EventDispatcher {
     public var elements (default, null) : Array<TimelineElement>;
 
     private var nbCompleteTransitions : Float = 0;
-
-    public function new(?name:String) : Void {
-
-		super();
-
-		this.name = name;
-        this.elements = [];
-
-    }
 
     public function play():Void
     {

@@ -1,12 +1,16 @@
 package grar.view.component.container;
 
 import grar.view.component.container.WidgetContainer;
+
 import com.knowledgeplayers.grar.display.style.KpTextDownElement;
 import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 import com.knowledgeplayers.grar.display.style.Style;
 import com.knowledgeplayers.grar.display.style.StyleParser;
-import com.knowledgeplayers.grar.util.DisplayUtils;
+
+import grar.util.DisplayUtils;
+
 import com.knowledgeplayers.grar.localisation.Localiser;
+
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
 import flash.display.BitmapData;
@@ -18,32 +22,36 @@ import flash.display.Sprite;
 class ScrollPanel extends WidgetContainer {
 
 // FIXME public function new(?xml: Fast, ?width:Float, ?height:Float, ?_styleSheet:String) {
-	public function new(spd : WidgetContainerData) {
+	public function new( ? spd : Null<WidgetContainerData> ) {
 
-		super(spd);
+		if (spd == null) {
 
-		// ??? if (xml != null) {
-		switch(spd.type) {
+			super();
 
-			case ScrollPanel(ss, s, c, t):
+		} else {
 
-				this.styleSheet = ss;
-				this.style = s;
-				
-				if (c != null) {
+			super(spd);
 
-					setContent(Localiser.instance.getItemContent(c));
-				}
-				trim = t;
+			switch(spd.type) {
 
-			default: // nothing
+				case ScrollPanel(ss, s, c, t):
+
+					this.styleSheet = ss;
+					this.style = s;
+					
+					if (c != null) {
+
+						setContent(Localiser.instance.getItemContent(c));
+					}
+					trim = t;
+
+				default: // nothing
+			}
 		}
+// FIXME if (_styleSheet != null) {
 
-		// ??? }
-		// FIXME if (_styleSheet != null) {
-
-		// FIXME 	styleSheet = _styleSheet;
-		// FIXME }
+// FIXME 	styleSheet = _styleSheet;
+// FIXME }
 	}
 
 	/**
