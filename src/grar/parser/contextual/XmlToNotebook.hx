@@ -73,22 +73,4 @@ class XmlToNotebook {
 
 		return { n: new Notebook(background, items, texts, pages, closeButton), i: inventory };
 	}
-	
-	static public function parseView(xml : Xml) : NotebookDisplay {
-
-		var kd : KpDisplayData = XmlToKpDisplay.parse(xml);
-
-		var f : Fast = new Fast(xml);
-
-		var chapterTemplates : StringMap<Fast> = new StringMap();
-		
-		for (chapter in f.nodes.Chapter) {
-
-			chapterTemplates.set(chapter.att.ref, chapter);
-		}
-		var tabTemplate : Fast = f.node.Tab;
-		var bookmark : Fast = f.node.Bookmark;
-
-		return new NotebookDisplay(kd, chapterTemplates, tabTemplate, bookmark);
-	}
 }

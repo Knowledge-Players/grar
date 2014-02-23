@@ -62,6 +62,22 @@ class XmlToDisplay {
 
 		switch (dd.type) {
 
+			case Notebook:
+
+				var chapterTemplates : StringMap<{ offsetY : Float, e : Display.ElementData }> = new StringMap();
+
+				for (c in f.nodes.Chapter) {
+
+					chapterTemplates.set(c.att.ref, { offsetY: Std.parseFloat(c.att.offsetY), e: parseElement(c, dd).e});
+				}
+
+				var tabTemplate : { x : Float, xOffset : Float, e : WidgetContainerData } = { x: Std.parseFloat(f.node.Tab.att.x), xOffset: Std.parseFloat(f.node.Tab.att.xOffset), e: XmlToWidgetContainer.parseWidgetContainerData(f.node.Tab, DefaultButton) };
+				var bookmark : ImageData = XmlToImage.parseImageData(f.node.Bookmark);
+				var guide : GuideData = XmlToGuide.parseGuideData(f.node.Bookmark.node.Guide);
+				var step : { r : String, e : WidgetContainerData, transitionIn : Null<String> } = { r: f.node.Bookmark.node.Step.att.ref, e: XmlToWidgetContainer.parseWidgetContainerData(f.node.Bookmark.node.Step, DefaultButton), transitionIn: f.node.Step.has.transitionIn };
+
+				dd.type = Notebook( chapterTemplates, tabTemplate, bookmark, guide, step );
+
 			case Activity:
 
 				var groups : StringMap<{ x : Float, y : Float, guide : Guide }> = new StringMap();
@@ -164,7 +180,7 @@ class XmlToDisplay {
 		// FIXME layers.set("ui", uiLayer);
 		// FIXME addChild(uiLayer.view);
 
-		dd = createDisplay(f, type, dd);
+		dd = parseDisplay(f, type, dd);
 
 		if (f.has.transitionIn) {
 
@@ -190,11 +206,11 @@ class XmlToDisplay {
 		// FIXME ResizeManager.instance.onResize();
 	}
 
-	static function createDisplay(f : Fast, type : DisplayType, dd : DisplayData) : DisplayData {
+	static function parseDisplay(f : Fast, type : DisplayType, dd : DisplayData) : DisplayData {
 
 		for (child in f.elements) {
 
-			var ret : { e : Null<ElementData>, r : Null<String> } = createElement(child, type, dd);
+			var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(child, type, dd);
 			
 			if (ret.e != null && ret.r != null) {
 
@@ -229,7 +245,7 @@ class XmlToDisplay {
 	}
 
 	//static function createElement(elemNode:Fast) : Widget {
-	static function createElement(f : Fast, dd : DisplayData) : { e : Null<ElementData>, r : Null<String> } {
+	static function parseElement(f : Fast, dd : DisplayData) : { e : Null<ElementData>, r : Null<String> } {
 
 		var e : Null<ElementData> = null;
 		var r : Null<String> = f.has.ref ? f.att.ref : null;
@@ -286,7 +302,7 @@ class XmlToDisplay {
 
 					for (c in f.elements) {
 
-						var ret : { e : Null<ElementData>, r : Null<String> } = createElement(c, dd);
+						var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(c, dd);
 
 						if (ret.e != null) {
 
@@ -355,7 +371,7 @@ class XmlToDisplay {
 				
 				case "template": // use seen only in ActivityDisplay
 
-					var ret = createElement(f);
+					var ret = parseElement(f);
 
 					if (ret.e != null) {
 
@@ -418,7 +434,7 @@ class XmlToDisplay {
 
 		for (child in f.elements) {
 
-			var ret : { e : Null<ElementData>, r : Null<String> } = createElement(child, type, dd);
+			var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(child, type, dd);
 			
 			if (ret.e != null && ret.r != null) {
 

@@ -1,95 +1,130 @@
-package grar.view.contextual;
+package com.knowledgeplayers.grar.display.contextual;
 
-import com.knowledgeplayers.grar.factory.GuideFactory;
-import com.knowledgeplayers.grar.event.PartEvent;
-import com.knowledgeplayers.grar.event.TokenEvent;
-import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.structure.contextual.Note;
-import com.knowledgeplayers.grar.structure.contextual.Notebook;
-import com.knowledgeplayers.grar.display.component.Widget;
-import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
-import com.knowledgeplayers.grar.display.component.container.DefaultButton;
-import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import grar.view.KpDisplay;
-import com.knowledgeplayers.grar.util.guide.Guide;
-import com.knowledgeplayers.grar.util.guide.Line;
-import com.knowledgeplayers.grar.util.ParseUtils;
-import com.knowledgeplayers.grar.util.DisplayUtils;
+import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
+
+import grar.view.guide.Guide;
+import grar.view.guide.Line;
+import grar.view.component.Widget;
+import grar.view.component.container.VideoPlayer;
+import grar.view.component.container.DefaultButton;
+import grar.view.component.container.ScrollPanel;
+import grar.view.Display;
+
+import grar.model.contextual.Notebook;
+import grar.model.contextual.Note;
+
+import grar.util.ParseUtils;
+import grar.util.DisplayUtils;
+
+import com.knowledgeplayers.grar.event.PartEvent; // FIXME
+import com.knowledgeplayers.grar.event.TokenEvent; // FIXME
+import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
 
 import flash.events.Event;
 import flash.net.URLRequest;
+import flash.geom.Point;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
-import flash.geom.Point;
 
 import haxe.ds.StringMap;
-import haxe.xml.Fast;
 import haxe.ds.GenericStack;
 
-class NotebookDisplay extends KpDisplay /* implements ContextualDisplay */ {
+class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TODO check use of ContextualDisplay
 
-	inline static var noteGroupName : String = "notes";
-	inline static var tabGroupName : String = "tabs";
-	inline static var stepGroupName : String = "steps";
+	static private inline var NOTE_GROUP_NAME : String = "notes";
+	static private inline var TAB_GROUP_NAME : String = "tabs";
+	static private inline var STEP_GROUP_NAME : String = "steps";
 
-	public function new(kd : KpDisplayData, ct : StringMap<Fast>, tt : Fast, b : Fast) {
+	public function new() {
 
-		super(kd);
+		super();
 
-		//GameManager.instance.addEventListener(TokenEvent.ADD, onUnlocked); // FIXME
-
-		this.chapterTemplates = ct;
-		this.chapterMap = new Map();
-		this.tabTemplate = tt;
-		this.bookmark = b;
-
-		buttonGroups.set(noteGroupName, new GenericStack<DefaultButton>());
-		buttonGroups.set(tabGroupName, new GenericStack<DefaultButton>());
-		buttonGroups.set(stepGroupName, new GenericStack<DefaultButton>());
+// FIXME		GameManager.instance.addEventListener(TokenEvent.ADD, onUnlocked);
+		
+		buttonGroups.set(NOTE_GROUP_NAME, new GenericStack());
+		buttonGroups.set(TAB_GROUP_NAME, new GenericStack());
+		buttonGroups.set(STEP_GROUP_NAME, new GenericStack());
 
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
-			displayPage(currentPage);
-			//dispatchEvent(new PartEvent(PartEvent.ENTER_PART)); // FIXME
-		});
+
+				displayPage(currentPage);
+				dispatchEvent(new PartEvent(PartEvent.ENTER_PART));
+
+			});
 
 		addEventListener(Event.REMOVED_FROM_STAGE, function(e){
-			//dispatchEvent(new PartEvent(PartEvent.EXIT_PART)); // FIXME
-			clearPage();
-		});
+
+				dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+				clearPage();
+
+			});
 	}
 
-	var chapterTemplates : Map<String, Fast>;
-	var chapterMap : Map<DefaultButton, Chapter>;
-	var currentPage : Page;
-	var tabTemplate : Fast;
-	var bookmark : Fast;
-	var bookmarkBkg : Widget;
-	var currentChapter : DefaultButton;
+	public var model (default, set) : Notebook;
 
-	public function set_model(model : Notebook) : Notebook {
+	private var chapterTemplates : StringMap<{ offsetY : Float, e : Display.ElementData }>;
 
-		if (model != this.model) {
+	private var chapterMap : Map<DefaultButton, Chapter>;
+	private var currentPage : Page;
+	private var tabTemplate : { x : Float, xOffset : Float, e : WidgetContainerData };
+	private var currentChapter : DefaultButton;
 
+	private var bookmark : ImageData;
+	private var bookmarkBkg : Widget;
+
+	private var guideData : GuideData;
+	private var stepData : { r: String, e: WidgetContainerData };
+
+
+	///
+	// API
+	//
+
+//	override public function parseContent(content:Xml):Void
+	public function setContent(d : DisplayData) : Void {
+
+		super.setContent(d);
+
+		switch (d.type) {
+
+			case Notebook(ct, tt, b, gd, sd):
+
+				if (d.layout != null) {
+
+					this.layout = d.layout;
+				}
+				this.chapterTemplates = ct;
+				this.chapterMap = new Map();
+
+				this.tabTemplate = tt;
+				this.bookmark = b;
+				this.guideData = gd;
+				this.stepData = sd;
+
+				this.buttonGroups.set(NOTE_GROUP_NAME, new GenericStack());
+
+			default: throw "wrong DisplayData type given to NotebookDisplay.setContent()";
+		}
+	}
+
+	public function set_model(model:Notebook):Notebook
+	{
+		if(model != this.model){
 			this.model = model;
 
 			// Display bkg
-			if (model.background != null) {
-
+			if(model.background != null){
 				addChildAt(displays.get(model.background), 0);
 			}
-			for (item in model.items) {
 
-				if (displays.exists(item)) {
-
+			for(item in model.items){
+				if(displays.exists(item)){
 					addChild(displays.get(item));
-				
-				} else {
-
-					throw '[NotebookDisplay] There is no item with ref "$item."';
 				}
+				else
+					throw '[NotebookDisplay] There is no item with ref "$item."';
 			}
+
 
 			// Set Locale
 			Localiser.instance.layoutPath = model.file;
@@ -101,27 +136,36 @@ class NotebookDisplay extends KpDisplay /* implements ContextualDisplay */ {
 			addChild(button);
 
 			// Display Tabs
-			var totalX: Float = Std.parseFloat(tabTemplate.att.x);
-			var xOffset = Std.parseFloat(tabTemplate.att.xOffset);
-			var first = true;
+			var totalX : Float = tabTemplate.x; // FIXME
+			var xOffset : Float = tabTemplate.xOffset; // FIXME
+			var first : Bool = true;
 
 			for (page in model.pages) {
 
-				var cloneXml = Xml.parse(tabTemplate.x.toString()).firstElement();
-				var tmpTemplate = new Fast(cloneXml);
-				tmpTemplate.x.set("ref", page.tabContent);
-				var icons = ParseUtils.selectByAttribute("ref", "icon", tmpTemplate.x);
-				ParseUtils.updateIconsXml(page.icon, icons);
+				//var cloneXml = Xml.parse(tabTemplate.x.toString()).firstElement(); ???
+				//var tmpTemplate = new Fast(cloneXml);
+				//tmpTemplate.x.set("ref", page.tabContent);
+				tabTemplate.e.wd.ref = page.tabContent;
 
-				var tab = new DefaultButton(tmpTemplate);
+
+// FIXME				var icons = ParseUtils.selectByAttribute("ref", "icon", tmpTemplate.x);
+// FIXME				ParseUtils.updateIconsXml(page.icon, icons);
+
+				var tab = new DefaultButton(tabTemplate.e); // FIXME
+
 				tab.x = totalX;
 				totalX += tab.width+xOffset;
 				tab.name = page.tabContent;
-				tab.setText(Localiser.instance.getItemContent(page.tabContent));
-				buttonGroups.get(tabGroupName).add(tab);
-				setButtonAction(tab, tmpTemplate.att.action);
+// FIXME				tab.setText(Localiser.instance.getItemContent(page.tabContent));
+				
+				buttonGroups.get(TAB_GROUP_NAME).add(tab);
+//				setButtonAction(tab, tmpTemplate.att.action);
+				setButtonAction(tab, switch(tabTemplate.e.type){ case DefaultButton(ds, ite, a, g, e): a; default: null; });
+
 				addChild(tab);
-				if(first){
+				
+				if(first) {
+
 					tab.toggle();
 					first = false;
 				}
@@ -129,19 +173,32 @@ class NotebookDisplay extends KpDisplay /* implements ContextualDisplay */ {
 
 				var offsetY: Float = 0;
 				// Fill every occurences of "icon" element with the proper tile/img
-				for(chapter in page.chapters){
-					if(!chapterTemplates.exists(chapter.ref))
+				for (chapter in page.chapters) {
+
+					if (!chapterTemplates.exists(chapter.ref)) {
+
 						throw "[NotebookDisplay] There is no template for chapter with ref '"+chapter.ref+"'.";
-					var icons = ParseUtils.selectByAttribute("ref", "icon", chapterTemplates.get(chapter.ref).x);
-					ParseUtils.updateIconsXml(chapter.icon, icons);
+					}
+
+// FIXME					var icons = ParseUtils.selectByAttribute("ref", "icon", chapterTemplates.get(chapter.ref).x);
+// FIXME					ParseUtils.updateIconsXml(chapter.icon, icons);
 					// Clickable note
-					var button: DefaultButton = new DefaultButton(chapterTemplates.get(chapter.ref));
+					var button : DefaultButton;
+
+					switch (chapterTemplates.get(chapter.ref).e) {
+
+						case DefaultButton(d):
+
+							button = new DefaultButton(d);
+
+						default: throw "";
+					}
 					button.y += offsetY;
-					offsetY += button.height + Std.parseFloat(chapterTemplates.get(chapter.ref).att.offsetY);
-					var chapterTitle = Localiser.instance.getItemContent(chapter.name);
+					offsetY += button.height + chapterTemplates.get(chapter.ref).offsetY;
+// FIXME					var chapterTitle = Localiser.instance.getItemContent(chapter.name);
 					button.setText(chapterTitle, "title");
-					button.setText(Localiser.instance.getItemContent(chapter.subtitle), "subtitle");
-					buttonGroups.get(noteGroupName).add(button);
+// FIXME					button.setText(Localiser.instance.getItemContent(chapter.subtitle), "subtitle");
+					buttonGroups.get(NOTE_GROUP_NAME).add(button);
 					button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 					// Fill hit box
 					DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
@@ -163,8 +220,8 @@ class NotebookDisplay extends KpDisplay /* implements ContextualDisplay */ {
 
 	// Privates
 
-	private function displayPage(page : Page) : Void {
-
+	private function displayPage(page:Page):Void
+	{
 		currentPage = page;
 
 		// Set Locale
@@ -172,15 +229,17 @@ class NotebookDisplay extends KpDisplay /* implements ContextualDisplay */ {
 
 		// Display title
 		var title: ScrollPanel = cast(displays.get(currentPage.title.ref), ScrollPanel);
-		title.setContent(Localiser.instance.getItemContent(currentPage.title.content));
+// FIXME		title.setContent(Localiser.instance.getItemContent(currentPage.title.content));
 		addChild(title);
 
 		// Build Bookmark container
-		if(bookmarkBkg == null)
+		if(bookmarkBkg == null) {
+
 			bookmarkBkg = createImage(bookmark);
+		}
 
 		// Clean previous note
-		/*for(note in buttonGroups.get(noteGroupName)){
+		/*for(note in buttonGroups.get(NOTE_GROUP_NAME)){
 			removeChild(note);
 			note = null;
 		}*/
@@ -199,8 +258,8 @@ class NotebookDisplay extends KpDisplay /* implements ContextualDisplay */ {
 		Localiser.instance.popLocale();
 	}
 
-	override private function setButtonAction(button : DefaultButton, action : String) : Bool {
-
+	override private function setButtonAction(button:DefaultButton, action:String):Bool
+	{
 		if(super.setButtonAction(button, action))
 			return true;
 		button.buttonAction = switch(action.toLowerCase()){
@@ -218,31 +277,62 @@ class NotebookDisplay extends KpDisplay /* implements ContextualDisplay */ {
 		currentChapter = target;
 		var notes: Array<Note> = chapterMap.get(target).notes;
 		var numActive = 0;
-		for(note in notes)
-			if(note.isActivated)
+		
+		for (note in notes) {
+
+			if (note.isActivated) {
+
 				numActive++;
-		if(numActive > 1){
+			}
+		}
+		if (numActive > 1) {
+
 			clearPage(target);
 			addChild(bookmarkBkg);
-			var guide: Guide = GuideFactory.createGuideFromXml(bookmark.node.Guide);
+
+			var guide : Guide;
+
+			switch (guideData) {
+
+				case Line(d):
+
+					guide = new Line(d);
+
+				case Grid(d):
+
+					guide = new Grid(d);
+
+				case Curve(d):
+
+					guide = new Curve(d);
+			}
+			
 			// Create steps
-			for(i in 0...numActive){
-				var step: DefaultButton = cast(createButton(bookmark.node.Step), DefaultButton);
+			for(i in 0...numActive) {
+
+				var step : DefaultButton = cast(createButton(stepData.r, stepData.e), DefaultButton);
 				step.setText(Std.string(i+1));
 				step.name = Std.string(i);
 				var transitionIn = null;
-                if(bookmark.node.Step.has.transitionIn)
-                    transitionIn = bookmark.node.Step.att.transitionIn;
+
+                if (stepData.transitionIn != null) {
+
+                    transitionIn = stepData.transitionIn;
+                }
+				
 				guide.add(step,transitionIn);
-				if(i == 0)
+
+				if (i == 0) {
+
 					step.toggle();
+				}
 				addChild(step);
-				buttonGroups.get(stepGroupName).add(step);
+				buttonGroups.get(STEP_GROUP_NAME).add(step);
 			}
 			var chapter: Chapter = chapterMap.get(target);
-			Localiser.instance.layoutPath = model.file;
-			cast(displays.get(chapter.titleRef), ScrollPanel).setContent(Localiser.instance.getItemContent(chapter.name));
-			Localiser.instance.popLocale();
+// FIXME			Localiser.instance.layoutPath = model.file;
+// FIXME			cast(displays.get(chapter.titleRef), ScrollPanel).setContent(Localiser.instance.getItemContent(chapter.name));
+// FIXME			Localiser.instance.popLocale();
 			addChild(displays.get(chapter.titleRef));
 		}
 		var i = 0;
@@ -275,12 +365,12 @@ class NotebookDisplay extends KpDisplay /* implements ContextualDisplay */ {
 					removeChild(player);
 			}
 		}
-#if flash
+		#if flash
 		else{
 			var url = new URLRequest(note.content);
 			flash.Lib.getURL(url, "_blank");
 		}
-#end
+		#end
 	}
 
 	private function changeNote(?target:DefaultButton):Void
@@ -355,8 +445,8 @@ class NotebookDisplay extends KpDisplay /* implements ContextualDisplay */ {
 
 	private inline function clearSteps():Void
 	{
-		while(!buttonGroups.get(stepGroupName).isEmpty()){
-			var step = buttonGroups.get(stepGroupName).pop();
+		while(!buttonGroups.get(STEP_GROUP_NAME).isEmpty()){
+			var step = buttonGroups.get(STEP_GROUP_NAME).pop();
 			if(contains(step))
 				removeChild(step);
 			step = null;

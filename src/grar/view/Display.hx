@@ -70,10 +70,10 @@ enum DisplayType {
 
 	Display; // TODO remove ?
 	Part;
-	Activity( ? groups : StringMap<{ x : Float, y : Float, guide : GuideData }> );
-	Zone( ? bgColor : Null<Int>, ? ref : Null<String>, ? rows : Null<String>, ? columns : Null<String>, ? zones : Null<Array<DisplayData>> );
-	Menu( ? bookmark : Null<WidgetContainerData>, ? orientation : String, ? levelDisplays : StringMap<MenuLevel>, ? xBase : Null<Float>, ? yBase : Null<Float> );
-	Notebook;
+	Activity(? groups : StringMap<{ x : Float, y : Float, guide : GuideData }>);
+	Zone(? bgColor : Null<Int>, ? ref : Null<String>, ? rows : Null<String>, ? columns : Null<String>, ? zones : Null<Array<DisplayData>>);
+	Menu(? bookmark : Null<WidgetContainerData>, ? orientation : String, ? levelDisplays : StringMap<MenuLevel>, ? xBase : Null<Float>, ? yBase : Null<Float>);
+	Notebook(? chapterTemplates : StringMap<{ offsetY : Float, e : Display.ElementData }>, ? tabTemplate : { x : Float, xOffset : Float, e : WidgetContainerData }, ? bookmark : ImageData, ? guide : GuideData, ? step : { r: String, e: WidgetContainerData, transitionIn : Null<String> });
 }
 
 typedef DisplayData = {
