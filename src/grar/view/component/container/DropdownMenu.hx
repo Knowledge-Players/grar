@@ -18,7 +18,7 @@ import haxe.ds.StringMap;
 class DropdownMenu extends WidgetContainer {
 
 	//public function new( ? xml : Fast, blankItem = false) {
-	public function new( dmd : WidgetContainerData ) {
+	public function new( dmd : WidgetContainerData , blankItem = false) {
 
 		super(dmd);
 

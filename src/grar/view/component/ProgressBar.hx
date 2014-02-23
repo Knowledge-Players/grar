@@ -4,10 +4,14 @@ import aze.display.TileClip;
 import aze.display.TileLayer;
 
 import grar.view.component.container.WidgetContainer;
+
 import com.knowledgeplayers.grar.event.GameEvent;
 import com.knowledgeplayers.grar.event.PartEvent;
+
 import com.knowledgeplayers.grar.factory.UiFactory;
+
 import com.knowledgeplayers.grar.tracking.Trackable;
+
 import grar.util.DisplayUtils;
 
 import haxe.ds.StringMap;

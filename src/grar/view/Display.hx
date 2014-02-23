@@ -44,7 +44,7 @@ typedef Template = {
 
 enum ElementData {
 
-	TextGroup({ data : StringMap<{ obj : ElementData, z : Int }> });
+	TextGroup(data : StringMap<{ obj : ElementData, z : Int }>); // CHECK param
 	Image(i : ImageData);
 	TileImage(ti : TileImageData);
 	CharacterData(c : CharacterData);
@@ -60,6 +60,10 @@ enum ElementData {
 	// PartDisplay only
 	InventoryDisplay(d : WidgetContainerData);
 	IntroScreen(d : WidgetContainerData);
+
+	// Zone only
+	Menu(d : DisplayData);
+	ProgressBar(d : WidgetContainerData);
 }
 
 enum DisplayType {
@@ -528,7 +532,7 @@ typedef DisplayData = {
 		textGroups.set(r, d.data);
 	}
 
-	//private function addElement(elem:Widget, node:Fast):Void // FIXME
+	//private function addElement(elem:Widget, node:Fast):Void
 	private function addElement(elem : Widget, ref : String, ? isBackground : Bool = false) : Void {
 
 		if (isBackground) {

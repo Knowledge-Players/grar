@@ -49,8 +49,6 @@ class Zone extends Display {
 //	private var layer:TileLayer;
 	private var soundState : Bool = true;
 
-// FIXME	private var menuXml : Fast;
-
 	
 	///
 	// API
@@ -134,12 +132,14 @@ class Zone extends Display {
 		}
 	}
 
-// FIXME	public function createMenu(element:Fast):Void
-// FIXME	{
+//	public function createMenu(element:Fast):Void {
+	public function createMenu(d : DisplayData) : Void {
 
-// FIXME	    MenuDisplay.instance.parseContent(element.x);
-// FIXME		menuXml = element;
-// FIXME	}
+		// MenuDisplay.instance.parseContent(element.x);
+// FIXME	    MenuDisplay.instance.setContent(d);
+
+		//menuXml = element; ??? why was this useful
+	}
 
 
 	///
@@ -226,7 +226,7 @@ class Zone extends Display {
 
 		return sizeArray;
 	}
-// FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+
 	//override private function createElement(elemNode:Fast):Widget
 	private function createElement(e : ElementData, r : String) : Widget {
 
@@ -234,11 +234,17 @@ class Zone extends Display {
 
 		switch (e) {
 
-			case "menu": createMenu(elemNode);
+			case Menu(d):
+
+				createMenu(d);
 			
-			case "progressbar": createProgressBar(elemNode);
+			case ProgressBar(d):
+
+				createProgressBar(d);
 #if kpdebug
-			case "fastnav":	fastnav = new DropdownMenu(elemNode, true);
+			case DropdownMenu(d):
+
+				fastnav = new DropdownMenu(d, true);
 #end
 		}
 
@@ -246,10 +252,21 @@ class Zone extends Display {
 		return elem;
 	}
 
-// FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-	override private function addElement(elem:Widget, node:Fast):Void
-	{
-		super.addElement(elem, node);
+//	private function createProgressBar(element : Fast) : ProgressBar {
+	private function createProgressBar(d : WidgetContainerData) : ProgressBar {
+
+		var progress = new ProgressBar(d);
+
+		addChild(progress);
+
+		return progress;
+	}
+
+	//override private function addElement(elem:Widget, node:Fast):Void
+	override private function addElement(elem : Widget, ref : String, ? isBackground : Bool = false) : Void {
+
+		super.addElement(elem, ref, isBackground);
+
 		addChild(elem);
 	}
 

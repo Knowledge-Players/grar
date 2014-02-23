@@ -247,16 +247,16 @@ class XmlToDisplay {
 
 					case "menu":
 
-						e = // TODO
+						e = Menu(parseDisplayData(f, Menu));
 
 					case "progressbar":
 
-						e = // TODO
-
+						e = ProgressBar(XmlToWidgetContainer.parseWidgetContainerData(f, ProgressBar));
+#if kpdebug
 					case "fastnav":
 
-						e = // TODO
-
+						e = DropdownMenu(XmlToWidgetContainer.parseWidgetContainerData(f, DropdownMenu));
+#end
 					default: // nothing
 				}
 

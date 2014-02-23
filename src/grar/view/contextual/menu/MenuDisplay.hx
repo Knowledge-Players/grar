@@ -86,7 +86,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 	// API
 	//
 
-    //override public function setContent(content:Xml):Void
+    //override public function parseContent(content:Xml):Void
     override public function setContent(d : DisplayData) : Void {
 
         super.setContent(d);
