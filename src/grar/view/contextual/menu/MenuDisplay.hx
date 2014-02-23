@@ -1,16 +1,22 @@
 package grar.view.contextual.menu;
 
-import com.knowledgeplayers.grar.event.PartEvent;
-import com.knowledgeplayers.grar.structure.part.Part;
-import com.knowledgeplayers.grar.localisation.Localiser;
-import com.knowledgeplayers.grar.display.component.Image;
-import com.knowledgeplayers.grar.display.component.container.SimpleContainer;
-import com.knowledgeplayers.grar.display.component.Widget;
-import com.knowledgeplayers.grar.display.contextual.ContextualDisplay;
-import com.knowledgeplayers.grar.display.component.container.DefaultButton;
-import com.knowledgeplayers.grar.display.GameManager;
-import grar.view.KpDisplay;
-import com.knowledgeplayers.grar.util.ParseUtils;
+import com.knowledgeplayers.grar.event.PartEvent; // FIXME
+
+import grar.model.part.Part;
+
+import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
+
+import grar.view.Display;
+import grar.view.component.Image;
+import grar.view.component.Widget;
+import grar.view.component.container.WidgetContainer;
+import grar.view.component.container.SimpleContainer;
+import grar.view.component.container.DefaultButton;
+import grar.view.contextual.ContextualDisplay;
+
+// FIXME import com.knowledgeplayers.grar.display.GameManager;
+
+import grar.util.ParseUtils;
 
 import flash.events.MouseEvent;
 import flash.display.Shape;
@@ -21,26 +27,25 @@ import haxe.ds.StringMap;
 
 using StringTools;
 
+enum MenuLevel {
+
+	Button(? xOffset : Null<Float>, ? yOffset : Null<Float>, ? width : Null<Float>, ? button : Null<WidgetContainerData>);
+	ContainerSeparator(? d : WidgetContainerData);
+	ImageSeparator(? thickness : Null<Float>, ? color : Null<Int>, ? alpha : Null<Float>, ? origin : Null<Array<Float>>, ? destination : Null<Array<Float>>, ? x : Null<Float>, ? y : Null<Float>);
+}
+
 /**
  * Display of a menu
  */
-class MenuDisplay extends KpDisplay implements ContextualDisplay {
+class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
-	public function new(kd : KpDisplayData, o : String, b : Null<BookmarkDisplay>, xb : Float, yb : Float, xo : Float, yo : Float) {
-		
-		super(kd);
+	private function new() {
 
-		this.orientation = o;
-		this.bookmark = b;
-		this.xBase = xb;
-		this.yBase = yb;
-		this.xOffset = xo;
-		this.yOffset = yo;
+		super();
 
-		// FIXME all below
 		buttons = new StringMap();
 		buttonGroups.set(btnGroupName, new GenericStack());
-		GameManager.instance.addEventListener(PartEvent.EXIT_PART, onFinishPart);
+// FIXME		GameManager.instance.addEventListener(PartEvent.EXIT_PART, onFinishPart);
 		addEventListener(Event.ADDED_TO_STAGE, onAdded);
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 	}
@@ -60,7 +65,7 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 	**/
 	public var menuButtons : GenericStack<DefaultButton>;
 
-	// private var levelDisplays : StringMap<Fast>; TODO check but we should not need this anymore
+	private var levelDisplays : StringMap<Fast>; // FIXME
 	private var xOffset : Float = 0;
 	private var yOffset : Float = 0;
 
@@ -76,6 +81,71 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 // Constant that stock the name of the button group
 	private inline static var btnGroupName: String = "levels";
 
+
+	///
+	// API
+	//
+
+    //override public function setContent(content:Xml):Void
+    override public function setContent(d : DisplayData) : Void {
+
+        super.setContent(d);
+
+        switch (d.type) {
+
+        	case Menu(b):
+
+				if (b != null) {
+
+					this.bookmark = new BookmarkDisplay(b);
+				}
+			default: throw "wrong DisplayData type given to MenuDisplay.setContent()";
+        }
+        exists = true;
+    }
+
+	public function init() : Void {
+
+		switch (data.type) {
+
+        	case Menu( b, o, ld, xb, yb ):
+
+        		this.orientation = o;
+        		this.levelDisplays = ld;
+
+				super.createDisplay();
+
+				this.xBase = xb;
+				this.yBase = yb;
+
+// FIXME				var menuXml = GameManager.instance.game.menu;
+
+				xOffset += xBase;
+				yOffset += yBase;
+
+// FIXME				Localiser.instance.layoutPath = LayoutManager.instance.interfaceLocale;
+
+				addChild(layers.get("ui").view);
+
+// FIXME				for (elem in menuXml.firstElement().elements()) {
+
+// FIXME					createMenuLevel(elem);
+// FIXME				}
+
+				if (bookmark != null) {
+
+					bookmark.updatePosition(currentPartButton.x, currentPartButton.y);
+					addChild(bookmark);
+				}
+
+// FIXME				Localiser.instance.popLocale();
+
+// FIXME				GameManager.instance.menuLoaded = true;
+
+			default: // nothing
+		}
+	}
+
 	/**
     * @:setter for orientation
     * @param    orientation : The orientation set
@@ -87,18 +157,120 @@ class MenuDisplay extends KpDisplay implements ContextualDisplay {
 		return this.orientation;
 	}
 
-	public function init():Void
-	{
-		Localiser.instance.popLocale();
+	
+	///
+	// INTERNALS
+	//
 
-		GameManager.instance.menuLoaded = true;
+	private function createMenuLevel(level : Xml) : Void { // FIXME FIXME FIXME FIXME FIXME 
+
+		if (!levelDisplays.exists(level.nodeName)) {
+
+			throw "Display not specified for tag " + level.nodeName;
+		}
+
+		var ml : MenuLevel = levelDisplays.get(level.nodeName);
+
+		switch (ml) {
+
+			case Button(xo, yo, w, bd):
+
+// FIXME				var partName = GameManager.instance.getItemName(level.get("id"));
+				if (partName == null) {
+
+					throw "[MenuDisplay] Can't find a name for '"+level.get("id")+"'.";
+				}
+
+				var button = addButton(bd, partName, level.get("icon"));
+
+				buttons.set(level.get("id"), button);
+				setButtonState(button, level); // FIXME
+				buttons.set(level.get("id"), button);
+
+	            button.x += xOffset;
+	            button.y += yOffset;
+
+				if (orientation == "vertical") {
+
+					yOffset += button.height + yo;
+				
+				} else if (w != null) {
+
+					xOffset += xOffset + w;
+				
+				} else if (orientation == "horizontal") {
+
+				    xOffset += button.width + xo;
+				}
+	            addChild(button);
+
+				if (currentPartButton == null) {
+
+					currentPartButton = button;
+				}
+
+			case ContainerSeparator(? d : WidgetContainerData):
+
+				var separator : Widget = new SimpleContainer(d);
+
+				separator.addEventListener(Event.CHANGE, updateDynamicFields);
+
+			case ImageSeparator(thickness, color, alpha, origin, destination, x, y):
+
+				var separator : Widget = new Image();
+
+				if (thickness != null) {
+
+					var line = new Shape();
+					
+					line.graphics.lineStyle(thickness, color, alpha);
+					line.graphics.moveTo(origin[0], origin[1]);
+					line.graphics.lineTo(destination[0], destination[1]);
+					line.x = x;
+					line.y = y + yOffset;
+					
+					separator.addChild(line);
+				}
+				separator.addEventListener(Event.CHANGE, updateDynamicFields);
+
+			default: 
+		}
+		for(elem in level.elements())	// FIXME FIXME FIXME FIXME
+			createMenuLevel(elem);	// FIXME FIXME FIXME FIXME
+	}
+// FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+	private function setButtonState(button:DefaultButton, level: Xml):Void
+	{
+		for(part in GameManager.instance.game.getAllParts()){
+			if(part.name == level.get("id")){
+				if(!part.canStart())
+					button.toggleState = "lock";
+				else
+					button.toggle(!part.isDone);
+				break;
+			}
+		}
 	}
 
-	// Private
+//	private function addButton(fast : Fast, text : String, iconId : String) : DefaultButton {
+	private function addButton(d : WidgetContainerData, text : String, iconId : String) : DefaultButton {
 
-	override private function createDisplay():Void // TODO check what's the consequence
-	{
+// FIXME parse "icons" in WidgetContainerData		var icons = ParseUtils.selectByAttribute("ref", "icon", fast.x);
+// FIXME parse "icons" in WidgetContainerData		ParseUtils.updateIconsXml(iconId, icons);
+		var button : DefaultButton = new DefaultButton(d);
+
+		button.setText(text, "partName");
+		button.buttonAction = onClick;
+		button.addEventListener(MouseEvent.MOUSE_OVER, onOver);
+		button.addEventListener(MouseEvent.MOUSE_OUT, onOut);
+		button.transitionOut = transitionOut;
+		button.name = text;
+		buttonGroups.get(btnGroupName).add(button);
+
+		return button;
 	}
+
+	override private function createDisplay() : Void { } // ?
 
 	// Handlers
 

@@ -79,7 +79,7 @@ typedef WidgetContainerData = {
 	var wd : WidgetData;
 	var type : WidgetContainerType;
 	var spritesheetRef : Null<String>; 
-	var tilesheet : Null<TilesheetEx> = null; // set in a second step (instanciation)
+	@:optional var tilesheet : Null<TilesheetEx> = null; // set in a second step (instanciation)
 	var contentAlpha : Float;
 	var scrollBarName : String;
 	var contentTransition : String;

@@ -20,10 +20,11 @@ import grar.view.component.Image;
 import grar.view.component.container.DefaultButton;
 import grar.view.component.container.ScrollPanel;
 import grar.view.component.CharacterDisplay;
+
 import com.knowledgeplayers.grar.factory.UiFactory; // FIXME
 import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
+
 import grar.util.DisplayUtils;
-import com.knowledgeplayers.utils.assets.AssetsStorage; // FIXME ?
 
 import flash.geom.Rectangle;
 import flash.events.Event;
@@ -32,8 +33,6 @@ import flash.display.Sprite;
 
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
-
-import haxe.xml.Fast; // FIXME
 
 using StringTools;
 
@@ -57,34 +56,38 @@ enum ElementData {
 	SimpleContainer(d : WidgetContainerData);
 	ChronoCircle(d : WidgetContainerData);
 	Template(d : { data : ElementData, validation : Null<String> });
+
+	// PartDisplay only
+	InventoryDisplay(d : WidgetContainerData);
+	IntroScreen(d : WidgetContainerData);
 }
 
 enum DisplayType {
 
 	Display; // TODO remove ?
-	Zone;
-	Menu;
-	Notebook;
 	Part;
-	// TODO find others
+	Zone(? bgColor : Null<Int>, ? ref : Null<String>, ? rows : Null<String>, ? columns : Null<String>, ? zones : Null<Array<DisplayData>>);
+	Menu( ? bookmark : Null<WidgetContainerData>, ? orientation : String, ? levelDisplays : StringMap<MenuLevel>, ? xBase : Null<Float>, ? yBase : Null<Float> );
+	Notebook;
 }
 
 typedef DisplayData = {
 
-	var x : Null<Float> = null;
-	var y : Null<Float> = null;
-	var width : Null<Float> = null;
-	var height : Null<Float> = null;
-	var spritesheets : Null<StringMap<TilesheetEx>>; // TODO set in second step
-	var spritesheetsSrc : StringMap<String>;
-	var transitionIn : Null<String>;
-	var transitionOut : Null<String>;
-	var layout : Null<String>;
-	var filters : Null<String>;
-	var timelines : StringMap<{ ref : String, elements : Array<{ ref : String, transition : String, delay : Float }> }>;
-	var displays : StringMap<ElementData>;
-	var layers : Null<StringMap<TileLayer>>; // TODO set in second step
-	var layersSrc : StringMap<String>;
+	var type : DisplayType;
+	@:optional var x : Null<Float> = null;
+	@:optional var y : Null<Float> = null;
+	@:optional var width : Null<Float> = null;
+	@:optional var height : Null<Float> = null;
+	@:optional var spritesheets : Null<StringMap<TilesheetEx>>; // TODO set in second step
+	@:optional var spritesheetsSrc : StringMap<String>;
+	@:optional var transitionIn : Null<String>;
+	@:optional var transitionOut : Null<String>;
+	@:optional var layout : Null<String>;
+	@:optional var filters : Null<String>;
+	@:optional var timelines : StringMap<{ ref : String, elements : Array<{ ref : String, transition : String, delay : Float }> }>;
+	@:optional var displays : StringMap<ElementData>;
+	@:optional var layers : Null<StringMap<TileLayer>>; // set in second step
+	@:optional var layersSrc : StringMap<String>;
 }
 
 class Display extends Sprite {
@@ -111,53 +114,55 @@ class Display extends Sprite {
 	}
 
 	// Should not be written. Can't be inlined because of inheritance
-	private var groupMenu: String = "menu";
-	private var groupNotebook: String = "notebook";
+	private var groupMenu : String = "menu";
+	private var groupNotebook : String = "notebook";
 	/**
     * All the spritesheets used here
     **/
-	public var spritesheets:Map<String, TilesheetEx>;
+	public var spritesheets : StringMap<TilesheetEx>;
 
 	/**
     * Transition to play at the beginning of the part
     **/
-	public var transitionIn (default, default):String;
+	public var transitionIn (default, default) : String;
 
 	/**
     * Transition to play at the end of the part
     **/
-	public var transitionOut (default, default):String;
+	public var transitionOut (default, default) : String;
 
 	/**
 	* Layout where to display this widget
 	**/
-	public var layout (default, default):String;
+	public var layout (default, default) : String;
 
 	/**
 	* Fields with dynamic content that need to be update while loading a new part
 	**/
-	public var dynamicFields (default, null): Array<{field: ScrollPanel, content: String}>;
+	public var dynamicFields (default, null) : Array<{field: ScrollPanel, content: String}>;
 
 	/**
 	* Map for layer render needed
 	**/
-	public var renderLayers (default, null):Map<TileLayer, Bool>;
+	public var renderLayers (default, null) : Map<TileLayer, Bool>;
 
 	/**
 	* Scroll bars
 	**/
-	public var scrollBars (default, null):Map<String, ScrollBar>;
+	public var scrollBars (default, null) : StringMap<ScrollBar>;
 
-	private var displays:Map<String, Widget>;
-	private var zIndex:Int = 0;
-	private var layers:Map<String, TileLayer>;
-	private var displayFast:Fast;
-	private var totalSpriteSheets:Int = 0;
-	private var textGroups:Map<String, Map<String, {obj:Fast, z:Int}>>;
-	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
-	private var displayTemplates: StringMap<Template>;
-	private var timelines: Map<String, Timeline>;
+	private var displays : StringMap<Widget>;
+	private var zIndex : Int = 0;
+	private var layers : StringMap<TileLayer>;
 
+	private var totalSpriteSheets : Int = 0;
+//	private var textGroups:Map<String, Map<String, {obj:Fast, z:Int}>>;
+	private var textGroups : StringMap<StringMap<{ obj : ElementData, z : Int }>>; // TODO FIXME in PartDisplay
+	private var buttonGroups : StringMap<GenericStack<DefaultButton>>;
+	private var displayTemplates : StringMap<Template>;
+	private var timelines : StringMap<Timeline>;
+
+	var data : Null<DisplayData> = null;
 
 	///
 	// API
@@ -165,6 +170,8 @@ class Display extends Sprite {
 
 	//public function parseContent(content:Xml):Void
 	public function setContent(d : DisplayData) : Void {
+
+		this.data = d;
 
 		d.x != null ? x = d.x;
 		d.y != null ? y = d.y;
@@ -518,7 +525,7 @@ typedef DisplayData = {
 
 			createElement(e.obj);
 		}
-		textGroups.set(r, d.data); // FIXME
+		textGroups.set(r, d.data);
 	}
 
 	//private function addElement(elem:Widget, node:Fast):Void // FIXME

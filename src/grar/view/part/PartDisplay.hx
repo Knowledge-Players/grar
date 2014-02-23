@@ -38,8 +38,6 @@ import flash.media.SoundChannel;
 
 import haxe.ds.GenericStack;
 
-import haxe.xml.Fast; // FIXME
-
 using StringTools;
 
 /**
@@ -57,7 +55,7 @@ class PartDisplay extends Display {
 
 		this.part = part;
 		resizeD = ResizeManager.get_instance();
-		currentItems = new GenericStack<Widget>();
+		currentItems = new GenericStack();
 	}
 
 	/**
@@ -67,20 +65,20 @@ class PartDisplay extends Display {
 
 	public var introScreenOn (default, null) : Bool = false;
 
-	private var currentElement:PartElement;
-	private var resizeD:ResizeManager;
-	private var currentSpeaker:CharacterDisplay;
-	private var previousBackground:String;
-	private var localeLoaded:Bool = false;
-	private var displayLoaded:Bool = false;
-	private var currentItems:GenericStack<Widget>;
-	private var currentItem:Item;
-	private var inventory:InventoryDisplay;
-	private var itemSound:Sound;
-	private var itemSoundChannel:SoundChannel;
-	private var numWidgetAdded: Int;
-	private var numWidgetReady: Int;
-	private var nextTimeline: String;
+	private var currentElement : PartElement;
+	private var resizeD : ResizeManager;
+	private var currentSpeaker : CharacterDisplay;
+	private var previousBackground : String;
+	private var localeLoaded : Bool = false;
+	private var displayLoaded : Bool = false;
+	private var currentItems : GenericStack<Widget>;
+	private var currentItem : Item;
+	private var inventory : InventoryDisplay;
+	private var itemSound : Sound;
+	private var itemSoundChannel : SoundChannel;
+	private var numWidgetAdded : Int;
+	private var numWidgetReady : Int;
+	private var nextTimeline : String;
 
 	/**
     * Initialize the part display.
@@ -93,9 +91,9 @@ class PartDisplay extends Display {
 		else
 			localeLoaded = true;
 
-		if(part.display != null)
-			parseContent(AssetsStorage.getXml(part.display));
-		else
+// FIXME		if(part.display != null)
+// FIXME			parseContent(AssetsStorage.getXml(part.display));
+// FIXME		else
 			displayLoaded = true;
 
 		localeLoaded = true;
@@ -248,26 +246,33 @@ class PartDisplay extends Display {
 			}
 		}
 	}
-/*** FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-	override private function createElement(elemNode:Fast):Widget
-	{
-		if(elemNode.name.toLowerCase() == "inventory"){
-			inventory = new InventoryDisplay(elemNode);
-			inventory.init(part.tokens);
-			addElement(inventory, elemNode);
-			return null;
+
+	//override private function createElement(elemNode:Fast):Widget
+	private function createElement(e : ElementData, r : String) : Widget {
+
+		switch (e) {
+
+			case InventoryDisplay(d): 
+
+				inventory = new InventoryDisplay(d);
+				inventory.init(part.tokens);
+				addElement(inventory, r);
+				return null;
+
+			case IntroScreen(d):
+
+				var intro = new IntroScreen(d);
+				intro.zz = zIndex;
+				displays.set(r, intro);
+				zIndex++;
+				return intro;
+
+			default: 
+
+				return super.createElement(e, r);
 		}
-		else if(elemNode.name.toLowerCase() == "intro"){
-			var intro = new IntroScreen(elemNode);
-			intro.zz = zIndex;
-			displays.set(elemNode.att.ref, intro);
-			zIndex++;
-			return intro;
-		}
-		else
-			return super.createElement(elemNode);
 	}
-*/
+
 	override private function createDisplay():Void
 	{
 		super.createDisplay();
