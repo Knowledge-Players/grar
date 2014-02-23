@@ -13,6 +13,7 @@ import grar.view.component.Image;
 import grar.view.component.CharacterDisplay;
 import grar.view.element.Timeline;
 import grar.view.contextual.InventoryDisplay;
+
 import com.knowledgeplayers.grar.display.GameManager;	// FIXME
 import com.knowledgeplayers.grar.display.ResizeManager;	// FIXME
 import com.knowledgeplayers.grar.display.TweenManager;	// FIXME
@@ -83,13 +84,16 @@ class PartDisplay extends Display {
 	/**
     * Initialize the part display.
     **/
-	public function init():Void
-	{
-		if(part.file != null){
-			Localiser.instance.layoutPath = part.file;
-		}
-		else
+	public function init() : Void {
+
+		if (part.file != null) {
+
+// FIXME			Localiser.instance.layoutPath = part.file;
+		
+		} else {
+
 			localeLoaded = true;
+		}
 
 // FIXME		if(part.display != null)
 // FIXME			parseContent(AssetsStorage.getXml(part.display));
@@ -182,7 +186,10 @@ class PartDisplay extends Display {
 		nextElement(part.getElementIndex(elem)-1);
 	}
 
-	// Privates
+
+	///
+	// INTERNALS
+	//
 
 	/**
      * Unload the display from the scene
@@ -209,39 +216,53 @@ class PartDisplay extends Display {
 		itemSoundChannel = null;
 	}
 
-	private function crawlTextGroup(item: Item, ?pattern: Pattern):Void
-	{
-		if(textGroups != null){
+	private function crawlTextGroup(item : Item, ? pattern : Pattern) : Void {
+
+		if (textGroups != null) {
+
 			var groupKey: String = null;
-			for(key in textGroups.keys()){
-				if(textGroups.get(key).exists(item.ref)){
+			
+			for (key in textGroups.keys()) {
+
+				if (textGroups.get(key).exists(item.ref)) {
+
 					groupKey = key;
 					break;
 				}
 			}
+			if (groupKey != null) {
 
-			if(groupKey != null){
 				var textItem = null;
 				var i = 0;
-				while(i < Lambda.count(textGroups.get(groupKey))){
-					if(i > 0){
-						if(pattern != null)
+				
+				while ( i < Lambda.count(textGroups.get(groupKey)) ) {
+
+					if (i > 0) {
+
+						if (pattern != null) {
+
 							textItem = pattern.getNextItem();
-						else
+						
+						} else {
+
 							textItem = cast(part.getNextElement(), Item);
-					}
-					else{
+						}
+					
+					} else {
+
 						textItem = item;
 					}
-					if(textItem != null && textItem.endScreen){
+					if (textItem != null && textItem.endScreen) {
+
 						part.isDone = true;
 						dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
 					}
 					setupItem(cast(textItem, Item), (i == 0));
 					i++;
 				}
-			}
-			else{
+			
+			} else {
+
 				setupItem(item);
 			}
 		}

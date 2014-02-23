@@ -29,6 +29,7 @@ class XmlToWidgetContainer {
 			wcd.spritesheetRef = f.has.spritesheet ? f.att.spritesheet : null;
 			wcd.contentAlpha = f.has.contentAlpha ? Std.parseFloat(f.att.contentAlpha) : 1;
 			wcd.scrollBarName = f.has.scrollBar ? f.att.scrollBar : null;
+			wcd.transitionIn = f.has.transitionIn ? f.att.transitionIn : null;
 
 			if (f.has.contentTransition) {
 
@@ -162,9 +163,36 @@ class XmlToWidgetContainer {
 
 			case TokenNotification:
 
-				var duration : Int = Std.parseInt(f.att.duration);;
+				var duration : Int = Std.parseInt(f.att.duration);
 
 				wcd.type = TokenNotification(duration);
+
+			case InventoryDisplay:
+
+				var guide : GuideData;
+				var fullscreen : WidgetContainerData;
+				var displayTemplates : StringMap<grar.view.contextual.InventoryDisplay.Template> = new StringMap();
+
+				var zIndex : Int = 0;
+
+				for (e in f.elements) {
+
+					if (e.name.toLowerCase() == "guide") {
+
+						guide = XmlToGuide.parseGuideData(e);
+					
+					} else if(e.name.toLowerCase() == "fullscreen") {
+
+						fullscreen = parseWidgetContainerData(e, SimpleContainer);
+					
+					} else {
+
+						displayTemplates.set(e.att.ref, { data: parseElement(e).e, z: zIndex });
+					}
+					zIndex++;
+				}
+
+				wcd.type = InventoryDisplay(guide, fullscreen, displayTemplates);
 
 			default: // nothing
 		}
@@ -182,13 +210,18 @@ class XmlToWidgetContainer {
 
 				for (e in f.elements) {
 
-					wcd = parseElement(e, wcd);
+					var ret : { e: ElementData, r: String } = parseElement(e, wcd);
+
+					wcd.displays.set(ret.r, ret.e);
 				}
 		}
 		return wcd;
 	}
 
-	static function parseElement(e : Fast, wcd : WidgetContainerData) : WidgetContainerData {
+	static function parseElement(e : Fast, wcd : WidgetContainerData) : { e: ElementData, r: String } {
+
+		var ref : String;
+		var e : ElementData;
 
 		switch(wcd.type) {
 
@@ -203,33 +236,38 @@ class XmlToWidgetContainer {
 						if (e.has.src) {
 
 				            var id : ImageData = XmlToImage.parseImageData(e);
-				            
-				            wcd.displays.set(id.wd.ref, Image(id));
+
+				            ref = id.wd.ref;
+				            e = Image(id);
 				        
 				        } else {
 
 				            var tid : TileImageData = XmlToImage.parseTileImageData(e,null,true,true);
 				            
-				            wcd.displays.set(tid.id.wd.ref, TileImage(tid));
+				            ref = tid.id.wd.ref;
+				            e = TileImage(tid);
 				        }
 
 					case "button":
 
 						var dbd : WidgetContainerData = parseWidgetContainerData(e, DefaultButton);
 
-						wcd.displays.set(dbd.wd.ref, DefaultButton(dbd));
+						ref = dbd.wd.ref;
+						e = DefaultButton(dbd);
 
 					case "text":
 
 						var spd : WidgetContainerData = parseWidgetContainerData(e, ScrollPanel);
 
-						wcd.displays.set(spd.wd.ref, ScrollPanel(sbd));
+						ref = spd.wd.ref;
+						e = ScrollPanel(sbd);
 
 				    case "timer":
 
 						var ccd : WidgetContainerData = parseWidgetContainerData(e, ChronoCircle);
 
-						wcd.displays.set(ccd.wd.ref, ChronoCircle(ccd));
+						ref = ccd.wd.ref;
+						e = ChronoCircle(ccd);
 
 					case "include" :
 /*** FIXME
@@ -244,7 +282,8 @@ class XmlToWidgetContainer {
 
 						var scd : WidgetContainerData = parseWidgetContainerData(e, SimpleContainer);
 
-						wcd.displays.set(scd.wd.ref, SimpleContainer(scd));
+						ref = scd.wd.ref;
+						e = SimpleContainer(scd);
 
 					default:
 
@@ -274,7 +313,8 @@ class XmlToWidgetContainer {
 								h: e.has.height ? Std.parseFloat(e.att.height) : 0
 							};
 
-						wcd.displays.set(e.has.ref ? e.att.ref : "backgroundcontrols", VideoBackground(bd)); // no ref available here ?
+						ref = e.has.ref ? e.att.ref : "backgroundcontrols";  // no ref available here ?
+						e = VideoBackground(bd);
 
 
 					case "progressbar":
@@ -318,7 +358,8 @@ class XmlToWidgetContainer {
 								cursor: csr
 							};
 
-						wcd.displays.set(e.has.ref ? e.att.ref : "progressbar", VideoProgressBar(pbd)); // no ref available here ?
+						ref = e.has.ref ? e.att.ref : "progressbar";  // no ref available here ?
+						e = VideoProgressBar(pbd);
 
 
 					case "slider":
@@ -356,13 +397,15 @@ class XmlToWidgetContainer {
 								cursor: csr
 							};
 
-						wcd.displays.set(e.has.ref ? e.att.ref : "slider", VideoSlider(pbd)); // no ref available here ?
+						ref = e.has.ref ? e.att.ref : "slider";  // no ref available here ?
+						e = VideoSlider(pbd);
 
 					default: // nothing
 				}
 
 			default: // nothing
 		}
-		return wcd;
+
+		return { e: e, r: ref };
 	}
 }

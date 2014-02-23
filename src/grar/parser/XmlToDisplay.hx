@@ -62,6 +62,17 @@ class XmlToDisplay {
 
 		switch (dd.type) {
 
+			case Activity:
+
+				var groups : StringMap<{ x : Float, y : Float, guide : Guide }> = new StringMap();
+
+				for (g in f.nodes.Group) {
+			
+					groups.set(f.att.ref, { x: Std.parseFloat(g.att.x);, y: Std.parseFloat(g.att.y);, guide: XmlToGuide.parseGuideData(g) });
+				}
+
+				dd.type = Activity( groups );
+
 			case Zone:
 
 				return parseZoneContent(f); // Zone parsing differs completely from other Displays

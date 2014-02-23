@@ -4,11 +4,11 @@ import grar.view.Display.Template;
 import grar.view.component.container.SimpleContainer;
 import grar.view.component.container.WidgetContainer;
 import grar.view.component.container.DefaultButton;
+import grar.view.guide.Guide;
 
 import com.knowledgeplayers.grar.factory.GuideFactory;
 
 import grar.util.ParseUtils;
-import grar.util.guide.Guide;
 
 import com.knowledgeplayers.grar.event.TokenEvent;
 
@@ -23,6 +23,12 @@ import flash.events.Event;
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
 
+typedef Template = {
+
+	var data : ElementData;
+	var z : Int;
+}
+
 /**
 * View of an inventory
 **/
@@ -36,34 +42,45 @@ class InventoryDisplay extends WidgetContainer {
 		slots = new StringMap();
 		displayTemplates = new StringMap();
 
-		var zIndex = 0;
-/* FIXME
-		for (elem in fast.elements) {
+		switch (idd.type) {
 
-			if (elem.name.toLowerCase() == "guide") {
+			case InventoryDisplay(gd, fs, dt):
 
-				guide = GuideFactory.createGuideFromXml(elem);
-			
-			} else if(elem.name.toLowerCase() == "fullscreen") {
+				switch (gd) {
 
-				fullscreenXML = elem;
-			
-			} else {
+					case Line(d):
 
-				displayTemplates.set(elem.att.ref, {fast: elem, z: zIndex});
-			}
-			zIndex++;
+						this.guide = new Line(d);
+
+					case Grid(d):
+
+						this.guide = new Grid(d);
+
+					case Curve(d):
+
+						this.guide = new Curve(d);
+				}
+
+				this.fullscreen = fs;
+				this.displayTemplates = dt;
+
+			default: throw "wrong WidgetContainerData type passed to InventoryDisplay constructor";
 		}
-*/
+
 // FIXME		GameManager.instance.addEventListener(TokenEvent.ADD, onTokenActivated);
 
-// FIXME		fullscreenContainer = new SimpleContainer(fullscreenXML);
+		fullscreenContainer = new SimpleContainer(fullscreen);
 	}
 
 	private var slots : StringMap<DefaultButton>;
+
 	private var displayTemplates : StringMap<Template>;
+
 	private var guide : Guide;
-// FIXME	private var fullscreenXML: Fast;
+
+	// private var fullscreenXML: Fast;
+	private var fullscreen : WidgetContainerData;
+
 	private var fullscreenContainer : SimpleContainer;
 
 
@@ -71,23 +88,30 @@ class InventoryDisplay extends WidgetContainer {
      * Init the inventory with all the tokens it will contained
      **/
 	public function init(tokens : GenericStack<String>) : Void {
-/* FIXME  FIXME  FIXME  FIXME  FIXME 
-		for(tokenRef in tokens){
-			var token: InventoryToken = GameManager.instance.inventory.get(tokenRef);
 
-			var cloneXml = Xml.parse(displayTemplates.get(token.ref).fast.x.toString()).firstElement();
-			var tmpTemplate = new Fast(cloneXml);
-			var icons = ParseUtils.selectByAttribute("ref", "icon", tmpTemplate.x);
-			ParseUtils.updateIconsXml(token.icon, icons);
+		for (tokenRef in tokens) {
 
-			var button = new DefaultButton(tmpTemplate);
+// FIXME			var token : InventoryToken = GameManager.instance.inventory.get(tokenRef);
+			var button : DefaultButton;
+
+			switch (displayTemplates.get(token.ref).data.data) {
+
+				case DefaultButton(d):
+
+// FIXME			var icons = ParseUtils.selectByAttribute("ref", "icon", tmpTemplate.x);
+// FIXME			ParseUtils.updateIconsXml(token.icon, icons);
+					button = new DefaultButton(d);
+
+				default: throw "unexpected ElementData type";
+			}
+
 			slots.set(tokenRef, button);
 			guide.add(button);
 			content.addChild(button);
 			button.buttonAction = onClickToken;
-			button.setText(Localiser.instance.getItemContent(token.name), "tooltip");
+// FIXME			button.setText(Localiser.instance.getItemContent(token.name), "tooltip");
 		}
-*/
+
 		addEventListener(Event.ADDED_TO_STAGE, function(e:Event) {
 
 				TweenManager.applyTransition(this, transitionIn);
@@ -111,18 +135,25 @@ class InventoryDisplay extends WidgetContainer {
 
 	private function onClickToken(?target: DefaultButton):Void
 	{
-		var token: InventoryToken = null;
-		for(ref in slots.keys()){
-			if(slots.get(ref) == target)
+		var token : InventoryToken = null;
+		
+		for (ref in slots.keys()) {
+
+			if (slots.get(ref) == target) {
+
 				token = GameManager.instance.inventory.get(ref);
+			}
 		}
-		if(token != null){
+		if (token != null) {
+
 			fullscreenContainer.setText(Localiser.instance.getItemContent(token.name), "title");
 			fullscreenContainer.setText(Localiser.instance.getItemContent(token.content), "txt");
 			content.addChild(fullscreenContainer);
-// FIXME			if(fullscreenXML.has.transitionIn)
-// FIXME				TweenManager.applyTransition(fullscreenContainer, fullscreenXML.att.transitionIn);
-		}
+			
+			if (fullscreen.transitionIn != null) {
 
+// FIXME				TweenManager.applyTransition(fullscreenContainer, fullscreen.transitionIn);
+			}
+		}
 	}
 }

@@ -44,7 +44,7 @@ typedef Template = {
 
 enum ElementData {
 
-	TextGroup(data : StringMap<{ obj : ElementData, z : Int }>); // CHECK param
+	TextGroup(data : StringMap<{ obj : ElementData, z : Int }>); // TODO CHECK param
 	Image(i : ImageData);
 	TileImage(ti : TileImageData);
 	CharacterData(c : CharacterData);
@@ -70,7 +70,8 @@ enum DisplayType {
 
 	Display; // TODO remove ?
 	Part;
-	Zone(? bgColor : Null<Int>, ? ref : Null<String>, ? rows : Null<String>, ? columns : Null<String>, ? zones : Null<Array<DisplayData>>);
+	Activity( ? groups : StringMap<{ x : Float, y : Float, guide : GuideData }> );
+	Zone( ? bgColor : Null<Int>, ? ref : Null<String>, ? rows : Null<String>, ? columns : Null<String>, ? zones : Null<Array<DisplayData>> );
 	Menu( ? bookmark : Null<WidgetContainerData>, ? orientation : String, ? levelDisplays : StringMap<MenuLevel>, ? xBase : Null<Float>, ? yBase : Null<Float> );
 	Notebook;
 }
@@ -161,7 +162,7 @@ class Display extends Sprite {
 
 	private var totalSpriteSheets : Int = 0;
 //	private var textGroups:Map<String, Map<String, {obj:Fast, z:Int}>>;
-	private var textGroups : StringMap<StringMap<{ obj : ElementData, z : Int }>>; // TODO FIXME in PartDisplay
+	private var textGroups : StringMap<StringMap<{ obj : ElementData, z : Int }>>; // ??? don't understand the use of it
 	private var buttonGroups : StringMap<GenericStack<DefaultButton>>;
 	private var displayTemplates : StringMap<Template>;
 	private var timelines : StringMap<Timeline>;

@@ -4,12 +4,17 @@ import aze.display.TileSprite;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 
-import com.knowledgeplayers.grar.display.element.ChronoCircle;
-import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import com.knowledgeplayers.grar.factory.UiFactory;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
-import com.knowledgeplayers.grar.util.ParseUtils;
-import com.knowledgeplayers.grar.util.DisplayUtils;
+
+import grar.view.contextual.InventoryDisplay.Template;
+import grar.view.element.ChronoCircle;
+
+import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
+
+import com.knowledgeplayers.grar.factory.UiFactory; // FIXME
+
+import grar.util.ParseUtils;
+import grar.util.DisplayUtils;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -67,7 +72,7 @@ enum WidgetContainerType {
 	ChronoCircle(? colorCircle : Null<Color>, ? minRadius : Null<Int>, ? maxRadius : Null<Int>, ? colorBackground : Null<Color>, ? centerCircle : Null<Color>);
 	VideoPlayer(? controlsHidden : Bool, ? autoFullscreen : Null<Bool>);
 	ProgressBar(? iconScale : Float, ? progressColor : Int, ? icon : String);
-	InventoryDisplay;
+	InventoryDisplay(? guide : GuideData, fullscreen : WidgetContainerData, displayTemplates : StringMap<Template>);
 	BookmarkDisplay(? animation : Null<String>, ? xOffset : Float, ? yOffset : Float);
 	IntroScreen(? duration : Int);
 	AnimationDisplay;
@@ -89,6 +94,7 @@ typedef WidgetContainerData = {
 	var maskHeight : Null<Float> = null;
 	var background : BackgroundData;
 	var displays : StringMap<ElementData>;
+	var transitionIn : Null<String>;
 }
 
 /**
