@@ -64,6 +64,10 @@ enum ElementData {
 	// Zone only
 	Menu(d : DisplayData);
 	ProgressBar(d : WidgetContainerData);
+	DropdownMenu(d : WidgetContainerData);
+
+	// Strip only
+	BoxDisplay(d : WidgetContainerData)
 }
 
 enum DisplayType {

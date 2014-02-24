@@ -253,6 +253,24 @@ class XmlToDisplay {
 		// parsing specific to some Display types
 		switch (dd.type) {
 
+			case Strip:
+
+				switch (f.name.toLowerCase()) {
+
+					case "box":
+
+						e = BoxDisplay(XmlToWidgetContainer.parseWidgetContainerData(f, BoxDisplay));
+
+					case "background": // in StripDisplay, "background" means Image (not TileImage)
+
+						var id : ImageData = XmlToImage.parseImageData(f, f.has.spritesheet ? f.att.spritesheet : "ui");
+						id.isBackground = true;
+
+						e = Image(id);
+
+					default: // nothing
+				}
+
 			case Part:
 
 				switch (f.name.toLowerCase()) {
