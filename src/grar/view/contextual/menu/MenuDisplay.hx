@@ -27,6 +27,18 @@ import haxe.ds.StringMap;
 
 using StringTools;
 
+typedef LevelData = {
+
+	var name : String;
+	var id : String;
+	@:optional var icon : Null<String>;
+	@:optional var items : Null<Array<LevelData>>;
+}
+typedef MenuData = {
+
+	var levels : Array<LevelData>;
+}
+
 enum MenuLevel {
 
 	Button(? xOffset : Null<Float>, ? yOffset : Null<Float>, ? width : Null<Float>, ? button : Null<WidgetContainerData>);
@@ -56,16 +68,12 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 	public var orientation (default, set) : String;
 
 	/**
-	 * Tell wether or not there is a menu in the module
-	 **/
-	//public var exists (default,null) : Bool = false; // testing null in application should be enought ?
-
-	/**
 	* Buttons that open and close the menu. Not set internally
 	**/
 	public var menuButtons : GenericStack<DefaultButton>;
 
 	private var levelDisplays : StringMap<Fast>; // FIXME
+
 	private var xOffset : Float = 0;
 	private var yOffset : Float = 0;
 
@@ -104,7 +112,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
         exists = true;
     }
 
-	public function init() : Void {
+	public function init(d : MenuData) : Void {
 
 		switch (data.type) {
 
@@ -118,8 +126,6 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 				this.xBase = xb;
 				this.yBase = yb;
 
-// FIXME				var menuXml = GameManager.instance.game.menu;
-
 				xOffset += xBase;
 				yOffset += yBase;
 
@@ -127,14 +133,14 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 				addChild(layers.get("ui").view);
 
-// FIXME				for (elem in menuXml.firstElement().elements()) {
+				for (l in e.levels) {
 
-// FIXME					createMenuLevel(elem);
-// FIXME				}
-
+					createMenuLevel(l);
+				}
 				if (bookmark != null) {
 
 					bookmark.updatePosition(currentPartButton.x, currentPartButton.y);
+
 					addChild(bookmark);
 				}
 
@@ -162,30 +168,30 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 	// INTERNALS
 	//
 
-	private function createMenuLevel(level : Xml) : Void { // FIXME FIXME FIXME FIXME FIXME 
+	private function createMenuLevel(level : LevelData) : Void {
 
-		if (!levelDisplays.exists(level.nodeName)) {
+		if (!levelDisplays.exists(level.name)) {
 
-			throw "Display not specified for tag " + level.nodeName;
+			throw "Display not specified for tag " + level.name;
 		}
 
-		var ml : MenuLevel = levelDisplays.get(level.nodeName);
+		var ml : MenuLevel = levelDisplays.get(level.name);
 
 		switch (ml) {
 
 			case Button(xo, yo, w, bd):
 
-// FIXME				var partName = GameManager.instance.getItemName(level.get("id"));
+// FIXME				var partName = GameManager.instance.getItemName(level.id);
 				if (partName == null) {
 
-					throw "[MenuDisplay] Can't find a name for '"+level.get("id")+"'.";
+					throw "[MenuDisplay] Can't find a name for '"+level.id+"'.";
 				}
 
-				var button = addButton(bd, partName, level.get("icon"));
+				var button = addButton(bd, partName, level.icon);
 
-				buttons.set(level.get("id"), button);
+				buttons.set(level.id, button);
 				setButtonState(button, level); // FIXME
-				buttons.set(level.get("id"), button);
+				buttons.set(level.id, button);
 
 	            button.x += xOffset;
 	            button.y += yOffset;
@@ -235,18 +241,26 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 			default: 
 		}
-		for(elem in level.elements())	// FIXME FIXME FIXME FIXME
-			createMenuLevel(elem);	// FIXME FIXME FIXME FIXME
+		for (elem in level.items) {
+
+			createMenuLevel(elem);
+		}
 	}
-// FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-	private function setButtonState(button:DefaultButton, level: Xml):Void
-	{
-		for(part in GameManager.instance.game.getAllParts()){
-			if(part.name == level.get("id")){
-				if(!part.canStart())
+
+	private function setButtonState(button : DefaultButton, level : LevelData) : Void {
+
+		for (part in GameManager.instance.game.getAllParts()) {
+
+			if (part.name == level.id) {
+
+				if (!part.canStart()) {
+
 					button.toggleState = "lock";
-				else
+				
+				} else {
+					
 					button.toggle(!part.isDone);
+				}
 				break;
 			}
 		}

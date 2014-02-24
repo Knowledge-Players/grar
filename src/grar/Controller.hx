@@ -86,7 +86,7 @@ class Controller {
 
 						gameSrv.fetchTransitions( displayXml.node.Transitions.att.display, function(t:StringMap<TransitionTemplate>){ state.module.transitions = t; }, onError );
 
-						gameSrv.fetchFilters( displayXml.node.Filters.att.display, function(f:StringMap<FilterType>){ state.module.filters = f; }, onError );
+						gameSrv.fetchFilters( displayXml.node.Filters.att.display, function(f:StringMap<FilterData>){ application.filters = f; }, onError );
 
 						if (displayXml.hasNode.Templates) {
 
@@ -129,15 +129,14 @@ class Controller {
 										}, onError);
 								
 								case MENU:
-/* FIXME
-									gameSrv.fetchMenu(contextual.att.display, contextual.has.file ? contextual.att.file : null, function(d:MenuDisplay, m:Xml){
 
-											application.menu = d;
-											// FIXME What is this menu Xml ??????
-											// TODO menu = AssetsStorage.getXml(c);
+									gameSrv.fetchMenu(contextual.att.display, contextual.has.file ? contextual.att.file : null, function(d:Displaydata, m:Null<MenuData>){
+
+											application.createMenu(d);
+											application.menuData = m;
 
 										}, onError);
-*/
+
 								default: // nothing
 							}
 						}
@@ -230,15 +229,43 @@ class Controller {
 				// if (getLoadingCompletion() == 1 && (numStyleSheet == numStyleSheetLoaded)) {
 
 		        	// Menu hasn't been set, creating the default
-		            if (menu == null) {
+		            if (application.menuData == null) {
 
-		                var menuXml = Xml.createDocument();
-			            menuXml.addChild(Xml.createElement("menu"));
-		                for (part in parts) {
+		            	var md : MenuData = { levels: [] };
 
-		                    createMenuXml(menuXml, part);
+		            	var createMenuLevel = function(p : Part, ? l : Int = 1) : LevelData {
+
+		            			var name : String = "h" + l;
+		            			var id : String = p.id;
+		            			var icon : Null<String> = null;
+		            			var items : Array<LevelData> = [];
+
+		            			for (pe in p.elements) {
+
+		            				switch (pe) {
+
+		            					Part(sp):
+
+		            						if (sp.hasParts()) {
+
+		            							items.push(createMenuLevel(sp, l++));
+		            						
+		            						} else {
+
+		            							items.push({ name: "item", id: sp.id });
+		            						}
+										
+										default: // nothing
+		            				}
+						        }
+						        return { name: name, id: id, icon: icon, items: items };
+			            	}
+
+		                for (part in state.module.parts) {
+
+		                    md.levels.push(createMenuLevel(part));
 		                }
-		                menu = menuXml;
+		                application.menu = md;
 		            }
 		            if (!layoutLoaded) {
 

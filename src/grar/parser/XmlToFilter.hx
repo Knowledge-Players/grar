@@ -1,9 +1,10 @@
 package grar.parser;
 
-import haxe.xml.Fast;
-import haxe.ds.StringMap;
+import grar.model.FilterData;
 
-import grar.model.FilterType;
+import haxe.xml.Fast;
+
+import haxe.ds.StringMap;
 
 class XmlToFilter {
 
@@ -16,14 +17,14 @@ class XmlToFilter {
 	static inline var ATT_VALUE_MED_Q : String = "MEDIUM";
 	static inline var ATT_VALUE_HIG_Q : String = "HIGH";
 
-    static public function parse( xml : Xml ) : StringMap<FilterType> {
+    static public function parse( xml : Xml ) : StringMap<FilterData> {
 
 		var root : Fast = new Fast(xml).node.Filters;
-		var filters : StringMap<FilterType> = new StringMap();
+		var filters : StringMap<FilterData> = new StringMap();
 
 		for (child in root.elements) {
 
-			var filter : Null<FilterType>;
+			var filter : Null<FilterData>;
 #if flash
 			switch(child.name.toLowerCase()) {
 

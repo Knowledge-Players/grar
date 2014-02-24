@@ -2,7 +2,7 @@ package grar.service;
 
 import grar.model.Grar;
 import grar.model.TransitionTemplate;
-import grar.model.FilterType;
+import grar.model.FilterData;
 import grar.model.StyleSheet;
 import grar.model.Locale;
 import grar.model.InventoryToken;
@@ -12,6 +12,7 @@ import grar.model.contextual.Notebook;
 import grar.model.part.Part;
 
 import grar.view.TokenNotification;
+import grar.view.contextual.menu.MenuDisplay.MenuData;
 
 import grar.parser.XmlToGrar;
 import grar.parser.XmlToTransition;
@@ -22,6 +23,7 @@ import grar.parser.XmlToInventory;
 import grar.parser.contextual.XmlToBibliography;
 import grar.parser.contextual.XmlToGlossary;
 import grar.parser.contextual.XmlToNotebook;
+import grar.parser.contextual.XmlToMenu;
 import grar.parser.part.XmlToPart;
 
 import aze.display.TilesheetEx;
@@ -68,9 +70,9 @@ class GameService {
 		onSuccess(t);
 	}
 
-	public function fetchFilters(uri : String, onSuccess : StringMap<FilterType> -> Void, onError : String -> Void) : Void {
+	public function fetchFilters(uri : String, onSuccess : StringMap<FilterData> -> Void, onError : String -> Void) : Void {
 
-		var f : StringMap<FilterType>;
+		var f : StringMap<FilterData>;
 
 		try {
 
@@ -160,20 +162,20 @@ class GameService {
 		}
 		onSuccess(m.n, m.i, v);
 	}
-/* FIXME
-	public function fetchMenu(vPath : String, mPath : Null<String>, onSuccess : grar.view.contextual.menu.MenuDisplay -> Null<Xml> -> Void, onError : String -> Void) : Void {
 
-		var v : MenuDisplay;
-		var m : Null<Xml> = null;
+	public function fetchMenu(vPath : String, mPath : Null<String>, onSuccess : DisplayData -> Null<MenuData> -> Void, onError : String -> Void) : Void {
+
+		var v : DisplayData;
+		var m : Null<MenuData> = null;
 
 		try {
 
 			// at the moment, grar fetches its data from embedded assets only
-			v = XmlToMenu.parseView(AssetsStorage.getXml(vPath));
+			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Menu);
 
 			if (mPath != null) {
 
-				m = AssetsStorage.getXml(mPath);
+				m = XmlToMenu.parse(AssetsStorage.getXml(mPath));
 			}
 
 		} catch (e:String) {
@@ -183,7 +185,7 @@ class GameService {
 		}
 		onSuccess(v, m);
 	}
-*/
+
 	public function fetchGlossary(path : String, onSuccess : Glossary -> Void, onError : String -> Void) : Void {
 
 		var g : Glossary;

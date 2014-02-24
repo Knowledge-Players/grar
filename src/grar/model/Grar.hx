@@ -46,8 +46,6 @@ class Grar {
 
 	public var transitions (default, default) : StringMap<TransitionTemplate>;
 
-	public var filters (default, default) : StringMap<FilterType>;
-
 	public var ref (default, set) : String; // ref for the layout (?)
 
 	public var notebook (default, set) : Notebook;
