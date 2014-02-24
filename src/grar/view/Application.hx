@@ -146,6 +146,14 @@ class Application {
 		menu = m;
 	}
 
+	public function initMenu() : Void {
+
+        if (menu != null) {
+
+            menu.init(menuData);
+        }
+	}
+
 
 	///
 	// CALLBACKS

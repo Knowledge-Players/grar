@@ -190,7 +190,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 				var button = addButton(bd, partName, level.icon);
 
 				buttons.set(level.id, button);
-				setButtonState(button, level); // FIXME
+				setButtonState(button, level);
 				buttons.set(level.id, button);
 
 	            button.x += xOffset;
@@ -215,7 +215,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 					currentPartButton = button;
 				}
 
-			case ContainerSeparator(? d : WidgetContainerData):
+			case ContainerSeparator(d):
 
 				var separator : Widget = new SimpleContainer(d);
 
@@ -258,7 +258,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 					button.toggleState = "lock";
 				
 				} else {
-					
+
 					button.toggle(!part.isDone);
 				}
 				break;

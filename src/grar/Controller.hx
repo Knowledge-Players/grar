@@ -265,7 +265,7 @@ class Controller {
 
 		                    md.levels.push(createMenuLevel(part));
 		                }
-		                application.menu = md;
+		                application.menuData = md;
 		            }
 		            if (!layoutLoaded) {
 
@@ -287,10 +287,8 @@ class Controller {
 		                // Menu must be init after the event is dispatched. Trust me.
 			            dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
 			            
-			            if (MenuDisplay.instance.exists) {
-
-		                    MenuDisplay.instance.init();
-			            }
+			            
+			            application.initMenu();
 		            }
 		        // }
 		    // *****************************
