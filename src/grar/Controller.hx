@@ -58,17 +58,8 @@ class Controller {
 
 					case Loading(langsUri, layoutUri, displayXml, structureXml):
 
-						var changeState = function() {
-
-								if (state.currentLocale != null && application.tilesheet != null) {
-
-									state.module.readyState = LoadingStyles(displayXml);
-								}
-							}
-
-
 						// tracking
-						trackingCtrl.initTracking(state.module, function(){ changeState(); }, onError);
+						trackingCtrl.initTracking(state.module, function(){ loadStyles(displayXml); }, onError);
 
 
 						// langs
@@ -80,7 +71,7 @@ class Controller {
 
 									application.tilesheet = t;
 
-									changeState();
+									loadStyles(displayXml);
 
 								}, onError );
 
@@ -164,37 +155,32 @@ class Controller {
 
 				        		}, onError);
 				        }
+
+						state.onModulePartsChanged = function() {
+
+								// Menu hasn't been set, creating the default
+						        if (application.menuData == null) {
+
+						        	createDefaultMenu();
+						        }
+
+// FIXME / TODO in tracking controller            if (stateInfos.tmpState != null) {
+
+// FIXME / TODO in tracking controller                stateInfos.loadStateInfos(stateInfos.tmpState);
+// FIXME / TODO in tracking controller            }
+// FIXME / TODO in tracking controller            for (part in getAllParts()) {
+
+// FIXME / TODO in tracking controller                part.isDone = stateInfos.isPartFinished(part.id);
+// FIXME / TODO in tracking controller                part.isStarted = stateInfos.isPartStarted(part.id);
+// FIXME / TODO in tracking controller            }
+
+						        loadlayouts(layoutUri);
+							}
+
 				        state.module.parts = parts;
 
 
-					case LoadingStyles(displayXml): // only when tilesheet loaded and currentLocale known
-
-						var onStyle = function(s : StyleSheet) {
-
-								state.module.setStyleSheet(currentLocale, stylesheet);
-
-								if (state.module.countStyleSheet(currentLocale) == 0) {
-
-									state.currentStyleSheet = stylesheet.name;
-								}
-							}
-
-						for (s in display.nodes.Style) {
-
-				            var fullPath = s.att.file.split("/");
-				            var localePath : String = "";
-
-				            for (i in 0...fullPath.length - 1) {
-
-				                localePath += fullPath[i] + "/";
-				            }
-				            localePath += state.currentLocale + "/";
-				            localePath += fullPath[fullPath.length - 1];
-
-					        var extension : String = localePath.substr(localePath.lastIndexOf(".") + 1);
-
-							gameSrv.fetchStyle( localePath, extension, application.tilesheet, onStyle, onError );
-				        }
+					default: // nothing
 				}
 			}
 
@@ -223,81 +209,103 @@ class Controller {
 				loadCurrentLocale();
 			}
 
-		state.onModulePartsChanged = function() { // actually code below also require the templates to be fetch already
+		application.onLayoutsChanged = function() {
 
-			// WIP **********************
-				// if (getLoadingCompletion() == 1 && (numStyleSheet == numStyleSheetLoaded)) {
-
-		        	// Menu hasn't been set, creating the default
-		            if (application.menuData == null) {
-
-		            	var md : MenuData = { levels: [] };
-
-		            	var createMenuLevel = function(p : Part, ? l : Int = 1) : LevelData {
-
-		            			var name : String = "h" + l;
-		            			var id : String = p.id;
-		            			var icon : Null<String> = null;
-		            			var items : Array<LevelData> = [];
-
-		            			for (pe in p.elements) {
-
-		            				switch (pe) {
-
-		            					Part(sp):
-
-		            						if (sp.hasParts()) {
-
-		            							items.push(createMenuLevel(sp, l++));
-		            						
-		            						} else {
-
-		            							items.push({ name: "item", id: sp.id });
-		            						}
-										
-										default: // nothing
-		            				}
-						        }
-						        return { name: name, id: id, icon: icon, items: items };
-			            	}
-
-		                for (part in state.module.parts) {
-
-		                    md.levels.push(createMenuLevel(part));
-		                }
-		                application.menuData = md;
-		            }
-		            if (!layoutLoaded) {
-
-			            if (stateInfos.tmpState != null) {
-
-		                    //stateInfos.initTrackable();
-			                stateInfos.loadStateInfos(stateInfos.tmpState);
-		                }
-			            for (part in getAllParts()) {
-
-		                    part.isDone = stateInfos.isPartFinished(part.id);
-		                    part.isStarted = stateInfos.isPartStarted(part.id);
-		                }
-		                // Load Layout
-		                LayoutManager.instance.parseXml(AssetsStorage.getXml(structureXml.node.Grar.node.Parameters.node.Layout.att.file));
-		            
-		            } else {
-
-		                // Menu must be init after the event is dispatched. Trust me.
-			            dispatchEvent(new PartEvent(PartEvent.PART_LOADED));
-			            
-			            
-			            application.initMenu();
-		            }
-		        // }
-		    // *****************************
+				// last call before the user experience actually starts
+        		application.initMenu();
 			}
 
 		state.readyState = true;
 	}
 
-	function loadCurrentLocale() {
+	function createDefaultMenu() : Void {
+
+    	var md : MenuData = { levels: [] };
+
+    	var createMenuLevel = function(p : Part, ? l : Int = 1) : LevelData {
+
+    			var name : String = "h" + l;
+    			var id : String = p.id;
+    			var icon : Null<String> = null;
+    			var items : Array<LevelData> = [];
+
+    			for (pe in p.elements) {
+
+    				switch (pe) {
+
+    					Part(sp):
+
+    						if (sp.hasParts()) {
+
+    							items.push(createMenuLevel(sp, l++));
+    						
+    						} else {
+
+    							items.push({ name: "item", id: sp.id });
+    						}
+						
+						default: // nothing
+    				}
+		        }
+		        return { name: name, id: id, icon: icon, items: items };
+        	}
+
+        for (part in state.module.parts) {
+
+            md.levels.push(createMenuLevel(part));
+        }
+        application.menuData = md;
+	}
+
+	function loadStyles(displayXml : Fast) : Void {
+
+		if (state.currentLocale != null && application.tilesheet != null) { // check if enought
+
+			// only when tilesheet loaded and currentLocale known
+
+			var onStyle = function(s : StyleSheet) {
+
+					state.module.setStyleSheet(currentLocale, stylesheet);
+
+					if (state.module.countStyleSheet(currentLocale) == 0) {
+
+						state.currentStyleSheet = stylesheet.name;
+					}
+				}
+
+			for (s in display.nodes.Style) {
+
+	            var fullPath = s.att.file.split("/");
+	            var localePath : String = "";
+
+	            for (i in 0...fullPath.length - 1) {
+
+	                localePath += fullPath[i] + "/";
+	            }
+	            localePath += state.currentLocale + "/";
+	            localePath += fullPath[fullPath.length - 1];
+
+		        var extension : String = localePath.substr(localePath.lastIndexOf(".") + 1);
+
+				gameSrv.fetchStyle( localePath, extension, application.tilesheet, onStyle, onError );
+	        }
+		}
+	}
+
+	function loadlayouts(uri : String) : Void { // actually, code below also requires the templates to be fetch already (and styles too ?)
+
+        gameSrv.fetchLayouts(uri, function(lm : StringMap<LayoutData>, lp : Null<String>){
+
+				if (lp != null) {
+
+					// FIXME Localiser.instance.layoutPath = lp;
+				}
+				application.createLayouts(lm);
+
+        	}, onError );
+	}
+
+	function loadCurrentLocale() : Void {
 
 		if (state.currentLocale == null || state.locales == null) {
 

@@ -1,14 +1,38 @@
 package grar.view.layout;
 
+import grar.view.Display.DisplayData;
+
 import haxe.ds.StringMap;
+
+import flash.Lib;
+
+typedef LayoutData = {
+
+	var name : String;
+	var content : DisplayData;
+}
 
 class Layout {
 
-	public function new(c : Zone, n : String) : Void {
+//	public function new(?_name:String, ?_content:Zone, ?_fast:Fast):Void
+	public function new( ? n : Null<String>, ? c : Null<Zone>, ? ld : Null<LayoutData>) : Void {
 
-		this.content = c;
-		this.name = n;
-		this.zones = new StringMap();
+		zones = new StringMap();
+
+		if (ld != null) {
+
+			content = new Zone(Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
+// FIXME			content.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
+
+			content.init(ld.content);
+
+			this.name = ld.name;
+		
+		} else {
+
+			this.name = n;
+			this.content = c;
+		}
 	}
 
 	/**

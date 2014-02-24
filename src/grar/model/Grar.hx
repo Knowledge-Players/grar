@@ -14,13 +14,14 @@ typedef InitState = {
 	var tracking : String;
 }
 
-enum ReadyState { // FIXME
+enum ReadyState {
 
 	Loading(langs : String, layout : String, displayNode : haxe.xml.Fast, structureNode : haxe.xml.Fast);
+	Ready;
 }
 
 /**
- * Represents a GRAR module/game.
+ * Represents a GRAR module / game.
  */
 class Grar {
 

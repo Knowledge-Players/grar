@@ -168,8 +168,6 @@ class TrackingController {
 				*/
 				state.checksum = Std.parseInt(stateInfosArray[3]);
 
-				//state.module.readyState = 
-
 				onSuccess();
 			}
 

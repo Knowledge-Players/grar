@@ -12,6 +12,7 @@ import grar.model.contextual.Notebook;
 import grar.model.part.Part;
 
 import grar.view.TokenNotification;
+import grar.view.layout.Layout.LayoutData;
 import grar.view.contextual.menu.MenuDisplay.MenuData;
 
 import grar.parser.XmlToGrar;
@@ -24,6 +25,7 @@ import grar.parser.contextual.XmlToBibliography;
 import grar.parser.contextual.XmlToGlossary;
 import grar.parser.contextual.XmlToNotebook;
 import grar.parser.contextual.XmlToMenu;
+import grar.parser.layout.XmlToLayouts;
 import grar.parser.part.XmlToPart;
 
 import aze.display.TilesheetEx;
@@ -36,7 +38,23 @@ class GameService {
 
 	public function new() { }
 
-	public function fetchModule( uri : String, onSuccess : Grar -> Void, onError : String -> Void ) : Void {
+	public function fetchLayouts(path : String, onSuccess : StringMap<LayoutData> -> Null<String> -> Void, onError : String -> Void) : Void {
+
+		var ret : { lp : Null<String>, lm : StringMap<LayoutData> };
+
+		try {
+
+			ret = XmlToLayouts.parse(AssetsStorage.getXml(path));
+
+		} catch(e:String) {
+
+			onError(e);
+			return;
+		}
+		onSuccess(ret.lm, ret.lp);
+	}
+
+	public function fetchModule(uri : String, onSuccess : Grar -> Void, onError : String -> Void) : Void {
 
 		var m : Grar;
 
@@ -352,21 +370,5 @@ class GameService {
 			onInnerError(e);
 			return;
 		}
-	}
-
-	public function fetchLayouts(path : String, onSuccess : StringMap<Layout> -> Void, onError : String -> Void) : Void {
-
-		var l : StringMap<Layout>;
-
-		try {
-
-			l = XmlToLayouts.parse(AssetsStorage.getXml(path));
-
-		} catch(e:String) {
-
-			onError(e);
-			return;
-		}
-		onSuccess(l);
 	}
 }

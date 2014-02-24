@@ -42,25 +42,12 @@ class Application {
 	public var tokensImages (default, set) : Null<StringMap<{ small : String, large : String }>>;
 #end
 
-	public var layouts (default, set) : Null<StringMap<Layout>> = null;
+	public var layouts (default, null) : Null<StringMap<Layout>> = null;
 
 	
 	///
 	// GETTER / SETTER
 	//
-
-	public function set_layouts(v : Null<StringMap<Layout>>) : Null<StringMap<Layout>> {
-
-		if (v == layouts) {
-
-			return layouts;
-		}
-		layouts = v;
-
-		onLayoutsChanged();
-
-		return layouts;
-	}
 
 	public function set_menu(v : Null<MenuDisplay>) : Null<MenuDisplay> {
 
@@ -135,6 +122,19 @@ class Application {
 	///
 	// API
 	//
+
+	public function createLayouts(lm : StringMap<LayoutData>) : Void {
+
+		l = new StringMap();
+
+		for (lk in lm.keys) {
+
+			l.set(lk, new Layout(lm.get(lk)));
+		}
+		this.layouts = l;
+
+		onLayoutsChanged();
+	}
 
 	public function createMenu(d : DisplayData) : Void {
 
