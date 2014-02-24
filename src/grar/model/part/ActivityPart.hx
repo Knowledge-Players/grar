@@ -2,6 +2,8 @@ package grar.model.part;
 
 //import com.knowledgeplayers.grar.display.GameManager; FIXME (see below)
 
+import grar.model.part.Part;
+
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
 

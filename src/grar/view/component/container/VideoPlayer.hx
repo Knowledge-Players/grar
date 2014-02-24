@@ -7,8 +7,11 @@ import aze.display.TileClip;
 import aze.display.TileSprite;
 import aze.display.TilesheetEx;
 
-import com.knowledgeplayers.grar.display.TweenManager;
+// FIXME import com.knowledgeplayers.grar.display.TweenManager;
+
+import grar.view.component.TileImage;
 import grar.view.component.container.WidgetContainer;
+
 import grar.util.DisplayUtils;
 
 import flash.display.Bitmap;
@@ -41,7 +44,7 @@ typedef SliderData = {
 	var x : Float;
 	var y : Float;
 	var bar : { tile : TileImageData, x : Float, y : Float };
-	var cursor : { tile : TileImageData, ref : String, x : Float : 0, y : Float, vol : Float };
+	var cursor : { tile : TileImageData, ref : String, x : Float, y : Float, vol : Float };
 }
 
 typedef ProgressBarData = {
@@ -53,7 +56,7 @@ typedef ProgressBarData = {
 	var cursor : { tile : TileImageData, ref : String, x : Float };
 }
 
-typedef BackgroundData = {
+typedef VideoBackgroundData = {
 
 	var color : Int;
 	var alpha : Float;
@@ -66,10 +69,10 @@ typedef BackgroundData = {
 class VideoPlayer extends WidgetContainer {
 
 	//public function new(?xml: Fast, ?tilesheet: TilesheetEx)
-	public function new(vpd : WidgetContainer) {
+	public function new(vpd : WidgetContainerData) {
 
-		playButtons = new GenericStack();
-		controls = new GenericStack();
+		playButtons = new GenericStack<DefaultButton>();
+		controls = new GenericStack<Widget>();
 		containerVideo = new Sprite();
 		containerControls = new Sprite();
         containerThumbnail = new Sprite();
@@ -430,7 +433,7 @@ class VideoPlayer extends WidgetContainer {
 				mt.x = (progressBar.x + mt.width/2);
 				mt.y = (progressBar.y + mt.height/2);
 				mask = mt.getMask();
-				mask.width = child.has.width ? Std.parseFloat(d.mask.id.width) : mt.width;
+				mask.width = d.mask.id.width != null ? d.mask.id.width : mt.width;
 
 				var bar = new Sprite();
 				DisplayUtils.initSprite(bar, mask.width, mask.height, d.bar.color, d.bar.alpha, d.bar.x, d.bar.y);
@@ -696,8 +699,8 @@ class VideoPlayer extends WidgetContainer {
 	private function showControls(e:MouseEvent=null):Void
 	{
 		if(controlsHidden){
-			TweenManager.stop(containerControls);
-			TweenManager.applyTransition(containerControls, "fadeInVideoControls").onComplete(checkAgain);
+// FIXME			TweenManager.stop(containerControls);
+// FIXME			TweenManager.applyTransition(containerControls, "fadeInVideoControls").onComplete(checkAgain);
 		}
 	}
 
@@ -705,9 +708,9 @@ class VideoPlayer extends WidgetContainer {
 	{
 
 		if(controlsHidden){
-			TweenManager.stop(containerControls);
+// FIXME			TweenManager.stop(containerControls);
 
-			TweenManager.applyTransition(containerControls, "fadeOutVideoControls",3);
+// FIXME			TweenManager.applyTransition(containerControls, "fadeOutVideoControls",3);
 		}
 
 	}

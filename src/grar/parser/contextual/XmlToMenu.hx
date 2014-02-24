@@ -4,7 +4,7 @@ import grar.view.contextual.menu.MenuDisplay.MenuData;
 
 class XmlToMenu {
 
-	static public parse(xml : Xml) : MenuData {
+	static public function parse(xml : Xml) : MenuData {
 
 		var md : MenuData = { levels: [] };
 

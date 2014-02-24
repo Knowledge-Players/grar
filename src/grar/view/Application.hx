@@ -2,11 +2,14 @@ package grar.view;
 
 import aze.display.TilesheetEx;
 
+import grar.view.component.container.WidgetContainer;
 import grar.view.contextual.menu.MenuDisplay;
 import grar.view.contextual.NotebookDisplay;
 import grar.view.element.TokenNotification;
 import grar.view.layout.Layout;
 import grar.view.FilterData;
+import grar.view.TransitionTemplate;
+import grar.view.Display;
 
 #if (flash || openfl)
 import flash.display.BitmapData;
@@ -27,14 +30,16 @@ class Application {
 
 	public var filters (default, default) : StringMap<FilterData>;
 
-	public var menuData (default, set) : Null<MenuDisplay.MenuData>;
+	public var transitions : StringMap<TransitionTemplate>;
+
+	public var menuData (default, set) : Null<MenuData>;
 
 
 	public var menu (default, set) : Null<MenuDisplay>;
 
-	public var notebook (default, set) : Null<NotebookDisplay>;
+	public var notebook (default, null) : Null<NotebookDisplay>;
 
-	public var tokenNotification (default, set) : Null<TokenNotification>;
+	public var tokenNotification (default, null) : Null<TokenNotification>;
 
 #if (flash || openfl)
 	public var tokensImages (default, set) : Null<StringMap<{ small : BitmapData, large : BitmapData }>>;
@@ -75,47 +80,21 @@ class Application {
 		return menuData;
 	}
 
-	public function set_notebook(v : Null<NotebookDisplay>) : Null<NotebookDisplay> {
-
-		if (v == notebook) {
-
-			return notebook;
-		}
-		notebook = v;
-
-		onNotebookChanged();
-
-		return notebook;
-	}
-
-	public function set_tokenNotification(v : Null<TokenNotification>) : Null<TokenNotification> {
-
-		if (v == tokenNotification) {
-
-			return tokenNotification;
-		}
-		tokenNotification = v;
-
-		onTokenNotificationChanged();
-
-		return tokenNotification;
-	}
-
 #if (flash || openfl)
-	public function set_tokensImages(v : Null<StringMap<small:BitmapData,large:BitmapData}>>) : Null<StringMap<{small:BitmapData,large:BitmapData}>> {
+	public function set_tokensImages(v : Null<StringMap<{small:BitmapData,large:BitmapData}>>) : Null<StringMap<{small:BitmapData,large:BitmapData}>> {
 #else
-	public function set_tokensImages(v : Null<StringMap<small:String,large:String}>>) : Null<StringMap<{small:String,large:String}>> {
+	public function set_tokensImages(v : Null<StringMap<{small:String,large:String}>>) : Null<StringMap<{small:String,large:String}>> {
 #end
 
-		if (v == tokensImage) {
+		if (v == tokensImages) {
 
-			return tokensImage;
+			return tokensImages;
 		}
-		tokensImage = v;
+		tokensImages = v;
 
-		onTokensImageChanged();
+		onTokensImagesChanged();
 
-		return tokensImage;
+		return tokensImages;
 	}
 
 
@@ -123,11 +102,29 @@ class Application {
 	// API
 	//
 
+	public function createTokenNotification(d : WidgetContainerData) : Void {
+
+		tokenNotification = new TokenNotification(d);
+
+		onTokenNotificationChanged();
+	}
+
+	public function createNotebook(d : DisplayData) : Void {
+
+		var n : NotebookDisplay = new NotebookDisplay();
+
+		n.setContent(d);
+
+		this.notebook = n;
+
+		onNotebookChanged();
+	}
+
 	public function createLayouts(lm : StringMap<LayoutData>) : Void {
 
-		l = new StringMap();
+		var l : StringMap<Layout> = new StringMap();
 
-		for (lk in lm.keys) {
+		for (lk in lm.keys()) {
 
 			l.set(lk, new Layout(lm.get(lk)));
 		}
@@ -138,7 +135,9 @@ class Application {
 
 	public function createMenu(d : DisplayData) : Void {
 
-		var m : MenuDisplay = new MenuDisplay(d);
+		var m : MenuDisplay = new MenuDisplay();
+
+		m.setContent(d);
 
 		// TODO set callbacks on m
 		// ...
@@ -169,6 +168,6 @@ class Application {
 
 	public dynamic function onLayoutsChanged() : Void { }
 
-	public dynamic function onTokensImageChanged() : Void { }
+	public dynamic function onTokensImagesChanged() : Void { }
 
 }

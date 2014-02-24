@@ -36,7 +36,7 @@ class AutoService {
 				isActive = false;
 				studentId = "42";
 				studentName = "wayne";
-				lesson_location = suivi;
+				// FIXME lesson_location = suivi;
 				score = "0";
 				masteryScore = 80;
 				lessonStatus = "n,a";

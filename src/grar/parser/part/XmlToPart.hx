@@ -13,21 +13,9 @@ import grar.parser.part.XmlToItem;
 
 import grar.util.ParseUtils;
 
+import haxe.ds.StringMap;
+
 import haxe.xml.Fast;
-
-enum PartType {
-
-	Part;
-	Activity;
-	Dialog;
-	Strip;
-}
-
-typedef PartialPart = {
-
-	var pd : PartData;
-	var type : PartType;
-}
 
 class XmlToPart {
 
@@ -375,12 +363,18 @@ class XmlToPart {
 
 		pd.id = f.att.id;
 		pd.nbSubPartTotal = 0;
+		pd.nbSubPartLoaded = 0;
+		pd.partIndex = 0;
+		pd.elemIndex = 0;
 		pd.elements = new Array();
-		pd.tokens = new GenericStack();
+		pd.tokens = new GenericStack<String>();
 		pd.buttons = new StringMap();
 		pd.buttonTargets = new StringMap();
 		pd.perks = new StringMap();
 		pd.requirements = new StringMap();
+		pd.endScreen = false;
+		pd.loaded = false;
+		pd.partialSubParts = [];
 
 		pd = parsePartHeader(pd, f);
 

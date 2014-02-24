@@ -1,10 +1,10 @@
 package grar.view.contextual.menu;
 
-import com.knowledgeplayers.grar.event.PartEvent; // FIXME
+// FIXME import com.knowledgeplayers.grar.event.PartEvent; // FIXME
 
 import grar.model.part.Part;
 
-import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
+// FIXME import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
 
 import grar.view.Display;
 import grar.view.component.Image;
@@ -12,7 +12,7 @@ import grar.view.component.Widget;
 import grar.view.component.container.WidgetContainer;
 import grar.view.component.container.SimpleContainer;
 import grar.view.component.container.DefaultButton;
-import grar.view.contextual.ContextualDisplay;
+//import grar.view.contextual.ContextualDisplay;
 
 // FIXME import com.knowledgeplayers.grar.display.GameManager;
 
@@ -51,12 +51,12 @@ enum MenuLevel {
  */
 class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
-	private function new() {
+	public function new() {
 
 		super();
 
 		buttons = new StringMap();
-		buttonGroups.set(btnGroupName, new GenericStack());
+		buttonGroups.set(btnGroupName, new GenericStack<DefaultButton>());
 // FIXME		GameManager.instance.addEventListener(PartEvent.EXIT_PART, onFinishPart);
 		addEventListener(Event.ADDED_TO_STAGE, onAdded);
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
@@ -72,7 +72,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 	**/
 	public var menuButtons : GenericStack<DefaultButton>;
 
-	private var levelDisplays : StringMap<Fast>; // FIXME
+	private var levelDisplays : StringMap<MenuLevel>;
 
 	private var xOffset : Float = 0;
 	private var yOffset : Float = 0;
@@ -325,7 +325,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 			}
 		}
 	}
-
+/* FIXME
 	private function onFinishPart(e:PartEvent):Void
 	{
 		// Set to finish
@@ -341,7 +341,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 			}
 		}
 	}
-
+*/
 	private inline function getUnlockCounterInfos(partId:String):String
 	{
 		var output: String = "";

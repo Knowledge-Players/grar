@@ -1,13 +1,15 @@
-package com.knowledgeplayers.grar.display.contextual;
+package grar.view.contextual;
 
-import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
+// FIXME import com.knowledgeplayers.grar.localisation.Localiser;
 
-import grar.view.guide.Guide;
-import grar.view.guide.Line;
-import grar.view.component.Widget;
 import grar.view.component.container.VideoPlayer;
 import grar.view.component.container.DefaultButton;
 import grar.view.component.container.ScrollPanel;
+import grar.view.component.container.WidgetContainer;
+import grar.view.component.Widget;
+import grar.view.component.Image;
+import grar.view.guide.Guide;
+import grar.view.guide.Line;
 import grar.view.Display;
 
 import grar.model.contextual.Notebook;
@@ -16,9 +18,9 @@ import grar.model.contextual.Note;
 import grar.util.ParseUtils;
 import grar.util.DisplayUtils;
 
-import com.knowledgeplayers.grar.event.PartEvent; // FIXME
-import com.knowledgeplayers.grar.event.TokenEvent; // FIXME
-import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
+// FIXME import com.knowledgeplayers.grar.event.PartEvent; // FIXME
+// FIXME import com.knowledgeplayers.grar.event.TokenEvent; // FIXME
+// FIXME import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
 
 import flash.events.Event;
 import flash.net.URLRequest;
@@ -41,9 +43,9 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 
 // FIXME		GameManager.instance.addEventListener(TokenEvent.ADD, onUnlocked);
 		
-		buttonGroups.set(NOTE_GROUP_NAME, new GenericStack());
-		buttonGroups.set(TAB_GROUP_NAME, new GenericStack());
-		buttonGroups.set(STEP_GROUP_NAME, new GenericStack());
+		buttonGroups.set(NOTE_GROUP_NAME, new GenericStack<DefaultButton>());
+		buttonGroups.set(TAB_GROUP_NAME, new GenericStack<DefaultButton>());
+		buttonGroups.set(STEP_GROUP_NAME, new GenericStack<DefaultButton>());
 
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
 
@@ -101,7 +103,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 				this.guideData = gd;
 				this.stepData = sd;
 
-				this.buttonGroups.set(NOTE_GROUP_NAME, new GenericStack());
+				this.buttonGroups.set(NOTE_GROUP_NAME, new GenericStack<DefaultButton>());
 
 			default: throw "wrong DisplayData type given to NotebookDisplay.setContent()";
 		}
@@ -397,7 +399,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 		if(i < model.pages.length)
 			displayPage(model.pages[i]);
 	}
-
+/* FIXME
 	private function onUnlocked(e:TokenEvent):Void
 	{
 		if(e.token.type == "note"){
@@ -428,7 +430,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 			}
 		}
 	}
-
+*/
 	private inline function clearPage(?activeChapter: DefaultButton):Void
 	{
 		clearSteps();

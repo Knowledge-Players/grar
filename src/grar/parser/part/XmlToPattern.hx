@@ -3,6 +3,7 @@ package grar.parser.part;
 import grar.model.part.Pattern;
 import grar.model.part.dialog.ChoicePattern;
 import grar.model.part.video.VideoPattern;
+import grar.model.part.strip.BoxPattern;
 
 import haxe.xml.Fast;
 import haxe.ds.StringMap;
@@ -12,7 +13,7 @@ class XmlToPattern {
 	static public function parse(xml : Xml) : Pattern {
 
 		var p : Pattern;
-		var f : Fast : new Fast(xml);
+		var f : Fast = new Fast(xml);
 
 		switch (f.att.type.toLowerCase()) {
 
@@ -42,8 +43,13 @@ class XmlToPattern {
 
 		var pd : PatternData = { };
 
+		pd.patternContent = [];
+		pd.buttons = new StringMap();
+		pd.tokens = new GenericStack<String>();
 		pd.id = f.att.id;
 		pd.nextPattern = f.att.next;
+		pd.endScreen = false;
+		pd.itemIndex = 0;
 
 		for (itemNode in f.nodes.Text) {
 

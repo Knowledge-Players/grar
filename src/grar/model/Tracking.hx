@@ -2,7 +2,7 @@ package grar.model;
 
 import haxe.Timer;
 
-enum Type {
+enum TrackingType {
 	Aicc( url : String, is : String );
 	Auto( lessonLocation : String );
 	Scorm( is2004 : Bool, successStatus : String, suspendData : String );
@@ -12,7 +12,7 @@ class Tracking {
 
 	static inline var TIME_INTERVAL : Int = 1000;
 	
-	public function new(ia : Bool, si : String, sn : String, l : Null<String>, s : String, ms : Null<Int>, ls : Null<String>, isn : Null<Bool>, t : Type) {
+	public function new(ia : Bool, si : String, sn : String, l : Null<String>, s : String, ms : Null<Int>, ls : Null<String>, isn : Null<Bool>, t : TrackingType) {
 
 		this.isActive = ia;
 		this.studentId = si;
@@ -43,7 +43,7 @@ class Tracking {
 	public var studentId : String;
 	public var studentName : String;
 	public var lessonStatus : String = "";
-	public var location (get,set) : String = "";
+	@:isVar public var location (get,set) : String = "";
 	public var score : String = "0";
 	public var masteryScore (default, null) : Int = 0;
 	public var suivi : String;
@@ -52,7 +52,7 @@ class Tracking {
 	public var currentTime : Int = 0;
 	public var isNote : Bool = false;
 	public var isActive : Bool;
-	public var type : Type;
+	public var type : TrackingType;
 
 	function updateCurrentTime() : Void {
 
@@ -189,6 +189,8 @@ class Tracking {
 		if((Std.string(this.getScore()) == "") || (this.getScore() <= v)) {
 
 			this.score = Std.string(v);
+
+			onScoreChanged();
 		}
 	}
 
@@ -238,11 +240,11 @@ class Tracking {
 
 		switch(type) {
 
-			case Scorm( b, ss, sd ), Aicc( u, i ):
+			case Scorm(_), Aicc(_):
 
 				return location;
 
-			case Auto( lesson_location ):
+			case Auto(lesson_location):
 
 				return lesson_location;
 		}
@@ -253,6 +255,8 @@ class Tracking {
 		location = v;
 
 		onLocationChanged();
+
+		return location;
 	}
 
 
@@ -265,6 +269,8 @@ class Tracking {
 	public dynamic function onSuccessStatusChanged() : Void { } // SCORM ONLY
 
 	public dynamic function onLocationChanged() : Void { }
+
+	public dynamic function onScoreChanged() : Void { }
 
 	public dynamic function onSuspendDataChanged() : Void { } // SCORM ONLY
 }

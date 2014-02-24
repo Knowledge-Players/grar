@@ -48,8 +48,8 @@ class XmlToItem {
 		var background : Null<String> = null;
 		var button : Null<StringMap<StringMap<String>>> = null;
 		var ref : Null<String> = null;
-		var tokens : GenericStack<String> = new GenericStack();
-		var images : GenericStack<String> = new GenericStack();
+		var tokens : GenericStack<String> = new GenericStack<String>();
+		var images : GenericStack<String> = new GenericStack<String>();
 		var endScreen : Bool = false;
 		var timelineIn : Null<String> = null;
 		var timelineOut : Null<String> = null;
@@ -138,7 +138,7 @@ class XmlToItem {
 		}
 
 		// Reverse pile order to match XML order
-		var tmpStack : GenericStack<String> = new GenericStack();
+		var tmpStack : GenericStack<String> = new GenericStack<String>();
 		
 		for (img in id.images) {
 

@@ -6,13 +6,13 @@ import haxe.ds.StringMap;
 typedef PatternData = {
 
 	var id : String;
-	var patternContent : Array<Item> = new Array();
+	var patternContent : Array<Item>;
 	var ref : String;
 	var nextPattern : String;
-	var buttons : StringMap<StringMap<String>> = new StringMap();
-	var tokens : GenericStack<String> = new GenericStack();
-	var endScreen : Bool = false;
-	var itemIndex : Int = 0;
+	var buttons : StringMap<StringMap<String>>;
+	var tokens : GenericStack<String>;
+	var endScreen : Bool;
+	var itemIndex : Int;
 }
 
 class Pattern /* implements PartElement */ {

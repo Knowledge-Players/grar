@@ -35,7 +35,7 @@ class ScormService {
 
 			case "off" :
 				isActive = false;
-				location = suivi;
+				// FIXME location = suivi;
 				score = "";
 				masteryScore = 80;
 				lessonStatus = "n,a";
@@ -120,7 +120,7 @@ class ScormService {
 				
 				if (status == "completed") { // FIXME, should this be here ?
 
-					setScore(100);
+					setScore(isActive, is2004, 100);
 				}
 			
 			} else {

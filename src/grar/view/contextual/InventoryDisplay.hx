@@ -6,15 +6,13 @@ import grar.view.component.container.WidgetContainer;
 import grar.view.component.container.DefaultButton;
 import grar.view.guide.Guide;
 
-import com.knowledgeplayers.grar.factory.GuideFactory;
-
 import grar.util.ParseUtils;
 
-import com.knowledgeplayers.grar.event.TokenEvent;
+// FIXME import com.knowledgeplayers.grar.event.TokenEvent;
 
 import grar.model.InventoryToken;
 
-import com.knowledgeplayers.grar.localisation.Localiser;
+// FIXME import com.knowledgeplayers.grar.localisation.Localiser;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -125,14 +123,14 @@ class InventoryDisplay extends WidgetContainer {
 	}
 
 	// Handlers
-
+/* FIXME
 	private function onTokenActivated(e:TokenEvent):Void
 	{
 		if(slots.exists(e.token.id)){
 			slots.get(e.token.id).toggleState = "active";
 		}
 	}
-
+*/
 	private function onClickToken(?target: DefaultButton):Void
 	{
 		var token : InventoryToken = null;

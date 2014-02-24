@@ -25,7 +25,7 @@ class AiccService {
 		var isActive : Null<Bool> = null;
 		var studentId : Null<String> = null;
 		var studentName : Null<String> = null;
-		var location : Null<> = null;
+		var location : Null<String> = null;
 		var score : Null<String> = null;
 		var masteryScore : Null<Int> = null;
 		var lessonStatus : Null<String> = null;

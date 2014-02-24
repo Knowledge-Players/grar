@@ -1,4 +1,8 @@
-package grar.util.guide;
+package grar.view.guide;
+
+import grar.view.guide.Line;
+import grar.view.guide.Grid;
+import grar.view.guide.Curve;
 
 import flash.display.DisplayObject;
 

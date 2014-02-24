@@ -31,7 +31,7 @@ class State {
 	//public var tmpState (default, null) : String;
 
 	//private var completion : Map<String, Int>;
-	//private var completionOrdered : Array<String>;
+	public var completionOrdered : Array<String>; // FIXME
 	//private var allItem : Array<Trackable>;
 
 	/*********/
@@ -78,6 +78,7 @@ class State {
 
 		tracking = v;
 
+		tracking.onScoreChanged = onTrackingScoreChanged;
 		tracking.onLocationChanged = onTrackingLocationChanged;
 		tracking.onStatusChanged = onTrackingStatusChanged;
 		tracking.onSuccessStatusChanged = onTrackingSuccessStatusChanged;
@@ -138,6 +139,8 @@ class State {
 	public dynamic function onTrackingStatusChanged() : Void { }
 
 	public dynamic function onTrackingSuccessStatusChanged() : Void { }
+
+	public dynamic function onTrackingScoreChanged() : Void { }
 
 	public dynamic function onTrackingSuspendDataChanged() : Void { }
 

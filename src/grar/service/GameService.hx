@@ -1,8 +1,6 @@
 package grar.service;
 
 import grar.model.Grar;
-import grar.model.TransitionTemplate;
-import grar.model.FilterData;
 import grar.model.StyleSheet;
 import grar.model.Locale;
 import grar.model.InventoryToken;
@@ -11,10 +9,15 @@ import grar.model.contextual.Bibliography;
 import grar.model.contextual.Notebook;
 import grar.model.part.Part;
 
-import grar.view.TokenNotification;
+import grar.view.Display;
+import grar.view.FilterData;
+import grar.view.TransitionTemplate;
+import grar.view.element.TokenNotification;
 import grar.view.layout.Layout.LayoutData;
 import grar.view.contextual.menu.MenuDisplay.MenuData;
+import grar.view.component.container.WidgetContainer;
 
+import grar.parser.XmlToDisplay;
 import grar.parser.XmlToGrar;
 import grar.parser.XmlToTransition;
 import grar.parser.XmlToFilter;
@@ -37,6 +40,11 @@ import haxe.ds.StringMap;
 class GameService {
 
 	public function new() { }
+
+	//public function loadLang(path : String, onSuccess : -> Void, onError : String -> Void) : Void {
+
+		// TODO
+	//}
 
 	public function fetchLayouts(path : String, onSuccess : StringMap<LayoutData> -> Null<String> -> Void, onError : String -> Void) : Void {
 
@@ -161,7 +169,7 @@ class GameService {
 		onSuccess(tmpls);
 	}
 
-	public function fetchNotebook(mPath : String, vPath : String, onSuccess : Notebook -> StringMap<InventoryToken> -> NotebookDisplay -> Void, onError : String -> Void) : Void {
+	public function fetchNotebook(mPath : String, vPath : String, onSuccess : Notebook -> StringMap<InventoryToken> -> DisplayData -> Void, onError : String -> Void) : Void {
 
 		var m : { n: Notebook, i: StringMap<InventoryToken> };
 		var v : NotebookDisplay;
@@ -171,7 +179,7 @@ class GameService {
 			// at the moment, grar fetches its data from embedded assets only
 			m = XmlToNotebook.parseModel(AssetsStorage.getXml(mPath));
 
-			v = XmlToNotebook.parseView(AssetsStorage.getXml(vPath));
+			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Notebook);
 
 		} catch (e:String) {
 
@@ -239,14 +247,14 @@ class GameService {
 	}
 
 #if (flash || openfl)
-	public function fetchInventory(path : String, onSuccess : StringMap<InventoryToken> -> TokenNotification -> StringMap<{ small : flash.display.BitmapData, large : flash.display.BitmapData }> -> Void, onError : String -> Void) : Void {
+	public function fetchInventory(path : String, onSuccess : StringMap<InventoryToken> -> WidgetContainerData -> StringMap<{ small : flash.display.BitmapData, large : flash.display.BitmapData }> -> Void, onError : String -> Void) : Void {
 #else
-	public function fetchInventory(path : String, onSuccess : StringMap<InventoryToken> -> TokenNotification -> StringMap<{ small : String, large : String }> -> Void, onError : String -> Void) : Void {
+	public function fetchInventory(path : String, onSuccess : StringMap<InventoryToken> -> WidgetContainerData -> StringMap<{ small : String, large : String }> -> Void, onError : String -> Void) : Void {
 #end
 		var i : { m : StringMap<InventoryToken>, d : String };
-		var id : { tn : TokenNotification, ti : StringMap<{ small : String, large : String }> };
+		var id : { tn : WidgetContainerData, ti : StringMap<{ small : String, large : String }> };
 #if (flash || openfl)
-		var ti : StringMap<{ small : String, large : String }> = new StringMap();
+		var ti : StringMap<{ small : flash.display.BitmapData, large : flash.display.BitmapData }> = new StringMap();
 #end
 		try {
 
@@ -275,11 +283,6 @@ class GameService {
 #end
 	}
 
-	public function loadLang(path : String, onSuccess : -> Void, onError : String -> Void) : Void {
-
-		// TODO
-	}
-
 	public function fetchStyle(path : String, ext : String, tilesheet : aze.display.TilesheetEx, 
 									onSuccess : StyleSheet -> Void, onError : String -> Void) : Void {
 
@@ -291,10 +294,10 @@ class GameService {
 			switch(ext.toLowerCase()) {
 
 				case "json":
-					s = JsonToStyleSheet(AssetsStorage.getText(path), tilesheet);
+					s = JsonToStyleSheet.parse(AssetsStorage.getText(path), tilesheet);
 
 				case "xml":
-					s = XmlToStyleSheet(AssetsStorage.getXml(path), tilesheet);
+					s = XmlToStyleSheet.parse(AssetsStorage.getXml(path), tilesheet);
 
 				default:
 					throw "unsupported style format "+ext;
@@ -314,7 +317,7 @@ class GameService {
 
 				var ret : { p : Part, pps : Array<PartialPart> };
 #if (flash || openfl)
-				pp.pd.soundLoop = AssetsStorage.getSound(soundLoopSrc);
+				pp.pd.soundLoop = AssetsStorage.getSound(pp.pd.soundLoopSrc);
 #end
 				if (pp.pd.file != null) {
 

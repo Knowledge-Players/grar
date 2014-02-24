@@ -5,6 +5,7 @@ import grar.model.contextual.Glossary;
 import grar.model.contextual.Bibliography;
 import grar.model.contextual.Notebook;
 import grar.model.score.ScoreChart;
+import grar.model.part.Part;
 
 import haxe.ds.StringMap;
 
@@ -25,7 +26,7 @@ enum ReadyState {
  */
 class Grar {
 
-	public function new(m : TrackingMode, id : String, s : State, r : String, rs : ReadyState) {
+	public function new(m : TrackingMode, id : String, s : InitState, r : String, rs : ReadyState) {
 
 		this.mode = m;
 		this.id = id;
@@ -44,8 +45,6 @@ class Grar {
 	public var id (default, null) : String;
 
 	public var state (default, null) : InitState;
-
-	public var transitions (default, default) : StringMap<TransitionTemplate>;
 
 	public var ref (default, set) : String; // ref for the layout (?)
 

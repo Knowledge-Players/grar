@@ -4,6 +4,7 @@ import openfl.Assets;
 
 import aze.display.TilesheetEx;
 
+import grar.view.component.Widget;
 import grar.view.component.container.SimpleBubble;
 
 //import com.knowledgeplayers.grar.factory.UiFactory; // FIXME
@@ -32,26 +33,24 @@ typedef Point2D = {
 typedef ImageData = {
 
 	var wd : WidgetData;
-	var src : Null<String> = f.has.src ? f.att.src : null;
-	var vertices : Null<List<Point2D>> = null;
-	var radius : Null<Array<Float>> = null;
-	var height : Null<Float> = null;
-	var width : Null<Float> = null;
-	var smoothing : Bool = true;
-	var mirror : Null<Int> = null;
-	var clipOrigin : Null<Array<Float>> = null;
-	var tilesheetRef : Null<String> = null;
-	var tilesheet : Null<TilesheetEx> = null; // set in second step (instanciation)
-	var tile : Null<String> = null;
-	var isBackground : Bool = false;
+	var src : Null<String>;
+	var vertices : Null<List<Point2D>>;
+	var radius : Null<Array<Float>>;
+	var height : Null<Float>;
+	var width : Null<Float>;
+	var smoothing : Bool;
+	var mirror : Null<Int>;
+	var clipOrigin : Null<Array<Float>>;
+	var tilesheetRef : Null<String>;
+	var tilesheet : Null<TilesheetEx>; // set in second step (instanciation)
+	var tile : Null<String>;
+	var isBackground : Bool;
 }
 
 /**
  * Image widget
  **/
 class Image extends Widget {
-
-	public var bitmap (default, null) : Bitmap;
 
 	//public function new( ? xml : Fast, ? tilesheet : TilesheetEx ) {
 	public function new( ? id : Null<ImageData> ) {
@@ -72,8 +71,8 @@ class Image extends Widget {
 				
 				for (i in 0...numChildren) {
 
-					getChildAt(i).x -= clipOrigin[0];
-					getChildAt(i).y -= clipOrigin[1];
+					getChildAt(i).x -= id.clipOrigin[0];
+					getChildAt(i).y -= id.clipOrigin[1];
 				}
 				mask.graphics.beginFill(0);
 				mask.graphics.drawRect(0, 0, id.width, id.height);
@@ -94,6 +93,8 @@ class Image extends Widget {
 			}
 		}
 	}
+
+	public var bitmap (default, null) : Bitmap;
 
 
 	///
@@ -142,6 +143,8 @@ class Image extends Widget {
 		if (id.src != null) {
 
 			if (id.vertices != null) {
+
+				var vertices = id.vertices;
 				
 				var shape = new Shape();
 				

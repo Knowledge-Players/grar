@@ -17,7 +17,7 @@ typedef CurveData = {
 	var maxAngle : Null<Float>;
 	var centerObject : Null<Bool>;
 	var transitionIn : Null<String>;
-	@:optional var center : Null<Array<Int>> = null;
+	@:optional var center : Null<Array<Int>>;
 }
 
 /**

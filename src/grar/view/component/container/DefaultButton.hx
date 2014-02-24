@@ -1,13 +1,13 @@
-package com.knowledgeplayers.grar.display.component.container;
+package grar.view.component.container;
 
 import aze.display.TileLayer;
 import aze.display.TileSprite;
 
-import com.knowledgeplayers.grar.display.element.Timeline;
-import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
-import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
-import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import com.knowledgeplayers.grar.util.ParseUtils;
+import grar.view.element.Timeline;
+import grar.view.component.container.WidgetContainer;
+import grar.view.component.container.ScrollPanel;
+
+// FIXME import com.knowledgeplayers.grar.event.ButtonActionEvent;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -51,7 +51,11 @@ class DefaultButton extends WidgetContainer {
 		
 					this.defaultState = ds;
 					this.isToggleEnabled = ite;
-					g != null ? this.group = g;
+
+					if (g != null) {
+
+						this.group = g;
+					}
 
 				default: //nothing
 			}
@@ -411,7 +415,7 @@ class DefaultButton extends WidgetContainer {
 	private inline function onToggle():Void
 	{
 		toggle(toggleState != "active");
-		dispatchEvent(new ButtonActionEvent(ButtonActionEvent.TOGGLE));
+//FIXME		dispatchEvent(new ButtonActionEvent(ButtonActionEvent.TOGGLE));
 	}
 
 	override private inline function addElement(elem:Widget):Void

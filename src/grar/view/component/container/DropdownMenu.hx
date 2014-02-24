@@ -1,8 +1,9 @@
 package grar.view.component.container;
 
+import grar.view.Color;
 import grar.view.component.container.WidgetContainer;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import com.knowledgeplayers.grar.util.ParseUtils;
+
+// FIXME import com.knowledgeplayers.grar.display.style.KpTextDownParser;
 
 import flash.geom.Point;
 import flash.display.Sprite;
@@ -18,13 +19,13 @@ import haxe.ds.StringMap;
 class DropdownMenu extends WidgetContainer {
 
 	//public function new( ? xml : Fast, blankItem = false) {
-	public function new( dmd : WidgetContainerData , blankItem = false) {
+	public function new(dmd : WidgetContainerData , blankItem = false) {
 
 		super(dmd);
 
 		blank = blankItem;
 		buttonMode = true;
-		items = new GenericStack();
+		items = new GenericStack<String>();
 		sprites = new StringMap();
 		list = new Sprite();
 		labelSprite = new Sprite();
@@ -43,7 +44,7 @@ class DropdownMenu extends WidgetContainer {
 	private var labelSprite : Sprite;
 	private var sprites : StringMap<Sprite>;
 	private var blank : Bool;
-	private var color : String;
+	private var color : Color;
 
 	/**
      * Add an item at the top of the menu
@@ -62,7 +63,7 @@ class DropdownMenu extends WidgetContainer {
 		currentLabel = label;
 		if(labelSprite.numChildren > 0)
 			labelSprite.removeChildAt(0);
-		labelSprite.addChild(KpTextDownParser.parse(label)[0].createSprite(maskWidth));
+// FIXME		labelSprite.addChild(KpTextDownParser.parse(label)[0].createSprite(maskWidth));
 		dispatchEvent(new Event(Event.CHANGE));
 		return label;
 	}
@@ -72,6 +73,7 @@ class DropdownMenu extends WidgetContainer {
 		var yOffset:Float = 0;
 		for(item in items){
 			if(item != null){
+/* FIXME
 				var sprite = KpTextDownParser.parse(item)[0].createSprite(maskWidth);
 				sprite.buttonMode = true;
 				sprite.y = yOffset;
@@ -79,6 +81,7 @@ class DropdownMenu extends WidgetContainer {
 				sprite.addEventListener(MouseEvent.CLICK, onItemClick);
 				list.addChild(sprite);
 				sprites.set(item, sprite);
+*/
 			}
 		}
 		if(localToGlobal(new Point(0, 0)).y+list.height > stage.stageHeight)
@@ -89,7 +92,7 @@ class DropdownMenu extends WidgetContainer {
 		if(!blank)
 			set_currentLabel(items.first());
 		else{
-			labelSprite.graphics.beginFill(ParseUtils.parseColor(color).color, ParseUtils.parseColor(color).alpha);
+			labelSprite.graphics.beginFill(color.color, color.alpha);
 			labelSprite.graphics.drawRect(0, 0, list.getChildAt(0).width, list.getChildAt(0).height);
 			labelSprite.graphics.endFill();
 

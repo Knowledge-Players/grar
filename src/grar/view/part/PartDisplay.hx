@@ -14,19 +14,19 @@ import grar.view.component.CharacterDisplay;
 import grar.view.element.Timeline;
 import grar.view.contextual.InventoryDisplay;
 
-import com.knowledgeplayers.grar.display.GameManager;	// FIXME
-import com.knowledgeplayers.grar.display.ResizeManager;	// FIXME
-import com.knowledgeplayers.grar.display.TweenManager;	// FIXME
+// FIXME import com.knowledgeplayers.grar.display.GameManager;	// FIXME
+// FIXME import com.knowledgeplayers.grar.display.ResizeManager;	// FIXME
+// FIXME import com.knowledgeplayers.grar.display.TweenManager;	// FIXME
 
-import com.knowledgeplayers.grar.event.ButtonActionEvent;	// FIXME
-import com.knowledgeplayers.grar.event.GameEvent;	// FIXME
-import com.knowledgeplayers.grar.event.PartEvent;	// FIXME
+// FIXME import com.knowledgeplayers.grar.event.ButtonActionEvent;	// FIXME
+// FIXME import com.knowledgeplayers.grar.event.GameEvent;	// FIXME
+// FIXME import com.knowledgeplayers.grar.event.PartEvent;	// FIXME
 
-import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
+// FIXME import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
 
-import grar.model.part.sound.item.SoundItem;
+import grar.model.part.sound.SoundItem;
 import grar.model.part.Item;
-import grar.model.part.video.item.VideoItem;
+import grar.model.part.video.VideoItem;
 import grar.model.part.Part;
 import grar.model.part.PartElement;
 import grar.model.part.Pattern;
@@ -55,8 +55,8 @@ class PartDisplay extends Display {
 		super();
 
 		this.part = part;
-		resizeD = ResizeManager.get_instance();
-		currentItems = new GenericStack();
+// FIXME		resizeD = ResizeManager.get_instance();
+		currentItems = new GenericStack<Widget>();
 	}
 
 	/**
@@ -67,7 +67,7 @@ class PartDisplay extends Display {
 	public var introScreenOn (default, null) : Bool = false;
 
 	private var currentElement : PartElement;
-	private var resizeD : ResizeManager;
+// FIXME 	private var resizeD : ResizeManager;
 	private var currentSpeaker : CharacterDisplay;
 	private var previousBackground : String;
 	private var localeLoaded : Bool = false;
@@ -108,9 +108,9 @@ class PartDisplay extends Display {
 	{
 		part.isDone = completed;
 		unLoad();
-		if(part.file != null)
-			Localiser.instance.popLocale();
-		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+// FIXME		if(part.file != null)
+// FIXME			Localiser.instance.popLocale();
+// FIXME		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 	}
 
 	/**
@@ -118,33 +118,46 @@ class PartDisplay extends Display {
     * @return the TextItem in the part or null if there is an activity or the part is over
     **/
 
-	public function nextElement(startIndex:Int = -1):Void
-	{
+	public function nextElement(startIndex : Int = -1) : Void {
+
 		currentElement = part.getNextElement(startIndex);
 
-		if(currentElement == null){
+		if (currentElement == null) {
+
 			exitPart();
 			return;
 		}
-		if(currentElement.endScreen){
-			part.isDone = true;
-			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
-		}
+		switch (currentElement) {
 
-		if(Std.is(currentElement, Item)){
-			crawlTextGroup(cast(currentElement, Item));
-		}
+			case Part(p):
 
-		else if(currentElement.isPattern()){
+				if (p.endScreen) {
 
-			startPattern(cast(currentElement, Pattern));
-		}
+					part.isDone = true;
+// FIXME			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+				}
+				cleanDisplay();
+// FIXME				var event = new PartEvent(PartEvent.ENTER_SUB_PART);
+// FIXME				event.part = cast(currentElement, Part);
+// FIXME				dispatchEvent(event);
 
-		else if(currentElement.isPart()){
-			cleanDisplay();
-			var event = new PartEvent(PartEvent.ENTER_SUB_PART);
-			event.part = cast(currentElement, Part);
-			dispatchEvent(event);
+			case Item(i):
+
+				if (i.endScreen) {
+
+					part.isDone = true;
+// FIXME			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+				}
+				crawlTextGroup(i);
+
+			case Pattern(p):
+
+				if (p.endScreen) {
+
+					part.isDone = true;
+// FIXME			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+				}
+				startPattern(p);
 		}
 	}
 
@@ -255,7 +268,7 @@ class PartDisplay extends Display {
 					if (textItem != null && textItem.endScreen) {
 
 						part.isDone = true;
-						dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+// FIXME						dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
 					}
 					setupItem(cast(textItem, Item), (i == 0));
 					i++;
@@ -304,9 +317,9 @@ class PartDisplay extends Display {
 	private function checkPartLoaded():Void
 	{
 		if(localeLoaded && displayLoaded){
-			var event = new PartEvent(PartEvent.PART_LOADED);
-			event.part = part;
-			dispatchEvent(event);
+// FIXME			var event = new PartEvent(PartEvent.PART_LOADED);
+// FIXME			event.part = part;
+// FIXME			dispatchEvent(event);
 		}
 	}
 
@@ -383,7 +396,7 @@ class PartDisplay extends Display {
 				currentSpeaker = char;
 
 				if(char.nameRef != null && displays.exists(char.nameRef))
-					cast(displays.get(char.nameRef), ScrollPanel).setContent(currentSpeaker.model.getName());
+					cast(displays.get(char.nameRef), ScrollPanel).setContent(currentSpeaker.charRef);
 				else if(char.nameRef != null)
 					throw "[PartDisplay] There is no TextArea with ref " + char.nameRef;
 			}
@@ -401,8 +414,8 @@ class PartDisplay extends Display {
 
 		currentItem = item;
 
-		for(token in item.tokens)
-			GameManager.instance.activateToken(token);
+// FIXME		for(token in item.tokens)
+// FIXME			GameManager.instance.activateToken(token);
 
 		if(isFirst)
 			setBackground(item.background);
@@ -419,8 +432,8 @@ class PartDisplay extends Display {
 				// The intro screen automatically removes itself after its duration
 				var intro = text.introScreen;
 				var introDisplay:IntroScreen = cast(displays.get(intro.ref), IntroScreen);
-				for(field in intro.content.keys())
-					introDisplay.setText(Localiser.instance.getItemContent(intro.content.get(field)), field);
+// FIXME				for(field in intro.content.keys())
+// FIXME					introDisplay.setText(Localiser.instance.getItemContent(intro.content.get(field)), field);
 				introDisplay.addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
 				{
 					introScreenOn = false;
@@ -472,6 +485,7 @@ class PartDisplay extends Display {
 
 	private function setText(item:TextItem, isFirst:Bool = true):Void
 	{
+/* FIXME
 		var content = Localiser.get_instance().getItemContent(item.content);
 		if(item.ref != null){
 			if(!displays.exists(item.ref))
@@ -479,6 +493,7 @@ class PartDisplay extends Display {
 			cast(displays.get(item.ref), ScrollPanel).setContent(content);
 		}
 		GameManager.instance.loadSound(item.sound);
+*/
 	}
 
 	private function displayPart():Void
@@ -586,7 +601,7 @@ class PartDisplay extends Display {
 				var targetedText: String = null;
 				if(contentKey != " ")
 					targetedText = contentKey;
-				cast(displays.get(buttonRef), DefaultButton).setText(Localiser.instance.getItemContent(buttonContent.get(contentKey)), targetedText);
+// FIXME				cast(displays.get(buttonRef), DefaultButton).setText(Localiser.instance.getItemContent(buttonContent.get(contentKey)), targetedText);
 			}
 		}
 	}

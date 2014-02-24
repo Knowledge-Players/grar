@@ -1,15 +1,11 @@
 package grar.util;
 
+import grar.view.Color;
+
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
 
 using StringTools;
-
-typedef Color = {
-
-	var color : Int;
-	var alpha : Float;
-}
 
 class ParseUtils {
 

@@ -6,12 +6,20 @@ import aze.display.TilesheetEx;
 
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
+import grar.view.Display;
+import grar.view.Color;
+import grar.view.guide.Guide;
 import grar.view.contextual.InventoryDisplay.Template;
 import grar.view.element.ChronoCircle;
+import grar.view.component.Widget;
+import grar.view.component.Image;
+import grar.view.component.TileImage;
+import grar.view.component.ScaleBitmap;
+import grar.view.component.container.VideoPlayer;
 
-import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
+// FIXME import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
 
-import com.knowledgeplayers.grar.factory.UiFactory; // FIXME
+// FIXME import com.knowledgeplayers.grar.factory.UiFactory; // FIXME
 
 import grar.util.ParseUtils;
 import grar.util.DisplayUtils;
@@ -54,9 +62,9 @@ enum ElementData {
 	SimpleContainer(d:WidgetContainerData);
 
 	// VideoPlayer only
-	VideoBackground(d:VideoPlayer.BackgroundData);
-	VideoProgressBar(d:VideoPlayer.ProgressBarData);
-	VideoProgressBar(d:VideoPlayer.SliderData);
+	VideoBackground(d:VideoBackgroundData);
+	VideoProgressBar(d:ProgressBarData);
+	VideoSlider(d:SliderData);
 }
 
 enum WidgetContainerType {
@@ -65,7 +73,7 @@ enum WidgetContainerType {
 	SimpleContainer(? mask : Null<String>);
 	BoxDisplay;
 	DefaultButton(? defaultState : String, ? isToggleEnabled : Bool, ? action : Null<String>, ? group : Null<String>, ? enabled : Bool);
-	DropdownMenu(? color : String);
+	DropdownMenu(? color : Color);
 	ScrollPanel(? styleSheet : Null<String>, ? style : Null<String>, ? content : Null<String>, ? trim : Bool);
 	SimpleBubble;
 	SoundPlayer;
@@ -84,14 +92,14 @@ typedef WidgetContainerData = {
 	var wd : WidgetData;
 	var type : WidgetContainerType;
 	var spritesheetRef : Null<String>; 
-	@:optional var tilesheet : Null<TilesheetEx> = null; // set in a second step (instanciation)
+	@:optional var tilesheet : Null<TilesheetEx>; // set in a second step (instanciation)
 	var contentAlpha : Float;
 	var scrollBarName : String;
 	var contentTransition : String;
 	var scrollable : Bool;
 	var grid9 : { g0 : Float, g1 : Float, g2 : Float, g3 : Float };
-	var maskWidth : Null<Float> = null;
-	var maskHeight : Null<Float> = null;
+	var maskWidth : Null<Float>;
+	var maskHeight : Null<Float>;
 	var background : BackgroundData;
 	var displays : StringMap<ElementData>;
 	var transitionIn : Null<String>;
@@ -357,11 +365,11 @@ class WidgetContainer extends Widget {
 			scrollNeeded = false;
 		}
 
-        TweenManager.applyTransition(content, contentTransition);
+// FIXME        TweenManager.applyTransition(content, contentTransition);
 
 		for(child in children){
             if(child.transformation != null){
-                TweenManager.applyTransition(child, child.transformation);
+// FIXME                TweenManager.applyTransition(child, child.transformation);
             }
         }
 	}
@@ -370,15 +378,15 @@ class WidgetContainer extends Widget {
 	{
 		var partDisplay = parent;
 
-		while(!Std.is(partDisplay, KpDisplay)){
+		while(!Std.is(partDisplay, Display)){
 			partDisplay = partDisplay.parent;
 		}
 		if(scrollBarName == null){
 			var keyArray = [];
-			for (key in cast(partDisplay, KpDisplay).scrollBars.keys()) keyArray.push(key);
+			for (key in cast(partDisplay, Display).scrollBars.keys()) keyArray.push(key);
 			scrollBarName = keyArray[0];
 		}
-		scrollBar = cast(partDisplay, KpDisplay).scrollBars.get(scrollBarName);
+		scrollBar = cast(partDisplay, Display).scrollBars.get(scrollBarName);
 
 
 		scrollBar.setHeight(maskHeight);
@@ -417,19 +425,19 @@ class WidgetContainer extends Widget {
 	            addElement(tileImg);
 		        return tileImg;
 
-			case DefaultButton(d:WidgetContainerData):
+			case DefaultButton(d):
 
 				return createButton(d);
 
-			case ScrollPanel(d:WidgetContainerData):
+			case ScrollPanel(d):
 
 				return createText(d);
 
-			case ChronoCircle(d:WidgetContainerData):
+			case ChronoCircle(d):
 
 				return createTimer(d);
 
-			case SimpleContainer(d:WidgetContainerData):
+			case SimpleContainer(d):
 
 				return createSimpleContainer(d);
 /* FIXME
@@ -472,7 +480,7 @@ class WidgetContainer extends Widget {
 
 		switch(d.type) {
 
-			case DefaultButton(ds, ite, a, g):
+			case DefaultButton(_, _, a, g, _):
 
 				if (a != null) {
 
@@ -486,14 +494,14 @@ class WidgetContainer extends Widget {
 					
 					} else {
 
-						var stack = new GenericStack();
+						var stack = new GenericStack<DefaultButton>();
 						stack.add(button);
 						buttonGroups.set(g, stack);
 					}
 				}
 			default: // nothing
 		}
-		button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+// FIXME		button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 		addElement(button);
 		return button;
 	}
@@ -546,7 +554,7 @@ class WidgetContainer extends Widget {
 			renderNeeded = false;
 		}
 	}
-
+/* FIXME
 	private function onButtonToggle(e:ButtonActionEvent):Void
 	{
 		var button = cast(e.target, DefaultButton);
@@ -557,4 +565,5 @@ class WidgetContainer extends Widget {
 			}
 		}
 	}
+*/
 }

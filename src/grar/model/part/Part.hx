@@ -14,6 +14,20 @@ import flash.media.Sound;
 import flash.media.SoundChannel;
 #end
 
+enum PartType {
+
+	Part;
+	Activity;
+	Dialog;
+	Strip;
+}
+
+typedef PartialPart = {
+
+	var pd : PartData;
+	var type : PartType;
+}
+
 typedef PartData = {
 
 	var name : String;
@@ -37,16 +51,16 @@ typedef PartData = {
 	var ref : String;
 	var requirements (default, null) : StringMap<Int>;
 	var next (default, default) : String;
-	var endScreen (default, null) : Bool = false;
+	var endScreen (default, null) : Bool;
 	var buttonTargets (default, null) : StringMap<PartElement>;
-	var nbSubPartLoaded : Int = 0;
-	var nbSubPartTotal : Int = 0;
-	var partIndex : Int = 0;
-	var elemIndex : Int = 0;
+	var nbSubPartLoaded : Int;
+	var nbSubPartTotal : Int;
+	var partIndex : Int;
+	var elemIndex : Int;
 	var soundLoopChannel : SoundChannel;
-	var loaded : Bool = false;
+	var loaded : Bool;
 	// partial data
-	var partialSubParts : Array<grar.parser.XmlToPart.PartialPart> = [];
+	var partialSubParts : Array<PartialPart>;
 	var xml : Xml;
 }
 
@@ -371,11 +385,10 @@ class Part /* implements Part */ {
 		return elements[i];
 	}
 
-		/**
-	     * @return a string-based representation of the part
-	     */
-
-	override public function toString() : String {
+	/**
+     * @return a string-based representation of the part
+     */
+	public function toString() : String {
 
 		return "Part " + name + " " + file + " : " + elements.toString();
 	}

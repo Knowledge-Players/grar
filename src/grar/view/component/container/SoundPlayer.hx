@@ -19,7 +19,7 @@ class SoundPlayer extends WidgetContainer
     //public function new(?xml: Fast, ?tilesheet: TilesheetEx)
     public function new(spd : WidgetContainerData) {
 
-        playButtons = new GenericStack();
+        playButtons = new GenericStack<DefaultButton>();
 
         //super(xml, tilesheet);
         super(spd);

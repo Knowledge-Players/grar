@@ -8,12 +8,12 @@ import grar.view.component.container.DefaultButton;
 
 import grar.view.part.PartDisplay;
 
-import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
+// FIXME import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
 
 import grar.model.part.Part;
 import grar.model.part.Item;
 import grar.model.part.Pattern;
-import grar.model.part.strip.pattern.BoxPattern;
+import grar.model.part.strip.BoxPattern;
 import grar.model.part.TextItem;
 
 
@@ -93,8 +93,8 @@ class StripDisplay extends PartDisplay {
 			currentBoxItem = nextItem;
 			setupItem(nextItem);
 
-			for(token in nextItem.tokens)
-				GameManager.instance.activateToken(token);
+// FIXME			for(token in nextItem.tokens)
+// FIXME				GameManager.instance.activateToken(token);
 		}
 		else if(currentBox.nextPattern != "")
 			goToPattern(currentBox.nextPattern);
@@ -111,7 +111,7 @@ class StripDisplay extends PartDisplay {
 		for(elem in part.elements){
 			if(elem.isText()){
 				var textItem = cast(elem, TextItem);
-				cast(displays.get(textItem.ref), ScrollPanel).setContent(Localiser.instance.getItemContent(textItem.content));
+// FIXME				cast(displays.get(textItem.ref), ScrollPanel).setContent(Localiser.instance.getItemContent(textItem.content));
 			}
 		}
 		displayPart();
@@ -137,9 +137,9 @@ class StripDisplay extends PartDisplay {
 			var nextItem: Item = currentBoxItem;
 			while(nextItem != null){
 				if(nextItem != null){
-					box.textFields.get(nextItem.ref).setContent(Localiser.instance.getItemContent(nextItem.content));
-					if(Std.is(nextItem, TextItem))
-						GameManager.instance.playSound(cast(nextItem, TextItem).sound);
+// FIXME					box.textFields.get(nextItem.ref).setContent(Localiser.instance.getItemContent(nextItem.content));
+// FIXME					if(Std.is(nextItem, TextItem))
+// FIXME						GameManager.instance.playSound(cast(nextItem, TextItem).sound);
 				}
 
 				nextItem = currentBox.getNextItem();

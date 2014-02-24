@@ -39,7 +39,7 @@ class XmlToDisplay {
 
 		var f : Fast = new Fast(xml.firstElement());
 
-		var dd : DisplayData = parseContent(f : Fast, type);
+		var dd : DisplayData = parseContent(f, type);
 
 		return dd;
 	}
@@ -84,7 +84,7 @@ class XmlToDisplay {
 
 				for (g in f.nodes.Group) {
 			
-					groups.set(f.att.ref, { x: Std.parseFloat(g.att.x);, y: Std.parseFloat(g.att.y);, guide: XmlToGuide.parseGuideData(g) });
+					groups.set(f.att.ref, { x: Std.parseFloat(g.att.x), y: Std.parseFloat(g.att.y), guide: XmlToGuide.parseGuideData(g) });
 				}
 
 				dd.type = Activity( groups );
@@ -99,7 +99,7 @@ class XmlToDisplay {
 
 				if (f.hasNode.Bookmark) {
 
-					bookmark = XmlToWidgetContainer.parseWidgetContainerData(f, BookmarkDisplay)
+					bookmark = XmlToWidgetContainer.parseWidgetContainerData(f, BookmarkDisplay);
 				}
 				var orientation : String = f.att.orientation;
 
@@ -150,60 +150,25 @@ class XmlToDisplay {
 			default: // nothing
 		}
 
-		if (f.has.x) {
+		dd.x = f.has.x ? Std.parseFloat(f.att.x) : null;
+		dd.y = f.has.y ? Std.parseFloat(f.att.y) : null;
+		dd.width = f.has.width ? Std.parseFloat(f.att.width) : null;
+		dd.height = f.has.height ? Std.parseFloat(f.att.height) : null;
 
-			dd.x = Std.parseFloat(f.att.x);
-		}
-		if (f.has.y) {
-
-			dd.y = Std.parseFloat(f.att.y);
-		}
-		if (f.has.width && f.has.height) {
-
-			dd.width = Std.parseFloat(f.att.width);
-			dd.height = Std.parseFloat(f.att.height);
-			// FIXME DisplayUtils.initSprite(this, Std.parseFloat(f.att.width), Std.parseFloat(f.att.height), 0, 0.001);
-		}
 		for (child in f.nodes.SpriteSheet) {
 
 			//dd.spritesheets.set(child.att.id, AssetsStorage.getSpritesheet(child.att.src)); // FIXME
 			dd.spritesheetsSrc.set(child.att.id, child.att.src);
 
 			dd.layersSrc.set(child.att.id, child.att.src);
-
-			// FIXME var layer = new TileLayer(AssetsStorage.getSpritesheet(child.att.src));
-			// FIXME layers.set(child.att.id, layer);
-			// FIXME addChild(layer.view);
 		}
-		dd.layersSrc.set("ui", "");
-		// FIXME var uiLayer = new TileLayer(UiFactory.tilesheet);
-		// FIXME layers.set("ui", uiLayer);
-		// FIXME addChild(uiLayer.view);
 
 		dd = parseDisplay(f, type, dd);
 
-		if (f.has.transitionIn) {
-
-			dd.transitionIn = f.att.transitionIn;
-
-			// FIXME addEventListener(Event.ADDED_TO_STAGE, function(e){
-			// FIXME 	TweenManager.applyTransition(this, transitionIn);
-			// FIXME });
-		}
-		if (f.has.transitionOut) {
-
-			dd.transitionOut = f.att.transitionOut;
-		}
-		if (f.has.layout) {
-
-			dd.layout = f.att.layout;
-		}
-		if (f.has.filters) {
-
-			filters = f.att.filters;
-			// FIXME filters = FilterManager.getFilter(f.att.filters);
-		}
-		// FIXME ResizeManager.instance.onResize();
+		dd.transitionIn = f.has.transitionIn ? f.att.transitionIn : null;
+		dd.transitionOut = f.has.transitionOut ? f.att.transitionOut : null;
+		dd.layout = f.has.layout ? f.att.layout : null;
+		dd.filters = f.has.filters ? f.att.filters : null;
 	}
 
 	static function parseDisplay(f : Fast, type : DisplayType, dd : DisplayData) : DisplayData {
@@ -377,7 +342,7 @@ class XmlToDisplay {
 									tilesheet: f.has.spritesheet ? f.att.spritesheet : null,
 									cursor9Grid: f.att.cursor9Grid.split(",").map(function(it:String):Float{ return Std.parseFloat(it); }),
 									bg9Grid: f.has.bg9Grid ? f.att.bg9Grid.split(",").map(function(it:String):Float{ return Std.parseFloat(it); }) : null
-								}));
+								});
 
 				case "div":
 
@@ -445,7 +410,7 @@ class XmlToDisplay {
 
 		var dd : DisplayData = {
 
-				type: Zone(bgColor: f.has.bgColor ? Std.parseInt(f.att.bgColor) : null, ref: f.has.ref ? f.att.ref : null, rows: f.has.rows ? f.att.rows : null, columns: f.has.columns ? f.att.columns : null, zones: zones),
+				type: Zone(f.has.bgColor ? Std.parseInt(f.att.bgColor) : null, f.has.ref ? f.att.ref : null, f.has.rows ? f.att.rows : null, f.has.columns ? f.att.columns : null, zones),
 				displays: new StringMap()
 
 			};

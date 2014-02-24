@@ -5,15 +5,20 @@ import grar.Controller;
 import grar.model.State;
 import grar.model.Config;
 import grar.model.Grar;
+import grar.model.Tracking;
+
+import grar.service.AiccService;
+import grar.service.AutoService;
+import grar.service.ScormService;
 
 class TrackingController {
 	
-	public function new(parent : Controller) {
+	public function new(parent : Controller, state : State, config : Config) {
 
 		this.parent = parent;
 
-		this.config = parent.config;
-		this.state = parent.state;
+		this.config = config;
+		this.state = state;
 
 		this.aiccSrv = new AiccService();
 		this.autoSrv = new AutoService();
@@ -44,7 +49,7 @@ class TrackingController {
 
 					case Aicc( u, i ):
 
-						aiccSrv.putParams(state.tracking);
+						aiccSrv.putParams(state.tracking, function(t:Tracking){ /* nothing */ }, function(e:String) { /* TODO ? */ });
 
 					case Auto( lesson_location ):
 
@@ -56,15 +61,15 @@ class TrackingController {
 
 				switch(state.tracking.type) {
 
-					case Scorm( is2004, ss, sd ):
+					case Scorm(is2004, ss, sd):
 
-						scormSrv.setStatus(is2004, state.tracking.getStatus());
+						scormSrv.setStatus(state.tracking.isActive, is2004, state.tracking.getStatus());
 
-					case Aicc( u, i ):
+					case Aicc(u, i):
 
-						aiccSrv.putParams(state.tracking);
+						aiccSrv.putParams(state.tracking, function(t:Tracking){ /* nothing */ }, function(e:String) { /* TODO ? */ });
 
-					case Auto( l ):
+					case Auto(l):
 
 						autoSrv.setStatus(state.tracking.isActive, state.tracking.getStatus());
 				}
@@ -138,14 +143,14 @@ class TrackingController {
 			}
 	}
 
-	public function initTracking(m : Grar, onSuccess : Void -> Void, onError : Void -> Void ) : Void {
+	public function initTracking(m : Grar, onSuccess : Void -> Void, onError : String -> Void ) : Void {
 
 		var loadStateInfos = function(stateStr:String):Void {
 				
 				// TODO commented code
 				//allItem = GameManager.instance.game.getAllItems();
 				var stateInfosArray : Array<String> = stateStr.split("@");
-				state.currentLanguage = stateInfosArray[0];
+				state.currentLocale = stateInfosArray[0];
 				state.bookmark = Std.parseInt(stateInfosArray[1]);
 
 				/* TODO This will have to be done once parts loaded !!!
@@ -182,7 +187,7 @@ class TrackingController {
 
 					loadStateInfos(s);
 				}
-		        if (state.currentLanguage == null && state.bookmark == -1 && state.completionOrdered.length == 0) {
+		        if (state.currentLocale == null && state.bookmark == -1 && state.completionOrdered.length == 0) {
 
 		            loadStateInfos(m.state.value);
 		        }

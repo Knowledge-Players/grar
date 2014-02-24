@@ -6,9 +6,10 @@ import aze.display.TileSprite;
 
 import motion.actuators.GenericActuator.IGenericActuator;
 
-import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
-import com.knowledgeplayers.grar.display.part.PartDisplay;
+import grar.view.component.container.WidgetContainer;
+import grar.view.part.PartDisplay;
 import grar.view.component.Image;
+import grar.view.Display;
 
 import flash.events.Event;
 import flash.filters.BitmapFilter;
@@ -18,11 +19,11 @@ typedef TileImageData = {
 
 	var id : ImageData;
 
-	var tilesheetName : Null<String> = null;
-	var layerRef : Null<String> = null;
-	var layer : Null<TileLayer> = null; // set in second step
-	var visible : Bool = true;
-	var div : Bool = false;
+	var tilesheetName : Null<String>;
+	var layerRef : Null<String>;
+	var layer : Null<TileLayer>; // set in second step
+	var visible : Bool;
+	var div : Bool;
 }
 
 /**
@@ -61,7 +62,7 @@ class TileImage extends Image {
 				
 				this.visible = true;
 
-				TweenManager.applyTransition(this, transformation);
+// FIXME				TweenManager.applyTransition(this, transformation);
 
 				if (onComplete != null) {
 
@@ -341,12 +342,12 @@ class TileImage extends Image {
 				removeEventListener(Event.ADDED_TO_STAGE, renderNeeded);
 
 			var container = parent;
-			while(container != null && !Std.is(container, KpDisplay) && !Std.is(container, WidgetContainer))
+			while(container != null && !Std.is(container, Display) && !Std.is(container, WidgetContainer))
 				container = container.parent;
 
 			// TODO unify (MVP)
-			if(Std.is(container, KpDisplay)){
-				cast(container, KpDisplay).renderLayers.set(tileSprite.layer, true);
+			if(Std.is(container, Display)){
+				cast(container, Display).renderLayers.set(tileSprite.layer, true);
 			}
 			if(Std.is(container, WidgetContainer)){
 				cast(container, WidgetContainer).renderNeeded = true;

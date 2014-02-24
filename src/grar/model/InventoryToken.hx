@@ -23,14 +23,14 @@ class InventoryToken {
 		if (td != null) {
 
 			this.id = td.id;
-			this.ref = td.r;
-			this.type = td.t;
-			this.isActivated = td.ia;
-			this.name = td.n;
-			this.content = td.c;
-			this.icon = td.i;
-			this.image = td.p;
-			this.fullScreenContent = td.fsc;
+			this.ref = td.ref;
+			this.type = td.type;
+			this.isActivated = td.isActivated;
+			this.name = td.name;
+			this.content = td.content;
+			this.icon = td.icon;
+			this.image = td.image;
+			this.fullScreenContent = td.fullScreenContent;
 		
 		} else {
 
@@ -42,7 +42,7 @@ class InventoryToken {
 	/**
      * Unique identifier
      **/
-	public var id : Null<String> (default, null) = null;
+	public var id (default, null) : Null<String> = null;
 
 	/**
      * Reference to the display

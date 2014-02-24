@@ -32,10 +32,14 @@ class XmlToImage {
 
 		id.wd = XmlToWidget.parseWidgetData(f);
 		id.tilesheetRef = tilesheetRef;
+		id.tilesheet = null;
+		id.isBackground = false;
 		
 		if (f != null) {
 
 			//var f : Fast = new Fast(xml);
+
+			id.src = f.has.src ? f.att.src : null;
 
 			if (f.has.vertices) {
 
@@ -47,28 +51,20 @@ class XmlToImage {
 
 						id.vertices.add({x: Std.parseFloat(v[0]), y: Std.parseFloat(v[1])});
 					});
+
+			} else {
+
+				id.vertices = null;
 			}
 
-			if (f.has.radius) {
+			id.radius = f.has.radius ? ParseUtils.parseListOfFloatValues(f.att.radius) : null;
 
-				id.radius = ParseUtils.parseListOfFloatValues(f.att.radius);
-			}
+			id.height = f.has.height ? Std.parseFloat(f.att.height) : null;
+			id.width = f.has.width ? Std.parseFloat(f.att.width) : null;
 
-			if (f.has.width && f.has.height) {
+			id.tile = f.has.tile ? f.att.tile : null;
 
-				id.height = Std.parseFloat(f.att.height);
-				id.width = Std.parseFloat(f.att.width);
-			}
-
-			if (f.has.tile) {
-
-				id.tile = f.att.tile;
-			}
-
-			if(f.has.smoothing) {
-
-	            id.smoothing = f.has.smoothing ? f.att.smoothing == "true" : true;
-	        }
+            id.smoothing = f.has.smoothing ? f.att.smoothing == "true" : true;
 
 			if (f.has.mirror) {
 
@@ -80,13 +76,12 @@ class XmlToImage {
 
 								case _ : throw '[KpDisplay] Unsupported mirror $f.att.mirror';
 							}
+			} else {
+
+				id.mirror = null;
 			}
 
-			if (f.has.clip) {
-
-				id.clipOrigin = ParseUtils.parseListOfFloatValues(f.att.clip, ";");
-			
-			}
+			id.clipOrigin = f.has.clip ? ParseUtils.parseListOfFloatValues(f.att.clip, ";") : null;
 		}
 		return id;
 	}

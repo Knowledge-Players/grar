@@ -1,7 +1,7 @@
 package grar.model.contextual;
 
-import grar.model.Item;
-import grar.model.Note;
+import grar.model.part.Item;
+import grar.model.contextual.Note;
 
 import haxe.ds.GenericStack;
 

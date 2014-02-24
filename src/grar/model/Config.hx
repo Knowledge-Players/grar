@@ -5,7 +5,7 @@ package grar.model;
  */
 class Config {
 
-	static var VARNAME_STRUCTURE_FILE_URI : String = "structureUri";
+	static inline var VARNAME_STRUCTURE_FILE_URI : String = "structureUri";
 	
 	public function new() { }
 
@@ -14,9 +14,9 @@ class Config {
 	 */
 	public var structureFileUri(default, null) : Null<String>;
 
-	public function parseConfigParameter( key : String, value : String ) : Void {
+	public function parseConfigParameter(key : String, value : String) : Void {
 
-		switch(key) {
+		switch (key) {
 
 			case VARNAME_STRUCTURE_FILE_URI:
 

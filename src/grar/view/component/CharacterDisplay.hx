@@ -8,7 +8,7 @@ typedef CharacterData = {
 
 	var tid : TileImageData;
 	var charRef : String;
-	var nameRef : Null<String> = null;
+	var nameRef : Null<String>;
 }
 
 /**
@@ -22,7 +22,11 @@ class CharacterDisplay extends TileImage {
 		super(cd.tid);
 
 		this.charRef = cd.charRef;
-		cd.nameRef != null ? this.nameRef = cd.nameRef;
+		
+		if (cd.nameRef != null) {
+
+			this.nameRef = cd.nameRef;
+		}
 	}
 
 	/**

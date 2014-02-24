@@ -3,8 +3,11 @@ package grar.view.component.container;
 import aze.display.TilesheetEx;
 
 import grar.view.part.PartDisplay;
+import grar.view.component.container.WidgetContainer;
+
 import grar.util.DisplayUtils;
-import com.knowledgeplayers.grar.event.DisplayEvent;
+
+// FIXME import com.knowledgeplayers.grar.event.DisplayEvent;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -25,12 +28,15 @@ class SimpleContainer extends WidgetContainer {
 
 		super(scd);
 		
-		scd != null && scd.spritesheetRef != null ? this.tilesheetName = scd.spritesheetRef;
+		if (scd != null && scd.spritesheetRef != null) {
+
+			this.tilesheetName = scd.spritesheetRef;
+		}
 
 		addEventListener(Event.ADDED_TO_STAGE, onAdded);
 	}
 
-    private var scd : SimpleContainerData;
+    private var scd : WidgetContainerData;
 
 	private var contentMask : Bitmap;
     private var bmpData : BitmapData;
@@ -95,7 +101,7 @@ class SimpleContainer extends WidgetContainer {
 			// FIXME }
 			removeEventListener(Event.ADDED_TO_STAGE, onAdded);
 		}
-		dispatchEvent(new DisplayEvent(DisplayEvent.LOADED));
+//FIXME		dispatchEvent(new DisplayEvent(DisplayEvent.LOADED));
 	}
 
 	public function setMask(e : Event) : Void {
@@ -176,7 +182,7 @@ class SimpleContainer extends WidgetContainer {
 
 		switch(d.type) {
 
-			case ScrollPanel(styleSheet : Null<String>, style : Null<String>, content : Null<String>, trim : Bool):
+			case ScrollPanel(styleSheet, style, content, trim):
 
 				if (content != null && content.startsWith("$")) {
 

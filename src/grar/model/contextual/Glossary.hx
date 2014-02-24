@@ -44,7 +44,11 @@ class Glossary {
      */
 	public function get_words() : Array<String> {
 
-		return Lambda.array(definitions.keys()).sort(sortWords);
+		var warr : Array<String> = Lambda.array({ iterator: definitions.keys });
+
+		warr.sort(sortWords);
+
+		return warr;
 	}
 
 	/**

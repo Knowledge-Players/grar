@@ -1,10 +1,12 @@
 package grar.parser;
 
 import grar.model.InventoryToken;
+import grar.model.contextual.Note;
 
-import grar.view.TokenNotification;
+import grar.view.component.container.WidgetContainer;
 
 import haxe.ds.StringMap;
+
 import haxe.xml.Fast;
 
 class XmlToInventory {
@@ -24,13 +26,11 @@ class XmlToInventory {
 		return { m: i, d: d };
 	}
 
-	static public function parseDisplayToken(xml : Xml) : { tn : TokenNotification, ti : StringMap<{ small : String, large : String }> } {
+	static public function parseDisplayToken(xml : Xml) : { tn : WidgetContainerData, ti : StringMap<{ small : String, large : String }> } {
 
 		var dtf : Fast = new Fast(xml.firstElement());
 
-		var d : Int = Std.parseInt(dtf.node.Hud.att.duration);
-
-		var tokenNotification : TokenNotification = new TokenNotification(d); // TODO <= a lot more things to pass here
+		var tn : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(dtf, TokenNotification); // dtf.node.Hud.att.duration
 
 		var ti : StringMap<{ small : String, large : String }> = new StringMap();
 		
@@ -38,6 +38,8 @@ class XmlToInventory {
 
 			ti.set(t.att.ref, { small: t.att.src.substr(0, t.att.src.indexOf(",")), large: t.att.src.substr(t.att.src.indexOf(",") + 1) });
 		}
+
+		return { tn: tn, ti: ti };
 	}
 	
 	static function parseTokenData(xml : Xml) : Null<TokenData> {

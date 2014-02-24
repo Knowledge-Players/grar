@@ -1,9 +1,9 @@
-package grar.model;
+package grar.view;
 
 enum FilterQuality {
 
 	Low;
-	Medium:
+	Medium;
 	High;
 }
 

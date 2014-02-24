@@ -3,13 +3,21 @@ package grar;
 import grar.model.Config;
 import grar.model.State;
 import grar.model.Grar;
+import grar.model.Locale;
+import grar.model.InventoryToken;
 import grar.model.ContextualType;
+import grar.model.contextual.Notebook;
+import grar.model.part.Part;
 
 import grar.service.GameService;
 
 import grar.controller.TrackingController;
 
 import grar.view.Application;
+
+import haxe.ds.StringMap;
+
+import haxe.xml.Fast; // FIXME
 
 /**
  * GRAR main controller
@@ -23,7 +31,7 @@ class Controller {
 
 		gameSrv = new GameService();
 
-		trackingCtrl = new TrackingController(this);
+		trackingCtrl = new TrackingController(this, state, config);
 
 		application = new Application();
 
@@ -46,9 +54,9 @@ class Controller {
 
 		state.onReadyStateChanged = function() {
 
-				if (state.readyState && c.structureFileUri != null) {
+				if (state.readyState && config.structureFileUri != null) {
 
-					gameSrv.fetchModule( c.structureFileUri, function(m:Grar){ state.module = m; }, onError );
+					gameSrv.fetchModule( config.structureFileUri, function(m:Grar){ state.module = m; }, onError );
 				}
 			}
 
@@ -63,11 +71,11 @@ class Controller {
 
 
 						// langs
-						gameSrv.fetchLangs( langs, function(l:StringMap<Locale>){ state.locales = l; }, onError );
+						gameSrv.fetchLangs( langsUri, function(l:StringMap<Locale>){ state.locales = l; }, onError );
 
 
 						// display (styles, ui, transitions, filters, templates)
-						gameSrv.fetchSpriteSheet( displayXml.node.Ui.att.display, function(t:TilesheetEx){
+						gameSrv.fetchSpriteSheet( displayXml.node.Ui.att.display, function(t:aze.display.TilesheetEx){
 
 									application.tilesheet = t;
 
@@ -75,13 +83,13 @@ class Controller {
 
 								}, onError );
 
-						gameSrv.fetchTransitions( displayXml.node.Transitions.att.display, function(t:StringMap<TransitionTemplate>){ state.module.transitions = t; }, onError );
+						gameSrv.fetchTransitions( displayXml.node.Transitions.att.display, function(t:StringMap<grar.view.TransitionTemplate>){ application.transitions = t; }, onError );
 
-						gameSrv.fetchFilters( displayXml.node.Filters.att.display, function(f:StringMap<FilterData>){ application.filters = f; }, onError );
+						gameSrv.fetchFilters( displayXml.node.Filters.att.display, function(f:StringMap<grar.view.FilterData>){ application.filters = f; }, onError );
 
 						if (displayXml.hasNode.Templates) {
 
-							gameSrv.fetchTemplates( displayXml.node.Templates.att.folder, function(tmpls:StringMap<Xml>){ state.module.templates = tmpls; }, onError );
+							gameSrv.fetchTemplates( displayXml.node.Templates.att.folder, function(tmpls:StringMap<Xml>){ /* FIXME state.module.templates = tmpls; */ }, onError );
 					    }
 
 
@@ -95,9 +103,9 @@ class Controller {
 
 								case NOTEBOOK:
 
-									gameSrv.fetchNotebook(contextual.att.file, contextual.att.display, function(m:grar.model.Notebook,i:StringMap<grar.model.InventoryToken>,v:grar.view.NotebookDisplay){
+									gameSrv.fetchNotebook(contextual.att.file, contextual.att.display, function(m:Notebook,i:StringMap<grar.model.InventoryToken>,v:grar.view.Display.DisplayData){
 
-											application.notebook = v;
+											application.createNotebook(v);
 											state.module.addInventoryTokens(i);
 											state.module.notebook = m;
 
@@ -121,7 +129,7 @@ class Controller {
 								
 								case MENU:
 
-									gameSrv.fetchMenu(contextual.att.display, contextual.has.file ? contextual.att.file : null, function(d:Displaydata, m:Null<MenuData>){
+									gameSrv.fetchMenu(contextual.att.display, contextual.has.file ? contextual.att.file : null, function(d:grar.view.Display.DisplayData, m:Null<grar.view.contextual.menu.MenuDisplay.MenuData>){
 
 											application.createMenu(d);
 											application.menuData = m;
@@ -133,12 +141,12 @@ class Controller {
 						}
 				        if (structureXml.has.inventory) {
 #if (flash || openfl)
-				        	gameSrv.fetchInventory(structureNode.att.inventory, function(i:StringMap<InventoryToken>, tn:TokenNotification, ti:StringMap<{ small:flash.display.BitmapData, large:flash.display.BitmapData }>){
+				        	gameSrv.fetchInventory(structureXml.att.inventory, function(i:StringMap<InventoryToken>, tn:grar.view.component.container.WidgetContainer.WidgetContainerData, ti:StringMap<{ small:flash.display.BitmapData, large:flash.display.BitmapData }>){
 #else
-				        	gameSrv.fetchInventory(structureNode.att.inventory, function(i:StringMap<InventoryToken>, tn:TokenNotification, ti:StringMap<{ small:String, large:String }>){
+				        	gameSrv.fetchInventory(structureXml.att.inventory, function(i:StringMap<InventoryToken>, tn:grar.view.component.container.WidgetContainer.WidgetContainerData, ti:StringMap<{ small:String, large:String }>){
 #end
 				        			state.module.addInventoryTokens(i);
-				        			application.tokenNotification = tn;
+				        			application.createTokenNotification(tn);
 									application.tokensImages = ti;
 
 				        		}, onError);
@@ -149,7 +157,7 @@ class Controller {
 
 				        for (partXml in structureXml.nodes.Part) {
 
-				        	var part : Part = gameSrv.fetchPart(partXml, function(p:Part){
+				        	gameSrv.fetchPart(partXml.x, function(p:Part){
 
 				        			parts.push(p);
 
@@ -218,39 +226,38 @@ class Controller {
 		state.readyState = true;
 	}
 
+	function createMenuLevel(p : Part, ? l : Int = 1) : grar.view.contextual.menu.MenuDisplay.LevelData {
+
+		var name : String = "h" + l;
+		var id : String = p.id;
+		var icon : Null<String> = null;
+		var items : Array<grar.view.contextual.menu.MenuDisplay.LevelData> = [];
+
+		for (pe in p.elements) {
+
+			switch (pe) {
+
+				case Part(sp):
+
+					if (sp.hasParts()) {
+
+						items.push(createMenuLevel(sp, l++));
+					
+					} else {
+
+						items.push({ name: "item", id: sp.id });
+					}
+				
+				default: // nothing
+			}
+        }
+        return { name: name, id: id, icon: icon, items: items };
+	}
 	function createDefaultMenu() : Void {
 
-    	var md : MenuData = { levels: [] };
+    	var md : grar.view.contextual.menu.MenuDisplay.MenuData = { levels: [] };
 
-    	var createMenuLevel = function(p : Part, ? l : Int = 1) : LevelData {
-
-    			var name : String = "h" + l;
-    			var id : String = p.id;
-    			var icon : Null<String> = null;
-    			var items : Array<LevelData> = [];
-
-    			for (pe in p.elements) {
-
-    				switch (pe) {
-
-    					Part(sp):
-
-    						if (sp.hasParts()) {
-
-    							items.push(createMenuLevel(sp, l++));
-    						
-    						} else {
-
-    							items.push({ name: "item", id: sp.id });
-    						}
-						
-						default: // nothing
-    				}
-		        }
-		        return { name: name, id: id, icon: icon, items: items };
-        	}
-
-        for (part in state.module.parts) {
+    	for (part in state.module.parts) {
 
             md.levels.push(createMenuLevel(part));
         }
@@ -258,7 +265,7 @@ class Controller {
 	}
 
 	function loadStyles(displayXml : Fast) : Void {
-
+/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
 		if (state.currentLocale != null && application.tilesheet != null) { // check if enought
 
 			// only when tilesheet loaded and currentLocale known
@@ -290,11 +297,12 @@ class Controller {
 				gameSrv.fetchStyle( localePath, extension, application.tilesheet, onStyle, onError );
 	        }
 		}
+*/
 	}
 
 	function loadlayouts(uri : String) : Void { // actually, code below also requires the templates to be fetch already (and styles too ?)
 
-        gameSrv.fetchLayouts(uri, function(lm : StringMap<LayoutData>, lp : Null<String>){
+        gameSrv.fetchLayouts(uri, function(lm : StringMap<grar.view.layout.Layout.LayoutData>, lp : Null<String>){
 
 				if (lp != null) {
 

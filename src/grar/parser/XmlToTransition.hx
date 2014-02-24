@@ -3,8 +3,7 @@ package grar.parser;
 import haxe.xml.Fast;
 import haxe.ds.StringMap;
 
-import grar.model.TransitionType;
-import grar.model.TransitionTemplate;
+import grar.view.TransitionTemplate;
 
 class XmlToTransition {
 

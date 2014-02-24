@@ -44,7 +44,7 @@ class SimpleBubble extends WidgetContainer {
 
         bubble.graphics.endFill();
         if (shadow != 0){
-                bubble.filters = FilterManager.getFilter("bubbleShadow");
+// FIXME                bubble.filters = FilterManager.getFilter("bubbleShadow");
 	        if(bubble.filters.length == 0)
 	            throw "[SimpleBubble] No filter are specified for bubble. You must use the ref 'bubbleShadow' for it.";
         }

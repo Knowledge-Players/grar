@@ -106,13 +106,13 @@ class Style extends StringMap<String> {
 	/**
      * @return the font of the style
      */
-#if (flash || openfl)
-	public function getFont() : Null<Font> {
+// FIXME #if (flash || openfl)
+// FIXME 	public function getFont() : Null<Font> {
 
-		return Assets.getFont(get("font"));
-#else
+// FIXME 		return Assets.getFont(get("font"));
+// FIXME #else
 	public function getFont() : Null<String> {
-#end
+// FIXME #end
 
 		return get("font");
 	}

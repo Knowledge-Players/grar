@@ -2,6 +2,8 @@ package grar.view.component;
 
 import aze.display.TilesheetEx;
 
+import grar.view.component.ScaleBitmap;
+
 import grar.util.DisplayUtils;
 
 import flash.display.Sprite;

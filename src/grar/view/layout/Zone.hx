@@ -2,18 +2,19 @@ package grar.view.layout;
 
 import aze.display.TileLayer;
 
-import grar.view.contextual.NotebookDisplay;
+import grar.view.component.container.WidgetContainer;
 import grar.view.component.container.DropdownMenu;
-import grar.view.component.Widget;
 import grar.view.component.container.DefaultButton;
-import grar.view.component.ProgressBar;
 import grar.view.contextual.menu.MenuDisplay;
+import grar.view.contextual.NotebookDisplay;
+import grar.view.component.Widget;
+import grar.view.component.ProgressBar;
 import grar.view.Display;
 
-import com.knowledgeplayers.grar.event.LayoutEvent;
-import com.knowledgeplayers.grar.event.PartEvent;
+// FIXME import com.knowledgeplayers.grar.event.LayoutEvent;
+// FIXME import com.knowledgeplayers.grar.event.PartEvent;
 
-import com.knowledgeplayers.grar.factory.UiFactory;
+// FIXME import com.knowledgeplayers.grar.factory.UiFactory;
 
 import grar.util.DisplayUtils;
 
@@ -59,7 +60,7 @@ class Zone extends Display {
 
 		switch (d.type) {
 
-			case Zone(? bgColor : Null<Int>, ? ref : Null<String>, ? rows : Null<String>, ? columns : Null<String>, ? zones : Null<Array<DisplayData>>):
+			case Zone(bgColor, ref, rows, columns, zones):
 
 				if (bgColor != null) {
 
@@ -271,7 +272,7 @@ class Zone extends Display {
 	}
 
 	// Handlers
-
+/* FIXME
 	private function onNewZone(e:LayoutEvent):Void
 	{
 		dispatchEvent(e);
@@ -292,7 +293,7 @@ class Zone extends Display {
             fastnav.visible = false;
 		}
 	}
-
+*/
 	private function onFastNav(e: Event):Void
 	{
 		var track = fastnav.currentLabel;

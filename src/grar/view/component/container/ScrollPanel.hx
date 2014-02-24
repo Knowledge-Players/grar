@@ -2,14 +2,15 @@ package grar.view.component.container;
 
 import grar.view.component.container.WidgetContainer;
 
-import com.knowledgeplayers.grar.display.style.KpTextDownElement;
-import com.knowledgeplayers.grar.display.style.KpTextDownParser;
-import com.knowledgeplayers.grar.display.style.Style;
-import com.knowledgeplayers.grar.display.style.StyleParser;
+// FIXME import com.knowledgeplayers.grar.display.style.KpTextDownElement;
+// FIXME import com.knowledgeplayers.grar.display.style.KpTextDownParser;
+
+// FIXME import grar.view.style.Style;
+// FIXME import grar.view.style.StyleParser;
 
 import grar.util.DisplayUtils;
 
-import com.knowledgeplayers.grar.localisation.Localiser;
+// FIXME import com.knowledgeplayers.grar.localisation.Localiser;
 
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
@@ -41,7 +42,7 @@ class ScrollPanel extends WidgetContainer {
 					
 					if (c != null) {
 
-						setContent(Localiser.instance.getItemContent(c));
+// FIXME						setContent(Localiser.instance.getItemContent(c));
 					}
 					trim = t;
 
@@ -79,10 +80,10 @@ class ScrollPanel extends WidgetContainer {
 	{
 		clear();
 		var previousStyleSheet = null;
-		if(styleSheet != null){
-			previousStyleSheet = StyleParser.currentStyleSheet;
-			StyleParser.currentStyleSheet = styleSheet;
-		}
+// FIXME		if(styleSheet != null){
+// FIXME			previousStyleSheet = StyleParser.currentStyleSheet;
+// FIXME			StyleParser.currentStyleSheet = styleSheet;
+// FIXME		}
 
 		var offSetY:Float = 0;
 		var isFirst:Bool = true;
@@ -91,6 +92,7 @@ class ScrollPanel extends WidgetContainer {
 
 		var text = new Sprite();
 		var minPaddingLeft = Math.POSITIVE_INFINITY;
+/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
 		for(element in KpTextDownParser.parse(contentString)){
 			if(style != null)
 				element.style = style;
@@ -126,6 +128,7 @@ class ScrollPanel extends WidgetContainer {
 			}
 			text.addChild(item);
 		}
+*/
 		content.alpha = contentAlpha;
 		content.addChild(text);
 		if(!scrollable)
@@ -135,8 +138,8 @@ class ScrollPanel extends WidgetContainer {
 		addChild(content);
 		displayContent(trim);
 
-		if(previousStyleSheet != null)
-			StyleParser.currentStyleSheet = previousStyleSheet;
+// FIXME		if(previousStyleSheet != null)
+// FIXME			StyleParser.currentStyleSheet = previousStyleSheet;
 
 	}
 }

@@ -23,6 +23,7 @@ class XmlToWidgetContainer {
 
 		wcd.wd = XmlToWidget.parseWidgetData(f);
 		wcd.type = type;
+		wcd.tilesheet = null;
 
 		if (f != null) {
 
@@ -102,7 +103,7 @@ class XmlToWidgetContainer {
 
 				var color : String = f.has.color ? f.att.color : "0x02000000";
 
-				wcd.type = DropdownMenu(color);
+				wcd.type = DropdownMenu(ParseUtils.parseColor(color));
 
 			case ScrollPanel:
 
@@ -303,7 +304,7 @@ class XmlToWidgetContainer {
 
 					case "backgroundcontrols":
 
-						var bd : grar.view.component.container.VideoPlayer.BackgroundData = {
+						var bd : VideoBackgroundData = {
 
 								color: e.has.color ? Std.parseInt(e.att.color) : 0,
 								alpha: e.has.alpha ? Std.parseFloat(e.att.alpha) : 1,

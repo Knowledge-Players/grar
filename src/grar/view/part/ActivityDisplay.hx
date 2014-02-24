@@ -45,7 +45,7 @@ class ActivityDisplay extends PartDisplay {
 		hasCorrection = true;
 		groups = new StringMap();
 		buttonsToInputs = new Map();
-		inputs = new GenericStack();
+		inputs = new GenericStack<DefaultButton>();
 		validatedInputs = new Map();
 	}
 

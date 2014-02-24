@@ -1,6 +1,6 @@
 package grar.view.component;
 
-import com.knowledgeplayers.grar.display.component.container.DropdownMenu; // FIXME
+import grar.view.component.container.DropdownMenu;
 
 import motion.actuators.GenericActuator;
 
@@ -16,18 +16,19 @@ typedef WidgetData = {
 
 	var ref : String;
 	var scale : Float;
-	var scaleX : Null<Float> = null;
-	var scaleY : Null<Float> = null;
-	var x : String = "0";
-	var currentX : Null<String> = null;
-	var y : String = "0";
+	var scaleX : Null<Float>;
+	var scaleY : Null<Float>;
+	var x : String;
+	var currentX : Null<String>;
+	var y : String;
 	var transitionIn : String;
 	var transitionOut : String;
-	var alpha : Null<Float> = null;
-	var rotation : Null<Float> = null;
-	var transformation : Null<String> = null;
-	var borderStyle : Null<{ thickness : Float, color : Color }> = null;
-	var position : Null<Positioning> = null;
+	var alpha : Null<Float>;
+	var rotation : Null<Float>;
+	var transformation : Null<String>;
+	var filters : Null<String>;
+	var borderStyle : Null<{ thickness : Float, color : Color }>;
+	var position : Null<Positioning>;
 }
 
 typedef BorderStyle = {
@@ -59,21 +60,47 @@ class Widget extends Sprite {
 
 			this.ref  = wd.ref;
 			this.scale = wd.scale;
-			wd.scaleX != null ? this.scaleX = wd.scaleX;
-			wd.scaleY != null ? this.scaleY = wd.scaleY;
-			wd.currentX != null ? this.currentX = wd.currentX;
+			if (wd.scaleX != null) {
+
+				this.scaleX = wd.scaleX;
+			}
+			if (wd.scaleY != null) {
+
+				this.scaleY = wd.scaleY;
+			}
+			if (wd.currentX != null) {
+
+				this.currentX = wd.currentX;
+			}
 			this.transitionIn = wd.transitionIn;
 			this.transitionOut = wd.transitionOut;
-			wd.alpha != null ? this.alpha = wd.alpha;
-			wd.rotation != null ? this.rotation = wd.rotation;
-			wd.transformation != null ? this.transformation = wd.transformation;
-			wd.position != null ? this.position = wd.position;
+
+			if (wd.alpha != null) {
+
+				this.alpha = wd.alpha;
+			}
+			if (wd.rotation != null) {
+
+				this.rotation = wd.rotation;
+			}
+			if (wd.transformation != null) {
+
+				this.transformation = wd.transformation;
+			}
+// FIXME			if (xml.has.filters) {
+
+// FIXME				filters = FilterManager.getFilter(xml.att.filters);
+// FIXME			}
+			if (wd.position != null) {
+
+				this.position = wd.position;
+			}
 
 			setX(wd.x);
 
 			if (!Math.isNaN(Std.parseFloat(wd.y))) {
 
-				wd.y = Std.parseFloat(wd.y);
+				this.y = Std.parseFloat(wd.y);
 			
 			} else {
 

@@ -18,8 +18,8 @@ typedef GridData = {
 	var gapRow : Null<Float>;
 	var alignment : Null<String>;
 	var transitionIn : Null<String>;
-	@:optional var cellWidth : Float = 0;
-	@:optional var cellHeight : Float = 0;
+	@:optional var cellWidth : Float;
+	@:optional var cellHeight : Float;
 }
 
 /**

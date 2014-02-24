@@ -1,7 +1,7 @@
 package grar.parser.layout;
 
 import grar.view.layout.Layout;
-import grar.view.Display.DisplayData
+import grar.view.Display.DisplayData;
 
 import grar.parser.XmlToDisplay;
 

@@ -4,7 +4,7 @@ import grar.model.Config;
 
 class App {
 
-	private var controller : Null<Controller>;
+	static public var controller : Null<Controller>;
 
 	static public function main() : Void {
 
@@ -14,7 +14,7 @@ class App {
 		}
 	}
 
-	private function init() : Void {
+	static function init() : Void {
 
 		var c = new Config();
 

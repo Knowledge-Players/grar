@@ -5,11 +5,6 @@ import grar.model.contextual.Note;
 import grar.model.InventoryToken;
 import grar.model.part.Item;
 
-import grar.view.KpDisplay;
-import grar.view.NoteBookDisplay;
-
-import grar.parser.XmlToKpDisplay;
-
 import haxe.ds.StringMap;
 import haxe.ds.GenericStack;
 
@@ -22,8 +17,8 @@ class XmlToNotebook {
 		var f : Fast = new Fast(xml).node.Notebook;
 
 		var background : String = f.att.background;
-		var items : GenericStack<String> = new GenericStack();
-		var texts : GenericStack<Item> = new GenericStack();
+		var items : GenericStack<String> = new GenericStack<String>();
+		var texts : GenericStack<Item> = new GenericStack<Item>();
 		var pages : Array<Page> = new Array();
 		var closeButton : { ref : String, content : String };
 
@@ -38,7 +33,7 @@ class XmlToNotebook {
 			texts.add(XmlToItem.parse(txt.x));
 		}
 		// Reverse pile order to match XML order
-		var tmpStack : GenericStack<String> = new GenericStack();
+		var tmpStack : GenericStack<String> = new GenericStack<String>();
 		
 		for (img in items) {
 
@@ -48,7 +43,7 @@ class XmlToNotebook {
 		
 		for (page in f.nodes.Page) {
 
-			var title : {ref: String, content: String}; = {ref: page.node.Title.att.ref, content: page.node.Title.att.content};
+			var title : {ref: String, content: String} = {ref: page.node.Title.att.ref, content: page.node.Title.att.content};
 			var contentRef : String = page.node.Chapter.att.ref;
 			var titleRef : String = page.node.Chapter.att.titleRef;
 			var newPage : Page = {title: title, contentRef: contentRef, titleRef: titleRef, tabContent: page.att.tabContent, icon: page.att.icon, chapters: new Array<Chapter>()};

@@ -17,11 +17,8 @@ class XmlToCharacter {
 
 		cd.tid = XmlToImage.parseTileImageData(f, f.att.spritesheet, false);
 		cd.charRef = f.att.ref;
+		cd.nameRef = f.has.nameRef ? f.att.nameRef : null;
 
-		if (f.has.nameRef) {
-
-			cd.nameRef = f.att.nameRef;
-		}
 		return cd;
 	}
 }

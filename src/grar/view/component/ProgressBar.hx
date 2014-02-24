@@ -5,12 +5,12 @@ import aze.display.TileLayer;
 
 import grar.view.component.container.WidgetContainer;
 
-import com.knowledgeplayers.grar.event.GameEvent;
-import com.knowledgeplayers.grar.event.PartEvent;
+// FIXME import com.knowledgeplayers.grar.event.GameEvent;
+// FIXME import com.knowledgeplayers.grar.event.PartEvent;
 
-import com.knowledgeplayers.grar.factory.UiFactory;
+// FIXME import com.knowledgeplayers.grar.factory.UiFactory;
 
-import com.knowledgeplayers.grar.tracking.Trackable;
+import grar.model.tracking.Trackable;
 
 import grar.util.DisplayUtils;
 
@@ -83,7 +83,7 @@ class ProgressBar extends WidgetContainer {
 		layerProgressBar.render();
 
 	}
-
+/* FIXME
 	private function onEnterPart(e:PartEvent):Void
 	{
 		if(icons.exists(e.partId)){
@@ -135,7 +135,7 @@ class ProgressBar extends WidgetContainer {
 		}
 
 	}
-
+*/
 	private function fillBar(end:Float):Void
 	{
 		DisplayUtils.initSprite(this, end - xProgress, maskHeight, progressColor, xProgress, 0);

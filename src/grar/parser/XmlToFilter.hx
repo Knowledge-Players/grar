@@ -1,6 +1,6 @@
 package grar.parser;
 
-import grar.model.FilterData;
+import grar.view.FilterData;
 
 import haxe.xml.Fast;
 

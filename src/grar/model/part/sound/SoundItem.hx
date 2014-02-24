@@ -1,4 +1,4 @@
-package grar.model.part;
+package grar.model.part.sound;
 
 import grar.model.part.Item;
 

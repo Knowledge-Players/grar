@@ -35,11 +35,11 @@ class XmlToGuide {
 
 				var d : LineData = {
 
-					start: ParseUtils.parseListOfIntValues(f.att.start, ";");
-					end: ParseUtils.parseListOfIntValues(f.att.end, ";");
-					center: f.has.center ? f.att.center == "true" : null;
-					transitionIn: f.has.transitionIn ? f.att.transitionIn : null;
-				}
+						start: ParseUtils.parseListOfIntValues(f.att.start, ";"),
+						end: ParseUtils.parseListOfIntValues(f.att.end, ";"),
+						center: f.has.center ? f.att.center == "true" : null,
+						transitionIn: f.has.transitionIn ? f.att.transitionIn : null
+					};
 
 				creation = Line(d);
 
@@ -47,17 +47,22 @@ class XmlToGuide {
 			
 			case "grid":
 
-				var numRow : Int = Std.parseInt(f.att.numRow);
-				var numCol : Int = Std.parseInt(f.att.numCol);
-				var resize : Bool = f.has.resize ? f.att.resize == "true" : true;
-				var width : Null<Float> = f.has.width ? Std.parseFloat(f.att.width) : null;
-				var height : Null<Float> = f.has.height ? Std.parseFloat(f.att.height) : null;
-				var gapCol : Null<Float> = f.has.gapCol ? Std.parseFloat(f.att.gapCol) : null;
-				var gapRow : Null<Float> = f.has.gapRow ? Std.parseFloat(f.att.gapRow) : null;
-				var alignment : Null<String> = f.has.alignment ? Std.parseFloat(f.att.alignment) : null;
-				var transitionIn : Null<String> = f.has.transitionIn ? f.att.transitionIn : null;
+				var d : GridData = {
 
-				creation = Grid(numRow, numCol, resize, width, height, gapCol, gapRow, alignment, transitionIn);
+						numRow: Std.parseInt(f.att.numRow),
+						numCol: Std.parseInt(f.att.numCol),
+						resize:  f.has.resize ? f.att.resize == "true" : true,
+						width: f.has.width ? Std.parseFloat(f.att.width) : null,
+						height: f.has.height ? Std.parseFloat(f.att.height) : null,
+						gapCol: f.has.gapCol ? Std.parseFloat(f.att.gapCol) : null,
+						gapRow: f.has.gapRow ? Std.parseFloat(f.att.gapRow) : null,
+						alignment: f.has.alignment ? Std.parseFloat(f.att.alignment) : null,
+						transitionIn: f.has.transitionIn ? f.att.transitionIn : null,
+						cellWidth: 0,
+						cellHeight: 0
+					};
+
+				creation = Grid(d);
 			
 				// var grid = new Grid( Std.parseInt(f.att.numRow), Std.parseInt(f.att.numCol), f.has.resize ? f.att.resize == "true" : true );
 				/*
@@ -81,13 +86,17 @@ class XmlToGuide {
 			
 			case "curve":
 
-				var radius : Null<Float> = f.has.radius ? Std.parseFloat(f.att.radius) : null;
-				var minAngle : Null<Float> = f.has.minAngle ? Std.parseFloat(f.att.minAngle) : null;
-				var maxAngle : Null<Float> = f.has.maxAngle ? Std.parseFloat(f.att.maxAngle) : null;
-				var centerObject : Null<Bool> = f.has.centerObject ?  f.att.centerObject == "true" : null;
-				var transitionIn : Null<String> = f.has.transitionIn ? f.att.transitionIn : null;
+				var d : CurveData = {
+
+						radius: f.has.radius ? Std.parseFloat(f.att.radius) : null,
+						minAngle: f.has.minAngle ? Std.parseFloat(f.att.minAngle) : null,
+						maxAngle: f.has.maxAngle ? Std.parseFloat(f.att.maxAngle) : null,
+						centerObject: f.has.centerObject ?  f.att.centerObject == "true" : null,
+						transitionIn: f.has.transitionIn ? f.att.transitionIn : null,
+						center:	null
+					};
 			
-				creation = Curve(radius, minAngle, maxAngle, centerObject, transitionIn);
+				creation = Curve(d);
 				/*
 				var curve = new Curve();
 

@@ -28,7 +28,7 @@ class Perk {
 	public function new(name : String) {
 
 		this.name = name;
-		this.subscribed = new GenericStack();
+		this.subscribed = new GenericStack<Trackable>();
 	}
 
 	/**
@@ -46,11 +46,16 @@ class Perk {
      */
 	public function getScore() : Int {
 
-		var tmpScore = score;
+		var tmpScore : Int = score;
 		
 		for (activity in subscribed) {
 
-			tmpScore += activity.score;
+			switch(activity) {
+
+				case Part(p):
+
+					tmpScore += p.score;
+			}
 		}
 		return tmpScore;
 	}

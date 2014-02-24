@@ -3,6 +3,7 @@ package grar.view;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 
+import grar.view.guide.Guide;
 import grar.view.contextual.NotebookDisplay;
 import grar.view.contextual.menu.MenuDisplay;
 import grar.view.element.ChronoCircle;
@@ -20,9 +21,10 @@ import grar.view.component.Image;
 import grar.view.component.container.DefaultButton;
 import grar.view.component.container.ScrollPanel;
 import grar.view.component.CharacterDisplay;
+import grar.view.component.container.WidgetContainer;
 
-import com.knowledgeplayers.grar.factory.UiFactory; // FIXME
-import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
+// FIXME import com.knowledgeplayers.grar.factory.UiFactory; // FIXME
+// FIXME import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
 
 import grar.util.DisplayUtils;
 
@@ -67,7 +69,7 @@ enum ElementData {
 	DropdownMenu(d : WidgetContainerData);
 
 	// Strip only
-	BoxDisplay(d : WidgetContainerData)
+	BoxDisplay(d : WidgetContainerData);
 }
 
 enum DisplayType {
@@ -77,17 +79,17 @@ enum DisplayType {
 	Activity(? groups : StringMap<{ x : Float, y : Float, guide : GuideData }>);
 	Zone(? bgColor : Null<Int>, ? ref : Null<String>, ? rows : Null<String>, ? columns : Null<String>, ? zones : Null<Array<DisplayData>>);
 	Menu(? bookmark : Null<WidgetContainerData>, ? orientation : String, ? levelDisplays : StringMap<MenuLevel>, ? xBase : Null<Float>, ? yBase : Null<Float>);
-	Notebook(? chapterTemplates : StringMap<{ offsetY : Float, e : Display.ElementData }>, ? tabTemplate : { x : Float, xOffset : Float, e : WidgetContainerData }, ? bookmark : ImageData, ? guide : GuideData, ? step : { r: String, e: WidgetContainerData, transitionIn : Null<String> });
+	Notebook(? chapterTemplates : Null<StringMap<{ offsetY : Float, e : Display.ElementData }>>, ? tabTemplate : Null<{ x : Float, xOffset : Float, e : WidgetContainerData }>, ? bookmark : Null<ImageData>, ? guide : Null<GuideData>, ? step : Null<{ r: String, e: WidgetContainerData, transitionIn : Null<String> }>);
 }
 
 typedef DisplayData = {
 
 	var type : DisplayType;
-	@:optional var x : Null<Float> = null;
-	@:optional var y : Null<Float> = null;
-	@:optional var width : Null<Float> = null;
-	@:optional var height : Null<Float> = null;
-	@:optional var spritesheets : Null<StringMap<TilesheetEx>>; // TODO set in second step
+	@:optional var x : Null<Float>;
+	@:optional var y : Null<Float>;
+	@:optional var width : Null<Float>;
+	@:optional var height : Null<Float>;
+	@:optional var spritesheets : Null<StringMap<TilesheetEx>>; // set in a second step
 	@:optional var spritesheetsSrc : StringMap<String>;
 	@:optional var transitionIn : Null<String>;
 	@:optional var transitionOut : Null<String>;
@@ -95,7 +97,7 @@ typedef DisplayData = {
 	@:optional var filters : Null<String>;
 	@:optional var timelines : StringMap<{ ref : String, elements : Array<{ ref : String, transition : String, delay : Float }> }>;
 	@:optional var displays : StringMap<ElementData>;
-	@:optional var layers : Null<StringMap<TileLayer>>; // set in second step
+	@:optional var layers : Null<StringMap<TileLayer>>; // set in a second step
 	@:optional var layersSrc : StringMap<String>;
 }
 
@@ -182,10 +184,18 @@ class Display extends Sprite {
 
 		this.data = d;
 
-		d.x != null ? x = d.x;
-		d.y != null ? y = d.y;
-		d.width != null && d.height != null ? DisplayUtils.initSprite(this, d.width, d.height, 0, 0.001);
+		if (d.x != null) {
 
+			x = d.x;
+		}
+		if (d.y != null) {
+
+			y = d.y;
+		}
+		if (d.width != null && d.height != null) {
+
+			DisplayUtils.initSprite(this, d.width, d.height, 0, 0.001);
+		}
 		for (sk in d.spritesheets.keys) {
 
 			var layer = new TileLayer(d.spritesheets.get(sk));
@@ -274,27 +284,6 @@ class Display extends Sprite {
 		}
 	}
 
-
-
-
-typedef DisplayData = {
-
-	var x : Null<Float> = null;
-	var y : Null<Float> = null;
-	var width : Null<Float> = null;
-	var height : Null<Float> = null;
-	var spritesheets : Null<StringMap<TilesheetEx>>; // set in second step
-	var spritesheetsSrc : StringMap<String>;
-	var transitionIn : Null<String>;
-	var transitionOut : Null<String>;
-	var layout : Null<String>;
-	var filters : Null<String>;
-	var timelines : StringMap<{ ref : String, elements : Array<{ ref : String, transition : String, delay : Float }> }>;
-	var displays : StringMap<ElementData>;
-	var layers : Null<StringMap<TileLayer>>; // set in second step
-	var layersSrc : StringMap<String>;
-}
-
 	//private function createElement(elemNode:Fast):Widget
 	private function createElement(e : ElementData, r : String) : Widget {
 
@@ -353,7 +342,7 @@ typedef DisplayData = {
 
 				return timer;
 
-			case Template(d : { data : ElementData, validation : Null<String> }):
+			case Template(d): // d : { data : ElementData, validation : Null<String> }
 
 				displayTemplates.set(r, { data: d, z: zIndex++});
 
@@ -459,7 +448,7 @@ typedef DisplayData = {
 
 		switch (d.type) {
 
-			case DefaultButton(? defaultState : String, ? isToggleEnabled : Bool, ? action : Null<String>, ? group : Null<String>, ? enabled : Bool):
+			case DefaultButton(ds, ite, action, group, e):
 				
 				var btn : DefaultButton = new DefaultButton(d);
 
@@ -475,7 +464,7 @@ typedef DisplayData = {
 					
 					} else {
 
-						var stack : GenericStack<DefaultButton> = new GenericStack();
+						var stack : GenericStack<DefaultButton> = new GenericStack<DefaultButton>();
 						stack.add(btn);
 						buttonGroups.set(group, stack);
 					}
@@ -584,7 +573,7 @@ typedef DisplayData = {
 
 		return actionSet;
     }
-
+/* FIXME
 	private function onButtonToggle(e:ButtonActionEvent):Void
 	{
 		var button = cast(e.target, DefaultButton);
@@ -593,7 +582,7 @@ typedef DisplayData = {
 				b.toggle(button.toggleState != "active");
 		}
 	}
-
+*/
 	private function checkRender(e:Event):Void
 	{
 		for(layer in renderLayers.keys()){
