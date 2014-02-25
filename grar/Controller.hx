@@ -3,7 +3,8 @@ package grar;
 import grar.model.Config;
 import grar.model.State;
 import grar.model.Grar;
-import grar.model.Locale;
+import grar.model.localization.Locale;
+import grar.model.localization.LocaleData;
 import grar.model.InventoryToken;
 import grar.model.ContextualType;
 import grar.model.contextual.Notebook;
@@ -64,8 +65,8 @@ class Controller {
 
 				switch(state.module.readyState) {
 
-					case Loading(langsUri, layoutUri, displayXml, structureXml):
-
+					case Loading(langsUri, layoutUri, displayXml, structureXml): // FIXME, no more Xml/Fast
+trace("Loading("+langsUri+", "+layoutUri+"...)");
 						// tracking
 						trackingCtrl.initTracking(state.module, function(){ loadStyles(displayXml); }, onError);
 
@@ -187,12 +188,16 @@ class Controller {
 // FIXME / TODO in tracking controller            }
 
 						        loadlayouts(layoutUri);
+
+						        state.module.readyState = Ready; // FIXME reorganize init tasks and place in the safest place
 							}
 
 				        state.module.parts = parts;
 
 
-					default: // nothing
+				    case Ready:
+trace("Ready");
+				    	launchGame();
 				}
 			}
 
@@ -203,22 +208,17 @@ class Controller {
 				state.currentLocale = null;
 			}
 
-		state.onCurrentLocaleChanged = function() {
-
-				if (state.currentLocale == null) {
-
-					return;
-				}
-
-				loadCurrentLocale();
-			}
-
 		state.onLocalesAdded = function() {
 
-				// TODO 
+				// TODO ? doesn't seem to be used...
 				// for each lang, flags.set(value, flagIconPath);
 
-				loadCurrentLocale();
+				// implement a loadCurrentLocale(); ?
+			}
+
+		state.onCurrentLocalePathChanged = function() {
+
+				pushLocale(state.module.currentLocalePath);
 			}
 
 		application.onLayoutsChanged = function() {
@@ -257,6 +257,7 @@ class Controller {
         }
         return { name: name, id: id, icon: icon, items: items };
 	}
+
 	function createDefaultMenu() : Void {
 
     	var md : grar.view.contextual.menu.MenuDisplay.MenuData = { levels: [] };
@@ -306,25 +307,74 @@ class Controller {
 
 				if (lp != null) {
 
-					// FIXME Localiser.instance.layoutPath = lp;
-					// lp is the id/path to the aplication wide localization file (used by the menu)
+					// lp is the id/path to the application wide localization file (used by the menu)
+					state.module.interfaceLocale = lp;
 				}
 				application.createLayouts(lm);
 
         	}, onError );
 	}
 
-	function loadCurrentLocale() : Void {
+	/**
+	 * FIXME this shouldn't be here
+	 */
+	function pushLocale(l : String) : Void {
 
-		if (state.currentLocale == null || state.locales == null) {
+		var fullPath = l.split("/");
 
-			return;
+		var localePath : StringBuf = new StringBuf();
+		localePath.add(fullPath[0] + "/");
+		localePath.add(state.currentLocale + "/");
+
+		for (i in 1...fullPath.length-1) {
+
+			localePath.add(fullPath[i] + "/");
 		}
-		// TODO load lang file for current "view"
+		localePath.add(fullPath[fullPath.length-1]);
+
+		var ld : LocaleData = new LocaleData(state.currentLocale);
+		ld.setLocaleFile(localePath.toString());
+
+		application.localeData = ld;
 	}
 
+	function launchGame() : Void {
+
+		application.startMenu();
+
+		application.displayPart(state.module.start(null));
+	}
+/*
+	function startGame(game : Game, layout : String = "default"):Void
+	{
+		this.game = game;
+
+		changeLayout(layout);
+
+		if(!MenuDisplay.instance.exists || menuLoaded){
+			launchGame();
+		}
+	}
+
+	private function launchGame():Void
+	{
+		var startingPart:String = null;
+
+		if(game.stateInfos.bookmark > 0)
+			startingPart = game.getAllItems()[game.stateInfos.bookmark].id;
+
+		displayPartById(startingPart);
+	}
+
+	public function displayPartById(?id:String, interrupt:Bool = false):Bool
+	{
+		return displayPart(game.start(id), interrupt);
+	}
+
+*/
 	function onError(e:String) : Void {
 
 		trace("ERROR", e);
+		trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
 	}
 }

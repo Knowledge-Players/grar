@@ -5,8 +5,12 @@ import grar.view.component.Widget;
 import grar.view.component.container.DefaultButton;
 import grar.view.part.PartDisplay;
 import grar.view.guide.Guide;
+import grar.view.guide.Curve;
+import grar.view.guide.Line;
+import grar.view.guide.Grid;
+import grar.view.Display;
 
-import com.knowledgeplayers.grar.display.GameManager; // FIXME
+// FIXME import com.knowledgeplayers.grar.display.GameManager; // FIXME
 
 import grar.model.part.Item;
 import grar.model.part.ActivityPart;
@@ -14,17 +18,18 @@ import grar.model.part.Part;
 
 import grar.util.ParseUtils;
 
-import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
+// FIXME import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
 
 import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
+import haxe.ds.StringMap;
 import haxe.ds.GenericStack;
 
 using Lambda;
 using Std;
-using com.knowledgeplayers.grar.util.DisplayUtils;
+using grar.util.DisplayUtils;
 
 typedef Coordinates = {
 
@@ -51,7 +56,7 @@ class ActivityDisplay extends PartDisplay {
 
 	private static inline var dropRef: String = "dropZone";
 
-	private var groups : StringMap<{ x : Float, y : Float, guide : Guide }>;
+	private var groups : StringMap<{ x : Float, y : Float, guide : GuideData }>;
 
 	private var buttonsToInputs : Map<DefaultButton, Input>;
 	private var autoCorrect : Bool;
@@ -69,8 +74,16 @@ class ActivityDisplay extends PartDisplay {
 		// If startIndex == 0, it's called from startPart, no verification needed
 		if(startIndex == 0 || cast(part, ActivityPart).hasNextGroup()){
 			for(elem in part.elements){
-				if(elem.isText()){
-					setupItem(cast(elem, Item));
+
+				switch(elem) {
+
+					case Item(i):
+
+						if (i.isText()) {
+
+							setupItem(i);
+						}
+					default: // nothing
 				}
 			}
 			displayInputs();
@@ -130,7 +143,7 @@ class ActivityDisplay extends PartDisplay {
 	}
 
 	//override public function parseContent(content:Xml):Void
-	public function setContent(d : DisplayData) : Void {
+	override public function setContent(d : DisplayData) : Void {
 
 		super.setContent(d);
 
@@ -139,6 +152,8 @@ class ActivityDisplay extends PartDisplay {
 			case Activity(g):
 
 				this.groups = g;
+
+			default: throw "wrong DisplayData type passed to ActivityDisplay.setContent()";
 		}
 	}
 
@@ -198,7 +213,7 @@ class ActivityDisplay extends PartDisplay {
 
 		for (contentKey in input.content.keys()) {
 
-			button.setText(Localiser.instance.getItemContent(input.content.get(contentKey)), contentKey);
+// FIXME			button.setText(Localiser.instance.getItemContent(input.content.get(contentKey)), contentKey);
 		}
 		button.setAllListeners(onInputEvents);
 		button.zz = displayTemplates.get(input.ref).z;
@@ -209,6 +224,7 @@ class ActivityDisplay extends PartDisplay {
 	private inline function createGroupGuide(groupe : Group) : Guide {
 
 		var groupTemplate : { x : Float, y : Float, guide : GuideData } = groups.get(groupe.ref);
+
 
 		var guide : Guide;
 
@@ -293,10 +309,10 @@ class ActivityDisplay extends PartDisplay {
 
 		if(idNext != null){
 			var target = part.getElementById(idNext);
-			if(target.isPart())
-				GameManager.instance.displayPart(cast(target, Part));
-			else
-				throw "[ActivityPart] Thresholds must point to Part.";
+// FIXME			if(target.isPart())
+// FIXME				GameManager.instance.displayPart(cast(target, Part));
+// FIXME			else
+// FIXME				throw "[ActivityPart] Thresholds must point to Part.";
 		}
 		else
 			exitPart();
@@ -356,8 +372,8 @@ class ActivityDisplay extends PartDisplay {
 			switch(rule.value.toLowerCase()){
 				case "goto":
 					var target = part.getElementById(buttonsToInputs.get(e.target).values[0]);
-					if(target.isPart())
-						GameManager.instance.displayPart(cast(target, Part));
+// FIXME					if(target.isPart())
+// FIXME						GameManager.instance.displayPart(cast(target, Part));
 					needValidation = true;
 				case "toggle":
 					e.target.toggle();

@@ -4,10 +4,18 @@ import aze.display.TilesheetEx;
 
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
+import grar.model.localization.LocaleData;
+import grar.model.part.Part;
+
 import grar.view.component.container.WidgetContainer;
 import grar.view.contextual.menu.MenuDisplay;
 import grar.view.contextual.NotebookDisplay;
 import grar.view.element.TokenNotification;
+import grar.view.part.PartDisplay;
+import grar.view.part.ActivityDisplay;
+import grar.view.part.DialogDisplay;
+import grar.view.part.IntroScreen;
+import grar.view.part.StripDisplay;
 import grar.view.layout.Layout;
 import grar.view.style.StyleSheet;
 import grar.view.style.Style;
@@ -15,13 +23,13 @@ import grar.view.FilterData;
 import grar.view.TransitionTemplate;
 import grar.view.Display;
 
-#if (flash || openfl)
 import flash.display.BitmapData;
 import flash.display.Bitmap;
-#end
+import flash.Lib;
 
 import grar.util.DisplayUtils;
 
+import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
 
 class Application {
@@ -31,6 +39,11 @@ class Application {
 		// note: if we were to support multi instances with GRAR, 
 		// we should pass here the targetted API's root element of 
 		// the GRAR instance.
+
+		
+		// WIP 
+
+		this.parts = new GenericStack<PartDisplay>();
 	}
 
 	public var tilesheet (default, default) : TilesheetEx;
@@ -42,6 +55,10 @@ class Application {
 	public var menuData (default, set) : Null<MenuData>;
 
 	public var stylesheets : Null<StringMap<StyleSheet>>;
+
+	public var localeData : LocaleData;
+
+	private var stashedLocale : GenericStack<LocaleData>;
 
 
 	public var menu (default, set) : Null<MenuDisplay>;
@@ -57,6 +74,17 @@ class Application {
 #end
 
 	public var layouts (default, null) : Null<StringMap<Layout>> = null;
+
+
+	// WIP
+
+	public var currentLayout : Null<Layout> = null;
+
+	public var previousLayout : String = null; // FIXME shouldn't be here
+
+	var parts : GenericStack<PartDisplay>;
+
+	var startIndex:Int;
 
 	
 	///
@@ -110,6 +138,34 @@ class Application {
 	///
 	// API
 	//
+
+	public function changeLayout(l : String) : Void {
+
+		if (l == null) {
+
+			l = "default";
+		}
+		if (currentLayout == null || l != currentLayout.name) {
+
+			previousLayout = currentLayout == null ? "default" : currentLayout.name;
+			
+			if (currentLayout != null) {
+
+				Lib.current.removeChild(currentLayout.content);
+			}
+			currentLayout = layouts.get(l);
+			
+			if (currentLayout == null) {
+
+				throw "there is no layout '"+l+"'";
+			}
+			Lib.current.addChild(currentLayout.content);
+
+		} else {
+
+			previousLayout = currentLayout == null ? "default" : currentLayout.name;
+		}
+	}
 
 	public function createStyles(ssds : Array<StyleSheetData>) : Void {
 
@@ -213,6 +269,65 @@ class Application {
 	}
 
 
+	// WIP
+
+	public function startMenu() : Void {
+
+		if (menu != null) {
+
+			menu.init(menuData);
+		}
+	}
+
+	/**
+    * Display a graphic representation of the given part
+    * @param    part : The part to display
+    * @param    interrupt : Stop current part to display the new one
+    * @return true if the part can be displayed.
+    */
+	public function displayPart(part:Part, interrupt:Bool = false, startPosition:Int = -1):Bool
+	{
+		#if !kpdebug
+		// Part doesn't meet the requirements to start
+		if(!part.canStart())
+			return false;
+		#end
+
+		if (interrupt) {
+
+			var oldPart = parts.pop();
+
+			if (oldPart != null) {
+
+// FIXME				oldPart.removeEventListener(PartEvent.EXIT_PART, onExitPart);
+				oldPart.exitPart();
+			}
+		}
+		if (!parts.isEmpty()) {
+
+// FIXME			parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
+		}
+		// Display the new part
+		parts.add(createPartDisplay(part));
+trace("Part created");
+		startIndex = startPosition;
+		
+// FIXME		parts.first().addEventListener(PartEvent.EXIT_PART, onExitPart);
+// FIXME		parts.first().addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
+// FIXME		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+// FIXME		parts.first().addEventListener(GameEvent.GAME_OVER, function(e:GameEvent)
+// FIXME		{
+// FIXME			game.connection.tracking.setStatus(true);
+// FIXME			game.connection.computeTracking(game.stateInfos);
+// FIXME			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+// FIXME		});
+
+		parts.first().init();
+
+		return true;
+	}
+
+
 	///
 	// CALLBACKS
 	//
@@ -230,5 +345,31 @@ class Application {
 	public dynamic function onTokensImagesChanged() : Void { }
 
 	public dynamic function onStylesChanged() : Void { }
+
+
+	///
+	// INTERNALS
+	//
+
+
+	// WIP
+
+	function createPartDisplay(part:Part):Null<PartDisplay>
+	{
+		if(part == null)
+			return null;
+		part.restart();
+		var creation:PartDisplay = null;
+		if(part.isDialog())
+			creation = new DialogDisplay(part);
+		else if(part.isStrip())
+			creation = new StripDisplay(part);
+		else if(part.isActivity())
+			creation = new ActivityDisplay(part);
+		else
+			creation = new PartDisplay(part);
+
+		return creation;
+	}
 
 }

@@ -2,6 +2,7 @@ package grar.model;
 
 import grar.model.Grar;
 import grar.model.Tracking;
+import grar.model.localization.Locale;
 
 import haxe.ds.StringMap;
 
@@ -40,8 +41,6 @@ class State {
 
 	public var locales (default, set) : Null<StringMap<Locale>> = null;
 
-	public var localeStrings (default, set) : Null<StringMap<String>> = null;
-
 
 	///
 	// GETTER / SETTER
@@ -63,15 +62,6 @@ class State {
 		onLocalesAdded();
 
 		return locales;
-	}
-
-	function set_localeStrings( v : Null<StringMap<String>> ) : Null<StringMap<String>> {
-
-		localeStrings = v;
-
-		onLocaleLoaded();
-
-		return localeStrings;
 	}
 
 	function set_tracking( v : Tracking ) : Tracking {
@@ -118,6 +108,7 @@ class State {
 		module = s;
 
 		module.onPartsChanged = onModulePartsChanged;
+		module.onCurrentLocalePathChanged = onCurrentLocalePathChanged;
 
 		onModuleChanged();
 
@@ -158,5 +149,5 @@ class State {
 
 	public dynamic function onLocalesAdded() : Void { }
 
-	public dynamic function onLocaleLoaded() : Void { }
+	public dynamic function onCurrentLocalePathChanged() : Void { }
 }

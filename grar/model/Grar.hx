@@ -59,10 +59,40 @@ class Grar {
 
 	public var scoreChart (default, null) : ScoreChart;
 
+	public var interfaceLocale (default, set) : Null<String> = null;
+
+	public var currentLocalePath (default, set) : Null<String> = null;
+
+
+	var partIndex:Int = 0;
 
 	///
 	// GETTERS / SETTERS
 	//
+
+	public function set_interfaceLocale(v : Null<String>) : Null<String> {
+
+		if (interfaceLocale == v) {
+
+			return interfaceLocale;
+		}
+		interfaceLocale = currentLocalePath = v;
+//		onCurrentLocalePathChanged();
+
+		return interfaceLocale;
+	}
+
+	public function set_currentLocalePath(v : Null<String>) : Null<String> {
+
+		if (currentLocalePath == v) {
+
+			return currentLocalePath;
+		}
+		currentLocalePath = v;
+		onCurrentLocalePathChanged();
+
+		return currentLocalePath;
+	}
 
 	public function set_parts(v : Null<Array<Part>>) : Null<Array<Part>> {
 
@@ -143,6 +173,62 @@ class Grar {
 		}
 	}
 
+	/**
+     * Start the game
+     * @param	partId : the ID of the part to start.
+     * @return 	the part with id partId or null if this part doesn't exist
+     */
+    public function start( ? partId : String) : Null<Part> {
+
+        var nextPart:Part = null;
+        
+        if (partId == null) {
+
+            do {
+
+                nextPart = parts[partIndex].start();
+                partIndex++;
+            
+            } while (nextPart == null && partIndex < parts.length);
+        
+        } else if (partId != null) {
+
+            var i : Int = 0;
+
+            var allPart : Array<Part> = getAllParts();
+            
+            while (i < allPart.length && allPart[i].id != partId) {
+
+                i++;
+            }
+	        if (i != allPart.length) {
+
+                nextPart = allPart[i].start(true);
+	            var j = 0;
+	            var k = 0;
+	            
+	            while(j <= i) {
+
+	                if(allPart[j] == parts[k] && j > 0)
+	                    k++;
+	                j++;
+	            }
+	            partIndex = k + 1;
+	        }
+        }
+        return nextPart;
+    }
+
+    public function getAllParts():Array<Part>
+    {
+        var array = new Array<Part>();
+        for(part in parts){
+            array = array.concat(part.getAllParts());
+        }
+
+        return array;
+    }
+
 
 	///
 	// CALLBACKS
@@ -159,4 +245,6 @@ class Grar {
 	public dynamic function onBibliographyChanged() { }
 
 	public dynamic function onPartsChanged() { }
+
+	public dynamic function onCurrentLocalePathChanged() { }
 }

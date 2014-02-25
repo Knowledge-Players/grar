@@ -488,6 +488,15 @@ class Part /* implements Part */ {
 		return false;
 	}
 
+	/**
+     * Tell if this part is a activity
+     * @return true if this part is a activity
+     */
+	public function isActivity():Bool
+	{
+		return false;
+	}
+
 		/**
      * Tell if this part is a sound
      * @return true if this part is a sound

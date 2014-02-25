@@ -4,10 +4,10 @@ import grar.model.Config;
 
 class App {
 
-	static public var controller : Null<Controller>;
+	static public var controller : Null<Controller> = null;
 
 	static public function main() : Void {
-
+trace("starting...");
 		if (controller == null) {
 
 			init();

@@ -237,4 +237,9 @@ class ActivityPart extends Part {
 
 		return 'ref: $ref, groups: $groups, rules: $rules';
 	}
+
+	override public function isActivity():Bool
+	{
+		return true;
+	}
 }

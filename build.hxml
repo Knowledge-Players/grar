@@ -9,12 +9,11 @@
 
 #--next
 -main grar.App
--swf bin/grar.swf
+-swf bin/Dcns.swf
 -lib nme
 -lib tilelayer
 -lib ExAM
 -lib actuate
--cp src
 -swf-header 640:480:60:000000
 -debug
 -swf-version 11

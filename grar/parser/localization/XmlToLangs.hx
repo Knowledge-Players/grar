@@ -1,6 +1,6 @@
-package grar.parser;
+package grar.parser.localization;
 
-import grar.model.Locale;
+import grar.model.localization.Locale;
 
 import haxe.ds.StringMap;
 import haxe.xml.Fast;

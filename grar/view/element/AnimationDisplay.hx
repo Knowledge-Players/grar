@@ -1,4 +1,4 @@
-package com.knowledgeplayers.grar.display.element;
+package grar.view.element;
 
 import aze.display.TileClip;
 import aze.display.TileLayer;

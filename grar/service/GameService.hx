@@ -1,8 +1,8 @@
 package grar.service;
 
 import grar.model.Grar;
-import grar.model.Locale;
 import grar.model.InventoryToken;
+import grar.model.localization.Locale;
 import grar.model.contextual.Glossary;
 import grar.model.contextual.Bibliography;
 import grar.model.contextual.Notebook;
@@ -29,7 +29,7 @@ import grar.parser.contextual.XmlToNotebook;
 import grar.parser.contextual.XmlToMenu;
 import grar.parser.layout.XmlToLayouts;
 import grar.parser.part.XmlToPart;
-import grar.parser.XmlToLangs;
+import grar.parser.localization.XmlToLangs;
 import grar.parser.style.XmlToStyleSheet;
 import grar.parser.style.JsonToStyleSheet;
 

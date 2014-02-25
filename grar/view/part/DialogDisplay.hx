@@ -1,18 +1,18 @@
-package grar.display.part;
+package grar.view.part;
 
-import grar.display.component.container.DefaultButton;
-import grar.display.component.container.ScrollPanel;
-import grar.display.part.PartDisplay;
+import grar.view.component.container.DefaultButton;
+import grar.view.component.container.ScrollPanel;
+import grar.view.part.PartDisplay;
 
-import com.knowledgeplayers.grar.event.GameEvent;		// FIXME
-import com.knowledgeplayers.grar.event.ButtonActionEvent;		// FIXME
+// FIXME import com.knowledgeplayers.grar.event.GameEvent;		// FIXME
+// FIXME import com.knowledgeplayers.grar.event.ButtonActionEvent;		// FIXME
 
-import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
+// FIXME import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
 
 import grar.model.part.Item;
 import grar.model.part.PartElement;
 import grar.model.part.Part;
-import grar.model.part.dialog.pattern.ChoicePattern;
+import grar.model.part.dialog.ChoicePattern;
 import grar.model.part.Pattern;
 
 import flash.events.Event;
@@ -40,7 +40,7 @@ class DialogDisplay extends PartDisplay {
 
 	override public function next(? target : DefaultButton) : Void {
 
-		GameManager.instance.stopSound();
+// FIXME		GameManager.instance.stopSound();
 
 		startPattern(currentPattern);
 	}
@@ -84,7 +84,7 @@ class DialogDisplay extends PartDisplay {
 			else if(currentPattern.nextPattern != "")
 				goToPattern(currentPattern.nextPattern);
 			else{
-				var nextIndex = part.getElementIndex(currentPattern);
+				var nextIndex = part.getElementIndex(Pattern(currentPattern));
 				currentPattern = null;
 				nextElement(nextIndex);
 			}
@@ -95,6 +95,7 @@ class DialogDisplay extends PartDisplay {
 
 	override private function setButtonAction(button:DefaultButton, action:String):Bool
 	{
+/* FIXME
 		if(action.toLowerCase() == ButtonActionEvent.GOTO){
 			button.buttonAction = onChoice;
 			button.addEventListener(MouseEvent.MOUSE_OVER, onOverChoice);
@@ -102,6 +103,7 @@ class DialogDisplay extends PartDisplay {
 			return true;
 		}
 		else
+*/
 			return super.setButtonAction(button, action);
 	}
 
@@ -113,7 +115,7 @@ class DialogDisplay extends PartDisplay {
 
 	private function onChoice(?choice: DefaultButton):Void
 	{
-		GameManager.instance.stopSound();
+// FIXME		GameManager.instance.stopSound();
 		cast(currentPattern, ChoicePattern).numChoices++;
 		var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
 		cast(currentPattern, ChoicePattern).choices.get(choice.ref).viewed = true;
@@ -140,14 +142,14 @@ class DialogDisplay extends PartDisplay {
 			var tooltip = cast(displays.get(pattern.tooltipRef), ScrollPanel);
 			if(contains(tooltip))
 				removeChild(tooltip);
-			var content = Localiser.instance.getItemContent(choice.toolTip);
-			tooltip.setContent(content);
+// FIXME			var content = Localiser.instance.getItemContent(choice.toolTip);
+// FIXME			tooltip.setContent(content);
 			var i:Int = 0;
 			while(!Std.is(getChildAt(i), DefaultButton)){
 				i++;
 			}
 
-			TweenManager.applyTransition(tooltip, pattern.tooltipTransition);
+// FIXME			TweenManager.applyTransition(tooltip, pattern.tooltipTransition);
 			addChildAt(tooltip, i);
 		}
 		else{
