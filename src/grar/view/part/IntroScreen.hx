@@ -15,7 +15,16 @@ class IntroScreen extends WidgetContainer {
 		//super(xml);
 		super(isd);
 		
-		this.duration = switch(isd.type){ case IntroScreen(d): d; default: null; };
+		switch(isd.type) {
+
+			case IntroScreen(d):
+
+				this.duration = d;
+
+			default: 
+
+				throw "Wrong WidgetContainerData type passed to IntroScreen constructor";
+		};
 	}
 
 	/**
@@ -44,14 +53,14 @@ class IntroScreen extends WidgetContainer {
 
 	private function hide():Void
 	{
-		if(transitionOut != null)
-			TweenManager.applyTransition(this, transitionOut).onComplete(function()
-			{
-				dispose();
-			});
-		else{
+// FIWME		if (transitionOut != null)
+// FIXME			TweenManager.applyTransition(this, transitionOut).onComplete(function() {
+
+// FIXME					dispose();
+// FIXME				});
+// FIWME		else{
 			dispose();
-		}
+// FIWME		}
 	}
 
 	private function dispose():Void
@@ -66,7 +75,7 @@ class IntroScreen extends WidgetContainer {
 	{
 		addEventListener(Event.ADDED_TO_STAGE, function(e:Event) {
 			
-				TweenManager.applyTransition(this, transition);
+// FIXME				TweenManager.applyTransition(this, transition);
 				Timer.delay(hide, duration);
 			});
 

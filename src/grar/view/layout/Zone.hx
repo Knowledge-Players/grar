@@ -78,7 +78,7 @@ class Zone extends Display {
 
 // FIXME					addChild(layers.get("ui").view);
 
-					for (e in d.displays.keys) {
+					for (e in d.displays.keys()) {
 
 						createElement(d.displays.get(e), e);
 					}
@@ -130,6 +130,8 @@ class Zone extends Display {
 // FIXME					NotebookDisplay.instance.addEventListener(PartEvent.EXIT_PART, exitNotebook);
 // FIXME					NotebookDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterNotebook);
 				}
+
+			default: // nothing
 		}
 	}
 
@@ -164,9 +166,9 @@ class Zone extends Display {
 		for(button in buttonGroups.get(groupMenu))
 			button.toggle(true);
 
-		MenuDisplay.instance.removeEventListener(PartEvent.EXIT_PART, exitMenu);
+// FIXME		MenuDisplay.instance.removeEventListener(PartEvent.EXIT_PART, exitMenu);
 
-		MenuDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
+// FIXME		MenuDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
 	}
 
 	private function enterMenu(e:Event):Void
@@ -174,9 +176,9 @@ class Zone extends Display {
 		for(button in buttonGroups.get(groupMenu))
 			button.toggle(false);
 
-		MenuDisplay.instance.removeEventListener(PartEvent.ENTER_PART, enterMenu);
+// FIXME		MenuDisplay.instance.removeEventListener(PartEvent.ENTER_PART, enterMenu);
 
-		MenuDisplay.instance.addEventListener(PartEvent.EXIT_PART, exitMenu);
+// FIXME		MenuDisplay.instance.addEventListener(PartEvent.EXIT_PART, exitMenu);
 	}
 
 	override private function setButtonAction(button:DefaultButton, action:String):Bool
@@ -194,12 +196,12 @@ class Zone extends Display {
 	private function activeSound(?_target:DefaultButton):Void
 	{
 		if(soundState){
-			GameManager.instance.changeVolume(0);
+// FIXME			GameManager.instance.changeVolume(0);
 			soundState = false;
 			if(_target != null) _target.toggle(false);
 		}
 		else{
-			GameManager.instance.changeVolume(1);
+// FIXME			GameManager.instance.changeVolume(1);
 			soundState = true;
 			if(_target != null) _target.toggle(true);
 		}
@@ -229,7 +231,7 @@ class Zone extends Display {
 	}
 
 	//override private function createElement(elemNode:Fast):Widget
-	private function createElement(e : ElementData, r : String) : Widget {
+	override private function createElement(e : ElementData, r : String) : Widget {
 
 		var elem : Widget = super.createElement(e, r);
 
@@ -247,6 +249,7 @@ class Zone extends Display {
 
 				fastnav = new DropdownMenu(d, true);
 #end
+			default: // nothing
 		}
 
 		//layer.render();
@@ -296,6 +299,7 @@ class Zone extends Display {
 */
 	private function onFastNav(e: Event):Void
 	{
+/* FIXME
 		var track = fastnav.currentLabel;
 		var items = GameManager.instance.game.getAllItems();
 		var i = 0;
@@ -306,5 +310,6 @@ class Zone extends Display {
 		GameManager.instance.displayTrackable(items[i]);
 
         fastnav.visible = false;
+*/
 	}
 }

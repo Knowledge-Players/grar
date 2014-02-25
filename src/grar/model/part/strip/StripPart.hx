@@ -4,7 +4,7 @@ import grar.model.part.Part;
 
 class StripPart extends Part {
 
-	public function new() { super(); }
+	public function new(pd : PartData) { super(pd); }
 
 	/**
      * @return true

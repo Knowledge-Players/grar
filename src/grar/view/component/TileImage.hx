@@ -249,12 +249,12 @@ class TileImage extends Image {
 
 		if(visible){
 			reset();
-			actuator = TweenManager.applyTransition(tileSprite, transitionIn);
+// FIXME			actuator = TweenManager.applyTransition(tileSprite, transitionIn);
 			if(actuator != null && onComplete != null)
 				actuator.onComplete(onComplete);
 		}
 		else{
-			actuator = TweenManager.applyTransition(tileSprite, transitionOut);
+// FIXME			actuator = TweenManager.applyTransition(tileSprite, transitionOut);
 		}
 		renderNeeded();
 		if(actuator != null)

@@ -17,7 +17,7 @@ class XmlToGuide {
 
 	static public function parseGuideData(f : Fast) : GuideData {
 
-		return doParseGuideData(f.att.type.toLowerCase(), xml);
+		return doParseGuideData(f.att.type.toLowerCase(), f);
 	}
 
 
@@ -56,7 +56,7 @@ class XmlToGuide {
 						height: f.has.height ? Std.parseFloat(f.att.height) : null,
 						gapCol: f.has.gapCol ? Std.parseFloat(f.att.gapCol) : null,
 						gapRow: f.has.gapRow ? Std.parseFloat(f.att.gapRow) : null,
-						alignment: f.has.alignment ? Std.parseFloat(f.att.alignment) : null,
+						alignment: f.has.alignment ? f.att.alignment : null,
 						transitionIn: f.has.transitionIn ? f.att.transitionIn : null,
 						cellWidth: 0,
 						cellHeight: 0

@@ -76,7 +76,7 @@ class XmlToFilter {
         return filters;
     }
 
-    function xmlToQuality(n : Fast) : Int {
+    static function xmlToQuality(n : Fast) : FilterQuality {
 
     	var q : FilterQuality = Medium;
 

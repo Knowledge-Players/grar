@@ -1,5 +1,6 @@
 package grar.view.part;
 
+import grar.view.Display;
 import grar.view.component.Widget;
 import grar.view.component.Image;
 import grar.view.component.container.BoxDisplay;
@@ -16,8 +17,9 @@ import grar.model.part.Pattern;
 import grar.model.part.strip.BoxPattern;
 import grar.model.part.TextItem;
 
-
 import flash.display.DisplayObject;
+
+import haxe.ds.StringMap;
 
 /**
  * Display for the strip parts, like a comic
@@ -53,15 +55,27 @@ class StripDisplay extends PartDisplay {
 	// INTERNALS
 	//
 
-	override private function createDisplay():Void
-	{
-		super.createDisplay();
+	override private function createDisplay(d : DisplayData) : Void {
 
-		for(elem in part.elements){
-			if(elem.isText()){
-				addChild(displays.get(cast(elem, TextItem).ref));
-				for(image in cast(elem, TextItem).images)
-					addChild(displays.get(image));
+		super.createDisplay(d);
+
+		for (elem in part.elements) {
+
+			switch (elem) {
+
+				case Item(i):
+
+					if (i.isText()) {
+
+						addChild(displays.get(i.ref));
+						
+						for (image in i.images) {
+
+							addChild(displays.get(image));
+						}
+					}
+
+				default: // nothing
 			}
 		}
 	}
@@ -106,12 +120,20 @@ class StripDisplay extends PartDisplay {
 		    super.setBackground(currentBox.background);
 	}
 
-	override private function setText(item:TextItem, isFirst:Bool = true):Void
-	{
-		for(elem in part.elements){
-			if(elem.isText()){
-				var textItem = cast(elem, TextItem);
-// FIXME				cast(displays.get(textItem.ref), ScrollPanel).setContent(Localiser.instance.getItemContent(textItem.content));
+	override private function setText(item : TextItem, isFirst : Bool = true) : Void {
+
+		for (elem in part.elements) {
+
+			switch (elem) {
+
+				case Item(i):
+
+					if (i.isText()) {
+
+// FIXME				cast(displays.get(i.ref), ScrollPanel).setContent(Localiser.instance.getItemContent(i.content));
+					}
+
+				default: // nothing
 			}
 		}
 		displayPart();
@@ -176,7 +198,9 @@ class StripDisplay extends PartDisplay {
 
 		if (d.isBackground) {
 
-			var img = new Image(itemNode, spritesheets.get(d.tilesheetRef != null ? d.tilesheetRef : "ui"));
+			d.tilesheet = spritesheets.get(d.tilesheetRef != null ? d.tilesheetRef : "ui");
+
+			var img = new Image(d);
 			
 			addChild(img);
 			

@@ -38,6 +38,7 @@ import flash.media.Sound;
 import flash.media.SoundChannel;
 
 import haxe.ds.GenericStack;
+import haxe.ds.StringMap;
 
 using StringTools;
 
@@ -168,7 +169,7 @@ class PartDisplay extends Display {
 
 	public function startPart(startPosition:Int = -1):Void
 	{
-		TweenManager.applyTransition(this, transitionIn);
+// FIXME		TweenManager.applyTransition(this, transitionIn);
 		nextElement(startPosition);
 	}
 
@@ -185,18 +186,31 @@ class PartDisplay extends Display {
 	* @param    target : Name of the pattern to go
 	**/
 
-	public function goToPattern(target:String):Void
-	{
-		var i = 0;
-		while(i < part.elements.length && part.elements[i].id != target){
-			i++;
-		}
-		if(i == part.elements.length)
-			throw "[PartDisplay] There is no pattern with ref \""+target+"\"";
+	public function goToPattern(target : String) : Void {
 
-		var elem = part.elements[i];
-		part.startElement(elem.id);
-		nextElement(part.getElementIndex(elem)-1);
+		var elem : Null<PartElement> = null;
+
+		for (e in part.elements) {
+
+			switch (e) {
+
+				case Pattern(p):
+
+					if (p.id == target) {
+
+						elem = e;
+						part.startElement(p.id);
+						nextElement(part.getElementIndex(elem)-1);
+						break;
+					}
+
+				default: // original code doesn't filter on PartElement type (apply this to all PartElements)
+			}
+		}
+		if (elem == null) {
+
+			throw "[PartDisplay] There is no pattern with ref \""+target+"\"";
+		}
 	}
 
 
@@ -282,7 +296,7 @@ class PartDisplay extends Display {
 	}
 
 	//override private function createElement(elemNode:Fast):Widget
-	private function createElement(e : ElementData, r : String) : Widget {
+	override private function createElement(e : ElementData, r : String) : Widget {
 
 		switch (e) {
 
@@ -307,9 +321,10 @@ class PartDisplay extends Display {
 		}
 	}
 
-	override private function createDisplay():Void
-	{
-		super.createDisplay();
+	override private function createDisplay(d : DisplayData) : Void {
+
+		super.createDisplay(d);
+
 		displayLoaded = true;
 		checkPartLoaded();
 	}
@@ -323,9 +338,9 @@ class PartDisplay extends Display {
 		}
 	}
 
-	private function startPattern(pattern:Pattern):Void
+	private function startPattern(p : Pattern):Void
 	{
-		currentElement = pattern;
+		currentElement = Pattern(p);
 	}
 
 	override private function setButtonAction(button:DefaultButton, action:String):Bool
@@ -333,6 +348,7 @@ class PartDisplay extends Display {
 		if(super.setButtonAction(button, action))
 			return true;
 		else{
+/* FIXME FIXME FIXME
 			switch(action.toLowerCase()){
 				case ButtonActionEvent.NEXT:
 					button.buttonAction = next;
@@ -352,6 +368,7 @@ class PartDisplay extends Display {
 					};
 					return true;
 			}
+*/
 		}
 		return false;
 	}
@@ -547,8 +564,8 @@ class PartDisplay extends Display {
 			var listener: Event -> Void = null;
 			var ref = currentItem.ref;
 			listener = function(e){
-				if(currentItem != null && Std.is(currentItem, TextItem))
-					GameManager.instance.playSound(cast(currentItem, TextItem).sound);
+// FIXME				if(currentItem != null && Std.is(currentItem, TextItem))
+// FIXME					GameManager.instance.playSound(cast(currentItem, TextItem).sound);
 				tl.removeEventListener(ref, listener);
 			}
 			tl.addEventListener(ref, listener);
@@ -637,20 +654,34 @@ class PartDisplay extends Display {
 		// Buttons
 		if(Std.is(object, DefaultButton)){
 
-			var button: Map<String, Map<String, String>> = null;
-			if(currentElement.isText() || currentElement.isVideo())
-				button = cast(currentElement, Item).button;
-			else if(currentElement.isPattern())
-				button = cast(currentElement, Pattern).buttons;
+			var button : StringMap<StringMap<String>> = null;
 
-			if(button.exists(key)){
-				setButtonText(key, button.get(key));
-				if(timelines.get(currentItem.timelineOut) != null)
-					cast(displays.get(key), DefaultButton).timeline = timelines.get(currentItem.timelineOut);
-				return true;
+			switch (currentElement) {
+
+				case Item(i):
+
+					button = i.button;
+
+				case Pattern(p):
+
+					button = p.buttons;
+
+				default: // nothing
 			}
-			else
+			if (button.exists(key)) {
+
+				setButtonText(key, button.get(key));
+				
+				if (timelines.get(currentItem.timelineOut) != null) {
+
+					cast(displays.get(key), DefaultButton).timeline = timelines.get(currentItem.timelineOut);
+				}
+				return true;
+			
+			} else {
+
 				return false;
+			}
 		}
 
 		// If the character is present on the scene

@@ -101,7 +101,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
         switch (d.type) {
 
-        	case Menu(b):
+        	case Menu(b, _, _, _, _):
 
 				if (b != null) {
 
@@ -109,7 +109,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 				}
 			default: throw "wrong DisplayData type given to MenuDisplay.setContent()";
         }
-        exists = true;
+//        exists = true;
     }
 
 	public function init(d : MenuData) : Void {
@@ -121,7 +121,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
         		this.orientation = o;
         		this.levelDisplays = ld;
 
-				super.createDisplay();
+				// WHY AGAIN ??? super.createDisplay();
 
 				this.xBase = xb;
 				this.yBase = yb;
@@ -133,7 +133,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 				addChild(layers.get("ui").view);
 
-				for (l in e.levels) {
+				for (l in d.levels) {
 
 					createMenuLevel(l);
 				}
@@ -182,11 +182,11 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 			case Button(xo, yo, w, bd):
 
 // FIXME				var partName = GameManager.instance.getItemName(level.id);
-				if (partName == null) {
+// FIXME				if (partName == null) {
 
-					throw "[MenuDisplay] Can't find a name for '"+level.id+"'.";
-				}
-
+// FIXME					throw "[MenuDisplay] Can't find a name for '"+level.id+"'.";
+// FIXME				}
+/* FIXME
 				var button = addButton(bd, partName, level.icon);
 
 				buttons.set(level.id, button);
@@ -214,7 +214,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 					currentPartButton = button;
 				}
-
+*/
 			case ContainerSeparator(d):
 
 				var separator : Widget = new SimpleContainer(d);
@@ -239,7 +239,6 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 				}
 				separator.addEventListener(Event.CHANGE, updateDynamicFields);
 
-			default: 
 		}
 		for (elem in level.items) {
 
@@ -248,7 +247,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 	}
 
 	private function setButtonState(button : DefaultButton, level : LevelData) : Void {
-
+/* FIXME FIXME FIXME FIXME FIXME FIXME
 		for (part in GameManager.instance.game.getAllParts()) {
 
 			if (part.name == level.id) {
@@ -264,6 +263,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 				break;
 			}
 		}
+*/
 	}
 
 //	private function addButton(fast : Fast, text : String, iconId : String) : DefaultButton {
@@ -284,7 +284,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 		return button;
 	}
 
-	override private function createDisplay() : Void { } // ?
+	override private function createDisplay(d : DisplayData) : Void { } // ?
 
 	// Handlers
 
@@ -293,18 +293,18 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 		var target = _target;
 		var canStart = false;
 		for(key in buttons.keys()){
-			if(buttons.get(key) == target)
-				canStart = GameManager.instance.displayPartById(key, true);
+// FIXME			if(buttons.get(key) == target)
+// FIXME				canStart = GameManager.instance.displayPartById(key, true);
 		}
 
 		if(canStart){
-			var actuator = TweenManager.applyTransition(this, transitionOut);
-			if(actuator != null)
-				actuator.onComplete(function(){
-					GameManager.instance.hideContextual(instance);
-				});
-			else
-				GameManager.instance.hideContextual(instance);
+// FIXME			var actuator = TweenManager.applyTransition(this, transitionOut);
+// FIXME			if(actuator != null)
+// FIXME				actuator.onComplete(function(){
+// FIXME					GameManager.instance.hideContextual(instance);
+// FIXME				});
+// FIXME			else
+// FIXME				GameManager.instance.hideContextual(instance);
 		}
 	}
 
@@ -345,6 +345,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 	private inline function getUnlockCounterInfos(partId:String):String
 	{
 		var output: String = "";
+/* FIXME
 		var parent: Part = GameManager.instance.game.getPart(partId);
 		var numUnlocked = 0;
 		if(parent != null){
@@ -369,7 +370,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 				output = numUnlocked+"/"+children.length;
 			}
 		}
-
+*/
 		return output;
 	}
 
@@ -380,15 +381,16 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 				var content = getUnlockCounterInfos(field.field.ref);
 				field.field.setContent(content);
 			}
-			else{
-				field.field.setContent(Localiser.instance.getItemContent(field.content));
-			}
+// FIXME			else{
+// FIXME				field.field.setContent(Localiser.instance.getItemContent(field.content));
+// FIXME			}
 			field.field.updateX();
 		}
 	}
 
 	private function onAdded(e:Event):Void
 	{
+/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
 		// Update bookmark
 		var i = 0;
 		while(i < GameManager.instance.game.getAllParts().length && GameManager.instance.game.getAllParts()[i].isDone){
@@ -412,6 +414,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 			timelines.get("in").play();
 		}
 		dispatchEvent(new PartEvent(PartEvent.ENTER_PART));
+*/
 	}
 
 	private function onRemove(e:Event):Void
@@ -420,7 +423,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
             for(elem in timelines.get("in").elements)
                 elem.widget.reset();
         }
-		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+// FIXME		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 	}
 
 }

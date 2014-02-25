@@ -1,15 +1,16 @@
 package grar.parser;
 
-import haxe.xml.Fast;
-
 import grar.model.Grar;
+import grar.model.TrackingMode;
+
+import haxe.xml.Fast;
 
 class XmlToGrar {
 
     static public function parse( xml : Xml ) : Grar {
 
         var m : TrackingMode;
-        var s : String;
+        var s : { value : String, tracking : String };
         var id : String;
 
         var sFast : Fast = new Fast(xml);

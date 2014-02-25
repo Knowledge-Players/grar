@@ -4,6 +4,7 @@ import aze.display.TilesheetEx;
 
 import grar.view.part.PartDisplay;
 import grar.view.component.container.WidgetContainer;
+import grar.view.component.container.ScrollPanel;
 
 import grar.util.DisplayUtils;
 
@@ -108,7 +109,7 @@ class SimpleContainer extends WidgetContainer {
 
 		loadedChildren++;
 
-		var mask : Null<String> = switch(scd.type){ case SimpleContainer(s,m): m; default: null; };
+		var mask : Null<String> = switch(scd.type){ case SimpleContainer(m): m; default: null; };
 
         if (loadedChildren == totalChildren && mask != null) {
 
@@ -171,14 +172,14 @@ class SimpleContainer extends WidgetContainer {
 
 		var div = new SimpleContainer(d);
 		totalChildren++;
-		div.addEventListener(DisplayEvent.LOADED, setMask);
+// FIXME		div.addEventListener(DisplayEvent.LOADED, setMask);
 		addElement(div);
 		return div;
 	}
 
 	override private function createText(d : WidgetContainerData) : ScrollPanel {
 
-		var panel : Widget = super.createText(d);
+		var panel : ScrollPanel = super.createText(d);
 
 		switch(d.type) {
 
@@ -210,18 +211,25 @@ class SimpleContainer extends WidgetContainer {
 		return panel;
 	}
 
-	override private function setButtonAction(button:DefaultButton, action:String):Void
-	{
-		if(action == "close"){
-			button.buttonAction = function(?target: DefaultButton){
-				if(transitionOut != null){
-					TweenManager.applyTransition(this, transitionOut).onComplete(function(){
+	override private function setButtonAction(button : DefaultButton, action : String) : Void {
+
+		if (action == "close") {
+
+			button.buttonAction = function(? target : DefaultButton) {
+
+					if (transitionOut != null) {
+
+// FIXME						TweenManager.applyTransition(this, transitionOut).onComplete(function(){
+
+// FIXME								parent.removeChild(this);
+
+// FIXME							});
+
+					} else {
+
 						parent.removeChild(this);
-					});
+					}
 				}
-				else
-					parent.removeChild(this);
-			}
 		}
 	}
 }

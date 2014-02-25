@@ -5,6 +5,8 @@ import grar.model.contextual.Note;
 
 import grar.view.component.container.WidgetContainer;
 
+import grar.parser.component.container.XmlToWidgetContainer;
+
 import haxe.ds.StringMap;
 
 import haxe.xml.Fast;
@@ -20,7 +22,7 @@ class XmlToInventory {
 
 		for (token in tf.nodes.Token) {
 
-			i.set(token.att.id, parseInventoryToken(token));
+			i.set(token.att.id, parseInventoryToken(token.x));
 		}
 
 		return { m: i, d: d };
@@ -30,7 +32,7 @@ class XmlToInventory {
 
 		var dtf : Fast = new Fast(xml.firstElement());
 
-		var tn : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(dtf, TokenNotification); // dtf.node.Hud.att.duration
+		var tn : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(dtf, TokenNotification(null)); // dtf.node.Hud.att.duration
 
 		var ti : StringMap<{ small : String, large : String }> = new StringMap();
 		
@@ -63,8 +65,8 @@ class XmlToInventory {
 				return { id: id, ref: ref, type: type, isActivated: isActivated, name: name, content: content, 
 							icon: icon, image: image, fullScreenContent: fullScreenContent };
 			}
-			return null;
 		}
+		return null;
 	}
 	
 	static function parseInventoryToken(xml : Xml) : InventoryToken {

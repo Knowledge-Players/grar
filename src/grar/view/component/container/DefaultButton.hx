@@ -276,9 +276,10 @@ class DefaultButton extends WidgetContainer {
 		}
 	}
 
-/* FIXME  FIXME  FIXME  FIXME  FIXME  FIXME 
-	public function initStates(?xml: Fast, ?timelines: Map<String, Timeline>):Void
+	//public function initStates(?xml: Fast, ?timelines: Map<String, Timeline>):Void
+	public function initStates(?timelines: Map<String, Timeline>):Void
 	{
+/* FIXME  FIXME  FIXME  FIXME  FIXME  FIXME 
 		if(xml != null)
 			tmpXml = xml;
 		if(tmpXml != null){
@@ -298,21 +299,23 @@ class DefaultButton extends WidgetContainer {
 				states.set(defaultState+"_out", createStates(tmpXml));
 			tmpXml = null;
 		}
-
-	}
 */
-/* FIXME FIXME FIXME FIXME FIXME FIXME 
-	private inline function createStates(node:Fast):Map<String, Widget>
+	}
+
+	//private inline function createStates(node:Fast):Map<String, Widget>
+	private inline function createStates(node:Dynamic):Map<String, Widget>
 	{
 		var list = new Map<String, Widget>();
+/* FIXME FIXME FIXME FIXME FIXME FIXME 
 
 		for(elem in node.elements){
 			var widget = createElement(elem);
 			list.set(widget.ref, widget);
 		}
+*/
 		return list;
 	}
-*/
+
 	public function setAllListeners(listener:MouseEvent -> Void):Void
 	{
 		removeAllEventsListeners(listener);

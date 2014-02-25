@@ -13,6 +13,7 @@ import grar.parser.part.XmlToItem;
 
 import grar.util.ParseUtils;
 
+import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
 
 import haxe.xml.Fast;
@@ -29,8 +30,8 @@ class XmlToPart {
 	static public function parse(xml : Xml) : PartialPart {
 
 		var f : Fast = new Fast(xml);
-		var pp : PartialPart = { };
-		pp.xml = xml;
+		var pp : PartialPart = cast { };
+		// ??? pp.xml = xml;
 
 		var t : String = f.has.type ? f.att.type.toLowerCase() : "";
 
@@ -39,22 +40,22 @@ class XmlToPart {
 			case "dialog":
 
 				pp.type = Dialog;
-				pp.pd = parsePartData( xml );
+				pp.pd = parsePartData(f);
 
 			case "strip" :
 
 				pp.type = Strip;
-				pp.pd = parsePartData( xml );
+				pp.pd = parsePartData(f);
 
 			case "activity":
 
 				pp.type = Activity;
-				pp.pd = parsePartData( xml );
+				pp.pd = parsePartData(f);
 
 			case "" :
 
 				pp.type = Part;
-				pp.pd = parsePartData( xml );
+				pp.pd = parsePartData(f);
 
 			default: 
 
@@ -212,7 +213,7 @@ class XmlToPart {
 			
 			case "pattern": // should happen only for DialogParts and StripParts
 			
-				pd.elements.push(Pattern(XmlToPattern.parse(node)));
+				pd.elements.push(Pattern(XmlToPattern.parse(node.x)));
 		}
 
 		return pd;
@@ -355,11 +356,9 @@ class XmlToPart {
 		return pd;
 	}
 
-	static public function parsePartData(xml : Xml) : PartData {
+	static public function parsePartData(f : Fast) : PartData {
 
-		var f : Fast = new Fast(xml);
-
-		var pd : PartData = {};
+		var pd : PartData = cast {};
 
 		pd.id = f.att.id;
 		pd.nbSubPartTotal = 0;
@@ -377,7 +376,7 @@ class XmlToPart {
 		pd.partialSubParts = [];
 
 		pd = parsePartHeader(pd, f);
-
+/* done in parseContent
 		if (f.hasNode.Sound) {
 
 #if (flash || openfl)
@@ -388,19 +387,16 @@ class XmlToPart {
 		}
 		if (f.hasNode.Part && pd.file != null) {
 
-			for (partNode in xml.nodes.Part) {
+			for (partNode in f.nodes.Part) {
 
 				pd.nbSubPartTotal++;
 
-				var sp : Part = parse(partNode, p);
+				var sp : PartialPart = parse(partNode.x, p);
 				
-				pd.elements.push(Part(sp));
+				pd.elements.push(PartialPart(sp));
 			}
 		}
-		if (pd.display == null && pd.parent != null) {
-
-			pd.display = pd.parent.display;
-		}
+*/
 
 		return pd;
 	}

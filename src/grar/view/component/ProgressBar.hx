@@ -26,19 +26,21 @@ class ProgressBar extends WidgetContainer {
 		//super(_node);
 		super(pbd);
 
-		layerProgressBar = new TileLayer(UiFactory.tilesheet);
+// FIXME		layerProgressBar = new TileLayer(UiFactory.tilesheet);
 
 		addChild(layerProgressBar.view);
 
 		icons = new StringMap();
 
-		GameManager.instance.addEventListener(PartEvent.ENTER_PART, onEnterPart);
+// FIXME		GameManager.instance.addEventListener(PartEvent.ENTER_PART, onEnterPart);
 
-		GameManager.instance.addEventListener(GameEvent.GAME_OVER, function(e:GameEvent) {
-				fillBar(maskWidth);
-			});
+// FIXME		GameManager.instance.addEventListener(GameEvent.GAME_OVER, function(e:GameEvent) {
 
-		allItems = GameManager.instance.game.getAllItems();
+// FIXME				fillBar(maskWidth);
+
+// FIXME			});
+
+// FIXME		allItems = GameManager.instance.game.getAllItems();
 
 		switch(pbd.type) {
 
@@ -64,22 +66,28 @@ class ProgressBar extends WidgetContainer {
 	{
 		var xPos:Float = maskWidth / (2 * allItems.length);
 		var isFirst = true;
-		for(item in allItems){
-			var icon = new TileClip(layerProgressBar, prefix + "_" + item.id);
-			icons.set(item.id, icon);
-			icon.x = xPos;
-			icon.y = -8;
-			icon.scale = iconScale;
-			icon.stop();
-			layerProgressBar.addChild(icon);
-			if(isFirst){
-				fillBar(xPos);
-				icon.currentFrame++;
-				isFirst = false;
-			}
-			xPos += maskWidth / allItems.length;
-		}
 
+		for(item in allItems) {
+
+			switch (item) {
+
+				case Part(p):
+
+					var icon = new TileClip(layerProgressBar, prefix + "_" + p.id);
+					icons.set(p.id, icon);
+					icon.x = xPos;
+					icon.y = -8;
+					icon.scale = iconScale;
+					icon.stop();
+					layerProgressBar.addChild(icon);
+					if(isFirst){
+						fillBar(xPos);
+						icon.currentFrame++;
+						isFirst = false;
+					}
+					xPos += maskWidth / allItems.length;
+			}
+		}
 		layerProgressBar.render();
 
 	}

@@ -5,6 +5,8 @@ import grar.model.contextual.Note;
 import grar.model.InventoryToken;
 import grar.model.part.Item;
 
+import grar.parser.part.XmlToItem;
+
 import haxe.ds.StringMap;
 import haxe.ds.GenericStack;
 

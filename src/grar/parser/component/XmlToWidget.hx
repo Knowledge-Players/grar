@@ -6,6 +6,8 @@ import grar.util.ParseUtils;
 
 import haxe.xml.Fast;
 
+using StringTools;
+
 class XmlToWidget {
 
 	///
@@ -16,7 +18,7 @@ class XmlToWidget {
 
 		//var f : Fast = new Fast(xml);
 
-		var wd : WidgetData = { };
+		var wd : WidgetData = cast { };
 
 		if (f != null) {
 
@@ -42,7 +44,7 @@ class XmlToWidget {
 			wd.transitionOut = f.has.transitionOut ? f.att.transitionOut : "";
 			
 			wd.alpha = f.has.alpha ? Std.parseFloat(f.att.alpha) : null;
-			wd.rotation = f.has.rotation ? Std.parseFloat(f.att.rotation) null;
+			wd.rotation = f.has.rotation ? Std.parseFloat(f.att.rotation) : null;
 			wd.transformation = f.has.transformation ? f.att.transformation : null;
 
 			wd.filters = f.has.filters ? f.att.filters : null;
@@ -60,5 +62,7 @@ class XmlToWidget {
 			}
 			wd.position = f.has.position ? Type.createEnum(Positioning, f.att.position.toUpperCase()) : null;
 		}
+
+		return wd;
 	}
 }

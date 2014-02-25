@@ -22,7 +22,8 @@ class Item /* implements PartElement */ {
 	/**
      * Never called directly (only in sub-classes)
      */
-	private function new( o : ItemData ) {
+// private function new(?xml:Fast, content:String = "")
+	private function new(o : ItemData) {
 
 		this.id = o.id;
 		this.content = o.content;

@@ -21,7 +21,7 @@ class XmlToLayouts {
 
 		for (l in f.elements) {
 
-			var ld : LayoutData = { name: l.att.layoutName, content: XmlToDisplay.parseDisplayData(l, Zone) };
+			var ld : LayoutData = { name: l.att.layoutName, content: XmlToDisplay.parseDisplayData(l.x, Zone(null, null, null, null, null)) };
 
 			lm.set(ld.name, ld);
 		}

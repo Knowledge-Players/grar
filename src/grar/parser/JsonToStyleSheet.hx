@@ -8,6 +8,8 @@ import grar.util.DisplayUtils;
 import haxe.ds.StringMap;
 import haxe.Json;
 
+import flash.display.Bitmap; // FIXME
+
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
 class JsonToStyleSheet {

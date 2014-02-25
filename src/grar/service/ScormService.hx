@@ -21,7 +21,7 @@ class ScormService {
 	 */
 	public function init( isNote : Bool, activation : String, is2004 : Bool, onSuccess : Tracking -> Void, onError : String -> Void ) : Void {
 
-		var isActive : Bool;
+		var isActive : Bool = false;
 		var location : Null<String> = null;
 		var score : String = "";
 		var masteryScore : Null<Int> = null;

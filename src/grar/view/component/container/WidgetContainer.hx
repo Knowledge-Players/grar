@@ -6,6 +6,7 @@ import aze.display.TilesheetEx;
 
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
+import grar.view.ElementData;
 import grar.view.Display;
 import grar.view.Color;
 import grar.view.guide.Guide;
@@ -51,7 +52,7 @@ typedef BackgroundData = {
 	var bubbleY : Float;
 	var resize : Bool;
 }
-
+/*
 enum ElementData {
 
 	Image(d:ImageData);
@@ -66,7 +67,7 @@ enum ElementData {
 	VideoProgressBar(d:ProgressBarData);
 	VideoSlider(d:SliderData);
 }
-
+*/
 enum WidgetContainerType {
 
 	WidgetContainer; // TODO remove ?
@@ -80,7 +81,7 @@ enum WidgetContainerType {
 	ChronoCircle(? colorCircle : Null<Color>, ? minRadius : Null<Int>, ? maxRadius : Null<Int>, ? colorBackground : Null<Color>, ? centerCircle : Null<Color>);
 	VideoPlayer(? controlsHidden : Bool, ? autoFullscreen : Null<Bool>);
 	ProgressBar(? iconScale : Float, ? progressColor : Int, ? icon : String);
-	InventoryDisplay(? guide : GuideData, fullscreen : WidgetContainerData, displayTemplates : StringMap<Template>);
+	InventoryDisplay(? guide : GuideData, ? fullscreen : WidgetContainerData, ? displayTemplates : StringMap<Template>);
 	BookmarkDisplay(? animation : Null<String>, ? xOffset : Float, ? yOffset : Float);
 	IntroScreen(? duration : Int);
 	AnimationDisplay;

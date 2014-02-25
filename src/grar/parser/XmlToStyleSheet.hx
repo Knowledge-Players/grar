@@ -10,6 +10,8 @@ import haxe.xml.Fast;
 
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
+import flash.display.Bitmap; // FIXME
+
 class XmlToStyleSheet {
 
     static public function parse( xml : Xml, tilesheet : aze.display.TilesheetEx ) : StyleSheet {
@@ -41,14 +43,14 @@ class XmlToStyleSheet {
 
 				if (child.att.value.indexOf(".") < 0) {
 #if (flash || openfl)
-					style.icon = DisplayUtils.getBitmapDataFromLayer(tilesheet, child.att.value);
+					style.icon = DisplayUtils.getBitmapDataFromLayer(tilesheet, child.att.value); // FIXME
 #else
 					style.icon = child.att.value;
 #end
 				
 				} else {
 #if (flash || openfl)
-					style.icon = AssetsStorage.getBitmapData(child.att.value);
+					style.icon = AssetsStorage.getBitmapData(child.att.value); // FIXME
 #else
 					style.icon = child.att.value;
 #end

@@ -1,7 +1,7 @@
 package grar.parser.component;
 
 import grar.view.component.TileImage;
-import grar.view.component.Character;
+import grar.view.component.CharacterDisplay;
 
 import grar.parser.component.XmlToImage;
 
@@ -11,7 +11,7 @@ class XmlToCharacter {
 
 	static public function parseCharacterData(f : Fast) : CharacterData {
 
-		var cd : CharacterData = { };
+		var cd : CharacterData = cast { };
 
 		f.x.remove("spritesheet");
 

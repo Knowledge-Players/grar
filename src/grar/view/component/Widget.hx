@@ -15,7 +15,7 @@ using StringTools;
 typedef WidgetData = {
 
 	var ref : String;
-	var scale : Float;
+	var scale : Null<Float>;
 	var scaleX : Null<Float>;
 	var scaleY : Null<Float>;
 	var x : String;
@@ -231,7 +231,7 @@ class Widget extends Sprite {
 
 	public function set_transformation(transformation: String):String
 	{
-		TweenManager.applyTransition(this, transformation);
+// FIXME		TweenManager.applyTransition(this, transformation);
 		return this.transformation = transformation;
 	}
 
@@ -245,10 +245,10 @@ class Widget extends Sprite {
 			}
 			reset();
 			if(visible){
-				var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
-				if(actuator != null && onComplete != null)
-					actuator.onComplete(onComplete);
-				else if(onComplete != null)
+// FIXME				var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
+// FIXME				if(actuator != null && onComplete != null)
+// FIXME					actuator.onComplete(onComplete);
+// FIXME				else if(onComplete != null)
 					onComplete();
 			}
 			else if(onComplete != null)
@@ -260,10 +260,12 @@ class Widget extends Sprite {
 
 	public function set_transitionOut(transition:String):String
 	{
-		addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
-		{
-			var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
-		});
+		addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event) {
+
+// FIXME				var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
+
+			});
+
 		return transitionOut = transition;
 	}
 

@@ -7,7 +7,7 @@ import haxe.xml.Fast;
 
 class DialogPart extends Part {
 
-	public function new() { super(); }
+	public function new(pd : PartData) { super(pd); }
 
 	override public function isDialog() : Bool {
 

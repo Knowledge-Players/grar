@@ -8,6 +8,8 @@ import grar.model.part.video.VideoItem;
 import grar.util.ParseUtils;
 
 import haxe.ds.GenericStack;
+import haxe.ds.StringMap;
+
 import haxe.xml.Fast;
 
 class XmlToItem {
@@ -43,8 +45,8 @@ class XmlToItem {
 
 	static public function parseItem(f : Fast) : ItemData {
 
-		var id : String;
-		var content : String;
+		var id : String = "";
+		var content : String = "";
 		var background : Null<String> = null;
 		var button : Null<StringMap<StringMap<String>>> = null;
 		var ref : Null<String> = null;
@@ -95,11 +97,8 @@ class XmlToItem {
 				images.add(elem.att.ref);
 			}
 
-		} else {
-
-			this.content = content;
 		}
-		id = this.content;
+		id = content;
 
 		return { id: id, content: content, background: background, button: button, ref: ref, 
 					tokens: tokens, images: images, endScreen: endScreen, timelineIn: timelineIn, 
@@ -112,10 +111,10 @@ class XmlToItem {
 
 		var id : ItemData = parseItem(f);
 
-		var author : String;
-		var transition : String;
-		var sound : String;
-		var introScreen : { ref : String, content : StringMap<String> };
+		var author : String = null;
+		var transition : String = null;
+		var sound : String = null;
+		var introScreen : { ref : String, content : StringMap<String> } = null;
 
 		if (f != null) {
 

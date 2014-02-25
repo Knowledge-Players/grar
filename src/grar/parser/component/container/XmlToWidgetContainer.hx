@@ -1,29 +1,37 @@
 package grar.parser.component.container;
 
+import grar.view.ElementData;
+import grar.view.Color;
+import grar.view.guide.Guide;
 import grar.view.component.Widget;
+import grar.view.component.Image;
+import grar.view.component.TileImage;
 import grar.view.component.container.WidgetContainer;
 import grar.view.component.container.SimpleContainer;
+import grar.view.component.container.VideoPlayer;
 
 import grar.parser.component.XmlToWidget;
 
 import grar.util.ParseUtils;
 
+import haxe.ds.StringMap;
+
 import haxe.xml.Fast;
 
 class XmlToWidgetContainer {
 
-	static public function parseWidgetContainerData( ? f : Fast, ? type : WidgetContainerType = WidgetContainer /*, ? tilesheet : TilesheetEx */ ) : Null<WidgetContainerData> {
+	static public function parseWidgetContainerData(? f : Null<Fast>, ? type : Null<WidgetContainerType> /*, ? tilesheet : TilesheetEx */ ) : Null<WidgetContainerData> {
+
+		var wcd : WidgetContainerData = cast { };
+		wcd.type = type == null ? WidgetContainer : type;
+		wcd.tilesheet = null;
 
 		switch (wcd.type) {
 			case SimpleBubble: return null;
 			default: // nothing
 		}
 
-		var wcd : WidgetContainerData = { };
-
 		wcd.wd = XmlToWidget.parseWidgetData(f);
-		wcd.type = type;
-		wcd.tilesheet = null;
 
 		if (f != null) {
 
@@ -52,12 +60,12 @@ class XmlToWidgetContainer {
 
 					grid.push(Std.parseFloat(number));
 				}
-				wcd.grid9 = { 0: grid[0], 1: grid[1], 2: grid[2], 3: grid[3] };
+				wcd.grid9 = { g0: grid[0], g1: grid[1], g2: grid[2], g3: grid[3] };
 			}
-			for (child in f.elements) {
+// ???			for (child in f.elements) {
 
-				wcd = createElement(child, wcd);
-			}
+// ???				wcd = createElement(child, wcd);
+// ???			}
 			wcd.maskWidth = f.has.width ? Std.parseFloat(f.att.width) : null;
 			wcd.maskHeight = f.has.height ? Std.parseFloat(f.att.height) : null;
 
@@ -83,13 +91,13 @@ class XmlToWidgetContainer {
 		// additional parsing specific to each WidgetContainer type
 		switch (wcd.type) {
 
-			case SimpleContainer:
+			case SimpleContainer(_):
 
 				var nm : Null<String> = f.has.mask ? f.att.mask : null;
 
 				wcd.type = SimpleContainer(nm);
 
-			case DefaultButton:
+			case DefaultButton(_, _, _, _, _):
 
 				var defaultState : String = f.has.defaultState ? f.att.defaultState : "active";
 				var isToggleEnabled : Bool = f.has.toggle ? (f.att.toggle == "true") : false;
@@ -99,13 +107,13 @@ class XmlToWidgetContainer {
 
 				wcd.type = DefaultButton(defaultState, isToggleEnabled, action, group, enabled);
 
-			case DropdownMenu:
+			case DropdownMenu(_):
 
 				var color : String = f.has.color ? f.att.color : "0x02000000";
 
 				wcd.type = DropdownMenu(ParseUtils.parseColor(color));
 
-			case ScrollPanel:
+			case ScrollPanel(_, _, _, _):
 
 				var styleSheet : Null<String> = f.has.styleSheet ? f.att.styleSheet : null;
 				var style : Null<String> = f.has.style ? f.att.style : null;
@@ -114,7 +122,7 @@ class XmlToWidgetContainer {
 
 				wcd.type = ScrollPanel(styleSheet, style, content, trim);
 
-			case ChronoCircle:
+			case ChronoCircle(_, _, _, _, _):
 
 				var colorCircle : Null<Color> = null;
 				var minRadius : Null<Int> = null;
@@ -127,20 +135,20 @@ class XmlToWidgetContainer {
 		            colorCircle = ParseUtils.parseColor(f.att.color);
 		            minRadius = Std.parseInt(f.att.minRadius);
 		            maxRadius = Std.parseInt(f.att.maxRadius);
-					f.has.colorBackground ? colorBackground = ParseUtils.parseColor(f.att.colorBackground);
-					f.has.colorCenter ? centerCircle = ParseUtils.parseColor(f.att.colorCenter);
+					colorBackground = f.has.colorBackground ? ParseUtils.parseColor(f.att.colorBackground) : null;
+					centerCircle = f.has.colorCenter ? ParseUtils.parseColor(f.att.colorCenter) : null;
 		        }
 
 		        wcd.type = ChronoCircle(colorCircle, minRadius, maxRadius, colorBackground, centerCircle);
 
-		    case VideoPlayer:
+		    case VideoPlayer(_, _):
 
 		    	var controlsHidden : Bool = f.has.controlsHidden ? f.att.controlsHidden == "true" : false;
 				var autoFullscreen : Null<Bool> = f.has.autoFullscreen ? f.att.autoFullscreen == "true" : null;
 
 				wcd.type = VideoPlayer(controlsHidden, autoFullscreen);
 
-		    case ProgressBar:
+		    case ProgressBar(_, _, _):
 
 		    	var iconScale : Float = f.has.iconScale ? Std.parseFloat(f.att.iconScale) : 1;
 				var progressColor : Int = Std.parseInt(f.att.progressColor);
@@ -148,7 +156,7 @@ class XmlToWidgetContainer {
 
 				wcd.type = ProgressBar(iconScale, progressColor, icon);
 
-			case BookmarkDisplay:
+			case BookmarkDisplay(_, _, _):
 
 				var animation : Null<String> = f.has.animation ? f.att.animation : null;
 				var xOffset : Float = f.has.xOffset ? Std.parseFloat(f.att.xOffset) : 0;
@@ -156,22 +164,22 @@ class XmlToWidgetContainer {
 
 				wcd.type = BookmarkDisplay(animation, xOffset, yOffset);
 
-			case IntroScreen:
+			case IntroScreen(_):
 
 				var duration : Int = Std.parseInt(f.att.duration);
 
 				wcd.type = IntroScreen(duration);
 
-			case TokenNotification:
+			case TokenNotification(_):
 
 				var duration : Int = Std.parseInt(f.att.duration);
 
 				wcd.type = TokenNotification(duration);
 
-			case InventoryDisplay:
+			case InventoryDisplay(_, _, _):
 
-				var guide : GuideData;
-				var fullscreen : WidgetContainerData;
+				var guide : GuideData = null;
+				var fullscreen : WidgetContainerData = null;
 				var displayTemplates : StringMap<grar.view.contextual.InventoryDisplay.Template> = new StringMap();
 
 				var zIndex : Int = 0;
@@ -184,11 +192,11 @@ class XmlToWidgetContainer {
 					
 					} else if(e.name.toLowerCase() == "fullscreen") {
 
-						fullscreen = parseWidgetContainerData(e, SimpleContainer);
+						fullscreen = parseWidgetContainerData(e, SimpleContainer(null));
 					
 					} else {
 
-						displayTemplates.set(e.att.ref, { data: parseElement(e).e, z: zIndex });
+						displayTemplates.set(e.att.ref, { data: parseElement(e, wcd).e, z: zIndex });
 					}
 					zIndex++;
 				}
@@ -198,7 +206,7 @@ class XmlToWidgetContainer {
 			default: // nothing
 		}
 
-		wcd = parseElements(f : Fast, type : WidgetContainerType, wcd : WidgetContainerData);
+		wcd = parseElements(f, wcd);
 
 		return wcd;
 	}
@@ -221,14 +229,14 @@ class XmlToWidgetContainer {
 
 	static function parseElement(e : Fast, wcd : WidgetContainerData) : { e: ElementData, r: String } {
 
-		var ref : String;
-		var e : ElementData;
+		var ref : String = null;
+		var ed : ElementData = null;
 
 		switch(wcd.type) {
 
-			case WidgetContainer, SimpleContainer, BoxDisplay, DefaultButton, DropdownMenu, ScrollPanel, 
-					SoundPlayer, ChronoCircle, ProgressBar, InventoryDisplay, BookmarkDisplay, IntroScreen, 
-					AnimationDisplay, TokenNotification:
+			case WidgetContainer, SimpleContainer(_), BoxDisplay, DefaultButton(_, _, _, _, _), DropdownMenu(_), 
+				ScrollPanel(_, _, _, _), SoundPlayer, ChronoCircle(_, _, _, _, _), ProgressBar(_, _, _), 
+				InventoryDisplay(_, _, _), BookmarkDisplay(_, _, _), IntroScreen(_), AnimationDisplay, TokenNotification(_):
 
 				switch (e.name.toLowerCase()) {
 
@@ -239,36 +247,36 @@ class XmlToWidgetContainer {
 				            var id : ImageData = XmlToImage.parseImageData(e);
 
 				            ref = id.wd.ref;
-				            e = Image(id);
+				            ed = Image(id);
 				        
 				        } else {
 
 				            var tid : TileImageData = XmlToImage.parseTileImageData(e,null,true,true);
 				            
 				            ref = tid.id.wd.ref;
-				            e = TileImage(tid);
+				            ed = TileImage(tid);
 				        }
 
 					case "button":
 
-						var dbd : WidgetContainerData = parseWidgetContainerData(e, DefaultButton);
+						var dbd : WidgetContainerData = parseWidgetContainerData(e, DefaultButton(null, null, null, null, null));
 
 						ref = dbd.wd.ref;
-						e = DefaultButton(dbd);
+						ed = DefaultButton(dbd);
 
 					case "text":
 
-						var spd : WidgetContainerData = parseWidgetContainerData(e, ScrollPanel);
+						var spd : WidgetContainerData = parseWidgetContainerData(e, ScrollPanel(null, null, null, null));
 
 						ref = spd.wd.ref;
-						e = ScrollPanel(sbd);
+						ed = ScrollPanel(spd);
 
 				    case "timer":
 
-						var ccd : WidgetContainerData = parseWidgetContainerData(e, ChronoCircle);
+						var ccd : WidgetContainerData = parseWidgetContainerData(e, ChronoCircle(null, null, null, null, null));
 
 						ref = ccd.wd.ref;
-						e = ChronoCircle(ccd);
+						ed = ChronoCircle(ccd);
 
 					case "include" :
 /*** FIXME
@@ -281,10 +289,10 @@ class XmlToWidgetContainer {
 */
 					case "div":
 
-						var scd : WidgetContainerData = parseWidgetContainerData(e, SimpleContainer);
+						var scd : WidgetContainerData = parseWidgetContainerData(e, SimpleContainer(null));
 
 						ref = scd.wd.ref;
-						e = SimpleContainer(scd);
+						ed = SimpleContainer(scd);
 
 					default:
 
@@ -292,11 +300,14 @@ class XmlToWidgetContainer {
 				}
 
 
-			case VideoPlayer:
+			case VideoPlayer(ch, af):
 
 				wcd.type = WidgetContainer;
 
-				wcd = parseElement(e, wcd);
+				var ret = parseElement(e, wcd);
+
+				ref = ret.r;
+				ed = ret.e;
 
 				wcd.type = VideoPlayer(ch, af);
 					
@@ -315,29 +326,29 @@ class XmlToWidgetContainer {
 							};
 
 						ref = e.has.ref ? e.att.ref : "backgroundcontrols";  // no ref available here ?
-						e = VideoBackground(bd);
+						ed = VideoBackground(bd);
 
 
 					case "progressbar":
 
-						var m : TileImageData;
-						var b : { color : Int, alpha : Float, x : Float, y : Float };
-						var csr : { tile : TileImageData, ref : String, x : Float };
+						var m : TileImageData = null;
+						var b : { color : Int, alpha : Float, x : Float, y : Float } = null;
+						var csr : { tile : TileImageData, ref : String, x : Float } = null;
 
-						for (c in f.elements) {
+						for (c in e.elements) {
 
 							if (c.name.toLowerCase() == "mask") {
 
 								m = XmlToImage.parseTileImageData(c);
-								m.id.width = c.has.width ? Std.parseFloat(c.att.width);
+								if (c.has.width) m.id.width = Std.parseFloat(c.att.width);
 							}
 							if (c.name.toLowerCase() == "bar") {
 
 								b = {
-										color: c.has.color ? Std.parseInt(c.att.color) : 0;
-										alpha: c.has.alpha ? Std.parseFloat(c.att.alpha) : 1;
-										x: c.has.x ? Std.parseFloat(c.att.x) : 0;
-										y: c.has.y ? Std.parseFloat(c.att.y) : 0;
+										color: c.has.color ? Std.parseInt(c.att.color) : 0,
+										alpha: c.has.alpha ? Std.parseFloat(c.att.alpha) : 1,
+										x: c.has.x ? Std.parseFloat(c.att.x) : 0,
+										y: c.has.y ? Std.parseFloat(c.att.y) : 0
 									};
 							}
 							if (c.name.toLowerCase() == "cursor") {
@@ -360,15 +371,15 @@ class XmlToWidgetContainer {
 							};
 
 						ref = e.has.ref ? e.att.ref : "progressbar";  // no ref available here ?
-						e = VideoProgressBar(pbd);
+						ed = VideoProgressBar(pbd);
 
 
 					case "slider":
 
-						var b : { tile : TileImageData, x : Float, y : Float };
-						var csr : { tile : TileImageData, ref : String, x : Float : 0, y : Float };
+						var b : { tile : TileImageData, x : Float, y : Float } = null;
+						var csr : { tile : TileImageData, ref : String, x : Float, y : Float, vol : Float } = null;
 
-						for (child in elemNode.elements) {
+						for (c in e.elements) {
 
 							if (c.name.toLowerCase() == "bar") {
 
@@ -399,7 +410,7 @@ class XmlToWidgetContainer {
 							};
 
 						ref = e.has.ref ? e.att.ref : "slider";  // no ref available here ?
-						e = VideoSlider(pbd);
+						ed = VideoSlider(sd);
 
 					default: // nothing
 				}
@@ -407,6 +418,6 @@ class XmlToWidgetContainer {
 			default: // nothing
 		}
 
-		return { e: e, r: ref };
+		return { e: ed, r: ref };
 	}
 }

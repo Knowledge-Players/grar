@@ -15,6 +15,7 @@ import grar.view.TransitionTemplate;
 import grar.view.element.TokenNotification;
 import grar.view.layout.Layout.LayoutData;
 import grar.view.contextual.menu.MenuDisplay.MenuData;
+import grar.view.contextual.NotebookDisplay;
 import grar.view.component.container.WidgetContainer;
 
 import grar.parser.XmlToDisplay;
@@ -30,10 +31,12 @@ import grar.parser.contextual.XmlToNotebook;
 import grar.parser.contextual.XmlToMenu;
 import grar.parser.layout.XmlToLayouts;
 import grar.parser.part.XmlToPart;
+import grar.parser.XmlToLangs;
 
 import aze.display.TilesheetEx;
 
 import com.knowledgeplayers.utils.assets.AssetsStorage;
+import com.knowledgeplayers.utils.assets.loaders.concrete.TextAsset;
 
 import haxe.ds.StringMap;
 
@@ -137,7 +140,7 @@ class GameService {
 		try {
 
 			// at the moment, grar fetches its data from embedded assets only
-			l = XmlToLangs(AssetsStorage.getXml(uri));
+			l = XmlToLangs.parse(AssetsStorage.getXml(uri));
 
 		} catch (e:String) {
 
@@ -158,7 +161,9 @@ class GameService {
 
 		    for (temp in templates) {
 
-		    	tmpls.set( temp.firstElement().get("ref"), cast(temp, TextAsset).getXml() );
+		    	var tXml : Xml = cast(temp, TextAsset).getXml();
+
+		    	tmpls.set( tXml.firstElement().get("ref"), tXml );
 		    }
 
 		} catch (e:String) {
@@ -172,14 +177,14 @@ class GameService {
 	public function fetchNotebook(mPath : String, vPath : String, onSuccess : Notebook -> StringMap<InventoryToken> -> DisplayData -> Void, onError : String -> Void) : Void {
 
 		var m : { n: Notebook, i: StringMap<InventoryToken> };
-		var v : NotebookDisplay;
+		var v : DisplayData;
 
 		try {
 
 			// at the moment, grar fetches its data from embedded assets only
 			m = XmlToNotebook.parseModel(AssetsStorage.getXml(mPath));
 
-			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Notebook);
+			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Notebook(null, null, null, null, null));
 
 		} catch (e:String) {
 
@@ -197,7 +202,7 @@ class GameService {
 		try {
 
 			// at the moment, grar fetches its data from embedded assets only
-			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Menu);
+			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Menu(null, null, null, null, null));
 
 			if (mPath != null) {
 
@@ -268,7 +273,7 @@ class GameService {
 #if (flash || openfl)
 			for (k in id.ti.keys()) {
 
-				ti.set(k, { small: AssetsStorage.getBitmapData(id.ti.get(k.small)), large: AssetsStorage.getBitmapData(id.ti.get(k.large)) });
+				ti.set(k, { small: AssetsStorage.getBitmapData(id.ti.get(k).small), large: AssetsStorage.getBitmapData(id.ti.get(k).large) });
 			}
 #end
 		} catch (e:String) {
@@ -313,55 +318,6 @@ class GameService {
 
 	public function fetchPart(xml : Xml, onSuccess : Part -> Void, onError : String -> Void) : Void {
 
-		var fetchPartContent = function(innerXml : Xml, pp : PartialPart, onInnerSuccess : Part -> Void, onInnerError : String -> Void) {
-
-				var ret : { p : Part, pps : Array<PartialPart> };
-#if (flash || openfl)
-				pp.pd.soundLoop = AssetsStorage.getSound(pp.pd.soundLoopSrc);
-#end
-				if (pp.pd.file != null) {
-
-					// at the moment, grar fetches its data from embedded assets only
-					ret = XmlToPart.parseContent(pp, AssetsStorage.getXml(pd.file)); // { p : Part, pps : Array<PartialPart> }
-
-				} else if (xml.elements.hasNext()) {
-
-					ret = XmlToPart.parseContent(pp, innerXml);
-					
-				}
-				var cnt : Int = pp.pd.partialSubParts.length;
-
-				if (cnt == 0) {
-
-					ret.p.loaded = true; // TODO check if still useful
-					onInnerSuccess( ret.p );
-
-				} else {
-
-					for ( spp in pp.pd.partialSubParts ) {
-
-						fetchPartContent( spp.pd.xml, spp, function(sp : Part) {
-
-								cnt--;
-
-								ret.p.elements.push(Part(sp));
-								sp.parent = ret.p;
-
-								if (sp.file == null) {
-
-									sp.file = ret.p.file;
-								}
-								if (cnt == 0) {
-
-									onInnerSuccess( ret.p );
-
-								}
-
-							}, onInnerError );
-					}
-				}
-			}
-
 		try {
 
 			var pp : PartialPart = XmlToPart.parse(xml);
@@ -370,8 +326,62 @@ class GameService {
 
 		} catch (e:String) {
 
-			onInnerError(e);
+			onError(e);
 			return;
+		}
+	}
+
+
+	///
+	// INTERNALS
+	//
+
+	private function fetchPartContent(innerXml : Xml, pp : PartialPart, onInnerSuccess : Part -> Void, onInnerError : String -> Void) {
+
+		var ret : { p : Part, pps : Array<PartialPart> } = null;
+#if (flash || openfl)
+		pp.pd.soundLoop = AssetsStorage.getSound(pp.pd.soundLoopSrc);
+#end
+		if (pp.pd.file != null) {
+
+			// at the moment, grar fetches its data from embedded assets only
+			ret = XmlToPart.parseContent(pp, AssetsStorage.getXml(pp.pd.file)); // { p : Part, pps : Array<PartialPart> }
+
+		} else if (innerXml.elements().hasNext()) {
+
+			ret = XmlToPart.parseContent(pp, innerXml);
+			
+		}
+		var cnt : Int = pp.pd.partialSubParts.length;
+
+		if (cnt == 0) {
+
+			//ret.p.loaded = true; // TODO check if still useful
+			onInnerSuccess( ret.p );
+
+		} else {
+
+			for ( spp in pp.pd.partialSubParts ) {
+
+				fetchPartContent( spp.pd.xml, spp, function(sp : Part) {
+
+						cnt--;
+
+						ret.p.elements.push(Part(sp));
+						sp.parent = ret.p;
+
+						if (sp.file == null) {
+
+							sp.file = ret.p.file;
+						}
+						if (cnt == 0) {
+
+							onInnerSuccess( ret.p );
+
+						}
+
+					}, onInnerError );
+			}
 		}
 	}
 }

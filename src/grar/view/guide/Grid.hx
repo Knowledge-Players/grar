@@ -22,6 +22,25 @@ typedef GridData = {
 	@:optional var cellHeight : Float;
 }
 
+enum GridAlignment {
+
+	CENTER;
+	TOP_LEFT;
+	TOP_RIGHT;
+	TOP_MIDDLE;
+	MIDDLE_LEFT;
+	MIDDLE_RIGHT;
+	BOTTOM_LEFT;
+	BOTTOM_MIDDLE;
+	BOTTOM_RIGHT;
+}
+
+typedef Size = {
+
+	var width: Float;
+	var height: Float;
+}
+
 /**
  * Manage a grid to place object
  */
@@ -37,7 +56,7 @@ class Grid implements Guide {
 		this.resize = d.resize;
 		this.transitionIn = d.transitionIn;
 
-		this.alignment = d.alignment != null ? d.alignment : GridAlignment.TOP_LEFT;
+		this.alignment = d.alignment != null ? Type.createEnum(GridAlignment, d.alignment.toUpperCase()) : GridAlignment.TOP_LEFT;
 
 		cellSize = { width: d.cellWidth, height: d.cellHeight };
 
@@ -172,21 +191,4 @@ class Grid implements Guide {
 		object.width = cellSize.width;
 		object.height = cellSize.height;
 	}
-}
-
-enum GridAlignment {
-	CENTER;
-	TOP_LEFT;
-	TOP_RIGHT;
-	TOP_MIDDLE;
-	MIDDLE_LEFT;
-	MIDDLE_RIGHT;
-	BOTTOM_LEFT;
-	BOTTOM_MIDDLE;
-	BOTTOM_RIGHT;
-}
-
-typedef Size = {
-	var width: Float;
-	var height: Float;
 }

@@ -10,7 +10,10 @@ import grar.view.component.Widget;
 import grar.view.component.Image;
 import grar.view.guide.Guide;
 import grar.view.guide.Line;
+import grar.view.guide.Grid;
+import grar.view.guide.Curve;
 import grar.view.Display;
+import grar.view.ElementData;
 
 import grar.model.contextual.Notebook;
 import grar.model.contextual.Note;
@@ -50,13 +53,13 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
 
 				displayPage(currentPage);
-				dispatchEvent(new PartEvent(PartEvent.ENTER_PART));
+// FIXME				dispatchEvent(new PartEvent(PartEvent.ENTER_PART));
 
 			});
 
 		addEventListener(Event.REMOVED_FROM_STAGE, function(e){
 
-				dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+// FIXME				dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 				clearPage();
 
 			});
@@ -64,7 +67,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 
 	public var model (default, set) : Notebook;
 
-	private var chapterTemplates : StringMap<{ offsetY : Float, e : Display.ElementData }>;
+	private var chapterTemplates : StringMap<{ offsetY : Float, e : ElementData }>;
 
 	private var chapterMap : Map<DefaultButton, Chapter>;
 	private var currentPage : Page;
@@ -75,7 +78,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 	private var bookmarkBkg : Widget;
 
 	private var guideData : GuideData;
-	private var stepData : { r: String, e: WidgetContainerData };
+	private var stepData : { r : String, e : WidgetContainerData, transitionIn : Null<String> };
 
 
 	///
@@ -83,7 +86,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 	//
 
 //	override public function parseContent(content:Xml):Void
-	public function setContent(d : DisplayData) : Void {
+	override public function setContent(d : DisplayData) : Void {
 
 		super.setContent(d);
 
@@ -129,11 +132,11 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 
 
 			// Set Locale
-			Localiser.instance.layoutPath = model.file;
+// FIXME			Localiser.instance.layoutPath = model.file;
 
 			// Display close button
 			var button: DefaultButton = cast(displays.get(model.closeButton.ref), DefaultButton);
-			button.setText(Localiser.instance.getItemContent(model.closeButton.content));
+// FIXME			button.setText(Localiser.instance.getItemContent(model.closeButton.content));
 
 			addChild(button);
 
@@ -171,7 +174,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 					tab.toggle();
 					first = false;
 				}
-				tab.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+// FIXME				tab.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 
 				var offsetY: Float = 0;
 				// Fill every occurences of "icon" element with the proper tile/img
@@ -198,10 +201,10 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 					button.y += offsetY;
 					offsetY += button.height + chapterTemplates.get(chapter.ref).offsetY;
 // FIXME					var chapterTitle = Localiser.instance.getItemContent(chapter.name);
-					button.setText(chapterTitle, "title");
+// FIXME					button.setText(chapterTitle, "title");
 // FIXME					button.setText(Localiser.instance.getItemContent(chapter.subtitle), "subtitle");
 					buttonGroups.get(NOTE_GROUP_NAME).add(button);
-					button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+// FIXME					button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 					// Fill hit box
 					DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
 					//button.alpha = chapter.isActivated ? 1 : 0;
@@ -215,7 +218,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 			// Display page
 			//displayPage(model.pages[0]);
 
-			Localiser.instance.popLocale();
+// FIXME			Localiser.instance.popLocale();
 		}
 		return model;
 	}
@@ -227,7 +230,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 		currentPage = page;
 
 		// Set Locale
-		Localiser.instance.layoutPath = model.file;
+// FIXME		Localiser.instance.layoutPath = model.file;
 
 		// Display title
 		var title: ScrollPanel = cast(displays.get(currentPage.title.ref), ScrollPanel);
@@ -237,7 +240,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 		// Build Bookmark container
 		if(bookmarkBkg == null) {
 
-			bookmarkBkg = createImage(bookmark);
+			bookmarkBkg = createImage(bookmark.wd.ref, bookmark);
 		}
 
 		// Clean previous note
@@ -257,7 +260,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 				removeChild(chapter);
 		}
 
-		Localiser.instance.popLocale();
+// FIXME		Localiser.instance.popLocale();
 	}
 
 	override private function setButtonAction(button:DefaultButton, action:String):Bool
@@ -265,7 +268,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 		if(super.setButtonAction(button, action))
 			return true;
 		button.buttonAction = switch(action.toLowerCase()){
-			case "close" : function(?t: DefaultButton){GameManager.instance.hideContextual(this);};
+// FIXME			case "close" : function(?t: DefaultButton){GameManager.instance.hideContextual(this);};
 			case "show" : onSelectChapter;
 			case "goto" : changePage;
 			case "gotonote": changeNote;
@@ -346,13 +349,13 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 
 	private function displayNote(note: Note):Void
 	{
-		Localiser.instance.layoutPath = model.file;
+// FIXME		Localiser.instance.layoutPath = model.file;
 		var panel = cast(displays.get(note.ref), ScrollPanel);
 
 		if(note.content.indexOf("/") < 1){
-			panel.setContent(Localiser.instance.getItemContent(note.content));
+// FIXME			panel.setContent(Localiser.instance.getItemContent(note.content));
 
-			Localiser.instance.popLocale();
+// FIXME			Localiser.instance.popLocale();
 			addChild(panel);
 
 			if(note.video != null){

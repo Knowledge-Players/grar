@@ -1,10 +1,13 @@
 package grar.view.contextual;
 
+import grar.view.guide.Guide;
+import grar.view.guide.Curve;
+import grar.view.guide.Line;
+import grar.view.guide.Grid;
 import grar.view.Display.Template;
 import grar.view.component.container.SimpleContainer;
 import grar.view.component.container.WidgetContainer;
 import grar.view.component.container.DefaultButton;
-import grar.view.guide.Guide;
 
 import grar.util.ParseUtils;
 
@@ -88,6 +91,7 @@ class InventoryDisplay extends WidgetContainer {
 	public function init(tokens : GenericStack<String>) : Void {
 
 		for (tokenRef in tokens) {
+/* FIXME
 
 // FIXME			var token : InventoryToken = GameManager.instance.inventory.get(tokenRef);
 			var button : DefaultButton;
@@ -108,16 +112,17 @@ class InventoryDisplay extends WidgetContainer {
 			content.addChild(button);
 			button.buttonAction = onClickToken;
 // FIXME			button.setText(Localiser.instance.getItemContent(token.name), "tooltip");
+*/
 		}
 
 		addEventListener(Event.ADDED_TO_STAGE, function(e:Event) {
 
-				TweenManager.applyTransition(this, transitionIn);
+// FIXME				TweenManager.applyTransition(this, transitionIn);
 
 			});
 		addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event) {
 
-				TweenManager.applyTransition(this, transitionOut);
+// FIXME				TweenManager.applyTransition(this, transitionOut);
 
 			});
 	}
@@ -139,13 +144,13 @@ class InventoryDisplay extends WidgetContainer {
 
 			if (slots.get(ref) == target) {
 
-				token = GameManager.instance.inventory.get(ref);
+// FIXME				token = GameManager.instance.inventory.get(ref);
 			}
 		}
 		if (token != null) {
 
-			fullscreenContainer.setText(Localiser.instance.getItemContent(token.name), "title");
-			fullscreenContainer.setText(Localiser.instance.getItemContent(token.content), "txt");
+// FIXME			fullscreenContainer.setText(Localiser.instance.getItemContent(token.name), "title");
+// FIXME			fullscreenContainer.setText(Localiser.instance.getItemContent(token.content), "txt");
 			content.addChild(fullscreenContainer);
 			
 			if (fullscreen.transitionIn != null) {

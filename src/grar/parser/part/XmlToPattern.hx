@@ -5,8 +5,12 @@ import grar.model.part.dialog.ChoicePattern;
 import grar.model.part.video.VideoPattern;
 import grar.model.part.strip.BoxPattern;
 
-import haxe.xml.Fast;
+import grar.util.ParseUtils;
+
+import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
+
+import haxe.xml.Fast;
 
 class XmlToPattern {
 
@@ -37,11 +41,13 @@ class XmlToPattern {
 
 				throw "unexpected pattern type attribute value " + f.att.type;
 		}
+
+		return p;
 	}
 
 	static function parsePatternData( f : Fast ) : PatternData {
 
-		var pd : PatternData = { };
+		var pd : PatternData = cast { };
 
 		pd.patternContent = [];
 		pd.buttons = new StringMap();
@@ -53,7 +59,7 @@ class XmlToPattern {
 
 		for (itemNode in f.nodes.Text) {
 
-			pd.patternContent.push(XmlToItem.parse(itemNode));
+			pd.patternContent.push(XmlToItem.parse(itemNode.x));
 		}
 		for (child in f.elements) {
 
@@ -86,11 +92,11 @@ class XmlToPattern {
 
 		var pd : PatternData = parsePatternData(f);
 
-		var tooltipRef : String;
+		var tooltipRef : Null<String> = null;
 		var choices : StringMap<Choice> = new StringMap();
 		var numChoices : Int = 0;
-		var minimumChoice : Int;
-		var tooltipTransition : String;
+		var minimumChoice : Null<Int> = null;
+		var tooltipTransition : Null<String> = null;
 
 		if (f.has.toolTip && f.att.toolTip != "") {
 

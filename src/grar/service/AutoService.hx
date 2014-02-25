@@ -22,7 +22,7 @@ class AutoService {
 	 */
 	public function init( isNote : Bool, activation : String, onSuccess : Tracking -> Void, onError : String -> Void ) : Void {
 
-		var isActive : Bool;
+		var isActive : Bool = false;
 		var studentId : Null<String> = null;
 		var studentName : Null<String> = null;
 		var lesson_location : Null<String> = null;

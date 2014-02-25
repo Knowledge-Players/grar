@@ -18,7 +18,15 @@ class TokenNotification extends WidgetContainer {
 		//super(fast);
 		super(tnd);
 
-		this.duration = switch(tnd.type){ case TokenNotification(d): d; default: null; };
+		switch(tnd.type) {
+
+			case TokenNotification(d):
+
+				this.duration = d;
+
+			default: throw "Wrong WidgetContainerData type passed to TokenNotification constructor";
+
+		};
 	}
 
 	/**

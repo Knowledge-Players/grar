@@ -3,6 +3,7 @@ package grar.view;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 
+import grar.view.ElementData;
 import grar.view.guide.Guide;
 import grar.view.contextual.NotebookDisplay;
 import grar.view.contextual.menu.MenuDisplay;
@@ -44,42 +45,15 @@ typedef Template = {
 	var z : Int;
 }
 
-enum ElementData {
-
-	TextGroup(data : StringMap<{ obj : ElementData, z : Int }>); // TODO CHECK param
-	Image(i : ImageData);
-	TileImage(ti : TileImageData);
-	CharacterData(c : CharacterData);
-	DefaultButton(d : WidgetContainerData);
-	ScrollPanel(d : WidgetContainerData);
-	VideoPlayer(d : WidgetContainerData);
-	SoundPlayer(d : WidgetContainerData);
-	ScrollBar(d : { width : Float, bgColor : Null<String>, cursorColor : Null<String>, bgTile : Null<String>, tile : String, tilesheet : Null<String>, cursor9Grid : Array<Float>, bg9Grid : Null<Array<Float>> });
-	SimpleContainer(d : WidgetContainerData);
-	ChronoCircle(d : WidgetContainerData);
-	Template(d : { data : ElementData, validation : Null<String> });
-
-	// PartDisplay only
-	InventoryDisplay(d : WidgetContainerData);
-	IntroScreen(d : WidgetContainerData);
-
-	// Zone only
-	Menu(d : DisplayData);
-	ProgressBar(d : WidgetContainerData);
-	DropdownMenu(d : WidgetContainerData);
-
-	// Strip only
-	BoxDisplay(d : WidgetContainerData);
-}
-
 enum DisplayType {
 
 	Display; // TODO remove ?
 	Part;
+	Strip;
 	Activity(? groups : StringMap<{ x : Float, y : Float, guide : GuideData }>);
 	Zone(? bgColor : Null<Int>, ? ref : Null<String>, ? rows : Null<String>, ? columns : Null<String>, ? zones : Null<Array<DisplayData>>);
 	Menu(? bookmark : Null<WidgetContainerData>, ? orientation : String, ? levelDisplays : StringMap<MenuLevel>, ? xBase : Null<Float>, ? yBase : Null<Float>);
-	Notebook(? chapterTemplates : Null<StringMap<{ offsetY : Float, e : Display.ElementData }>>, ? tabTemplate : Null<{ x : Float, xOffset : Float, e : WidgetContainerData }>, ? bookmark : Null<ImageData>, ? guide : Null<GuideData>, ? step : Null<{ r: String, e: WidgetContainerData, transitionIn : Null<String> }>);
+	Notebook(? chapterTemplates : Null<StringMap<{ offsetY : Float, e : ElementData }>>, ? tabTemplate : Null<{ x : Float, xOffset : Float, e : WidgetContainerData }>, ? bookmark : Null<ImageData>, ? guide : Null<GuideData>, ? step : Null<{ r : String, e : WidgetContainerData, transitionIn : Null<String> }>);
 }
 
 typedef DisplayData = {
@@ -196,7 +170,7 @@ class Display extends Sprite {
 
 			DisplayUtils.initSprite(this, d.width, d.height, 0, 0.001);
 		}
-		for (sk in d.spritesheets.keys) {
+		for (sk in d.spritesheets.keys()) {
 
 			var layer = new TileLayer(d.spritesheets.get(sk));
 			layers.set(sk, layer);
@@ -216,7 +190,7 @@ class Display extends Sprite {
 
 			addEventListener(Event.ADDED_TO_STAGE, function(e){
 
-					TweenManager.applyTransition(this, transitionIn);
+// FIXME					TweenManager.applyTransition(this, transitionIn);
 
 				});
 		}
@@ -247,7 +221,7 @@ class Display extends Sprite {
 
 	private function createDisplay(d : DisplayData) : Void {
 
-		for (c in d.displays.keys) {
+		for (c in d.displays.keys()) {
 
 			createElement(d.displays.get(c), c);
 		}
@@ -302,7 +276,7 @@ class Display extends Sprite {
 
 				return createTileImage(r, d);
 
-			case CharacterData(d):
+			case Character(d):
 
 				return createCharacter(r, d);
 
@@ -360,12 +334,14 @@ class Display extends Sprite {
 				}
 				createElement(new Fast(tmpXml));
 */
+			default: // nothing
 		}
+		return null;
 	}
 
-	private function createScrollBar(r : String, d : { width : Float, bgColor : Null<String>, cursorColor : Null<String>, bgTile : Null<String>, tile : String, spritesheet : Null<String>, cursor9Grid : Array<Float>, bg9Grid : Null<Array<Float>> }) : Widget {
+	private function createScrollBar(r : String, d : { width : Float, bgColor : Null<String>, cursorColor : Null<String>, bgTile : Null<String>, tile : String, tilesheet : Null<String>, cursor9Grid : Array<Float>, bg9Grid : Null<Array<Float>> }) : Widget {
 
-		var tilesheet = d.spritesheet != null ? spritesheets.get(d.spritesheet) : null; // FIXME UiFactory.tilesheet;
+		var tilesheet = d.tilesheet != null ? spritesheets.get(d.tilesheet) : null; // FIXME UiFactory.tilesheet;
 
 		var cursor9Grid : Rectangle = new Rectangle(d.cursor9Grid[0], d.cursor9Grid[1], d.cursor9Grid[2], d.cursor9Grid[3]);
 		
@@ -471,7 +447,7 @@ class Display extends Sprite {
 				}
 				if (btn.group != null) {
 
-					btn.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+// FIXME					btn.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 				}
 
 				addElement(btn, r);
@@ -502,7 +478,7 @@ class Display extends Sprite {
 		}
 		var img = new TileImage(d);
 		
-		addElement(img, r, d.isBackground);
+		addElement(img, r, d.id.isBackground);
 		
 		return img;
 	}
@@ -517,13 +493,13 @@ class Display extends Sprite {
 	}
 
 	//private function createTextGroup(textNode:Fast):Void
-	private function createTextGroup(r : String, d : { data : StringMap<{ obj : ElementData, z : Int }> }) : Void {
+	private function createTextGroup(r : String, d : StringMap<{ obj : ElementData, z : Int }>) : Void {
 
-		for (e in d.data) {
+		for (e in d) {
 
-			createElement(e.obj);
+			createElement(e.obj, r);
 		}
-		textGroups.set(r, d.data);
+		textGroups.set(r, d);
 	}
 
 	//private function addElement(elem:Widget, node:Fast):Void
@@ -548,7 +524,7 @@ class Display extends Sprite {
 		var actionSet = true;
 		if(action.toLowerCase() == "open_menu"){
 			button.buttonAction = function(?target){
-				GameManager.instance.displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout);
+// FIXME				GameManager.instance.displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout);
 			}
 			if(!buttonGroups.exists(groupMenu))
 				buttonGroups.set(groupMenu, new GenericStack<DefaultButton>());
@@ -556,7 +532,7 @@ class Display extends Sprite {
 		}
 		else if(action.toLowerCase() == "open_inventory"){
 			button.buttonAction = function(?target){
-				GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
+// FIXME				GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
 			}
 			if(!buttonGroups.exists(groupNotebook))
 				buttonGroups.set(groupNotebook, new GenericStack<DefaultButton>());
@@ -564,10 +540,10 @@ class Display extends Sprite {
 		}
 		else if(action.toLowerCase() == "close_menu")
 			button.buttonAction = function(?target){
-				GameManager.instance.hideContextual(MenuDisplay.instance);
+// FIXME				GameManager.instance.hideContextual(MenuDisplay.instance);
 			}
-		else if(action.toLowerCase() == ButtonActionEvent.QUIT)
-			button.buttonAction = quit;
+// FIXME		else if(action.toLowerCase() == ButtonActionEvent.QUIT)
+// FIXME			button.buttonAction = quit;
 		else
 			actionSet = false;
 

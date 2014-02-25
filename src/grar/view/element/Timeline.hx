@@ -38,6 +38,22 @@ class Timeline extends EventDispatcher {
 
     private var nbCompleteTransitions : Float = 0;
 
+
+    ///
+    // API
+    //
+
+    public function addElement(widget : Widget, transition : String, delay : Float) : Void {
+
+        var dynValue : String = null;
+
+        if (widget.ref.startsWith("$")) {
+
+            dynValue = widget.ref;
+        }
+        elements.push({ widget: widget, transition: transition, delay: delay, dynamicValue: dynValue });
+    }
+
     public function play():Void
     {
          nbCompleteTransitions=0;

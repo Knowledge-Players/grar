@@ -49,10 +49,10 @@ typedef PartData = {
 	var perks : StringMap<Int>;
 	var score : Int;
 	var ref : String;
-	var requirements (default, null) : StringMap<Int>;
-	var next (default, default) : String;
-	var endScreen (default, null) : Bool;
-	var buttonTargets (default, null) : StringMap<PartElement>;
+	var requirements : StringMap<Int>;
+	var next : String;
+	var endScreen : Bool;
+	var buttonTargets : StringMap<PartElement>;
 	var nbSubPartLoaded : Int;
 	var nbSubPartTotal : Int;
 	var partIndex : Int;
@@ -73,6 +73,10 @@ class Part /* implements Part */ {
 		this.file = pd.file;
 		this.display = pd.display;
 		this.parent = pd.parent;
+		if (display == null && parent != null) {
+
+			display = parent.display;
+		}
 		this.isDone = pd.isDone;
 		this.isStarted = pd.isStarted;
 		this.tokens = pd.tokens;
@@ -107,7 +111,7 @@ class Part /* implements Part */ {
 	/**
      * Path to the XML structure file
      */
-	public var file (default, null) : String;
+	public var file (default, default) : String;
 
 	/**
      * Path to the XML display file
@@ -240,16 +244,48 @@ class Part /* implements Part */ {
 		}
 	}
 
-	public function startElement(elemId: String):Void
-	{
-		if(elemIndex == 0 || elemId != elements[elemIndex-1].id){
-			var tmpIndex = 0;
-			while(tmpIndex < elements.length && elements[tmpIndex].id != elemId)
-				tmpIndex++;
-			if(tmpIndex < elements.length)
-				elemIndex = tmpIndex;
-			if(elements[elemIndex].isPart() && (cast(elements[elemIndex], Part).next == null || cast(elements[elemIndex], Part).next == ""))
-				elemIndex++;
+	public function startElement(elemId : String) : Void {
+
+		var tmpIndex : Int = elemIndex == 0 ? 0 : elemIndex - 1;
+		var first : Bool = true;
+
+		while (tmpIndex < elements.length) {
+
+			switch (elements[tmpIndex]) {
+
+				case Part(p):
+
+					if (p.id == elemId) {
+
+						if (first) return;
+
+						elemIndex = tmpIndex;
+					}
+					if (p.next == null || p.next == "") {
+
+						elemIndex++;
+					}
+
+				case Pattern(p):
+
+					if (p.id == elemId) {
+
+						if (first) return;
+
+						elemIndex = tmpIndex;
+					}
+
+				case Item(i):
+
+					if (i.id == elemId) {
+
+						if (first) return;
+
+						elemIndex = tmpIndex;
+					}
+			}
+			tmpIndex++;
+			first = false;
 		}
 	}
 
@@ -257,30 +293,35 @@ class Part /* implements Part */ {
 	* @param    startIndex : Next element after this position
     * @return the next element in the part or null if the part is over
     */
-	public function getNextElement(startIndex:Int = - 1):Null<PartElement>
-	{
-		if(startIndex > - 1)
+	public function getNextElement(startIndex : Int = -1) : Null<PartElement> {
+
+		if (startIndex > -1) {
+
 			elemIndex = startIndex;
-		if(elemIndex < elements.length){
-			return elements[elemIndex++];
 		}
-		else{
+		if (elemIndex < elements.length) {
+
+			return elements[elemIndex++];
+		
+		} else {
+
 			return null;
 		}
 	}
 
 	/**
-		* Get the position in this element in the part
-		* @param    element : Element to find
-		* @return the position of this element
-		**/
+	* Get the position in this element in the part
+	* @param    element : Element to find
+	* @return the position of this element
+	**/
+	public function getElementIndex(element : PartElement) : Int {
 
-	public function getElementIndex(element:PartElement):Int
-	{
 		var i = 0;
-		while(i < elements.length && elements[i] != element)
-			i++;
 
+		while (i < elements.length && !Type.enumEq( elements[i], element )) {
+
+			i++;
+		}
 		return i == elements.length ? - 1 : i + 1;
 	}
 
@@ -375,14 +416,35 @@ class Part /* implements Part */ {
 		return can;
 	}
 
-	public function getElementById(id:String):PartElement
-	{
-		var i = 0;
-		while(i < elements.length && elements[i].id != id)
-			i++;
-		if(i == elements.length)
-			throw "[StructurePart] There is no Element with the id '"+id+"'.";
-		return elements[i];
+	public function getElementById(id : String) : PartElement {
+
+		for (e in elements) {
+
+			switch (e) {
+
+				case Part(p):
+
+					if (p.id == id) {
+
+						return e;
+					}
+
+				case Pattern(p):
+
+					if (p.id == id) {
+
+						return e;
+					}
+
+				case Item(i):
+
+					if (i.id == id) {
+
+						return e;
+					}
+			}
+		}
+		throw "[StructurePart] There is no Element with the id '"+id+"'.";
 	}
 
 	/**
@@ -439,18 +501,27 @@ class Part /* implements Part */ {
      * @param    id : Id of the item
      * @return the name of the item
      **/
-	public function getItemName(id:String):Null<String>
-	{
-		if(this.id == id)
+	public function getItemName(id : String) : Null<String> {
+
+		if (this.id == id) {
+
 			return this.name;
-		var name = null;
-		var i = 0;
-		while(i < elements.length && name == null){
-			if(elements[i].isPart())
-				name = cast(elements[i], Part).getItemName(id);
-			i++;
 		}
-		return name;
+		for (e in elements) {
+
+			switch(e) {
+
+				case Part(p):
+
+					if (p.getItemName(id) != null) {
+
+						return p.getItemName(id);
+					}
+
+				default: // nothing
+			}
+		}
+		return null;
 	}
 
 

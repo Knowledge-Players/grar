@@ -10,13 +10,15 @@ import grar.util.ParseUtils;
 
 import haxe.xml.Fast;
 
+using Lambda;
+
 class XmlToImage {
 
 	static public function parseTileImageData( f : Fast, ? layerRef : Null<String>, visible : Bool = true, ? div : Bool = false ) : TileImageData {
 
-		var tid : TileImageData = { };
+		var tid : TileImageData = cast { };
 
-		tid.layerRef = layer;
+		tid.layerRef = layerRef;
 		tid.visible = visible;
 		tid.div = div;
 		tid.tilesheetName = f.has.spritesheet ? f.att.spritesheet : null;
@@ -28,7 +30,7 @@ class XmlToImage {
 
 	static public function parseImageData( f : Fast, ? tilesheetRef : Null<String> ) : ImageData {
 
-		var id : ImageData = { };
+		var id : ImageData = cast { };
 
 		id.wd = XmlToWidget.parseWidgetData(f);
 		id.tilesheetRef = tilesheetRef;
