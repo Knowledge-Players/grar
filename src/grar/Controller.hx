@@ -70,11 +70,15 @@ class Controller {
 						trackingCtrl.initTracking(state.module, function(){ loadStyles(displayXml); }, onError);
 
 
-						// langs
-						gameSrv.fetchLangs( langsUri, function(l:StringMap<Locale>){ state.locales = l; }, onError );
+						// langs list
+						gameSrv.fetchLangs( langsUri, function(l:StringMap<Locale>){
+
+							state.locales = l;
+
+						}, onError );
 
 
-						// display (styles, ui, transitions, filters, templates)
+						// view (styles, ui, transitions, filters, templates)
 						gameSrv.fetchSpriteSheet( displayXml.node.Ui.att.display, function(t:aze.display.TilesheetEx){
 
 									application.tilesheet = t;
@@ -93,7 +97,7 @@ class Controller {
 					    }
 
 
-						// structure (parts, contextuals)
+						// game model (parts, contextuals)
 
 						for (contextual in structureXml.nodes.Contextual) {
 
@@ -264,40 +268,36 @@ class Controller {
         application.menuData = md;
 	}
 
-	function loadStyles(displayXml : Fast) : Void {
-/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+	function loadStyles(displayXml : Fast) : Void { // FIXME avoid Fast in ctrl
+
 		if (state.currentLocale != null && application.tilesheet != null) { // check if enought
 
 			// only when tilesheet loaded and currentLocale known
+	        var localizedPathes : Array<{ p : String, e : String }> = [];
 
-			var onStyle = function(s : StyleSheet) {
-
-					state.module.setStyleSheet(currentLocale, stylesheet);
-
-					if (state.module.countStyleSheet(currentLocale) == 0) {
-
-						state.currentStyleSheet = stylesheet.name;
-					}
-				}
-
-			for (s in display.nodes.Style) {
+			for (s in displayXml.nodes.Style) {
 
 	            var fullPath = s.att.file.split("/");
-	            var localePath : String = "";
+	            var lp : String = "";
 
 	            for (i in 0...fullPath.length - 1) {
 
-	                localePath += fullPath[i] + "/";
+	                lp += fullPath[i] + "/";
 	            }
-	            localePath += state.currentLocale + "/";
-	            localePath += fullPath[fullPath.length - 1];
+	            lp += state.currentLocale + "/";
+	            lp += fullPath[fullPath.length - 1];
 
-		        var extension : String = localePath.substr(localePath.lastIndexOf(".") + 1);
+		        var extension : String = lp.substr(lp.lastIndexOf(".") + 1);
 
-				gameSrv.fetchStyle( localePath, extension, application.tilesheet, onStyle, onError );
+		        localizedPathes.push({ p: lp, e: extension });
 	        }
+
+			gameSrv.fetchStyles( localizedPathes, function(s : Array<grar.view.style.StyleSheet.StyleSheetData>) {
+
+					application.createStyles(s);
+
+				}, onError );
 		}
-*/
 	}
 
 	function loadlayouts(uri : String) : Void { // actually, code below also requires the templates to be fetch already (and styles too ?)
@@ -307,6 +307,7 @@ class Controller {
 				if (lp != null) {
 
 					// FIXME Localiser.instance.layoutPath = lp;
+					// lp is the id/path to the aplication wide localization file (used by the menu)
 				}
 				application.createLayouts(lm);
 

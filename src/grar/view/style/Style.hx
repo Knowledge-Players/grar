@@ -1,4 +1,4 @@
-package grar.model;
+package grar.view.style;
 
 import haxe.ds.StringMap;
 
@@ -14,10 +14,42 @@ import flash.text.Font;
 import flash.text.TextFormatAlign;
 #end
 
+typedef StyleData = {
+
+	var name : String;
+	var values : StringMap<String>;
+#if (flash || openfl)
+	var icon : BitmapData;
+#end
+	var iconSrc : Null<String>;
+	var iconPosition : Null<String>;
+	var iconMargin : Null<Array<Float>>;
+#if (flash || openfl)
+	var background : Bitmap;
+#end
+	var backgroundSrc : Null<String>;
+}
+
 /**
  * Style of a text
  */
-class Style extends StringMap<String> {
+class Style {
+
+	public function new(sd : StyleData) {
+
+		this.name = sd.name;
+		this.values = sd.values;
+#if (flash || openfl)
+		this.icon = sd.icon;
+#end
+		this.iconSrc = sd.iconSrc;
+		this.iconPosition = sd.iconPosition;
+		this.iconMargin = sd.iconMargin;
+#if (flash || openfl)
+		this.background = sd.background;
+#end
+		this.backgroundSrc = sd.backgroundSrc;
+	}
 
 	/**
      * Name of the style
@@ -29,9 +61,8 @@ class Style extends StringMap<String> {
      */
 #if (flash || openfl)
 	public var icon : BitmapData;
-#else
-	public var icon : String;
 #end
+	public var iconSrc : String;
 
 	/**
      * Position of the icon
@@ -48,9 +79,8 @@ class Style extends StringMap<String> {
      */
 #if (flash || openfl)
 	public var background : Bitmap;
-#else
-	public var background : String;
 #end
+	public var backgroundSrc : String;
 
 	/**
     * Margin around the icon
@@ -58,50 +88,14 @@ class Style extends StringMap<String> {
 	public var iconMargin (default, null) : Array<Float>;
 
 	/**
-     * Add a rule to the style
-     * @param	name : Name of the rule
-     * @param	value : Value of the rule;
-     */
-	public function addRule(name : String, value : String) : Void {
+    * Style values
+    **/
+	public var values (default, null) : StringMap<String>;
 
-		set(name, value);
-	}
 
-	/**
-     * Make this style inherit from the parent style
-     * @param	parentName : Name of the parent style
-     */
-	public function inherit(parent : Style) : Void {
-
-		if (parent == null) {
-
-			throw "Can't inherit style for " + name + ", the parent doesn't exist.";
-		}
-		for (rule in parent.keys()) {
-
-			set(rule, parent.get(rule));
-		}
-	}
-
-	public function setIconMargin(string : String) : Void {
-
-		iconMargin = new Array<Float>();
-
-		if (string != null && string != "") {
-
-			for (margin in string.split(" ")) {
-
-				iconMargin.push(Std.parseFloat(margin));
-			}
-			ParseUtils.formatToFour(iconMargin);
-		
-		} else {
-
-			iconMargin = [0, 0, 0, 0];
-		}
-	}
-
-	// Getters
+	///
+	// GETTER / SETTER
+	//
 
 	/**
      * @return the font of the style
@@ -114,7 +108,7 @@ class Style extends StringMap<String> {
 	public function getFont() : Null<String> {
 // FIXME #end
 
-		return get("font");
+		return values.get("font"); // FIXME
 	}
 
 	/**
@@ -122,7 +116,7 @@ class Style extends StringMap<String> {
      */
 	public function getSize() : Null<Int> {
 
-		return Std.parseInt(get("size"));
+		return Std.parseInt(values.get("size"));
 	}
 
 	/**
@@ -130,7 +124,7 @@ class Style extends StringMap<String> {
      */
 	public function getColor() : Null<Int> {
 
-		return Std.parseInt(get("color"));
+		return Std.parseInt(values.get("color"));
 	}
 
 	/**
@@ -138,7 +132,7 @@ class Style extends StringMap<String> {
      */
 	public function getBold() : Null<Bool> {
 
-		return get("bold") == "true";
+		return values.get("bold") == "true";
 	}
 
 	/**
@@ -146,7 +140,7 @@ class Style extends StringMap<String> {
      */
 	public function getItalic() : Null<Bool> {
 
-		return get("italic") == "true";
+		return values.get("italic") == "true";
 	}
 
 	/**
@@ -154,12 +148,12 @@ class Style extends StringMap<String> {
      */
 	public function getUnderline() : Null<Bool> {
 
-		return get("underline") == "true";
+		return values.get("underline") == "true";
 	}
 
 	public function getCase() : Null<String> {
 
-		return get("case");
+		return values.get("case");
 	}
 
 	/**
@@ -174,9 +168,9 @@ class Style extends StringMap<String> {
 
 		var array = new Array<Float>();
 #end
-		if (exists("leading")) {
+		if (values.exists("leading")) {
 
-			for (lead in get("leading").split(" ")) {
+			for (lead in values.get("leading").split(" ")) {
 #if js
                 array.push(Std.parseInt(lead));
 #else
@@ -204,11 +198,11 @@ class Style extends StringMap<String> {
 		// Type Conflict between Flash and native for TextFormatAlign
 		var alignment : Dynamic = null;
 		
-		if (exists("alignment")) {
+		if (values.exists("alignment")) {
 #if flash
-            alignment = Type.createEnum(TextFormatAlign, get("alignment").toUpperCase());
+            alignment = Type.createEnum(TextFormatAlign, values.get("alignment").toUpperCase());
 #else
-			alignment = get("alignment").toUpperCase();
+			alignment = values.get("alignment").toUpperCase();
 #end
 		
 		} else {
@@ -225,9 +219,9 @@ class Style extends StringMap<String> {
 
 		var array : Array<Float> = new Array();
 		
-		if (exists("padding")) {
+		if (values.exists("padding")) {
 
-			for (pad in get("padding").split(" ")) {
+			for (pad in values.get("padding").split(" ")) {
 
 				array.push(Std.parseFloat(pad));
 			}

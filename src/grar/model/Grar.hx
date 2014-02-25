@@ -33,7 +33,6 @@ class Grar {
 		this.state = s;
 		this.ref = r;
 		this.readyState = rs;
-		this.styles = new StringMap();
 		this.inventory = new StringMap();
 		this.scoreChart = new ScoreChart();
 	}
@@ -59,10 +58,6 @@ class Grar {
 	public var parts (default, set) : Null<Array<Part>> = null;
 
 	public var scoreChart (default, null) : ScoreChart;
-
-
-
-	private var styles : StringMap<StringMap<StyleSheet>>;
 
 
 	///
@@ -146,33 +141,6 @@ class Grar {
 
 			inventory.set(k, t.get(k));
 		}
-	}
-
-	public function getStyleSheet(locale : String, sn : String) : Null<StyleSheet> {
-
-		if (!styles.exists(locale)) {
-
-			return null;
-		}
-		return styles.get(locale).get(sn);
-	}
-
-	public function setStyleSheet(locale : String, s : StyleSheet) : Void {
-
-		if (!styles.exists(locale) ) {
-
-			styles.set(locale, new StringMap());
-		}
-		styles.get(locale).set(s.name, s);
-	}
-
-	public function countStyleSheet(locale : String) : Int {
-
-		if (!styles.exists(locale) ) {
-
-			return 0;
-		}
-		return Lambda.count(styles.get(locale));
 	}
 
 

@@ -1,7 +1,6 @@
 package grar.service;
 
 import grar.model.Grar;
-import grar.model.StyleSheet;
 import grar.model.Locale;
 import grar.model.InventoryToken;
 import grar.model.contextual.Glossary;
@@ -12,6 +11,7 @@ import grar.model.part.Part;
 import grar.view.Display;
 import grar.view.FilterData;
 import grar.view.TransitionTemplate;
+import grar.view.style.StyleSheet;
 import grar.view.element.TokenNotification;
 import grar.view.layout.Layout.LayoutData;
 import grar.view.contextual.menu.MenuDisplay.MenuData;
@@ -22,8 +22,6 @@ import grar.parser.XmlToDisplay;
 import grar.parser.XmlToGrar;
 import grar.parser.XmlToTransition;
 import grar.parser.XmlToFilter;
-import grar.parser.XmlToStyleSheet;
-import grar.parser.JsonToStyleSheet;
 import grar.parser.XmlToInventory;
 import grar.parser.contextual.XmlToBibliography;
 import grar.parser.contextual.XmlToGlossary;
@@ -32,6 +30,8 @@ import grar.parser.contextual.XmlToMenu;
 import grar.parser.layout.XmlToLayouts;
 import grar.parser.part.XmlToPart;
 import grar.parser.XmlToLangs;
+import grar.parser.style.XmlToStyleSheet;
+import grar.parser.style.JsonToStyleSheet;
 
 import aze.display.TilesheetEx;
 
@@ -288,31 +288,42 @@ class GameService {
 #end
 	}
 
-	public function fetchStyle(path : String, ext : String, tilesheet : aze.display.TilesheetEx, 
-									onSuccess : StyleSheet -> Void, onError : String -> Void) : Void {
+	public function fetchStyles(localizedPathes : Array<{ p : String, e : String }>, onSuccess : Array<StyleSheetData> -> Void, onError : String -> Void) : Void {
 
-		var s : StyleSheet;
+		var s : Array<StyleSheetData> = [];
 
 		try {
 
-			// at the moment, grar fetches its data from embedded assets only
-			switch(ext.toLowerCase()) {
+			for (l in localizedPathes) {
 
-				case "json":
-					s = JsonToStyleSheet.parse(AssetsStorage.getText(path), tilesheet);
+				var ssd : StyleSheetData;
 
-				case "xml":
-					s = XmlToStyleSheet.parse(AssetsStorage.getXml(path), tilesheet);
+				// at the moment, grar fetches its data from embedded assets only
+				switch(l.e.toLowerCase()) {
 
-				default:
-					throw "unsupported style format "+ext;
+					case "json":
+
+						ssd = JsonToStyleSheet.parse(AssetsStorage.getText(l.p));
+
+					case "xml":
+
+						ssd = XmlToStyleSheet.parse(AssetsStorage.getXml(l.p));
+
+					default:
+
+						throw "unsupported style format " + l.e;
+				}
+
+				s.push(ssd);
 			}
+
 
 		} catch (e:String) {
 
 			onError(e);
 			return;
 		}
+
 		onSuccess(s);
 	}
 

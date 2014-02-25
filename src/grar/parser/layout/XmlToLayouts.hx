@@ -17,7 +17,7 @@ class XmlToLayouts {
 
 		var lm : StringMap<LayoutData> = new StringMap();
 
-		var interfaceLocale : Null<String> = f.has.text ? f.att.text : null;
+		var lp : Null<String> = f.has.text ? f.att.text : null;
 
 		for (l in f.elements) {
 
@@ -26,6 +26,6 @@ class XmlToLayouts {
 			lm.set(ld.name, ld);
 		}
 
-		return { lp: interfaceLocale, lm: lm };
+		return { lp: lp, lm: lm };
 	}
 }

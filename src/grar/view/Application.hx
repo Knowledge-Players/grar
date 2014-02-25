@@ -2,18 +2,25 @@ package grar.view;
 
 import aze.display.TilesheetEx;
 
+import com.knowledgeplayers.utils.assets.AssetsStorage;
+
 import grar.view.component.container.WidgetContainer;
 import grar.view.contextual.menu.MenuDisplay;
 import grar.view.contextual.NotebookDisplay;
 import grar.view.element.TokenNotification;
 import grar.view.layout.Layout;
+import grar.view.style.StyleSheet;
+import grar.view.style.Style;
 import grar.view.FilterData;
 import grar.view.TransitionTemplate;
 import grar.view.Display;
 
 #if (flash || openfl)
 import flash.display.BitmapData;
+import flash.display.Bitmap;
 #end
+
+import grar.util.DisplayUtils;
 
 import haxe.ds.StringMap;
 
@@ -33,6 +40,8 @@ class Application {
 	public var transitions : StringMap<TransitionTemplate>;
 
 	public var menuData (default, set) : Null<MenuData>;
+
+	public var stylesheets : Null<StringMap<StyleSheet>>;
 
 
 	public var menu (default, set) : Null<MenuDisplay>;
@@ -102,6 +111,56 @@ class Application {
 	// API
 	//
 
+	public function createStyles(ssds : Array<StyleSheetData>) : Void {
+
+		var newStyles : StringMap<StyleSheet> = new StringMap();
+
+		for (ssd in ssds) {
+
+			var ss : StyleSheet = cast { };
+
+			ss.name = ssd.name;
+			ss.styles = new StringMap();
+
+			for (sd in ssd.styles) {
+#if (flash || openfl)
+				// set background bitmap
+				if (Std.parseInt(sd.backgroundSrc) != null) {
+
+					sd.background = new Bitmap();
+	#if !html
+ 					sd.background.opaqueBackground = Std.parseInt(sd.backgroundSrc);
+	#end
+
+				} else {
+
+					sd.background = new Bitmap(AssetsStorage.getBitmapData(sd.backgroundSrc));
+
+				}
+
+				// set icon bitmap
+				if (sd.iconSrc.indexOf(".") < 0) {
+
+					sd.icon = DisplayUtils.getBitmapDataFromLayer(tilesheet, sd.iconSrc);
+				
+				} else {
+
+					sd.icon = AssetsStorage.getBitmapData(sd.iconSrc);
+				}
+#end
+				var s : Style =  new Style(sd);
+
+				ss.styles.set( s.name , s );
+			}
+
+			newStyles.set(ss.name, ss);
+		}
+
+		stylesheets = newStyles;
+
+		onStylesChanged();
+	}
+
 	public function createTokenNotification(d : WidgetContainerData) : Void {
 
 		tokenNotification = new TokenNotification(d);
@@ -169,5 +228,7 @@ class Application {
 	public dynamic function onLayoutsChanged() : Void { }
 
 	public dynamic function onTokensImagesChanged() : Void { }
+
+	public dynamic function onStylesChanged() : Void { }
 
 }
