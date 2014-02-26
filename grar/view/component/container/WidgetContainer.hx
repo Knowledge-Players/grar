@@ -94,6 +94,7 @@ typedef WidgetContainerData = {
 	var type : WidgetContainerType;
 	var spritesheetRef : Null<String>; 
 	@:optional var tilesheet : Null<TilesheetEx>; // set in a second step (instanciation)
+	@:optional var applicationTilesheet : TilesheetEx;
 	var contentAlpha : Float;
 	var scrollBarName : String;
 	var contentTransition : String;
@@ -139,7 +140,7 @@ class WidgetContainer extends Widget {
 			
 			} else {
 				
-//FIXME 	this.tilesheet = UiFactory.tilesheet;
+			 	this.tilesheet = wcd.applicationTilesheet;
 			}
 
 			this.contentAlpha = wcd.contentAlpha;

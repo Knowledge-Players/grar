@@ -186,6 +186,14 @@ class GameService {
 
 			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Notebook(null, null, null, null, null));
 
+			v.spritesheets = new StringMap();
+
+			for (sk in v.spritesheetsSrc.keys()) {
+
+				v.spritesheets.set(sk, AssetsStorage.getSpritesheet(sk));
+
+			}
+
 		} catch (e:String) {
 
 			onError(e);

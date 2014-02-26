@@ -23,7 +23,7 @@ import flash.display.Sprite;
 class ScrollPanel extends WidgetContainer {
 
 // FIXME public function new(?xml: Fast, ?width:Float, ?height:Float, ?_styleSheet:String) {
-	public function new( ? spd : Null<WidgetContainerData> ) {
+	public function new(? spd : Null<WidgetContainerData>) {
 
 		if (spd == null) {
 

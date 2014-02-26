@@ -63,6 +63,7 @@ typedef DisplayData = {
 	@:optional var y : Null<Float>;
 	@:optional var width : Null<Float>;
 	@:optional var height : Null<Float>;
+	@:optional var applicationTilesheet : TilesheetEx; // set in a second step
 	@:optional var spritesheets : Null<StringMap<TilesheetEx>>; // set in a second step
 	@:optional var spritesheetsSrc : StringMap<String>;
 	@:optional var transitionIn : Null<String>;
@@ -105,6 +106,8 @@ class Display extends Sprite {
     * All the spritesheets used here
     **/
 	public var spritesheets : StringMap<TilesheetEx>;
+
+	var applicationTilesheet : TilesheetEx;
 
 	/**
     * Transition to play at the beginning of the part
@@ -170,17 +173,21 @@ class Display extends Sprite {
 
 			DisplayUtils.initSprite(this, d.width, d.height, 0, 0.001);
 		}
+		this.spritesheets = d.spritesheets;
+
 		for (sk in d.spritesheets.keys()) {
 
-			var layer = new TileLayer(d.spritesheets.get(sk));
+			var layer = new TileLayer(spritesheets.get(sk));
 			layers.set(sk, layer);
+
 			addChild(layer.view);
 		}
 		spritesheets = d.spritesheets;
+		applicationTilesheet = d.applicationTilesheet;
 
-// FIXME		var uiLayer = new TileLayer(UiFactory.tilesheet);
-// FIXME		layers.set("ui", uiLayer);
-// FIXME		addChild(uiLayer.view);
+		var uiLayer = new TileLayer(applicationTilesheet);
+		layers.set("ui", uiLayer);
+		addChild(uiLayer.view);
 
 		createDisplay(d);
 
@@ -369,8 +376,11 @@ class Display extends Sprite {
     		case SoundPlayer:
 
 				d.tilesheet = d.spritesheetRef != null ? spritesheets.get(d.spritesheetRef) : null;
+				d.applicationTilesheet = this.applicationTilesheet;
+
 				var sound = new SoundPlayer(d);
 				addElement(sound, r);
+
 				return sound;
 
     		default: throw "wrong WidgetContainerData type passed to createSound function: " + d.type;
@@ -386,6 +396,8 @@ class Display extends Sprite {
 			case VideoPlayer(controlsHidden, autoFullscreen):
 
 				d.tilesheet = d.spritesheetRef != null ? spritesheets.get(d.spritesheetRef) : null;
+				d.applicationTilesheet = this.applicationTilesheet;
+
 				var video = new VideoPlayer(d);
 
 				addElement(video, r);
@@ -403,6 +415,8 @@ class Display extends Sprite {
 		switch(d.type) {
 
 			case ScrollPanel(styleSheet, style, content, trim):
+
+				d.applicationTilesheet = this.applicationTilesheet;
 
 				var panel = new ScrollPanel(d);
 
@@ -425,6 +439,8 @@ class Display extends Sprite {
 		switch (d.type) {
 
 			case DefaultButton(ds, ite, action, group, e, _, _):
+
+				d.applicationTilesheet = this.applicationTilesheet;
 				
 				var btn : DefaultButton = new DefaultButton(d);
 
@@ -468,14 +484,15 @@ class Display extends Sprite {
 		return c;
 	}
 
-	//private function createImage(itemNode:Fast):Widget // TODO check overrides
+	//private function createImage(itemNode:Fast):Widget
 	private function createTileImage(r : String, d : TileImageData) : Widget {
 
 		if (!layers.exists(d.tilesheetName)) {
 
-// FIXME			var layer = new TileLayer(UiFactory.tilesheet);
-// FIXME			layers.set(d.tilesheetName, layer);
+			var layer = new TileLayer(applicationTilesheet);
+			layers.set(d.tilesheetName, layer);
 		}
+		d.layer = layers.get(d.tilesheetName);
 		var img = new TileImage(d);
 		
 		addElement(img, r, d.id.isBackground);

@@ -223,7 +223,17 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 		return model;
 	}
 
-	// Privates
+
+	///
+	// CALLBACKS
+	//
+
+	public dynamic function onClose() : Void { }
+
+
+	///
+	// INTERNALS
+	//
 
 	private function displayPage(page:Page):Void
 	{
@@ -263,17 +273,33 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 // FIXME		Localiser.instance.popLocale();
 	}
 
-	override private function setButtonAction(button:DefaultButton, action:String):Bool
-	{
-		if(super.setButtonAction(button, action))
+	override private function setButtonAction(button : DefaultButton, action : String) : Bool {
+
+		if (super.setButtonAction(button, action)) {
+
 			return true;
-		button.buttonAction = switch(action.toLowerCase()){
-// FIXME			case "close" : function(?t: DefaultButton){GameManager.instance.hideContextual(this);};
-			case "show" : onSelectChapter;
-			case "goto" : changePage;
-			case "gotonote": changeNote;
-			default: throw "[NotebookDisplay] Unknown action '"+action+"'.";
 		}
+		button.buttonAction = switch (action.toLowerCase()) {
+	
+				case "close":
+					//function(?t: DefaultButton){GameManager.instance.hideContextual(this);};
+					function(? t : DefaultButton){ onClose(); };
+
+				case "show":
+
+					onSelectChapter;
+
+				case "goto" :
+
+					changePage;
+
+				case "gotonote":
+
+					changeNote;
+
+				default: throw "[NotebookDisplay] Unknown action '"+action+"'.";
+			}
+
 		return true;
 	}
 

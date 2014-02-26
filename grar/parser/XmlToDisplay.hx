@@ -87,7 +87,7 @@ class XmlToDisplay {
 				step = {
 						r: f.node.Bookmark.node.Step.att.ref,
 						e: XmlToWidgetContainer.parseWidgetContainerData(f.node.Bookmark.node.Step, DefaultButton(null, null, null, null, null, null, null)),
-						transitionIn: f.node.Step.att.transitionIn
+						transitionIn: f.node.Bookmark.node.Step.att.transitionIn
 					};
 
 				dd.type = Notebook( chapterTemplates, tabTemplate, bookmark, guide, step );

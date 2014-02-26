@@ -256,7 +256,15 @@ class XmlToWidgetContainer {
 				for (e in f.elements) {
 
 					var ret : { e: ElementData, r: String } = parseElement(e, wcd);
-					wcd.displays.set(ret.r, ret.e);
+
+					if (ret.e != null && ret.r != null) {
+
+						wcd.displays.set(ret.r, ret.e);
+trace("elt "+ret.r+" created");
+					} else {
+
+						trace("XmlToWidgetContainer.parseElement return null with $e $wcd");
+					}
 				}
 		}
 		return wcd;

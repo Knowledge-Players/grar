@@ -228,7 +228,11 @@ class Application {
 
 		var n : NotebookDisplay = new NotebookDisplay();
 
+		d.applicationTilesheet = tilesheet;
+
 		n.setContent(d);
+
+		n.onClose = function(){ hideContextual(n); }
 
 		this.notebook = n;
 
@@ -370,6 +374,15 @@ trace("Part created");
 			creation = new PartDisplay(part);
 
 		return creation;
+	}
+
+	private function hideContextual(contextual : Display) : Void {
+
+// FIXME		if (layout.name == contextual.layout) {
+
+// FIXME			layout.zones.get(game.ref).removeChild(cast(contextual, KpDisplay));
+// FIXME			changeLayout(previousLayout);
+// FIXME		}
 	}
 
 }
