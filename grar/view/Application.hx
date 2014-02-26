@@ -61,7 +61,7 @@ class Application {
 	private var stashedLocale : GenericStack<LocaleData>;
 
 
-	public var menu (default, set) : Null<MenuDisplay>;
+	public var menu (default, null) : Null<MenuDisplay>;
 
 	public var notebook (default, null) : Null<NotebookDisplay>;
 
@@ -90,19 +90,6 @@ class Application {
 	///
 	// GETTER / SETTER
 	//
-
-	public function set_menu(v : Null<MenuDisplay>) : Null<MenuDisplay> {
-
-		if (v == menu) {
-
-			return menu;
-		}
-		menu = v;
-
-		onMenuChanged();
-
-		return menu;
-	}
 
 	public function set_menuData(v : Null<MenuData>) : Null<MenuData> {
 
@@ -256,12 +243,16 @@ class Application {
 
 		var m : MenuDisplay = new MenuDisplay();
 
+		d.applicationTilesheet = tilesheet;
+
 		m.setContent(d);
 
 		// TODO set callbacks on m
 		// ...
 
 		menu = m;
+
+		onMenuChanged();
 	}
 
 	public function initMenu() : Void {

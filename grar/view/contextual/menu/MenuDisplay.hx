@@ -105,6 +105,8 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 				if (b != null) {
 
+					b.applicationTilesheet = applicationTilesheet;
+
 					this.bookmark = new BookmarkDisplay(b);
 				}
 			default: throw "wrong DisplayData type given to MenuDisplay.setContent()";

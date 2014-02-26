@@ -174,7 +174,7 @@ class Display extends Sprite {
 			DisplayUtils.initSprite(this, d.width, d.height, 0, 0.001);
 		}
 		this.spritesheets = d.spritesheets;
-
+trace(d.type);
 		for (sk in d.spritesheets.keys()) {
 
 			var layer = new TileLayer(spritesheets.get(sk));

@@ -113,7 +113,7 @@ class XmlToDisplay {
 
 				if (f.hasNode.Bookmark) {
 
-					bookmark = XmlToWidgetContainer.parseWidgetContainerData(f, BookmarkDisplay(null, null, null));
+					bookmark = XmlToWidgetContainer.parseWidgetContainerData(f.node.Bookmark, BookmarkDisplay(null, null, null));
 				}
 				var orientation : String = f.att.orientation;
 

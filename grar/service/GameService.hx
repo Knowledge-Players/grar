@@ -212,6 +212,14 @@ class GameService {
 			// at the moment, grar fetches its data from embedded assets only
 			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Menu(null, null, null, null, null));
 
+			v.spritesheets = new StringMap();
+
+			for (sk in v.spritesheetsSrc.keys()) {
+
+				v.spritesheets.set(sk, AssetsStorage.getSpritesheet(sk));
+
+			}
+
 			if (mPath != null) {
 
 				m = XmlToMenu.parse(AssetsStorage.getXml(mPath));

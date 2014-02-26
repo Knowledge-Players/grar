@@ -23,7 +23,7 @@ class XmlToWidget {
 		if (f != null) {
 
 			if (!f.has.ref) {
-
+//trace("f= "+f.x);
 				throw "expected ref attribute not found";
 			
 			} else {

@@ -25,7 +25,7 @@ class XmlToWidgetContainer {
 		var wcd : WidgetContainerData = cast { };
 		wcd.type = type == null ? WidgetContainer : type;
 		wcd.tilesheet = null;
-
+//trace("type= "+wcd.type);
 		switch (wcd.type) {
 			case SimpleBubble: return null;
 			default: // nothing
@@ -263,7 +263,15 @@ class XmlToWidgetContainer {
 trace("elt "+ret.r+" created");
 					} else {
 
-						trace("XmlToWidgetContainer.parseElement return null with $e $wcd");
+						switch (e.name.toLowerCase()) {
+
+							case "active": return wcd;
+
+							default:
+							
+								trace("XmlToWidgetContainer.parseElement return null with "+e+" "+wcd); throw e.x.toString();
+						}
+
 					}
 				}
 		}
