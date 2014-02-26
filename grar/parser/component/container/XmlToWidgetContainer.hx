@@ -97,15 +97,49 @@ class XmlToWidgetContainer {
 
 				wcd.type = SimpleContainer(nm);
 
-			case DefaultButton(_, _, _, _, _):
+			case DefaultButton(_, _, _, _, _, _, _):
 
 				var defaultState : String = f.has.defaultState ? f.att.defaultState : "active";
 				var isToggleEnabled : Bool = f.has.toggle ? (f.att.toggle == "true") : false;
 				var action : Null<String> = f.has.action ? f.att.action : null;
 				var group : Null<String> = f.has.group ? f.att.group.toLowerCase() : null;
 				var enabled : Bool = f.has.action || f.name != "Button";
+				var states : Array<{ name : String, timeline : Null<String>, enabled : Bool }> = [];
+				var statesElts : StringMap<StringMap<ElementData>> = new StringMap();
 
-				wcd.type = DefaultButton(defaultState, isToggleEnabled, action, group, enabled);
+				var createStates = function(e : Fast) : StringMap<ElementData>{
+				
+						// createStates
+						var list = new StringMap();
+		
+						for (elem in e.elements) {
+		
+							var ed : { r : String, e : ElementData} = parseElement(elem, wcd);
+							list.set(ed.r, ed.e);
+						}
+						return list;
+					}
+
+				for (state in f.elements) {
+
+					var stName : String = state.name;
+					var stTimeline : Null<String> = state.has.timeline ? state.att.timeline : null;
+					var stEnable : Bool = state.has.enable ? state.att.enable == "true" : true;
+
+					states.push( { timeline: stTimeline, name: stName, enabled: stEnable } );
+
+					for (elem in state.elements) {
+
+						statesElts.set(state.name + "_" + elem.name, createStates(elem));
+					}
+				}
+				// Simplified XML
+				if (Lambda.count(statesElts) == 0) {
+
+					statesElts.set(defaultState + "_out", createStates(f));
+				}
+
+				wcd.type = DefaultButton(defaultState, isToggleEnabled, action, group, enabled, states, statesElts);
 
 			case DropdownMenu(_):
 
@@ -213,6 +247,8 @@ class XmlToWidgetContainer {
 
 	static function parseElements(f : Fast, wcd : WidgetContainerData) : WidgetContainerData {
 
+		wcd.displays = new StringMap();
+
 		switch(wcd.type) {
 
 			default: // all cases
@@ -220,7 +256,7 @@ class XmlToWidgetContainer {
 				for (e in f.elements) {
 
 					var ret : { e: ElementData, r: String } = parseElement(e, wcd);
-
+trace("ret= "+ret);
 					wcd.displays.set(ret.r, ret.e);
 				}
 		}
@@ -231,10 +267,10 @@ class XmlToWidgetContainer {
 
 		var ref : String = null;
 		var ed : ElementData = null;
-
+trace("type= "+wcd.type+"   element= "+e.name.toLowerCase());
 		switch(wcd.type) {
 
-			case WidgetContainer, SimpleContainer(_), BoxDisplay, DefaultButton(_, _, _, _, _), DropdownMenu(_), 
+			case WidgetContainer, SimpleContainer(_), BoxDisplay, DefaultButton(_, _, _, _, _, _, _), DropdownMenu(_), 
 				ScrollPanel(_, _, _, _), SoundPlayer, ChronoCircle(_, _, _, _, _), ProgressBar(_, _, _), 
 				InventoryDisplay(_, _, _), BookmarkDisplay(_, _, _), IntroScreen(_), AnimationDisplay, TokenNotification(_):
 
@@ -259,7 +295,7 @@ class XmlToWidgetContainer {
 
 					case "button":
 
-						var dbd : WidgetContainerData = parseWidgetContainerData(e, DefaultButton(null, null, null, null, null));
+						var dbd : WidgetContainerData = parseWidgetContainerData(e, DefaultButton(null, null, null, null, null, null, null));
 
 						ref = dbd.wd.ref;
 						ed = DefaultButton(dbd);

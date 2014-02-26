@@ -79,14 +79,14 @@ class XmlToDisplay {
 					chapterTemplates.set(c.att.ref, { offsetY: Std.parseFloat(c.att.offsetY), e: parseElement(c, dd).e});
 				}
 
-				var tabTemplate : { x : Float, xOffset : Float, e : WidgetContainerData } = { x: Std.parseFloat(f.node.Tab.att.x), xOffset: Std.parseFloat(f.node.Tab.att.xOffset), e: XmlToWidgetContainer.parseWidgetContainerData(f.node.Tab, DefaultButton(null, null, null, null, null)) };
+				var tabTemplate : { x : Float, xOffset : Float, e : WidgetContainerData } = { x: Std.parseFloat(f.node.Tab.att.x), xOffset: Std.parseFloat(f.node.Tab.att.xOffset), e: XmlToWidgetContainer.parseWidgetContainerData(f.node.Tab, DefaultButton(null, null, null, null, null, null, null)) };
 				var bookmark : ImageData = XmlToImage.parseImageData(f.node.Bookmark);
 				var guide : GuideData = XmlToGuide.parseGuideData(f.node.Bookmark.node.Guide);
 
 				var step : { r : String, e : WidgetContainerData, transitionIn : Null<String> };
 				step = {
 						r: f.node.Bookmark.node.Step.att.ref,
-						e: XmlToWidgetContainer.parseWidgetContainerData(f.node.Bookmark.node.Step, DefaultButton(null, null, null, null, null)),
+						e: XmlToWidgetContainer.parseWidgetContainerData(f.node.Bookmark.node.Step, DefaultButton(null, null, null, null, null, null, null)),
 						transitionIn: f.node.Step.att.transitionIn
 					};
 
@@ -149,7 +149,7 @@ class XmlToDisplay {
 							var xOffset : Null<Float> = c.has.xOffset ? Std.parseFloat(c.att.xOffset) : null;
 							var yOffset : Null<Float> = c.has.yOffset ? Std.parseFloat(c.att.yOffset) : null;
 							var width : Null<Float> = c.has.width ? Std.parseFloat(c.att.width) : null;
-							var button : Null<WidgetContainerData> = c.has.Button ? XmlToWidgetContainer.parseWidgetContainerData(c.node.Button, DefaultButton(null, null, null, null, null)) : null;
+							var button : Null<WidgetContainerData> = c.has.Button ? XmlToWidgetContainer.parseWidgetContainerData(c.node.Button, DefaultButton(null, null, null, null, null, null, null)) : null;
 
 							levelDisplays.set(c.name, Button(xOffset, yOffset, width, button));
 						}
@@ -336,7 +336,7 @@ class XmlToDisplay {
 				
 				case "button":
 
-					e = DefaultButton(XmlToWidgetContainer.parseWidgetContainerData(f, DefaultButton(null, null, null, null, null)));
+					e = DefaultButton(XmlToWidgetContainer.parseWidgetContainerData(f, DefaultButton(null, null, null, null, null, null, null)));
 				
 				case "text":
 

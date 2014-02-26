@@ -1,7 +1,7 @@
 package grar.parser;
 
 import grar.model.Grar;
-import grar.model.TrackingMode;
+import grar.model.tracking.TrackingMode;
 
 import haxe.xml.Fast;
 
@@ -16,7 +16,15 @@ class XmlToGrar {
         var sFast : Fast = new Fast(xml);
         var parametersNode : Fast = sFast.node.Grar.node.Parameters;
 
-        m = Type.createEnum(TrackingMode, parametersNode.node.Mode.innerData);
+        try {
+
+            m = Type.createEnum(TrackingMode, parametersNode.node.Mode.innerData);
+        
+        } catch (e:String) {
+
+            m = AUTO;
+            trace("Couldn't convert '"+parametersNode.node.Mode.innerData+"' to TrackingMode: "+e);
+        }
         s = { value: parametersNode.node.State.innerData, tracking: parametersNode.node.State.has.tracking ? parametersNode.node.State.att.tracking : "off" };
         id = parametersNode.node.Id.innerData;
 

@@ -1,6 +1,6 @@
 package grar.service;
 
-import grar.model.Tracking;
+import grar.model.tracking.Tracking;
 
 #if flash
 //import flash.errors.Error;

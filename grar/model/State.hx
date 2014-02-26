@@ -1,7 +1,7 @@
 package grar.model;
 
 import grar.model.Grar;
-import grar.model.Tracking;
+import grar.model.tracking.Tracking;
 import grar.model.localization.Locale;
 
 import haxe.ds.StringMap;

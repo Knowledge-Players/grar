@@ -424,7 +424,7 @@ class Display extends Sprite {
 
 		switch (d.type) {
 
-			case DefaultButton(ds, ite, action, group, e):
+			case DefaultButton(ds, ite, action, group, e, _, _):
 				
 				var btn : DefaultButton = new DefaultButton(d);
 

@@ -5,7 +5,7 @@ import grar.Controller;
 import grar.model.State;
 import grar.model.Config;
 import grar.model.Grar;
-import grar.model.Tracking;
+import grar.model.tracking.Tracking;
 
 import grar.service.AiccService;
 import grar.service.AutoService;
@@ -187,7 +187,7 @@ class TrackingController {
 
 					loadStateInfos(s);
 				}
-		        if (state.currentLocale == null && state.bookmark == -1 && state.completionOrdered.length == 0) {
+		        if (state.currentLocale == null && state.bookmark == -1 && state.completionOrdered != null && state.completionOrdered.length == 0) {
 
 		            loadStateInfos(m.state.value);
 		        }

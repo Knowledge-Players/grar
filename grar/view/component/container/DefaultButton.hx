@@ -14,13 +14,15 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
+import haxe.ds.StringMap;
+
 /**
  * Custom base button class
  */
 class DefaultButton extends WidgetContainer {
 
 
-// FIXME public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>) // pStates never passed
+// public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>) // pStates never passed ??
 	public function new(? dbd : Null<WidgetContainerData>) {
 		
 		this.timelines = new Map<String, Timeline>();
@@ -38,32 +40,34 @@ class DefaultButton extends WidgetContainer {
 
 			super(dbd);
 
-			// FIXME for(state in xml.elements){
-			// FIXME 	if(state.has.timeline){
-			// FIXME 		tmpXml = xml;
-			// FIXME 		break;
-			// FIXME 	}
-			// FIXME }
-
 			switch(dbd.type) {
 
-				case DefaultButton(ds, ite, a, g, e):
-		
+				case DefaultButton(ds, ite, a, g, e, st, ste):
+
+					for (state in st) {
+
+						if (state.timeline != null) {
+
+							tmpdata = dbd;
+							break;
+						}
+					}
 					this.defaultState = ds;
+					
+					if (tmpdata != null) {
+
+						initStates(dbd);
+					}
 					this.isToggleEnabled = ite;
 
 					if (g != null) {
 
 						this.group = g;
 					}
+					this.enabled = e;
 
-				default: //nothing
+				default: throw "Wrong WidgetContainerData type passed to DefaultButton constructor";
 			}
-	
-			// FIXME if (tmpXml == null)
-				// FIXME 	initStates(xml);
-
-			this.enabled = switch(dbd.type){ case DefaultButton(ds, ite, a, g, e): e; default: false; };
 		}
 
 		this.mouseChildren = false;
@@ -118,7 +122,7 @@ class DefaultButton extends WidgetContainer {
 	private var currentState:String;
 	private var isToggleEnabled: Bool = false;
     private var timelines: Map<String, Timeline>;
-// FIXME	private var tmpXml: Fast;
+	private var tmpdata : WidgetContainerData;
 	private var defaultState: String;
 	private var enabledState: Map<String, Bool>;
 
@@ -277,42 +281,55 @@ class DefaultButton extends WidgetContainer {
 	}
 
 	//public function initStates(?xml: Fast, ?timelines: Map<String, Timeline>):Void
-	public function initStates(?timelines: Map<String, Timeline>):Void
+	public function initStates(? dbd : Null<WidgetContainerData>, ? timelines: Map<String, Timeline>):Void
 	{
-/* FIXME  FIXME  FIXME  FIXME  FIXME  FIXME 
-		if(xml != null)
-			tmpXml = xml;
-		if(tmpXml != null){
-			for(state in tmpXml.elements){
-				if(timelines != null && state.has.timeline)
-					this.timelines.set(state.name, timelines.get(state.att.timeline));
-				if(state.has.enable)
-					enabledState.set(state.name, state.att.enable == "true");
-				else
-					enabledState.set(state.name, true);
-				for(elem in state.elements){
-					states.set(state.name+"_" + elem.name, createStates(elem));
-				}
-			}
-			// Simplified XML
-			if(Lambda.count(states) == 0)
-				states.set(defaultState+"_out", createStates(tmpXml));
-			tmpXml = null;
+		if (dbd != null) {
+
+			tmpdata = dbd;
 		}
-*/
+		if (tmpdata != null) {
+
+			switch (tmpdata.type) {
+
+				case DefaultButton(_, _, _, _, _, st, stElts):
+// : Array<{ timeline : Null<String>, name : String, enabled : Bool }> 
+// : haxe.ds.StringMap<haxe.ds.StringMap<grar.view.ElementData>>
+
+					for (se in stElts.keys()) {
+
+						states.set(se, createStates(stElts.get(se)));
+					}
+					for (s in st) {
+
+						if (timelines != null && s.timeline != null) {
+
+							this.timelines.set(s.name, timelines.get(s.timeline));
+						}
+						if (s.enabled) {
+
+							enabledState.set(s.name, s.enabled);
+						}
+					}
+
+				default: throw "Wrong WidgetContainerData type passed to DefaultButton.initStates()";
+			}
+			tmpdata = null;
+		}
+
 	}
 
 	//private inline function createStates(node:Fast):Map<String, Widget>
-	private inline function createStates(node:Dynamic):Map<String, Widget>
-	{
-		var list = new Map<String, Widget>();
-/* FIXME FIXME FIXME FIXME FIXME FIXME 
+	private inline function createStates(sm : StringMap<ElementData>) : Map<String, Widget> {
 
-		for(elem in node.elements){
-			var widget = createElement(elem);
-			list.set(widget.ref, widget);
+		var list = new Map<String, Widget>();
+
+		for (sk in sm.keys()) {
+
+			var w : Widget = createElement(sm.get(sk));
+
+			list.set(w.ref, w);
 		}
-*/
+
 		return list;
 	}
 

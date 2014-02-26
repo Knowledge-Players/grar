@@ -2,7 +2,7 @@ package grar.service;
 
 import haxe.Http;
 
-import grar.model.Tracking;
+import grar.model.tracking.Tracking;
 
 #if flash
 import flash.external.ExternalInterface;

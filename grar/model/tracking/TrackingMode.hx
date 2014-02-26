@@ -1,4 +1,4 @@
-package grar.model;
+package grar.model.tracking;
 
 enum TrackingMode {
 	AICC;

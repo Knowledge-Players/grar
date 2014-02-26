@@ -73,7 +73,7 @@ enum WidgetContainerType {
 	WidgetContainer; // TODO remove ?
 	SimpleContainer(? mask : Null<String>);
 	BoxDisplay;
-	DefaultButton(? defaultState : String, ? isToggleEnabled : Bool, ? action : Null<String>, ? group : Null<String>, ? enabled : Bool);
+	DefaultButton(defaultState : Null<String>, isToggleEnabled : Null<Bool>, action : Null<String>, group : Null<String>, enabled : Null<Bool>, states : Null<Array<{ name : String, timeline : Null<String>, enabled : Bool }>>, statesElts : Null<StringMap<StringMap<ElementData>>>);
 	DropdownMenu(? color : Color);
 	ScrollPanel(? styleSheet : Null<String>, ? style : Null<String>, ? content : Null<String>, ? trim : Bool);
 	SimpleBubble;
@@ -481,7 +481,7 @@ class WidgetContainer extends Widget {
 
 		switch(d.type) {
 
-			case DefaultButton(_, _, a, g, _):
+			case DefaultButton(_, _, a, g, _, _, _):
 
 				if (a != null) {
 

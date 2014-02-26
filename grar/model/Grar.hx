@@ -6,6 +6,7 @@ import grar.model.contextual.Bibliography;
 import grar.model.contextual.Notebook;
 import grar.model.score.ScoreChart;
 import grar.model.part.Part;
+import grar.model.tracking.TrackingMode;
 
 import haxe.ds.StringMap;
 

@@ -165,7 +165,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 				
 				buttonGroups.get(TAB_GROUP_NAME).add(tab);
 //				setButtonAction(tab, tmpTemplate.att.action);
-				setButtonAction(tab, switch(tabTemplate.e.type){ case DefaultButton(ds, ite, a, g, e): a; default: null; });
+				setButtonAction(tab, switch(tabTemplate.e.type){ case DefaultButton(_, _, a, _, _, _, _): a; default: null; });
 
 				addChild(tab);
 				
