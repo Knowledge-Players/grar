@@ -28,10 +28,9 @@ class XmlToPart {
 	 * @param Xml describing the part
 	 */
 	static public function parse(xml : Xml) : PartialPart {
-
 		var f : Fast = new Fast(xml);
+
 		var pp : PartialPart = cast { };
-		// ??? pp.xml = xml;
 
 		var t : String = f.has.type ? f.att.type.toLowerCase() : "";
 
@@ -61,7 +60,7 @@ class XmlToPart {
 
 				throw "unexpected type attribute value $t";
 		}
-
+//trace("parsed "+pp);
 		return pp;
 	}
 
@@ -169,7 +168,7 @@ class XmlToPart {
 			case "part":
 
 				pd.nbSubPartTotal++;
-
+//trace("found sub part "+node.att.id);
 				pd.partialSubParts.push( parse(node.x) );
 			
 			case "sound":
@@ -376,27 +375,7 @@ class XmlToPart {
 		pd.partialSubParts = [];
 
 		pd = parsePartHeader(pd, f);
-/* done in parseContent
-		if (f.hasNode.Sound) {
-
-#if (flash || openfl)
-			pd.soundLoopSrc = f.node.Sound.att.content;
-#else
-			pd.soundLoop = f.node.Sound.att.content;
-#end
-		}
-		if (f.hasNode.Part && pd.file != null) {
-
-			for (partNode in f.nodes.Part) {
-
-				pd.nbSubPartTotal++;
-
-				var sp : PartialPart = parse(partNode.x, p);
-				
-				pd.elements.push(PartialPart(sp));
-			}
-		}
-*/
+		pd.xml = f.x;
 
 		return pd;
 	}

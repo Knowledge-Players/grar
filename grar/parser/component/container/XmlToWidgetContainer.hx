@@ -256,7 +256,6 @@ class XmlToWidgetContainer {
 				for (e in f.elements) {
 
 					var ret : { e: ElementData, r: String } = parseElement(e, wcd);
-trace("ret= "+ret);
 					wcd.displays.set(ret.r, ret.e);
 				}
 		}
@@ -267,7 +266,7 @@ trace("ret= "+ret);
 
 		var ref : String = null;
 		var ed : ElementData = null;
-trace("type= "+wcd.type+"   element= "+e.name.toLowerCase());
+
 		switch(wcd.type) {
 
 			case WidgetContainer, SimpleContainer(_), BoxDisplay, DefaultButton(_, _, _, _, _, _, _), DropdownMenu(_), 

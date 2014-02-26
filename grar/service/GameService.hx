@@ -331,6 +331,7 @@ class GameService {
 
 		try {
 
+//trace("fetchPart "+xml);
 			var pp : PartialPart = XmlToPart.parse(xml);
 
 			fetchPartContent( xml, pp, onSuccess, onError );
@@ -348,10 +349,14 @@ class GameService {
 	//
 
 	private function fetchPartContent(innerXml : Xml, pp : PartialPart, onInnerSuccess : Part -> Void, onInnerError : String -> Void) {
-
+//trace("fetchPartContent innerXml= "+innerXml);
+//trace("pp.pd.file= "+pp.pd.file);
 		var ret : { p : Part, pps : Array<PartialPart> } = null;
 #if (flash || openfl)
-		pp.pd.soundLoop = AssetsStorage.getSound(pp.pd.soundLoopSrc);
+		if (pp.pd.soundLoopSrc != null) {
+
+			pp.pd.soundLoop = AssetsStorage.getSound(pp.pd.soundLoopSrc); trace("fetch sound "+pp.pd.soundLoopSrc);
+		}
 #end
 		if (pp.pd.file != null) {
 
@@ -363,18 +368,19 @@ class GameService {
 			ret = XmlToPart.parseContent(pp, innerXml);
 			
 		}
-		var cnt : Int = pp.pd.partialSubParts.length;
-
+		//var cnt : Int = pp.pd.partialSubParts.length;
+		var cnt : Int = ret.pps.length;
+//trace("found "+cnt+" sub parts");
 		if (cnt == 0) {
 
 			//ret.p.loaded = true; // TODO check if still useful
 			onInnerSuccess( ret.p );
 
 		} else {
+//trace("ret.pps = "+pp.pd.partialSubParts);
+			for ( spp in ret.pps ) {
 
-			for ( spp in pp.pd.partialSubParts ) {
-
-				fetchPartContent( spp.pd.xml, spp, function(sp : Part) {
+				fetchPartContent(spp.pd.xml, spp, function(sp : Part) {
 
 						cnt--;
 
@@ -387,11 +393,10 @@ class GameService {
 						}
 						if (cnt == 0) {
 
-							onInnerSuccess( ret.p );
-
+							onInnerSuccess(ret.p);
 						}
 
-					}, onInnerError );
+					}, onInnerError);
 			}
 		}
 	}
