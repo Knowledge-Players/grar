@@ -480,6 +480,8 @@ class StructurePart extends EventDispatcher implements Part{
 							buttonTargets.set(node.att.ref, elements[i]);
 					}
 				}
+			case "dynamic":
+				elements.push(new DynamicItem(node));
 		}
 	}
 

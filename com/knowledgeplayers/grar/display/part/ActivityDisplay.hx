@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import flash.display.DisplayObject;
 import flash.events.Event;
@@ -35,6 +36,7 @@ class ActivityDisplay extends PartDisplay {
 	private var hasCorrection: Bool;
 	private var inputs: List<DefaultButton>;
 	private var validationRef: String;
+	// Maybe remove this one. Not very useful
 	private var validatedInputs: Map<DefaultButton, Bool>;
 	private var minSelect: Int;
 	private var maxSelect: Int;
@@ -85,7 +87,6 @@ class ActivityDisplay extends PartDisplay {
 			displayInputs();
 		}
 		else
-			//exitPart();
 			endActivity();
 	}
 
@@ -125,10 +126,6 @@ class ActivityDisplay extends PartDisplay {
 				createInput(input, guide);
 			}
 		}
-
-		// Apply saved data
-		if(savedData != null)
-			savedData.split("-")[roundIndex];
 
 		for(group in currentGroup.groups){
 			var guide = createGroupGuide(group);
@@ -178,7 +175,7 @@ class ActivityDisplay extends PartDisplay {
 		if(selectLimits.length > 1)
 			throw "[ActivityDisplay] Multiple selection limits rules in activity '"+part.id+"'. Pick only one!";
 		if(selectLimits.length == 1){
-			var limits = ParseUtils.parseListOfValues(selectLimits[0].value);
+			var limits = ParseUtils.parseStringArray(selectLimits[0].value);
 			if(limits.length == 1)
 				maxSelect = minSelect = Std.parseInt(limits[0]);
 			else if(limits.length == 2){
@@ -194,6 +191,19 @@ class ActivityDisplay extends PartDisplay {
 				throw "[ActivityDisplay] There is more than 2 limits of selection in activity '"+part.id+"'. Just set a minimum and a maximum.";
 			if(minSelect > 0 && validationButton != null){
 				validationButton.toggle(false);
+			}
+		}
+
+		// Apply saved data
+		if(savedData != null){
+			var list = ParseUtils.parseIntList(savedData.split("-")[roundIndex]);
+			var i = 0;
+			for(input in inputs){
+				if(list.has(i)){
+					buttonsToInputs.get(input).selected = !buttonsToInputs.get(input).selected;
+					toggleInput(input);
+				}
+				i++;
 			}
 		}
 
@@ -219,6 +229,8 @@ class ActivityDisplay extends PartDisplay {
 		button.zz = displayTemplates.get(input.ref).z + zButton;
         zButton++;
 		inputs.add(button);
+		if(input.selected)
+			toggleInput(button);
 	}
 
 	private inline function createGroupGuide(groupe: Group):Guide
@@ -292,7 +304,6 @@ class ActivityDisplay extends PartDisplay {
 		if(i != restartRules.length)
 			part.restart();
 
-
 		if(idNext != null){
 			var target = part.getElementById(idNext);
 			if(target.isPart())
@@ -356,6 +367,16 @@ class ActivityDisplay extends PartDisplay {
 		}
 	}
 
+	private function toggleInput(input:DefaultButton):Void
+	{
+		input.toggle();
+		var selected: Bool = buttonsToInputs.get(input).selected;
+		validatedInputs.set(input, selected);
+		if(autoCorrect)
+			validate(input, Std.string(selected));
+		updateValidationButton();
+	}
+
 	// Handler
 	private function onInputEvents(e: MouseEvent):Void
 	{
@@ -373,11 +394,8 @@ class ActivityDisplay extends PartDisplay {
 					needValidation = true;
 					updateButton = true;
 				case "toggle":
-					e.target.toggle();
-					var selected = buttonsToInputs.get(e.target).selected = e.target.toggleState == "active";
-					validatedInputs.set(e.target, selected);
-					needValidation = true;
-					updateButton = true;
+					buttonsToInputs.get(e.currentTarget).selected = !buttonsToInputs.get(e.currentTarget).selected;
+					toggleInput(e.currentTarget);
 				case "drag":
 					e.target.startDrag();
 					e.target.parent.setChildIndex(e.target, e.target.parent.numChildren-1);
@@ -463,22 +481,29 @@ class ActivityDisplay extends PartDisplay {
 		if(needValidation && autoCorrect)
 			validate(e.target, Std.string(e.target.toggleState == "active"));
 
+		// Insert this into cases (like toggleInput)
+		if(updateButton)
+			updateValidationButton();
+
+		if(goNext)
+			nextElement();
+	}
+
+	private function updateValidationButton():Void
+	{
 		// Selection limits
 		var validated = Lambda.count(validatedInputs, function(input){
 			return input;
 		});
 
 		// Activate validation button
-		if(updateButton && validationButton != null)
+		if(validationButton != null)
 			validationButton.toggle(validated >= minSelect);
 		// Toggle inputs
 		if(validated == maxSelect)
 			disableInputs();
 		else
 			enableInputs();
-
-		if(goNext)
-			nextElement();
 	}
 
 	private inline function onValidate(?target:DefaultButton):Void

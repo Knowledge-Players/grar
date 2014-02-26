@@ -62,20 +62,22 @@ class Pattern implements PartElement {
 
 	public function init(xml:Fast):Void
 	{
-		for(itemNode in xml.nodes.Text){
-			var item:Item = ItemFactory.createItemFromXml(itemNode);
-			patternContent.push(item);
-
-		}
-		for(child in xml.elements){
-			if(child.name.toLowerCase() == "button" || child.name.toLowerCase() == "choice"){
-				if(child.has.content)
-					buttons.set(child.att.ref, ParseUtils.parseHash(child.att.content));
-				else
-					buttons.set(child.att.ref, new Map<String, String>());
+		for(itemNode in xml.elements){
+			switch(itemNode.name.toLowerCase()){
+				case "text":
+					var item:Item = ItemFactory.createItemFromXml(itemNode);
+					patternContent.push(item);
+				case "button" | "choice":
+					if(itemNode.has.content)
+						buttons.set(itemNode.att.ref, ParseUtils.parseHash(itemNode.att.content));
+					else
+						buttons.set(itemNode.att.ref, new Map<String, String>());
+				case "dynamic":
+					patternContent.push(new DynamicItem(itemNode));
 			}
 		}
-		nextPattern = xml.att.next;
+
+		nextPattern = xml.has.next ? xml.att.next : "";
 	}
 
 	/**

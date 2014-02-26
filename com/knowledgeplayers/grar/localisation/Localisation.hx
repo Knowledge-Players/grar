@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.localisation;
 
+import StringTools;
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
 import haxe.xml.Fast;
@@ -89,7 +90,7 @@ class Localisation extends EventDispatcher {
 						for(data in cell.elements()){
 							if(data.nodeName == "Data"){
 								if(key != ""){
-									value = data.firstChild().toString();
+									value = StringTools.htmlUnescape(data.firstChild().toString());
 								}
 								else{
 									key = data.firstChild().toString();

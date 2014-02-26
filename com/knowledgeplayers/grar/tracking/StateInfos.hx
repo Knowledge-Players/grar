@@ -51,7 +51,8 @@ class StateInfos {
 				if (p!=null)
 					NotebookDisplay.instance.stockPart(p);
 			}
-			activityData = ParseUtils.parseHash(stateInfosArray[4]);
+			if(stateInfosArray.length > 4)
+				activityData = ParseUtils.parseHash(stateInfosArray[4]);
 		}
 		else{
 			tmpState = state;

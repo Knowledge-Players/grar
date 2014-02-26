@@ -3,6 +3,7 @@ package com.knowledgeplayers.grar.display;
 #if flash
 import com.knowledgeplayers.grar.display.component.container.VideoPlayer;
 #end
+import com.knowledgeplayers.grar.util.guide.Guide;
 import com.knowledgeplayers.grar.display.contextual.NotebookDisplay;
 import com.knowledgeplayers.grar.display.contextual.menu.MenuDisplay;
 import com.knowledgeplayers.grar.display.component.container.SoundPlayer;
@@ -82,6 +83,7 @@ class KpDisplay extends Sprite {
 	private var buttonGroups: Map<String, GenericStack<DefaultButton>>;
 	private var displayTemplates: Map<String, Template>;
 	private var timelines: Map<String, Timeline>;
+	private var guides:Map<String, Guide>;
 
 
 	/**
@@ -153,8 +155,15 @@ class KpDisplay extends Sprite {
 					mock.ref = elem.att.ref;
 					timeline.addElement(mock, elem.att.transition, delay);
 				}
-				else if(!displays.exists(elem.att.ref))
-					trace("[KpDisplay] Can't add unexistant widget '"+elem.att.ref+"' in timeline '"+child.att.ref+"'.");
+				else if(!displays.exists(elem.att.ref)){
+					if(guides.exists(elem.att.ref))
+						for(obj in guides.get(elem.att.ref).getAllObjects()){
+							if(Std.is(obj, Widget))
+								timeline.addElement(cast obj, elem.att.transition, delay);
+						}
+					else
+						trace("[KpDisplay] Can't add unexistant widget '"+elem.att.ref+"' in timeline '"+child.att.ref+"'.");
+				}
 				else
 					timeline.addElement(displays.get(elem.att.ref),elem.att.transition,delay);
 			}
@@ -419,6 +428,7 @@ class KpDisplay extends Sprite {
         timelines = new Map<String, Timeline>();
 		dynamicFields = new Array<{field: ScrollPanel, content: String}>();
 		displayTemplates = new Map<String, {fast: Fast, z: Int}>();
+		guides = new Map<String, Guide>();
 
 		addEventListener(Event.ENTER_FRAME, checkRender);
 	}

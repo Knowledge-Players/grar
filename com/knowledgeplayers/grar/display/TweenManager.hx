@@ -51,7 +51,7 @@ class TweenManager {
 			if(Std.is(display, Widget))
 				cast(display, Widget).reset();
 
-			var arrayRef:Array<String> = ParseUtils.parseListOfValues(refs);
+			var arrayRef:Array<String> = ParseUtils.parseStringArray(refs);
 			for(ref in arrayRef){
 				transition = startTransition(display, ref,delay);
 			}

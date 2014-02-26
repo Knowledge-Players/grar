@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import haxe.Timer;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
@@ -17,6 +18,11 @@ import flash.events.MouseEvent;
  * Custom base button class
  */
 class DefaultButton extends WidgetContainer {
+
+	/**
+	* Number of seconds before the button can render again
+	**/
+	private static var RENDER_INTERVAL: Float = 0.08;
 
 	/**
      * Switch to enable the button
@@ -56,6 +62,7 @@ class DefaultButton extends WidgetContainer {
 	private var enabledState: Map<String, Bool>;
 	private var innerTimelines: Map<String, Timeline>;
 	private var tmpContent:Sprite;
+	private var lastRender:Float;
 
 	/**
      * Action to execute on click
@@ -72,6 +79,7 @@ class DefaultButton extends WidgetContainer {
 		timelines = new Map<String, Timeline>();
 		enabledState = new Map<String, Bool>();
 		innerTimelines = new Map<String, Timeline>();
+		lastRender = 0;
 
 		if(pStates != null)
 			states = pStates;
@@ -267,7 +275,7 @@ class DefaultButton extends WidgetContainer {
 				changeState = true;
 			}
 		}
-		if(changeState){
+		if(changeState && Timer.stamp()-lastRender > RENDER_INTERVAL){
 			tmpContent = new Sprite();
 			if(state == null)
 				throw "There is no information for state \"" + currentState + "\" for button \"" + ref + "\".";
@@ -316,6 +324,7 @@ class DefaultButton extends WidgetContainer {
 				}
 				state.timelineIn.play();
 			}
+			lastRender = Timer.stamp();
 		}
 	}
 
@@ -411,8 +420,8 @@ class DefaultButton extends WidgetContainer {
 
 	private inline function removeAllEventsListeners(listener:MouseEvent -> Void):Void
 	{
-		removeEventListener(MouseEvent.MOUSE_OUT, listener);
-		removeEventListener(MouseEvent.MOUSE_OVER, listener);
+		/*removeEventListener(MouseEvent.MOUSE_OUT, listener);
+		removeEventListener(MouseEvent.MOUSE_OVER, listener);*/
 		removeEventListener(MouseEvent.ROLL_OVER, listener);
 		removeEventListener(MouseEvent.ROLL_OUT, listener);
 		removeEventListener(MouseEvent.CLICK, listener);
@@ -448,8 +457,8 @@ class DefaultButton extends WidgetContainer {
 		if(!enabled)
 			return ;
 		switch (event.type) {
-			case MouseEvent.MOUSE_OUT: onOut(event);
-			case MouseEvent.MOUSE_OVER: onOver(event);
+			/*case MouseEvent.MOUSE_OUT: onOut(event);
+			case MouseEvent.MOUSE_OVER: onOver(event);*/
 			case MouseEvent.ROLL_OVER: onOver(event);
 			case MouseEvent.ROLL_OUT: onOut(event);
 			case MouseEvent.CLICK: onClick(event);

@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.structure.part.DynamicItem;
 import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.SoundPlayer;
 import com.knowledgeplayers.grar.structure.part.sound.item.SoundItem;
@@ -368,7 +369,7 @@ class PartDisplay extends KpDisplay {
 		}
 	}
 
-	private function setupItem(item:Item, ?isFirst:Bool = true):Void
+	private function setupItem(item:Item, ?isFirst:Bool = true, ?groupName: String):Void
 	{
 		if(item == null)
 			return;

@@ -103,7 +103,7 @@ class Item implements PartElement {
 	}
 
 	/**
-    * @return true
+    * @return false
     **/
 
 	public function isText():Bool
@@ -154,5 +154,10 @@ class Item implements PartElement {
 	public function isSound():Bool
 	{
 		return false;
+	}
+
+	public function toString():String
+	{
+		return "item "+id+": "+content;
 	}
 }

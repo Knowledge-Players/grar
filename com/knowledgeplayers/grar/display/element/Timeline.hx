@@ -40,7 +40,7 @@ class Timeline extends EventDispatcher
 
     public function play():Void
     {
-         nbCompleteTransitions=0;
+         nbCompleteTransitions = 0;
 
          for (elem in elements){
             var actuator = TweenManager.applyTransition(elem.widget,elem.transition,elem.delay);

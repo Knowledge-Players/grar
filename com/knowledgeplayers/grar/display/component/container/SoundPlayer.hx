@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import flash.media.SoundTransform;
 import com.knowledgeplayers.grar.display.element.ChronoCircle;
 import flash.events.Event;
 import flash.net.URLRequest;
@@ -22,6 +23,7 @@ class SoundPlayer extends WidgetContainer
     private var pausePosition:Float=0;
     private var chrono:ChronoCircle;
 	private var loaded:Bool;
+	private var defaultVolume:Float;
 
     public function new(?xml: Fast, ?tilesheet: TilesheetEx)
     {
@@ -32,12 +34,13 @@ class SoundPlayer extends WidgetContainer
         soundChannel = new SoundChannel();
     }
 
-    public function setSound(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 0, capture:Float = 0,?autoFullscreen:Bool): Void{
+    public function setSound(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1, capture:Float = 0,?autoFullscreen:Bool): Void{
 
         if(url == null || url == "")
             throw '[SoundPlayer] Invalid url "$url" for audio stream.';
 
 	    autoPlay = autoStart;
+	    this.defaultVolume = defaultVolume;
 	    loaded = false;
 	    var req:URLRequest = new URLRequest(url);
 	    sound = new Sound();
@@ -53,7 +56,9 @@ class SoundPlayer extends WidgetContainer
 	{
 		if(loaded){
 			setPlaying(true);
+			var volume = new SoundTransform(defaultVolume);
 			soundChannel = sound.play(pausePosition);
+			soundChannel.soundTransform = volume;
 			soundChannel.addEventListener(Event.SOUND_COMPLETE,onSoundComplete);
 		}
 		else{

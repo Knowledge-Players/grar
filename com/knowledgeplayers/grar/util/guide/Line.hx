@@ -24,7 +24,7 @@ class Line implements Guide
 	private var startPoint: Point;
 	private var endPoint: Point;
 	private var nextPoint: Point;
-	private var objects: Array<DisplayObject>;
+	private var objects: List<DisplayObject>;
 	private var center: Bool;
 
 	/**
@@ -37,7 +37,7 @@ class Line implements Guide
 	{
 		startPoint = start;
 		endPoint = end;
-		objects = new Array<DisplayObject>();
+		objects = new List<DisplayObject>();
 		this.transitionIn = transitionIn;
 	}
 
@@ -58,7 +58,7 @@ class Line implements Guide
 	**/
 	public function add(object:DisplayObject, ?tween:String, tile: Bool = false):DisplayObject
 	{
-		objects.push(object);
+		objects.add(object);
 		var step = getFragment(startPoint, endPoint, objects.length+1);
 		nextPoint = startPoint;
 		for(obj in objects){
@@ -83,6 +83,11 @@ class Line implements Guide
 	private function getFragment(p1:Point, p2:Point, numFragment:Int):Point
 	{
 		return new Point((p2.x-p1.x)/numFragment, (p2.y-p1.y)/numFragment);
+	}
+
+	public function getAllObjects():List<DisplayObject>
+	{
+		return objects;
 	}
 
 }

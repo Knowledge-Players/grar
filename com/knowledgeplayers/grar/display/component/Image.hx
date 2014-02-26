@@ -31,7 +31,7 @@ class Image extends Widget{
 
 			if(xml.has.clip){
 				var mask = new Shape();
-				var clipOrigin = ParseUtils.parseListOfFloatValues(xml.att.clip, ";");
+				var clipOrigin = ParseUtils.parseFloatArray(xml.att.clip, ";");
 				for(i in 0...numChildren){
 					getChildAt(i).x -= clipOrigin[0];
 					getChildAt(i).y -= clipOrigin[1];
@@ -54,7 +54,7 @@ class Image extends Widget{
     public function setBmp(_bmpData:String):Void
     {
          if(_bmpData.indexOf(".")<0){
-             var stringColor = ParseUtils.parseListOfValues(_bmpData);
+             var stringColor = ParseUtils.parseStringArray(_bmpData);
              var colors = new Array<Int>();
              var alphas = new Array<Float>();
              for(color in stringColor){
@@ -88,7 +88,7 @@ class Image extends Widget{
 		if(xml.has.src){
 			if(xml.has.vertices){
 				var vertices = new List<Point2D>();
-				ParseUtils.parseListOfValues(xml.att.vertices).iter(function(vertex: String){
+				ParseUtils.parseStringArray(xml.att.vertices).iter(function(vertex: String){
 					var v = vertex.split(";");
 					vertices.add({x: Std.parseFloat(v[0]), y: Std.parseFloat(v[1])});
 				});
@@ -98,7 +98,7 @@ class Image extends Widget{
 					shape.graphics.beginFill(color.color, color.alpha);
 				}
 				else{
-					var stringColor = ParseUtils.parseListOfValues(xml.att.src);
+					var stringColor = ParseUtils.parseStringArray(xml.att.src);
 					var colors = new Array<Int>();
 					var alphas = new Array<Float>();
 					for(color in stringColor){
@@ -122,7 +122,7 @@ class Image extends Widget{
 				addChild(shape);
 			}
 			else if(xml.has.radius){
-				var stringColor = ParseUtils.parseListOfValues(xml.att.src);
+				var stringColor = ParseUtils.parseStringArray(xml.att.src);
 				var colors = new Array<Int>();
 				var alphas = new Array<Float>();
 				for(color in stringColor){
@@ -130,7 +130,7 @@ class Image extends Widget{
 					colors.push(c.color);
 					alphas.push(c.alpha);
 				}
-				var radius = ParseUtils.parseListOfFloatValues(xml.att.radius);
+				var radius = ParseUtils.parseFloatArray(xml.att.radius);
 				if(xml.has.width && xml.has.height){
 					ParseUtils.formatToFour(radius);
 					addChild(new SimpleBubble(Std.parseFloat(xml.att.width), Std.parseFloat(xml.att.height), colors, radius,alphas));
@@ -141,7 +141,7 @@ class Image extends Widget{
 			}
 			else if(xml.att.src.indexOf(".") < 0)
             {
-	            var stringColor = ParseUtils.parseListOfValues(xml.att.src);
+	            var stringColor = ParseUtils.parseStringArray(xml.att.src);
 	            var colors = new Array<Int>();
 	            var alphas = new Array<Float>();
 	            for(color in stringColor){

@@ -13,8 +13,8 @@ class GuideFactory
 	public static function createGuide(guideType:String, guideFast: Fast):Guide
 	{
 		var creation: Guide = switch(guideType.toLowerCase()) {
-			case "line": var start = ParseUtils.parseListOfIntValues(guideFast.att.start, ";");
-				var end = ParseUtils.parseListOfIntValues(guideFast.att.end, ";");
+			case "line": var start = ParseUtils.parseIntArray(guideFast.att.start, ";");
+				var end = ParseUtils.parseIntArray(guideFast.att.end, ";");
 				new Line(new Point(start[0], start[1]), new Point(end[0], end[1]), guideFast.has.center?guideFast.att.center=="true":false);
 			case "grid":
 				var grid = new Grid(Std.parseInt(guideFast.att.numRow), Std.parseInt(guideFast.att.numCol), guideFast.has.resize?guideFast.att.resize=="true":true);

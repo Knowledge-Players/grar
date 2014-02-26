@@ -80,7 +80,7 @@ class ActivityPart extends StructurePart
 			var result = i != input.values.length;
 			if(result)
 				numRightAnswers++;
-			input.selected = value == "true";
+			//input.selected = value == "true";
 			return result;
 		}
 	}
@@ -109,12 +109,6 @@ class ActivityPart extends StructurePart
 						GameManager.instance.activateToken(input.id);
 				}
 			}
-		}
-
-		// Reset inputs
-		for(group in groups){
-			for(input in group.inputs)
-				input.selected = false;
 		}
 
 		isDone = true;
@@ -151,6 +145,13 @@ class ActivityPart extends StructurePart
 	override public function restart():Void
 	{
 		super.restart();
+
+		// Reset inputs
+		for(group in groups){
+			for(input in group.inputs)
+				input.selected = input.defaultSelection;
+		}
+
 		groupIndex = -1;
 	}
 
@@ -162,6 +163,14 @@ class ActivityPart extends StructurePart
 	override public function isActivity():Bool
 	{
 		return true;
+	}
+
+	public function getAllInputs():Array<Input>
+	{
+		var inputsGroup = new Array<Input>();
+		for(group in groups)
+			inputsGroup = inputsGroup.concat(group.inputs);
+		return inputsGroup;
 	}
 
 	// Privates
@@ -214,17 +223,17 @@ class ActivityPart extends StructurePart
 	{
 		var values;
 		if(xml.has.values)
-			values = ParseUtils.parseListOfValues(xml.att.values);
+			values = ParseUtils.parseStringArray(xml.att.values);
 		else
 			values = new Array<String>();
-		return {id: xml.att.id, ref: xml.att.ref, content: ParseUtils.parseHash(xml.att.content), values: values, selected: false, group: group};
+		return {id: xml.att.id, ref: xml.att.ref, content: ParseUtils.parseHash(xml.att.content), values: values, selected: xml.has.selected ? xml.att.selected == "true":false, defaultSelection: xml.has.selected ? xml.att.selected == "true":false, group: group};
 	}
 
 	private inline function createGroup(xml: Fast): Group
 	{
 		var rules: Array<String> = null;
 		if(xml.has.rules){
-			rules = ParseUtils.parseListOfValues(xml.att.rules);
+			rules = ParseUtils.parseStringArray(xml.att.rules);
 		}
 		var group: Group = {id: xml.att.id, ref: xml.att.ref, rules: rules, groups: new Array<Group>(), inputs: new Array<Input>(), items: new Array<Item>(), buttons: new Array<Button>()};
 		for(elem in xml.elements){
@@ -242,14 +251,6 @@ class ActivityPart extends StructurePart
 		}
 
 		return group;
-	}
-
-	private function getAllInputs():Array<Input>
-	{
-		var inputsGroup = new Array<Input>();
-		for(group in groups)
-			inputsGroup = inputsGroup.concat(group.inputs);
-		return inputsGroup;
 	}
 }
 
@@ -275,6 +276,7 @@ typedef Input = {
 	var content: Map<String, String>;
 	var values: Array<String>;
 	var selected: Bool;
+	var defaultSelection: Bool;
 	@:optional var group: Group;
 }
 

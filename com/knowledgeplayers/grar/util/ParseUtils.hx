@@ -28,7 +28,7 @@ class ParseUtils {
 		return results;
 	}
 
-	public static inline function parseListOfValues(list: String, separator: String = ","):Array<String>
+	public static inline function parseStringArray(list: String, separator: String = ","):Array<String>
 	{
 		var result = new Array<String>();
 		for(elem in list.split(separator)){
@@ -37,22 +37,43 @@ class ParseUtils {
 		return result;
 	}
 
-	public static inline function parseListOfIntValues(list: String, separator: String = ","):Array<Int>
+	public static inline function parseIntArray(list: String, separator: String = ","):Array<Int>
 	{
 		var result = new Array<Int>();
-		var list = parseListOfValues(list, separator);
+		var list = parseStringArray(list, separator);
 		for(elem in list){
 			result.push(Std.parseInt(elem));
 		}
 		return result;
 	}
 
-	public static inline function parseListOfFloatValues(list: String, separator: String = ","):Array<Float>
+	public static inline function parseFloatArray(list: String, separator: String = ","):Array<Float>
 	{
 		var result = new Array<Float>();
-		var list = parseListOfValues(list, separator);
+		var list = parseStringArray(list, separator);
 		for(elem in list){
 			result.push(Std.parseFloat(elem));
+		}
+		return result;
+	}
+
+	public static inline function parseIntList(list: String, separator: String = ","):List<Int>
+	{
+		var result = new List<Int>();
+		var list = parseStringList(list, separator);
+		for(elem in list){
+			result.push(Std.parseInt(elem));
+		}
+		return result;
+	}
+
+	public static inline function parseStringList(list: String, separator: String = ","):List<String>
+	{
+		var result = new List<String>();
+		var regexp = ~/[\{\}]/g;
+		var strippedList = regexp.replace(list, "");
+		for(elem in strippedList.split(separator)){
+			result.push(elem.trim());
 		}
 		return result;
 	}

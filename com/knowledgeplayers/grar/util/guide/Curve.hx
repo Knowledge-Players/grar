@@ -175,4 +175,9 @@ class Curve implements Guide
 	{
 		return 'Curve: center ('+center.x+';'+center.y+') radius '+radius+' angles '+minAngle+'-'+maxAngle+' '+objects.length+' children';
 	}
+
+	public function getAllObjects():List<DisplayObject>
+	{
+		return Lambda.list(objects);
+	}
 }

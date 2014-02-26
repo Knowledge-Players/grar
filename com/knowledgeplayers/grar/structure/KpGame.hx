@@ -345,9 +345,10 @@ class KpGame extends EventDispatcher #if haxe3 implements Game #else ,implements
     public function getPart(id:String):Null<Part>
     {
         var i = 0;
-        while(i < getAllParts().length && getAllParts()[i].id != id)
+	    var allParts = getAllParts();
+        while(i < allParts.length && allParts[i].id != id)
             i++;
-        return i == getAllParts().length ? null : getAllParts()[i];
+        return i == allParts.length ? null : allParts[i];
     }
 
     // Privates

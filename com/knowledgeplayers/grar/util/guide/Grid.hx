@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.util.guide;
 
+import com.knowledgeplayers.grar.display.component.Widget;
 import com.knowledgeplayers.grar.display.component.TileImage;
 import flash.events.Event;
 import com.knowledgeplayers.grar.display.TweenManager;
@@ -49,6 +50,7 @@ class Grid implements Guide {
 
 	private var alignment: GridAlignment;
 	private var resize: Bool;
+	private var children:List<DisplayObject>;
 
 	public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0,decal:Float = 0, ?alignment:GridAlignment, resize: Bool = true, ?transitionIn: String)
 	{
@@ -63,6 +65,7 @@ class Grid implements Guide {
 		this.alignment = alignment != null ? alignment : GridAlignment.TOP_LEFT;
 
 		cellSize = {width: cellWidth, height: cellHeight};
+		children = new List<DisplayObject>();
 
 		// Initialize nextCell to (0;0)
 		empty();
@@ -144,7 +147,13 @@ class Grid implements Guide {
         });
 
         }
+		children.add(object);
 		return object;
+	}
+
+	public function getAllObjects():List<DisplayObject>
+	{
+		return children;
 	}
 
 	/**

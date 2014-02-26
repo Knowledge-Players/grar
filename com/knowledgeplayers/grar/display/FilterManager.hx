@@ -27,7 +27,7 @@ class FilterManager {
 	public static function getFilter(id:String):Array<BitmapFilter>
 	{
 		var result = new Array<BitmapFilter>();
-		var filtersId = ParseUtils.parseListOfValues(id);
+		var filtersId = ParseUtils.parseStringArray(id);
 		for(filter in filtersId){
 			if(!filters.exists(filter))
 				throw "[FilterManager] There is no filter with id '"+filter+"'.";

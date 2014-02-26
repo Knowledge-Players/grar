@@ -227,7 +227,7 @@ class WidgetContainer extends Widget{
 				xml.has.color ? Std.string(xml.att.color).split(","):null,
 				xml.has.arrowX ? Std.parseFloat(xml.att.arrowX):0,
 				xml.has.arrowY ? Std.parseFloat(xml.att.arrowY):0,
-				xml.has.radius ? ParseUtils.parseListOfFloatValues(xml.att.radius):null,
+				xml.has.radius ? ParseUtils.parseFloatArray(xml.att.radius):null,
 				xml.has.line ? Std.parseFloat(xml.att.line):0,
 				xml.has.colorLine ? Std.parseInt(xml.att.colorLine):0xFFFFFF,
 				xml.has.bubbleWidth ? Std.parseInt(xml.att.bubbleWidth):0,

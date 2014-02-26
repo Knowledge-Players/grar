@@ -23,4 +23,6 @@ interface Guide{
 	* @return the added object
 	**/
 	public function add(object:DisplayObject, ?tween:String, tile: Bool = false):DisplayObject;
+
+	public function getAllObjects():List<DisplayObject>;
 }
