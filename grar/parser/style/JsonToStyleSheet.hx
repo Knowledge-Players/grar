@@ -21,6 +21,7 @@ class JsonToStyleSheet {
 
 			var style : StyleData = cast { };
 			style.name = key;
+			style.values = new StringMap();
 
 			var styleInfos = Reflect.field(jsonStylesheet.styles, key);
 

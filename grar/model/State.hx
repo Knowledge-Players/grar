@@ -22,22 +22,11 @@ class State {
 
 	public var tracking (default,set) : Null<Tracking> = null;
 
-	// From StateInfos
-	public var currentLocale (default,set) : Null<String> = null;
-
-	public var bookmark (default,default) : Int = -1;
-
-	public var checksum (default,default) : Int;
-
-	//public var tmpState (default, null) : String;
-
-	//private var completion : Map<String, Int>;
-	public var completionOrdered : Array<String>; // FIXME
-	//private var allItem : Array<Trackable>;
-
 	/*********/
 
 	public var currentStyleSheet (default, set) : Null<String> = null;
+
+	public var currentLocale (default,set) : Null<String> = null;
 
 	public var locales (default, set) : Null<StringMap<Locale>> = null;
 
@@ -107,12 +96,13 @@ class State {
 
 		module = s;
 
-		module.onPartsChanged = onModulePartsChanged;
-		module.onCurrentLocalePathChanged = onCurrentLocalePathChanged;
+		module.onPartsChanged = function(){ onModulePartsChanged(); };
+		module.onCurrentLocalePathChanged = function(){ onCurrentLocalePathChanged(); };
+		module.onPartFinished = function(p:grar.model.part.Part){ onPartFinished(p); };
 
 		onModuleChanged();
 
-		module.onReadyStateChanged = onModuleStateChanged;
+		module.onReadyStateChanged = function(){ onModuleStateChanged(); };
 		onModuleStateChanged();
 
 		return module;
@@ -150,4 +140,6 @@ class State {
 	public dynamic function onLocalesAdded() : Void { }
 
 	public dynamic function onCurrentLocalePathChanged() : Void { }
+
+	public dynamic function onPartFinished(p : grar.model.part.Part) : Void { }
 }

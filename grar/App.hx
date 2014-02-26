@@ -22,5 +22,7 @@ trace("starting...");
 		c.parseConfigParameter( "structureUri", "structure.xml" );
 
 		controller = new Controller(c);
+
+		controller.init();
 	}
 }

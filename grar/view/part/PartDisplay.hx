@@ -82,11 +82,35 @@ class PartDisplay extends Display {
 	private var numWidgetReady : Int;
 	private var nextTimeline : String;
 
-	/**
-    * Initialize the part display.
-    **/
-	public function init() : Void {
 
+	///
+	// CALLBACKS
+	//
+
+	public dynamic function onExit() : Void { }
+
+	public dynamic function onEnterSubPart(sp : Part) : Void { }
+
+	public dynamic function onPartLoaded() : Void { }
+
+	public dynamic function onGameOver() : Void { }
+
+	public dynamic function onTokenToActivate(token : String) : Void { }
+
+	public dynamic function onSoundToLoad(sound : String) : Void { }
+
+	public dynamic function onSoundToPlay(sound : String) : Void { }
+
+
+	///
+	// API
+	//
+
+	/**
+     * Initialize the part display.
+     **/
+	public function init() : Void {
+trace("init display of "+part.id);
 		if (part.file != null) {
 
 // FIXME			Localiser.instance.layoutPath = part.file;
@@ -96,29 +120,36 @@ class PartDisplay extends Display {
 			localeLoaded = true;
 		}
 
-// FIXME		if(part.display != null)
-// FIXME			parseContent(AssetsStorage.getXml(part.display));
-// FIXME		else
-			displayLoaded = true;
+ 		if (part.display != null) {
+trace("setting part display content");
+ 			//parseContent(AssetsStorage.getXml(part.display));
+ 			setContent(part.display);
+ 		
+ 		} else {
+
+			displayLoaded = true; // <= useless ?
+ 		}
 
 		localeLoaded = true;
 		checkPartLoaded();
 	}
 
-	public function exitPart(completed: Bool = true):Void
-	{
+	public function exitPart(completed : Bool = true) : Void {
+
 		part.isDone = completed;
+		
 		unLoad();
 // FIXME		if(part.file != null)
 // FIXME			Localiser.instance.popLocale();
-// FIXME		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+
+// 		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+		onExit();
 	}
 
 	/**
 	* @param    startIndex :   element after this index
     * @return the TextItem in the part or null if there is an activity or the part is over
     **/
-
 	public function nextElement(startIndex : Int = -1) : Void {
 
 		currentElement = part.getNextElement(startIndex);
@@ -135,28 +166,32 @@ class PartDisplay extends Display {
 				if (p.endScreen) {
 
 					part.isDone = true;
-// FIXME			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+// 					dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+					onGameOver();
 				}
 				cleanDisplay();
-// FIXME				var event = new PartEvent(PartEvent.ENTER_SUB_PART);
-// FIXME				event.part = cast(currentElement, Part);
-// FIXME				dispatchEvent(event);
+// 				var event = new PartEvent(PartEvent.ENTER_SUB_PART);
+// 				event.part = cast(currentElement, Part);
+// 				dispatchEvent(event);
+				onEnterSubPart(p);
 
 			case Item(i):
 
-				if (i.endScreen) {
+				if (i.endScreen) { // TODO check if this is possible
 
 					part.isDone = true;
-// FIXME			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+// 					dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+					onGameOver();
 				}
 				crawlTextGroup(i);
 
 			case Pattern(p):
 
-				if (p.endScreen) {
+				if (p.endScreen) { // TODO check if this is possible
 
 					part.isDone = true;
-// FIXME			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+// 					dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+					onGameOver();
 				}
 				startPattern(p);
 		}
@@ -282,7 +317,8 @@ class PartDisplay extends Display {
 					if (textItem != null && textItem.endScreen) {
 
 						part.isDone = true;
-// FIXME						dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+// 						dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+						onGameOver();
 					}
 					setupItem(cast(textItem, Item), (i == 0));
 					i++;
@@ -329,12 +365,13 @@ class PartDisplay extends Display {
 		checkPartLoaded();
 	}
 
-	private function checkPartLoaded():Void
+	private function checkPartLoaded():Void // TODO check if still useful
 	{
-		if(localeLoaded && displayLoaded){
-// FIXME			var event = new PartEvent(PartEvent.PART_LOADED);
-// FIXME			event.part = part;
-// FIXME			dispatchEvent(event);
+		if (localeLoaded && displayLoaded) {
+// 			var event = new PartEvent(PartEvent.PART_LOADED);
+// 			event.part = part;
+// 			dispatchEvent(event);
+			onPartLoaded();
 		}
 	}
 
@@ -431,16 +468,22 @@ class PartDisplay extends Display {
 
 		currentItem = item;
 
-// FIXME		for(token in item.tokens)
-// FIXME			GameManager.instance.activateToken(token);
+ 		for(token in item.tokens) {
 
-		if(isFirst)
+// 			GameManager.instance.activateToken(token);
+			onTokenToActivate(token);
+ 		}
+		if (isFirst) {
+
 			setBackground(item.background);
+		}
 
-		if(item.isText()){
+		if (item.isText()) {
+
 			var text = cast(item, TextItem);
 
-			if(text.introScreen != null){
+			if (text.introScreen != null) {
+
 				cleanDisplay();
 
 				setSpeaker(text.author, text.transition);
@@ -458,23 +501,30 @@ class PartDisplay extends Display {
 				});
 				introScreenOn = true;
 				addChild(introDisplay);
-			}
-			else{
+			
+			} else {
+
 				setSpeaker(text.author, text.transition);
 				setText(text, isFirst);
 			}
-		}
-		else if(item.isVideo()){
-			if(!displays.exists(item.ref))
+		
+		} else if (item.isVideo()) {
+
+			if (!displays.exists(item.ref)) {
+
 				throw "[PartDisplay] There is no VideoPlayer with ref '"+ item.ref+"'.";
+			}
 			var video = cast(item, VideoItem);
 
 			cast(displays.get(item.ref), VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture,video.autoFullscreen,video.thumbnail);
 			cast(displays.get(item.ref), VideoPlayer).addEventListener(Event.COMPLETE, onVideoComplete);
-		}
-		else {
-            if(!displays.exists(item.ref))
+		
+		} else {
+
+            if (!displays.exists(item.ref)) {
+
                 throw "[PartDisplay] There is no SoundPlayer with ref '"+ item.ref+"'.";
+            }
             var sound = cast(item, SoundItem);
             cast(displays.get(item.ref), SoundPlayer).setSound(sound.content, sound.autoStart, sound.loop, sound.defaultVolume);
         }
@@ -509,8 +559,9 @@ class PartDisplay extends Display {
 				throw "[PartDisplay] There is no TextArea with ref " + item.ref;
 			cast(displays.get(item.ref), ScrollPanel).setContent(content);
 		}
-		GameManager.instance.loadSound(item.sound);
 */
+		//GameManager.instance.loadSound(item.sound);
+		onSoundToLoad(item.sound);
 	}
 
 	private function displayPart():Void
@@ -564,10 +615,14 @@ class PartDisplay extends Display {
 			var listener: Event -> Void = null;
 			var ref = currentItem.ref;
 			listener = function(e){
-// FIXME				if(currentItem != null && Std.is(currentItem, TextItem))
-// FIXME					GameManager.instance.playSound(cast(currentItem, TextItem).sound);
-				tl.removeEventListener(ref, listener);
-			}
+
+					if (currentItem != null && Std.is(currentItem, TextItem)) {
+
+//	 					GameManager.instance.playSound(cast(currentItem, TextItem).sound);
+						onSoundToPlay(cast(currentItem, TextItem).sound);
+					}
+					tl.removeEventListener(ref, listener);
+				}
 			tl.addEventListener(ref, listener);
 		}
 

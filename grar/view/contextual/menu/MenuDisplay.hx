@@ -57,7 +57,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 		buttons = new StringMap();
 		buttonGroups.set(btnGroupName, new GenericStack<DefaultButton>());
-// FIXME		GameManager.instance.addEventListener(PartEvent.EXIT_PART, onFinishPart);
+// GameManager.instance.addEventListener(PartEvent.EXIT_PART, onFinishPart); <= replaced by setPartFinished()
 		addEventListener(Event.ADDED_TO_STAGE, onAdded);
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 	}
@@ -93,6 +93,32 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 	///
 	// API
 	//
+
+	public function setPartFinished(partId : String) : Void {
+
+		// Set to finish
+		if (buttons.exists(partId)) {
+
+			buttons.get(partId).toggle(false);
+		}
+		// Unlock next parts
+/* FIXME
+		for (part in GameManager.instance.game.getAllParts()) {
+
+			if (buttons.exists(part.id) && part.id != e.partId && !part.isDone) {
+
+				if (!part.canStart()) {
+
+					buttons.get(part.id).toggleState = "lock";
+				
+				} else {
+
+					buttons.get(part.id).toggle(true);
+				}
+			}
+		}
+*/
+	}
 
     //override public function parseContent(content:Xml):Void
     override public function setContent(d : DisplayData) : Void {
@@ -242,9 +268,12 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 				separator.addEventListener(Event.CHANGE, updateDynamicFields);
 
 		}
-		for (elem in level.items) {
+		if (level.items != null) {
 
-			createMenuLevel(elem);
+			for (elem in level.items) {
+
+				createMenuLevel(elem);
+			}
 		}
 	}
 
@@ -327,23 +356,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 			}
 		}
 	}
-/* FIXME
-	private function onFinishPart(e:PartEvent):Void
-	{
-		// Set to finish
-		if(buttons.exists(e.partId))
-			buttons.get(e.partId).toggle(false);
-		// Unlock next parts
-		for(part in GameManager.instance.game.getAllParts()){
-			if(buttons.exists(part.id) && part.id != e.partId && !part.isDone){
-				if(!part.canStart())
-					buttons.get(part.id).toggleState = "lock";
-				else
-					buttons.get(part.id).toggle(true);
-			}
-		}
-	}
-*/
+
 	private inline function getUnlockCounterInfos(partId:String):String
 	{
 		var output: String = "";

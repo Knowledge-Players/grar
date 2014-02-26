@@ -32,6 +32,16 @@ import grar.util.DisplayUtils;
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
 
+// See if really need it
+enum ContextualType {
+
+	MENU;
+	NOTEBOOK;
+	GLOSSARY;
+	BIBLIOGRAPHY;
+	INVENTORY;
+}
+
 class Application {
 	
 	public function new() {
@@ -86,6 +96,10 @@ class Application {
 
 	var startIndex:Int;
 
+	private var lastContextual: Display;
+
+	public var mainLayoutRef (default, default) : Null<String> = null;
+
 	
 	///
 	// GETTER / SETTER
@@ -120,6 +134,27 @@ class Application {
 
 		return tokensImages;
 	}
+
+
+	///
+	// CALLBACKS
+	//
+
+	public dynamic function onExitPart(partId : String) : Void { }
+
+	public dynamic function onTokenNotificationChanged() : Void { }
+
+	public dynamic function onNotebookChanged() : Void { }
+
+	public dynamic function onMenuChanged() : Void { }
+
+	public dynamic function onMenuDataChanged() : Void { }
+
+	public dynamic function onLayoutsChanged() : Void { }
+
+	public dynamic function onTokensImagesChanged() : Void { }
+
+	public dynamic function onStylesChanged() : Void { }
 
 
 	///
@@ -168,27 +203,33 @@ class Application {
 			for (sd in ssd.styles) {
 #if (flash || openfl)
 				// set background bitmap
-				if (Std.parseInt(sd.backgroundSrc) != null) {
+				if (sd.backgroundSrc != null) {
 
-					sd.background = new Bitmap();
+					if (Std.parseInt(sd.backgroundSrc) != null) {
+
+						sd.background = new Bitmap();
 	#if !html
- 					sd.background.opaqueBackground = Std.parseInt(sd.backgroundSrc);
+ 						sd.background.opaqueBackground = Std.parseInt(sd.backgroundSrc);
 	#end
 
-				} else {
+					} else {
 
-					sd.background = new Bitmap(AssetsStorage.getBitmapData(sd.backgroundSrc));
+						sd.background = new Bitmap(AssetsStorage.getBitmapData(sd.backgroundSrc));
 
+					}
 				}
 
 				// set icon bitmap
-				if (sd.iconSrc.indexOf(".") < 0) {
+				if (sd.iconSrc != null) {
 
-					sd.icon = DisplayUtils.getBitmapDataFromLayer(tilesheet, sd.iconSrc);
-				
-				} else {
+					if (sd.iconSrc.indexOf(".") < 0) {
 
-					sd.icon = AssetsStorage.getBitmapData(sd.iconSrc);
+						sd.icon = DisplayUtils.getBitmapDataFromLayer(tilesheet, sd.iconSrc);
+					
+					} else {
+
+						sd.icon = AssetsStorage.getBitmapData(sd.iconSrc);
+					}
 				}
 #end
 				var s : Style =  new Style(sd);
@@ -211,21 +252,6 @@ class Application {
 		onTokenNotificationChanged();
 	}
 
-	public function createNotebook(d : DisplayData) : Void {
-
-		var n : NotebookDisplay = new NotebookDisplay();
-
-		d.applicationTilesheet = tilesheet;
-
-		n.setContent(d);
-
-		n.onClose = function(){ hideContextual(n); }
-
-		this.notebook = n;
-
-		onNotebookChanged();
-	}
-
 	public function createLayouts(lm : StringMap<LayoutData>) : Void {
 
 		var l : StringMap<Layout> = new StringMap();
@@ -239,6 +265,21 @@ class Application {
 		onLayoutsChanged();
 	}
 
+	public function createNotebook(d : DisplayData) : Void {
+
+		var n : NotebookDisplay = new NotebookDisplay();
+
+		d.applicationTilesheet = tilesheet;
+
+		n.setContent(d);
+
+		n.onClose = function(){ doHideContextual(n); }
+
+		this.notebook = n;
+
+		onNotebookChanged();
+	}
+
 	public function createMenu(d : DisplayData) : Void {
 
 		var m : MenuDisplay = new MenuDisplay();
@@ -249,6 +290,9 @@ class Application {
 
 		// TODO set callbacks on m
 		// ...
+
+		// IN pipes
+		// m.setPartFinished(partId) <= done
 
 		menu = m;
 
@@ -287,6 +331,7 @@ class Application {
 		if(!part.canStart())
 			return false;
 		#end
+trace("display part "+part.id);
 
 		if (interrupt) {
 
@@ -307,39 +352,87 @@ class Application {
 trace("Part created");
 		startIndex = startPosition;
 		
-// FIXME		parts.first().addEventListener(PartEvent.EXIT_PART, onExitPart);
+//		parts.first().addEventListener(PartEvent.EXIT_PART, onExitPart);
+		parts.first().onExit = function(){ onExitPart(parts.first().part.id); }
 // FIXME		parts.first().addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
+		parts.first().onEnterSubPart = function(sp : Part){ /* TODO */ }
 // FIXME		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-// FIXME		parts.first().addEventListener(GameEvent.GAME_OVER, function(e:GameEvent)
-// FIXME		{
-// FIXME			game.connection.tracking.setStatus(true);
-// FIXME			game.connection.computeTracking(game.stateInfos);
-// FIXME			dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
-// FIXME		});
+		parts.first().onPartLoaded = function(){ /* TODO */ }
+// FIXME		parts.first().addEventListener(GameEvent.GAME_OVER, function(e:GameEvent) {...});
+		parts.first().onGameOver = function(){ 
 
+// FIXME				game.connection.tracking.setStatus(true);
+// FIXME				game.connection.computeTracking(game.stateInfos);
+// FIXME				dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+			}
+/* TODO
+		parts.first().onTokenToActivate = function(token : String) : Void { }
+		parts.first().onSoundToLoad = function(sound : String) : Void { }
+		parts.first().onSoundToPlay = function(sound : String) : Void { }
+*/
 		parts.first().init();
 
 		return true;
 	}
 
 
-	///
-	// CALLBACKS
-	//
 
-	public dynamic function onTokenNotificationChanged() : Void { }
+	public function displayContextual(c : ContextualType, hideOther : Bool = true) : Void {
+	
+		switch (c) {
 
-	public dynamic function onNotebookChanged() : Void { }
+			case MENU:
 
-	public dynamic function onMenuChanged() : Void { }
+				doDisplayContextual(menu, menu.layout, hideOther);
+			
+			case NOTEBOOK:
 
-	public dynamic function onMenuDataChanged() : Void { }
+				doDisplayContextual(notebook, notebook.layout, hideOther);
+			
+			case GLOSSARY:
 
-	public dynamic function onLayoutsChanged() : Void { }
+				// TODO doDisplayContextual(GlossaryDisplay.instance, GlossaryDisplay.instance.layout, hideOther);
+			
+			case BIBLIOGRAPHY:
 
-	public dynamic function onTokensImagesChanged() : Void { }
+				// TODO doDisplayContextual(BibliographyDisplay.instance, BibliographyDisplay.instance.layout, hideOther);
+			
+			case INVENTORY: // nothing ?
+		}
+	}
 
-	public dynamic function onStylesChanged() : Void { }
+	//private function onExitPart(event:Event) : Void {
+	public function setFinishedPart(partId : String) : Void {
+		
+		var finishedPart = parts.pop();
+		
+		if (finishedPart.part.id != partId) {
+
+			trace("WARNING "+finishedPart.part.id+" != "+partId);
+		}
+		if (menu != null) {
+
+			menu.setPartFinished(partId);
+		}
+	}
+
+	public function displayNext(previous : Part) : Void {
+
+		if (!parts.isEmpty() && parts.first().part == previous.parent) {
+
+			parts.first().visible = true;
+			parts.first().nextElement();
+			// if this part is not finished too
+			if (parts.first() != null) {
+
+				changeLayout(parts.first().layout);
+			}
+
+		} else {
+
+			// dispatchEvent(new GameEvent(GameEvent.GAME_OVER)); TODO call setGameOver on ProgressBar
+		}
+	}
 
 
 	///
@@ -349,31 +442,65 @@ trace("Part created");
 
 	// WIP
 
-	function createPartDisplay(part:Part):Null<PartDisplay>
-	{
-		if(part == null)
+	function createPartDisplay(part : Part) : Null<PartDisplay> {
+trace("create part display for "+part.id);
+		if (part == null) {
+
 			return null;
+		}
 		part.restart();
-		var creation:PartDisplay = null;
-		if(part.isDialog())
+		
+		var creation : PartDisplay = null;
+
+		if (part.isDialog()) {
+
 			creation = new DialogDisplay(part);
-		else if(part.isStrip())
+		
+		} else if(part.isStrip()) {
+
 			creation = new StripDisplay(part);
-		else if(part.isActivity())
+		
+		} else if(part.isActivity()) {
+
 			creation = new ActivityDisplay(part);
-		else
+		
+		} else {
+
 			creation = new PartDisplay(part);
+		}
 
 		return creation;
 	}
 
-	private function hideContextual(contextual : Display) : Void {
+	function doDisplayContextual(contextual : Display, ? layout : String, hideOther : Bool = true) : Void {
 
-// FIXME		if (layout.name == contextual.layout) {
+		// Remove previous one
+		if ( hideOther && lastContextual != null
+			 && currentLayout.zones.get(mainLayoutRef).contains(lastContextual) && !parts.isEmpty() ) {
 
-// FIXME			layout.zones.get(game.ref).removeChild(cast(contextual, KpDisplay));
-// FIXME			changeLayout(previousLayout);
-// FIXME		}
+			doHideContextual(lastContextual);
+		}
+		
+		// Change to selected layout
+		if (layout != null) {
+
+			changeLayout(layout);
+		}
+		currentLayout.zones.get(mainLayoutRef).addChild(contextual);
+
+		lastContextual = contextual;
+
+		currentLayout.updateDynamicFields();
 	}
+
+	private function doHideContextual(contextual : Display) : Void {
+
+		if (currentLayout.name == contextual.layout) {
+
+			currentLayout.zones.get(mainLayoutRef).removeChild(contextual);
+			changeLayout(previousLayout);
+		}
+	}
+
 
 }

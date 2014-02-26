@@ -97,8 +97,8 @@ class XmlToDisplay {
 				var groups : StringMap<{ x : Float, y : Float, guide : GuideData }> = new StringMap();
 
 				for (g in f.nodes.Group) {
-			
-					groups.set(f.att.ref, { x: Std.parseFloat(g.att.x), y: Std.parseFloat(g.att.y), guide: XmlToGuide.parseGuideData(g) });
+
+					groups.set(g.att.ref, { x: Std.parseFloat(g.att.x), y: Std.parseFloat(g.att.y), guide: XmlToGuide.parseGuideData(g.node.Guide) });
 				}
 
 				dd.type = Activity( groups );
@@ -372,12 +372,10 @@ class XmlToDisplay {
 				
 				case "template": // use seen only in ActivityDisplay
 
-					var ret = parseElement(f, dd);
+					// At the moment, templates seem to be DefaultButton templates only
+					var td : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(f, DefaultButton(null, null, null, null, null, null, null));
 
-					if (ret.e != null) {
-
-						e = Template({ data: ret.e, validation: f.has.validation ? f.att.validation : null });
-					}
+					e = Template({ data: DefaultButton(td), validation: f.has.validation ? f.att.validation : null });
 				
 				case "include" :
 /** FIXME FIXME FIXME FIXME FIXME FIXME FIXME

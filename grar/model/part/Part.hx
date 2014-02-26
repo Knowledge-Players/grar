@@ -33,7 +33,8 @@ typedef PartData = {
 	var name : String;
 	var id : String;
 	var file : String;
-	var display : String;
+	var displaySrc : String;
+	var display : grar.view.Display.DisplayData;
 	var parent : Null<Part>;
 	var isDone : Bool;
 	var isStarted : Bool;
@@ -50,7 +51,7 @@ typedef PartData = {
 	var score : Int;
 	var ref : String;
 	var requirements : StringMap<Int>;
-	var next : String;
+	var next : Null<Array<String>>;
 	var endScreen : Bool;
 	var buttonTargets : StringMap<PartElement>;
 	var nbSubPartLoaded : Int;
@@ -114,9 +115,9 @@ class Part /* implements Part */ {
 	public var file (default, default) : String;
 
 	/**
-     * Path to the XML display file
+     * Display data for the part
      */
-	public var display (default, default) : String;
+	public var display (default, default) : grar.view.Display.DisplayData;
 
 	/**
 	 * Parent of this part
@@ -177,7 +178,7 @@ class Part /* implements Part */ {
 	 **/
 	public var requirements (default, null) : StringMap<Int>;
 
-	public var next (default, default) : String;
+	public var next (default, default) : Null<Array<String>>;
 
 	public var endScreen (default, null) : Bool = false;
 
@@ -261,7 +262,7 @@ class Part /* implements Part */ {
 
 						elemIndex = tmpIndex;
 					}
-					if (p.next == null || p.next == "") {
+					if (p.next == null) {
 
 						elemIndex++;
 					}

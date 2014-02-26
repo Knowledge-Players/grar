@@ -260,12 +260,12 @@ class XmlToWidgetContainer {
 					if (ret.e != null && ret.r != null) {
 
 						wcd.displays.set(ret.r, ret.e);
-trace("elt "+ret.r+" created");
+//trace("elt "+ret.r+" created");
 					} else {
 
 						switch (e.name.toLowerCase()) {
 
-							case "active": return wcd;
+							case "active", "inactive", "true": return wcd; // don't know if that's normal
 
 							default:
 							

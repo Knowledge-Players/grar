@@ -18,6 +18,8 @@ import haxe.ds.StringMap;
 
 import haxe.xml.Fast;
 
+using StringTools;
+
 class XmlToPart {
 
 	///
@@ -110,7 +112,7 @@ class XmlToPart {
 
 		var f : Fast = (xml.nodeType == Xml.Element && xml.nodeName == "Part") ? new Fast(xml) : new Fast(xml).node.Part;
 
-		pd = parsePartHeader(pd, f);
+		pd = parsePartHeader(pd, f); // not sure we need it here too...
 
 		for (child in f.elements) {
 
@@ -337,12 +339,10 @@ class XmlToPart {
 		}
 		if (f.has.display) { 
 
-			pd.display = f.att.display;
+			pd.displaySrc = f.att.display;
 		}
-		if (f.has.next) { 
+		pd.next = f.has.next && f.att.next.trim() != "" ? ParseUtils.parseListOfValues(f.att.next) : null;
 
-			pd.next = f.att.next;
-		}
 		if (f.has.bounty) { 
 
 			pd = parsePartPerks(pd, f.att.bounty);

@@ -158,7 +158,7 @@ class Display extends Sprite {
 
 	//public function parseContent(content:Xml):Void
 	public function setContent(d : DisplayData) : Void {
-
+trace("setContent, display type is "+d.type);
 		this.data = d;
 
 		if (d.x != null) {
@@ -174,7 +174,7 @@ class Display extends Sprite {
 			DisplayUtils.initSprite(this, d.width, d.height, 0, 0.001);
 		}
 		this.spritesheets = d.spritesheets;
-trace(d.type);
+
 		for (sk in d.spritesheets.keys()) {
 
 			var layer = new TileLayer(spritesheets.get(sk));

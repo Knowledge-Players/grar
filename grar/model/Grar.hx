@@ -36,6 +36,8 @@ class Grar {
 		this.readyState = rs;
 		this.inventory = new StringMap();
 		this.scoreChart = new ScoreChart();
+		this.completion = new StringMap();
+		this.completionOrdered = new Array();
 	}
 
 	public var readyState (default, set) : ReadyState;
@@ -65,7 +67,22 @@ class Grar {
 	public var currentLocalePath (default, set) : Null<String> = null;
 
 
-	var partIndex:Int = 0;
+	// WIP
+
+	// From StateInfos
+
+	public var bookmark (default,default) : Int = -1;
+
+	public var checksum (default,default) : Int;
+
+	//public var tmpState (default, null) : String;
+
+	private var completion : StringMap<Int>;
+	public var completionOrdered : Array<String>;
+	//private var allItem : Array<Trackable>;
+
+
+	var partIndex : Int = 0;
 
 	///
 	// GETTERS / SETTERS
@@ -102,7 +119,7 @@ class Grar {
 		}
 		parts = v;
 		onPartsChanged();
-
+trace("onPartsChanged");
 		return parts;
 	}
 
@@ -166,6 +183,13 @@ class Grar {
 	// API
 	//
 
+	public function setPartFinished(pid : String) : Void {
+
+		completion.set(pid, 2);
+
+		onPartFinished(getPartById(pid));
+	}
+
 	public function addInventoryTokens(t : StringMap<InventoryToken>) : Void {
 
 		for (k in t.keys()) {
@@ -179,9 +203,9 @@ class Grar {
      * @param	partId : the ID of the part to start.
      * @return 	the part with id partId or null if this part doesn't exist
      */
-    public function start( ? partId : String) : Null<Part> {
+    public function start(? partId : Null<String>) : Null<Part> {
 
-        var nextPart:Part = null;
+        var nextPart : Null<Part> = null;
         
         if (partId == null) {
 
@@ -196,22 +220,24 @@ class Grar {
 
             var i : Int = 0;
 
-            var allPart : Array<Part> = getAllParts();
+            var allParts : Array<Part> = getAllParts();
             
-            while (i < allPart.length && allPart[i].id != partId) {
+            while (i < allParts.length && allParts[i].id != partId) {
 
                 i++;
             }
-	        if (i != allPart.length) {
+	        if (i != allParts.length) {
 
-                nextPart = allPart[i].start(true);
+                nextPart = allParts[i].start(true);
 	            var j = 0;
 	            var k = 0;
 	            
-	            while(j <= i) {
+	            while (j <= i) {
 
-	                if(allPart[j] == parts[k] && j > 0)
+	                if (allParts[j] == parts[k] && j > 0) {
+
 	                    k++;
+	                }
 	                j++;
 	            }
 	            partIndex = k + 1;
@@ -220,13 +246,28 @@ class Grar {
         return nextPart;
     }
 
-    public function getAllParts():Array<Part>
-    {
+    public function getPartById(pid : String) : Null<Part> {
+
+    	var allParts : Array<Part> = getAllParts();
+
+    	for (p in allParts) {
+
+    		if (p.id == pid) {
+
+    			return p;
+    		}
+    	}
+    	return null;
+    }
+
+    public function getAllParts() : Array<Part> {
+
         var array = new Array<Part>();
-        for(part in parts){
+        
+        for (part in parts){ 
+
             array = array.concat(part.getAllParts());
         }
-
         return array;
     }
 
@@ -248,4 +289,6 @@ class Grar {
 	public dynamic function onPartsChanged() { }
 
 	public dynamic function onCurrentLocalePathChanged() { }
+
+	public dynamic function onPartFinished(p : Part) { }
 }

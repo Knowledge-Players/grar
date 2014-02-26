@@ -35,8 +35,6 @@ class Controller {
 		trackingCtrl = new TrackingController(this, state, config);
 
 		application = new Application();
-
-		init();
 	}
 
 	var config : Config;
@@ -51,7 +49,7 @@ class Controller {
 	/**
 	 * Inits the MVC part of the Controller
 	 */
-	function init() : Void {
+	public function init() : Void {
 
 		state.onReadyStateChanged = function() {
 
@@ -65,15 +63,18 @@ class Controller {
 
 				switch(state.module.readyState) {
 
-					case Loading(langsUri, layoutUri, displayXml, structureXml): // FIXME, no more Xml/Fast
+					case Loading(langsUri, layoutUri, displayXml, structureXml): // FIXME, no more Xml/Fast in ctrl
 trace("Loading("+langsUri+", "+layoutUri+"...)");
+						// layout ref for the view
+						application.mainLayoutRef = state.module.ref;
+
 						// tracking
-						trackingCtrl.initTracking(state.module, function(){ loadStyles(displayXml); }, onError);
+						trackingCtrl.initTracking(state.module, function(){ loadStyles(displayXml);  trace("tracking init"); }, onError);
 
 
 						// langs list
 						gameSrv.fetchLangs( langsUri, function(l:StringMap<Locale>){
-
+ trace("got langs list");
 							state.locales = l;
 
 						}, onError );
@@ -83,18 +84,18 @@ trace("Loading("+langsUri+", "+layoutUri+"...)");
 						gameSrv.fetchSpriteSheet( displayXml.node.Ui.att.display, function(t:aze.display.TilesheetEx){
 
 									application.tilesheet = t;
-
+ trace("got sprites");
 									loadStyles(displayXml);
 
 								}, onError );
 
-						gameSrv.fetchTransitions( displayXml.node.Transitions.att.display, function(t:StringMap<grar.view.TransitionTemplate>){ application.transitions = t; }, onError );
+						gameSrv.fetchTransitions( displayXml.node.Transitions.att.display, function(t:StringMap<grar.view.TransitionTemplate>){ trace("got transitions"); application.transitions = t; }, onError );
 
-						gameSrv.fetchFilters( displayXml.node.Filters.att.display, function(f:StringMap<grar.view.FilterData>){ application.filters = f; }, onError );
+						gameSrv.fetchFilters( displayXml.node.Filters.att.display, function(f:StringMap<grar.view.FilterData>){ trace("got filters"); application.filters = f; }, onError );
 
 						if (displayXml.hasNode.Templates) {
 
-							gameSrv.fetchTemplates( displayXml.node.Templates.att.folder, function(tmpls:StringMap<Xml>){ /* FIXME state.module.templates = tmpls; */ }, onError );
+							gameSrv.fetchTemplates( displayXml.node.Templates.att.folder, function(tmpls:StringMap<Xml>){ trace("got templates"); /* FIXME state.module.templates = tmpls; */ }, onError );
 					    }
 
 
@@ -113,23 +114,25 @@ trace("Loading("+langsUri+", "+layoutUri+"...)");
 											application.createNotebook(v);
 											state.module.addInventoryTokens(i);
 											state.module.notebook = m;
-
+ trace("got notebook");
 										}, onError);
 								
 								case GLOSSARY:
 
 									gameSrv.fetchGlossary(contextual.att.file, function(g:grar.model.contextual.Glossary){
 			
+											// TODO create display ?
 											state.module.glossary = g;
-
+ trace("got glossary");
 										}, onError);
 								
 								case BIBLIOGRAPHY:
 
 									gameSrv.fetchBibliography(contextual.att.file, function(b:grar.model.contextual.Bibliography){
 			
+											// TODO create display ?
 											state.module.bibliography = b;
-
+ trace("got bibliography");
 										}, onError);
 								
 								case MENU:
@@ -138,12 +141,13 @@ trace("Loading("+langsUri+", "+layoutUri+"...)");
 
 											application.createMenu(d);
 											application.menuData = m;
-
+ trace("got menu");
 										}, onError);
 
 								default: // nothing
 							}
 						}
+
 				        if (structureXml.has.inventory) {
 #if (flash || openfl)
 				        	gameSrv.fetchInventory(structureXml.att.inventory, function(i:StringMap<InventoryToken>, tn:grar.view.component.container.WidgetContainer.WidgetContainerData, ti:StringMap<{ small:flash.display.BitmapData, large:flash.display.BitmapData }>){
@@ -153,24 +157,13 @@ trace("Loading("+langsUri+", "+layoutUri+"...)");
 				        			state.module.addInventoryTokens(i);
 				        			application.createTokenNotification(tn);
 									application.tokensImages = ti;
-
+trace("got inventory");
 				        		}, onError);
 				        }
 
 				        // Load part models
-				        var parts : Array<Part> = [];
-
-				        for (partXml in structureXml.nodes.Part) {
-
-				        	gameSrv.fetchPart(partXml.x, function(p:Part){
-
-				        			parts.push(p);
-
-				        		}, onError);
-				        }
-
 						state.onModulePartsChanged = function() {
-
+trace("state.onModulePartsChanged");
 								// Menu hasn't been set, creating the default
 						        if (application.menuData == null) {
 
@@ -188,12 +181,15 @@ trace("Loading("+langsUri+", "+layoutUri+"...)");
 // FIXME / TODO in tracking controller            }
 
 						        loadlayouts(layoutUri);
-
-						        state.module.readyState = Ready; // FIXME reorganize init tasks and place in the safest place
 							}
 
-				        state.module.parts = parts;
+						gameSrv.fetchParts(structureXml.x, function(pa:Array<Part>){
+trace("got parts");
+				        		state.module.parts = pa;
 
+			        		}, onError);
+
+trace("case Loading ended");
 
 				    case Ready:
 trace("Ready");
@@ -221,11 +217,18 @@ trace("Ready");
 				pushLocale(state.module.currentLocalePath);
 			}
 
+		state.onPartFinished = onPartFinished;
+
 		application.onLayoutsChanged = function() {
 
 				// last call before the user experience actually starts
         		application.initMenu();
 			}
+
+		application.onExitPart = function(pid : String) {
+
+			state.module.setPartFinished(pid);
+		}
 
 		state.readyState = true;
 	}
@@ -270,9 +273,9 @@ trace("Ready");
 	}
 
 	function loadStyles(displayXml : Fast) : Void { // FIXME avoid Fast in ctrl
-
+trace("loadStyles");
 		if (state.currentLocale != null && application.tilesheet != null) { // check if enought
-
+trace("actually load styles");
 			// only when tilesheet loaded and currentLocale known
 	        var localizedPathes : Array<{ p : String, e : String }> = [];
 
@@ -302,7 +305,7 @@ trace("Ready");
 	}
 
 	function loadlayouts(uri : String) : Void { // actually, code below also requires the templates to be fetch already (and styles too ?)
-
+trace("loadlayouts "+uri);
         gameSrv.fetchLayouts(uri, function(lm : StringMap<grar.view.layout.Layout.LayoutData>, lp : Null<String>){
 
 				if (lp != null) {
@@ -311,6 +314,8 @@ trace("Ready");
 					state.module.interfaceLocale = lp;
 				}
 				application.createLayouts(lm);
+
+				state.module.readyState = Ready; // FIXME reorganize init tasks and place in the safest place
 
         	}, onError );
 	}
@@ -339,7 +344,7 @@ trace("Ready");
 	}
 
 	function launchGame() : Void {
-
+trace("launch game");
 		application.startMenu();
 
 		application.displayPart(state.module.start(null));
@@ -370,8 +375,36 @@ trace("Ready");
 	{
 		return displayPart(game.start(id), interrupt);
 	}
-
 */
+	function onPartFinished(p : Part) {
+
+		application.setFinishedPart(p.id);
+
+		if (p.next != null) {
+
+			var i = 0;
+			
+			for (next in p.next) {
+
+				var nextPart = state.module.start(next);
+				
+				if (nextPart != null) {
+
+					application.displayPart(nextPart);
+				
+				} else {
+
+					application.displayContextual(Type.createEnum(ContextualType, next.toUpperCase()), (i == 0));
+				}
+				i++;
+			}
+
+		} else {
+
+			application.displayNext(p);
+		}
+	}
+
 	function onError(e:String) : Void {
 
 		trace("ERROR", e);

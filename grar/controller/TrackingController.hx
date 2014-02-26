@@ -151,7 +151,7 @@ class TrackingController {
 				//allItem = GameManager.instance.game.getAllItems();
 				var stateInfosArray : Array<String> = stateStr.split("@");
 				state.currentLocale = stateInfosArray[0];
-				state.bookmark = Std.parseInt(stateInfosArray[1]);
+				state.module.bookmark = Std.parseInt(stateInfosArray[1]);
 
 				/* TODO This will have to be done once parts loaded !!!
 				var trackable:Array<String> = stateInfosArray[2].split("-");
@@ -171,7 +171,7 @@ class TrackingController {
 					tmpState = stateStr;
 				}
 				*/
-				state.checksum = Std.parseInt(stateInfosArray[3]);
+				state.module.checksum = Std.parseInt(stateInfosArray[3]);
 
 				onSuccess();
 			}
@@ -187,7 +187,7 @@ class TrackingController {
 
 					loadStateInfos(s);
 				}
-		        if (state.currentLocale == null && state.bookmark == -1 && state.completionOrdered != null && state.completionOrdered.length == 0) {
+		        if (state.currentLocale == null && state.module.bookmark == -1 && state.module.completionOrdered != null && state.module.completionOrdered.length == 0) {
 
 		            loadStateInfos(m.state.value);
 		        }

@@ -272,6 +272,7 @@ class GameService {
 #else
 	public function fetchInventory(path : String, onSuccess : StringMap<InventoryToken> -> WidgetContainerData -> StringMap<{ small : String, large : String }> -> Void, onError : String -> Void) : Void {
 #end
+
 		var i : { m : StringMap<InventoryToken>, d : String };
 		var id : { tn : WidgetContainerData, ti : StringMap<{ small : String, large : String }> };
 #if (flash || openfl)
@@ -343,14 +344,33 @@ class GameService {
 		onSuccess(s);
 	}
 
-	public function fetchPart(xml : Xml, onSuccess : Part -> Void, onError : String -> Void) : Void {
+	public function fetchParts(xml : Xml, onSuccess : Array<Part> -> Void, onError : String -> Void) : Void {
 
 		try {
 
-//trace("fetchPart "+xml);
-			var pp : PartialPart = XmlToPart.parse(xml);
+			var pa : Array<Part> = [];
 
-			fetchPartContent( xml, pp, onSuccess, onError );
+			var f : haxe.xml.Fast = new haxe.xml.Fast(xml);
+
+			var cnt : Int = f.nodes.Part.length;
+
+			for (partXml in f.nodes.Part) {
+
+				var pp : PartialPart = XmlToPart.parse(partXml.x);
+
+				fetchPartContent( partXml.x, pp, function(p : Part) {
+
+						pa.push(p);
+
+						cnt--;
+
+						if (cnt == 0) {
+
+							onSuccess(pa);
+						}
+
+					}, onError );
+			}
 
 		} catch (e:String) {
 
@@ -365,8 +385,7 @@ class GameService {
 	//
 
 	private function fetchPartContent(innerXml : Xml, pp : PartialPart, onInnerSuccess : Part -> Void, onInnerError : String -> Void) {
-//trace("fetchPartContent innerXml= "+innerXml);
-//trace("pp.pd.file= "+pp.pd.file);
+
 		var ret : { p : Part, pps : Array<PartialPart> } = null;
 #if (flash || openfl)
 		if (pp.pd.soundLoopSrc != null) {
@@ -374,6 +393,17 @@ class GameService {
 			pp.pd.soundLoop = AssetsStorage.getSound(pp.pd.soundLoopSrc); trace("fetch sound "+pp.pd.soundLoopSrc);
 		}
 #end
+		if (pp.pd.displaySrc != null) {
+
+			pp.pd.display = switch (pp.type) {
+
+				case Dialog, Part: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Part);
+
+				case Strip: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Strip);
+
+				case Activity: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Activity(null));
+			}
+		}
 		if (pp.pd.file != null) {
 
 			// at the moment, grar fetches its data from embedded assets only
@@ -384,6 +414,7 @@ class GameService {
 			ret = XmlToPart.parseContent(pp, innerXml);
 			
 		}
+
 		//var cnt : Int = pp.pd.partialSubParts.length;
 		var cnt : Int = ret.pps.length;
 //trace("found "+cnt+" sub parts");

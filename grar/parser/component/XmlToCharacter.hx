@@ -15,7 +15,7 @@ class XmlToCharacter {
 
 		f.x.remove("spritesheet");
 
-		cd.tid = XmlToImage.parseTileImageData(f, f.att.spritesheet, false);
+		cd.tid = XmlToImage.parseTileImageData(f, null, false);
 		cd.charRef = f.att.ref;
 		cd.nameRef = f.has.nameRef ? f.att.nameRef : null;
 
