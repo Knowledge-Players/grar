@@ -64,17 +64,18 @@ class Controller {
 				switch(state.module.readyState) {
 
 					case Loading(langsUri, layoutUri, displayXml, structureXml): // FIXME, no more Xml/Fast in ctrl
-trace("Loading("+langsUri+", "+layoutUri+"...)");
+trace("Loading("+langsUri+", ...)");
+
 						// layout ref for the view
 						application.mainLayoutRef = state.module.ref;
 
 						// tracking
-						trackingCtrl.initTracking(state.module, function(){ loadStyles(displayXml);  trace("tracking init"); }, onError);
+						trackingCtrl.initTracking(state.module, function(){ loadStyles(displayXml); }, onError);
 
 
 						// langs list
 						gameSrv.fetchLangs( langsUri, function(l:StringMap<Locale>){
- trace("got langs list");
+ 
 							state.locales = l;
 
 						}, onError );
@@ -84,22 +85,38 @@ trace("Loading("+langsUri+", "+layoutUri+"...)");
 						gameSrv.fetchSpriteSheet( displayXml.node.Ui.att.display, function(t:aze.display.TilesheetEx){
 
 									application.tilesheet = t;
- trace("got sprites");
+ 
 									loadStyles(displayXml);
 
 								}, onError );
 
-						gameSrv.fetchTransitions( displayXml.node.Transitions.att.display, function(t:StringMap<grar.view.TransitionTemplate>){ trace("got transitions"); application.transitions = t; }, onError );
+						gameSrv.fetchTransitions( displayXml.node.Transitions.att.display, function(t:StringMap<grar.view.TransitionTemplate>){ application.transitions = t; }, onError );
 
-						gameSrv.fetchFilters( displayXml.node.Filters.att.display, function(f:StringMap<grar.view.FilterData>){ trace("got filters"); application.filters = f; }, onError );
+						gameSrv.fetchFilters( displayXml.node.Filters.att.display, function(f:StringMap<grar.view.FilterData>){ application.filters = f; }, onError );
+
+						var templates : Null<StringMap<Xml>> = null;
 
 						if (displayXml.hasNode.Templates) {
 
-							gameSrv.fetchTemplates( displayXml.node.Templates.att.folder, function(tmpls:StringMap<Xml>){ trace("got templates"); /* FIXME state.module.templates = tmpls; */ }, onError );
+							gameSrv.fetchTemplates( displayXml.node.Templates.att.folder, function(tmpls:StringMap<Xml>){
+
+									templates = tmpls;
+
+									state.module.readyState = LoadingGame(layoutUri, displayXml, structureXml, templates);
+
+								}, onError );
+					    
+					    } else {
+
+					    	state.module.readyState = LoadingGame(layoutUri, displayXml, structureXml, templates);
 					    }
 
 
-						// game model (parts, contextuals)
+					case LoadingGame(layoutUri, displayXml, structureXml, templates): // TODO passed templates to parsers...
+trace("LoadingGame("+layoutUri+", ...)");
+						var menuData : grar.view.contextual.menu.MenuDisplay.MenuData = null;
+
+						// game model & views (parts, contextuals)
 
 						for (contextual in structureXml.nodes.Contextual) {
 
@@ -109,12 +126,12 @@ trace("Loading("+langsUri+", "+layoutUri+"...)");
 
 								case NOTEBOOK:
 
-									gameSrv.fetchNotebook(contextual.att.file, contextual.att.display, function(m:Notebook,i:StringMap<grar.model.InventoryToken>,v:grar.view.Display.DisplayData){
+									gameSrv.fetchNotebook(contextual.att.file, contextual.att.display, templates, function(m:Notebook,i:StringMap<grar.model.InventoryToken>,v:grar.view.Display.DisplayData){
 
 											application.createNotebook(v);
 											state.module.addInventoryTokens(i);
 											state.module.notebook = m;
- trace("got notebook");
+
 										}, onError);
 								
 								case GLOSSARY:
@@ -123,7 +140,7 @@ trace("Loading("+langsUri+", "+layoutUri+"...)");
 			
 											// TODO create display ?
 											state.module.glossary = g;
- trace("got glossary");
+
 										}, onError);
 								
 								case BIBLIOGRAPHY:
@@ -132,16 +149,16 @@ trace("Loading("+langsUri+", "+layoutUri+"...)");
 			
 											// TODO create display ?
 											state.module.bibliography = b;
- trace("got bibliography");
+
 										}, onError);
 								
 								case MENU:
 
-									gameSrv.fetchMenu(contextual.att.display, contextual.has.file ? contextual.att.file : null, function(d:grar.view.Display.DisplayData, m:Null<grar.view.contextual.menu.MenuDisplay.MenuData>){
+									gameSrv.fetchMenu(contextual.att.display, contextual.has.file ? contextual.att.file : null, templates, function(d:grar.view.Display.DisplayData, m:Null<grar.view.contextual.menu.MenuDisplay.MenuData>){
 
 											application.createMenu(d);
-											application.menuData = m;
- trace("got menu");
+											menuData = m;
+
 										}, onError);
 
 								default: // nothing
@@ -150,24 +167,28 @@ trace("Loading("+langsUri+", "+layoutUri+"...)");
 
 				        if (structureXml.has.inventory) {
 #if (flash || openfl)
-				        	gameSrv.fetchInventory(structureXml.att.inventory, function(i:StringMap<InventoryToken>, tn:grar.view.component.container.WidgetContainer.WidgetContainerData, ti:StringMap<{ small:flash.display.BitmapData, large:flash.display.BitmapData }>){
+				        	gameSrv.fetchInventory(structureXml.att.inventory, templates, function(i:StringMap<InventoryToken>, tn:grar.view.component.container.WidgetContainer.WidgetContainerData, ti:StringMap<{ small:flash.display.BitmapData, large:flash.display.BitmapData }>){
 #else
-				        	gameSrv.fetchInventory(structureXml.att.inventory, function(i:StringMap<InventoryToken>, tn:grar.view.component.container.WidgetContainer.WidgetContainerData, ti:StringMap<{ small:String, large:String }>){
+				        	gameSrv.fetchInventory(structureXml.att.inventory, templates, function(i:StringMap<InventoryToken>, tn:grar.view.component.container.WidgetContainer.WidgetContainerData, ti:StringMap<{ small:String, large:String }>){
 #end
 				        			state.module.addInventoryTokens(i);
 				        			application.createTokenNotification(tn);
 									application.tokensImages = ti;
-trace("got inventory");
+
 				        		}, onError);
 				        }
 
 				        // Load part models
 						state.onModulePartsChanged = function() {
-trace("state.onModulePartsChanged");
+
 								// Menu hasn't been set, creating the default
-						        if (application.menuData == null) {
+						        if (menuData == null) {
 
 						        	createDefaultMenu();
+						        
+						        } else {
+
+						        	application.menuData = addMenuPartsInfo(menuData);
 						        }
 
 // FIXME / TODO in tracking controller            if (stateInfos.tmpState != null) {
@@ -180,16 +201,16 @@ trace("state.onModulePartsChanged");
 // FIXME / TODO in tracking controller                part.isStarted = stateInfos.isPartStarted(part.id);
 // FIXME / TODO in tracking controller            }
 
-						        loadlayouts(layoutUri);
+						        loadlayouts(layoutUri, templates);
 							}
 
-						gameSrv.fetchParts(structureXml.x, function(pa:Array<Part>){
-trace("got parts");
+						gameSrv.fetchParts(structureXml.x, templates, function(pa:Array<Part>){
+
 				        		state.module.parts = pa;
 
 			        		}, onError);
 
-trace("case Loading ended");
+trace("case LoadingGame ended");
 
 				    case Ready:
 trace("Ready");
@@ -261,6 +282,31 @@ trace("Ready");
         return { name: name, id: id, icon: icon, items: items };
 	}
 
+	function addPartsInfoToLevel(la : Array<grar.view.contextual.menu.MenuDisplay.LevelData>) : Array<grar.view.contextual.menu.MenuDisplay.LevelData> {
+
+		for (l in la) {
+
+			l.partName = state.module.getItemName(l.id);
+
+			if (l.partName == null) {
+
+				throw "can't find a name for '"+l.id+"'.";
+			}
+			if (l.items != null) {
+
+				l.items = addPartsInfoToLevel(l.items);
+			}
+		}
+		return la;
+	}
+
+	function addMenuPartsInfo(md : grar.view.contextual.menu.MenuDisplay.MenuData) : grar.view.contextual.menu.MenuDisplay.MenuData {
+
+		md.levels = addPartsInfoToLevel(md.levels);
+		
+		return md;
+	}
+
 	function createDefaultMenu() : Void {
 
     	var md : grar.view.contextual.menu.MenuDisplay.MenuData = { levels: [] };
@@ -269,7 +315,7 @@ trace("Ready");
 
             md.levels.push(createMenuLevel(part));
         }
-        application.menuData = md;
+        application.menuData = addMenuPartsInfo(md);
 	}
 
 	function loadStyles(displayXml : Fast) : Void { // FIXME avoid Fast in ctrl
@@ -304,9 +350,9 @@ trace("actually load styles");
 		}
 	}
 
-	function loadlayouts(uri : String) : Void { // actually, code below also requires the templates to be fetch already (and styles too ?)
+	function loadlayouts(uri : String, templates : StringMap<Xml>) : Void { // actually, code below also requires the templates to be fetch already (and styles too ?)
 trace("loadlayouts "+uri);
-        gameSrv.fetchLayouts(uri, function(lm : StringMap<grar.view.layout.Layout.LayoutData>, lp : Null<String>){
+        gameSrv.fetchLayouts(uri, templates, function(lm : StringMap<grar.view.layout.Layout.LayoutData>, lp : Null<String>){
 
 				if (lp != null) {
 

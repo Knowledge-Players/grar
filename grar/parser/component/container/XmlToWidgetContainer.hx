@@ -20,7 +20,7 @@ import haxe.xml.Fast;
 
 class XmlToWidgetContainer {
 
-	static public function parseWidgetContainerData(? f : Null<Fast>, ? type : Null<WidgetContainerType> /*, ? tilesheet : TilesheetEx */ ) : Null<WidgetContainerData> {
+	static public function parseWidgetContainerData(? f : Null<Fast>, ? type : Null<WidgetContainerType>, templates : StringMap<Xml>  ) : Null<WidgetContainerData> {
 
 		var wcd : WidgetContainerData = cast { };
 		wcd.type = type == null ? WidgetContainer : type;
@@ -114,7 +114,7 @@ class XmlToWidgetContainer {
 		
 						for (elem in e.elements) {
 		
-							var ed : { r : String, e : ElementData} = parseElement(elem, wcd);
+							var ed : { r : String, e : ElementData} = parseElement(elem, wcd, templates);
 							list.set(ed.r, ed.e);
 						}
 						return list;
@@ -226,11 +226,11 @@ class XmlToWidgetContainer {
 					
 					} else if(e.name.toLowerCase() == "fullscreen") {
 
-						fullscreen = parseWidgetContainerData(e, SimpleContainer(null));
+						fullscreen = parseWidgetContainerData(e, SimpleContainer(null), templates);
 					
 					} else {
 
-						displayTemplates.set(e.att.ref, { data: parseElement(e, wcd).e, z: zIndex });
+						displayTemplates.set(e.att.ref, { data: parseElement(e, wcd, templates).e, z: zIndex });
 					}
 					zIndex++;
 				}
@@ -240,12 +240,12 @@ class XmlToWidgetContainer {
 			default: // nothing
 		}
 
-		wcd = parseElements(f, wcd);
+		wcd = parseElements(f, wcd, templates);
 
 		return wcd;
 	}
 
-	static function parseElements(f : Fast, wcd : WidgetContainerData) : WidgetContainerData {
+	static function parseElements(f : Fast, wcd : WidgetContainerData, templates : StringMap<Xml>) : WidgetContainerData {
 
 		wcd.displays = new StringMap();
 
@@ -255,7 +255,7 @@ class XmlToWidgetContainer {
 
 				for (e in f.elements) {
 
-					var ret : { e: ElementData, r: String } = parseElement(e, wcd);
+					var ret : { e: ElementData, r: String } = parseElement(e, wcd, templates);
 
 					if (ret.e != null && ret.r != null) {
 
@@ -278,7 +278,7 @@ class XmlToWidgetContainer {
 		return wcd;
 	}
 
-	static function parseElement(e : Fast, wcd : WidgetContainerData) : { e: ElementData, r: String } {
+	static function parseElement(e : Fast, wcd : WidgetContainerData, templates : StringMap<Xml>) : { e: ElementData, r: String } {
 
 		var ref : String = null;
 		var ed : ElementData = null;
@@ -310,37 +310,44 @@ class XmlToWidgetContainer {
 
 					case "button":
 
-						var dbd : WidgetContainerData = parseWidgetContainerData(e, DefaultButton(null, null, null, null, null, null, null));
+						var dbd : WidgetContainerData = parseWidgetContainerData(e, DefaultButton(null, null, null, null, null, null, null), templates);
 
 						ref = dbd.wd.ref;
 						ed = DefaultButton(dbd);
 
 					case "text":
 
-						var spd : WidgetContainerData = parseWidgetContainerData(e, ScrollPanel(null, null, null, null));
+						var spd : WidgetContainerData = parseWidgetContainerData(e, ScrollPanel(null, null, null, null), templates);
 
 						ref = spd.wd.ref;
 						ed = ScrollPanel(spd);
 
 				    case "timer":
 
-						var ccd : WidgetContainerData = parseWidgetContainerData(e, ChronoCircle(null, null, null, null, null));
+						var ccd : WidgetContainerData = parseWidgetContainerData(e, ChronoCircle(null, null, null, null, null), templates);
 
 						ref = ccd.wd.ref;
 						ed = ChronoCircle(ccd);
 
 					case "include" :
-/*** FIXME
-						var tmpXml = Xml.parse(DisplayUtils.templates.get(e.att.ref).toString()).firstElement();
-						for(att in e.x.attributes()){
-							if(att != "ref")
+
+						var tmpXml : Xml = Xml.parse(templates.get(e.att.ref).toString()).firstElement();
+						
+						for (att in e.x.attributes()) {
+
+							if (att != "ref") { // useless ?
+
 								tmpXml.set(att, e.x.get(att));
+							}
 						}
-						createElement(new Fast(tmpXml));
-*/
+						var pe = parseElement(new Fast(tmpXml), wcd, templates);
+
+						ref = pe.r;
+						ed = pe.e;
+
 					case "div":
 
-						var scd : WidgetContainerData = parseWidgetContainerData(e, SimpleContainer(null));
+						var scd : WidgetContainerData = parseWidgetContainerData(e, SimpleContainer(null), templates);
 
 						ref = scd.wd.ref;
 						ed = SimpleContainer(scd);
@@ -355,7 +362,7 @@ class XmlToWidgetContainer {
 
 				wcd.type = WidgetContainer;
 
-				var ret = parseElement(e, wcd);
+				var ret = parseElement(e, wcd, templates);
 
 				ref = ret.r;
 				ed = ret.e;

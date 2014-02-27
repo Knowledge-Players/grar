@@ -33,6 +33,7 @@ typedef LevelData = {
 	var id : String;
 	@:optional var icon : Null<String>;
 	@:optional var items : Null<Array<LevelData>>;
+	@:optional var partName : String;
 }
 typedef MenuData = {
 
@@ -41,9 +42,9 @@ typedef MenuData = {
 
 enum MenuLevel {
 
-	Button(? xOffset : Null<Float>, ? yOffset : Null<Float>, ? width : Null<Float>, ? button : Null<WidgetContainerData>);
-	ContainerSeparator(? d : WidgetContainerData);
-	ImageSeparator(? thickness : Null<Float>, ? color : Null<Int>, ? alpha : Null<Float>, ? origin : Null<Array<Float>>, ? destination : Null<Array<Float>>, ? x : Null<Float>, ? y : Null<Float>);
+	Button(xOffset : Null<Float>, yOffset : Null<Float>, width : Null<Float>, button : Null<WidgetContainerData>);
+	ContainerSeparator(d : WidgetContainerData);
+	ImageSeparator(thickness : Null<Float>, color : Null<Int>, alpha : Null<Float>, origin : Null<Array<Float>>, destination : Null<Array<Float>>, x : Null<Float>, y : Null<Float>);
 }
 
 /**
@@ -87,7 +88,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 	private var currentPartButton : DefaultButton;
 
 // Constant that stock the name of the button group
-	private inline static var btnGroupName: String = "levels";
+	private inline static var btnGroupName : String = "levels";
 
 
 	///
@@ -207,15 +208,9 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 		switch (ml) {
 
-			case Button(xo, yo, w, bd):
+			case Button(xo, yo, w, bd): // xOffset : Null<Float>, yOffset : Null<Float>, width : Null<Float>, button : Null<WidgetContainerData>
 
-// FIXME				var partName = GameManager.instance.getItemName(level.id);
-// FIXME				if (partName == null) {
-
-// FIXME					throw "[MenuDisplay] Can't find a name for '"+level.id+"'.";
-// FIXME				}
-/* FIXME
-				var button = addButton(bd, partName, level.icon);
+				var button = addButton(bd, level.partName, level.icon); // FIXME localize level.partName
 
 				buttons.set(level.id, button);
 				setButtonState(button, level);
@@ -242,7 +237,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 					currentPartButton = button;
 				}
-*/
+
 			case ContainerSeparator(d):
 
 				var separator : Widget = new SimpleContainer(d);
@@ -323,13 +318,17 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 	{
 		var target = _target;
 		var canStart = false;
-		for(key in buttons.keys()){
-// FIXME			if(buttons.get(key) == target)
-// FIXME				canStart = GameManager.instance.displayPartById(key, true);
-		}
 
-		if(canStart){
+		for (key in buttons.keys()) {
+
+			if (buttons.get(key) == target) {
+
+// FIXME				canStart = GameManager.instance.displayPartById(key, true);
+			}
+		}
+		if (canStart) {
 // FIXME			var actuator = TweenManager.applyTransition(this, transitionOut);
+
 // FIXME			if(actuator != null)
 // FIXME				actuator.onComplete(function(){
 // FIXME					GameManager.instance.hideContextual(instance);
@@ -396,9 +395,10 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 				var content = getUnlockCounterInfos(field.field.ref);
 				field.field.setContent(content);
 			}
-// FIXME			else{
+			else{
+				field.field.setContent(field.content);
 // FIXME				field.field.setContent(Localiser.instance.getItemContent(field.content));
-// FIXME			}
+			}
 			field.field.updateX();
 		}
 	}

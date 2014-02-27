@@ -28,11 +28,11 @@ class XmlToInventory {
 		return { m: i, d: d };
 	}
 
-	static public function parseDisplayToken(xml : Xml) : { tn : WidgetContainerData, ti : StringMap<{ small : String, large : String }> } {
+	static public function parseDisplayToken(xml : Xml, templates : StringMap<Xml>) : { tn : WidgetContainerData, ti : StringMap<{ small : String, large : String }> } {
 
 		var dtf : Fast = new Fast(xml.firstElement());
 
-		var tn : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(dtf, TokenNotification(null)); // dtf.node.Hud.att.duration
+		var tn : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(dtf, TokenNotification(null), templates); // dtf.node.Hud.att.duration
 
 		var ti : StringMap<{ small : String, large : String }> = new StringMap();
 		

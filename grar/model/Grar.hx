@@ -19,6 +19,7 @@ typedef InitState = {
 enum ReadyState {
 
 	Loading(langs : String, layout : String, displayNode : haxe.xml.Fast, structureNode : haxe.xml.Fast);
+	LoadingGame(layoutUri : String, displayXml : haxe.xml.Fast, structureXml : haxe.xml.Fast, templates : Null<StringMap<Xml>>);
 	Ready;
 }
 
@@ -197,6 +198,21 @@ trace("onPartsChanged");
 			inventory.set(k, t.get(k));
 		}
 	}
+
+	/**
+    * @param    id : Id of the item
+    * @return the name of the item
+    **/
+    public function getItemName(id:String):Null<String>
+    {
+        var i = 0;
+        var name:String = null;
+        while(i < parts.length && name == null){
+            name = parts[i].getItemName(id);
+            i++;
+        }
+        return name;
+    }
 
 	/**
      * Start the game

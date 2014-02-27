@@ -23,6 +23,7 @@ enum ElementData {
 	SimpleContainer(d : WidgetContainerData);
 	ChronoCircle(d : WidgetContainerData);
 	Template(d : { data : ElementData, validation : Null<String> });
+	ApplicationTemplate(tplRef : String, attrs : StringMap<String>);
 
 	// PartDisplay only
 	InventoryDisplay(d : WidgetContainerData);

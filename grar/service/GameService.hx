@@ -49,13 +49,13 @@ class GameService {
 		// TODO
 	//}
 
-	public function fetchLayouts(path : String, onSuccess : StringMap<LayoutData> -> Null<String> -> Void, onError : String -> Void) : Void {
+	public function fetchLayouts(path : String, templates : StringMap<Xml>, onSuccess : StringMap<LayoutData> -> Null<String> -> Void, onError : String -> Void) : Void {
 
 		var ret : { lp : Null<String>, lm : StringMap<LayoutData> };
 
 		try {
 
-			ret = XmlToLayouts.parse(AssetsStorage.getXml(path));
+			ret = XmlToLayouts.parse(AssetsStorage.getXml(path), templates);
 
 		} catch(e:String) {
 
@@ -161,9 +161,9 @@ class GameService {
 
 		    for (temp in templates) {
 
-		    	var tXml : Xml = cast(temp, TextAsset).getXml();
+		    	var tXml : Xml = cast(temp, TextAsset).getXml().firstElement();
 
-		    	tmpls.set( tXml.firstElement().get("ref"), tXml );
+		    	tmpls.set( tXml.get("ref"), tXml );
 		    }
 
 		} catch (e:String) {
@@ -174,7 +174,7 @@ class GameService {
 		onSuccess(tmpls);
 	}
 
-	public function fetchNotebook(mPath : String, vPath : String, onSuccess : Notebook -> StringMap<InventoryToken> -> DisplayData -> Void, onError : String -> Void) : Void {
+	public function fetchNotebook(mPath : String, vPath : String, templates : StringMap<Xml>, onSuccess : Notebook -> StringMap<InventoryToken> -> DisplayData -> Void, onError : String -> Void) : Void {
 
 		var m : { n: Notebook, i: StringMap<InventoryToken> };
 		var v : DisplayData;
@@ -184,7 +184,7 @@ class GameService {
 			// at the moment, grar fetches its data from embedded assets only
 			m = XmlToNotebook.parseModel(AssetsStorage.getXml(mPath));
 
-			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Notebook(null, null, null, null, null));
+			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Notebook(null, null, null, null, null), templates);
 
 			v.spritesheets = new StringMap();
 
@@ -202,7 +202,7 @@ class GameService {
 		onSuccess(m.n, m.i, v);
 	}
 
-	public function fetchMenu(vPath : String, mPath : Null<String>, onSuccess : DisplayData -> Null<MenuData> -> Void, onError : String -> Void) : Void {
+	public function fetchMenu(vPath : String, mPath : Null<String>, templates : StringMap<Xml>, onSuccess : DisplayData -> Null<MenuData> -> Void, onError : String -> Void) : Void {
 
 		var v : DisplayData;
 		var m : Null<MenuData> = null;
@@ -210,7 +210,7 @@ class GameService {
 		try {
 
 			// at the moment, grar fetches its data from embedded assets only
-			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Menu(null, null, null, null, null));
+			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Menu(null, null, null, null, null), templates);
 
 			v.spritesheets = new StringMap();
 
@@ -268,9 +268,9 @@ class GameService {
 	}
 
 #if (flash || openfl)
-	public function fetchInventory(path : String, onSuccess : StringMap<InventoryToken> -> WidgetContainerData -> StringMap<{ small : flash.display.BitmapData, large : flash.display.BitmapData }> -> Void, onError : String -> Void) : Void {
+	public function fetchInventory(path : String, templates : StringMap<Xml>, onSuccess : StringMap<InventoryToken> -> WidgetContainerData -> StringMap<{ small : flash.display.BitmapData, large : flash.display.BitmapData }> -> Void, onError : String -> Void) : Void {
 #else
-	public function fetchInventory(path : String, onSuccess : StringMap<InventoryToken> -> WidgetContainerData -> StringMap<{ small : String, large : String }> -> Void, onError : String -> Void) : Void {
+	public function fetchInventory(path : String, templates : StringMap<Xml>, onSuccess : StringMap<InventoryToken> -> WidgetContainerData -> StringMap<{ small : String, large : String }> -> Void, onError : String -> Void) : Void {
 #end
 
 		var i : { m : StringMap<InventoryToken>, d : String };
@@ -286,7 +286,7 @@ class GameService {
 
 			var dtXml : Xml = AssetsStorage.getXml(i.d);
 
-			id = XmlToInventory.parseDisplayToken(dtXml);
+			id = XmlToInventory.parseDisplayToken(dtXml, templates);
 #if (flash || openfl)
 			for (k in id.ti.keys()) {
 
@@ -344,7 +344,7 @@ class GameService {
 		onSuccess(s);
 	}
 
-	public function fetchParts(xml : Xml, onSuccess : Array<Part> -> Void, onError : String -> Void) : Void {
+	public function fetchParts(xml : Xml, templates : StringMap<Xml>, onSuccess : Array<Part> -> Void, onError : String -> Void) : Void {
 
 		try {
 
@@ -358,7 +358,7 @@ class GameService {
 
 				var pp : PartialPart = XmlToPart.parse(partXml.x);
 
-				fetchPartContent( partXml.x, pp, function(p : Part) {
+				fetchPartContent( partXml.x, pp, templates, function(p : Part) {
 
 						pa.push(p);
 
@@ -384,7 +384,7 @@ class GameService {
 	// INTERNALS
 	//
 
-	private function fetchPartContent(innerXml : Xml, pp : PartialPart, onInnerSuccess : Part -> Void, onInnerError : String -> Void) {
+	private function fetchPartContent(innerXml : Xml, pp : PartialPart, templates : StringMap<Xml>, onInnerSuccess : Part -> Void, onInnerError : String -> Void) {
 
 		var ret : { p : Part, pps : Array<PartialPart> } = null;
 #if (flash || openfl)
@@ -397,11 +397,18 @@ class GameService {
 
 			pp.pd.display = switch (pp.type) {
 
-				case Dialog, Part: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Part);
+				case Dialog, Part: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Part, templates);
 
-				case Strip: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Strip);
+				case Strip: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Strip, templates);
 
-				case Activity: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Activity(null));
+				case Activity: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Activity(null), templates);
+			}
+			pp.pd.display.spritesheets = new StringMap(); // TODO make a function for this code that is repeated several times
+
+			for (sk in pp.pd.display.spritesheetsSrc.keys()) {
+
+				pp.pd.display.spritesheets.set(sk, AssetsStorage.getSpritesheet(sk));
+
 			}
 		}
 		if (pp.pd.file != null) {
@@ -427,7 +434,7 @@ class GameService {
 //trace("ret.pps = "+pp.pd.partialSubParts);
 			for ( spp in ret.pps ) {
 
-				fetchPartContent(spp.pd.xml, spp, function(sp : Part) {
+				fetchPartContent(spp.pd.xml, spp, templates, function(sp : Part) {
 
 						cnt--;
 

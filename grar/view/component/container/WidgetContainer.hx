@@ -52,22 +52,7 @@ typedef BackgroundData = {
 	var bubbleY : Float;
 	var resize : Bool;
 }
-/*
-enum ElementData {
 
-	Image(d:ImageData);
-	TileImage(d:TileImageData);
-	DefaultButton(d:WidgetContainerData);
-	ScrollPanel(d:WidgetContainerData);
-	ChronoCircle(d:WidgetContainerData);
-	SimpleContainer(d:WidgetContainerData);
-
-	// VideoPlayer only
-	VideoBackground(d:VideoBackgroundData);
-	VideoProgressBar(d:ProgressBarData);
-	VideoSlider(d:SliderData);
-}
-*/
 enum WidgetContainerType {
 
 	WidgetContainer; // TODO remove ?
@@ -442,15 +427,7 @@ class WidgetContainer extends Widget {
 			case SimpleContainer(d):
 
 				return createSimpleContainer(d);
-/* FIXME
-		case "include" :
-			var tmpXml = Xml.parse(DisplayUtils.templates.get(elemNode.att.ref).toString()).firstElement();
-			for(att in elemNode.x.attributes()){
-				if(att != "ref")
-					tmpXml.set(att, elemNode.x.get(att));
-			}
-			createElement(new Fast(tmpXml));
-*/
+
 			default:
 
 				return null;

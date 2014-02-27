@@ -26,7 +26,7 @@ class XmlToDisplay {
 	/**
 	 * You should call this method only from GameService as there is a two-step loading because of assets
 	 */
-	static public function parseDisplayData(xml : Xml, type : DisplayType) : DisplayData {
+	static public function parseDisplayData(xml : Xml, type : DisplayType, templates : StringMap<Xml>) : DisplayData {
 
 		switch (type) {
 
@@ -47,7 +47,7 @@ class XmlToDisplay {
 
 		var f : Fast = new Fast(xml.firstElement());
 
-		var dd : DisplayData = parseContent(f, type);
+		var dd : DisplayData = parseContent(f, type, templates);
 
 		return dd;
 	}
@@ -57,7 +57,7 @@ class XmlToDisplay {
 	// INTERNALS
 	//
 
-	static function parseContent(f : Fast, type : DisplayType) : DisplayData {
+	static function parseContent(f : Fast, type : DisplayType, templates : StringMap<Xml>) : DisplayData {
 
 
 		var dd : DisplayData = cast { };
@@ -76,17 +76,17 @@ class XmlToDisplay {
 
 				for (c in f.nodes.Chapter) {
 
-					chapterTemplates.set(c.att.ref, { offsetY: Std.parseFloat(c.att.offsetY), e: parseElement(c, dd).e});
+					chapterTemplates.set(c.att.ref, { offsetY: Std.parseFloat(c.att.offsetY), e: parseElement(c, dd, templates).e});
 				}
 
-				var tabTemplate : { x : Float, xOffset : Float, e : WidgetContainerData } = { x: Std.parseFloat(f.node.Tab.att.x), xOffset: Std.parseFloat(f.node.Tab.att.xOffset), e: XmlToWidgetContainer.parseWidgetContainerData(f.node.Tab, DefaultButton(null, null, null, null, null, null, null)) };
+				var tabTemplate : { x : Float, xOffset : Float, e : WidgetContainerData } = { x: Std.parseFloat(f.node.Tab.att.x), xOffset: Std.parseFloat(f.node.Tab.att.xOffset), e: XmlToWidgetContainer.parseWidgetContainerData(f.node.Tab, DefaultButton(null, null, null, null, null, null, null), templates) };
 				var bookmark : ImageData = XmlToImage.parseImageData(f.node.Bookmark);
 				var guide : GuideData = XmlToGuide.parseGuideData(f.node.Bookmark.node.Guide);
 
 				var step : { r : String, e : WidgetContainerData, transitionIn : Null<String> };
 				step = {
 						r: f.node.Bookmark.node.Step.att.ref,
-						e: XmlToWidgetContainer.parseWidgetContainerData(f.node.Bookmark.node.Step, DefaultButton(null, null, null, null, null, null, null)),
+						e: XmlToWidgetContainer.parseWidgetContainerData(f.node.Bookmark.node.Step, DefaultButton(null, null, null, null, null, null, null), templates),
 						transitionIn: f.node.Bookmark.node.Step.att.transitionIn
 					};
 
@@ -105,7 +105,7 @@ class XmlToDisplay {
 
 			case Zone(_, _, _, _, _):
 
-				return parseZoneContent(f); // Zone parsing differs completely from other Displays
+				return parseZoneContent(f, templates); // Zone parsing differs completely from other Displays
 
 			case Menu(_, _, _, _, _):
 
@@ -113,7 +113,7 @@ class XmlToDisplay {
 
 				if (f.hasNode.Bookmark) {
 
-					bookmark = XmlToWidgetContainer.parseWidgetContainerData(f.node.Bookmark, BookmarkDisplay(null, null, null));
+					bookmark = XmlToWidgetContainer.parseWidgetContainerData(f.node.Bookmark, BookmarkDisplay(null, null, null), templates);
 				}
 				var orientation : String = f.att.orientation;
 
@@ -129,7 +129,7 @@ class XmlToDisplay {
 
 							if (c.elements.hasNext()) {
 
-								levelDisplays.set(c.name, ContainerSeparator(XmlToWidgetContainer.parseWidgetContainerData(c, SimpleContainer(null))));
+								levelDisplays.set(c.name, ContainerSeparator(XmlToWidgetContainer.parseWidgetContainerData(c, SimpleContainer(null), templates)));
 
 							} else {
 
@@ -149,7 +149,7 @@ class XmlToDisplay {
 							var xOffset : Null<Float> = c.has.xOffset ? Std.parseFloat(c.att.xOffset) : null;
 							var yOffset : Null<Float> = c.has.yOffset ? Std.parseFloat(c.att.yOffset) : null;
 							var width : Null<Float> = c.has.width ? Std.parseFloat(c.att.width) : null;
-							var button : Null<WidgetContainerData> = c.has.Button ? XmlToWidgetContainer.parseWidgetContainerData(c.node.Button, DefaultButton(null, null, null, null, null, null, null)) : null;
+							var button : Null<WidgetContainerData> = c.has.Button ? XmlToWidgetContainer.parseWidgetContainerData(c.node.Button, DefaultButton(null, null, null, null, null, null, null), templates) : null;
 
 							levelDisplays.set(c.name, Button(xOffset, yOffset, width, button));
 						}
@@ -177,7 +177,7 @@ class XmlToDisplay {
 			dd.layersSrc.set(child.att.id, child.att.src);
 		}
 
-		dd = parseDisplay(f, type, dd);
+		dd = parseDisplay(f, type, dd, templates);
 
 		dd.transitionIn = f.has.transitionIn ? f.att.transitionIn : null;
 		dd.transitionOut = f.has.transitionOut ? f.att.transitionOut : null;
@@ -187,11 +187,11 @@ class XmlToDisplay {
 		return dd;
 	}
 
-	static function parseDisplay(f : Fast, type : DisplayType, dd : DisplayData) : DisplayData {
+	static function parseDisplay(f : Fast, type : DisplayType, dd : DisplayData, templates : StringMap<Xml>) : DisplayData {
 
 		for (child in f.elements) {
 
-			var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(child, dd);
+			var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(child, dd, templates);
 			
 			if (ret.e != null && ret.r != null) {
 
@@ -228,7 +228,7 @@ class XmlToDisplay {
 	}
 
 	//static function createElement(elemNode:Fast) : Widget {
-	static function parseElement(f : Fast, dd : DisplayData) : { e : Null<ElementData>, r : Null<String> } {
+	static public function parseElement(f : Fast, dd : DisplayData, templates : StringMap<Xml>) : { e : Null<ElementData>, r : Null<String> } {
 
 		var e : Null<ElementData> = null;
 		var r : Null<String> = f.has.ref ? f.att.ref : null;
@@ -242,7 +242,7 @@ class XmlToDisplay {
 
 					case "box":
 
-						e = BoxDisplay(XmlToWidgetContainer.parseWidgetContainerData(f, BoxDisplay));
+						e = BoxDisplay(XmlToWidgetContainer.parseWidgetContainerData(f, BoxDisplay, templates));
 
 					case "background": // in StripDisplay, "background" means Image (not TileImage)
 
@@ -260,11 +260,11 @@ class XmlToDisplay {
 
 					case "inventory":
 
-						e = InventoryDisplay(XmlToWidgetContainer.parseWidgetContainerData(f, InventoryDisplay(null, null, null)));
+						e = InventoryDisplay(XmlToWidgetContainer.parseWidgetContainerData(f, InventoryDisplay(null, null, null), templates));
 
 					case "intro":
 
-						e = IntroScreen(XmlToWidgetContainer.parseWidgetContainerData(f, IntroScreen(null)));
+						e = IntroScreen(XmlToWidgetContainer.parseWidgetContainerData(f, IntroScreen(null), templates));
 
 					default: // nothing
 				}
@@ -275,15 +275,15 @@ class XmlToDisplay {
 
 					case "menu":
 
-						e = Menu(parseDisplayData(f.x, Menu(null, null, null, null, null)));
+						e = Menu(parseDisplayData(f.x, Menu(null, null, null, null, null), templates));
 
 					case "progressbar":
 
-						e = ProgressBar(XmlToWidgetContainer.parseWidgetContainerData(f, ProgressBar(null, null, null)));
+						e = ProgressBar(XmlToWidgetContainer.parseWidgetContainerData(f, ProgressBar(null, null, null), templates));
 #if kpdebug
 					case "fastnav":
 
-						e = DropdownMenu(XmlToWidgetContainer.parseWidgetContainerData(f, DropdownMenu(null)));
+						e = DropdownMenu(XmlToWidgetContainer.parseWidgetContainerData(f, DropdownMenu(null), templates));
 #end
 					default: // nothing
 				}
@@ -303,7 +303,7 @@ class XmlToDisplay {
 
 					for (c in f.elements) {
 
-						var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(c, dd);
+						var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(c, dd, templates);
 
 						if (ret.e != null) {
 
@@ -336,19 +336,19 @@ class XmlToDisplay {
 				
 				case "button":
 
-					e = DefaultButton(XmlToWidgetContainer.parseWidgetContainerData(f, DefaultButton(null, null, null, null, null, null, null)));
+					e = DefaultButton(XmlToWidgetContainer.parseWidgetContainerData(f, DefaultButton(null, null, null, null, null, null, null), templates));
 				
 				case "text":
 
-					e = ScrollPanel(XmlToWidgetContainer.parseWidgetContainerData(f, ScrollPanel(null, null, null, null)));
+					e = ScrollPanel(XmlToWidgetContainer.parseWidgetContainerData(f, ScrollPanel(null, null, null, null), templates));
 				
 				case "video":
 #if flash
-					e = VideoPlayer(XmlToWidgetContainer.parseWidgetContainerData(f, VideoPlayer(null, null)));
+					e = VideoPlayer(XmlToWidgetContainer.parseWidgetContainerData(f, VideoPlayer(null, null), templates));
 #end
 				case "sound":
 
-					e = SoundPlayer(XmlToWidgetContainer.parseWidgetContainerData(f, SoundPlayer));
+					e = SoundPlayer(XmlToWidgetContainer.parseWidgetContainerData(f, SoundPlayer, templates));
 
 				case "scrollbar":
 
@@ -364,36 +364,38 @@ class XmlToDisplay {
 
 				case "div":
 
-					e = SimpleContainer(XmlToWidgetContainer.parseWidgetContainerData(f, SimpleContainer(null)));
+					e = SimpleContainer(XmlToWidgetContainer.parseWidgetContainerData(f, SimpleContainer(null), templates));
 	            
 	            case "timer":
 
-		            e = ChronoCircle(XmlToWidgetContainer.parseWidgetContainerData(f, ChronoCircle(null, null, null, null, null)));
+		            e = ChronoCircle(XmlToWidgetContainer.parseWidgetContainerData(f, ChronoCircle(null, null, null, null, null), templates));
 				
 				case "template": // use seen only in ActivityDisplay
 
 					// At the moment, templates seem to be DefaultButton templates only
-					var td : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(f, DefaultButton(null, null, null, null, null, null, null));
+					var td : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(f, DefaultButton(null, null, null, null, null, null, null), templates);
 
 					e = Template({ data: DefaultButton(td), validation: f.has.validation ? f.att.validation : null });
 				
 				case "include" :
-/** FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-					if (!DisplayUtils.templates.exists(f.att.ref)) {
 
-						throw "[KpDisplay] There is no template '"+f.att.ref+"'.";
+					if (!templates.exists(f.att.ref)) {
+
+						throw "template '"+f.att.ref+"' nor found";
 					}
-					var tmpXml = Xml.parse(DisplayUtils.templates.get(f.att.ref).toString()).firstElement();
+					var tmpXml = Xml.parse(templates.get(f.att.ref).toString()).firstElement();
 					
 					for (att in f.x.attributes()) {
 
-						if (att != "ref") {
+						if (att != "ref") { // useless ?
 
 							tmpXml.set(att, f.x.get(att));
 						}
 					}
-					createElement(new Fast(tmpXml));
-*/
+					var tr = parseElement(new Fast(tmpXml), dd, templates);
+
+					e = tr.e;
+
 				default: // nothing
 			}
 		}
@@ -401,7 +403,7 @@ class XmlToDisplay {
 		return {e: e, r: r};
 	}
 
-	static function parseZoneContent(f : Fast) : DisplayData {
+	static function parseZoneContent(f : Fast, templates : StringMap<Xml>) : DisplayData {
 
 		var zones : Array<DisplayData> = [];
 
@@ -409,14 +411,14 @@ class XmlToDisplay {
 
 			for (r in f.nodes.Row) {
 
-				zones.push(parseZoneContent(r));
+				zones.push(parseZoneContent(r, templates));
 			}
 
 		} else if(f.has.columns) {
 
 			for (c in f.nodes.Column) {
 
-				zones.push(parseZoneContent(c));
+				zones.push(parseZoneContent(c, templates));
 			}
 		
 		} else if (!f.has.ref) {
@@ -433,7 +435,7 @@ class XmlToDisplay {
 
 		for (child in f.elements) {
 
-			var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(child, dd);
+			var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(child, dd, templates);
 			
 			if (ret.e != null && ret.r != null) {
 

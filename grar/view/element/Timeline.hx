@@ -18,7 +18,7 @@ typedef TimelineElement = {
 
 class Timeline extends EventDispatcher {
 
-    public function new( ? name : String ) : Void {
+    public function new(? name : String) : Void {
 
         super();
 
@@ -62,13 +62,17 @@ class Timeline extends EventDispatcher {
 // FIXME            var actuator = TweenManager.applyTransition(elem.widget,elem.transition,elem.delay);
 // FIXME            if(actuator != null)
 // FIXME	            actuator.onComplete(onCompleteTransition, [elem.widget.ref]);
+onCompleteTransition(elem.widget.ref);
          }
     }
 
-    private function onCompleteTransition(elemRef: String):Void {
+    private function onCompleteTransition(elemRef : String) : Void {
+
         nbCompleteTransitions++;
 		dispatchEvent(new Event(elemRef));
-        if(nbCompleteTransitions == elements.length){
+        
+        if (nbCompleteTransitions == elements.length) {
+
             dispatchEvent(new Event(Event.COMPLETE));
         }
     }

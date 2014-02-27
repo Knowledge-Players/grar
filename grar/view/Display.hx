@@ -74,6 +74,7 @@ typedef DisplayData = {
 	@:optional var displays : StringMap<ElementData>;
 	@:optional var layers : Null<StringMap<TileLayer>>; // set in a second step
 	@:optional var layersSrc : StringMap<String>;
+	@:optional var applicationTemplates : StringMap<ElementData>;
 }
 
 class Display extends Sprite {
@@ -152,6 +153,9 @@ class Display extends Sprite {
 
 	var data : Null<DisplayData> = null;
 
+	var applicationTemplates : StringMap<ElementData>;
+
+
 	///
 	// API
 	//
@@ -160,6 +164,8 @@ class Display extends Sprite {
 	public function setContent(d : DisplayData) : Void {
 trace("setContent, display type is "+d.type);
 		this.data = d;
+
+		this.applicationTemplates = d.applicationTemplates;
 
 		if (d.x != null) {
 
@@ -329,18 +335,6 @@ trace("setContent, display type is "+d.type);
 
 				return null;
 
-/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME 
-
-			case "include" :
-				if(!DisplayUtils.templates.exists(elemNode.att.ref))
-					throw "[KpDisplay] There is no template '"+elemNode.att.ref+"'.";
-				var tmpXml = Xml.parse(DisplayUtils.templates.get(elemNode.att.ref).toString()).firstElement();
-				for(att in elemNode.x.attributes()){
-					if(att != "ref")
-						tmpXml.set(att, elemNode.x.get(att));
-				}
-				createElement(new Fast(tmpXml));
-*/
 			default: // nothing
 		}
 		return null;
@@ -512,9 +506,9 @@ trace("setContent, display type is "+d.type);
 	//private function createTextGroup(textNode:Fast):Void
 	private function createTextGroup(r : String, d : StringMap<{ obj : ElementData, z : Int }>) : Void {
 
-		for (e in d) {
+		for (ek in d.keys()) {
 
-			createElement(e.obj, r);
+			createElement(d.get(ek).obj, ek);
 		}
 		textGroups.set(r, d);
 	}

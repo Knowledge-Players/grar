@@ -11,7 +11,7 @@ import haxe.xml.Fast;
 
 class XmlToLayouts {
 
-	static public function parse(xml : Xml) : { lp : Null<String>, lm : StringMap<LayoutData> } {
+	static public function parse(xml : Xml, templates : StringMap<Xml>) : { lp : Null<String>, lm : StringMap<LayoutData> } {
 
 		var f : Fast = new Fast(xml).node.Layouts;
 
@@ -21,7 +21,7 @@ class XmlToLayouts {
 
 		for (l in f.elements) {
 
-			var ld : LayoutData = { name: l.att.layoutName, content: XmlToDisplay.parseDisplayData(l.x, Zone(null, null, null, null, null)) };
+			var ld : LayoutData = { name: l.att.layoutName, content: XmlToDisplay.parseDisplayData(l.x, Zone(null, null, null, null, null), templates) };
 
 			lm.set(ld.name, ld);
 		}

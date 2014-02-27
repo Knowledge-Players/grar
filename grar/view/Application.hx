@@ -21,6 +21,7 @@ import grar.view.style.StyleSheet;
 import grar.view.style.Style;
 import grar.view.FilterData;
 import grar.view.TransitionTemplate;
+import grar.view.ElementData;
 import grar.view.Display;
 
 import flash.display.BitmapData;
@@ -449,6 +450,8 @@ trace("create part display for "+part.id);
 			return null;
 		}
 		part.restart();
+
+		part.display.applicationTilesheet = tilesheet;
 		
 		var creation : PartDisplay = null;
 
