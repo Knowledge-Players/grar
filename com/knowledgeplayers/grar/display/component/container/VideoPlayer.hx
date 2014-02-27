@@ -204,7 +204,7 @@ class VideoPlayer extends WidgetContainer
 	public function playVideo(?target: DefaultButton):Void
 	{
         video.visible =true;
-		addChild(containerControls);
+
 		addEventListener(Event.ENTER_FRAME, enterFrame);
         stream.addEventListener(NetStatusEvent.NET_STATUS,statusHandler);
 		onVideoPlay();
@@ -213,6 +213,7 @@ class VideoPlayer extends WidgetContainer
         if(autoFullscreen.value){
            Actuate.timer(0.01,null).onComplete(waitForIt);
         }
+
 	}
 
     //TODO FULL ... wait for it ... SCREEN
