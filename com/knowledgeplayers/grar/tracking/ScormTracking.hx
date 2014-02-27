@@ -208,7 +208,7 @@ class ScormTracking extends Tracking {
 	{
 		if(isActive){
 			if(is2004){
-				scorm.set("cmi.session_time", formatTimeScorm2004(getFormatTime(timer.currentCount - startTime)));
+				scorm.set("cmi.session_time", getFormatTime2K4(timer.currentCount - startTime));
 				scorm.set("cmi.completion_status", lessonStatus);
 				scorm.set("cmi.success_status", success_status);
 				scorm.set("cmi.score.raw", score);
@@ -226,8 +226,9 @@ class ScormTracking extends Tracking {
 		}
 	}
 
-    private  function formatTimeScorm2004(_format:String):String{
+    private  function getFormatTime2K4(_time: Int):String{
         //format 00:00:54 to PT00H00M54S
+        var _format:String = getFormatTime(_time);
         var timeArray:Array<String> = _format.split(':');
         var timeformated:String = 'PT'+timeArray[0]+'H'+timeArray[1]+'M'+timeArray[2]+'S';
 
@@ -238,7 +239,7 @@ class ScormTracking extends Tracking {
 	{
 		var success:Bool = scorm.set("adl.nav.request", "{target=" + identifier + "}choice");
 		if(success){
-            scorm.set("cmi.session_time", formatTimeScorm2004(getFormatTime(timer.currentCount - startTime)));
+            scorm.set("cmi.session_time", getFormatTime2K4(timer.currentCount - startTime));
 			exitAU();
 		}
 		return success;
