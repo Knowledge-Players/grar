@@ -24,7 +24,6 @@ import grar.view.component.container.ScrollPanel;
 import grar.view.component.CharacterDisplay;
 import grar.view.component.container.WidgetContainer;
 
-// FIXME import com.knowledgeplayers.grar.factory.UiFactory; // FIXME
 // FIXME import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
 
 import grar.util.DisplayUtils;
@@ -74,7 +73,6 @@ typedef DisplayData = {
 	@:optional var displays : StringMap<ElementData>;
 	@:optional var layers : Null<StringMap<TileLayer>>; // set in a second step
 	@:optional var layersSrc : StringMap<String>;
-	@:optional var applicationTemplates : StringMap<ElementData>;
 }
 
 class Display extends Sprite {
@@ -153,7 +151,10 @@ class Display extends Sprite {
 
 	var data : Null<DisplayData> = null;
 
-	var applicationTemplates : StringMap<ElementData>;
+
+	///
+	// CALLBACKS
+	//
 
 
 	///
@@ -164,8 +165,6 @@ class Display extends Sprite {
 	public function setContent(d : DisplayData) : Void {
 trace("setContent, display type is "+d.type);
 		this.data = d;
-
-		this.applicationTemplates = d.applicationTemplates;
 
 		if (d.x != null) {
 
@@ -342,7 +341,7 @@ trace("setContent, display type is "+d.type);
 
 	private function createScrollBar(r : String, d : { width : Float, bgColor : Null<String>, cursorColor : Null<String>, bgTile : Null<String>, tile : String, tilesheet : Null<String>, cursor9Grid : Array<Float>, bg9Grid : Null<Array<Float>> }) : Widget {
 
-		var tilesheet = d.tilesheet != null ? spritesheets.get(d.tilesheet) : null; // FIXME UiFactory.tilesheet;
+		var tilesheet = d.tilesheet != null ? spritesheets.get(d.tilesheet) : applicationTilesheet;
 
 		var cursor9Grid : Rectangle = new Rectangle(d.cursor9Grid[0], d.cursor9Grid[1], d.cursor9Grid[2], d.cursor9Grid[3]);
 		
@@ -530,33 +529,54 @@ trace("setContent, display type is "+d.type);
 		zIndex++;
 	}
 
-	private function setButtonAction(button:DefaultButton, action:String):Bool
-	{
+	private function setButtonAction(button : DefaultButton, action : String) : Bool {
+
 		var actionSet = true;
-		if(action.toLowerCase() == "open_menu"){
-			button.buttonAction = function(?target){
-// FIXME				GameManager.instance.displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout);
-			}
-			if(!buttonGroups.exists(groupMenu))
+		
+		if (action.toLowerCase() == "open_menu") { 
+
+			button.buttonAction = function(? target) {
+
+	// FIXME				GameManager.instance.displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout);
+
+				}
+
+			if (!buttonGroups.exists(groupMenu)) {
+
 				buttonGroups.set(groupMenu, new GenericStack<DefaultButton>());
+			}
 			buttonGroups.get(groupMenu).add(button);
-		}
-		else if(action.toLowerCase() == "open_inventory"){
-			button.buttonAction = function(?target){
+		
+		} else if(action.toLowerCase() == "open_inventory") {
+
+			button.buttonAction = function(? target) {
+
 // FIXME				GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
-			}
-			if(!buttonGroups.exists(groupNotebook))
+
+				}
+			
+			if (!buttonGroups.exists(groupNotebook)) {
+
 				buttonGroups.set(groupNotebook, new GenericStack<DefaultButton>());
-			buttonGroups.get(groupNotebook).add(button);
-		}
-		else if(action.toLowerCase() == "close_menu")
-			button.buttonAction = function(?target){
-// FIXME				GameManager.instance.hideContextual(MenuDisplay.instance);
 			}
-// FIXME		else if(action.toLowerCase() == ButtonActionEvent.QUIT)
-// FIXME			button.buttonAction = quit;
-		else
+			buttonGroups.get(groupNotebook).add(button);
+		
+		} else if (action.toLowerCase() == "close_menu") {
+
+			button.buttonAction = function(? target) {
+
+// FIXME				GameManager.instance.hideContextual(MenuDisplay.instance);
+
+			}
+
+		} else if (action.toLowerCase() == ButtonActionEvent.QUIT) {
+
+			button.buttonAction = quit;
+
+		} else {
+
 			actionSet = false;
+		}
 
 		return actionSet;
     }

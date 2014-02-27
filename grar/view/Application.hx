@@ -24,6 +24,9 @@ import grar.view.TransitionTemplate;
 import grar.view.ElementData;
 import grar.view.Display;
 
+import flash.media.Sound;
+import flash.media.SoundChannel;
+import flash.media.SoundTransform;
 import flash.display.BitmapData;
 import flash.display.Bitmap;
 import flash.Lib;
@@ -100,6 +103,11 @@ class Application {
 	private var lastContextual: Display;
 
 	public var mainLayoutRef (default, default) : Null<String> = null;
+
+
+	private var nbVolume:Float = 1;
+	private var itemSoundChannel:SoundChannel;
+	private var sounds:Map<String, Sound>;
 
 	
 	///
@@ -182,7 +190,7 @@ class Application {
 
 				throw "there is no layout '"+l+"'";
 			}
-			Lib.current.addChild(currentLayout.content);
+			Lib.current.addChild(currentLayout.content); trace("child added to Lib.current");
 
 		} else {
 
@@ -259,7 +267,11 @@ class Application {
 
 		for (lk in lm.keys()) {
 
-			l.set(lk, new Layout(lm.get(lk)));
+			var nl : Layout = new Layout(lm.get(lk), tilesheet);
+
+			l.set(lk, nl);
+
+			nl.onVolumeChangeRequested = changeVolume;
 		}
 		this.layouts = l;
 
@@ -311,6 +323,58 @@ class Application {
 
 	// WIP
 
+
+	public function changeVolume(nb : Float = 0) : Void {
+
+		nbVolume = nb;
+
+		if (itemSoundChannel != null) {
+
+			var soundControl = itemSoundChannel.soundTransform;
+			soundControl.volume = nbVolume;
+			itemSoundChannel.soundTransform = soundControl;
+		}
+	}
+
+	/**
+	* Pre load a sound. Then use playSound with the same url to play it
+	* @param soundUrl : Path to the sound file
+	**/
+	public function loadSound(soundUrl:String):Void
+	{
+		if (soundUrl != null && soundUrl != "") {
+			var sound = new Sound(new flash.net.URLRequest(soundUrl));
+			sounds.set(soundUrl, sound);
+		}
+	}
+
+	/**
+    * Play a sound. May cause error if the sound is not preloaded with loadSound()
+    * @param soundUrl : Path to the sound file
+    **/
+	public function playSound(soundUrl: String):Void
+	{
+		if (soundUrl != null) {
+
+			stopSound();
+			
+			if (!sounds.exists(soundUrl)) {
+
+				loadSound(soundUrl);
+			}
+			itemSoundChannel = sounds.get(soundUrl).play();
+		}
+	}
+
+	/**
+	* Stop currently playing sound
+	**/
+	public function stopSound():Void
+	{
+		if(itemSoundChannel != null)
+			itemSoundChannel.stop();
+	}
+
 	public function startMenu() : Void {
 
 		if (menu != null) {
@@ -352,26 +416,28 @@ trace("display part "+part.id);
 		parts.add(createPartDisplay(part));
 trace("Part created");
 		startIndex = startPosition;
+
+		var fp : PartDisplay = parts.first();
 		
 //		parts.first().addEventListener(PartEvent.EXIT_PART, onExitPart);
-		parts.first().onExit = function(){ onExitPart(parts.first().part.id); }
+		fp.onExit = function(){ onExitPart(parts.first().part.id); }
 // FIXME		parts.first().addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
-		parts.first().onEnterSubPart = function(sp : Part){ /* TODO */ }
+		fp.onEnterSubPart = function(sp : Part){ /* TODO */ }
 // FIXME		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-		parts.first().onPartLoaded = function(){ /* TODO */ }
+		fp.onPartLoaded = function(){ onPartLoaded(fp); }
 // FIXME		parts.first().addEventListener(GameEvent.GAME_OVER, function(e:GameEvent) {...});
-		parts.first().onGameOver = function(){ 
+		fp.onGameOver = function(){ 
 
 // FIXME				game.connection.tracking.setStatus(true);
 // FIXME				game.connection.computeTracking(game.stateInfos);
 // FIXME				dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
 			}
 /* TODO
-		parts.first().onTokenToActivate = function(token : String) : Void { }
-		parts.first().onSoundToLoad = function(sound : String) : Void { }
-		parts.first().onSoundToPlay = function(sound : String) : Void { }
+		fp.onTokenToActivate = function(token : String) : Void { }
+		fp.onSoundToLoad = function(sound : String) : Void { }
+		fp.onSoundToPlay = function(sound : String) : Void { }
 */
-		parts.first().init();
+		fp.init();
 
 		return true;
 	}
@@ -442,6 +508,26 @@ trace("Part created");
 
 
 	// WIP
+
+	function onPartLoaded(pd : PartDisplay) : Void { trace("onPartLoaded "+pd.part.id);
+
+		// TODO setBookmark(pd.part.id);
+
+		//pd.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
+		pd.startPart(startIndex);
+
+		if (pd.visible && pd.layout != null) {
+
+			changeLayout(pd.layout);
+		}
+		currentLayout.zones.get(mainLayoutRef).addChild(pd);
+
+		currentLayout.updateDynamicFields();
+
+		// FIXME var event = new PartEvent(PartEvent.ENTER_PART);
+		// FIXME event.part = partDisplay.part;
+		// FIXME dispatchEvent(event);
+	}
 
 	function createPartDisplay(part : Part) : Null<PartDisplay> {
 trace("create part display for "+part.id);

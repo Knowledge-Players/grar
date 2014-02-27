@@ -307,7 +307,15 @@ trace("setting part display content");
 						
 						} else {
 
-							textItem = cast(part.getNextElement(), Item);
+							//textItem = cast(part.getNextElement(), Item);
+							switch (part.getNextElement()) {
+
+								case Item(i):
+
+									textItem = i;
+
+								default: // nothing
+							}
 						}
 					
 					} else {

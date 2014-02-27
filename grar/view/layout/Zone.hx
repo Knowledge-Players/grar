@@ -11,10 +11,7 @@ import grar.view.component.Widget;
 import grar.view.component.ProgressBar;
 import grar.view.Display;
 
-// FIXME import com.knowledgeplayers.grar.event.LayoutEvent;
 // FIXME import com.knowledgeplayers.grar.event.PartEvent;
-
-// FIXME import com.knowledgeplayers.grar.factory.UiFactory;
 
 import grar.util.DisplayUtils;
 
@@ -36,12 +33,8 @@ class Zone extends Display {
 
 		zoneWidth = _width;
 		zoneHeight = _height;
-		// FIXME GameManager.instance.game.addEventListener(PartEvent.PART_LOADED, onGameLoaded);
 	}
 
-	/**
-	 * Reference
-	 **/
 	public var ref : String;
 	public var fastnav (default,null) : DropdownMenu;
 
@@ -50,10 +43,38 @@ class Zone extends Display {
 //	private var layer:TileLayer;
 	private var soundState : Bool = true;
 
+
+	///
+	// CALLBACKS
+	//
+
+	public dynamic function onNewZone(ref : String, zone : Zone) { }
+
+	public dynamic function onVolumeChangeRequested(v : Float) : Void { }
+
 	
 	///
 	// API
 	//
+
+// GameManager.instance.game.addEventListener(PartEvent.PART_LOADED, onGameLoaded);
+	public function setGameLoaded() : Void {
+
+        if (fastnav != null) {
+/* TODO
+			for (item in GameManager.instance.game.getAllItems()) {
+
+				fastnav.addItem(item.name);
+			}
+			fastnav.addEventListener(Event.CHANGE, onFastNav);
+			fastnav.addEventListener(Event.ADDED_TO_STAGE, fastnav.onAdd);
+			
+			addChild(fastnav);
+            
+            fastnav.visible = false;
+*/
+		}
+	}
 
 	//public function init(_zone:Fast) : Void
 	public function init(d : DisplayData) : Void {
@@ -72,11 +93,13 @@ class Zone extends Display {
 				}
 				if (ref != null) {
 
-// FIXME					layers.set("ui", new TileLayer(UiFactory.tilesheet));
+					this.applicationTilesheet = d.applicationTilesheet;
 
-// FIXME					dispatchEvent(new LayoutEvent(LayoutEvent.NEW_ZONE, ref, this));
+					layers.set("ui", new TileLayer(applicationTilesheet));
+//					dispatchEvent(new LayoutEvent(LayoutEvent.NEW_ZONE, ref, this));
+					onNewZone( ref, this );
 
-// FIXME					addChild(layers.get("ui").view);
+					addChild(layers.get("ui").view);
 
 					for (e in d.displays.keys()) {
 
@@ -94,7 +117,10 @@ class Zone extends Display {
 						var zone = new Zone(zoneWidth, heights[i]);
 						zone.x = 0;
 						zone.y = yOffset;
-// FIXME						zone.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
+
+// 						zone.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
+						zone.onNewZone = onNewZone;
+
 						zone.init(row);
 						yOffset += zone.zoneHeight;
 						addChild(zone);
@@ -112,7 +138,10 @@ class Zone extends Display {
 						var zone = new Zone(widths[j], zoneHeight);
 						zone.x = xOffset;
 						zone.y = 0;
-// FIXME						zone.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
+
+// 						zone.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
+						zone.onNewZone = onNewZone;
+
 						zone.init(column);
 						xOffset += zone.zoneWidth;
 						addChild(zone);
@@ -120,66 +149,46 @@ class Zone extends Display {
 					}
 				}
 
-				// Listeners on menu state
-				if (buttonGroups.exists(groupMenu)) {
-
-// FIXME				    MenuDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
-				}
-				if (buttonGroups.exists(groupNotebook)) {
-
-// FIXME					NotebookDisplay.instance.addEventListener(PartEvent.EXIT_PART, exitNotebook);
-// FIXME					NotebookDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterNotebook);
-				}
-
 			default: // nothing
 		}
 	}
 
-//	public function createMenu(element:Fast):Void {
-	public function createMenu(d : DisplayData) : Void {
+	public function setExitNotebook() : Void {
 
-		// MenuDisplay.instance.parseContent(element.x);
-// FIXME	    MenuDisplay.instance.setContent(d);
+		for (button in buttonGroups.get(groupNotebook)) {
 
-		//menuXml = element; ??? why was this useful
+			button.toggle(true);
+		}
+	}
+
+	public function setEnterNotebook() : Void {
+
+		for (button in buttonGroups.get(groupNotebook)) {
+
+			button.toggle(false);
+		}
+	}
+
+	public function setExitMenu() : Void {
+
+		for (button in buttonGroups.get(groupMenu)) {
+
+			button.toggle(true);
+		}
+	}
+
+	public function setEnterMenu() : Void {
+
+		for (button in buttonGroups.get(groupMenu)) {
+
+			button.toggle(false);
+		}
 	}
 
 
 	///
 	// INTERNALS
 	//
-
-	private function exitNotebook(e:Event):Void
-	{
-		for(button in buttonGroups.get(groupNotebook))
-			button.toggle(true);
-	}
-
-	private function enterNotebook(e:Event):Void
-	{
-		for(button in buttonGroups.get(groupNotebook))
-			button.toggle(false);
-	}
-
-	private function exitMenu(e:Event):Void
-	{
-		for(button in buttonGroups.get(groupMenu))
-			button.toggle(true);
-
-// FIXME		MenuDisplay.instance.removeEventListener(PartEvent.EXIT_PART, exitMenu);
-
-// FIXME		MenuDisplay.instance.addEventListener(PartEvent.ENTER_PART, enterMenu);
-	}
-
-	private function enterMenu(e:Event):Void
-	{
-		for(button in buttonGroups.get(groupMenu))
-			button.toggle(false);
-
-// FIXME		MenuDisplay.instance.removeEventListener(PartEvent.ENTER_PART, enterMenu);
-
-// FIXME		MenuDisplay.instance.addEventListener(PartEvent.EXIT_PART, exitMenu);
-	}
 
 	override private function setButtonAction(button:DefaultButton, action:String):Bool
 	{
@@ -195,13 +204,18 @@ class Zone extends Display {
 
 	private function activeSound(?_target:DefaultButton):Void
 	{
-		if(soundState){
-// FIXME			GameManager.instance.changeVolume(0);
+		if (soundState) {
+
+// 			GameManager.instance.changeVolume(0);
+			onVolumeChangeRequested(0);
+
 			soundState = false;
 			if(_target != null) _target.toggle(false);
 		}
 		else{
-// FIXME			GameManager.instance.changeVolume(1);
+// 			GameManager.instance.changeVolume(1);
+			onVolumeChangeRequested(1);
+
 			soundState = true;
 			if(_target != null) _target.toggle(true);
 		}
@@ -239,7 +253,7 @@ class Zone extends Display {
 
 			case Menu(d):
 
-				createMenu(d);
+				// createMenu(d); this is now done in Application
 			
 			case ProgressBar(d):
 
@@ -275,28 +289,7 @@ class Zone extends Display {
 	}
 
 	// Handlers
-/* FIXME
-	private function onNewZone(e:LayoutEvent):Void
-	{
-		dispatchEvent(e);
-	}
 
-	private function onGameLoaded(e:PartEvent =null):Void
-	{
-
-        if(fastnav != null){
-
-			for(item in GameManager.instance.game.getAllItems()){
-				fastnav.addItem(item.name);
-			}
-
-			fastnav.addEventListener(Event.CHANGE, onFastNav);
-			fastnav.addEventListener(Event.ADDED_TO_STAGE, fastnav.onAdd);
-			addChild(fastnav);
-            fastnav.visible = false;
-		}
-	}
-*/
 	private function onFastNav(e: Event):Void
 	{
 /* FIXME

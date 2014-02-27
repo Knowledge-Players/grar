@@ -15,14 +15,16 @@ typedef LayoutData = {
 class Layout {
 
 //	public function new(?_name:String, ?_content:Zone, ?_fast:Fast):Void
-	public function new( ? n : Null<String>, ? c : Null<Zone>, ? ld : Null<LayoutData>) : Void {
+	public function new( ? n : Null<String>, ? c : Null<Zone>, ? ld : Null<LayoutData>, at : aze.display.TilesheetEx) : Void {
 
 		zones = new StringMap();
 
 		if (ld != null) {
 
 			content = new Zone(Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
-// FIXME			content.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
+// 			content.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
+			content.onNewZone = addZone;
+			ld.content.applicationTilesheet = at;
 
 			content.init(ld.content);
 
@@ -62,8 +64,49 @@ class Layout {
 
 
 	///
+	// CALLBACKS
+	//
+
+	public dynamic function onNewZone(z : Zone) { }
+
+	public dynamic function onVolumeChangeRequested(v : Float) : Void { }
+
+
+	///
 	// API
 	//
+
+	public function setExitNotebook() : Void {
+
+		for (z in zones) {
+
+			z.setExitNotebook();
+		}
+	}
+
+	public function setEnterNotebook() : Void {
+
+		for (z in zones) {
+
+			z.setEnterNotebook();
+		}
+	}
+
+	public function setExitMenu() : Void {
+
+		for (z in zones) {
+
+			z.setExitMenu();
+		}
+	}
+
+	public function setEnterMenu() : Void {
+
+		for (z in zones) {
+
+			z.setEnterMenu();
+		}
+	}
 
 	public function updateDynamicFields() : Void {
 
@@ -77,10 +120,17 @@ class Layout {
 		}
 	}
 
-	
 
-	// FIXME private function onNewZone(e:LayoutEvent):Void
-	// FIXME {
-	// FIXME 	zones.set(e.ref, e.zone);
-	// FIXME }
+	///
+	// INTERNALS
+	//
+
+	private function addZone(ref : String, zone : Zone) : Void {
+
+		zones.set(ref, zone);
+
+		zone.onVolumeChangeRequested = onVolumeChangeRequested;
+
+		onNewZone(zone);
+	}
 }

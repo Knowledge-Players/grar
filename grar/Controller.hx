@@ -210,7 +210,6 @@ trace("LoadingGame("+layoutUri+", ...)");
 
 			        		}, onError);
 
-trace("case LoadingGame ended");
 
 				    case Ready:
 trace("Ready");
@@ -392,6 +391,8 @@ trace("loadlayouts "+uri);
 	function launchGame() : Void {
 trace("launch game");
 		application.startMenu();
+
+		application.changeLayout("default");
 
 		application.displayPart(state.module.start(null));
 	}

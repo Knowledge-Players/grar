@@ -407,7 +407,7 @@ class GameService {
 
 			for (sk in pp.pd.display.spritesheetsSrc.keys()) {
 
-				pp.pd.display.spritesheets.set(sk, AssetsStorage.getSpritesheet(sk));
+				pp.pd.display.spritesheets.set(sk, AssetsStorage.getSpritesheet(pp.pd.display.spritesheetsSrc.get(sk)));
 
 			}
 		}

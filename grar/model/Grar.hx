@@ -120,7 +120,7 @@ class Grar {
 		}
 		parts = v;
 		onPartsChanged();
-trace("onPartsChanged");
+
 		return parts;
 	}
 
