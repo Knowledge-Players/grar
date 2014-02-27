@@ -1,7 +1,6 @@
 package grar.view.guide;
 
 import grar.view.component.TileImage;
-//FIXME import com.knowledgeplayers.grar.display.TweenManager;
 
 import flash.events.Event;
 import flash.display.DisplayObject;
@@ -44,10 +43,12 @@ typedef Size = {
 /**
  * Manage a grid to place object
  */
-class Grid implements Guide {
+class Grid extends Guide {
 
 	//public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?alignment:GridAlignment, resize: Bool = true, ?transitionIn: String)
 	public function new(d : GridData) {
+
+		super();
 
 		this.numRow = d.numRow;
 		this.numCol = d.numCol;
@@ -77,14 +78,6 @@ class Grid implements Guide {
     **/
 	public var cellSize (default, default):Size;
 	/**
-    * X of the grid
-    **/
-	public var x (default, set_x):Float;
-	/**
-    * Y of the grid
-    **/
-	public var y (default, set_y):Float;
-	/**
 	* Space between columns
 	**/
 	public var gapCol (default, default):Float;
@@ -93,27 +86,35 @@ class Grid implements Guide {
 	**/
 	public var gapRow (default, default):Float;
 
-	public var transitionIn (default, default):String;
-
 	private var nextCell:Point;
 
 	private var alignment: GridAlignment;
 	private var resize: Bool;
 
-	public function set_x(x:Float):Float
-	{
+
+	///
+	// GETTER / SETTER
+	//
+
+	override public function set_x(x : Float) : Float {
+
 		return this.x = x;
 	}
 
-	public function set_y(y:Float):Float
-	{
+	override public function set_y(y : Float) : Float {
+
 		return this.y = y;
 	}
+
+
+	///
+	// API
+	//
 
 	/**
 	* @inherits
 	**/
-	public function add(object:DisplayObject, ?tween:String, tile: Bool = false):DisplayObject
+	override public function add(object:DisplayObject, ?tween:String, tile: Bool = false):DisplayObject
 	{
 		if(cellSize.width == 0){
 			cellSize.width = object.width;
@@ -148,10 +149,16 @@ class Grid implements Guide {
 		else
 			throw "This grid is already full!";
 
-// FIXME		if(tween != null)
-// FIXME		    TweenManager.applyTransition(object,tween);
-// FIXME		else if(transitionIn != null)
-// FIXME			TweenManager.applyTransition(object,transitionIn);
+		if (tween != null) {
+
+//		    TweenManager.applyTransition(object,tween);
+		    onTransitionRequested(object,tween);
+		
+		} else if (transitionIn != null) {
+
+//			TweenManager.applyTransition(object,transitionIn);
+			onTransitionRequested(object,transitionIn);
+		}
 
         if(tile){
             cast(object, TileImage).set_x(targetX);

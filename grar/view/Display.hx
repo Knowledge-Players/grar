@@ -3,6 +3,8 @@ package grar.view;
 import aze.display.TileLayer;
 import aze.display.TilesheetEx;
 
+import motion.actuators.GenericActuator.IGenericActuator;
+
 import grar.view.ElementData;
 import grar.view.guide.Guide;
 import grar.view.contextual.NotebookDisplay;
@@ -160,6 +162,10 @@ class Display extends Sprite {
 
 	public dynamic function onQuitGameRequested() : Void { }
 
+	public dynamic function onTransitionRequested(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
+
+	public dynamic function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
+
 
 	///
 	// API
@@ -206,7 +212,8 @@ trace("setContent, display type is "+d.type);
 
 			addEventListener(Event.ADDED_TO_STAGE, function(e){
 
-// FIXME					TweenManager.applyTransition(this, transitionIn);
+// 					TweenManager.applyTransition(this, transitionIn);
+					onTransitionRequested(this, transitionIn);
 
 				});
 		}
@@ -245,6 +252,9 @@ trace("setContent, display type is "+d.type);
 
 			var timeline = new Timeline(t.ref);
 
+			timeline.onTransitionRequested = onTransitionRequested;
+			timeline.onStopTransitionRequested = onStopTransitionRequested;
+
 			for (e in t.elements) {
 
 				// Creating mock widget for dynamic timeline
@@ -252,6 +262,9 @@ trace("setContent, display type is "+d.type);
 
 					var mock = new Image();
 					mock.ref = e.ref;
+
+					mock.onTransitionRequested = onTransitionRequested;
+
 					timeline.addElement(mock, e.transition, e.delay);
 				
 				} else if(!displays.exists(e.ref)) {
@@ -529,6 +542,8 @@ trace("setContent, display type is "+d.type);
 			elem.zz = zIndex;
 		}
 		displays.set(ref, elem);
+
+		elem.onTransitionRequested = onTransitionRequested;
 
 // FIXME		ResizeManager.instance.addDisplayObjects(elem, node);
 		zIndex++;

@@ -7,8 +7,6 @@ import aze.display.TileClip;
 import aze.display.TileSprite;
 import aze.display.TilesheetEx;
 
-// FIXME import com.knowledgeplayers.grar.display.TweenManager;
-
 import grar.view.component.TileImage;
 import grar.view.component.container.WidgetContainer;
 
@@ -698,29 +696,37 @@ class VideoPlayer extends WidgetContainer {
 
 	private function showControls(e:MouseEvent=null):Void
 	{
-		if(controlsHidden){
-// FIXME			TweenManager.stop(containerControls);
-// FIXME			TweenManager.applyTransition(containerControls, "fadeInVideoControls").onComplete(checkAgain);
+		if (controlsHidden) {
+
+// 			TweenManager.stop(containerControls);
+			onStopTransitionRequested(containerControls);
+// 			TweenManager.applyTransition(containerControls, "fadeInVideoControls").onComplete(checkAgain);
+			onTransitionRequested(containerControls, "fadeInVideoControls").onComplete(checkAgain);
 		}
 	}
 
 	private function hideControls(e:MouseEvent=null):Void
 	{
 
-		if(controlsHidden){
-// FIXME			TweenManager.stop(containerControls);
+		if (controlsHidden) {
 
-// FIXME			TweenManager.applyTransition(containerControls, "fadeOutVideoControls",3);
+// 			TweenManager.stop(containerControls);
+			onStopTransitionRequested(containerControls);
+
+// 			TweenManager.applyTransition(containerControls, "fadeOutVideoControls",3);
+			onTransitionRequested(containerControls, "fadeOutVideoControls", 3).onComplete(checkAgain);
 		}
 
 	}
 
 	private function checkPositionMouse():Void{
 
-		if(containerVideo.hitTestPoint(Lib.current.stage.mouseX,Lib.current.stage.mouseY)){
+		if (containerVideo.hitTestPoint(Lib.current.stage.mouseX,Lib.current.stage.mouseY)){
+
 			showControls();
 
-		}else{
+		} else {
+
 			hideControls();
 		}
 	}

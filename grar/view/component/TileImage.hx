@@ -62,7 +62,8 @@ class TileImage extends Image {
 				
 				this.visible = true;
 
-// FIXME				TweenManager.applyTransition(this, transformation);
+// 				TweenManager.applyTransition(this, transformation);
+				onTransitionRequested(this, transformation);
 
 				if (onComplete != null) {
 
@@ -247,14 +248,21 @@ class TileImage extends Image {
 		tileSprite.visible = visible;
 		var actuator: IGenericActuator = null;
 
-		if(visible){
+		if (visible){ 
+
 			reset();
-// FIXME			actuator = TweenManager.applyTransition(tileSprite, transitionIn);
-			if(actuator != null && onComplete != null)
+// 			actuator = TweenManager.applyTransition(tileSprite, transitionIn);
+ 			actuator = onTransitionRequested(tileSprite, transitionIn);
+
+			if (actuator != null && onComplete != null) {
+
 				actuator.onComplete(onComplete);
-		}
-		else{
-// FIXME			actuator = TweenManager.applyTransition(tileSprite, transitionOut);
+			}
+		
+		} else {
+
+//			actuator = TweenManager.applyTransition(tileSprite, transitionOut);
+			actuator = onTransitionRequested(tileSprite, transitionOut);
 		}
 		renderNeeded();
 		if(actuator != null)

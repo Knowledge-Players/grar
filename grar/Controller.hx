@@ -84,13 +84,17 @@ trace("Loading("+langsUri+", ...)");
 						// view (styles, ui, transitions, filters, templates)
 						gameSrv.fetchSpriteSheet( displayXml.node.Ui.att.display, function(t:aze.display.TilesheetEx){
 
-									application.tilesheet = t;
- 
-									loadStyles(displayXml);
+								application.tilesheet = t;
 
-								}, onError );
+								loadStyles(displayXml);
 
-						gameSrv.fetchTransitions( displayXml.node.Transitions.att.display, function(t:StringMap<grar.view.TransitionTemplate>){ application.transitions = t; }, onError );
+							}, onError );
+
+						gameSrv.fetchTransitions( displayXml.node.Transitions.att.display, function(t:StringMap<grar.view.TransitionTemplate>){
+
+								application.initTweener(t);
+
+							}, onError );
 
 						gameSrv.fetchFilters( displayXml.node.Filters.att.display, function(f:StringMap<grar.view.FilterData>){ application.filters = f; }, onError );
 

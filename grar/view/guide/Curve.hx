@@ -1,6 +1,5 @@
 package grar.view.guide;
 
-// FIXME import com.knowledgeplayers.grar.display.TweenManager;
 import grar.view.component.TileImage;
 
 import grar.util.MathUtils;
@@ -23,11 +22,13 @@ typedef CurveData = {
 /**
 * Utility to place items on a curve
 **/
-class Curve implements Guide
+class Curve extends Guide
 {
 
 	//public function new(?center: Point, radius: Float = 1, minAngle: Float = 0, maxAngle: Float = 360, centerObject: Bool = false)
 	public function new(d : CurveData) {
+
+		super();
 
 		if (d.center != null) {
 
@@ -62,36 +63,35 @@ class Curve implements Guide
 	* Center the object on the curve. Default is false
 	**/
 	public var centerObject (default, default):Bool;
-	/**
-    * X of the curve
-    **/
-	public var x (default, set_x):Float;
-	/**
-    * Y of the curve
-    **/
-	public var y (default, set_y):Float;
-
-	public var transitionIn (default, default):String;
 
 	private var objects: Array<DisplayObject>;
 	private var objToAngles : Map<DisplayObject, Float>;
 
-	public function set_x(x:Float):Float
+
+	///
+	// GETTER / SETTER
+	//
+
+	override public function set_x(x:Float):Float
 	{
 		center.x = x;
 		return this.x = x;
 	}
 
-	public function set_y(y:Float):Float
+	override public function set_y(y:Float):Float
 	{
 		center.y = y;
 		return this.y = y;
 	}
 
+	///
+	// API
+	//
+
 	/**
 	* @inherits
 	**/
-	public function add(object:DisplayObject, ?tween:String, tile: Bool = false):DisplayObject
+	override public function add(object:DisplayObject, ?tween:String, tile: Bool = false):DisplayObject
 	{
 		objects.push(object);
 		var angle = (maxAngle - minAngle)/(2*objects.length);
@@ -108,10 +108,16 @@ class Curve implements Guide
 			objToAngles.set(objects[i], a);
 		}
 
-// FIXME		if(tween != null)
-// FIXME			TweenManager.applyTransition(object, tween);
-// FIXME		else if(transitionIn != null)
-// FIXME			TweenManager.applyTransition(object, transitionIn);
+		if (tween != null) {
+
+// 			TweenManager.applyTransition(object, tween);
+			onTransitionRequested(object, tween);
+		
+		} else if(transitionIn != null) {
+
+// 			TweenManager.applyTransition(object, transitionIn);
+			onTransitionRequested(object, transitionIn);
+		}
 
 		return object;
 	}

@@ -61,6 +61,7 @@ class InventoryDisplay extends WidgetContainer {
 
 						this.guide = new Curve(d);
 				}
+				this.guide.onTransitionRequested = onTransitionRequested;
 
 				this.fullscreen = fs;
 				this.displayTemplates = dt;
@@ -117,12 +118,14 @@ class InventoryDisplay extends WidgetContainer {
 
 		addEventListener(Event.ADDED_TO_STAGE, function(e:Event) {
 
-// FIXME				TweenManager.applyTransition(this, transitionIn);
+// 				TweenManager.applyTransition(this, transitionIn);
+				onTransitionRequested(this, transitionIn);
 
 			});
 		addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event) {
 
-// FIXME				TweenManager.applyTransition(this, transitionOut);
+// 				TweenManager.applyTransition(this, transitionOut);
+				onTransitionRequested(this, transitionOut);
 
 			});
 	}
@@ -155,7 +158,8 @@ class InventoryDisplay extends WidgetContainer {
 			
 			if (fullscreen.transitionIn != null) {
 
-// FIXME				TweenManager.applyTransition(fullscreenContainer, fullscreen.transitionIn);
+// 				TweenManager.applyTransition(fullscreenContainer, fullscreen.transitionIn);
+				onTransitionRequested(fullscreenContainer, fullscreen.transitionIn);
 			}
 		}
 	}

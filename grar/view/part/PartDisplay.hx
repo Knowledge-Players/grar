@@ -16,7 +16,6 @@ import grar.view.contextual.InventoryDisplay;
 
 // FIXME import com.knowledgeplayers.grar.display.GameManager;	// FIXME
 // FIXME import com.knowledgeplayers.grar.display.ResizeManager;	// FIXME
-// FIXME import com.knowledgeplayers.grar.display.TweenManager;	// FIXME
 
 // FIXME import com.knowledgeplayers.grar.event.GameEvent;	// FIXME
 // FIXME import com.knowledgeplayers.grar.event.PartEvent;	// FIXME
@@ -203,7 +202,9 @@ trace("setting part display content");
 
 	public function startPart(startPosition:Int = -1):Void
 	{
-// FIXME		TweenManager.applyTransition(this, transitionIn);
+// 		TweenManager.applyTransition(this, transitionIn);
+ 		onTransitionRequested(this, transitionIn);
+
 		nextElement(startPosition);
 	}
 

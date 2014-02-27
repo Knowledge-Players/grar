@@ -259,7 +259,11 @@ class WidgetContainer extends Widget {
 					b.radius = [0.0, 0.0, 0.0, 0.0];
 				}
 				ParseUtils.formatToFour(b.radius);
-                var bubble:SimpleBubble = new SimpleBubble(b.bubbleWidth!=0 ? b.bubbleWidth:maskWidth,b.bubbleHeight!=0 ? b.bubbleHeight:maskHeight,colors,b.arrowX,b.arrowY,b.radius,b.line,b.colorLine,b.shadow,b.gap,alphas,b.bubbleX,b.bubbleY);
+                
+                var bubble : SimpleBubble = new SimpleBubble(b.bubbleWidth!=0 ? b.bubbleWidth:maskWidth,b.bubbleHeight!=0 ? b.bubbleHeight:maskHeight,colors,b.arrowX,b.arrowY,b.radius,b.line,b.colorLine,b.shadow,b.gap,alphas,b.bubbleX,b.bubbleY);
+                
+                bubble.onTransitionRequested = onTransitionRequested;
+                
                 addChildAt(bubble,0);
             
             } else {
@@ -403,11 +407,15 @@ class WidgetContainer extends Widget {
 			scrollNeeded = false;
 		}
 
-// FIXME        TweenManager.applyTransition(content, contentTransition);
+//      TweenManager.applyTransition(content, contentTransition);
+		onTransitionRequested(content, contentTransition);
 
-		for(child in children){
-            if(child.transformation != null){
-// FIXME                TweenManager.applyTransition(child, child.transformation);
+		for (child in children) {
+
+            if (child.transformation != null) {
+
+//              TweenManager.applyTransition(child, child.transformation);
+				onTransitionRequested(child, child.transformation);
             }
         }
 	}
@@ -504,8 +512,11 @@ class WidgetContainer extends Widget {
 		elem.zz = zIndex;
         displays.set(elem.ref,elem);
 
+        elem.onTransitionRequested = onTransitionRequested;
+
 		content.addChild(elem);
 		children.push(elem);
+
         zIndex++;
 		dispatchEvent(new Event(Event.CHANGE));
 	}

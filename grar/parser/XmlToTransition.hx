@@ -1,9 +1,13 @@
 package grar.parser;
 
-import haxe.xml.Fast;
-import haxe.ds.StringMap;
-
 import grar.view.TransitionTemplate;
+import grar.view.Color;
+
+import grar.util.ParseUtils;
+
+import haxe.xml.Fast;
+
+import haxe.ds.StringMap;
 
 class XmlToTransition {
 
@@ -62,7 +66,7 @@ class XmlToTransition {
                     type = Rotate( child.has.x ? child.att.x : "x", child.has.y ? child.att.y : "y", child.has.rotation ? child.att.rotation : "rotation" );
 
                 case NODE_NAME_TRANSFORM:
-                    type = Transform( child.att.color );
+                    type = Transform( ParseUtils.parseColor(child.att.color) );
 
                 case NODE_NAME_MASK:
                     type = Mask(child.att.shutterTransitions.split(","), child.att.shutterChaining);

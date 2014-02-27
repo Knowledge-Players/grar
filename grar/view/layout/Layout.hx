@@ -1,5 +1,7 @@
 package grar.view.layout;
 
+import motion.actuators.GenericActuator.IGenericActuator;
+
 import grar.view.Display.DisplayData;
 
 import haxe.ds.StringMap;
@@ -70,6 +72,11 @@ class Layout {
 	public dynamic function onNewZone(z : Zone) { }
 
 	public dynamic function onVolumeChangeRequested(v : Float) : Void { }
+
+	public dynamic function onTransitionRequested(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
+
+	public dynamic function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
+
 
 
 	///

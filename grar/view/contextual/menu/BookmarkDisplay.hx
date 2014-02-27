@@ -20,7 +20,8 @@ class BookmarkDisplay extends WidgetContainer {
 
 					onComplete = function() {
 
-// FIXME							TweenManager.applyTransition(this, a);
+// 							TweenManager.applyTransition(this, a);
+							onTransitionRequested(this, a);
 						}
 				}
 				this.xOffset = xo;

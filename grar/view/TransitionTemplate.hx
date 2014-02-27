@@ -1,12 +1,14 @@
 package grar.view;
 
+import grar.view.Color;
+
 enum TransitionType {
 
 	Zoom(x:String, y:String, width:String, height:String);
 	Fade(alpha:String);
 	Slide(x:String, y:String);
 	Rotate(x:String, y:String, r:String);
-	Transform(color:String);
+	Transform(color:Color);
 	Mask(transitions:Array<String>, chaining:String);
 }
 

@@ -327,14 +327,22 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 			}
 		}
 		if (canStart) {
-// FIXME			var actuator = TweenManager.applyTransition(this, transitionOut);
 
-// FIXME			if(actuator != null)
-// FIXME				actuator.onComplete(function(){
+// 			var actuator = TweenManager.applyTransition(this, transitionOut);
+			var actuator = onTransitionRequested(this, transitionOut);
+
+			if (actuator != null) {
+
+				actuator.onComplete(function(){
+
 // FIXME					GameManager.instance.hideContextual(instance);
-// FIXME				});
-// FIXME			else
+
+					});
+			
+			} else {
+
 // FIXME				GameManager.instance.hideContextual(instance);
+			}
 		}
 	}
 

@@ -242,6 +242,7 @@ class ActivityDisplay extends PartDisplay {
 
 				guide = new Curve(d);
 		}
+		guide.onTransitionRequested = onTransitionRequested;
 		// Set guide to place inputs
 		guide.x = groupTemplate.x;
 		guide.y = groupTemplate.y;

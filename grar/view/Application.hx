@@ -2,6 +2,8 @@ package grar.view;
 
 import aze.display.TilesheetEx;
 
+import motion.actuators.GenericActuator.IGenericActuator;
+
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
 import grar.model.localization.LocaleData;
@@ -19,6 +21,7 @@ import grar.view.part.StripDisplay;
 import grar.view.layout.Layout;
 import grar.view.style.StyleSheet;
 import grar.view.style.Style;
+import grar.view.tweening.Tweener;
 import grar.view.FilterData;
 import grar.view.TransitionTemplate;
 import grar.view.ElementData;
@@ -64,8 +67,6 @@ class Application {
 
 	public var filters (default, default) : StringMap<FilterData>;
 
-	public var transitions : StringMap<TransitionTemplate>;
-
 	public var menuData (default, set) : Null<MenuData>;
 
 	public var stylesheets : Null<StringMap<StyleSheet>>;
@@ -91,6 +92,8 @@ class Application {
 
 
 	// WIP
+
+	var tweener : Null<Tweener> = null;
 
 	public var currentLayout : Null<Layout> = null;
 
@@ -169,6 +172,11 @@ class Application {
 	///
 	// API
 	//
+
+	public function initTweener(t : StringMap<TransitionTemplate>) : Void {
+
+		this.tweener = new Tweener(t);
+	}
 
 	public function changeLayout(l : String) : Void {
 
@@ -258,6 +266,9 @@ class Application {
 
 		tokenNotification = new TokenNotification(d);
 
+		tokenNotification.onTransitionRequested = onTransitionRequested;
+		tokenNotification.onStopTransitionRequested = onStopTransitionRequested;
+
 		onTokenNotificationChanged();
 	}
 
@@ -268,6 +279,9 @@ class Application {
 		for (lk in lm.keys()) {
 
 			var nl : Layout = new Layout(lm.get(lk), tilesheet);
+
+			nl.onTransitionRequested = onTransitionRequested;
+			nl.onStopTransitionRequested = onStopTransitionRequested;
 
 			l.set(lk, nl);
 
@@ -281,6 +295,9 @@ class Application {
 	public function createNotebook(d : DisplayData) : Void {
 
 		var n : NotebookDisplay = new NotebookDisplay();
+
+		n.onTransitionRequested = onTransitionRequested;
+		n.onStopTransitionRequested = onStopTransitionRequested;
 
 		d.applicationTilesheet = tilesheet;
 
@@ -296,6 +313,9 @@ class Application {
 	public function createMenu(d : DisplayData) : Void {
 
 		var m : MenuDisplay = new MenuDisplay();
+
+		m.onTransitionRequested = onTransitionRequested;
+		m.onStopTransitionRequested = onStopTransitionRequested;
 
 		d.applicationTilesheet = tilesheet;
 
@@ -413,11 +433,11 @@ trace("display part "+part.id);
 // FIXME			parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		}
 		// Display the new part
-		parts.add(createPartDisplay(part));
-trace("Part created");
-		startIndex = startPosition;
+		var fp : PartDisplay = createPartDisplay(part);
 
-		var fp : PartDisplay = parts.first();
+		parts.add(fp);
+
+		startIndex = startPosition;
 		
 //		parts.first().addEventListener(PartEvent.EXIT_PART, onExitPart);
 		fp.onExit = function(){ onExitPart(parts.first().part.id); }
@@ -437,6 +457,9 @@ trace("Part created");
 		fp.onSoundToLoad = function(sound : String) : Void { }
 		fp.onSoundToPlay = function(sound : String) : Void { }
 */
+		fp.onTransitionRequested = onTransitionRequested;
+		fp.onStopTransitionRequested = onStopTransitionRequested;
+
 		fp.init();
 
 		return true;
@@ -591,5 +614,13 @@ trace("create part display for "+part.id);
 		}
 	}
 
+	private function onTransitionRequested(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator {
 
+		return tweener.applyTransition(target, transition, delay);
+	}
+
+	private function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {
+
+		tweener.stop(target, properties, complete, sendEvent);
+	}
 }

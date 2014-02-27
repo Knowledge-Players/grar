@@ -51,16 +51,21 @@ class IntroScreen extends WidgetContainer {
 
 	// Privates
 
-	private function hide():Void
-	{
-// FIWME		if (transitionOut != null)
-// FIXME			TweenManager.applyTransition(this, transitionOut).onComplete(function() {
+	private function hide() : Void {
 
-// FIXME					dispose();
-// FIXME				});
-// FIWME		else{
+		if (transitionOut != null) {
+
+//			TweenManager.applyTransition(this, transitionOut).onComplete(function() {
+			onTransitionRequested(this, transitionOut).onComplete(function() {
+
+					dispose();
+
+				});
+		
+		} else {
+
 			dispose();
-// FIWME		}
+		}
 	}
 
 	private function dispose():Void
@@ -75,7 +80,9 @@ class IntroScreen extends WidgetContainer {
 	{
 		addEventListener(Event.ADDED_TO_STAGE, function(e:Event) {
 			
-// FIXME				TweenManager.applyTransition(this, transition);
+// 				TweenManager.applyTransition(this, transition);
+				onTransitionRequested(this, transition);
+				
 				Timer.delay(hide, duration);
 			});
 

@@ -1,5 +1,7 @@
 package grar.view.element;
 
+import motion.actuators.GenericActuator.IGenericActuator;
+
 import grar.view.component.TileImage;
 import grar.view.component.Widget;
 
@@ -40,6 +42,15 @@ class Timeline extends EventDispatcher {
 
 
     ///
+    // CALLBACKS
+    //
+
+    public dynamic function onTransitionRequested(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
+
+    public dynamic function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
+
+
+    ///
     // API
     //
 
@@ -58,11 +69,16 @@ class Timeline extends EventDispatcher {
     {
          nbCompleteTransitions=0;
 
-         for (elem in elements){
-// FIXME            var actuator = TweenManager.applyTransition(elem.widget,elem.transition,elem.delay);
-// FIXME            if(actuator != null)
-// FIXME	            actuator.onComplete(onCompleteTransition, [elem.widget.ref]);
-onCompleteTransition(elem.widget.ref);
+         for (elem in elements) {
+
+//          var actuator = TweenManager.applyTransition(elem.widget,elem.transition,elem.delay);
+            var actuator = onTransitionRequested(elem.widget,elem.transition,elem.delay);
+            
+            if (actuator != null) {
+
+	            actuator.onComplete(onCompleteTransition, [elem.widget.ref]);
+            }
+            onCompleteTransition(elem.widget.ref);
          }
     }
 

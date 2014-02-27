@@ -191,6 +191,15 @@ class Widget extends Sprite {
 
 
 	///
+	// CALLBACKS
+	//
+
+	public dynamic function onTransitionRequested(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
+
+	public dynamic function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
+
+
+	///
 	// GETTER / SETTER
 	//
 
@@ -229,40 +238,55 @@ class Widget extends Sprite {
 		return this.position = position;
 	}
 
-	public function set_transformation(transformation: String):String
-	{
-// FIXME		TweenManager.applyTransition(this, transformation);
+	public function set_transformation(transformation : String) : String {
+
+// 		TweenManager.applyTransition(this, transformation);
+		onTransitionRequested(this, transformation);
+
 		return this.transformation = transformation;
 	}
 
-	public function set_transitionIn(transition:String):String
-	{
-		addEventListener(Event.ADDED_TO_STAGE, function(e:Event)
-		{
-			if(!lockPosition){
-				origin = {x: x, y: y, scaleX: scaleX, scaleY: scaleY, alpha: alpha};
-				lockPosition = true;
-			}
-			reset();
-			if(visible){
-// FIXME				var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
-// FIXME				if(actuator != null && onComplete != null)
-// FIXME					actuator.onComplete(onComplete);
-// FIXME				else if(onComplete != null)
+	public function set_transitionIn(transition : String) : String {
+
+		addEventListener(Event.ADDED_TO_STAGE, function(e:Event) {
+
+				if (!lockPosition) {
+
+					origin = {x: x, y: y, scaleX: scaleX, scaleY: scaleY, alpha: alpha};
+					lockPosition = true;
+				}
+				reset();
+
+				if (visible) {
+
+	// 				var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
+					var actuator : IGenericActuator = onTransitionRequested(this, transition);
+
+					if (actuator != null && onComplete != null) {
+
+						actuator.onComplete(onComplete);
+					
+					} else if(onComplete != null) {
+
+						onComplete();
+					}
+				
+				} else if (onComplete != null) {
+
 					onComplete();
-			}
-			else if(onComplete != null)
-				onComplete();
-		}, 1000);
+				}
+
+			}, 1000);
 
 		return transitionIn = transition;
 	}
 
-	public function set_transitionOut(transition:String):String
-	{
+	public function set_transitionOut(transition : String) : String {
+
 		addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event) {
 
-// FIXME				var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
+// 				var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
+				onTransitionRequested(this, transition);
 
 			});
 

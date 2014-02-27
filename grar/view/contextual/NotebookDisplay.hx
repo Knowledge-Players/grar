@@ -340,6 +340,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 
 					guide = new Curve(d);
 			}
+			guide.onTransitionRequested = onTransitionRequested;
 			
 			// Create steps
 			for(i in 0...numActive) {

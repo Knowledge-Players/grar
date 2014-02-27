@@ -148,7 +148,9 @@ class DialogDisplay extends PartDisplay {
 				i++;
 			}
 
-// FIXME			TweenManager.applyTransition(tooltip, pattern.tooltipTransition);
+// 			TweenManager.applyTransition(tooltip, pattern.tooltipTransition);
+			onTransitionRequested(tooltip, pattern.tooltipTransition);
+
 			addChildAt(tooltip, i);
 		}
 		else{
