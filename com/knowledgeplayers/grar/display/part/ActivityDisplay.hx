@@ -513,8 +513,9 @@ class ActivityDisplay extends PartDisplay {
 
 	private inline function copyCoordinates(object: DisplayObject, src: Dynamic):Void
 	{
-		object.x = src.x;
-		object.y = src.y;
+        TweenManager.createTransition(object,0.6,{x:src.x,y:src.y});
+		//object.x = src.x;
+		//object.y = src.y;
 	}
 }
 
