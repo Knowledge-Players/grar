@@ -23,7 +23,6 @@ import grar.util.DisplayUtils;
 
 // FIXME import com.knowledgeplayers.grar.event.PartEvent; // FIXME
 // FIXME import com.knowledgeplayers.grar.event.TokenEvent; // FIXME
-// FIXME import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
 
 import flash.events.Event;
 import flash.net.URLRequest;
@@ -174,7 +173,8 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 					tab.toggle();
 					first = false;
 				}
-// FIXME				tab.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+//				tab.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+				tab.onToggle = function() { onButtonToggle(tab); }
 
 				var offsetY: Float = 0;
 				// Fill every occurences of "icon" element with the proper tile/img
@@ -204,7 +204,10 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 // FIXME					button.setText(chapterTitle, "title");
 // FIXME					button.setText(Localiser.instance.getItemContent(chapter.subtitle), "subtitle");
 					buttonGroups.get(NOTE_GROUP_NAME).add(button);
-// FIXME					button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+
+// 					button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+					button.onToggle = function() { onButtonToggle(button); }
+
 					// Fill hit box
 					DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
 					//button.alpha = chapter.isActivated ? 1 : 0;

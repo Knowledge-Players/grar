@@ -18,10 +18,6 @@ import grar.view.component.TileImage;
 import grar.view.component.ScaleBitmap;
 import grar.view.component.container.VideoPlayer;
 
-// FIXME import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
-
-// FIXME import com.knowledgeplayers.grar.factory.UiFactory; // FIXME
-
 import grar.util.ParseUtils;
 import grar.util.DisplayUtils;
 
@@ -213,10 +209,30 @@ class WidgetContainer extends Widget {
 	private var displays : StringMap<Widget>;
 	private var buttonGroups : StringMap<GenericStack<DefaultButton>>;
 
+
+	///
+	// GETTER / SETTER
+	//
+
 	public function set_contentAlpha(alpha : Float) : Float
 	{
 		return content.alpha = contentAlpha = alpha;
 	}
+
+	public function set_tilesheet(tilesheet:TilesheetEx):TilesheetEx
+	{
+		if(layer == null)
+			layer = new TileLayer(tilesheet);
+		else
+			layer.tilesheet = tilesheet;
+		layer.render();
+		return this.tilesheet = tilesheet;
+	}
+
+
+	///
+	// API
+	//
 
 	public function setBackground(b : BackgroundData) : String  {
 
@@ -290,16 +306,6 @@ class WidgetContainer extends Widget {
 		return background = b.background;
 	}
 
-	public function set_tilesheet(tilesheet:TilesheetEx):TilesheetEx
-	{
-		if(layer == null)
-			layer = new TileLayer(tilesheet);
-		else
-			layer.tilesheet = tilesheet;
-		layer.render();
-		return this.tilesheet = tilesheet;
-	}
-
 	/**
 	* Empty the container
 	**/
@@ -325,7 +331,52 @@ class WidgetContainer extends Widget {
 		return super.toString()+' $maskWidth x $maskHeight $background';
 	}
 
-	// Privates
+//	public function createElement(elemNode:Fast):Widget
+	public function createElement(de : ElementData) : Widget {
+
+		switch(de) {
+
+			case Image(d):
+
+				var img : Image = new Image(d);
+	            addElement(img);
+				return img;
+
+			case TileImage(d):
+
+				d.layer = layer;
+				d.visible = d.div = true;
+
+	            var tileImg : TileImage = new TileImage(d);
+	            addElement(tileImg);
+		        return tileImg;
+
+			case DefaultButton(d):
+
+				return createButton(d);
+
+			case ScrollPanel(d):
+
+				return createText(d);
+
+			case ChronoCircle(d):
+
+				return createTimer(d);
+
+			case SimpleContainer(d):
+
+				return createSimpleContainer(d);
+
+			default:
+
+				return null;
+		}
+	}
+
+
+	///
+	// INTERNALS
+	//
 
 	private inline function scrollToRatio(position:Float)
 	{
@@ -392,53 +443,6 @@ class WidgetContainer extends Widget {
 		layer.render();
 	}
 
-//	public function createElement(elemNode:Fast):Widget
-	public function createElement(de : ElementData) : Widget {
-
-		switch(de) {
-
-			case Image(d):
-
-				var img : Image = new Image(d);
-	            addElement(img);
-				return img;
-
-			case TileImage(d):
-
-				d.layer = layer;
-				d.visible = d.div = true;
-
-	            var tileImg : TileImage = new TileImage(d);
-	            addElement(tileImg);
-		        return tileImg;
-
-			case DefaultButton(d):
-
-				return createButton(d);
-
-			case ScrollPanel(d):
-
-				return createText(d);
-
-			case ChronoCircle(d):
-
-				return createTimer(d);
-
-			case SimpleContainer(d):
-
-				return createSimpleContainer(d);
-
-			default:
-
-				return null;
-		}
-	}
-
-
-	///
-	// INTERNALS
-	//
-
 	private function createTimer(d : WidgetContainerData) : ChronoCircle {
 
 		var timer = new ChronoCircle(d);
@@ -480,7 +484,9 @@ class WidgetContainer extends Widget {
 				}
 			default: // nothing
 		}
-// FIXME		button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+// 		button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+		button.onToggle = function(){ onButtonToggle(button); }
+
 		addElement(button);
 		return button;
 	}
@@ -506,9 +512,6 @@ class WidgetContainer extends Widget {
 
 	private function setButtonAction(button : DefaultButton, action : String) : Void { }
 
-
-	// Handlers
-
 	private function onWheel(e:MouseEvent):Void
 	{
 		if(scrollable){
@@ -526,23 +529,26 @@ class WidgetContainer extends Widget {
 		}
 	}
 
-	private inline function checkRender(e:Event):Void
-	{
-		if(renderNeeded){
+	private inline function checkRender(e:Event):Void {
+
+		if (renderNeeded) {
+
 			render();
 			renderNeeded = false;
 		}
 	}
-/* FIXME
-	private function onButtonToggle(e:ButtonActionEvent):Void
-	{
-		var button = cast(e.target, DefaultButton);
-		if(button.toggleState == "inactive" && button.group != null){
-			for(b in buttonGroups.get(button.group)){
-				if(b != button)
+
+	private function onButtonToggle(button : DefaultButton) : Void {
+
+		if (button.toggleState == "inactive" && button.group != null) {
+
+			for (b in buttonGroups.get(button.group)) {
+
+				if (b != button) {
+
 					b.toggle(true);
+				}
 			}
 		}
 	}
-*/
 }

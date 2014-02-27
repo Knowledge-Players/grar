@@ -7,8 +7,6 @@ import grar.view.element.Timeline;
 import grar.view.component.container.WidgetContainer;
 import grar.view.component.container.ScrollPanel;
 
-// FIXME import com.knowledgeplayers.grar.event.ButtonActionEvent;
-
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.Event;
@@ -20,7 +18,6 @@ import haxe.ds.StringMap;
  * Custom base button class
  */
 class DefaultButton extends WidgetContainer {
-
 
 // public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>) // pStates never passed ??
 	public function new(? dbd : Null<WidgetContainerData>) {
@@ -126,10 +123,22 @@ class DefaultButton extends WidgetContainer {
 	private var defaultState: String;
 	private var enabledState: Map<String, Bool>;
 
+
+	///
+	// CALLBACKS
+	//
+
+	public dynamic function onToggle() : Void { }
+
 	/**
      * Action to execute on click
      */
-	public dynamic function buttonAction(?target: DefaultButton): Void{}
+	public dynamic function buttonAction(? target : DefaultButton) : Void { }
+
+
+	///
+	// GETTER / SETTER
+	//
 
 	@:setter(alpha)
 	override public function set_alpha(alpha:Float):Void
@@ -169,17 +178,24 @@ class DefaultButton extends WidgetContainer {
 		return this.mirror = mirror;
 	}
 
-	/**
-	* Define if the button is in state active or inactive
-	**/
 
-	public inline function toggle(?toggle:Bool):Void
-	{
+	///
+	// API
+	//
+
+	/**
+	 * Define if the button is in state active or inactive
+	 **/
+	public inline function toggle(? toggle : Bool) : Void {
+
 		// Don't do anything if the toggle doesn't change
-		if(toggle != (toggleState == "active")){
+		if (toggle != (toggleState == "active")) {
+
 			// If param is null, switch state
-			if(toggle == null)
+			if (toggle == null) {
+
 				toggle = toggleState == "inactive";
+			}
 			toggleState = toggle ? "active" : "inactive";
 		}
 	}
@@ -315,22 +331,6 @@ class DefaultButton extends WidgetContainer {
 			}
 			tmpdata = null;
 		}
-
-	}
-
-	//private inline function createStates(node:Fast):Map<String, Widget>
-	private inline function createStates(sm : StringMap<ElementData>) : Map<String, Widget> {
-
-		var list = new Map<String, Widget>();
-
-		for (sk in sm.keys()) {
-
-			var w : Widget = createElement(sm.get(sk));
-
-			list.set(w.ref, w);
-		}
-
-		return list;
 	}
 
 	public function setAllListeners(listener:MouseEvent -> Void):Void
@@ -349,44 +349,76 @@ class DefaultButton extends WidgetContainer {
 		toggleState = defaultState;
 	}
 
-	// Private
 
-	private function onClick(event:MouseEvent):Void
-	{
-		var timelineOut = timeline;
-		if(isToggleEnabled)
-			onToggle();
-		if(timelineOut != null){
-			timelineOut.addEventListener(Event.COMPLETE,function(e){
-				buttonAction(this);
-			});
-			timelineOut.play();
-		}else
-			buttonAction(this);
+	///
+	// INTERNALS
+	//
+
+	//private inline function createStates(node:Fast):Map<String, Widget>
+	private inline function createStates(sm : StringMap<ElementData>) : Map<String, Widget> {
+
+		var list = new Map<String, Widget>();
+
+		for (sk in sm.keys()) {
+
+			var w : Widget = createElement(sm.get(sk));
+
+			list.set(w.ref, w);
+		}
+
+		return list;
 	}
 
-	private inline function onOver(event:MouseEvent):Void
-	{
+	// Private
+
+	private function onClick(event : MouseEvent) : Void {
+
+		var timelineOut = timeline;
+
+		if (isToggleEnabled) {
+
+			toggle(toggleState != "active");
+//			dispatchEvent(new ButtonActionEvent(ButtonActionEvent.TOGGLE));
+			onToggle();
+		}
+		if (timelineOut != null) {
+
+			timelineOut.addEventListener(Event.COMPLETE,function(e){
+
+					buttonAction(this);
+
+				});
+
+			timelineOut.play();
+
+		} else {
+
+			buttonAction(this);
+		}
+	}
+
+	private inline function onOver(event : MouseEvent) : Void {
+
 		renderState("over");
 	}
 
-	private inline function onOut(event:MouseEvent):Void
-	{
+	private inline function onOut(event : MouseEvent) : Void {
+
 		renderState("out");
 	}
 
-	private inline function onClickDown(event:MouseEvent):Void
-	{
+	private inline function onClickDown(event : MouseEvent) : Void {
+
 		renderState("press");
 	}
 
-	private inline function onClickUp(event:MouseEvent):Void
-	{
+	private inline function onClickUp(event : MouseEvent) : Void {
+
 		renderState("out");
 	}
 
-	private inline function sortDisplayObjects(x:Widget, y:Widget):Int
-	{
+	private inline function sortDisplayObjects(x : Widget, y : Widget) : Int {
+
 		if(x.zz < y.zz)
 			return -1;
 		else if(x.zz > y.zz)
@@ -395,8 +427,8 @@ class DefaultButton extends WidgetContainer {
 			return 0;
 	}
 
-	private inline function removeAllEventsListeners(listener:MouseEvent -> Void):Void
-	{
+	private inline function removeAllEventsListeners(listener : MouseEvent -> Void) : Void {
+
 		removeEventListener(MouseEvent.MOUSE_OUT, listener);
 		removeEventListener(MouseEvent.MOUSE_OVER, listener);
 		removeEventListener(MouseEvent.ROLL_OVER, listener);
@@ -406,8 +438,6 @@ class DefaultButton extends WidgetContainer {
 		removeEventListener(MouseEvent.MOUSE_UP, listener);
 		removeEventListener(MouseEvent.MOUSE_DOWN, listener);
 	}
-
-	// Listener
 
 	override private function createButton(d : WidgetContainerData) : Widget {
 
@@ -432,14 +462,8 @@ class DefaultButton extends WidgetContainer {
 		}
 	}
 
-	private inline function onToggle():Void
-	{
-		toggle(toggleState != "active");
-//FIXME		dispatchEvent(new ButtonActionEvent(ButtonActionEvent.TOGGLE));
-	}
+	override private inline function addElement(elem : Widget) : Void {
 
-	override private inline function addElement(elem:Widget):Void
-	{
 		elem.zz = zIndex;
 		zIndex++;
 	}

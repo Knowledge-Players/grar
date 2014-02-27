@@ -18,7 +18,6 @@ import grar.view.contextual.InventoryDisplay;
 // FIXME import com.knowledgeplayers.grar.display.ResizeManager;	// FIXME
 // FIXME import com.knowledgeplayers.grar.display.TweenManager;	// FIXME
 
-// FIXME import com.knowledgeplayers.grar.event.ButtonActionEvent;	// FIXME
 // FIXME import com.knowledgeplayers.grar.event.GameEvent;	// FIXME
 // FIXME import com.knowledgeplayers.grar.event.PartEvent;	// FIXME
 
@@ -390,30 +389,48 @@ trace("setting part display content");
 
 	override private function setButtonAction(button:DefaultButton, action:String):Bool
 	{
-		if(super.setButtonAction(button, action))
+		if (super.setButtonAction(button, action)) {
+
 			return true;
-		else{
-/* FIXME FIXME FIXME
-			switch(action.toLowerCase()){
-				case ButtonActionEvent.NEXT:
+		
+		} else {
+
+			switch (action.toLowerCase()) {
+
+				case "next":
+				
 					button.buttonAction = next;
+
 					return true;
-				case ButtonActionEvent.GOTO:
+				
+				case "goto":
+				
 					button.buttonAction = function(?target: DefaultButton){
-					var goToTarget: PartElement = part.buttonTargets.get(button.ref);
-					if(goToTarget == null)
-						exitPart();
-					else
-						nextElement(part.getElementIndex(goToTarget)-1);
-					};
+
+							var goToTarget: PartElement = part.buttonTargets.get(button.ref);
+						
+							if (goToTarget == null) {
+
+								exitPart();
+							
+							} else {
+
+								nextElement(part.getElementIndex(goToTarget)-1);
+							}
+						};
+
 					return true;
-				case ButtonActionEvent.EXIT:
-					button.buttonAction = function(?target){
-						exitPart(false);
-					};
+				
+				case "exit":
+
+					button.buttonAction = function(?target) {
+
+							exitPart(false);
+
+						};
+
 					return true;
 			}
-*/
 		}
 		return false;
 	}

@@ -24,8 +24,6 @@ import grar.view.component.container.ScrollPanel;
 import grar.view.component.CharacterDisplay;
 import grar.view.component.container.WidgetContainer;
 
-// FIXME import com.knowledgeplayers.grar.event.ButtonActionEvent; // FIXME
-
 import grar.util.DisplayUtils;
 
 import flash.geom.Rectangle;
@@ -155,6 +153,12 @@ class Display extends Sprite {
 	///
 	// CALLBACKS
 	//
+
+	public dynamic function onContextualDisplayRequested(c : grar.view.Application.ContextualType) : Void { }
+
+	public dynamic function onContextualHideRequested(c : grar.view.Application.ContextualType) : Void { }
+
+	public dynamic function onQuitGameRequested() : Void { }
 
 
 	///
@@ -456,7 +460,8 @@ trace("setContent, display type is "+d.type);
 				}
 				if (btn.group != null) {
 
-// FIXME					btn.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+// 					btn.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
+					btn.onToggle = function(){ onButtonToggle(btn); };
 				}
 
 				addElement(btn, r);
@@ -537,7 +542,8 @@ trace("setContent, display type is "+d.type);
 
 			button.buttonAction = function(? target) {
 
-	// FIXME				GameManager.instance.displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout);
+// 					GameManager.instance.displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout);
+					onContextualDisplayRequested(MENU);
 
 				}
 
@@ -551,7 +557,8 @@ trace("setContent, display type is "+d.type);
 
 			button.buttonAction = function(? target) {
 
-// FIXME				GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
+// 					GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
+					onContextualDisplayRequested(NOTEBOOK);
 
 				}
 			
@@ -565,11 +572,12 @@ trace("setContent, display type is "+d.type);
 
 			button.buttonAction = function(? target) {
 
-// FIXME				GameManager.instance.hideContextual(MenuDisplay.instance);
+// 				GameManager.instance.hideContextual(MenuDisplay.instance);
+				onContextualHideRequested(MENU);
 
 			}
 
-		} else if (action.toLowerCase() == ButtonActionEvent.QUIT) {
+		} else if (action.toLowerCase() == "quit") {
 
 			button.buttonAction = quit;
 
@@ -580,16 +588,18 @@ trace("setContent, display type is "+d.type);
 
 		return actionSet;
     }
-/* FIXME
-	private function onButtonToggle(e:ButtonActionEvent):Void
-	{
-		var button = cast(e.target, DefaultButton);
-		for(b in buttonGroups.get(button.group)){
-			if(b != button)
+
+	private function onButtonToggle(button : DefaultButton) : Void {
+
+		for (b in buttonGroups.get(button.group)) {
+
+			if (b != button) {
+
 				b.toggle(button.toggleState != "active");
+			}
 		}
 	}
-*/
+
 	private function checkRender(e:Event):Void
 	{
 		for(layer in renderLayers.keys()){
@@ -610,8 +620,9 @@ trace("setContent, display type is "+d.type);
 			return 0;
 	}
 
-	private inline function quit(?target: DefaultButton):Void
-	{
-// FIXME		GameManager.instance.quitGame();
+	private inline function quit(? target : DefaultButton) : Void {
+
+// 		GameManager.instance.quitGame();
+		onQuitGameRequested();
 	}
 }

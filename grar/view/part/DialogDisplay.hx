@@ -5,7 +5,6 @@ import grar.view.component.container.ScrollPanel;
 import grar.view.part.PartDisplay;
 
 // FIXME import com.knowledgeplayers.grar.event.GameEvent;		// FIXME
-// FIXME import com.knowledgeplayers.grar.event.ButtonActionEvent;		// FIXME
 
 // FIXME import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
 
@@ -93,18 +92,18 @@ class DialogDisplay extends PartDisplay {
 			nextElement();
 	}
 
-	override private function setButtonAction(button:DefaultButton, action:String):Bool
-	{
-/* FIXME
-		if(action.toLowerCase() == ButtonActionEvent.GOTO){
+	override private function setButtonAction(button : DefaultButton, action : String) : Bool {
+
+		if (action.toLowerCase() == "goto") {
+
 			button.buttonAction = onChoice;
 			button.addEventListener(MouseEvent.MOUSE_OVER, onOverChoice);
 			button.addEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
+
 			return true;
 		}
-		else
-*/
-			return super.setButtonAction(button, action);
+
+		return super.setButtonAction(button, action);
 	}
 
 	override private function onVideoComplete(e: Event):Void
