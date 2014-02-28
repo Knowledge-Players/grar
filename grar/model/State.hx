@@ -99,6 +99,7 @@ class State {
 		module.onPartsChanged = function(){ onModulePartsChanged(); };
 		module.onCurrentLocalePathChanged = function(){ onCurrentLocalePathChanged(); };
 		module.onPartFinished = function(p:grar.model.part.Part){ onPartFinished(p); };
+		module.onInventoryTokenActivated = function(it : grar.model.InventoryToken){ onInventoryTokenActivated(it); };
 
 		onModuleChanged();
 
@@ -142,4 +143,6 @@ class State {
 	public dynamic function onCurrentLocalePathChanged() : Void { }
 
 	public dynamic function onPartFinished(p : grar.model.part.Part) : Void { }
+
+	public dynamic function onInventoryTokenActivated(it : grar.model.InventoryToken) : Void { }
 }

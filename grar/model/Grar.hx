@@ -53,7 +53,7 @@ class Grar {
 
 	public var notebook (default, set) : Notebook;
 
-	public var inventory (default, null) : StringMap<InventoryToken>;
+	public var inventory (null, default) : StringMap<InventoryToken>;
 
 	public var glossary (default, set) : Null<Glossary> = null;
 
@@ -184,6 +184,20 @@ class Grar {
 	// API
 	//
 
+	public function activateInventoryToken(tid : String) : Void {
+
+		if (!inventory.exists(tid)) {
+
+			throw 'unknown token "$tid".';
+		}
+		var it : InventoryToken = inventory.get(tid);
+
+		it.isActivated = true;
+
+		onInventoryTokenActivated(it);
+	}
+
+
 	public function setPartFinished(pid : String) : Void {
 
 		completion.set(pid, 2);
@@ -307,4 +321,6 @@ class Grar {
 	public dynamic function onCurrentLocalePathChanged() { }
 
 	public dynamic function onPartFinished(p : Part) { }
+
+	public dynamic function onInventoryTokenActivated(it : InventoryToken) { }
 }

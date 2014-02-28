@@ -168,6 +168,10 @@ class Application {
 
 	public dynamic function onStylesChanged() : Void { }
 
+	public dynamic function onQuitGameRequested() : Void { }
+
+	public dynamic function onActivateTokenRequested(tokenName : String) : Void { }
+
 
 	///
 	// API
@@ -299,6 +303,12 @@ class Application {
 		n.onTransitionRequested = onTransitionRequested;
 		n.onStopTransitionRequested = onStopTransitionRequested;
 
+		n.onContextualDisplayRequested = function(c:ContextualType){ displayContextual(c); };
+		n.onContextualHideRequested = hideContextual;
+		n.onQuitGameRequested = onQuitGameRequested;
+
+		n.onClose = function() { doHideContextual(n); }
+
 		d.applicationTilesheet = tilesheet;
 
 		n.setContent(d);
@@ -316,6 +326,10 @@ class Application {
 
 		m.onTransitionRequested = onTransitionRequested;
 		m.onStopTransitionRequested = onStopTransitionRequested;
+
+		m.onContextualDisplayRequested = function(c:ContextualType){ displayContextual(c); };
+		m.onContextualHideRequested = hideContextual;
+		m.onQuitGameRequested = onQuitGameRequested;
 
 		d.applicationTilesheet = tilesheet;
 
@@ -453,12 +467,18 @@ trace("display part "+part.id);
 // FIXME				dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
 			}
 /* TODO
-		fp.onTokenToActivate = function(token : String) : Void { }
-		fp.onSoundToLoad = function(sound : String) : Void { }
-		fp.onSoundToPlay = function(sound : String) : Void { }
 */
+		fp.onTokenToActivate = onActivateTokenRequested;
+
+		fp.onSoundToLoad = loadSound;
+		fp.onSoundToPlay = playSound;
+
 		fp.onTransitionRequested = onTransitionRequested;
 		fp.onStopTransitionRequested = onStopTransitionRequested;
+
+		fp.onContextualDisplayRequested = function(c:ContextualType){ displayContextual(c); };
+		fp.onContextualHideRequested = hideContextual;
+		fp.onQuitGameRequested = onQuitGameRequested;
 
 		fp.init();
 
@@ -466,29 +486,18 @@ trace("display part "+part.id);
 	}
 
 
-
-	public function displayContextual(c : ContextualType, hideOther : Bool = true) : Void {
+	public function hideContextual(c : ContextualType) : Void {
 	
-		switch (c) {
+		var cd : Display = getContextual(c);
 
-			case MENU:
+		doHideContextual(cd);
+	}
 
-				doDisplayContextual(menu, menu.layout, hideOther);
-			
-			case NOTEBOOK:
+	public function displayContextual(c : ContextualType, ? hideOther : Bool = true) : Void {
+	
+		var cd : Display = getContextual(c);
 
-				doDisplayContextual(notebook, notebook.layout, hideOther);
-			
-			case GLOSSARY:
-
-				// TODO doDisplayContextual(GlossaryDisplay.instance, GlossaryDisplay.instance.layout, hideOther);
-			
-			case BIBLIOGRAPHY:
-
-				// TODO doDisplayContextual(BibliographyDisplay.instance, BibliographyDisplay.instance.layout, hideOther);
-			
-			case INVENTORY: // nothing ?
-		}
+		doDisplayContextual(cd, cd.layout, hideOther);
 	}
 
 	//private function onExitPart(event:Event) : Void {
@@ -522,6 +531,24 @@ trace("display part "+part.id);
 
 			// dispatchEvent(new GameEvent(GameEvent.GAME_OVER)); TODO call setGameOver on ProgressBar
 		}
+	}
+
+
+	/**
+    * Activate a token of the inventory
+    * @param    tokenName : Name of the token to activate
+    **/
+	//public function activateToken(tokenName:String):Void
+	public function setActivateToken(t : grar.model.InventoryToken) : Void {
+
+		if (tokenNotification != null) {
+
+			currentLayout.zones.get(mainLayoutRef).addChild(tokenNotification);
+
+			tokenNotification.setToken(t.name, t.icon);
+		}
+		notebook.setActivateToken(t);
+		// FIXME inventory.setActivateToken(t.id);
 	}
 
 
@@ -582,6 +609,33 @@ trace("create part display for "+part.id);
 		}
 
 		return creation;
+	}
+
+	function getContextual(c : ContextualType) : Display {
+
+		switch (c) {
+
+			case MENU:
+
+				return menu;
+			
+			case NOTEBOOK:
+
+				return notebook;
+			
+			case GLOSSARY:
+
+				// TODO doDisplayContextual(GlossaryDisplay.instance, GlossaryDisplay.instance.layout, hideOther);
+			
+			case BIBLIOGRAPHY:
+
+				// TODO doDisplayContextual(BibliographyDisplay.instance, BibliographyDisplay.instance.layout, hideOther);
+			
+			case INVENTORY: // nothing ?
+
+				//
+		}
+		return null;
 	}
 
 	function doDisplayContextual(contextual : Display, ? layout : String, hideOther : Bool = true) : Void {

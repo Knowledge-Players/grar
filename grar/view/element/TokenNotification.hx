@@ -34,16 +34,15 @@ class TokenNotification extends WidgetContainer {
      **/
 	public var duration (default, default) : Int;
 
-	public function setToken(tokenName : String) : Void {
-/* TODO
-		if (displays.exists("icon")) {
+	public function setToken(tokenName : String, tokenIcon : String) : Void {
 
-			cast(displays.get("icon"), Image).setBmp(GameManager.instance.inventory.get(tokenName).icon);
-		}
-		cast(displays.get("name"), ScrollPanel).setContent(Localiser.instance.getItemContent(GameManager.instance.inventory.get(tokenName).name));
-		cast(displays.get("title"), ScrollPanel).setContent(Localiser.instance.getItemContent("unlock"));
+		if(displays.exists("icon"))
+			cast(displays.get("icon"), Image).setBmp(tokenIcon);
+// FIXME		cast(displays.get("name"), ScrollPanel).setContent(Localiser.instance.getItemContent(tokenName));
+// FIXME		cast(displays.get("title"), ScrollPanel).setContent(Localiser.instance.getItemContent("unlock"));
+
+
 		Timer.delay(hideNotification, duration);
-*/
 	}
 
 	public function hideNotification() : Void {

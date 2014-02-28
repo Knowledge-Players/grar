@@ -22,7 +22,7 @@ class XmlToInventory {
 
 		for (token in tf.nodes.Token) {
 
-			i.set(token.att.id, parseInventoryToken(token.x));
+			i.set(token.att.id, parseInventoryToken(token));
 		}
 
 		return { m: i, d: d };
@@ -44,43 +44,43 @@ class XmlToInventory {
 		return { tn: tn, ti: ti };
 	}
 	
-	static function parseTokenData(xml : Xml) : Null<TokenData> {
+	static function parseTokenData(f : Fast) : Null<TokenData> {
 
-		var f : Fast = new Fast(xml);
-		
-		for (tf in f.nodes.Token) { // TODO check why for loop here
+		if (f != null) {
 
-			if (tf != null) {
+			var id : String = f.has.id ? f.att.id : f.att.name;
+			var ref : String = f.att.ref;
+			var type : Null<String> = f.has.type ? f.att.type : null;
+			var isActivated : Bool = f.has.unlocked ? f.att.unlocked == "true" : false;
+			var name : Null<String> = f.has.name ? f.att.name : null;
+			var content : String = f.att.content;
+			var icon : String = f.att.icon;
+			var image : String = f.att.src;
+			var fullScreenContent : Null<String> = f.has.fullScreenContent ? f.att.fullScreenContent : null;
 
-				var id : String = tf.att.id;
-				var ref : String = tf.att.ref;
-				var type : Null<String> = tf.has.type ? tf.att.type : null;
-				var isActivated : Bool = tf.has.unlocked ? tf.att.unlocked == "true" : false;
-				var name : Null<String> = tf.has.name ? tf.att.name : null;
-				var content : String = tf.att.content;
-				var icon : String = tf.att.icon;
-				var image : String = tf.att.src;
-				var fullScreenContent : Null<String> = tf.has.fullScreenContent ? tf.att.fullScreenContent : null;
-
-				return { id: id, ref: ref, type: type, isActivated: isActivated, name: name, content: content, 
-							icon: icon, image: image, fullScreenContent: fullScreenContent };
-			}
+			return { id: id, ref: ref, type: type, isActivated: isActivated, name: name, content: content, 
+						icon: icon, image: image, fullScreenContent: fullScreenContent };
 		}
+
 		return null;
 	}
 	
-	static function parseInventoryToken(xml : Xml) : InventoryToken {
+	static function parseInventoryToken(f : Fast) : InventoryToken {
 
-		var td : Null<TokenData> = parseTokenData(xml);
+		var td : Null<TokenData> = parseTokenData(f);
 		
 		return new InventoryToken(td);
 	}
 
 	static public function parseNoteToken(xml : Xml) : Note {
 
-		var td : Null<TokenData> = parseTokenData(xml);
-		
 		var f : Fast = new Fast(xml);
+		var td : Null<TokenData>;
+
+		for (tf in f.nodes.Token) {
+	
+			td = parseTokenData(tf);
+		}		
 
 		var video : Null<String> = null;
 

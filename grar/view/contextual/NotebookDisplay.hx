@@ -22,7 +22,6 @@ import grar.util.ParseUtils;
 import grar.util.DisplayUtils;
 
 // FIXME import com.knowledgeplayers.grar.event.PartEvent; // FIXME
-// FIXME import com.knowledgeplayers.grar.event.TokenEvent; // FIXME
 
 import flash.events.Event;
 import flash.net.URLRequest;
@@ -43,7 +42,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 
 		super();
 
-// FIXME		GameManager.instance.addEventListener(TokenEvent.ADD, onUnlocked);
+// 		GameManager.instance.addEventListener(TokenEvent.ADD, onUnlocked); // replaced by setActivateToken()
 		
 		buttonGroups.set(NOTE_GROUP_NAME, new GenericStack<DefaultButton>());
 		buttonGroups.set(TAB_GROUP_NAME, new GenericStack<DefaultButton>());
@@ -81,8 +80,62 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 
 
 	///
+	// CALLBACKS
+	//
+
+	public dynamic function onClose() : Void { }
+
+
+	///
 	// API
 	//
+
+	/**
+	 * FIXME The view shouldn't activate the chapter but only its button
+	 */
+	public function setActivateToken(t : grar.model.InventoryToken) : Void {
+
+		if (t.type == "note") {
+
+			var notes = model.getAllNotes();
+			var k = 0;
+			
+			while (k < notes.length && notes[k].name != t.name) {
+
+				k++;
+			}
+			if (k != notes.length) {
+
+				var chapter : Chapter = null;
+				var i = 0;
+				
+				while (i < model.pages.length && chapter == null) {
+
+					var j = 0;
+					
+					while (j < model.pages[i].chapters.length && !Lambda.has(model.pages[i].chapters[j].notes, notes[k])) {
+
+						j++;
+					}
+					chapter = j == model.pages[i].chapters.length ? null : model.pages[i].chapters[j];
+					i++;
+				}
+				if (chapter != null) {
+
+					chapter.isActivated = true;
+					
+					for (button in chapterMap.keys()) {
+
+						if (chapterMap.get(button) == chapter) {
+
+							button.alpha = 1;
+							break ;
+						}
+					}
+				}
+			}
+		}
+	}
 
 //	override public function parseContent(content:Xml):Void
 	override public function setContent(d : DisplayData) : Void {
@@ -228,18 +281,11 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 
 
 	///
-	// CALLBACKS
-	//
-
-	public dynamic function onClose() : Void { }
-
-
-	///
 	// INTERNALS
 	//
 
-	private function displayPage(page:Page):Void
-	{
+	private function displayPage(page : Page) : Void {
+
 		currentPage = page;
 
 		// Set Locale
@@ -432,38 +478,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 		if(i < model.pages.length)
 			displayPage(model.pages[i]);
 	}
-/* FIXME
-	private function onUnlocked(e:TokenEvent):Void
-	{
-		if(e.token.type == "note"){
-			var notes = model.getAllNotes();
-			var k = 0;
-			while(k < notes.length && notes[k].name != e.token.name){
-				k++;
-			}
-			if(k != notes.length){
-				var chapter: Chapter = null;
-				var i = 0;
-				while(i < model.pages.length && chapter == null){
-					var j = 0;
-					while(j < model.pages[i].chapters.length && !Lambda.has(model.pages[i].chapters[j].notes, notes[k]))
-						j++;
-					chapter = j == model.pages[i].chapters.length ? null : model.pages[i].chapters[j];
-					i++;
-				}
-				if(chapter != null){
-					chapter.isActivated = true;
-					for(button in chapterMap.keys()){
-						if(chapterMap.get(button) == chapter){
-							button.alpha = 1;
-							break ;
-						}
-					}
-				}
-			}
-		}
-	}
-*/
+
 	private inline function clearPage(?activeChapter: DefaultButton):Void
 	{
 		clearSteps();

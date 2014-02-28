@@ -178,6 +178,7 @@ trace("LoadingGame("+layoutUri+", ...)");
 				        			state.module.addInventoryTokens(i);
 				        			application.createTokenNotification(tn);
 									application.tokensImages = ti;
+									// TODO create id
 
 				        		}, onError);
 				        }
@@ -243,6 +244,11 @@ trace("Ready");
 
 		state.onPartFinished = onPartFinished;
 
+		state.onInventoryTokenActivated = function(t : InventoryToken) {
+
+				application.setActivateToken(t);
+			}
+
 		application.onLayoutsChanged = function() {
 
 				// last call before the user experience actually starts
@@ -251,8 +257,14 @@ trace("Ready");
 
 		application.onExitPart = function(pid : String) {
 
-			state.module.setPartFinished(pid);
-		}
+				state.module.setPartFinished(pid);
+			}
+
+		application.onActivateTokenRequested = function(tokenId : String) {
+
+				state.module.activateInventoryToken(tokenId);
+
+			}
 
 		state.readyState = true;
 	}
