@@ -454,7 +454,8 @@ class ActivityDisplay extends PartDisplay {
                         }
 
                         if(goodReps==nbDrops){
-                            cast(displays.get('button_continue_folder'), DefaultButton).toggleState ='continue';
+                            //cast(displays.get('button_continue_folder'), DefaultButton).toggleState ='continue';
+                            goNext = true;
                         };
 						if(buttonsToInputs.exists(cast(drop, DefaultButton))){
 							var dropZone = new DefaultButton();
