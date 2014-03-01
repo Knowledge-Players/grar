@@ -47,7 +47,7 @@ class XmlToWidget {
 			wd.rotation = f.has.rotation ? Std.parseFloat(f.att.rotation) : null;
 			wd.transformation = f.has.transformation ? f.att.transformation : null;
 
-			wd.filters = f.has.filters ? f.att.filters : null;
+			wd.filtersData = f.has.filters ? ParseUtils.parseListOfValues(f.att.filters) : null;
 
 			if (f.has.border) {
 

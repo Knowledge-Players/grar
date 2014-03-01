@@ -27,7 +27,7 @@ typedef WidgetData = {
 	var alpha : Null<Float>;
 	var rotation : Null<Float>;
 	var transformation : Null<String>;
-	var filters : Null<String>;
+	var filtersData : Null<Array<String>>;
 	var borderStyle : Null<{ thickness : Float, color : Color }>;
 	var position : Null<Positioning>;
 }
@@ -67,6 +67,7 @@ class Widget extends Sprite {
 		this.onLocalizedContentRequest = function(k : String){ return callbacks.onLocalizedContentRequest(k); }
 		this.onLocaleDataPathRequest = function(p:String){ callbacks.onLocaleDataPathRequest(p); }
 		this.onStylesheetRequest = function(s:String){ return callbacks.onStylesheetRequest(s); }
+		this.onFiltersRequest = function(fids:Array<String>){ return callbacks.onFiltersRequest(fids); }
 
 		if (wd != null) {
 
@@ -99,10 +100,10 @@ class Widget extends Sprite {
 
 				this.transformation = wd.transformation;
 			}
-// FIXME			if (xml.has.filters) {
+			if (wd.filtersData != null) {
 
-// FIXME				filters = FilterManager.getFilter(xml.att.filters);
-// FIXME			}
+				filters = onFiltersRequest(wd.filtersData);
+			}
 			if (wd.position != null) {
 
 				this.position = wd.position;
@@ -225,6 +226,8 @@ class Widget extends Sprite {
 	public dynamic function onLocaleDataPathRequest(uri : String) : Void { }
 
 	public dynamic function onStylesheetRequest(s : Null<String>) : grar.view.style.StyleSheet { return null; }
+
+	public dynamic function onFiltersRequest(fids : Array<String>) : Array<flash.filters.BitmapFilter> { return null; }
 
 
 	///

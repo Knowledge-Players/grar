@@ -30,6 +30,12 @@ import grar.view.Display;
 import flash.media.Sound;
 import flash.media.SoundChannel;
 import flash.media.SoundTransform;
+import flash.filters.GlowFilter;
+import flash.filters.ColorMatrixFilter;
+import flash.filters.BlurFilter;
+import flash.filters.DropShadowFilter;
+import flash.filters.BitmapFilterQuality;
+import flash.filters.BitmapFilter;
 import flash.display.BitmapData;
 import flash.display.Bitmap;
 import flash.Lib;
@@ -72,13 +78,14 @@ class Application {
 				onRestoreLocaleRequest: function(){ this.onRestoreLocaleRequest(); },
 				onLocalizedContentRequest: function(k:String){ return this.onLocalizedContentRequest(k); },
 				onLocaleDataPathRequest: function(p:String){ this.onLocaleDataPathRequest(p); },
-				onStylesheetRequest: function(s:String){ return this.getStyleSheet(s); }
+				onStylesheetRequest: function(s:String){ return this.getStyleSheet(s); },
+				onFiltersRequest: function(fids:Array<String>){ return this.getFilters(fids); }
 			};
 	}
 
 	public var tilesheet (default, default) : TilesheetEx;
 
-	public var filters (default, default) : StringMap<FilterData>;
+	public var filters (default, default) : Null<StringMap<BitmapFilter>>;
 
 	public var menuData (default, set) : Null<MenuData>;
 
@@ -202,6 +209,61 @@ class Application {
 	// API
 	//
 
+	public function getFilters(filtersIds : Array<String>) : Array<BitmapFilter> {
+
+		var result = new Array<BitmapFilter>();
+		
+		for (filter in filtersIds) {
+
+			if (!filters.exists(filter)) {
+
+				throw "no filter found for id '"+filter+"'";
+			}
+
+			result.push(filters.get(filter));
+		}
+
+		return result;
+	}
+
+	public function createFilters(f : StringMap<FilterData>) : Void {
+
+		this.filters = new StringMap();
+
+		for (fk in f.keys()) {
+
+			var nf : BitmapFilter;
+
+			switch (f.get(fk)) {
+
+				case DropShadow(distance, angle, color, alpha, blurX, blurY, strength, quality, inner, knockout, hideObject):
+
+					var q = switch(quality){ case Low: BitmapFilterQuality.LOW; case Medium: BitmapFilterQuality.MEDIUM; case High: BitmapFilterQuality.HIGH; }
+
+					nf = new DropShadowFilter(distance, angle, color, alpha, blurX, blurY, strength, q, inner, knockout, hideObject);
+
+				case Blur(blurX, blurY, quality):
+
+					var q = switch(quality){ case Low: BitmapFilterQuality.LOW; case Medium: BitmapFilterQuality.MEDIUM; case High: BitmapFilterQuality.HIGH; }
+
+					nf = new BlurFilter(blurX, blurY, q);
+
+				case Glow(color, alpha, blurX, blurY, strength, quality, inner, knockout):
+
+					var q = switch(quality){ case Low: BitmapFilterQuality.LOW; case Medium: BitmapFilterQuality.MEDIUM; case High: BitmapFilterQuality.HIGH; }
+
+					nf = new GlowFilter(color, alpha, blurX, blurY, strength, q, inner, knockout);
+
+				case ColorMatrix(matrix):
+
+					nf = new ColorMatrixFilter(matrix);
+
+			}
+
+			this.filters.set(fk, nf);
+		}
+	}
+
 	public function initTweener(t : StringMap<TransitionTemplate>) : Void {
 
 		this.tweener = new Tweener(t);
@@ -227,7 +289,7 @@ class Application {
 
 				throw "there is no layout '"+l+"'";
 			}
-			Lib.current.addChild(currentLayout.content); trace("child added to Lib.current");
+			Lib.current.addChild(currentLayout.content);
 
 		} else {
 
@@ -304,10 +366,13 @@ trace("styles ready");
 		n.onClose = function() { doHideContextual(n); }
 
 		d.applicationTilesheet = tilesheet;
+	
+		if (d.filtersData != null) {
+
+			d.filters = getFilters(d.filtersData);
+		}
 
 		n.setContent(d);
-
-		n.onClose = function(){ doHideContextual(n); }
 
 		this.notebook = n;
 
@@ -319,14 +384,13 @@ trace("styles ready");
 		var m : MenuDisplay = new MenuDisplay(callbacks);
 
 		d.applicationTilesheet = tilesheet;
+	
+		if (d.filtersData != null) {
+
+			d.filters = getFilters(d.filtersData);
+		}
 
 		m.setContent(d);
-
-		// TODO set callbacks on m
-		// ...
-
-		// IN pipes
-		// m.setPartFinished(partId) <= done
 
 		menu = m;
 
@@ -585,6 +649,11 @@ trace("create part display for "+part.id);
 		part.restart();
 
 		part.display.applicationTilesheet = tilesheet;
+	
+		if (part.display.filtersData != null) {
+
+			part.display.filters = getFilters(part.display.filtersData);
+		}
 		
 		var creation : PartDisplay = null;
 

@@ -47,7 +47,7 @@ class LocalizationController {
 trace("onCurrentLocaleChanged");
 					initLocaleData();
 				}
-				// TODO StyleParser.currentLocale = currentLocale;
+				// TODO something similar to StyleParser.currentLocale = currentLocale;
 			}
 
 		state.onCurrentLocalePathChanged = function() {
@@ -70,25 +70,21 @@ trace("state.onLocaleListChanged");
 		application.onRestoreLocaleRequest = function() {
 trace("application.onRestoreLocaleRequest");
 				restoreLocaleData();
-
 			}
 
 		application.onInterfaceLocaleDataPathRequest = function() {
 trace("application.onInterfaceLocaleDataPathRequest");
 				setInterfaceLocaleData();
-
 			}
 
 		application.onLocaleDataPathRequest = function(path : String) {
 trace("application.onLocaleDataPathRequest");
 				state.module.currentLocaleDataPath = path;
-
 			}
 
 		application.onLocalizedContentRequest = function(k : String) : String {
 //trace("application.onLocalizedContentRequest " + k);
 				return state.module.getLocalizedContent(k);
-
 			}
 	}
 

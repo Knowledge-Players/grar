@@ -69,7 +69,10 @@ typedef DisplayData = {
 	@:optional var transitionIn : Null<String>;
 	@:optional var transitionOut : Null<String>;
 	@:optional var layout : Null<String>;
-	@:optional var filters : Null<String>;
+	@:optional var filtersData : Null<Array<String>>;
+#if (flash || openfl)
+	@:optional var filters : Null<Array<flash.filters.BitmapFilter>>; // set in a second step
+#end
 	@:optional var timelines : StringMap<{ ref : String, elements : Array<{ ref : String, transition : String, delay : Float }> }>;
 	@:optional var displays : StringMap<ElementData>;
 	@:optional var layers : Null<StringMap<TileLayer>>; // set in a second step
@@ -211,17 +214,18 @@ trace("setContent, display type is "+d.type);
 			DisplayUtils.initSprite(this, d.width, d.height, 0, 0.001);
 		}
 		this.spritesheets = d.spritesheets;
+		this.applicationTilesheet = d.applicationTilesheet;
 
-		for (sk in d.spritesheets.keys()) {
+		if (d.spritesheets != null) {
 
-			var layer = new TileLayer(spritesheets.get(sk));
-			layers.set(sk, layer);
+			for (sk in d.spritesheets.keys()) {
 
-			addChild(layer.view);
+				var layer = new TileLayer(spritesheets.get(sk));
+				layers.set(sk, layer);
+
+				addChild(layer.view);
+			}
 		}
-		spritesheets = d.spritesheets;
-		applicationTilesheet = d.applicationTilesheet;
-
 		var uiLayer = new TileLayer(applicationTilesheet);
 		layers.set("ui", uiLayer);
 		addChild(uiLayer.view);
@@ -249,7 +253,7 @@ trace("setContent, display type is "+d.type);
 		}
 		if (d.filters != null) {
 
-// FIXME			filters = FilterManager.getFilter(d.filters);
+			filters = d.filters;
 		}
 // FIXME		ResizeManager.instance.onResize();
 	}

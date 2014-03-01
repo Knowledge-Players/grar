@@ -54,9 +54,6 @@ class Pattern /* implements PartElement */ {
 	 **/
 	public var buttons (default, null) : StringMap<StringMap<String>>;
 
-	/**
-     * Implements PartElement. FIXME should it be removed or is it still useful ?
-     **/
 	public var tokens (default, null) : GenericStack<String>;
 
 	public var endScreen (default, null) : Bool = false;

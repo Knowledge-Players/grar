@@ -29,6 +29,7 @@ class XmlToFilter {
 			switch(child.name.toLowerCase()) {
 
 				case NODE_NAME_DROPSHADOW:
+				
 					var distance = child.has.distance ? Std.parseFloat(child.att.distance) : 0;
 					var angle = child.has.angle ? Std.parseFloat(child.att.angle) : 0;
 					var color = child.has.color ? Std.parseInt(child.att.color) : 0;
@@ -43,12 +44,14 @@ class XmlToFilter {
 					filter = DropShadow(distance, angle, color, alpha, blurX, blurY, strength, quality, inner, knockout, hideObject);
 
 				case NODE_NAME_BLUR:
+				
 					var blurX = child.has.blurX ? Std.parseFloat(child.att.blurX) : 0;
 					var blurY = child.has.blurY ? Std.parseFloat(child.att.blurY) : 0;
 					var quality =  xmlToQuality(child);
 					filter = Blur(blurX, blurY, quality);
 
 				case NODE_NAME_GLOW:
+				
 					var color = child.has.color ? Std.parseInt(child.att.color) : 0;
 					var alpha = child.has.alpha ? Std.parseFloat(child.att.alpha) : 1;
 					var blurX = child.has.blurX ? Std.parseFloat(child.att.blurX) : 0;
@@ -60,6 +63,7 @@ class XmlToFilter {
 					filter = Glow(color, alpha, blurX, blurY, strength, quality, inner, knockout);
 
 				case NODE_NAME_COLOR:
+				
 					var matrix = new Array();
 					for(v in child.att.matrix.split(","))
 						matrix.push(Std.parseFloat(v));

@@ -134,7 +134,7 @@ class Grar {
 	//
 
 	public function set_currentLocale( v : String ) : String {
-
+trace("set currentLocale to " + v);
 		if (v == currentLocale) {
 			return v;
 		}

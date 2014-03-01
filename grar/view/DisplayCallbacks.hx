@@ -19,4 +19,6 @@ typedef DisplayCallbacks = {
 	var onLocaleDataPathRequest : String -> Void;
 
 	var onStylesheetRequest : Null<String> -> grar.view.style.StyleSheet;
+
+	var onFiltersRequest : Array<String> -> Array<flash.filters.BitmapFilter>;
 }

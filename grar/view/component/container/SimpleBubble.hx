@@ -46,10 +46,15 @@ class SimpleBubble extends WidgetContainer {
         drawSpeechBubble(bubble, radius, width, height, point,gap);
 
         bubble.graphics.endFill();
-        if (shadow != 0){
-// FIXME                bubble.filters = FilterManager.getFilter("bubbleShadow");
-	        if(bubble.filters.length == 0)
+        
+        if (shadow != 0) {
+
+            bubble.filters = onFiltersRequest(["bubbleShadow"]); // FilterManager.getFilter("bubbleShadow");
+	        
+            if (bubble.filters.length == 0) {
+
 	            throw "[SimpleBubble] No filter are specified for bubble. You must use the ref 'bubbleShadow' for it.";
+            }
         }
 
 	    content.addChild(bubble);

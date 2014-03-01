@@ -231,7 +231,6 @@ class GameService {
 			for (sk in v.spritesheetsSrc.keys()) {
 
 				v.spritesheets.set(sk, AssetsStorage.getSpritesheet(sk));
-
 			}
 
 			if (mPath != null) {

@@ -13,6 +13,8 @@ import grar.parser.component.XmlToImage;
 import grar.parser.component.XmlToCharacter;
 import grar.parser.component.container.XmlToWidgetContainer;
 
+import grar.util.ParseUtils;
+
 import haxe.ds.StringMap;
 
 import haxe.xml.Fast;
@@ -171,7 +173,6 @@ class XmlToDisplay {
 
 		for (child in f.nodes.SpriteSheet) {
 
-			//dd.spritesheets.set(child.att.id, AssetsStorage.getSpritesheet(child.att.src)); // FIXME
 			dd.spritesheetsSrc.set(child.att.id, child.att.src);
 
 			dd.layersSrc.set(child.att.id, child.att.src);
@@ -182,7 +183,7 @@ class XmlToDisplay {
 		dd.transitionIn = f.has.transitionIn ? f.att.transitionIn : null;
 		dd.transitionOut = f.has.transitionOut ? f.att.transitionOut : null;
 		dd.layout = f.has.layout ? f.att.layout : null;
-		dd.filters = f.has.filters ? f.att.filters : null;
+		dd.filtersData = f.has.filters ? ParseUtils.parseListOfValues(f.att.filters) : null;
 
 		return dd;
 	}
@@ -215,13 +216,6 @@ class XmlToDisplay {
 			}
 
 			dd.timelines.set(t.ref, t);
-		}
-		for (elem in dd.displays) {
-
-			// FIXME if (Std.is(elem, DefaultButton)) {
-
-				// FIXME cast(elem,DefaultButton).initStates(timelines);
-			// FIXME }
 		}
 
 		return dd;
