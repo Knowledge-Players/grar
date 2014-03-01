@@ -44,17 +44,17 @@ class LocalizationController {
 
 				if (state.module.currentLocaleDataPath != null && state.module.localeData == null) {
 
-					initLocaleData(state.module.currentLocaleDataPath);
-				}
 trace("onCurrentLocaleChanged");
+					initLocaleData();
+				}
 				// TODO StyleParser.currentLocale = currentLocale;
 			}
 
 		state.onCurrentLocalePathChanged = function() {
 trace("state.onCurrentLocalePathChanged");
-				if (state.module.currentLocale != null) {
+				if (state.module.currentLocaleDataPath != null && state.module.currentLocale != null) {
 
-					initLocaleData(state.module.currentLocaleDataPath);
+					initLocaleData();
 				}
 			}
 
@@ -86,14 +86,14 @@ trace("application.onLocaleDataPathRequest");
 			}
 
 		application.onLocalizedContentRequest = function(k : String) : String {
-trace("application.onLocalizedContentRequest");
+//trace("application.onLocalizedContentRequest " + k);
 				return state.module.getLocalizedContent(k);
 
 			}
 	}
 
-	function initLocaleData(p : String) : Void {
-trace("initLocaleData "+p);
+	function initLocaleData() : Void {
+trace("initLocaleData "+state.module.currentLocaleDataPath);
 		var fullPath = state.module.currentLocaleDataPath.split("/");
 
 		var localePath : StringBuf = new StringBuf();

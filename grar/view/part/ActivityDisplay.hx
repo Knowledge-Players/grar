@@ -40,9 +40,9 @@ typedef Coordinates = {
  */
 class ActivityDisplay extends PartDisplay {
 
-	public function new(model : Part) {
+	public function new(callbacks : grar.view.DisplayCallbacks, model : Part) {
 
-		super(model);
+		super(callbacks, model);
 
 		autoCorrect = false;
 		hasCorrection = true;
@@ -201,7 +201,7 @@ class ActivityDisplay extends PartDisplay {
 
 			case DefaultButton(d):
 
-				button = new DefaultButton(d);
+				button = new DefaultButton(callbacks, d);
 
 			default: throw "unexpected ElementData type";
 		}
@@ -232,18 +232,17 @@ class ActivityDisplay extends PartDisplay {
 
 			case Line(d):
 
-				guide = new Line(d);
+				guide = new Line(callbacks, d);
 
 			case Grid(d):
 
-				guide = new Grid(d);
+				guide = new Grid(callbacks, d);
 
 			case Curve(d):
 
-				guide = new Curve(d);
+				guide = new Curve(callbacks, d);
 		}
-		guide.onTransitionRequested = onTransitionRequested;
-		guide.onStopTransitionRequested = onStopTransitionRequested;
+
 		// Set guide to place inputs
 		guide.x = groupTemplate.x;
 		guide.y = groupTemplate.y;
@@ -394,7 +393,7 @@ class ActivityDisplay extends PartDisplay {
 					if(drop != null && validate(e.target, (buttonsToInputs.exists(cast(drop, DefaultButton)) ? buttonsToInputs.get(cast(drop, DefaultButton)).id : drop.name))){
 						copyCoordinates(e.target, drop);
 						if(buttonsToInputs.exists(cast(drop, DefaultButton))){
-							var dropZone = new DefaultButton();
+							var dropZone = new DefaultButton(callbacks);
 							dropZone.enabled = false;
 							dropZone.initSprite(drop.width, drop.height, 0.001);
 							dropZone.ref = dropRef;

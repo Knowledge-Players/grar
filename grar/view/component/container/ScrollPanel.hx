@@ -2,11 +2,10 @@ package grar.view.component.container;
 
 import grar.view.component.container.WidgetContainer;
 
-// FIXME import com.knowledgeplayers.grar.display.style.KpTextDownElement;
-// FIXME import com.knowledgeplayers.grar.display.style.KpTextDownParser;
+import grar.view.style.KpTextDownElement;
+import grar.view.style.Style;
 
-// FIXME import grar.view.style.Style;
-// FIXME import grar.view.style.StyleParser;
+import grar.parser.style.KpTextDownParser;
 
 import grar.util.DisplayUtils;
 
@@ -20,22 +19,22 @@ import flash.display.Sprite;
  */
 class ScrollPanel extends WidgetContainer {
 
-// FIXME public function new(?xml: Fast, ?width:Float, ?height:Float, ?_styleSheet:String) {
-	public function new(? spd : Null<WidgetContainerData>) {
+//  public function new(?xml: Fast, ?width:Float, ?height:Float, ?_styleSheet:String) {
+	public function new(callbacks : grar.view.DisplayCallbacks, ? spd : Null<WidgetContainerData>) {
 
 		if (spd == null) {
 
-			super();
+			super(callbacks);
 
 		} else {
 
-			super(spd);
+			super(callbacks, spd);
 
 			switch(spd.type) {
 
 				case ScrollPanel(ss, s, c, t):
 
-					this.styleSheet = ss;
+					this.styleSheetRef = ss;
 					this.style = s;
 					
 					if (c != null) {
@@ -47,26 +46,29 @@ class ScrollPanel extends WidgetContainer {
 				default: // nothing
 			}
 		}
-// FIXME if (_styleSheet != null) {
-
-// FIXME 	styleSheet = _styleSheet;
-// FIXME }
 	}
 
 	/**
     * Style sheet used for this panel
     **/
-	public var styleSheet (default, default):String;
+	public var styleSheetRef (default, default) : Null<String> = null;
 
 	/**
 	* Used to force a style on this scrollpanel
 	**/
-	public var style (default, default):String;
+	public var style (default, default) : String;
 
 	/**
 	* If true, resize the panel to the text width
 	**/
-	public var trim (default, default):Bool;
+	public var trim (default, default) : Bool;
+
+	private var styleSheet : grar.view.style.StyleSheet;
+
+
+	///
+	// API
+	//
 
 	/**
      * Set the text to the panel
@@ -77,45 +79,76 @@ class ScrollPanel extends WidgetContainer {
 	public function setContent(contentString:String):Void
 	{
 		clear();
-		var previousStyleSheet = null;
-// FIXME		if(styleSheet != null){
-// FIXME			previousStyleSheet = StyleParser.currentStyleSheet;
-// FIXME			StyleParser.currentStyleSheet = styleSheet;
-// FIXME		}
 
-		var offSetY:Float = 0;
-		var isFirst:Bool = true;
+		//var previousStyleSheet : String = null;
+		
+		if (styleSheetRef != null) {
+
+//			previousStyleSheet = onGetCurrentStyleSheetRequest();//StyleParser.currentStyleSheet;
+			//StyleParser.currentStyleSheet = styleSheet;
+			styleSheet = onStylesheetRequest(styleSheetRef);
+//trace("got stylesheet with id "+styleSheetRef+" => "+styleSheet);
+		} else {
+
+			styleSheet = onStylesheetRequest(null);
+//trace("got stylesheet with id "+styleSheetRef+" => "+styleSheet);
+		}
+
+		var offSetY : Float = 0;
+		var isFirst : Bool = true;
 
 		var maskLine = new Sprite();
 
 		var text = new Sprite();
 		var minPaddingLeft = Math.POSITIVE_INFINITY;
-/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-		for(element in KpTextDownParser.parse(contentString)){
-			if(style != null)
+
+		for (element in KpTextDownParser.parse(contentString)) {
+
+			element.tilesheet = tilesheet;
+
+			if (style != null) {
+
 				element.style = style;
-			var style:Style = StyleParser.getStyle(element.style);
-			if(style == null)
-				throw "[ScrollPanel] There is no style \"" + element.style + "\" in style sheet \"" + StyleParser.currentStyleSheet + "\".";
-			var padding = style.getPadding();
-			var iconOffset:Float = 0;
-			if(style.icon != null)
-				iconOffset += style.icon.width;
-			if(style.iconMargin != null)
-				iconOffset += style.iconMargin[1] + style.iconMargin[3];
+			}
+			element.styleSheet = styleSheet;
+//trace("styleSheet = "+styleSheet);
+			var st : Style = styleSheet.getStyle(element.style);
+			
+			if (st == null) {
+
+				throw "[ScrollPanel] There is no style \"" + element.style + "\" in style sheet \"" + styleSheet.name + "\".";
+			}
+			var padding = st.getPadding();
+			var iconOffset : Float = 0;
+			
+			if (st.icon != null) {
+
+				iconOffset += st.icon.width;
+			}
+			if (st.iconMargin != null) {
+
+				iconOffset += st.iconMargin[1] + st.iconMargin[3];
+			}
 			var item = element.createSprite(maskWidth - padding[1] - padding[3] - iconOffset, trim);
 
-			if(isFirst){
+			if (isFirst) {
+
 				offSetY += padding[0];
 				isFirst = false;
 			}
 			item.x = padding[3];
-			if(padding[3] < minPaddingLeft)
+
+			if (padding[3] < minPaddingLeft) {
+
 				minPaddingLeft = padding[3];
+			}
 			item.y = offSetY;
-			offSetY += item.height + style.getLeading()[1];
-			if(scrollable){
-				for(i in 0...element.numLines){
+			offSetY += item.height + st.getLeading()[1];
+			
+			if (scrollable) {
+
+				for (i in 0...element.numLines) {
+
 					var m = new Sprite();
 					m.y = item.y + (i * element.lineHeight);
 					m.x = item.x;
@@ -126,18 +159,22 @@ class ScrollPanel extends WidgetContainer {
 			}
 			text.addChild(item);
 		}
-*/
 		content.alpha = contentAlpha;
 		content.addChild(text);
-		if(!scrollable)
+		
+		if (!scrollable) {
+
 			DisplayUtils.initSprite(maskLine, text.width, maskHeight, 0, 1, minPaddingLeft);
+		}
 		content.addChild(maskLine);
 		text.mask = maskLine;
 		addChild(content);
 		displayContent(trim);
 
-// FIXME		if(previousStyleSheet != null)
-// FIXME			StyleParser.currentStyleSheet = previousStyleSheet;
+//		if (previousStyleSheet != null) {
 
+			//StyleParser.currentStyleSheet = previousStyleSheet;
+//			onSetCurrentStyleSheetRequest(previousStyleSheet);
+//		}
 	}
 }

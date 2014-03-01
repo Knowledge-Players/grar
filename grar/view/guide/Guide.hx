@@ -17,7 +17,11 @@ enum GuideData {
 
 class Guide {
 
-	public function new() { }
+	public function new(callbacks : grar.view.DisplayCallbacks) {
+
+		this.onTransitionRequested = function(target : Dynamic, transition : String, ? delay : Float = 0) { return callbacks.onTransitionRequested(target, transition, delay); }
+        this.onStopTransitionRequested = function(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true){ callbacks.onStopTransitionRequested(target, properties, complete, sendEvent); }
+	}
 
 	/**
      * X of the guide

@@ -32,9 +32,9 @@ typedef Template = {
 class InventoryDisplay extends WidgetContainer {
 
 	//public function new(?fast:Fast)
-	public function new(idd : WidgetContainerData) {
+	public function new(callbacks : grar.view.DisplayCallbacks, idd : WidgetContainerData) {
 
-		super(idd);
+		super(callbacks, idd);
 
 		slots = new StringMap();
 		displayTemplates = new StringMap();
@@ -47,18 +47,16 @@ class InventoryDisplay extends WidgetContainer {
 
 					case Line(d):
 
-						this.guide = new Line(d);
+						this.guide = new Line(callbacks, d);
 
 					case Grid(d):
 
-						this.guide = new Grid(d);
+						this.guide = new Grid(callbacks, d);
 
 					case Curve(d):
 
-						this.guide = new Curve(d);
+						this.guide = new Curve(callbacks, d);
 				}
-				this.guide.onTransitionRequested = onTransitionRequested;
-				this.guide.onStopTransitionRequested = onStopTransitionRequested;
 
 				this.fullscreen = fs;
 				this.displayTemplates = dt;
@@ -68,7 +66,7 @@ class InventoryDisplay extends WidgetContainer {
 
 // 		GameManager.instance.addEventListener(TokenEvent.ADD, onTokenActivated); // replaced by setActivateToken()
 
-		fullscreenContainer = new SimpleContainer(fullscreen);
+		fullscreenContainer = new SimpleContainer(callbacks, fullscreen);
 	}
 
 	private var slots : StringMap<DefaultButton>;
@@ -113,7 +111,7 @@ class InventoryDisplay extends WidgetContainer {
 
 // FIXME			var icons = ParseUtils.selectByAttribute("ref", "icon", tmpTemplate.x);
 // FIXME			ParseUtils.updateIconsXml(token.icon, icons);
-					button = new DefaultButton(d);
+					button = new DefaultButton(callbacks, d);
 
 				default: throw "unexpected ElementData type";
 			}

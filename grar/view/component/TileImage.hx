@@ -32,7 +32,7 @@ typedef TileImageData = {
 class TileImage extends Image {
 
 	//public function new(xml: Fast, layer: TileLayer, visible: Bool = true, ?div:Bool=false)
-	public function new(tid : TileImageData) {
+	public function new(callbacks : grar.view.DisplayCallbacks, tid : TileImageData) {
 
 		this.isVisible = tid.visible;
 
@@ -49,7 +49,7 @@ class TileImage extends Image {
             init();
 		}
 
-		super(tid.id);
+		super(callbacks, tid.id);
 
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove, 1000);
 		

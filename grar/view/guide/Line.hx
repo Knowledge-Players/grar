@@ -19,9 +19,9 @@ typedef LineData = {
 class Line extends Guide {
 
 	//public function new(start: Point, end: Point, centerObject: Bool = false, ?transitionIn: String)
-	public function new(d : LineData) {
+	public function new(callbacks : grar.view.DisplayCallbacks, d : LineData) {
 
-		super();
+		super(callbacks);
 		
 		startPoint = new Point(d.start[0],d.start[1]);
 		endPoint = new Point(d.end[0],d.end[1]);

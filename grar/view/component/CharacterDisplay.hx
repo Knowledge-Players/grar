@@ -17,9 +17,9 @@ typedef CharacterData = {
 class CharacterDisplay extends TileImage {
 
 	//public function new(?xml: Fast, layer:TileLayer, ?model:Character) {
-	public function new(cd : CharacterData) {
+	public function new(callbacks : grar.view.DisplayCallbacks, cd : CharacterData) {
 
-		super(cd.tid);
+		super(callbacks, cd.tid);
 
 		this.charRef = cd.charRef;
 		

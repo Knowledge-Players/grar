@@ -21,13 +21,13 @@ using StringTools;
 class SimpleContainer extends WidgetContainer {
 
 	//public function new( ? xml : Fast, ? tilesheet : TilesheetEx ) {
-	public function new(? scd : Null<WidgetContainerData>) {
+	public function new(callbacks : grar.view.DisplayCallbacks, ? scd : Null<WidgetContainerData>) {
 
         this.scd = scd;
 
 		this.totalChildren = this.loadedChildren = 0;
 
-		super(scd);
+		super(callbacks, scd);
 		
 		if (scd != null && scd.spritesheetRef != null) {
 
@@ -170,7 +170,7 @@ class SimpleContainer extends WidgetContainer {
 
 	override private function createSimpleContainer(d : WidgetContainerData) : Widget {
 
-		var div = new SimpleContainer(d);
+		var div = new SimpleContainer(callbacks, d);
 		totalChildren++;
 // FIXME		div.addEventListener(DisplayEvent.LOADED, setMask);
 		addElement(div);

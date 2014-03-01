@@ -12,10 +12,10 @@ import haxe.Timer;
 class TokenNotification extends WidgetContainer {
 
 	//public function new(fast : Fast) : Void {
-	public function new(tnd : WidgetContainerData) : Void {
+	public function new(callbacks : grar.view.DisplayCallbacks, tnd : WidgetContainerData) : Void {
 
 		//super(fast);
-		super(tnd);
+		super(callbacks, tnd);
 
 		switch(tnd.type) {
 

@@ -94,15 +94,15 @@ typedef WidgetContainerData = {
 class WidgetContainer extends Widget {
 
 	//private function new( ? xml : Fast, ? tilesheet : TilesheetEx ) {
-	private function new( ? wcd : Null<WidgetContainerData> ) {
+	private function new(callbacks : grar.view.DisplayCallbacks, ? wcd : Null<WidgetContainerData> ) {
 
 		if (wcd == null) {
 
-			super();
+			super(callbacks);
 
 		} else  {
 
-			super(wcd.wd);
+			super(callbacks, wcd.wd);
 		}
 
 		this.content = new Sprite();
@@ -260,14 +260,7 @@ class WidgetContainer extends Widget {
 				}
 				ParseUtils.formatToFour(b.radius);
                 
-                var bubble : SimpleBubble = new SimpleBubble(b.bubbleWidth!=0 ? b.bubbleWidth:maskWidth,b.bubbleHeight!=0 ? b.bubbleHeight:maskHeight,colors,b.arrowX,b.arrowY,b.radius,b.line,b.colorLine,b.shadow,b.gap,alphas,b.bubbleX,b.bubbleY);
-                
-                bubble.onTransitionRequested = onTransitionRequested;
-				bubble.onStopTransitionRequested = onStopTransitionRequested;
-
-				bubble.onRestoreLocaleRequest = onRestoreLocaleRequest;
-				bubble.onLocalizedContentRequest = onLocalizedContentRequest;
-				bubble.onLocaleDataPathRequest = onLocaleDataPathRequest;
+                var bubble : SimpleBubble = new SimpleBubble(callbacks, b.bubbleWidth!=0 ? b.bubbleWidth:maskWidth,b.bubbleHeight!=0 ? b.bubbleHeight:maskHeight,colors,b.arrowX,b.arrowY,b.radius,b.line,b.colorLine,b.shadow,b.gap,alphas,b.bubbleX,b.bubbleY);
                 
                 addChildAt(bubble,0);
             
@@ -347,7 +340,7 @@ class WidgetContainer extends Widget {
 
 			case Image(d):
 
-				var img : Image = new Image(d);
+				var img : Image = new Image(callbacks, d);
 	            addElement(img);
 				return img;
 
@@ -356,7 +349,7 @@ class WidgetContainer extends Widget {
 				d.layer = layer;
 				d.visible = d.div = true;
 
-	            var tileImg : TileImage = new TileImage(d);
+	            var tileImg : TileImage = new TileImage(callbacks, d);
 	            addElement(tileImg);
 		        return tileImg;
 
@@ -458,21 +451,21 @@ class WidgetContainer extends Widget {
 
 	private function createTimer(d : WidgetContainerData) : ChronoCircle {
 
-		var timer = new ChronoCircle(d);
+		var timer = new ChronoCircle(callbacks, d);
 		addElement(timer);
         return timer;
 	}
 
 	private function createSimpleContainer(d : WidgetContainerData) : Widget {
 
-		var div = new SimpleContainer(d);
+		var div = new SimpleContainer(callbacks, d);
 		addElement(div);
 		return div;
 	}
 
 	private function createButton(d : WidgetContainerData) : Widget {
 
-		var button : DefaultButton = new DefaultButton(d);
+		var button : DefaultButton = new DefaultButton(callbacks, d);
 
 		switch(d.type) {
 
@@ -507,7 +500,9 @@ class WidgetContainer extends Widget {
 	//private function createText(textNode : Fast) : Widget {
 	private function createText(d : WidgetContainerData) : ScrollPanel {
 
-		var text = new ScrollPanel(d);
+		d.applicationTilesheet = tilesheet;
+		
+		var text = new ScrollPanel(callbacks, d);
 		addElement(text);
         return text;
 	}
@@ -516,13 +511,6 @@ class WidgetContainer extends Widget {
 	{
 		elem.zz = zIndex;
         displays.set(elem.ref,elem);
-
-        elem.onTransitionRequested = onTransitionRequested;
-		elem.onStopTransitionRequested = onStopTransitionRequested;
-
-		elem.onRestoreLocaleRequest = onRestoreLocaleRequest;
-		elem.onLocalizedContentRequest = onLocalizedContentRequest;
-		elem.onLocaleDataPathRequest = onLocaleDataPathRequest;
 
 		content.addChild(elem);
 		children.push(elem);

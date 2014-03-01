@@ -1,5 +1,8 @@
 package grar.service;
 
+import openfl.Assets;
+import com.knowledgeplayers.utils.assets.AssetsStorage;
+
 import grar.model.Grar;
 import grar.model.InventoryToken;
 import grar.model.localization.Locale;
@@ -36,7 +39,6 @@ import grar.parser.style.JsonToStyleSheet;
 
 import aze.display.TilesheetEx;
 
-import com.knowledgeplayers.utils.assets.AssetsStorage;
 import com.knowledgeplayers.utils.assets.loaders.concrete.TextAsset;
 
 import haxe.ds.StringMap;
@@ -342,7 +344,26 @@ class GameService {
 
 						throw "unsupported style format " + l.e;
 				}
+#if (flash || openfl)
+				for (st in ssd.styles) {
 
+					if (st.values.get("font") != null) {
+
+						st.font =  Assets.getFont(st.values.get("font"));
+					}
+					if (st.iconSrc != null && st.iconSrc.indexOf(".") > 0) {
+
+						st.icon = AssetsStorage.getBitmapData(st.iconSrc);
+					}
+					if (st.backgroundSrc != null) {
+
+						if (Std.parseInt(st.backgroundSrc) == null) {
+
+							st.background = AssetsStorage.getBitmapData(st.backgroundSrc);
+						}
+					}
+				}
+#end
 				s.push(ssd);
 			}
 

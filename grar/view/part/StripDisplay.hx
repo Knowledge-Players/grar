@@ -24,9 +24,9 @@ import haxe.ds.StringMap;
  */
 class StripDisplay extends PartDisplay {
 
-	public function new(part : Part) {
+	public function new(callbacks, part : Part) {
 
-		super(part);
+		super(callbacks, part);
 
 		boxes = new StringMap();
 	}
@@ -88,7 +88,7 @@ class StripDisplay extends PartDisplay {
 			case BoxDisplay(d):
 
 				d.tilesheet = spritesheets.get(d.spritesheetRef);
-				elem = new BoxDisplay(d);
+				elem = new BoxDisplay(callbacks, d);
 
 			default: // nothing
 		}
@@ -207,7 +207,7 @@ class StripDisplay extends PartDisplay {
 
 			d.tilesheet = spritesheets.get(d.tilesheetRef != null ? d.tilesheetRef : "ui");
 
-			var img = new Image(d);
+			var img = new Image(callbacks, d);
 			
 			addChild(img);
 			

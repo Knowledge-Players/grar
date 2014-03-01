@@ -53,15 +53,15 @@ typedef ImageData = {
 class Image extends Widget {
 
 	//public function new( ? xml : Fast, ? tilesheet : TilesheetEx ) {
-	public function new( ? id : Null<ImageData> ) {
+	public function new(callbacks : grar.view.DisplayCallbacks, ? id : Null<ImageData>) {
 
 		if (id == null) {
 
-			super();
+			super(callbacks);
 
 		} else {
 
-			super(id.wd);
+			super(callbacks, id.wd);
 
 			createImg(id);
 
@@ -198,7 +198,7 @@ class Image extends Widget {
 				if (id.width != null && id.height != null) {
 
 					ParseUtils.formatToFour(id.radius);
-					addChild(new SimpleBubble(id.width, id.height, colors, id.radius, alphas));
+					addChild(new SimpleBubble(callbacks, id.width, id.height, colors, id.radius, alphas));
 				
 				} else {
 

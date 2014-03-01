@@ -41,9 +41,9 @@ class PartDisplay extends Display {
      * Constructor
      * @param	part : Part to display
      */
-	public function new(part : Part) {
+	public function new(callbacks : grar.view.DisplayCallbacks, part : Part) {
 
-		super();
+		super(callbacks);
 
 		this.part = part;
 // FIXME		resizeD = ResizeManager.get_instance();
@@ -343,14 +343,14 @@ trace("setting part display content");
 
 			case InventoryDisplay(d): 
 
-				inventory = new InventoryDisplay(d);
+				inventory = new InventoryDisplay(callbacks, d);
 				inventory.init(part.tokens);
 				addElement(inventory, r);
 				return null;
 
 			case IntroScreen(d):
 
-				var intro = new IntroScreen(d);
+				var intro = new IntroScreen(callbacks, d);
 				intro.zz = zIndex;
 				displays.set(r, intro);
 				zIndex++;
@@ -405,7 +405,7 @@ trace("setting part display content");
 				
 					button.buttonAction = function(?target: DefaultButton){
 
-							var goToTarget: PartElement = part.buttonTargets.get(button.ref);
+							var goToTarget : PartElement = part.buttonTargets.get(button.ref);
 						
 							if (goToTarget == null) {
 
@@ -413,7 +413,7 @@ trace("setting part display content");
 							
 							} else {
 
-								nextElement(part.getElementIndex(goToTarget)-1);
+								nextElement(part.getElementIndex(goToTarget) - 1);
 							}
 						};
 
@@ -726,7 +726,7 @@ trace("setting part display content");
 
 	private function selectElements():Array<Widget>
 	{
-		var array = new Array<Widget    >();
+		var array = new Array<Widget>();
 		for(key in displays.keys()){
 			if(mustBeDisplayed(key))
 				array.push(displays.get(key));

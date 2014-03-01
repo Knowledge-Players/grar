@@ -50,9 +50,9 @@ enum MenuLevel {
  */
 class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
-	public function new() {
+	public function new(callbacks : grar.view.DisplayCallbacks) {
 
-		super();
+		super(callbacks);
 
 		buttons = new StringMap();
 		buttonGroups.set(btnGroupName, new GenericStack<DefaultButton>());
@@ -132,7 +132,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 					b.applicationTilesheet = applicationTilesheet;
 
-					this.bookmark = new BookmarkDisplay(b);
+					this.bookmark = new BookmarkDisplay(callbacks, b);
 				}
 			default: throw "wrong DisplayData type given to MenuDisplay.setContent()";
         }
@@ -208,7 +208,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 			case Button(xo, yo, w, bd): // xOffset : Null<Float>, yOffset : Null<Float>, width : Null<Float>, button : Null<WidgetContainerData>
 
-				var button = addButton(bd, onLocalizedContentRequest(level.partName), level.icon); // FIXME localize level.partName
+				var button = addButton(bd, onLocalizedContentRequest(level.partName), level.icon);
 
 				buttons.set(level.id, button);
 				setButtonState(button, level);
@@ -238,13 +238,13 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 			case ContainerSeparator(d):
 
-				var separator : Widget = new SimpleContainer(d);
+				var separator : Widget = new SimpleContainer(callbacks, d);
 
 				separator.addEventListener(Event.CHANGE, updateDynamicFields);
 
 			case ImageSeparator(thickness, color, alpha, origin, destination, x, y):
 
-				var separator : Widget = new Image();
+				var separator : Widget = new Image(callbacks);
 
 				if (thickness != null) {
 
@@ -295,7 +295,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 // FIXME parse "icons" in WidgetContainerData		var icons = ParseUtils.selectByAttribute("ref", "icon", fast.x);
 // FIXME parse "icons" in WidgetContainerData		ParseUtils.updateIconsXml(iconId, icons);
-		var button : DefaultButton = new DefaultButton(d);
+		var button : DefaultButton = new DefaultButton(callbacks, d);
 
 		button.setText(text, "partName");
 		button.buttonAction = onClick;
@@ -409,29 +409,43 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 		}
 	}
 
-	private function onAdded(e:Event):Void
-	{
-/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+	private function onAdded(e : Event) : Void {
+/* FIXME
 		// Update bookmark
+// FIXME do this in Ctrl
 		var i = 0;
-		while(i < GameManager.instance.game.getAllParts().length && GameManager.instance.game.getAllParts()[i].isDone){
+		while (i < GameManager.instance.game.getAllParts().length && 
+				GameManager.instance.game.getAllParts()[i].isDone) {
+
 			i++;
 		}
 		var part;
-		if(!buttons.exists(GameManager.instance.game.getAllParts()[i].id)){
+		
+		if (!buttons.exists(GameManager.instance.game.getAllParts()[i].id)) {
+
 			part = GameManager.instance.game.getAllParts()[i];
-			while(part != null && !buttons.exists(part.id))
+			
+			while (part != null && !buttons.exists(part.id)) {
+
 				part = part.parent;
-		}
-		else
+			}
+		
+		} else {
+
 			part = GameManager.instance.game.getAllParts()[i];
-		if(part != null){
+		}
+		if (part != null) {
+
 			currentPartButton = buttons.get(part.id);
-			if(bookmark != null)
+			
+			if (bookmark != null) {
+
 				bookmark.updatePosition(currentPartButton.x, currentPartButton.y);
+			}
 		}
 
-		if (timelines.exists("in")){
+		if (timelines.exists("in")) {
+
 			timelines.get("in").play();
 		}
 		dispatchEvent(new PartEvent(PartEvent.ENTER_PART));

@@ -36,9 +36,9 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 	static private inline var TAB_GROUP_NAME : String = "tabs";
 	static private inline var STEP_GROUP_NAME : String = "steps";
 
-	public function new() {
+	public function new(callbacks : grar.view.DisplayCallbacks) {
 
-		super();
+		super(callbacks);
 
 // 		GameManager.instance.addEventListener(TokenEvent.ADD, onUnlocked); // replaced by setActivateToken()
 		
@@ -209,7 +209,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 // FIXME				var icons = ParseUtils.selectByAttribute("ref", "icon", tmpTemplate.x);
 // FIXME				ParseUtils.updateIconsXml(page.icon, icons);
 
-				var tab = new DefaultButton(tabTemplate.e); // FIXME
+				var tab = new DefaultButton(callbacks, tabTemplate.e); // FIXME
 
 				tab.x = totalX;
 				totalX += tab.width+xOffset;
@@ -249,7 +249,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 
 						case DefaultButton(d):
 
-							button = new DefaultButton(d);
+							button = new DefaultButton(callbacks, d);
 
 						default: throw "";
 					}
@@ -386,17 +386,16 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 
 				case Line(d):
 
-					guide = new Line(d);
+					guide = new Line(callbacks, d);
 
 				case Grid(d):
 
-					guide = new Grid(d);
+					guide = new Grid(callbacks, d);
 
 				case Curve(d):
 
-					guide = new Curve(d);
+					guide = new Curve(callbacks, d);
 			}
-			guide.onTransitionRequested = onTransitionRequested;
 			
 			// Create steps
 			for(i in 0...numActive) {

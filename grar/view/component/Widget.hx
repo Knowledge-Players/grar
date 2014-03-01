@@ -1,5 +1,6 @@
 package grar.view.component;
 
+import grar.view.DisplayCallbacks;
 import grar.view.component.container.DropdownMenu;
 
 import motion.actuators.GenericActuator;
@@ -52,9 +53,20 @@ class Widget extends Sprite {
 	 * Never called directly (only in sub-classes)
 	 */
 	//private function new(?xml: Fast)
-	private function new(? wd : Null<WidgetData>) {
+	private function new(callbacks : DisplayCallbacks, ? wd : Null<WidgetData>) {
 
 		super();
+
+		this.callbacks = callbacks;
+		this.onContextualDisplayRequested = function(c : grar.view.Application.ContextualType, ? ho : Bool = true){ callbacks.onContextualDisplayRequested(c, ho); }
+		this.onContextualHideRequested = function(c : grar.view.Application.ContextualType){ callbacks.onContextualHideRequested(c); }
+		this.onQuitGameRequested = function(){ callbacks.onQuitGameRequested(); }
+		this.onTransitionRequested = function(t : Dynamic, tt : String, ? de : Float = 0) { return callbacks.onTransitionRequested(t, tt, de); }
+		this.onStopTransitionRequested = function(t : Dynamic, ? p : Null<Dynamic>, ? c : Bool = false, ? se : Bool = true){ callbacks.onStopTransitionRequested(t, p, c, se); }
+		this.onRestoreLocaleRequest = function(){ callbacks.onRestoreLocaleRequest(); }
+		this.onLocalizedContentRequest = function(k : String){ return callbacks.onLocalizedContentRequest(k); }
+		this.onLocaleDataPathRequest = function(p:String){ callbacks.onLocaleDataPathRequest(p); }
+		this.onStylesheetRequest = function(s:String){ return callbacks.onStylesheetRequest(s); }
 
 		if (wd != null) {
 
@@ -136,6 +148,8 @@ class Widget extends Sprite {
 		}
 	}
 
+	var callbacks : DisplayCallbacks;
+
 	/**
 	* Scale of the widget
 	**/
@@ -194,6 +208,12 @@ class Widget extends Sprite {
 	// CALLBACKS
 	//
 
+	public dynamic function onContextualDisplayRequested(c : grar.view.Application.ContextualType, ? hideOther : Bool = true) : Void { }
+
+	public dynamic function onContextualHideRequested(c : grar.view.Application.ContextualType) : Void { }
+
+	public dynamic function onQuitGameRequested() : Void { }
+
 	public dynamic function onTransitionRequested(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
 
 	public dynamic function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
@@ -203,6 +223,8 @@ class Widget extends Sprite {
 	public dynamic function onLocalizedContentRequest(k : String) : String { return null; }
 
 	public dynamic function onLocaleDataPathRequest(uri : String) : Void { }
+
+	public dynamic function onStylesheetRequest(s : Null<String>) : grar.view.style.StyleSheet { return null; }
 
 
 	///

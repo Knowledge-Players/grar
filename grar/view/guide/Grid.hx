@@ -46,9 +46,9 @@ typedef Size = {
 class Grid extends Guide {
 
 	//public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?alignment:GridAlignment, resize: Bool = true, ?transitionIn: String)
-	public function new(d : GridData) {
+	public function new(callbacks : grar.view.DisplayCallbacks, d : GridData) {
 
-		super();
+		super(callbacks);
 
 		this.numRow = d.numRow;
 		this.numCol = d.numCol;

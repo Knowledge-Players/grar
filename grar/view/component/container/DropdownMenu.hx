@@ -1,9 +1,10 @@
 package grar.view.component.container;
 
 import grar.view.Color;
+import grar.view.style.KpTextDownElement;
 import grar.view.component.container.WidgetContainer;
 
-// FIXME import com.knowledgeplayers.grar.display.style.KpTextDownParser;
+import grar.parser.style.KpTextDownParser;
 
 import flash.geom.Point;
 import flash.display.Sprite;
@@ -19,9 +20,9 @@ import haxe.ds.StringMap;
 class DropdownMenu extends WidgetContainer {
 
 	//public function new( ? xml : Fast, blankItem = false) {
-	public function new(dmd : WidgetContainerData , blankItem = false) {
+	public function new(callbacks : grar.view.DisplayCallbacks, dmd : WidgetContainerData , blankItem = false) {
 
-		super(dmd);
+		super(callbacks, dmd);
 
 		blank = blankItem;
 		buttonMode = true;
@@ -61,9 +62,19 @@ class DropdownMenu extends WidgetContainer {
 	private function set_currentLabel(label:String):String
 	{
 		currentLabel = label;
-		if(labelSprite.numChildren > 0)
+		
+		if (labelSprite.numChildren > 0) {
+
 			labelSprite.removeChildAt(0);
-// FIXME		labelSprite.addChild(KpTextDownParser.parse(label)[0].createSprite(maskWidth));
+		}
+		
+		var kpTxt : KpTextDownElement = KpTextDownParser.parse(label)[0];
+// FIXME		// kpTxt.styleSheet = ???
+		kpTxt.tilesheet = tilesheet;
+
+		labelSprite.addChild(kpTxt.createSprite(maskWidth));
+
+
 		dispatchEvent(new Event(Event.CHANGE));
 		return label;
 	}
@@ -71,42 +82,54 @@ class DropdownMenu extends WidgetContainer {
 	public function onAdd(e:Event):Void
 	{
 		var yOffset:Float = 0;
-		for(item in items){
-			if(item != null){
-/* FIXME
-				var sprite = KpTextDownParser.parse(item)[0].createSprite(maskWidth);
+
+		for (item in items) {
+
+			if (item != null) {
+
+				var kpTxt : KpTextDownElement = KpTextDownParser.parse(item)[0];
+// FIXME				// kpTxt.styleSheet = ???
+				kpTxt.tilesheet = tilesheet;
+
+				var sprite = kpTxt.createSprite(maskWidth);
 				sprite.buttonMode = true;
 				sprite.y = yOffset;
 				yOffset += sprite.height;
 				sprite.addEventListener(MouseEvent.CLICK, onItemClick);
 				list.addChild(sprite);
 				sprites.set(item, sprite);
-*/
 			}
 		}
-		if(localToGlobal(new Point(0, 0)).y+list.height > stage.stageHeight)
+		if (localToGlobal(new Point(0, 0)).y+list.height > stage.stageHeight) {
+
 			list.y = y - list.height;
+		}
 
         list.visible = false;
 
-		if(!blank)
+		if (!blank) {
+
 			set_currentLabel(items.first());
-		else{
+		
+		} else {
+
 			labelSprite.graphics.beginFill(color.color, color.alpha);
 			labelSprite.graphics.drawRect(0, 0, list.getChildAt(0).width, list.getChildAt(0).height);
 			labelSprite.graphics.endFill();
-
 		}
 		addChild(labelSprite);
 
 		addChild(list);
 	}
 
-	private function onItemClick(e:MouseEvent):Void
-	{
-		for(label in sprites.keys()){
-			if(e.currentTarget == sprites.get(label))
+	private function onItemClick(e : MouseEvent) : Void {
+
+		for (label in sprites.keys()) {
+
+			if (e.currentTarget == sprites.get(label)) {
+
 				set_currentLabel(label);
+			}
 		}
 		list.visible = false;
 		labelSprite.visible = true;
@@ -114,8 +137,8 @@ class DropdownMenu extends WidgetContainer {
 		addEventListener(MouseEvent.CLICK, onClick);
 	}
 
-	private function onClick(e:MouseEvent):Void
-	{
+	private function onClick(e : MouseEvent) : Void {
+
 		labelSprite.visible = false;
 		list.visible = true;
 		removeEventListener(MouseEvent.CLICK, onClick);

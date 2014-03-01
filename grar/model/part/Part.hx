@@ -54,10 +54,7 @@ typedef PartData = {
 	var next : Null<Array<String>>;
 	var endScreen : Bool;
 	var buttonTargets : StringMap<PartElement>;
-	var nbSubPartLoaded : Int;
 	var nbSubPartTotal : Int;
-	var partIndex : Int;
-	var elemIndex : Int;
 	var soundLoopChannel : SoundChannel;
 	var loaded : Bool;
 	// partial data
@@ -91,10 +88,7 @@ class Part /* implements Part */ {
 		this.next = pd.next;
 		this.endScreen = pd.endScreen;
 		this.buttonTargets = pd.buttonTargets;
-		this.nbSubPartLoaded = pd.nbSubPartLoaded;
 		this.nbSubPartTotal = pd.nbSubPartTotal;
-		this.partIndex = pd.partIndex;
-		this.elemIndex = pd.elemIndex;
 		this.soundLoopChannel = pd.soundLoopChannel;
 		this.loaded = pd.loaded;
 	}
@@ -245,48 +239,35 @@ class Part /* implements Part */ {
 		}
 	}
 
-	public function startElement(elemId : String) : Void {
 
-		var tmpIndex : Int = elemIndex == 0 ? 0 : elemIndex - 1;
-		var first : Bool = true;
+	public function startElement(elemId: String):Void
+	{
+//		if (elemIndex == 0 || elemId != elements[elemIndex-1].id) {
+		if (elemIndex == 0 || elemId != switch(elements[elemIndex-1]){ case Part(p): p.id; case Pattern(p): p.id; case Item(i): i.id; }) {
 
-		while (tmpIndex < elements.length) {
+			var tmpIndex = 0;
+			
+			//while (tmpIndex < elements.length && elements[tmpIndex].id != elemId) {
+			while (tmpIndex < elements.length && elemId != switch(elements[tmpIndex]){ case Part(p): p.id; case Pattern(p): p.id; case Item(i): i.id; }) {
 
-			switch (elements[tmpIndex]) {
+				tmpIndex++;
+			}
+			if (tmpIndex < elements.length) {
+
+				elemIndex = tmpIndex;
+			}
+			switch (elements[elemIndex]) {
 
 				case Part(p):
 
-					if (p.id == elemId) {
-
-						if (first) return;
-
-						elemIndex = tmpIndex;
-					}
+					//if (p.next == null || p.next == "") {
 					if (p.next == null) {
 
 						elemIndex++;
 					}
 
-				case Pattern(p):
-
-					if (p.id == elemId) {
-
-						if (first) return;
-
-						elemIndex = tmpIndex;
-					}
-
-				case Item(i):
-
-					if (i.id == elemId) {
-
-						if (first) return;
-
-						elemIndex = tmpIndex;
-					}
+				default: // nothing
 			}
-			tmpIndex++;
-			first = false;
 		}
 	}
 

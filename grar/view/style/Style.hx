@@ -5,7 +5,6 @@ import haxe.ds.StringMap;
 import grar.util.ParseUtils;
 
 #if (flash || openfl)
-import openfl.Assets;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.text.Font;
@@ -18,16 +17,15 @@ typedef StyleData = {
 
 	var name : String;
 	var values : StringMap<String>;
-#if (flash || openfl)
-	var icon : BitmapData;
-#end
 	var iconSrc : Null<String>;
 	var iconPosition : Null<String>;
 	var iconMargin : Null<Array<Float>>;
-#if (flash || openfl)
-	var background : Bitmap;
-#end
 	var backgroundSrc : Null<String>;
+#if (flash || openfl)
+	var font : Null<Font>;
+	var icon : Null<BitmapData>;
+	var background : Null<BitmapData>;
+#end
 }
 
 /**
@@ -39,16 +37,25 @@ class Style {
 
 		this.name = sd.name;
 		this.values = sd.values;
-#if (flash || openfl)
-		this.icon = sd.icon;
-#end
 		this.iconSrc = sd.iconSrc;
 		this.iconPosition = sd.iconPosition;
 		this.iconMargin = sd.iconMargin;
-#if (flash || openfl)
-		this.background = sd.background;
-#end
 		this.backgroundSrc = sd.backgroundSrc;
+#if (flash || openfl)
+		if (sd.background != null) {
+
+			this.background = new Bitmap(sd.background);
+		
+		} else if (Std.parseInt(sd.backgroundSrc) != null) {
+
+			this.background = new Bitmap();
+	#if !html
+ 			this.background.opaqueBackground = Std.parseInt(sd.backgroundSrc);
+	#end
+		}
+		this.icon = sd.icon;
+		this.font = sd.font;
+#end
 	}
 
 	/**
@@ -92,23 +99,37 @@ class Style {
     **/
 	public var values (default, null) : StringMap<String>;
 
+#if (flash || openfl)
+	var font : Font;
+#end
+
 
 	///
-	// GETTER / SETTER
+	// API
 	//
+
+	public function get(k : String) : Null<String> {
+
+		return values.get(k);
+	}
+
+	public function exists(k : String) : Bool {
+
+		return values.exists(k);
+	}
 
 	/**
      * @return the font of the style
      */
-// FIXME #if (flash || openfl)
-// FIXME 	public function getFont() : Null<Font> {
+#if (flash || openfl)
+ 	public function getFont() : Null<Font> {
 
-// FIXME 		return Assets.getFont(get("font"));
-// FIXME #else
+ 		return font;
+#else
 	public function getFont() : Null<String> {
-// FIXME #end
 
-		return values.get("font"); // FIXME
+		return values.get("font");
+#end
 	}
 
 	/**

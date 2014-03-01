@@ -11,10 +11,10 @@ import flash.events.Event;
 class AnimationDisplay extends WidgetContainer {
 
     //public function new(?xml: Fast, ?_id:String, ?_tileSheet:TilesheetEx, _loop:Int = 0,_visible:Bool=false) {
-    public function new(add : WidgetContainerData) {
+    public function new(callbacks : grar.view.DisplayCallbacks, add : WidgetContainerData) {
 
         //super(xml);
-        super(add);
+        super(callbacks, add);
 
         set_visible(_visible);
 

@@ -17,12 +17,12 @@ class SoundPlayer extends WidgetContainer
 {
 
     //public function new(?xml: Fast, ?tilesheet: TilesheetEx)
-    public function new(spd : WidgetContainerData) {
+    public function new(callbacks : grar.view.DisplayCallbacks, spd : WidgetContainerData) {
 
         playButtons = new GenericStack<DefaultButton>();
 
         //super(xml, tilesheet);
-        super(spd);
+        super(callbacks, spd);
 
         soundChannel = new SoundChannel();
     }

@@ -20,7 +20,7 @@ import haxe.ds.StringMap;
 class DefaultButton extends WidgetContainer {
 
 // public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>) // pStates never passed ??
-	public function new(? dbd : Null<WidgetContainerData>) {
+	public function new(callbacks : grar.view.DisplayCallbacks, ? dbd : Null<WidgetContainerData>) {
 		
 		this.timelines = new Map<String, Timeline>();
 		this.enabledState = new Map<String, Bool>();
@@ -28,14 +28,14 @@ class DefaultButton extends WidgetContainer {
 
 		if (dbd == null) {
 
-			super();
+			super(callbacks);
 
 			this.defaultState = "active";
 			this.enabled = true;
 
 		} else {
 
-			super(dbd);
+			super(callbacks, dbd);
 
 			switch(dbd.type) {
 

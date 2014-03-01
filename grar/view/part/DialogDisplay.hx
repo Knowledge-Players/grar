@@ -22,18 +22,18 @@ import flash.events.MouseEvent;
 class DialogDisplay extends PartDisplay {
 
 	/**
-	 * Pattern playing
-	 **/
-	public var currentPattern : Pattern;
-
-	/**
      * Constructor
      * @param	part : DialogPart to display
      */
-	public function new(part : Part) {
+	public function new(callbacks : grar.view.DisplayCallbacks, part : Part) {
 
-		super(part);
+		super(callbacks, part);
 	}
+
+	/**
+	 * Pattern playing
+	 **/
+	public var currentPattern : Pattern;
 
 	override public function next(? target : DefaultButton) : Void {
 

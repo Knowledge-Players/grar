@@ -16,17 +16,19 @@ class BoxDisplay extends WidgetContainer {
 	 **/
 	public var textFields (default, default) : StringMap<ScrollPanel>;
 
-	public function new(bdd : WidgetContainerData) {
+	public function new(callbacks : grar.view.DisplayCallbacks, bdd : WidgetContainerData) {
 
 		textFields = new StringMap();
 
-		super(bdd);
+		super(callbacks, bdd);
 	}
 
 	//override private inline function createText(textNode : Fast) : Widget {
 	override private function createText(d : WidgetContainerData) : ScrollPanel {
 
-		var text = new ScrollPanel(d);
+		d.applicationTilesheet = tilesheet;
+
+		var text = new ScrollPanel(callbacks, d);
 		addElement(text);
 		textFields.set(text.ref, text);
 		return text;

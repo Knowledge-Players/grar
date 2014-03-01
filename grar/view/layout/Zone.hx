@@ -27,9 +27,9 @@ import flash.Lib;
 class Zone extends Display {
 
 	//public function new(_width:Float, _height:Float):Void
-	public function new(_width:Float, _height:Float) : Void {
+	public function new(callbacks : grar.view.DisplayCallbacks, _width : Float, _height : Float) : Void {
 
-		super();
+		super(callbacks);
 
 		zoneWidth = _width;
 		zoneHeight = _height;
@@ -114,7 +114,7 @@ class Zone extends Display {
 					
 					for (row in zones) {
 
-						var zone = new Zone(zoneWidth, heights[i]);
+						var zone = new Zone(callbacks, zoneWidth, heights[i]);
 						zone.x = 0;
 						zone.y = yOffset;
 
@@ -135,7 +135,7 @@ class Zone extends Display {
 
 					for (column in zones) {
 
-						var zone = new Zone(widths[j], zoneHeight);
+						var zone = new Zone(callbacks, widths[j], zoneHeight);
 						zone.x = xOffset;
 						zone.y = 0;
 
@@ -261,7 +261,7 @@ class Zone extends Display {
 #if kpdebug
 			case DropdownMenu(d):
 
-				fastnav = new DropdownMenu(d, true);
+				fastnav = new DropdownMenu(callbacks, d, true);
 #end
 			default: // nothing
 		}
@@ -273,7 +273,7 @@ class Zone extends Display {
 //	private function createProgressBar(element : Fast) : ProgressBar {
 	private function createProgressBar(d : WidgetContainerData) : ProgressBar {
 
-		var progress = new ProgressBar(d);
+		var progress = new ProgressBar(callbacks, d);
 
 		addChild(progress);
 

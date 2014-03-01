@@ -67,7 +67,7 @@ typedef VideoBackgroundData = {
 class VideoPlayer extends WidgetContainer {
 
 	//public function new(?xml: Fast, ?tilesheet: TilesheetEx)
-	public function new(vpd : WidgetContainerData) {
+	public function new(callbacks : grar.view.DisplayCallbacks, vpd : WidgetContainerData) {
 
 		playButtons = new GenericStack<DefaultButton>();
 		controls = new GenericStack<Widget>();
@@ -88,7 +88,7 @@ class VideoPlayer extends WidgetContainer {
 
 
 		//super(xml, tilesheet);
-		super(vpd);
+		super(callbacks, vpd);
 
 		video = new Video();
 
@@ -407,7 +407,7 @@ class VideoPlayer extends WidgetContainer {
 
 			case VideoBackground(d):
 
-				backgroundControls = new Widget();
+				backgroundControls = new Widget(callbacks);
 
 				backgroundControls.graphics.beginFill(d.color,d.alpha);
 				backgroundControls.graphics.drawRect(d.x,d.y,d.w,d.h);
@@ -419,7 +419,7 @@ class VideoPlayer extends WidgetContainer {
 
 			case VideoProgressBar(d):
 
-				progressBar = new Image();
+				progressBar = new Image(callbacks);
 				//progressBar.ref = elemNode.att.ref;
 				progressBar.x = d.x;
 				progressBar.y = d.y;
@@ -427,7 +427,7 @@ class VideoPlayer extends WidgetContainer {
 				
 				var mask : Sprite = null;
 				d.mask.layer = layer;
-				var mt : TileImage = new TileImage(d.mask);
+				var mt : TileImage = new TileImage(callbacks, d.mask);
 				mt.x = (progressBar.x + mt.width/2);
 				mt.y = (progressBar.y + mt.height/2);
 				mask = mt.getMask();
@@ -439,8 +439,8 @@ class VideoPlayer extends WidgetContainer {
 				progressBar.addChild(bar);
 
 				d.cursor.tile.layer = new TileLayer(layer.tilesheet);
-				var ct : TileImage = new TileImage(d.cursor.tile);
-				cursor = new Widget();
+				var ct : TileImage = new TileImage(callbacks, d.cursor.tile);
+				cursor = new Widget(callbacks);
 				cursor.ref = d.cursor.ref;
 				cursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(ct.tileSprite.layer.tilesheet, ct.tileSprite.tile)));
 				cursor.x = d.cursor.x + progressBar.x - cursor.width / 2;
@@ -457,21 +457,21 @@ class VideoPlayer extends WidgetContainer {
 
 			case VideoSlider(d):
 
-				soundSlider = new Image();
+				soundSlider = new Image(callbacks);
 				//soundSlider.ref = elemNode.att.ref;
 				soundSlider.x = d.x;
 				soundSlider.y = d.y;
 
 				d.bar.tile.layer = new TileLayer(layer.tilesheet);
-				var bt : TileImage = new TileImage(d.bar.tile);
+				var bt : TileImage = new TileImage(callbacks, d.bar.tile);
 				var cur = new Bitmap(DisplayUtils.getBitmapDataFromLayer(bt.tileSprite.layer.tilesheet, bt.tileSprite.tile));
 				cur.x = d.bar.x;
 				cur.y = d.bar.y;
 				soundSlider.addChild(cur);
 
 				d.cursor.tile.layer = new TileLayer(layer.tilesheet);
-				var ct : TileImage = new TileImage(d.cursor.tile);
-				soundCursor = new Widget();
+				var ct : TileImage = new TileImage(callbacks, d.cursor.tile);
+				soundCursor = new Widget(callbacks);
 				soundCursor.ref = d.cursor.ref;
 				soundCursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(ct.tileSprite.layer.tilesheet, ct.tileSprite.tile)));
 				soundCursor.x = d.cursor.x + soundSlider.x + d.cursor.vol * soundSlider.width - soundCursor.width / 2;

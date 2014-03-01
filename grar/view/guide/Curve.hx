@@ -26,9 +26,9 @@ class Curve extends Guide
 {
 
 	//public function new(?center: Point, radius: Float = 1, minAngle: Float = 0, maxAngle: Float = 360, centerObject: Bool = false)
-	public function new(d : CurveData) {
+	public function new(callbacks : grar.view.DisplayCallbacks, d : CurveData) {
 
-		super();
+		super(callbacks);
 
 		if (d.center != null) {
 

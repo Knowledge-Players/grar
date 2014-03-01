@@ -5,6 +5,7 @@ import aze.display.TilesheetEx;
 
 import motion.actuators.GenericActuator.IGenericActuator;
 
+import grar.view.DisplayCallbacks;
 import grar.view.ElementData;
 import grar.view.guide.Guide;
 import grar.view.contextual.NotebookDisplay;
@@ -80,7 +81,7 @@ class Display extends Sprite {
 	/**
 	 * Never instanciated directly (only in sub-classes)
 	 */
-	private function new() {
+	private function new(callbacks : DisplayCallbacks) {
 
 		super();
 		
@@ -95,8 +96,21 @@ class Display extends Sprite {
 		this.dynamicFields = new Array();
 		this.displayTemplates = new StringMap();
 
+		this.callbacks = callbacks;
+		this.onContextualDisplayRequested = function(c : grar.view.Application.ContextualType, ? ho : Bool = true){ callbacks.onContextualDisplayRequested(c, ho); }
+		this.onContextualHideRequested = function(c : grar.view.Application.ContextualType){ callbacks.onContextualHideRequested(c); }
+		this.onQuitGameRequested = function(){ callbacks.onQuitGameRequested(); }
+		this.onTransitionRequested = function(t : Dynamic, tt : String, ? de : Float = 0) { return callbacks.onTransitionRequested(t, tt, de); }
+		this.onStopTransitionRequested = function(t : Dynamic, ? p : Null<Dynamic>, ? c : Bool = false, ? se : Bool = true){ callbacks.onStopTransitionRequested(t, p, c, se); }
+		this.onRestoreLocaleRequest = function(){ callbacks.onRestoreLocaleRequest(); }
+		this.onLocalizedContentRequest = function(k : String){ return callbacks.onLocalizedContentRequest(k); }
+		this.onLocaleDataPathRequest = function(p:String){ callbacks.onLocaleDataPathRequest(p); }
+		this.onStylesheetRequest = function(s:String){ return callbacks.onStylesheetRequest(s); }
+
 		addEventListener(Event.ENTER_FRAME, checkRender);
 	}
+
+	var callbacks : DisplayCallbacks;
 
 	// Should not be written. Can't be inlined because of inheritance
 	private var groupMenu : String = "menu";
@@ -156,7 +170,7 @@ class Display extends Sprite {
 	// CALLBACKS
 	//
 
-	public dynamic function onContextualDisplayRequested(c : grar.view.Application.ContextualType) : Void { }
+	public dynamic function onContextualDisplayRequested(c : grar.view.Application.ContextualType, ? hideOther : Bool = true) : Void { }
 
 	public dynamic function onContextualHideRequested(c : grar.view.Application.ContextualType) : Void { }
 
@@ -171,6 +185,8 @@ class Display extends Sprite {
 	public dynamic function onLocalizedContentRequest(k : String) : String { return null; }
 
 	public dynamic function onLocaleDataPathRequest(uri : String) : Void { }
+
+	public dynamic function onStylesheetRequest(s : Null<String>) : grar.view.style.StyleSheet { return null; }
 
 
 	///
@@ -256,25 +272,15 @@ trace("setContent, display type is "+d.type);
 		}
 		for (t in d.timelines) {
 
-			var timeline = new Timeline(t.ref);
-
-			timeline.onTransitionRequested = onTransitionRequested;
-			timeline.onStopTransitionRequested = onStopTransitionRequested;
+			var timeline = new Timeline(callbacks, t.ref);
 
 			for (e in t.elements) {
 
 				// Creating mock widget for dynamic timeline
 				if (e.ref.startsWith("$")) {
 
-					var mock = new Image();
+					var mock = new Image(callbacks);
 					mock.ref = e.ref;
-
-					mock.onTransitionRequested = onTransitionRequested;
-					mock.onStopTransitionRequested = onStopTransitionRequested;
-
-					mock.onRestoreLocaleRequest = onRestoreLocaleRequest;
-					mock.onLocalizedContentRequest = onLocalizedContentRequest;
-					mock.onLocaleDataPathRequest = onLocaleDataPathRequest;
 
 
 					timeline.addElement(mock, e.transition, e.delay);
@@ -343,7 +349,7 @@ trace("setContent, display type is "+d.type);
 
 			case SimpleContainer(d):
 
-				var div = new SimpleContainer(d);
+				var div = new SimpleContainer(callbacks, d);
 				
 				addElement(div, r);
 				
@@ -351,7 +357,7 @@ trace("setContent, display type is "+d.type);
 
 			case ChronoCircle(d):
 
-	            var timer = new ChronoCircle(d);
+	            var timer = new ChronoCircle(callbacks, d);
 
 	            addElement(timer, r);
 
@@ -384,7 +390,7 @@ trace("setContent, display type is "+d.type);
 
 			bg9Grid = cursor9Grid;
 		}
-		var scroll = new ScrollBar(d.width, tilesheet, d.tile, d.bgTile, cursor9Grid, bg9Grid, d.cursorColor, d.bgColor);
+		var scroll = new ScrollBar(callbacks, d.width, tilesheet, d.tile, d.bgTile, cursor9Grid, bg9Grid, d.cursorColor, d.bgColor);
 
 		scrollBars.set(r, scroll);
 
@@ -400,7 +406,7 @@ trace("setContent, display type is "+d.type);
 				d.tilesheet = d.spritesheetRef != null ? spritesheets.get(d.spritesheetRef) : null;
 				d.applicationTilesheet = this.applicationTilesheet;
 
-				var sound = new SoundPlayer(d);
+				var sound = new SoundPlayer(callbacks, d);
 				addElement(sound, r);
 
 				return sound;
@@ -420,7 +426,7 @@ trace("setContent, display type is "+d.type);
 				d.tilesheet = d.spritesheetRef != null ? spritesheets.get(d.spritesheetRef) : null;
 				d.applicationTilesheet = this.applicationTilesheet;
 
-				var video = new VideoPlayer(d);
+				var video = new VideoPlayer(callbacks, d);
 
 				addElement(video, r);
 				
@@ -440,7 +446,7 @@ trace("setContent, display type is "+d.type);
 
 				d.applicationTilesheet = this.applicationTilesheet;
 
-				var panel = new ScrollPanel(d);
+				var panel = new ScrollPanel(callbacks, d);
 
 				addElement(panel, r);
 
@@ -464,7 +470,7 @@ trace("setContent, display type is "+d.type);
 
 				d.applicationTilesheet = this.applicationTilesheet;
 				
-				var btn : DefaultButton = new DefaultButton(d);
+				var btn : DefaultButton = new DefaultButton(callbacks, d);
 
 				if (action != null) {
 
@@ -500,7 +506,7 @@ trace("setContent, display type is "+d.type);
 
 	private function createCharacter(r : String, d : CharacterData) : Widget {
 
-		var c : CharacterDisplay = new CharacterDisplay(d);
+		var c : CharacterDisplay = new CharacterDisplay(callbacks, d);
 		
 		addElement(c, r);
 		
@@ -516,7 +522,7 @@ trace("setContent, display type is "+d.type);
 			layers.set(d.tilesheetName, layer);
 		}
 		d.layer = layers.get(d.tilesheetName);
-		var img = new TileImage(d);
+		var img = new TileImage(callbacks, d);
 		
 		addElement(img, r, d.id.isBackground);
 		
@@ -525,7 +531,7 @@ trace("setContent, display type is "+d.type);
 	private function createImage(r : String, d : ImageData) : Widget {
 
 		d.tilesheet = spritesheets.get(d.tilesheetRef);
-		var img =  new Image(d);
+		var img =  new Image(callbacks, d);
 
 		addElement(img, r, d.isBackground);
 		
@@ -554,13 +560,6 @@ trace("setContent, display type is "+d.type);
 			elem.zz = zIndex;
 		}
 		displays.set(ref, elem);
-
-		elem.onTransitionRequested = onTransitionRequested;
-		elem.onStopTransitionRequested = onStopTransitionRequested;
-
-		elem.onRestoreLocaleRequest = onRestoreLocaleRequest;
-		elem.onLocalizedContentRequest = onLocalizedContentRequest;
-		elem.onLocaleDataPathRequest = onLocaleDataPathRequest;
 
 // FIXME		ResizeManager.instance.addDisplayObjects(elem, node);
 		zIndex++;

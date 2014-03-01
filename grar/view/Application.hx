@@ -61,6 +61,19 @@ class Application {
 		// WIP 
 
 		this.parts = new GenericStack<PartDisplay>();
+
+		this.callbacks = {
+
+				onContextualDisplayRequested: function(c : ContextualType, ? ho : Bool = true){ this.displayContextual(c, ho); },
+				onContextualHideRequested: function(c : ContextualType){ this.hideContextual(c); },
+				onQuitGameRequested: function(){ this.onQuitGameRequested(); },
+				onTransitionRequested: function(t : Dynamic, tt : String, de : Float = 0){ return this.onTransitionRequested(t, tt, de); },
+				onStopTransitionRequested: function(t : Dynamic, ? p : Null<Dynamic>, ? c : Bool = false, ? se : Bool = true){ this.onStopTransitionRequested(t, p, c, se); },
+				onRestoreLocaleRequest: function(){ this.onRestoreLocaleRequest(); },
+				onLocalizedContentRequest: function(k:String){ return this.onLocalizedContentRequest(k); },
+				onLocaleDataPathRequest: function(p:String){ this.onLocaleDataPathRequest(p); },
+				onStylesheetRequest: function(s:String){ return this.getStyleSheet(s); }
+			};
 	}
 
 	public var tilesheet (default, default) : TilesheetEx;
@@ -70,6 +83,8 @@ class Application {
 	public var menuData (default, set) : Null<MenuData>;
 
 	public var stylesheets : Null<StringMap<StyleSheet>>;
+
+	public var defaultStyleSheetName : Null<String> = null;
 
 	public var localeData : LocaleData;
 
@@ -92,6 +107,8 @@ class Application {
 
 
 	// WIP
+
+	var callbacks : grar.view.DisplayCallbacks;
 
 	var tweener : Null<Tweener> = null;
 
@@ -224,62 +241,41 @@ class Application {
 
 		for (ssd in ssds) {
 
-			var ss : StyleSheet = cast { };
-
-			ss.name = ssd.name;
-			ss.styles = new StringMap();
+			var name = ssd.name;
+			var styles = new StringMap();
 
 			for (sd in ssd.styles) {
 #if (flash || openfl)
-				// set background bitmap
-				if (sd.backgroundSrc != null) {
-
-					if (Std.parseInt(sd.backgroundSrc) != null) {
-
-						sd.background = new Bitmap();
-	#if !html
- 						sd.background.opaqueBackground = Std.parseInt(sd.backgroundSrc);
-	#end
-
-					} else {
-
-						sd.background = new Bitmap(AssetsStorage.getBitmapData(sd.backgroundSrc));
-
-					}
-				}
-
 				// set icon bitmap
 				if (sd.iconSrc != null) {
 
 					if (sd.iconSrc.indexOf(".") < 0) {
 
 						sd.icon = DisplayUtils.getBitmapDataFromLayer(tilesheet, sd.iconSrc);
-					
-					} else {
-
-						sd.icon = AssetsStorage.getBitmapData(sd.iconSrc);
 					}
 				}
 #end
 				var s : Style =  new Style(sd);
 
-				ss.styles.set( s.name , s );
+				styles.set( s.name , s );
 			}
 
-			newStyles.set(ss.name, ss);
+			newStyles.set(name, new StyleSheet(name, styles));
+
+			if (defaultStyleSheetName == null) {
+
+				defaultStyleSheetName = name;
+			}
 		}
 
 		stylesheets = newStyles;
-
+trace("styles ready");
 		onStylesChanged();
 	}
 
 	public function createTokenNotification(d : WidgetContainerData) : Void {
 
-		tokenNotification = new TokenNotification(d);
-
-		tokenNotification.onTransitionRequested = onTransitionRequested;
-		tokenNotification.onStopTransitionRequested = onStopTransitionRequested;
+		tokenNotification = new TokenNotification(callbacks, d);
 
 		onTokenNotificationChanged();
 	}
@@ -290,14 +286,7 @@ class Application {
 
 		for (lk in lm.keys()) {
 
-			var nl : Layout = new Layout(lm.get(lk), tilesheet);
-
-			nl.onTransitionRequested = onTransitionRequested;
-			nl.onStopTransitionRequested = onStopTransitionRequested;
-
-			nl.onRestoreLocaleRequest = onRestoreLocaleRequest;
-			nl.onLocalizedContentRequest = onLocalizedContentRequest;
-			nl.onLocaleDataPathRequest = onLocaleDataPathRequest;
+			var nl : Layout = new Layout(callbacks, lm.get(lk), tilesheet);
 
 			l.set(lk, nl);
 
@@ -310,18 +299,7 @@ class Application {
 
 	public function createNotebook(d : DisplayData) : Void {
 
-		var n : NotebookDisplay = new NotebookDisplay();
-
-		n.onTransitionRequested = onTransitionRequested;
-		n.onStopTransitionRequested = onStopTransitionRequested;
-
-		n.onContextualDisplayRequested = function(c:ContextualType){ displayContextual(c); };
-		n.onContextualHideRequested = hideContextual;
-		n.onQuitGameRequested = onQuitGameRequested;
-
-		n.onRestoreLocaleRequest = onRestoreLocaleRequest;
-		n.onLocalizedContentRequest = onLocalizedContentRequest;
-		n.onLocaleDataPathRequest = onLocaleDataPathRequest;
+		var n : NotebookDisplay = new NotebookDisplay(callbacks);
 
 		n.onClose = function() { doHideContextual(n); }
 
@@ -338,18 +316,7 @@ class Application {
 
 	public function createMenu(d : DisplayData) : Void {
 
-		var m : MenuDisplay = new MenuDisplay();
-
-		m.onTransitionRequested = onTransitionRequested;
-		m.onStopTransitionRequested = onStopTransitionRequested;
-
-		m.onContextualDisplayRequested = function(c:ContextualType){ displayContextual(c); };
-		m.onContextualHideRequested = hideContextual;
-		m.onQuitGameRequested = onQuitGameRequested;
-
-		m.onRestoreLocaleRequest = onRestoreLocaleRequest;
-		m.onLocalizedContentRequest = onLocalizedContentRequest;
-		m.onLocaleDataPathRequest = onLocaleDataPathRequest;
+		var m : MenuDisplay = new MenuDisplay(callbacks);
 
 		d.applicationTilesheet = tilesheet;
 
@@ -370,7 +337,11 @@ class Application {
 
         if (menu != null) {
 
+        	onInterfaceLocaleDataPathRequest();
+trace("init menu");
             menu.init(menuData);
+
+			onRestoreLocaleRequest();
         }
 	}
 
@@ -480,33 +451,21 @@ trace("display part "+part.id);
 //		parts.first().addEventListener(PartEvent.EXIT_PART, onExitPart);
 		fp.onExit = function(){ onExitPart(parts.first().part.id); }
 // FIXME		parts.first().addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
-		fp.onEnterSubPart = function(sp : Part){ /* TODO */ }
+		fp.onEnterSubPart = function(sp : Part){ /* TODO */ trace("UNIMPLEMENTED onEnterSubPart"); }
 // FIXME		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		fp.onPartLoaded = function(){ onPartLoaded(fp); }
 // FIXME		parts.first().addEventListener(GameEvent.GAME_OVER, function(e:GameEvent) {...});
 		fp.onGameOver = function(){ 
-
+trace("UNIMPLEMENTED onGameOver");
 // FIXME				game.connection.tracking.setStatus(true);
 // FIXME				game.connection.computeTracking(game.stateInfos);
 // FIXME				dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
 			}
-/* TODO
-*/
+
 		fp.onTokenToActivate = onActivateTokenRequested;
 
 		fp.onSoundToLoad = loadSound;
 		fp.onSoundToPlay = playSound;
-
-		fp.onTransitionRequested = onTransitionRequested;
-		fp.onStopTransitionRequested = onStopTransitionRequested;
-
-		fp.onContextualDisplayRequested = function(c:ContextualType){ displayContextual(c); };
-		fp.onContextualHideRequested = hideContextual;
-		fp.onQuitGameRequested = onQuitGameRequested;
-
-		fp.onRestoreLocaleRequest = onRestoreLocaleRequest;
-		fp.onLocalizedContentRequest = onLocalizedContentRequest;
-		fp.onLocaleDataPathRequest = onLocaleDataPathRequest;
 
 		fp.init();
 
@@ -587,6 +546,16 @@ trace("display part "+part.id);
 
 	// WIP
 
+	function getStyleSheet(s : Null<String>) : StyleSheet {
+
+		if (s == null) {
+
+			s = defaultStyleSheetName;
+		}
+//trace("getStyleSheet "+s);
+		return stylesheets.get(s);
+	}
+
 	function onPartLoaded(pd : PartDisplay) : Void { trace("onPartLoaded "+pd.part.id);
 
 		// TODO setBookmark(pd.part.id);
@@ -621,19 +590,19 @@ trace("create part display for "+part.id);
 
 		if (part.isDialog()) {
 
-			creation = new DialogDisplay(part);
+			creation = new DialogDisplay(callbacks, part);
 		
 		} else if(part.isStrip()) {
 
-			creation = new StripDisplay(part);
+			creation = new StripDisplay(callbacks, part);
 		
 		} else if(part.isActivity()) {
 
-			creation = new ActivityDisplay(part);
+			creation = new ActivityDisplay(callbacks, part);
 		
 		} else {
 
-			creation = new PartDisplay(part);
+			creation = new PartDisplay(callbacks, part);
 		}
 
 		return creation;
@@ -696,7 +665,7 @@ trace("create part display for "+part.id);
 		}
 	}
 
-	private function onTransitionRequested(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator {
+	private function onTransitionRequested(target : Dynamic, transition : String, delay : Float = 0) : IGenericActuator {
 
 		return tweener.applyTransition(target, transition, delay);
 	}

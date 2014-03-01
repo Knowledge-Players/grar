@@ -361,9 +361,6 @@ class XmlToPart {
 
 		pd.id = f.att.id;
 		pd.nbSubPartTotal = 0;
-		pd.nbSubPartLoaded = 0;
-		pd.partIndex = 0;
-		pd.elemIndex = 0;
 		pd.elements = new Array();
 		pd.tokens = new GenericStack<String>();
 		pd.buttons = new StringMap();
