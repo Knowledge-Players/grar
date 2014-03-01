@@ -4,7 +4,6 @@ import grar.model.Config;
 import grar.model.State;
 import grar.model.Grar;
 import grar.model.localization.Locale;
-import grar.model.localization.LocaleData;
 import grar.model.InventoryToken;
 import grar.model.ContextualType;
 import grar.model.contextual.Notebook;
@@ -13,6 +12,7 @@ import grar.model.part.Part;
 import grar.service.GameService;
 
 import grar.controller.TrackingController;
+import grar.controller.LocalizationController;
 
 import grar.view.Application;
 
@@ -32,9 +32,10 @@ class Controller {
 
 		gameSrv = new GameService();
 
-		trackingCtrl = new TrackingController(this, state, config);
-
 		application = new Application();
+
+		trackingCtrl = new TrackingController(this, state, config);
+		localizationCtrl = new LocalizationController(this, state, config, application, gameSrv);
 	}
 
 	var config : Config;
@@ -43,6 +44,7 @@ class Controller {
 	var gameSrv : GameService;
 
 	var trackingCtrl : TrackingController;
+	var localizationCtrl : LocalizationController;
 
 	var application : Application;
 
@@ -76,7 +78,7 @@ trace("Loading("+langsUri+", ...)");
 						// langs list
 						gameSrv.fetchLangs( langsUri, function(l:StringMap<Locale>){
  
-							state.locales = l;
+							state.module.locales = l;
 
 						}, onError );
 
@@ -226,20 +228,7 @@ trace("Ready");
 
 				// place here cleaning code for any potential previous module
 
-				state.currentLocale = null;
-			}
-
-		state.onLocalesAdded = function() {
-
-				// TODO ? doesn't seem to be used...
-				// for each lang, flags.set(value, flagIconPath);
-
-				// implement a loadCurrentLocale(); ?
-			}
-
-		state.onCurrentLocalePathChanged = function() {
-
-				pushLocale(state.module.currentLocalePath);
+				state.module.currentLocale = null;
 			}
 
 		state.onPartFinished = onPartFinished;
@@ -334,8 +323,8 @@ trace("Ready");
 	}
 
 	function loadStyles(displayXml : Fast) : Void { // FIXME avoid Fast in ctrl
-trace("loadStyles");
-		if (state.currentLocale != null && application.tilesheet != null) { // check if enought
+//trace("loadStyles");
+		if (state.module.currentLocale != null && application.tilesheet != null) { // check if enought
 trace("actually load styles");
 			// only when tilesheet loaded and currentLocale known
 	        var localizedPathes : Array<{ p : String, e : String }> = [];
@@ -349,7 +338,7 @@ trace("actually load styles");
 
 	                lp += fullPath[i] + "/";
 	            }
-	            lp += state.currentLocale + "/";
+	            lp += state.module.currentLocale + "/";
 	            lp += fullPath[fullPath.length - 1];
 
 		        var extension : String = lp.substr(lp.lastIndexOf(".") + 1);
@@ -372,36 +361,13 @@ trace("loadlayouts "+uri);
 				if (lp != null) {
 
 					// lp is the id/path to the application wide localization file (used by the menu)
-					state.module.interfaceLocale = lp;
+					state.module.interfaceLocaleDataPath = lp;
 				}
 				application.createLayouts(lm);
 
 				state.module.readyState = Ready; // FIXME reorganize init tasks and place in the safest place
 
         	}, onError );
-	}
-
-	/**
-	 * FIXME this shouldn't be here
-	 */
-	function pushLocale(l : String) : Void {
-
-		var fullPath = l.split("/");
-
-		var localePath : StringBuf = new StringBuf();
-		localePath.add(fullPath[0] + "/");
-		localePath.add(state.currentLocale + "/");
-
-		for (i in 1...fullPath.length-1) {
-
-			localePath.add(fullPath[i] + "/");
-		}
-		localePath.add(fullPath[fullPath.length-1]);
-
-		var ld : LocaleData = new LocaleData(state.currentLocale);
-		ld.setLocaleFile(localePath.toString());
-
-		application.localeData = ld;
 	}
 
 	function launchGame() : Void {
@@ -468,7 +434,7 @@ trace("launch game");
 		}
 	}
 
-	function onError(e:String) : Void {
+	public function onError(e:String) : Void {
 
 		trace("ERROR", e);
 		trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()));

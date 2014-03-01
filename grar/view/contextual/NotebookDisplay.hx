@@ -1,7 +1,5 @@
 package grar.view.contextual;
 
-// FIXME import com.knowledgeplayers.grar.localisation.Localiser;
-
 import grar.view.component.container.VideoPlayer;
 import grar.view.component.container.DefaultButton;
 import grar.view.component.container.ScrollPanel;
@@ -184,11 +182,14 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 
 
 			// Set Locale
-// FIXME			Localiser.instance.layoutPath = model.file;
+// 			Localiser.instance.layoutPath = model.file;
+			onLocaleDataPathRequest(model.file);
+
 
 			// Display close button
 			var button: DefaultButton = cast(displays.get(model.closeButton.ref), DefaultButton);
-// FIXME			button.setText(Localiser.instance.getItemContent(model.closeButton.content));
+// 			button.setText(Localiser.instance.getItemContent(model.closeButton.content));
+			button.setText(onLocalizedContentRequest(model.closeButton.content));
 
 			addChild(button);
 
@@ -213,7 +214,8 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 				tab.x = totalX;
 				totalX += tab.width+xOffset;
 				tab.name = page.tabContent;
-// FIXME				tab.setText(Localiser.instance.getItemContent(page.tabContent));
+//				tab.setText(Localiser.instance.getItemContent(page.tabContent));
+				tab.setText(onLocalizedContentRequest(page.tabContent));
 				
 				buttonGroups.get(TAB_GROUP_NAME).add(tab);
 //				setButtonAction(tab, tmpTemplate.att.action);
@@ -253,9 +255,11 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 					}
 					button.y += offsetY;
 					offsetY += button.height + chapterTemplates.get(chapter.ref).offsetY;
-// FIXME					var chapterTitle = Localiser.instance.getItemContent(chapter.name);
-// FIXME					button.setText(chapterTitle, "title");
-// FIXME					button.setText(Localiser.instance.getItemContent(chapter.subtitle), "subtitle");
+// 					var chapterTitle = Localiser.instance.getItemContent(chapter.name);
+					var chapterTitle = onLocalizedContentRequest(chapter.name);
+					button.setText(chapterTitle, "title");
+// 					button.setText(Localiser.instance.getItemContent(chapter.subtitle), "subtitle");
+					button.setText(onLocalizedContentRequest(chapter.subtitle), "subtitle");
 					buttonGroups.get(NOTE_GROUP_NAME).add(button);
 
 // 					button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
@@ -274,7 +278,8 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 			// Display page
 			//displayPage(model.pages[0]);
 
-// FIXME			Localiser.instance.popLocale();
+// 			Localiser.instance.popLocale();
+			onRestoreLocaleRequest();
 		}
 		return model;
 	}
@@ -289,11 +294,15 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 		currentPage = page;
 
 		// Set Locale
-// FIXME		Localiser.instance.layoutPath = model.file;
+//		Localiser.instance.layoutPath = model.file;
+		onLocaleDataPathRequest(model.file);
 
 		// Display title
 		var title: ScrollPanel = cast(displays.get(currentPage.title.ref), ScrollPanel);
-// FIXME		title.setContent(Localiser.instance.getItemContent(currentPage.title.content));
+
+//		title.setContent(Localiser.instance.getItemContent(currentPage.title.content));
+		title.setContent(onLocalizedContentRequest(currentPage.title.content));
+
 		addChild(title);
 
 		// Build Bookmark container
@@ -319,7 +328,8 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 				removeChild(chapter);
 		}
 
-// FIXME		Localiser.instance.popLocale();
+//		Localiser.instance.popLocale();
+		onRestoreLocaleRequest();
 	}
 
 	override private function setButtonAction(button : DefaultButton, action : String) : Bool {
@@ -411,9 +421,16 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 				buttonGroups.get(STEP_GROUP_NAME).add(step);
 			}
 			var chapter: Chapter = chapterMap.get(target);
-// FIXME			Localiser.instance.layoutPath = model.file;
-// FIXME			cast(displays.get(chapter.titleRef), ScrollPanel).setContent(Localiser.instance.getItemContent(chapter.name));
-// FIXME			Localiser.instance.popLocale();
+
+//			Localiser.instance.layoutPath = model.file;
+			onLocaleDataPathRequest(model.file);
+
+//			cast(displays.get(chapter.titleRef), ScrollPanel).setContent(Localiser.instance.getItemContent(chapter.name));
+			cast(displays.get(chapter.titleRef), ScrollPanel).setContent(onLocalizedContentRequest(chapter.name));
+
+// 			Localiser.instance.popLocale();
+			onRestoreLocaleRequest();
+
 			addChild(displays.get(chapter.titleRef));
 		}
 		var i = 0;
@@ -425,13 +442,19 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 
 	private function displayNote(note: Note):Void
 	{
-// FIXME		Localiser.instance.layoutPath = model.file;
+//		Localiser.instance.layoutPath = model.file;
+		onLocaleDataPathRequest(model.file);
+
 		var panel = cast(displays.get(note.ref), ScrollPanel);
 
-		if(note.content.indexOf("/") < 1){
-// FIXME			panel.setContent(Localiser.instance.getItemContent(note.content));
+		if (note.content.indexOf("/") < 1) {
 
-// FIXME			Localiser.instance.popLocale();
+//			panel.setContent(Localiser.instance.getItemContent(note.content));
+			panel.setContent(onLocalizedContentRequest(note.content));
+
+// 			Localiser.instance.popLocale();
+			onRestoreLocaleRequest();
+
 			addChild(panel);
 
 			if(note.video != null){

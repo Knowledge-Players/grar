@@ -198,6 +198,12 @@ class Widget extends Sprite {
 
 	public dynamic function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
 
+	public dynamic function onRestoreLocaleRequest() : Void { }
+
+	public dynamic function onLocalizedContentRequest(k : String) : String { return null; }
+
+	public dynamic function onLocaleDataPathRequest(uri : String) : Void { }
+
 
 	///
 	// GETTER / SETTER

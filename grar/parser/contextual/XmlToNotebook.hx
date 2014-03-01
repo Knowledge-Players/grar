@@ -14,7 +14,7 @@ import haxe.xml.Fast;
 
 class XmlToNotebook {
 	
-	static public function parseModel(xml : Xml) : { n: Notebook, i: StringMap<InventoryToken> } {
+	static public function parseModel(file : String, xml : Xml) : { n: Notebook, i: StringMap<InventoryToken> } {
 
 		var f : Fast = new Fast(xml).node.Notebook;
 
@@ -68,6 +68,6 @@ class XmlToNotebook {
 		}
 		closeButton = {ref: f.node.Button.att.ref, content: f.node.Button.att.content};
 
-		return { n: new Notebook(background, items, texts, pages, closeButton), i: inventory };
+		return { n: new Notebook(file, background, items, texts, pages, closeButton), i: inventory };
 	}
 }

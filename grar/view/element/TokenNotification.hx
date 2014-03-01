@@ -3,7 +3,6 @@ package grar.view.element;
 import grar.view.component.container.WidgetContainer;
 import grar.view.component.Image;
 import grar.view.component.container.ScrollPanel;
-// FIXME import com.knowledgeplayers.grar.localisation.Localiser;
 
 import haxe.Timer;
 
@@ -36,10 +35,16 @@ class TokenNotification extends WidgetContainer {
 
 	public function setToken(tokenName : String, tokenIcon : String) : Void {
 
-		if(displays.exists("icon"))
+		if (displays.exists("icon")) {
+
 			cast(displays.get("icon"), Image).setBmp(tokenIcon);
-// FIXME		cast(displays.get("name"), ScrollPanel).setContent(Localiser.instance.getItemContent(tokenName));
-// FIXME		cast(displays.get("title"), ScrollPanel).setContent(Localiser.instance.getItemContent("unlock"));
+		}
+
+//		cast(displays.get("name"), ScrollPanel).setContent(Localiser.instance.getItemContent(tokenName));
+		cast(displays.get("name"), ScrollPanel).setContent(onLocalizedContentRequest(tokenName));
+
+//		cast(displays.get("title"), ScrollPanel).setContent(Localiser.instance.getItemContent("unlock"));
+		cast(displays.get("title"), ScrollPanel).setContent(onLocalizedContentRequest("unlock"));
 
 
 		Timer.delay(hideNotification, duration);

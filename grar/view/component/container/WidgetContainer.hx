@@ -263,6 +263,11 @@ class WidgetContainer extends Widget {
                 var bubble : SimpleBubble = new SimpleBubble(b.bubbleWidth!=0 ? b.bubbleWidth:maskWidth,b.bubbleHeight!=0 ? b.bubbleHeight:maskHeight,colors,b.arrowX,b.arrowY,b.radius,b.line,b.colorLine,b.shadow,b.gap,alphas,b.bubbleX,b.bubbleY);
                 
                 bubble.onTransitionRequested = onTransitionRequested;
+				bubble.onStopTransitionRequested = onStopTransitionRequested;
+
+				bubble.onRestoreLocaleRequest = onRestoreLocaleRequest;
+				bubble.onLocalizedContentRequest = onLocalizedContentRequest;
+				bubble.onLocaleDataPathRequest = onLocaleDataPathRequest;
                 
                 addChildAt(bubble,0);
             
@@ -513,6 +518,11 @@ class WidgetContainer extends Widget {
         displays.set(elem.ref,elem);
 
         elem.onTransitionRequested = onTransitionRequested;
+		elem.onStopTransitionRequested = onStopTransitionRequested;
+
+		elem.onRestoreLocaleRequest = onRestoreLocaleRequest;
+		elem.onLocalizedContentRequest = onLocalizedContentRequest;
+		elem.onLocaleDataPathRequest = onLocaleDataPathRequest;
 
 		content.addChild(elem);
 		children.push(elem);

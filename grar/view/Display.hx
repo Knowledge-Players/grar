@@ -166,6 +166,12 @@ class Display extends Sprite {
 
 	public dynamic function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
 
+	public dynamic function onRestoreLocaleRequest() : Void { }
+
+	public dynamic function onLocalizedContentRequest(k : String) : String { return null; }
+
+	public dynamic function onLocaleDataPathRequest(uri : String) : Void { }
+
 
 	///
 	// API
@@ -264,6 +270,12 @@ trace("setContent, display type is "+d.type);
 					mock.ref = e.ref;
 
 					mock.onTransitionRequested = onTransitionRequested;
+					mock.onStopTransitionRequested = onStopTransitionRequested;
+
+					mock.onRestoreLocaleRequest = onRestoreLocaleRequest;
+					mock.onLocalizedContentRequest = onLocalizedContentRequest;
+					mock.onLocaleDataPathRequest = onLocaleDataPathRequest;
+
 
 					timeline.addElement(mock, e.transition, e.delay);
 				
@@ -544,6 +556,11 @@ trace("setContent, display type is "+d.type);
 		displays.set(ref, elem);
 
 		elem.onTransitionRequested = onTransitionRequested;
+		elem.onStopTransitionRequested = onStopTransitionRequested;
+
+		elem.onRestoreLocaleRequest = onRestoreLocaleRequest;
+		elem.onLocalizedContentRequest = onLocalizedContentRequest;
+		elem.onLocaleDataPathRequest = onLocaleDataPathRequest;
 
 // FIXME		ResizeManager.instance.addDisplayObjects(elem, node);
 		zIndex++;

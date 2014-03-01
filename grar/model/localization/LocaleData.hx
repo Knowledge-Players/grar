@@ -1,14 +1,7 @@
 package grar.model.localization;
 
-import com.knowledgeplayers.utils.assets.AssetsStorage;
-
-import haxe.xml.Fast;
-
 //import flash.events.EventDispatcher;
 
-/**
- * TODO no more XML parsing here
- */
 class LocaleData /* extends EventDispatcher */ {
 
 	/**
@@ -22,23 +15,13 @@ class LocaleData /* extends EventDispatcher */ {
      * Constructor
      * @param	name : Name of the localisation (aka language)
      */
+	public function new(name : String, tradHash : Map<String, String>) {
 
-	public function new(name:String)
-	{
 		//super();
 
-		tradHash = new Map<String, String>();
+		this.tradHash = tradHash;
+
 		this.name = name;
-	}
-
-	/**
-     * Set the path to the file for this locale
-     * @param	path : path to the locale folder
-     */
-
-	public function setLocaleFile(path:String)
-	{
-		parseContent(AssetsStorage.getXml(path));
 	}
 
 	/**
@@ -46,67 +29,13 @@ class LocaleData /* extends EventDispatcher */ {
      * @param	key : key of the item
      * @return the localised text
      */
+	public function getItem(key : String) : String {
 
-	public function getItem(key:String):String
-	{
 		return tradHash.get(key);
 	}
 
-	public function toString():String
-	{
-		return name+" "+tradHash.toString();
-	}
+	public function toString() : String {
 
-	private function parseContent(content:Xml):Void
-	{
-		if(content.firstElement().nodeName == "Workbook")
-			parseExcelContent(content);
-		else
-			parseXmlContent(content);
-	}
-
-	private function parseXmlContent(content:Xml):Void
-	{
-		var locale = new Fast(content).node.Localisation;
-
-		for (elem in locale.nodes.Element) { 
-			
-			tradHash.set(elem.node.key.innerData, elem.node.value.innerData);
-		}
-	}
-
-	// Can't use haxe.xml.Fast because Excel XML isn't supported
-
-	private function parseExcelContent(content:Xml):Void
-	{
-		var table:Xml = null;
-		for(element in content.firstElement().elements()){
-			if(element.nodeName == "Worksheet")
-				table = element.firstElement();
-		}
-
-		for(row in table.elements()){
-			if(row.nodeName == "Row"){
-				var key:String = "";
-				var value:String = "";
-				for(cell in row.elements()){
-					if(cell.nodeName == "Cell"){
-						for(data in cell.elements()){
-							if(data.nodeName == "Data"){
-								if(key != ""){
-									value = data.firstChild().toString();
-								}
-								else{
-									key = data.firstChild().toString();
-								}
-							}
-						}
-					}
-				}
-				if(key != "" && value != ""){
-					tradHash.set(key, value);
-				}
-			}
-		}
+		return name + " " + tradHash.toString();
 	}
 }

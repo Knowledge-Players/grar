@@ -7,8 +7,11 @@ import grar.model.contextual.Notebook;
 import grar.model.score.ScoreChart;
 import grar.model.part.Part;
 import grar.model.tracking.TrackingMode;
+import grar.model.localization.Locale;
+import grar.model.localization.LocaleData;
 
 import haxe.ds.StringMap;
+import haxe.ds.GenericStack;
 
 typedef InitState = {
 
@@ -39,6 +42,7 @@ class Grar {
 		this.scoreChart = new ScoreChart();
 		this.completion = new StringMap();
 		this.completionOrdered = new Array();
+		this.stashedLocaleData = new GenericStack<LocaleData>();
 	}
 
 	public var readyState (default, set) : ReadyState;
@@ -63,9 +67,22 @@ class Grar {
 
 	public var scoreChart (default, null) : ScoreChart;
 
-	public var interfaceLocale (default, set) : Null<String> = null;
 
-	public var currentLocalePath (default, set) : Null<String> = null;
+	// Module localization related properties
+
+	public var locales (default, set) : Null<StringMap<Locale>> = null;
+
+	public var currentLocale (default, set) : String;
+
+	public var currentLocaleDataPath (default, set) : Null<String> = null;
+
+	public var interfaceLocaleDataPath (default, set) : Null<String> = null;
+
+	public var localeData : LocaleData;
+
+	private var stashedLocaleData : GenericStack<LocaleData>;
+
+	private var sameLocale : Bool;
 
 
 	// WIP
@@ -82,35 +99,100 @@ class Grar {
 	public var completionOrdered : Array<String>;
 	//private var allItem : Array<Trackable>;
 
-
 	var partIndex : Int = 0;
+
+
+	///
+	// CALLBACKS
+	//
+
+	public dynamic function onReadyStateChanged() { }
+
+	public dynamic function onRefChanged() { }
+
+	public dynamic function onNotebookChanged() { }
+
+	public dynamic function onGlossaryChanged() { }
+
+	public dynamic function onBibliographyChanged() { }
+
+	public dynamic function onPartsChanged() { }
+
+	public dynamic function onPartFinished(p : Part) { }
+
+	public dynamic function onInventoryTokenActivated(it : InventoryToken) { }
+
+	public dynamic function onCurrentLocalePathChanged() { }
+
+	public dynamic function onCurrentLocaleChanged() { }
+
+	public dynamic function onLocaleListChanged() { }
+
 
 	///
 	// GETTERS / SETTERS
 	//
 
-	public function set_interfaceLocale(v : Null<String>) : Null<String> {
+	public function set_currentLocale( v : String ) : String {
 
-		if (interfaceLocale == v) {
-
-			return interfaceLocale;
+		if (v == currentLocale) {
+			return v;
 		}
-		interfaceLocale = currentLocalePath = v;
-//		onCurrentLocalePathChanged();
+		currentLocale = v;
 
-		return interfaceLocale;
+		onCurrentLocaleChanged();
+
+		return currentLocale;
 	}
 
-	public function set_currentLocalePath(v : Null<String>) : Null<String> {
+	public function set_locales( v : Null<StringMap<Locale>> ) : Null<StringMap<Locale>> {
 
-		if (currentLocalePath == v) {
+		locales = v;
 
-			return currentLocalePath;
+		onLocaleListChanged();
+
+		return locales;
+	}
+
+	public function set_interfaceLocaleDataPath(v : Null<String>) : Null<String> {
+
+		if (interfaceLocaleDataPath == v) {
+
+			return interfaceLocaleDataPath;
 		}
-		currentLocalePath = v;
-		onCurrentLocalePathChanged();
+		currentLocaleDataPath = interfaceLocaleDataPath = v;
+//		onCurrentLocalePathChanged();
 
-		return currentLocalePath;
+		return interfaceLocaleDataPath;
+	}
+
+	public function set_currentLocaleDataPath(v : Null<String>) : Null<String> {
+
+		if (v != null) {
+
+			if (currentLocaleDataPath != v) {
+
+				stashedLocaleData.add(localeData);
+				
+				currentLocaleDataPath = v;
+
+				sameLocale = false;
+
+				onCurrentLocalePathChanged();
+			
+			} else {
+
+				sameLocale = true;
+			}
+		
+		} else {
+
+			currentLocaleDataPath = v;
+
+			onCurrentLocalePathChanged();
+		}
+
+		return currentLocaleDataPath;
 	}
 
 	public function set_parts(v : Null<Array<Part>>) : Null<Array<Part>> {
@@ -183,6 +265,40 @@ class Grar {
 	///
 	// API
 	//
+
+	/**
+    * Restore the previously stored locale
+    **/
+	public function restoreLocale() : Void {
+
+		if (!sameLocale && !stashedLocaleData.isEmpty()) {
+
+			localeData = stashedLocaleData.pop();
+			
+			currentLocaleDataPath = null; // shouldn't we restore it too ???
+		}
+	}
+
+	public function getLocalizedContent(key : String) : Null<String> {
+
+		if (localeData != null) {
+
+			var content = localeData.getItem(key);
+			
+			if (content == null) {
+
+				content = "unknown localized content key " + key;
+			}
+
+			return content;
+		
+		} else {
+
+			trace("No locale set. Returning null for key '"+key+"'.");
+
+			return null;
+		}
+	}
 
 	public function activateInventoryToken(tid : String) : Void {
 
@@ -302,25 +418,7 @@ class Grar {
     }
 
 
-	///
-	// CALLBACKS
-	//
-
-	public dynamic function onReadyStateChanged() { }
-
-	public dynamic function onRefChanged() { }
-
-	public dynamic function onNotebookChanged() { }
-
-	public dynamic function onGlossaryChanged() { }
-
-	public dynamic function onBibliographyChanged() { }
-
-	public dynamic function onPartsChanged() { }
-
-	public dynamic function onCurrentLocalePathChanged() { }
-
-	public dynamic function onPartFinished(p : Part) { }
-
-	public dynamic function onInventoryTokenActivated(it : InventoryToken) { }
+    ///
+    // INTERNALS
+    //
 }

@@ -26,10 +26,6 @@ class State {
 
 	public var currentStyleSheet (default, set) : Null<String> = null;
 
-	public var currentLocale (default,set) : Null<String> = null;
-
-	public var locales (default, set) : Null<StringMap<Locale>> = null;
-
 
 	///
 	// GETTER / SETTER
@@ -42,15 +38,6 @@ class State {
 		onCurrentStyleSheetChanged();
 
 		return currentStyleSheet;
-	}
-
-	function set_locales( v : Null<StringMap<Locale>> ) : Null<StringMap<Locale>> {
-
-		locales = v;
-
-		onLocalesAdded();
-
-		return locales;
 	}
 
 	function set_tracking( v : Tracking ) : Tracking {
@@ -66,18 +53,6 @@ class State {
 		onTrackingChanged();
 
 		return tracking;
-	}
-
-	function set_currentLocale( v : String ) : String {
-
-		if (v == currentLocale) {
-			return v;
-		}
-		currentLocale = v;
-
-		onCurrentLocaleChanged();
-
-		return currentLocale;
 	}
 
 	function set_readyState( v : Bool ) : Bool {
@@ -97,6 +72,8 @@ class State {
 		module = s;
 
 		module.onPartsChanged = function(){ onModulePartsChanged(); };
+		module.onLocaleListChanged = function(){ onLocaleListChanged(); };
+		module.onCurrentLocaleChanged = function(){ onCurrentLocaleChanged(); };
 		module.onCurrentLocalePathChanged = function(){ onCurrentLocalePathChanged(); };
 		module.onPartFinished = function(p:grar.model.part.Part){ onPartFinished(p); };
 		module.onInventoryTokenActivated = function(it : grar.model.InventoryToken){ onInventoryTokenActivated(it); };
@@ -126,8 +103,6 @@ class State {
 
 	public dynamic function onTrackingSuspendDataChanged() : Void { }
 
-	public dynamic function onCurrentLocaleChanged() : Void { }
-
 	public dynamic function onReadyStateChanged() : Void { }
 
 	public dynamic function onModuleChanged() : Void { }
@@ -138,7 +113,9 @@ class State {
 
 	public dynamic function onCurrentStyleSheetChanged() : Void { }
 
-	public dynamic function onLocalesAdded() : Void { }
+	public dynamic function onLocaleListChanged() { }
+
+	public dynamic function onCurrentLocaleChanged() : Void { }
 
 	public dynamic function onCurrentLocalePathChanged() : Void { }
 

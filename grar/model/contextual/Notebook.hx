@@ -28,7 +28,7 @@ typedef Chapter = {
 
 class Notebook {
 
-	public function new(b : String, i : GenericStack<String>, t : GenericStack<Item>, 
+	public function new(file : String, b : String, i : GenericStack<String>, t : GenericStack<Item>, 
 							p : Array<Page>, cb : {ref: String, content: String}) {
 
 		this.background = b;
@@ -47,6 +47,11 @@ class Notebook {
 	 * Background ref
 	 **/
 	public var background (default, default) : String;
+
+	/**
+	* Path to the structure file
+	**/
+	public var file (default, default) : String;
 
 	/**
 	 * Items to display with the notebook

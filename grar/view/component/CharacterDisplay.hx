@@ -38,6 +38,16 @@ class CharacterDisplay extends TileImage {
 	 * Reference to the panel where to display its name
 	 **/
 	public var nameRef (default, default) : String;
+
+
+	///
+	// API
+	//
+
+	public function getName() : String { // TODO invert calls (replace by a setName function)
+
+		return onLocalizedContentRequest(charRef.split("_")[0]);
+	}
 }
 
 /* Previously, we had also:

@@ -77,6 +77,12 @@ class Layout {
 
 	public dynamic function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
 
+	public dynamic function onLocalizedContentRequest(k : String) : String { return null; }
+
+	public dynamic function onLocaleDataPathRequest(uri : String) : Void { }
+
+	public dynamic function onRestoreLocaleRequest() : Void { }
+
 
 
 	///
@@ -121,8 +127,10 @@ class Layout {
 
 			for (field in zone.dynamicFields) {
 
-				// FIXME field.field.setContent(Localiser.instance.getItemContent(field.content));
-				// FIXME field.field.updateX();
+				// field.field.setContent(Localiser.instance.getItemContent(field.content));
+				field.field.setContent(onLocalizedContentRequest(field.content));
+				
+				field.field.updateX();
 			}
 		}
 	}

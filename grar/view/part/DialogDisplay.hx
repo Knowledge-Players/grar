@@ -6,8 +6,6 @@ import grar.view.part.PartDisplay;
 
 // FIXME import com.knowledgeplayers.grar.event.GameEvent;		// FIXME
 
-// FIXME import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
-
 import grar.model.part.Item;
 import grar.model.part.PartElement;
 import grar.model.part.Part;
@@ -139,10 +137,15 @@ class DialogDisplay extends PartDisplay {
 			if(!displays.exists(pattern.tooltipRef))
 				throw "[DialogDisplay] There is no ToolTip with ref " + pattern.tooltipRef;
 			var tooltip = cast(displays.get(pattern.tooltipRef), ScrollPanel);
-			if(contains(tooltip))
+			
+			if (contains(tooltip)) {
 				removeChild(tooltip);
-// FIXME			var content = Localiser.instance.getItemContent(choice.toolTip);
-// FIXME			tooltip.setContent(content);
+			}
+//			var content = Localiser.instance.getItemContent(choice.toolTip);
+			var content = onLocalizedContentRequest(choice.toolTip);
+
+			tooltip.setContent(content);
+
 			var i:Int = 0;
 			while(!Std.is(getChildAt(i), DefaultButton)){
 				i++;

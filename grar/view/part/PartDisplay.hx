@@ -1,7 +1,5 @@
 package grar.view.part;
 
-import com.knowledgeplayers.utils.assets.AssetsStorage;
-
 import grar.view.Display;
 import grar.view.component.container.SoundPlayer;
 import grar.view.component.container.SimpleContainer;
@@ -14,13 +12,7 @@ import grar.view.component.CharacterDisplay;
 import grar.view.element.Timeline;
 import grar.view.contextual.InventoryDisplay;
 
-// FIXME import com.knowledgeplayers.grar.display.GameManager;	// FIXME
 // FIXME import com.knowledgeplayers.grar.display.ResizeManager;	// FIXME
-
-// FIXME import com.knowledgeplayers.grar.event.GameEvent;	// FIXME
-// FIXME import com.knowledgeplayers.grar.event.PartEvent;	// FIXME
-
-// FIXME import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
 
 import grar.model.part.sound.SoundItem;
 import grar.model.part.Item;
@@ -111,7 +103,8 @@ class PartDisplay extends Display {
 trace("init display of "+part.id);
 		if (part.file != null) {
 
-// FIXME			Localiser.instance.layoutPath = part.file;
+//			Localiser.instance.layoutPath = part.file;
+			onLocaleDataPathRequest(part.file);
 		
 		} else {
 
@@ -137,8 +130,12 @@ trace("setting part display content");
 		part.isDone = completed;
 		
 		unLoad();
-// FIXME		if(part.file != null)
-// FIXME			Localiser.instance.popLocale();
+
+		if (part.file != null) {
+
+			//Localiser.instance.popLocale();
+			onRestoreLocaleRequest();
+		}
 
 // 		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
 		onExit();
@@ -487,14 +484,15 @@ trace("setting part display content");
 		}
 	}
 
-	private function setupItem(item:Item, ?isFirst:Bool = true):Void
-	{
-		if(item == null)
-			return;
+	private function setupItem(item : Item, ? isFirst : Bool = true) : Void {
 
+		if (item == null) {
+
+			return;
+		}
 		currentItem = item;
 
- 		for(token in item.tokens) {
+ 		for (token in item.tokens) {
 
 // 			GameManager.instance.activateToken(token);
 			onTokenToActivate(token);
@@ -503,7 +501,6 @@ trace("setting part display content");
 
 			setBackground(item.background);
 		}
-
 		if (item.isText()) {
 
 			var text = cast(item, TextItem);
@@ -518,14 +515,21 @@ trace("setting part display content");
 				// The intro screen automatically removes itself after its duration
 				var intro = text.introScreen;
 				var introDisplay:IntroScreen = cast(displays.get(intro.ref), IntroScreen);
-// FIXME				for(field in intro.content.keys())
-// FIXME					introDisplay.setText(Localiser.instance.getItemContent(intro.content.get(field)), field);
-				introDisplay.addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event)
-				{
-					introScreenOn = false;
-					displayPart();
-				});
+ 
+				for (field in intro.content.keys()) {
+
+					introDisplay.setText(onLocalizedContentRequest(intro.content.get(field)), field);
+				}
+				introDisplay.addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event) {
+
+						introScreenOn = false;
+
+						displayPart();
+
+					});
+
 				introScreenOn = true;
+				
 				addChild(introDisplay);
 			
 			} else {
@@ -552,17 +556,24 @@ trace("setting part display content");
                 throw "[PartDisplay] There is no SoundPlayer with ref '"+ item.ref+"'.";
             }
             var sound = cast(item, SoundItem);
+
             cast(displays.get(item.ref), SoundPlayer).setSound(sound.content, sound.autoStart, sound.loop, sound.defaultVolume);
         }
 
 		// Display Part
-		if(!introScreenOn && isFirst)
+		if (!introScreenOn && isFirst) {
+
 			displayPart();
-		else if(!introScreenOn){
+		
+		} else if (!introScreenOn) {
+
 			var i = 0;
 			var found = false;
-			while(i < numChildren && !found){
-				if(Std.is(getChildAt(i),Widget) && (cast(getChildAt(i),Widget).zz > displays.get(item.ref).zz)){
+			
+			while (i < numChildren && !found) {
+
+				if (Std.is(getChildAt(i),Widget) && (cast(getChildAt(i),Widget).zz > displays.get(item.ref).zz)) {
+
 					addChildAt(displays.get(item.ref),i);
 					found = true;
 				}
@@ -578,14 +589,18 @@ trace("setting part display content");
 
 	private function setText(item:TextItem, isFirst:Bool = true):Void
 	{
-/* FIXME
-		var content = Localiser.get_instance().getItemContent(item.content);
-		if(item.ref != null){
-			if(!displays.exists(item.ref))
+
+		var content = onLocalizedContentRequest(item.content);
+
+		if (item.ref != null) {
+
+			if (!displays.exists(item.ref)) {
+
 				throw "[PartDisplay] There is no TextArea with ref " + item.ref;
+			}
 			cast(displays.get(item.ref), ScrollPanel).setContent(content);
 		}
-*/
+
 		//GameManager.instance.loadSound(item.sound);
 		onSoundToLoad(item.sound);
 	}
@@ -692,14 +707,19 @@ trace("setting part display content");
 		}
 	}
 
-	private inline function setButtonText(buttonRef: String, buttonContent: Map<String, String>):Void
-	{
-		if(buttonContent != null){
-			for(contentKey in buttonContent.keys()){
+	private inline function setButtonText(buttonRef : String, buttonContent : Map<String, String>) : Void {
+
+		if (buttonContent != null) {
+
+			for (contentKey in buttonContent.keys()) {
+
 				var targetedText: String = null;
-				if(contentKey != " ")
+				
+				if (contentKey != " ") {
+
 					targetedText = contentKey;
-// FIXME				cast(displays.get(buttonRef), DefaultButton).setText(Localiser.instance.getItemContent(buttonContent.get(contentKey)), targetedText);
+				}
+				cast(displays.get(buttonRef), DefaultButton).setText(onLocalizedContentRequest(buttonContent.get(contentKey)), targetedText);
 			}
 		}
 	}

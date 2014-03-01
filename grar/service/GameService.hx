@@ -3,6 +3,7 @@ package grar.service;
 import grar.model.Grar;
 import grar.model.InventoryToken;
 import grar.model.localization.Locale;
+import grar.model.localization.LocaleData;
 import grar.model.contextual.Glossary;
 import grar.model.contextual.Bibliography;
 import grar.model.contextual.Notebook;
@@ -29,7 +30,7 @@ import grar.parser.contextual.XmlToNotebook;
 import grar.parser.contextual.XmlToMenu;
 import grar.parser.layout.XmlToLayouts;
 import grar.parser.part.XmlToPart;
-import grar.parser.localization.XmlToLangs;
+import grar.parser.localization.XmlToLocale;
 import grar.parser.style.XmlToStyleSheet;
 import grar.parser.style.JsonToStyleSheet;
 
@@ -44,10 +45,21 @@ class GameService {
 
 	public function new() { }
 
-	//public function loadLang(path : String, onSuccess : -> Void, onError : String -> Void) : Void {
+	public function fetchLocaleData(locale : String, path : String, onSuccess : LocaleData -> Void, onError : String -> Void) : Void {
 
-		// TODO
-	//}
+		var ret : LocaleData;
+
+		try {
+
+			ret = XmlToLocale.parseData(locale, AssetsStorage.getXml(path));
+
+		} catch(e:String) {
+
+			onError(e);
+			return;
+		}
+		onSuccess(ret);
+	}
 
 	public function fetchLayouts(path : String, templates : StringMap<Xml>, onSuccess : StringMap<LayoutData> -> Null<String> -> Void, onError : String -> Void) : Void {
 
@@ -140,7 +152,7 @@ class GameService {
 		try {
 
 			// at the moment, grar fetches its data from embedded assets only
-			l = XmlToLangs.parse(AssetsStorage.getXml(uri));
+			l = XmlToLocale.parseLangList(AssetsStorage.getXml(uri));
 
 		} catch (e:String) {
 
@@ -182,7 +194,7 @@ class GameService {
 		try {
 
 			// at the moment, grar fetches its data from embedded assets only
-			m = XmlToNotebook.parseModel(AssetsStorage.getXml(mPath));
+			m = XmlToNotebook.parseModel(mPath, AssetsStorage.getXml(mPath));
 
 			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Notebook(null, null, null, null, null), templates);
 

@@ -13,8 +13,6 @@ import grar.util.ParseUtils;
 
 import grar.model.InventoryToken;
 
-// FIXME import com.knowledgeplayers.grar.localisation.Localiser;
-
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.Event;
@@ -60,6 +58,7 @@ class InventoryDisplay extends WidgetContainer {
 						this.guide = new Curve(d);
 				}
 				this.guide.onTransitionRequested = onTransitionRequested;
+				this.guide.onStopTransitionRequested = onStopTransitionRequested;
 
 				this.fullscreen = fs;
 				this.displayTemplates = dt;

@@ -172,6 +172,14 @@ class Application {
 
 	public dynamic function onActivateTokenRequested(tokenName : String) : Void { }
 
+	public dynamic function onRestoreLocaleRequest() : Void { }
+
+	public dynamic function onLocalizedContentRequest(k : String) : String { return null; }
+
+	public dynamic function onLocaleDataPathRequest(uri : String) : Void { }
+
+	public dynamic function onInterfaceLocaleDataPathRequest() : Void { }
+
 
 	///
 	// API
@@ -287,6 +295,10 @@ class Application {
 			nl.onTransitionRequested = onTransitionRequested;
 			nl.onStopTransitionRequested = onStopTransitionRequested;
 
+			nl.onRestoreLocaleRequest = onRestoreLocaleRequest;
+			nl.onLocalizedContentRequest = onLocalizedContentRequest;
+			nl.onLocaleDataPathRequest = onLocaleDataPathRequest;
+
 			l.set(lk, nl);
 
 			nl.onVolumeChangeRequested = changeVolume;
@@ -306,6 +318,10 @@ class Application {
 		n.onContextualDisplayRequested = function(c:ContextualType){ displayContextual(c); };
 		n.onContextualHideRequested = hideContextual;
 		n.onQuitGameRequested = onQuitGameRequested;
+
+		n.onRestoreLocaleRequest = onRestoreLocaleRequest;
+		n.onLocalizedContentRequest = onLocalizedContentRequest;
+		n.onLocaleDataPathRequest = onLocaleDataPathRequest;
 
 		n.onClose = function() { doHideContextual(n); }
 
@@ -330,6 +346,10 @@ class Application {
 		m.onContextualDisplayRequested = function(c:ContextualType){ displayContextual(c); };
 		m.onContextualHideRequested = hideContextual;
 		m.onQuitGameRequested = onQuitGameRequested;
+
+		m.onRestoreLocaleRequest = onRestoreLocaleRequest;
+		m.onLocalizedContentRequest = onLocalizedContentRequest;
+		m.onLocaleDataPathRequest = onLocaleDataPathRequest;
 
 		d.applicationTilesheet = tilesheet;
 
@@ -413,7 +433,11 @@ class Application {
 
 		if (menu != null) {
 
+			onInterfaceLocaleDataPathRequest();
+
 			menu.init(menuData);
+
+			onRestoreLocaleRequest();
 		}
 	}
 
@@ -479,6 +503,10 @@ trace("display part "+part.id);
 		fp.onContextualDisplayRequested = function(c:ContextualType){ displayContextual(c); };
 		fp.onContextualHideRequested = hideContextual;
 		fp.onQuitGameRequested = onQuitGameRequested;
+
+		fp.onRestoreLocaleRequest = onRestoreLocaleRequest;
+		fp.onLocalizedContentRequest = onLocalizedContentRequest;
+		fp.onLocaleDataPathRequest = onLocaleDataPathRequest;
 
 		fp.init();
 

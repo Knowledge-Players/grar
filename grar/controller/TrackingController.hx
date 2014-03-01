@@ -150,7 +150,7 @@ class TrackingController {
 				// TODO commented code
 				//allItem = GameManager.instance.game.getAllItems();
 				var stateInfosArray : Array<String> = stateStr.split("@");
-				state.currentLocale = stateInfosArray[0];
+				state.module.currentLocale = stateInfosArray[0];
 				state.module.bookmark = Std.parseInt(stateInfosArray[1]);
 
 				/* TODO This will have to be done once parts loaded !!!
@@ -187,7 +187,7 @@ class TrackingController {
 
 					loadStateInfos(s);
 				}
-		        if (state.currentLocale == null && state.module.bookmark == -1 && state.module.completionOrdered != null && state.module.completionOrdered.length == 0) {
+		        if (state.module.currentLocale == null && state.module.bookmark == -1 && state.module.completionOrdered != null && state.module.completionOrdered.length == 0) {
 
 		            loadStateInfos(m.state.value);
 		        }

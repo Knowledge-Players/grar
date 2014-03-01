@@ -18,8 +18,6 @@ import grar.model.part.Part;
 
 import grar.util.ParseUtils;
 
-// FIXME import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
-
 import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -213,7 +211,9 @@ class ActivityDisplay extends PartDisplay {
 
 		for (contentKey in input.content.keys()) {
 
-// FIXME			button.setText(Localiser.instance.getItemContent(input.content.get(contentKey)), contentKey);
+//			button.setText(Localiser.instance.getItemContent(input.content.get(contentKey)), contentKey);
+			button.setText(onLocalizedContentRequest(input.content.get(contentKey)), contentKey);
+
 		}
 		button.setAllListeners(onInputEvents);
 		button.zz = displayTemplates.get(input.ref).z;
@@ -243,6 +243,7 @@ class ActivityDisplay extends PartDisplay {
 				guide = new Curve(d);
 		}
 		guide.onTransitionRequested = onTransitionRequested;
+		guide.onStopTransitionRequested = onStopTransitionRequested;
 		// Set guide to place inputs
 		guide.x = groupTemplate.x;
 		guide.y = groupTemplate.y;

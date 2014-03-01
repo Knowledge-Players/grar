@@ -4,8 +4,6 @@ package grar.view.contextual.menu;
 
 import grar.model.part.Part;
 
-// FIXME import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
-
 import grar.view.Display;
 import grar.view.component.Image;
 import grar.view.component.Widget;
@@ -158,7 +156,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 				xOffset += xBase;
 				yOffset += yBase;
 
-// FIXME				Localiser.instance.layoutPath = LayoutManager.instance.interfaceLocale;
+//				Localiser.instance.layoutPath = LayoutManager.instance.interfaceLocale; // now done in Application.hx
 
 				addChild(layers.get("ui").view);
 
@@ -173,7 +171,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 					addChild(bookmark);
 				}
 
-// FIXME				Localiser.instance.popLocale();
+//				Localiser.instance.popLocale(); // now done in Application.hx
 
 // FIXME				GameManager.instance.menuLoaded = true;
 
@@ -210,7 +208,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 			case Button(xo, yo, w, bd): // xOffset : Null<Float>, yOffset : Null<Float>, width : Null<Float>, button : Null<WidgetContainerData>
 
-				var button = addButton(bd, level.partName, level.icon); // FIXME localize level.partName
+				var button = addButton(bd, onLocalizedContentRequest(level.partName), level.icon); // FIXME localize level.partName
 
 				buttons.set(level.id, button);
 				setButtonState(button, level);
@@ -405,7 +403,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 			}
 			else{
 				field.field.setContent(field.content);
-// FIXME				field.field.setContent(Localiser.instance.getItemContent(field.content));
+				field.field.setContent(onLocalizedContentRequest(field.content));
 			}
 			field.field.updateX();
 		}

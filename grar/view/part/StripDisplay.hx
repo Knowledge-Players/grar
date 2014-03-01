@@ -9,8 +9,6 @@ import grar.view.component.container.DefaultButton;
 
 import grar.view.part.PartDisplay;
 
-// FIXME import com.knowledgeplayers.grar.localisation.Localiser; // FIXME
-
 import grar.model.part.Part;
 import grar.model.part.Item;
 import grar.model.part.Pattern;
@@ -130,7 +128,8 @@ class StripDisplay extends PartDisplay {
 
 					if (i.isText()) {
 
-// FIXME				cast(displays.get(i.ref), ScrollPanel).setContent(Localiser.instance.getItemContent(i.content));
+//						cast(displays.get(i.ref), ScrollPanel).setContent(Localiser.instance.getItemContent(i.content));
+						cast(displays.get(i.ref), ScrollPanel).setContent(onLocalizedContentRequest(i.content));
 					}
 
 				default: // nothing
@@ -157,11 +156,19 @@ class StripDisplay extends PartDisplay {
 		if(currentBox != null){
 	        var box: BoxDisplay = boxes.get(currentBox.id);
 			var nextItem: Item = currentBoxItem;
-			while(nextItem != null){
-				if(nextItem != null){
-// FIXME					box.textFields.get(nextItem.ref).setContent(Localiser.instance.getItemContent(nextItem.content));
-// FIXME					if(Std.is(nextItem, TextItem))
-// FIXME						GameManager.instance.playSound(cast(nextItem, TextItem).sound);
+			
+			while (nextItem != null) {
+
+				if (nextItem != null) {
+
+//					box.textFields.get(nextItem.ref).setContent(Localiser.instance.getItemContent(nextItem.content));
+					box.textFields.get(nextItem.ref).setContent(onLocalizedContentRequest(nextItem.content));
+
+					if (Std.is(nextItem, TextItem)) {
+
+//						GameManager.instance.playSound(cast(nextItem, TextItem).sound);
+						onSoundToPlay(cast(nextItem, TextItem).sound);
+					}
 				}
 
 				nextItem = currentBox.getNextItem();

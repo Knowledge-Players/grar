@@ -10,8 +10,6 @@ import grar.view.component.container.WidgetContainer;
 
 import grar.util.DisplayUtils;
 
-// FIXME import com.knowledgeplayers.grar.localisation.Localiser;
-
 import com.knowledgeplayers.utils.assets.AssetsStorage;
 
 import flash.display.BitmapData;
@@ -42,7 +40,7 @@ class ScrollPanel extends WidgetContainer {
 					
 					if (c != null) {
 
-// FIXME						setContent(Localiser.instance.getItemContent(c));
+						setContent(onLocalizedContentRequest(c));
 					}
 					trim = t;
 
