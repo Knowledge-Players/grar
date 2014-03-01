@@ -12,7 +12,7 @@ import grar.view.component.CharacterDisplay;
 import grar.view.element.Timeline;
 import grar.view.contextual.InventoryDisplay;
 
-// FIXME import com.knowledgeplayers.grar.display.ResizeManager;	// FIXME
+// import com.knowledgeplayers.grar.display.ResizeManager;
 
 import grar.model.part.sound.SoundItem;
 import grar.model.part.Item;
@@ -46,7 +46,7 @@ class PartDisplay extends Display {
 		super(callbacks);
 
 		this.part = part;
-// FIXME		resizeD = ResizeManager.get_instance();
+//		resizeD = ResizeManager.get_instance();
 		currentItems = new GenericStack<Widget>();
 	}
 
@@ -58,7 +58,7 @@ class PartDisplay extends Display {
 	public var introScreenOn (default, null) : Bool = false;
 
 	private var currentElement : PartElement;
-// FIXME 	private var resizeD : ResizeManager;
+// 	private var resizeD : ResizeManager;
 	private var currentSpeaker : CharacterDisplay;
 	private var previousBackground : String;
 	private var localeLoaded : Bool = false;

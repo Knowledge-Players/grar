@@ -20,7 +20,7 @@ import haxe.ds.StringMap;
 class DropdownMenu extends WidgetContainer {
 
 	//public function new( ? xml : Fast, blankItem = false) {
-	public function new(callbacks : grar.view.DisplayCallbacks, dmd : WidgetContainerData , blankItem = false) {
+	public function new(callbacks : grar.view.DisplayCallbacks, dmd : Null<WidgetContainerData> , blankItem = false) {
 
 		super(callbacks, dmd);
 
@@ -35,7 +35,10 @@ class DropdownMenu extends WidgetContainer {
 		addEventListener(Event.ADDED_TO_STAGE, onAdd);
 		addEventListener(MouseEvent.CLICK, onClick);
 
-        this.color = switch(dmd.type){ case DropdownMenu(c): c; default: null; };
+		if (dmd != null) {
+
+	        this.color = switch(dmd.type){ case DropdownMenu(c): c; default: null; };
+		}
 	}
 
 	public var items (default, default) : GenericStack<String>;

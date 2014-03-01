@@ -151,8 +151,7 @@ trace("$$$ notebook fetch");
 
 									gameSrv.fetchGlossary(contextual.att.file, function(g:grar.model.contextual.Glossary){
 trace("$$$ glossary fetch");
-											// TODO create display ?
-											state.module.glossary = g;
+											application.createGlossary(g);
 
 										}, onError);
 								
@@ -160,8 +159,7 @@ trace("$$$ glossary fetch");
 
 									gameSrv.fetchBibliography(contextual.att.file, function(b:grar.model.contextual.Bibliography){
 trace("$$$ bibliography fetch");
-											// TODO create display ?
-											state.module.bibliography = b;
+											application.createBibliography(b);
 
 										}, onError);
 								
@@ -248,7 +246,7 @@ trace("Ready");
 		application.onLayoutsChanged = function() {
 
 				// last call before the user experience actually starts
-        		application.initMenu();
+        		//application.initMenu();
 			}
 
 		application.onExitPart = function(pid : String) {

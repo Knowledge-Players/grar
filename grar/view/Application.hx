@@ -12,6 +12,8 @@ import grar.model.part.Part;
 import grar.view.component.container.WidgetContainer;
 import grar.view.contextual.menu.MenuDisplay;
 import grar.view.contextual.NotebookDisplay;
+import grar.view.contextual.GlossaryDisplay;
+import grar.view.contextual.BibliographyDisplay;
 import grar.view.element.TokenNotification;
 import grar.view.part.PartDisplay;
 import grar.view.part.ActivityDisplay;
@@ -79,7 +81,8 @@ class Application {
 				onLocalizedContentRequest: function(k:String){ return this.onLocalizedContentRequest(k); },
 				onLocaleDataPathRequest: function(p:String){ this.onLocaleDataPathRequest(p); },
 				onStylesheetRequest: function(s:String){ return this.getStyleSheet(s); },
-				onFiltersRequest: function(fids:Array<String>){ return this.getFilters(fids); }
+				onFiltersRequest: function(fids:Array<String>){ return this.getFilters(fids); },
+				onPartDisplayRequested: function(p:Part){ displayPart(p); }
 			};
 	}
 
@@ -135,6 +138,10 @@ class Application {
 	private var nbVolume:Float = 1;
 	private var itemSoundChannel:SoundChannel;
 	private var sounds:Map<String, Sound>;
+
+	var glossary : Null<GlossaryDisplay> = null;
+
+	var bibliography : Null<BibliographyDisplay> = null;
 
 	
 	///
@@ -359,6 +366,20 @@ trace("styles ready");
 		onLayoutsChanged();
 	}
 
+	public function createBibliography(b : grar.model.contextual.Bibliography) : Void {
+
+		bibliography = new BibliographyDisplay(callbacks, b);
+
+		//onBibliographyChanged();
+	}
+
+	public function createGlossary(g : grar.model.contextual.Glossary) : Void {
+
+		glossary = new GlossaryDisplay(g);
+
+		//onGlossaryChanged();
+	}
+
 	public function createNotebook(d : DisplayData) : Void {
 
 		var n : NotebookDisplay = new NotebookDisplay(callbacks);
@@ -397,16 +418,16 @@ trace("styles ready");
 		onMenuChanged();
 	}
 
-	public function initMenu() : Void {
+	public function startMenu() : Void {
 
-        if (menu != null) {
+		if (menu != null) {
 
-        	onInterfaceLocaleDataPathRequest();
-trace("init menu");
-            menu.init(menuData);
+			onInterfaceLocaleDataPathRequest();
+
+			menu.init(menuData);
 
 			onRestoreLocaleRequest();
-        }
+		}
 	}
 
 
@@ -464,18 +485,6 @@ trace("init menu");
 			itemSoundChannel.stop();
 	}
 
-	public function startMenu() : Void {
-
-		if (menu != null) {
-
-			onInterfaceLocaleDataPathRequest();
-
-			menu.init(menuData);
-
-			onRestoreLocaleRequest();
-		}
-	}
-
 	/**
     * Display a graphic representation of the given part
     * @param    part : The part to display
@@ -497,13 +506,14 @@ trace("display part "+part.id);
 
 			if (oldPart != null) {
 
-// FIXME				oldPart.removeEventListener(PartEvent.EXIT_PART, onExitPart);
+// 				oldPart.removeEventListener(PartEvent.EXIT_PART, onExitPart);
 				oldPart.exitPart();
 			}
 		}
 		if (!parts.isEmpty()) {
 
 // FIXME			parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
+			parts.first().onPartLoaded = function(){ trace("CHECK THIS !!!!"); }
 		}
 		// Display the new part
 		var fp : PartDisplay = createPartDisplay(part);
@@ -691,11 +701,11 @@ trace("create part display for "+part.id);
 			
 			case GLOSSARY:
 
-				// TODO doDisplayContextual(GlossaryDisplay.instance, GlossaryDisplay.instance.layout, hideOther);
+				return cast glossary; // this is just very ugly ! Fix this with an enum...
 			
 			case BIBLIOGRAPHY:
 
-				// TODO doDisplayContextual(BibliographyDisplay.instance, BibliographyDisplay.instance.layout, hideOther);
+				return cast bibliography; // this is just very ugly ! Fix this with an enum...
 			
 			case INVENTORY: // nothing ?
 

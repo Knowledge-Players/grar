@@ -109,6 +109,7 @@ class Display extends Sprite {
 		this.onLocalizedContentRequest = function(k : String){ return callbacks.onLocalizedContentRequest(k); }
 		this.onLocaleDataPathRequest = function(p:String){ callbacks.onLocaleDataPathRequest(p); }
 		this.onStylesheetRequest = function(s:String){ return callbacks.onStylesheetRequest(s); }
+		this.onPartDisplayRequested = function(p : grar.model.part.Part){ callbacks.onPartDisplayRequested(p); }
 
 		addEventListener(Event.ENTER_FRAME, checkRender);
 	}
@@ -191,6 +192,8 @@ class Display extends Sprite {
 
 	public dynamic function onStylesheetRequest(s : Null<String>) : grar.view.style.StyleSheet { return null; }
 
+	public dynamic function onPartDisplayRequested(p : grar.model.part.Part) : Void { }
+
 
 	///
 	// API
@@ -255,7 +258,7 @@ trace("setContent, display type is "+d.type);
 
 			filters = d.filters;
 		}
-// FIXME		ResizeManager.instance.onResize();
+// 		ResizeManager.instance.onResize();
 	}
 
 	public function getLayer(id : String) : TileLayer {
@@ -565,7 +568,7 @@ trace("setContent, display type is "+d.type);
 		}
 		displays.set(ref, elem);
 
-// FIXME		ResizeManager.instance.addDisplayObjects(elem, node);
+// 		ResizeManager.instance.addDisplayObjects(elem, node);
 		zIndex++;
 	}
 

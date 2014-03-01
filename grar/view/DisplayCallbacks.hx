@@ -21,4 +21,6 @@ typedef DisplayCallbacks = {
 	var onStylesheetRequest : Null<String> -> grar.view.style.StyleSheet;
 
 	var onFiltersRequest : Array<String> -> Array<flash.filters.BitmapFilter>;
+
+	var onPartDisplayRequested : grar.model.part.Part -> Void;
 }

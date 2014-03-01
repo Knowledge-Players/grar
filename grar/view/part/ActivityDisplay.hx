@@ -10,8 +10,6 @@ import grar.view.guide.Line;
 import grar.view.guide.Grid;
 import grar.view.Display;
 
-// FIXME import com.knowledgeplayers.grar.display.GameManager; // FIXME
-
 import grar.model.part.Item;
 import grar.model.part.ActivityPart;
 import grar.model.part.Part;
@@ -308,12 +306,18 @@ class ActivityDisplay extends PartDisplay {
 			part.restart();
 
 
-		if(idNext != null){
+		if (idNext != null) {
+
 			var target = part.getElementById(idNext);
-// FIXME			if(target.isPart())
-// FIXME				GameManager.instance.displayPart(cast(target, Part));
-// FIXME			else
-// FIXME				throw "[ActivityPart] Thresholds must point to Part.";
+
+			switch (target) {
+
+				case Part(p):
+
+					onPartDisplayRequested(p);
+
+				default: throw "[ActivityPart] Thresholds must point to Part.";
+			}
 		}
 		else
 			exitPart();
@@ -373,9 +377,18 @@ class ActivityDisplay extends PartDisplay {
 			switch(rule.value.toLowerCase()){
 				case "goto":
 					var target = part.getElementById(buttonsToInputs.get(e.target).values[0]);
-// FIXME					if(target.isPart())
-// FIXME						GameManager.instance.displayPart(cast(target, Part));
+
+					switch (target) {
+
+						case Part(p):
+
+							onPartDisplayRequested(p);
+
+						default: throw "target not a part"; // remove this throw if it happens normally
+					}
+
 					needValidation = true;
+
 				case "toggle":
 					e.target.toggle();
 					var selected = buttonsToInputs.get(e.target).selected = e.target.toggleState == "active";
