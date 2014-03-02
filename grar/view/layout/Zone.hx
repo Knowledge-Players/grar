@@ -27,9 +27,9 @@ import flash.Lib;
 class Zone extends Display {
 
 	//public function new(_width:Float, _height:Float):Void
-	public function new(callbacks : grar.view.DisplayCallbacks, _width : Float, _height : Float) : Void {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, _width : Float, _height : Float) : Void {
 
-		super(callbacks);
+		super(callbacks, applicationTilesheet);
 
 		zoneWidth = _width;
 		zoneHeight = _height;
@@ -93,8 +93,6 @@ class Zone extends Display {
 				}
 				if (ref != null) {
 
-					this.applicationTilesheet = d.applicationTilesheet;
-
 					layers.set("ui", new TileLayer(applicationTilesheet));
 //					dispatchEvent(new LayoutEvent(LayoutEvent.NEW_ZONE, ref, this));
 					onNewZone( ref, this );
@@ -102,19 +100,19 @@ class Zone extends Display {
 					addChild(layers.get("ui").view);
 
 					for (e in d.displays.keys()) {
-
+trace("CREATE ZONE ELT "+d.displays.get(e));
 						createElement(d.displays.get(e), e);
 					}
 				
 				} else if(rows != null) {
-
+trace("FOUND ONE ZONE WITH ROWS");
 					var heights = initSize(rows, zoneHeight);
 					var yOffset : Float = 0;
 					var i = 0;
 					
 					for (row in zones) {
 
-						var zone = new Zone(callbacks, zoneWidth, heights[i]);
+						var zone = new Zone(callbacks, applicationTilesheet, zoneWidth, heights[i]);
 						zone.x = 0;
 						zone.y = yOffset;
 
@@ -128,14 +126,14 @@ class Zone extends Display {
 					}
 				
 				} else if (columns != null) {
-
+trace("FOUND ONE ZONE WITH COLUMNS");
 					var widths = initSize(columns, zoneWidth);
 					var xOffset : Float = 0;
 					var j = 0;
 
 					for (column in zones) {
 
-						var zone = new Zone(callbacks, widths[j], zoneHeight);
+						var zone = new Zone(callbacks, applicationTilesheet, widths[j], zoneHeight);
 						zone.x = xOffset;
 						zone.y = 0;
 
@@ -149,7 +147,7 @@ class Zone extends Display {
 					}
 				}
 
-			default: // nothing
+			default: throw "Wrong DisplayData type passed to Zone.init()";
 		}
 	}
 
@@ -192,12 +190,16 @@ class Zone extends Display {
 
 	override private function setButtonAction(button:DefaultButton, action:String):Bool
 	{
-		if(super.setButtonAction(button, action))
+		if (super.setButtonAction(button, action)) {
+
 			return true;
-		button.buttonAction = switch(action){
-			case "sound_toggle": activeSound;
-			default: null;
 		}
+		button.buttonAction = switch (action) {
+
+				case "sound_toggle": activeSound;
+				
+				default: null;
+			}
 
 		return button.buttonAction != null;
 	}
@@ -261,7 +263,9 @@ class Zone extends Display {
 #if kpdebug
 			case DropdownMenu(d):
 
-				fastnav = new DropdownMenu(callbacks, d, true);
+				d.applicationTilesheet = applicationTilesheet;
+
+				fastnav = new DropdownMenu(callbacks, applicationTilesheet, d, true);
 #end
 			default: // nothing
 		}
@@ -273,7 +277,7 @@ class Zone extends Display {
 //	private function createProgressBar(element : Fast) : ProgressBar {
 	private function createProgressBar(d : WidgetContainerData) : ProgressBar {
 
-		var progress = new ProgressBar(callbacks, d);
+		var progress = new ProgressBar(callbacks, applicationTilesheet, d);
 
 		addChild(progress);
 

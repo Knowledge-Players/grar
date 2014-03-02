@@ -1,5 +1,7 @@
 package grar.view.component.container;
 
+import aze.display.TilesheetEx;
+
 import grar.view.component.container.WidgetContainer;
 
 import grar.view.style.KpTextDownElement;
@@ -20,15 +22,16 @@ import flash.display.Sprite;
 class ScrollPanel extends WidgetContainer {
 
 //  public function new(?xml: Fast, ?width:Float, ?height:Float, ?_styleSheet:String) {
-	public function new(callbacks : grar.view.DisplayCallbacks, ? spd : Null<WidgetContainerData>) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
+							? spd : Null<WidgetContainerData>) {
 
 		if (spd == null) {
 
-			super(callbacks);
+			super(callbacks, applicationTilesheet);
 
 		} else {
 
-			super(callbacks, spd);
+			super(callbacks, applicationTilesheet, spd);
 
 			switch(spd.type) {
 
@@ -80,12 +83,8 @@ class ScrollPanel extends WidgetContainer {
 	{
 		clear();
 
-		//var previousStyleSheet : String = null;
-		
 		if (styleSheetRef != null) {
 
-//			previousStyleSheet = onGetCurrentStyleSheetRequest();//StyleParser.currentStyleSheet;
-			//StyleParser.currentStyleSheet = styleSheet;
 			styleSheet = onStylesheetRequest(styleSheetRef);
 //trace("got stylesheet with id "+styleSheetRef+" => "+styleSheet);
 		} else {
@@ -170,11 +169,5 @@ class ScrollPanel extends WidgetContainer {
 		text.mask = maskLine;
 		addChild(content);
 		displayContent(trim);
-
-//		if (previousStyleSheet != null) {
-
-			//StyleParser.currentStyleSheet = previousStyleSheet;
-//			onSetCurrentStyleSheetRequest(previousStyleSheet);
-//		}
 	}
 }

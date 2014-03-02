@@ -44,14 +44,14 @@ class LocalizationController {
 
 				if (state.module.currentLocaleDataPath != null && state.module.localeData == null) {
 
-trace("onCurrentLocaleChanged");
+//trace("onCurrentLocaleChanged");
 					initLocaleData();
 				}
 				// TODO something similar to StyleParser.currentLocale = currentLocale;
 			}
 
 		state.onCurrentLocalePathChanged = function() {
-trace("state.onCurrentLocalePathChanged");
+//trace("state.onCurrentLocalePathChanged");
 				if (state.module.currentLocaleDataPath != null && state.module.currentLocale != null) {
 
 					initLocaleData();
@@ -60,7 +60,7 @@ trace("state.onCurrentLocalePathChanged");
 
 
 		state.onLocaleListChanged = function() {
-trace("state.onLocaleListChanged");
+//trace("state.onLocaleListChanged");
 				// TODO ? doesn't seem to be used...
 				// for each lang, flags.set(value, flagIconPath);
 
@@ -68,17 +68,17 @@ trace("state.onLocaleListChanged");
 			}
 
 		application.onRestoreLocaleRequest = function() {
-trace("application.onRestoreLocaleRequest");
+//trace("application.onRestoreLocaleRequest");
 				restoreLocaleData();
 			}
 
 		application.onInterfaceLocaleDataPathRequest = function() {
-trace("application.onInterfaceLocaleDataPathRequest");
+//trace("application.onInterfaceLocaleDataPathRequest");
 				setInterfaceLocaleData();
 			}
 
 		application.onLocaleDataPathRequest = function(path : String) {
-trace("application.onLocaleDataPathRequest");
+//trace("application.onLocaleDataPathRequest");
 				state.module.currentLocaleDataPath = path;
 			}
 
@@ -89,7 +89,7 @@ trace("application.onLocaleDataPathRequest");
 	}
 
 	function initLocaleData() : Void {
-trace("initLocaleData "+state.module.currentLocaleDataPath);
+//trace("initLocaleData "+state.module.currentLocaleDataPath);
 		var fullPath = state.module.currentLocaleDataPath.split("/");
 
 		var localePath : StringBuf = new StringBuf();

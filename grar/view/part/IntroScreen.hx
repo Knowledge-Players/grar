@@ -10,10 +10,10 @@ import haxe.Timer;
 class IntroScreen extends WidgetContainer {
 
 	//public function new(?xml:Fast)
-	public function new(callbacks : grar.view.DisplayCallbacks, isd : WidgetContainerData) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, isd : WidgetContainerData) {
 
 		//super(xml);
-		super(callbacks, isd);
+		super(callbacks, applicationTilesheet, isd);
 		
 		switch(isd.type) {
 

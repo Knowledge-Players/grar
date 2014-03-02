@@ -32,6 +32,10 @@ class XmlToDisplay {
 
 		switch (type) {
 
+			case Zone(_, _, _, _, _):
+
+				return parseZoneContent(new Fast(xml), templates); // Zone parsing differs completely from other Displays
+
 			case Menu(_, _, _, _, _):
 
 				var tempXml : Xml = xml;
@@ -104,10 +108,6 @@ class XmlToDisplay {
 				}
 
 				dd.type = Activity( groups );
-
-			case Zone(_, _, _, _, _):
-
-				return parseZoneContent(f, templates); // Zone parsing differs completely from other Displays
 
 			case Menu(_, _, _, _, _):
 
@@ -398,8 +398,14 @@ class XmlToDisplay {
 	}
 
 	static function parseZoneContent(f : Fast, templates : StringMap<Xml>) : DisplayData {
-
+//trace("parseZoneContent "+ f.x);
 		var zones : Array<DisplayData> = [];
+
+		var dd : DisplayData = {
+
+				type: Zone(f.has.bgColor ? Std.parseInt(f.att.bgColor) : null, f.has.ref ? f.att.ref : null, f.has.rows ? f.att.rows : null, f.has.columns ? f.att.columns : null, zones),
+				displays: new StringMap()
+			};
 
 		if (f.has.rows) {
 
@@ -408,26 +414,23 @@ class XmlToDisplay {
 				zones.push(parseZoneContent(r, templates));
 			}
 
+			return dd;
+
 		} else if(f.has.columns) {
 
 			for (c in f.nodes.Column) {
 
 				zones.push(parseZoneContent(c, templates));
 			}
+
+			return dd;
 		
 		} else if (!f.has.ref) {
 
 			trace("This zone is empty. Is your XML correct ?");
 		}
 
-		var dd : DisplayData = {
-
-				type: Zone(f.has.bgColor ? Std.parseInt(f.att.bgColor) : null, f.has.ref ? f.att.ref : null, f.has.rows ? f.att.rows : null, f.has.columns ? f.att.columns : null, zones),
-				displays: new StringMap()
-
-			};
-
-		for (child in f.elements) {
+		for (child in f.elements) { //trace("just found "+child.name+" in zone");
 
 			var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(child, dd, templates);
 			

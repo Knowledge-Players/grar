@@ -2,6 +2,7 @@ package grar.view.component.container;
 
 import aze.display.TileLayer;
 import aze.display.TileSprite;
+import aze.display.TilesheetEx;
 
 import grar.view.element.Timeline;
 import grar.view.component.container.WidgetContainer;
@@ -20,7 +21,8 @@ import haxe.ds.StringMap;
 class DefaultButton extends WidgetContainer {
 
 // public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>) // pStates never passed ??
-	public function new(callbacks : grar.view.DisplayCallbacks, ? dbd : Null<WidgetContainerData>) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
+							? dbd : Null<WidgetContainerData>) {
 		
 		this.timelines = new Map<String, Timeline>();
 		this.enabledState = new Map<String, Bool>();
@@ -28,14 +30,14 @@ class DefaultButton extends WidgetContainer {
 
 		if (dbd == null) {
 
-			super(callbacks);
+			super(callbacks, applicationTilesheet);
 
 			this.defaultState = "active";
 			this.enabled = true;
 
 		} else {
 
-			super(callbacks, dbd);
+			super(callbacks, applicationTilesheet, dbd);
 
 			switch(dbd.type) {
 

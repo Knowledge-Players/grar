@@ -17,7 +17,7 @@ typedef LayoutData = {
 class Layout {
 
 //	public function new(?_name:String, ?_content:Zone, ?_fast:Fast):Void
-	public function new(callbacks : grar.view.DisplayCallbacks, ? n : Null<String>, ? c : Null<Zone>, ? ld : Null<LayoutData>, at : aze.display.TilesheetEx) : Void {
+	public function new(callbacks : grar.view.DisplayCallbacks, at : aze.display.TilesheetEx, ? n : Null<String>, ? c : Null<Zone>, ? ld : Null<LayoutData>) : Void {
 
 		zones = new StringMap();
 
@@ -34,10 +34,9 @@ class Layout {
 
 		if (ld != null) {
 
-			content = new Zone(callbacks, Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
+			content = new Zone(callbacks, at, Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
 // 			content.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
 			content.onNewZone = addZone;
-			ld.content.applicationTilesheet = at;
 
 			content.init(ld.content);
 

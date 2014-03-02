@@ -13,12 +13,13 @@ import flash.display.Sprite;
 
 class SimpleBubble extends WidgetContainer {
 
-    public function new(callbacks : grar.view.DisplayCallbacks, ? width : Float, ? height : Float, ? colors : Array<Int>,
-                            ? arrowX : Float = 0, ? arrowY : Float = 0, ? radius : Array<Float>, ? line : Float = 0, 
-                            ? colorLine : Int = 0xFFFFFF, ? shadow : Float = 0, ? gap : Float = 5, ? alphas : Array<Float>,
-                            ? bubbleX : Float = 0, ? bubbleY : Float = 0) {
+    public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, ? width : Float, 
+                            ? height : Float, ? colors : Array<Int>, ? arrowX : Float = 0, ? arrowY : Float = 0, 
+                            ? radius : Array<Float>, ? line : Float = 0, ? colorLine : Int = 0xFFFFFF, 
+                            ? shadow : Float = 0, ? gap : Float = 5, ? alphas : Array<Float>, ? bubbleX : Float = 0, 
+                            ? bubbleY : Float = 0) {
 
-        super(callbacks);
+        super(callbacks, applicationTilesheet);
 
         var bubble : Sprite = new Sprite();
         x = bubbleX;

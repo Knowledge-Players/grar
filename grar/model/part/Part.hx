@@ -52,11 +52,9 @@ typedef PartData = {
 	var ref : String;
 	var requirements : StringMap<Int>;
 	var next : Null<Array<String>>;
-	var endScreen : Bool;
 	var buttonTargets : StringMap<PartElement>;
 	var nbSubPartTotal : Int;
 	var soundLoopChannel : SoundChannel;
-	var loaded : Bool;
 	// partial data
 	var partialSubParts : Array<PartialPart>;
 	var xml : Xml;
@@ -86,11 +84,9 @@ class Part /* implements Part */ {
 		this.ref = pd.ref;
 		this.requirements = pd.requirements;
 		this.next = pd.next;
-		this.endScreen = pd.endScreen;
 		this.buttonTargets = pd.buttonTargets;
 		this.nbSubPartTotal = pd.nbSubPartTotal;
 		this.soundLoopChannel = pd.soundLoopChannel;
-		this.loaded = pd.loaded;
 	}
 
 	/**

@@ -1,5 +1,7 @@
 package grar.view.component;
 
+import aze.display.TilesheetEx;
+
 import grar.view.DisplayCallbacks;
 import grar.view.component.container.DropdownMenu;
 
@@ -53,7 +55,7 @@ class Widget extends Sprite {
 	 * Never called directly (only in sub-classes)
 	 */
 	//private function new(?xml: Fast)
-	private function new(callbacks : DisplayCallbacks, ? wd : Null<WidgetData>) {
+	private function new(callbacks : DisplayCallbacks, applicationTilesheet : TilesheetEx, ? wd : Null<WidgetData>) {
 
 		super();
 
@@ -68,6 +70,8 @@ class Widget extends Sprite {
 		this.onLocaleDataPathRequest = function(p:String){ callbacks.onLocaleDataPathRequest(p); }
 		this.onStylesheetRequest = function(s:String){ return callbacks.onStylesheetRequest(s); }
 		this.onFiltersRequest = function(fids:Array<String>){ return callbacks.onFiltersRequest(fids); }
+
+		this.applicationTilesheet = applicationTilesheet;
 
 		if (wd != null) {
 
@@ -150,6 +154,8 @@ class Widget extends Sprite {
 	}
 
 	var callbacks : DisplayCallbacks;
+
+	var applicationTilesheet : TilesheetEx;
 
 	/**
 	* Scale of the widget

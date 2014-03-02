@@ -25,9 +25,9 @@ class DialogDisplay extends PartDisplay {
      * Constructor
      * @param	part : DialogPart to display
      */
-	public function new(callbacks : grar.view.DisplayCallbacks, part : Part) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, part : Part) {
 
-		super(callbacks, part);
+		super(callbacks, applicationTilesheet, part);
 	}
 
 	/**

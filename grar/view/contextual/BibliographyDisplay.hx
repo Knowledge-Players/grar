@@ -1,5 +1,7 @@
 package grar.view.contextual;
 
+import aze.display.TilesheetEx;
+
 import grar.view.component.container.DropdownMenu;
 import grar.view.style.Style;
 import grar.view.text.StyledTextField;
@@ -21,9 +23,11 @@ import haxe.ds.GenericStack;
  */
 class BibliographyDisplay extends Sprite {
 
-	public function new(callbacks : grar.view.DisplayCallbacks, bibliography : Bibliography, ? wordStyle : Style)
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, bibliography : Bibliography, ? wordStyle : Style)
 	{
 		super();
+
+		this.applicationTilesheet = applicationTilesheet;
 
 		this.style = wordStyle;
 		this.bibliography = bibliography;
@@ -43,6 +47,7 @@ class BibliographyDisplay extends Sprite {
 	private var drop:DropdownMenu;
 	var bibliography : Bibliography;
 	var callbacks : grar.view.DisplayCallbacks;
+	var applicationTilesheet : TilesheetEx;
 
 	// Private
 
@@ -110,7 +115,7 @@ class BibliographyDisplay extends Sprite {
 		filter.border = true;
 		addChild(filter);
 
-		drop = new DropdownMenu(callbacks, null, true);
+		drop = new DropdownMenu(callbacks, applicationTilesheet, null, true);
 		drop.addEventListener(Event.CHANGE, onFilter);
 		drop.items = bibliography.getAllPrograms();
 		drop.x = filter.x + filter.width + 10;

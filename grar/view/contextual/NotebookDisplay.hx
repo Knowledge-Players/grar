@@ -36,9 +36,9 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 	static private inline var TAB_GROUP_NAME : String = "tabs";
 	static private inline var STEP_GROUP_NAME : String = "steps";
 
-	public function new(callbacks : grar.view.DisplayCallbacks) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx) {
 
-		super(callbacks);
+		super(callbacks, applicationTilesheet);
 
 // 		GameManager.instance.addEventListener(TokenEvent.ADD, onUnlocked); // replaced by setActivateToken()
 		
@@ -209,7 +209,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 // FIXME				var icons = ParseUtils.selectByAttribute("ref", "icon", tmpTemplate.x);
 // FIXME				ParseUtils.updateIconsXml(page.icon, icons);
 
-				var tab = new DefaultButton(callbacks, tabTemplate.e); // FIXME
+				var tab = new DefaultButton(callbacks, applicationTilesheet, tabTemplate.e); // FIXME
 
 				tab.x = totalX;
 				totalX += tab.width+xOffset;
@@ -249,7 +249,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 
 						case DefaultButton(d):
 
-							button = new DefaultButton(callbacks, d);
+							button = new DefaultButton(callbacks, applicationTilesheet, d);
 
 						default: throw "";
 					}

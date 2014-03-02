@@ -17,11 +17,11 @@ import flash.events.MouseEvent;
  */
 class ScrollBar extends Widget {
 
-	public function new(callbacks : grar.view.DisplayCallbacks, width : Float, tilesheet : TilesheetEx, 
-							tile : String, ? bgTile : Null<String>,  scale9Grid : Rectangle, ? bgScale9Grid : Rectangle, 
-								? cursorColor : String, ? bgColor : String) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, width : Float, 
+							tilesheet : TilesheetEx, tile : String, ? bgTile : Null<String>,  scale9Grid : Rectangle, 
+							? bgScale9Grid : Rectangle, ? cursorColor : String, ? bgColor : String) {
 
-		super(callbacks);
+		super(callbacks, applicationTilesheet);
 
 		bgSprite = new Sprite();
 		var bgData : BitmapData = DisplayUtils.getBitmapDataFromLayer(tilesheet, bgTile != null ? bgTile : tile);

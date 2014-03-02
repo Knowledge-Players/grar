@@ -7,10 +7,11 @@ import grar.view.component.container.WidgetContainer;
 class BookmarkDisplay extends WidgetContainer {
 
 	//public function new( ? xml : Fast, ? tilesheet : TilesheetEx) {
-	public function new(callbacks : grar.view.DisplayCallbacks, bdd : WidgetContainerData) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
+							bdd : WidgetContainerData, ? tilesheet : TilesheetEx) {
 
 		//super(xml, tilesheet);
-		super(callbacks, bdd);
+		super(callbacks, applicationTilesheet, bdd, tilesheet);
 
 		switch(bdd.type) {
 

@@ -50,9 +50,9 @@ enum MenuLevel {
  */
 class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
-	public function new(callbacks : grar.view.DisplayCallbacks) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx) {
 
-		super(callbacks);
+		super(callbacks, applicationTilesheet);
 
 		buttons = new StringMap();
 		buttonGroups.set(btnGroupName, new GenericStack<DefaultButton>());
@@ -130,9 +130,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 				if (b != null) {
 
-					b.applicationTilesheet = applicationTilesheet;
-
-					this.bookmark = new BookmarkDisplay(callbacks, b);
+					this.bookmark = new BookmarkDisplay(callbacks, applicationTilesheet, b);
 				}
 			default: throw "wrong DisplayData type given to MenuDisplay.setContent()";
         }
@@ -238,13 +236,13 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 			case ContainerSeparator(d):
 
-				var separator : Widget = new SimpleContainer(callbacks, d);
+				var separator : Widget = new SimpleContainer(callbacks, applicationTilesheet, d);
 
 				separator.addEventListener(Event.CHANGE, updateDynamicFields);
 
 			case ImageSeparator(thickness, color, alpha, origin, destination, x, y):
 
-				var separator : Widget = new Image(callbacks);
+				var separator : Widget = new Image(callbacks, applicationTilesheet);
 
 				if (thickness != null) {
 
@@ -295,7 +293,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 // FIXME parse "icons" in WidgetContainerData		var icons = ParseUtils.selectByAttribute("ref", "icon", fast.x);
 // FIXME parse "icons" in WidgetContainerData		ParseUtils.updateIconsXml(iconId, icons);
-		var button : DefaultButton = new DefaultButton(callbacks, d);
+		var button : DefaultButton = new DefaultButton(callbacks, applicationTilesheet, d);
 
 		button.setText(text, "partName");
 		button.buttonAction = onClick;

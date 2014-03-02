@@ -74,8 +74,7 @@ typedef WidgetContainerData = {
 	var wd : WidgetData;
 	var type : WidgetContainerType;
 	var spritesheetRef : Null<String>; 
-	@:optional var tilesheet : Null<TilesheetEx>; // set in a second step (instanciation)
-	@:optional var applicationTilesheet : TilesheetEx;
+//	@:optional var tilesheet : Null<TilesheetEx>; // set in a second step (instanciation)
 	var contentAlpha : Float;
 	var scrollBarName : String;
 	var contentTransition : String;
@@ -94,15 +93,15 @@ typedef WidgetContainerData = {
 class WidgetContainer extends Widget {
 
 	//private function new( ? xml : Fast, ? tilesheet : TilesheetEx ) {
-	private function new(callbacks : grar.view.DisplayCallbacks, ? wcd : Null<WidgetContainerData> ) {
+	private function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, ? wcd : Null<WidgetContainerData>, ? tilesheet : Null<TilesheetEx> ) {
 
 		if (wcd == null) {
 
-			super(callbacks);
+			super(callbacks, applicationTilesheet);
 
 		} else  {
 
-			super(callbacks, wcd.wd);
+			super(callbacks, applicationTilesheet, wcd.wd);
 		}
 
 		this.content = new Sprite();
@@ -112,17 +111,9 @@ class WidgetContainer extends Widget {
 
 		addChild(content);
 
+		this.tilesheet = tilesheet != null ? tilesheet : applicationTilesheet;
+
 		if (wcd != null) {
-
-			// Default tilesheet
-			if (wcd.tilesheet != null) {
-
-			 	this.tilesheet = wcd.tilesheet;
-			
-			} else {
-				
-			 	this.tilesheet = wcd.applicationTilesheet;
-			}
 
 			this.contentAlpha = wcd.contentAlpha;
 			this.scrollBarName = wcd.scrollBarName;
@@ -260,7 +251,7 @@ class WidgetContainer extends Widget {
 				}
 				ParseUtils.formatToFour(b.radius);
                 
-                var bubble : SimpleBubble = new SimpleBubble(callbacks, b.bubbleWidth!=0 ? b.bubbleWidth:maskWidth,b.bubbleHeight!=0 ? b.bubbleHeight:maskHeight,colors,b.arrowX,b.arrowY,b.radius,b.line,b.colorLine,b.shadow,b.gap,alphas,b.bubbleX,b.bubbleY);
+                var bubble : SimpleBubble = new SimpleBubble(callbacks, applicationTilesheet, b.bubbleWidth!=0 ? b.bubbleWidth:maskWidth,b.bubbleHeight!=0 ? b.bubbleHeight:maskHeight,colors,b.arrowX,b.arrowY,b.radius,b.line,b.colorLine,b.shadow,b.gap,alphas,b.bubbleX,b.bubbleY);
                 
                 addChildAt(bubble,0);
             
@@ -340,16 +331,13 @@ class WidgetContainer extends Widget {
 
 			case Image(d):
 
-				var img : Image = new Image(callbacks, d);
+				var img : Image = new Image(callbacks, applicationTilesheet, d);
 	            addElement(img);
 				return img;
 
 			case TileImage(d):
 
-				d.layer = layer;
-				d.visible = d.div = true;
-
-	            var tileImg : TileImage = new TileImage(callbacks, d);
+	            var tileImg : TileImage = new TileImage(callbacks, applicationTilesheet, d, layer, true);
 	            addElement(tileImg);
 		        return tileImg;
 
@@ -451,21 +439,21 @@ class WidgetContainer extends Widget {
 
 	private function createTimer(d : WidgetContainerData) : ChronoCircle {
 
-		var timer = new ChronoCircle(callbacks, d);
+		var timer = new ChronoCircle(callbacks, applicationTilesheet, d);
 		addElement(timer);
         return timer;
 	}
 
 	private function createSimpleContainer(d : WidgetContainerData) : Widget {
 
-		var div = new SimpleContainer(callbacks, d);
+		var div = new SimpleContainer(callbacks, applicationTilesheet, d);
 		addElement(div);
 		return div;
 	}
 
 	private function createButton(d : WidgetContainerData) : Widget {
 
-		var button : DefaultButton = new DefaultButton(callbacks, d);
+		var button : DefaultButton = new DefaultButton(callbacks, applicationTilesheet, d);
 
 		switch(d.type) {
 
@@ -500,9 +488,7 @@ class WidgetContainer extends Widget {
 	//private function createText(textNode : Fast) : Widget {
 	private function createText(d : WidgetContainerData) : ScrollPanel {
 
-		d.applicationTilesheet = tilesheet;
-		
-		var text = new ScrollPanel(callbacks, d);
+		var text = new ScrollPanel(callbacks, applicationTilesheet, d);
 		addElement(text);
         return text;
 	}

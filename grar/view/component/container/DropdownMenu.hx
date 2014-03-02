@@ -20,9 +20,9 @@ import haxe.ds.StringMap;
 class DropdownMenu extends WidgetContainer {
 
 	//public function new( ? xml : Fast, blankItem = false) {
-	public function new(callbacks : grar.view.DisplayCallbacks, dmd : Null<WidgetContainerData> , blankItem = false) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, dmd : Null<WidgetContainerData> , blankItem = false) {
 
-		super(callbacks, dmd);
+		super(callbacks, applicationTilesheet, dmd);
 
 		blank = blankItem;
 		buttonMode = true;

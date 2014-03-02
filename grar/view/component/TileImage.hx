@@ -21,9 +21,9 @@ typedef TileImageData = {
 
 	var tilesheetName : Null<String>;
 	var layerRef : Null<String>;
-	var layer : Null<TileLayer>; // set in second step
-	var visible : Bool;
-	var div : Bool;
+//	var layer : Null<TileLayer>; // set in second step
+//	var visible : Bool;
+//	var div : Bool;
 }
 
 /**
@@ -32,9 +32,9 @@ typedef TileImageData = {
 class TileImage extends Image {
 
 	//public function new(xml: Fast, layer: TileLayer, visible: Bool = true, ?div:Bool=false)
-	public function new(callbacks : grar.view.DisplayCallbacks, tid : TileImageData) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, tid : TileImageData, layer : TileLayer, visible : Bool = true) {
 
-		this.isVisible = tid.visible;
+		this.isVisible = visible;
 
 		this.tid = tid;
 
@@ -45,11 +45,11 @@ class TileImage extends Image {
 
 		} else {
 
-			trueLayer = tid.layer;
+			trueLayer = layer;
             init();
 		}
 
-		super(callbacks, tid.id);
+		super(callbacks, applicationTilesheet, tid.id);
 
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove, 1000);
 		
@@ -368,7 +368,7 @@ class TileImage extends Image {
 		visible = false;
 	}
 
-	private function setTilesheet(e:Event):Void
+	private function setTilesheet(e:Event):Void // This ugly workaround could be easily avoided by passing the layer in new() ?
 	{
 		removeEventListener(Event.ADDED_TO_STAGE, setTilesheet);
 		

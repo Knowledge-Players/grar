@@ -19,8 +19,6 @@ class XmlToImage {
 		var tid : TileImageData = cast { };
 
 		tid.layerRef = layerRef;
-		tid.visible = visible;
-		tid.div = div;
 		tid.tilesheetName = f.has.spritesheet ? f.att.spritesheet : null;
 
 		tid.id = parseImageData(f);
@@ -34,7 +32,6 @@ class XmlToImage {
 
 		id.wd = XmlToWidget.parseWidgetData(f);
 		id.tilesheetRef = tilesheetRef;
-		id.tilesheet = null;
 		id.isBackground = false;
 		
 		if (f != null) {

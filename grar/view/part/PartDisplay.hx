@@ -41,9 +41,9 @@ class PartDisplay extends Display {
      * Constructor
      * @param	part : Part to display
      */
-	public function new(callbacks : grar.view.DisplayCallbacks, part : Part) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, part : Part) {
 
-		super(callbacks);
+		super(callbacks, applicationTilesheet);
 
 		this.part = part;
 //		resizeD = ResizeManager.get_instance();
@@ -100,7 +100,7 @@ class PartDisplay extends Display {
      * Initialize the part display.
      **/
 	public function init() : Void {
-trace("init display of "+part.id);
+
 		if (part.file != null) {
 
 //			Localiser.instance.layoutPath = part.file;
@@ -108,11 +108,11 @@ trace("init display of "+part.id);
 		
 		} else {
 
-			localeLoaded = true;
+			localeLoaded = true; // useless ?
 		}
 
  		if (part.display != null) {
-trace("setting part display content");
+
  			//parseContent(AssetsStorage.getXml(part.display));
  			setContent(part.display);
  		
@@ -121,7 +121,7 @@ trace("setting part display content");
 			displayLoaded = true; // <= useless ?
  		}
 
-		localeLoaded = true;
+		localeLoaded = true; // useless ?
 		checkPartLoaded();
 	}
 
@@ -341,16 +341,16 @@ trace("setting part display content");
 
 		switch (e) {
 
-			case InventoryDisplay(d): 
+			case InventoryDisplay(d):
 
-				inventory = new InventoryDisplay(callbacks, d);
+				inventory = new InventoryDisplay(callbacks, applicationTilesheet, d);
 				inventory.init(part.tokens);
 				addElement(inventory, r);
 				return null;
 
 			case IntroScreen(d):
 
-				var intro = new IntroScreen(callbacks, d);
+				var intro = new IntroScreen(callbacks, applicationTilesheet, d);
 				intro.zz = zIndex;
 				displays.set(r, intro);
 				zIndex++;
@@ -605,8 +605,8 @@ trace("setting part display content");
 		onSoundToLoad(item.sound);
 	}
 
-	private function displayPart():Void
-	{
+	private function displayPart() : Void {
+
 		// Clean-up buttons
 		cleanDisplay();
 
@@ -699,8 +699,8 @@ trace("setting part display content");
 				removeChild(obj);
 	}
 
-	private inline function onWidgetAdded():Void
-	{
+	private inline function onWidgetAdded() : Void {
+
 		numWidgetReady++;
 		if(numWidgetAdded == numWidgetReady && timelines.exists(nextTimeline)){
 			timelines.get(nextTimeline).play();

@@ -1,6 +1,7 @@
 package grar.view.component;
 
 import aze.display.TileLayer;
+import aze.display.TilesheetEx;
 
 import grar.view.component.TileImage;
 
@@ -17,9 +18,9 @@ typedef CharacterData = {
 class CharacterDisplay extends TileImage {
 
 	//public function new(?xml: Fast, layer:TileLayer, ?model:Character) {
-	public function new(callbacks : grar.view.DisplayCallbacks, cd : CharacterData) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, cd : CharacterData, layer : TileLayer) {
 
-		super(callbacks, cd.tid);
+		super(callbacks, applicationTilesheet, cd.tid, layer, false);
 
 		this.charRef = cd.charRef;
 		

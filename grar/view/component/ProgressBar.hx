@@ -21,12 +21,13 @@ import flash.display.Sprite;
 class ProgressBar extends WidgetContainer {
 
 	//public function new(_node : Fast) : Void {
-	public function new(callbacks : grar.view.DisplayCallbacks, pbd : WidgetContainerData) : Void {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx,
+						 pbd : WidgetContainerData) : Void {
 
 		//super(_node);
-		super(callbacks, pbd);
+		super(callbacks, applicationTilesheet, pbd);
 
-		layerProgressBar = new TileLayer(pbd.applicationTilesheet);
+		layerProgressBar = new TileLayer(applicationTilesheet);
 
 		addChild(layerProgressBar.view);
 

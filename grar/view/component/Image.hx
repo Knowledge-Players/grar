@@ -7,8 +7,6 @@ import aze.display.TilesheetEx;
 import grar.view.component.Widget;
 import grar.view.component.container.SimpleBubble;
 
-//import com.knowledgeplayers.grar.factory.UiFactory; // FIXME
-
 import grar.util.ParseUtils;
 import grar.util.DisplayUtils;
 
@@ -42,7 +40,7 @@ typedef ImageData = {
 	var mirror : Null<Int>;
 	var clipOrigin : Null<Array<Float>>;
 	var tilesheetRef : Null<String>;
-	var tilesheet : Null<TilesheetEx>; // set in second step (instanciation)
+//	var tilesheet : Null<TilesheetEx>; // set in second step (instanciation)
 	var tile : Null<String>;
 	var isBackground : Bool;
 }
@@ -53,15 +51,17 @@ typedef ImageData = {
 class Image extends Widget {
 
 	//public function new( ? xml : Fast, ? tilesheet : TilesheetEx ) {
-	public function new(callbacks : grar.view.DisplayCallbacks, ? id : Null<ImageData>) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, ? id : Null<ImageData>, ? tilesheet : TilesheetEx) {
+
+		this.tilesheet = tilesheet != null ? tilesheet : applicationTilesheet;
 
 		if (id == null) {
 
-			super(callbacks);
+			super(callbacks, applicationTilesheet);
 
 		} else {
 
-			super(callbacks, id.wd);
+			super(callbacks, applicationTilesheet, id.wd);
 
 			createImg(id);
 
@@ -95,6 +95,8 @@ class Image extends Widget {
 	}
 
 	public var bitmap (default, null) : Bitmap;
+
+	var tilesheet : TilesheetEx;
 
 
 	///
@@ -198,7 +200,7 @@ class Image extends Widget {
 				if (id.width != null && id.height != null) {
 
 					ParseUtils.formatToFour(id.radius);
-					addChild(new SimpleBubble(callbacks, id.width, id.height, colors, id.radius, alphas));
+					addChild(new SimpleBubble(callbacks, applicationTilesheet, id.width, id.height, colors, id.radius, alphas));
 				
 				} else {
 
@@ -229,8 +231,8 @@ class Image extends Widget {
             }
 		
 		} else {
-// FIXME
-			bitmap = new Bitmap(DisplayUtils.getBitmapDataFromLayer(id.tilesheet != null ? id.tilesheet : /* UiFactory.tilesheet */ null, id.tile));
+
+			bitmap = new Bitmap(DisplayUtils.getBitmapDataFromLayer(tilesheet, id.tile));
 			
 			if (bitmap != null) {
 

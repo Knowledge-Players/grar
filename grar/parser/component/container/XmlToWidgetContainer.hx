@@ -24,7 +24,6 @@ class XmlToWidgetContainer {
 
 		var wcd : WidgetContainerData = cast { };
 		wcd.type = type == null ? WidgetContainer : type;
-		wcd.tilesheet = null;
 //trace("type= "+wcd.type);
 		switch (wcd.type) {
 			case SimpleBubble: return null;

@@ -63,8 +63,7 @@ typedef DisplayData = {
 	@:optional var y : Null<Float>;
 	@:optional var width : Null<Float>;
 	@:optional var height : Null<Float>;
-	@:optional var applicationTilesheet : TilesheetEx; // set in a second step
-	@:optional var spritesheets : Null<StringMap<TilesheetEx>>; // set in a second step
+	@:optional var spritesheets : Null<StringMap<TilesheetEx>>; // set in a second step (service layer)
 	@:optional var spritesheetsSrc : StringMap<String>;
 	@:optional var transitionIn : Null<String>;
 	@:optional var transitionOut : Null<String>;
@@ -74,7 +73,7 @@ typedef DisplayData = {
 	@:optional var filters : Null<Array<flash.filters.BitmapFilter>>; // set in a second step
 #end
 	@:optional var timelines : StringMap<{ ref : String, elements : Array<{ ref : String, transition : String, delay : Float }> }>;
-	@:optional var displays : StringMap<ElementData>;
+	var displays : StringMap<ElementData>;
 	@:optional var layers : Null<StringMap<TileLayer>>; // set in a second step
 	@:optional var layersSrc : StringMap<String>;
 }
@@ -84,7 +83,7 @@ class Display extends Sprite {
 	/**
 	 * Never instanciated directly (only in sub-classes)
 	 */
-	private function new(callbacks : DisplayCallbacks) {
+	private function new(callbacks : DisplayCallbacks, applicationTilesheet : TilesheetEx) {
 
 		super();
 		
@@ -110,6 +109,8 @@ class Display extends Sprite {
 		this.onLocaleDataPathRequest = function(p:String){ callbacks.onLocaleDataPathRequest(p); }
 		this.onStylesheetRequest = function(s:String){ return callbacks.onStylesheetRequest(s); }
 		this.onPartDisplayRequested = function(p : grar.model.part.Part){ callbacks.onPartDisplayRequested(p); }
+
+		this.applicationTilesheet = applicationTilesheet;
 
 		addEventListener(Event.ENTER_FRAME, checkRender);
 	}
@@ -212,17 +213,16 @@ trace("setContent, display type is "+d.type);
 
 			y = d.y;
 		}
+		this.spritesheets = d.spritesheets;
+
 		if (d.width != null && d.height != null) {
 
 			DisplayUtils.initSprite(this, d.width, d.height, 0, 0.001);
 		}
-		this.spritesheets = d.spritesheets;
-		this.applicationTilesheet = d.applicationTilesheet;
-
 		if (d.spritesheets != null) {
 
 			for (sk in d.spritesheets.keys()) {
-
+trace("add TileLayer " + sk);
 				var layer = new TileLayer(spritesheets.get(sk));
 				layers.set(sk, layer);
 
@@ -238,9 +238,9 @@ trace("setContent, display type is "+d.type);
 		if (d.transitionIn != null) {
 
 			transitionIn = d.transitionIn;
-
+trace("TRANSITION IN");
 			addEventListener(Event.ADDED_TO_STAGE, function(e){
-
+trace("display added to stage");
 // 					TweenManager.applyTransition(this, transitionIn);
 					onTransitionRequested(this, transitionIn);
 
@@ -286,7 +286,7 @@ trace("setContent, display type is "+d.type);
 				// Creating mock widget for dynamic timeline
 				if (e.ref.startsWith("$")) {
 
-					var mock = new Image(callbacks);
+					var mock = new Image(callbacks, applicationTilesheet);
 					mock.ref = e.ref;
 
 
@@ -356,7 +356,7 @@ trace("setContent, display type is "+d.type);
 
 			case SimpleContainer(d):
 
-				var div = new SimpleContainer(callbacks, d);
+				var div = new SimpleContainer(callbacks, applicationTilesheet, d);
 				
 				addElement(div, r);
 				
@@ -364,7 +364,7 @@ trace("setContent, display type is "+d.type);
 
 			case ChronoCircle(d):
 
-	            var timer = new ChronoCircle(callbacks, d);
+	            var timer = new ChronoCircle(callbacks, applicationTilesheet, d);
 
 	            addElement(timer, r);
 
@@ -397,7 +397,7 @@ trace("setContent, display type is "+d.type);
 
 			bg9Grid = cursor9Grid;
 		}
-		var scroll = new ScrollBar(callbacks, d.width, tilesheet, d.tile, d.bgTile, cursor9Grid, bg9Grid, d.cursorColor, d.bgColor);
+		var scroll = new ScrollBar(callbacks, applicationTilesheet, d.width, tilesheet, d.tile, d.bgTile, cursor9Grid, bg9Grid, d.cursorColor, d.bgColor);
 
 		scrollBars.set(r, scroll);
 
@@ -410,10 +410,7 @@ trace("setContent, display type is "+d.type);
 
     		case SoundPlayer:
 
-				d.tilesheet = d.spritesheetRef != null ? spritesheets.get(d.spritesheetRef) : null;
-				d.applicationTilesheet = this.applicationTilesheet;
-
-				var sound = new SoundPlayer(callbacks, d);
+				var sound = new SoundPlayer(callbacks, applicationTilesheet, d, d.spritesheetRef != null ? spritesheets.get(d.spritesheetRef) : null);
 				addElement(sound, r);
 
 				return sound;
@@ -430,10 +427,7 @@ trace("setContent, display type is "+d.type);
 
 			case VideoPlayer(controlsHidden, autoFullscreen):
 
-				d.tilesheet = d.spritesheetRef != null ? spritesheets.get(d.spritesheetRef) : null;
-				d.applicationTilesheet = this.applicationTilesheet;
-
-				var video = new VideoPlayer(callbacks, d);
+				var video = new VideoPlayer(callbacks, applicationTilesheet, d, d.spritesheetRef != null ? spritesheets.get(d.spritesheetRef) : null);
 
 				addElement(video, r);
 				
@@ -451,9 +445,7 @@ trace("setContent, display type is "+d.type);
 
 			case ScrollPanel(styleSheet, style, content, trim):
 
-				d.applicationTilesheet = this.applicationTilesheet;
-
-				var panel = new ScrollPanel(callbacks, d);
+				var panel = new ScrollPanel(callbacks, applicationTilesheet, d);
 
 				addElement(panel, r);
 
@@ -474,10 +466,8 @@ trace("setContent, display type is "+d.type);
 		switch (d.type) {
 
 			case DefaultButton(ds, ite, action, group, e, _, _):
-
-				d.applicationTilesheet = this.applicationTilesheet;
 				
-				var btn : DefaultButton = new DefaultButton(callbacks, d);
+				var btn : DefaultButton = new DefaultButton(callbacks, applicationTilesheet, d);
 
 				if (action != null) {
 
@@ -512,8 +502,8 @@ trace("setContent, display type is "+d.type);
 	}
 
 	private function createCharacter(r : String, d : CharacterData) : Widget {
-
-		var c : CharacterDisplay = new CharacterDisplay(callbacks, d);
+//new CharacterDisplay(character, layers.get(character.att.spritesheet), new Character(character.att.ref));
+		var c : CharacterDisplay = new CharacterDisplay(callbacks, applicationTilesheet, d, layers.get(d.tid.tilesheetName));
 		
 		addElement(c, r);
 		
@@ -528,8 +518,7 @@ trace("setContent, display type is "+d.type);
 			var layer = new TileLayer(applicationTilesheet);
 			layers.set(d.tilesheetName, layer);
 		}
-		d.layer = layers.get(d.tilesheetName);
-		var img = new TileImage(callbacks, d);
+		var img = new TileImage(callbacks, applicationTilesheet, d, layers.get(d.tilesheetName));
 		
 		addElement(img, r, d.id.isBackground);
 		
@@ -537,8 +526,7 @@ trace("setContent, display type is "+d.type);
 	}
 	private function createImage(r : String, d : ImageData) : Widget {
 
-		d.tilesheet = spritesheets.get(d.tilesheetRef);
-		var img =  new Image(callbacks, d);
+		var img =  new Image(callbacks, applicationTilesheet, d, spritesheets.get(d.tilesheetRef));
 
 		addElement(img, r, d.isBackground);
 		

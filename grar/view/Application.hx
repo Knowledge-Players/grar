@@ -65,9 +65,6 @@ class Application {
 		// we should pass here the targetted API's root element of 
 		// the GRAR instance.
 
-		
-		// WIP 
-
 		this.parts = new GenericStack<PartDisplay>();
 
 		this.callbacks = {
@@ -86,6 +83,9 @@ class Application {
 			};
 	}
 
+	/**
+	 * The application tilesheet (previously in UIFactory)
+	 */
 	public var tilesheet (default, default) : TilesheetEx;
 
 	public var filters (default, default) : Null<StringMap<BitmapFilter>>;
@@ -282,6 +282,7 @@ class Application {
 
 			l = "default";
 		}
+
 		if (currentLayout == null || l != currentLayout.name) {
 
 			previousLayout = currentLayout == null ? "default" : currentLayout.name;
@@ -296,7 +297,7 @@ class Application {
 
 				throw "there is no layout '"+l+"'";
 			}
-			Lib.current.addChild(currentLayout.content);
+			Lib.current.addChild(currentLayout.content); trace("Layout "+currentLayout.name+" just added");
 
 		} else {
 
@@ -338,13 +339,13 @@ class Application {
 		}
 
 		stylesheets = newStyles;
-trace("styles ready");
+//trace("styles ready");
 		onStylesChanged();
 	}
 
 	public function createTokenNotification(d : WidgetContainerData) : Void {
 
-		tokenNotification = new TokenNotification(callbacks, d);
+		tokenNotification = new TokenNotification(callbacks, tilesheet, d);
 
 		onTokenNotificationChanged();
 	}
@@ -355,7 +356,7 @@ trace("styles ready");
 
 		for (lk in lm.keys()) {
 
-			var nl : Layout = new Layout(callbacks, lm.get(lk), tilesheet);
+			var nl : Layout = new Layout(callbacks, tilesheet, null, null, lm.get(lk));
 
 			l.set(lk, nl);
 
@@ -368,7 +369,7 @@ trace("styles ready");
 
 	public function createBibliography(b : grar.model.contextual.Bibliography) : Void {
 
-		bibliography = new BibliographyDisplay(callbacks, b);
+		bibliography = new BibliographyDisplay(callbacks, tilesheet, b);
 
 		//onBibliographyChanged();
 	}
@@ -382,11 +383,9 @@ trace("styles ready");
 
 	public function createNotebook(d : DisplayData) : Void {
 
-		var n : NotebookDisplay = new NotebookDisplay(callbacks);
+		var n : NotebookDisplay = new NotebookDisplay(callbacks, tilesheet);
 
 		n.onClose = function() { doHideContextual(n); }
-
-		d.applicationTilesheet = tilesheet;
 	
 		if (d.filtersData != null) {
 
@@ -402,9 +401,7 @@ trace("styles ready");
 
 	public function createMenu(d : DisplayData) : Void {
 
-		var m : MenuDisplay = new MenuDisplay(callbacks);
-
-		d.applicationTilesheet = tilesheet;
+		var m : MenuDisplay = new MenuDisplay(callbacks, tilesheet);
 	
 		if (d.filtersData != null) {
 
@@ -479,10 +476,12 @@ trace("styles ready");
 	/**
 	* Stop currently playing sound
 	**/
-	public function stopSound():Void
-	{
-		if(itemSoundChannel != null)
+	public function stopSound() : Void {
+
+		if (itemSoundChannel != null) {
+
 			itemSoundChannel.stop();
+		}
 	}
 
 	/**
@@ -491,13 +490,15 @@ trace("styles ready");
     * @param    interrupt : Stop current part to display the new one
     * @return true if the part can be displayed.
     */
-	public function displayPart(part:Part, interrupt:Bool = false, startPosition:Int = -1):Bool
-	{
-		#if !kpdebug
+	public function displayPart(part : Part, interrupt : Bool = false, startPosition : Int = -1) : Bool {
+
+#if !kpdebug
 		// Part doesn't meet the requirements to start
-		if(!part.canStart())
+		if (!part.canStart()) {
+
 			return false;
-		#end
+		}
+#end
 trace("display part "+part.id);
 
 		if (interrupt) {
@@ -594,7 +595,6 @@ trace("UNIMPLEMENTED onGameOver");
 		}
 	}
 
-
 	/**
     * Activate a token of the inventory
     * @param    tokenName : Name of the token to activate
@@ -641,7 +641,7 @@ trace("UNIMPLEMENTED onGameOver");
 
 			changeLayout(pd.layout);
 		}
-		currentLayout.zones.get(mainLayoutRef).addChild(pd);
+		currentLayout.zones.get(mainLayoutRef).addChild(pd); trace("part added to stage");
 
 		currentLayout.updateDynamicFields();
 
@@ -657,8 +657,6 @@ trace("create part display for "+part.id);
 			return null;
 		}
 		part.restart();
-
-		part.display.applicationTilesheet = tilesheet;
 	
 		if (part.display.filtersData != null) {
 
@@ -669,19 +667,19 @@ trace("create part display for "+part.id);
 
 		if (part.isDialog()) {
 
-			creation = new DialogDisplay(callbacks, part);
+			creation = new DialogDisplay(callbacks, tilesheet, part);
 		
 		} else if(part.isStrip()) {
 
-			creation = new StripDisplay(callbacks, part);
+			creation = new StripDisplay(callbacks, tilesheet, part);
 		
 		} else if(part.isActivity()) {
 
-			creation = new ActivityDisplay(callbacks, part);
+			creation = new ActivityDisplay(callbacks, tilesheet, part);
 		
 		} else {
 
-			creation = new PartDisplay(callbacks, part);
+			creation = new PartDisplay(callbacks, tilesheet, part);
 		}
 
 		return creation;
@@ -701,11 +699,11 @@ trace("create part display for "+part.id);
 			
 			case GLOSSARY:
 
-				return cast glossary; // this is just very ugly ! Fix this with an enum...
+				return cast glossary; // this is just very ugly ! We should use an enum...
 			
 			case BIBLIOGRAPHY:
 
-				return cast bibliography; // this is just very ugly ! Fix this with an enum...
+				return cast bibliography; // this is just very ugly ! We should use an enum...
 			
 			case INVENTORY: // nothing ?
 

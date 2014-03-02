@@ -38,9 +38,9 @@ typedef Coordinates = {
  */
 class ActivityDisplay extends PartDisplay {
 
-	public function new(callbacks : grar.view.DisplayCallbacks, model : Part) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, model : Part) {
 
-		super(callbacks, model);
+		super(callbacks, applicationTilesheet, model);
 
 		autoCorrect = false;
 		hasCorrection = true;
@@ -199,7 +199,7 @@ class ActivityDisplay extends PartDisplay {
 
 			case DefaultButton(d):
 
-				button = new DefaultButton(callbacks, d);
+				button = new DefaultButton(callbacks, applicationTilesheet, d);
 
 			default: throw "unexpected ElementData type";
 		}
@@ -406,7 +406,7 @@ class ActivityDisplay extends PartDisplay {
 					if(drop != null && validate(e.target, (buttonsToInputs.exists(cast(drop, DefaultButton)) ? buttonsToInputs.get(cast(drop, DefaultButton)).id : drop.name))){
 						copyCoordinates(e.target, drop);
 						if(buttonsToInputs.exists(cast(drop, DefaultButton))){
-							var dropZone = new DefaultButton(callbacks);
+							var dropZone = new DefaultButton(callbacks, applicationTilesheet);
 							dropZone.enabled = false;
 							dropZone.initSprite(drop.width, drop.height, 0.001);
 							dropZone.ref = dropRef;

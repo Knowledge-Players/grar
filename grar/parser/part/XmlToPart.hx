@@ -367,8 +367,6 @@ class XmlToPart {
 		pd.buttonTargets = new StringMap();
 		pd.perks = new StringMap();
 		pd.requirements = new StringMap();
-		pd.endScreen = false;
-		pd.loaded = false;
 		pd.partialSubParts = [];
 
 		pd = parsePartHeader(pd, f);

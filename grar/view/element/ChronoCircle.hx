@@ -11,9 +11,9 @@ import flash.display.Sprite;
 class ChronoCircle extends WidgetContainer {
 
     //public function new(_node:Fast):Void
-    public function new(callbacks : grar.view.DisplayCallbacks, ccd : WidgetContainerData) : Void {
+    public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, ccd : WidgetContainerData) : Void {
 
-        super(callbacks, ccd);
+        super(callbacks, applicationTilesheet, ccd);
 
         switch(ccd.type) {
 
