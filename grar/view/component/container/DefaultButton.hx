@@ -385,11 +385,12 @@ class DefaultButton extends WidgetContainer {
 		}
 		if (timelineOut != null) {
 
-			timelineOut.addEventListener(Event.COMPLETE,function(e){
+			//timelineOut.addEventListener(Event.COMPLETE,function(e){
+			timelineOut.onTimelineEnded = function(){
 
 					buttonAction(this);
 
-				});
+				}
 
 			timelineOut.play();
 

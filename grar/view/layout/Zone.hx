@@ -100,12 +100,12 @@ class Zone extends Display {
 					addChild(layers.get("ui").view);
 
 					for (e in d.displays.keys()) {
-trace("CREATE ZONE ELT "+d.displays.get(e));
+//trace("CREATE ZONE ELT "+d.displays.get(e));
 						createElement(d.displays.get(e), e);
 					}
 				
 				} else if(rows != null) {
-trace("FOUND ONE ZONE WITH ROWS");
+//trace("FOUND ONE ZONE WITH ROWS");
 					var heights = initSize(rows, zoneHeight);
 					var yOffset : Float = 0;
 					var i = 0;
@@ -126,7 +126,7 @@ trace("FOUND ONE ZONE WITH ROWS");
 					}
 				
 				} else if (columns != null) {
-trace("FOUND ONE ZONE WITH COLUMNS");
+//trace("FOUND ONE ZONE WITH COLUMNS");
 					var widths = initSize(columns, zoneWidth);
 					var xOffset : Float = 0;
 					var j = 0;

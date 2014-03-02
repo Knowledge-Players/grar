@@ -18,11 +18,11 @@ typedef TimelineElement = {
     var dynamicValue : Null<String>;
 }
 
-class Timeline extends EventDispatcher {
+class Timeline /* extends EventDispatcher */ {
 
     public function new(callbacks : grar.view.DisplayCallbacks, ? name : String) : Void {
 
-        super();
+        //super();
 
         this.onTransitionRequested = function(target : Dynamic, transition : String, ? delay : Float = 0) { return callbacks.onTransitionRequested(target, transition, delay); }
         this.onStopTransitionRequested = function(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true){ callbacks.onStopTransitionRequested(target, properties, complete, sendEvent); }
@@ -52,6 +52,12 @@ class Timeline extends EventDispatcher {
 
     public dynamic function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
 
+    // dispatchEvent(new Event(elemRef));
+    public dynamic function onCompleteTransition(elemRef : String) : Void { }
+    
+    // dispatchEvent(new Event(Event.COMPLETE));
+    public dynamic function onTimelineEnded() : Void { }
+
 
     ///
     // API
@@ -65,14 +71,15 @@ class Timeline extends EventDispatcher {
 
             dynValue = widget.ref;
         }
+
         elements.push({ widget: widget, transition: transition, delay: delay, dynamicValue: dynValue });
     }
 
-    public function play():Void
-    {
-         nbCompleteTransitions=0;
+    public function play() : Void {
 
-         for (elem in elements) {
+        nbCompleteTransitions=0;
+
+        for (elem in elements) {
 
 //          var actuator = TweenManager.applyTransition(elem.widget,elem.transition,elem.delay);
             var actuator = onTransitionRequested(elem.widget,elem.transition,elem.delay);
@@ -81,19 +88,14 @@ class Timeline extends EventDispatcher {
 
 	            actuator.onComplete(onCompleteTransition, [elem.widget.ref]);
             }
+            nbCompleteTransitions++;
+
             onCompleteTransition(elem.widget.ref);
-         }
-    }
-
-    private function onCompleteTransition(elemRef : String) : Void {
-
-        nbCompleteTransitions++;
-		dispatchEvent(new Event(elemRef));
         
-        if (nbCompleteTransitions == elements.length) {
+            if (nbCompleteTransitions == elements.length) {
 
-            dispatchEvent(new Event(Event.COMPLETE));
+                onTimelineEnded();
+            }
         }
     }
-
 }

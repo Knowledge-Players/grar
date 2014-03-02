@@ -652,19 +652,26 @@ class PartDisplay extends Display {
 				}
 			}
 		}
-		if(tl != null && currentItem.isText()){
+		if (tl != null && currentItem.isText()) {
+
 			var listener: Event -> Void = null;
 			var ref = currentItem.ref;
-			listener = function(e){
+			
+			tl.onCompleteTransition = function(er:String) {
 
-					if (currentItem != null && Std.is(currentItem, TextItem)) {
+					if (er == ref) {
 
-//	 					GameManager.instance.playSound(cast(currentItem, TextItem).sound);
-						onSoundToPlay(cast(currentItem, TextItem).sound);
+						if (currentItem != null && Std.is(currentItem, TextItem)) {
+
+//		 					GameManager.instance.playSound(cast(currentItem, TextItem).sound);
+							onSoundToPlay(cast(currentItem, TextItem).sound);
+						}
+
+					} else {
+
+						throw "problem ?";
 					}
-					tl.removeEventListener(ref, listener);
 				}
-			tl.addEventListener(ref, listener);
 		}
 
 		array.sort(sortDisplayObjects);
