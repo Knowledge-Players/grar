@@ -236,7 +236,10 @@ class Controller {
 				state.module.currentLocale = null;
 			}
 
-		state.onPartFinished = onPartFinished;
+		state.onPartFinished = function(p : grar.model.part.Part) {
+trace("state.onPartFinished");
+				onPartFinished(p);
+			}
 
 		state.onInventoryTokenActivated = function(t : InventoryToken) {
 
@@ -250,7 +253,7 @@ class Controller {
 			}
 
 		application.onExitPart = function(pid : String) {
-
+trace("onExitPart");
 				state.module.setPartFinished(pid);
 			}
 
@@ -406,7 +409,7 @@ trace("=============> launch game");
 	function onPartFinished(p : Part) {
 
 		application.setFinishedPart(p.id);
-
+trace("p.next = "+p.next);
 		if (p.next != null) {
 
 			var i = 0;

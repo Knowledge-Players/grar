@@ -387,6 +387,7 @@ class PartDisplay extends Display {
 
 	override private function setButtonAction(button:DefaultButton, action:String):Bool
 	{
+if(part.id == "intro") trace("setButtonAction "+action);
 		if (super.setButtonAction(button, action)) {
 
 			return true;
@@ -406,7 +407,7 @@ class PartDisplay extends Display {
 					button.buttonAction = function(?target: DefaultButton){
 
 							var goToTarget : PartElement = part.buttonTargets.get(button.ref);
-						
+trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);						
 							if (goToTarget == null) {
 
 								exitPart();

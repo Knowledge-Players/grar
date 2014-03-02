@@ -341,7 +341,7 @@ class XmlToPart {
 
 			pd.displaySrc = f.att.display;
 		}
-		pd.next = f.has.next && f.att.next.trim() != "" ? ParseUtils.parseListOfValues(f.att.next) : null;
+		pd.next = f.has.next && f.att.next.trim() != "" ? ParseUtils.parseListOfValues(f.att.next) : pd.next;
 
 		if (f.has.bounty) { 
 

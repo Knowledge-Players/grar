@@ -564,7 +564,7 @@ trace("display part "+part.id);
 	public function displayContextual(c : ContextualType, ? hideOther : Bool = true) : Void {
 	
 		var cd : Display = getContextual(c);
-
+trace("displayContextual "+cd);
 		doDisplayContextual(cd, cd.layout, hideOther);
 	}
 
@@ -596,7 +596,7 @@ trace("display part "+part.id);
 			}
 
 		} else {
-
+trace("Game Over");
 			// dispatchEvent(new GameEvent(GameEvent.GAME_OVER)); TODO call setGameOver on ProgressBar
 		}
 	}
@@ -652,7 +652,7 @@ trace("onPartLoaded "+pd.part.id);
 	}
 
 	function onEnterSubPart(part : Part) : Void {
-
+trace("onEnterSubPart "+part.id);
 		displayPart(part);
 	}
 
