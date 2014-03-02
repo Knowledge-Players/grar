@@ -1,7 +1,5 @@
 package grar.view.contextual.menu;
 
-// FIXME import com.knowledgeplayers.grar.event.PartEvent; // FIXME
-
 import grar.model.part.Part;
 
 import grar.view.Display;
@@ -10,9 +8,6 @@ import grar.view.component.Widget;
 import grar.view.component.container.WidgetContainer;
 import grar.view.component.container.SimpleContainer;
 import grar.view.component.container.DefaultButton;
-//import grar.view.contextual.ContextualDisplay;
-
-// FIXME import com.knowledgeplayers.grar.display.GameManager;
 
 import grar.util.ParseUtils;
 
@@ -57,7 +52,12 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 		buttons = new StringMap();
 		buttonGroups.set(btnGroupName, new GenericStack<DefaultButton>());
 // GameManager.instance.addEventListener(PartEvent.EXIT_PART, onFinishPart); <= replaced by setPartFinished()
-		addEventListener(Event.ADDED_TO_STAGE, onAdded);
+		
+		addEventListener(Event.ADDED_TO_STAGE, function(?_){
+
+				onMenuAdded();
+			});
+		
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 	}
 
@@ -90,8 +90,74 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 
 	///
+	// CALLBACKS
+	//
+
+	public dynamic function onMenuHide() : Void { }
+
+	public dynamic function onMenuAdded() : Void { }
+
+	public dynamic function onMenuReady() : Void { }
+
+	public dynamic function onMenuRemoved() : Void { }
+
+	public dynamic function onMenuClicked(partId : String) : Void { }
+
+	public dynamic function onMenuButtonStateRequest(partName : String) : { l : Bool, d : Bool } { return null; }
+
+
+	///
 	// API
 	//
+
+	public function setMenuExit() : Void {
+
+//		var actuator = TweenManager.applyTransition(this, transitionOut);
+		var actuator = onTransitionRequested(this, transitionOut);
+
+		if (actuator != null) {
+
+			actuator.onComplete(function(){
+
+//					GameManager.instance.hideContextual(instance);
+					onMenuHide();
+				});
+		
+		} else {
+
+//			GameManager.instance.hideContextual(instance);
+			onMenuHide();
+		}
+	}
+
+	public function setCurrentPart(p : Part) : Void {
+
+		if (!buttons.exists(p.id)) {
+
+			while (p != null && !buttons.exists(p.id)) {
+
+				p = p.parent;
+			}
+		
+		}
+		if (p != null) {
+
+			currentPartButton = buttons.get(p.id);
+			
+			if (bookmark != null) {
+
+				bookmark.updatePosition(currentPartButton.x, currentPartButton.y);
+			}
+		}
+
+		if (timelines.exists("in")) {
+
+			timelines.get("in").play();
+		}
+
+		onMenuReady();
+//  dispatchEvent(new PartEvent(PartEvent.ENTER_PART));
+	}
 
 	public function setPartFinished(partId : String) : Void {
 
@@ -100,23 +166,14 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 			buttons.get(partId).toggle(false);
 		}
-		// Unlock next parts
-/* FIXME
-		for (part in GameManager.instance.game.getAllParts()) {
+	}
 
-			if (buttons.exists(part.id) && part.id != e.partId && !part.isDone) {
+	public function unlockNextPart(partId : String) : Void {
 
-				if (!part.canStart()) {
+		if (buttons.exists(partId)) {
 
-					buttons.get(part.id).toggleState = "lock";
-				
-				} else {
-
-					buttons.get(part.id).toggle(true);
-				}
-			}
+			buttons.get(partId).toggle(true);
 		}
-*/
 	}
 
     //override public function parseContent(content:Xml):Void
@@ -171,7 +228,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 //				Localiser.instance.popLocale(); // now done in Application.hx
 
-// FIXME				GameManager.instance.menuLoaded = true;
+// 				GameManager.instance.menuLoaded = true; // should be useless now...
 
 			default: // nothing
 		}
@@ -269,7 +326,18 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 	}
 
 	private function setButtonState(button : DefaultButton, level : LevelData) : Void {
-/* FIXME FIXME FIXME FIXME FIXME FIXME
+
+		var s : { l : Bool, d : Bool } = onMenuButtonStateRequest(level.id);
+
+		if (s.l) {
+
+			button.toggleState = "lock";
+
+		} else {
+
+			button.toggle(!s.d);
+		}
+/* was:
 		for (part in GameManager.instance.game.getAllParts()) {
 
 			if (part.name == level.id) {
@@ -291,8 +359,32 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 //	private function addButton(fast : Fast, text : String, iconId : String) : DefaultButton {
 	private function addButton(d : WidgetContainerData, text : String, iconId : String) : DefaultButton {
 
-// FIXME parse "icons" in WidgetContainerData		var icons = ParseUtils.selectByAttribute("ref", "icon", fast.x);
-// FIXME parse "icons" in WidgetContainerData		ParseUtils.updateIconsXml(iconId, icons);
+		switch(d.type) {
+
+			case DefaultButton(_, _, _, _, _, _, statesElts):
+
+				for (st in statesElts) {
+
+					var ed : ElementData = st.get("icon");
+
+					switch(ed) {
+
+						case Image(i):
+
+							i.src = iconId;
+
+						case TileImage(ti):
+
+							ti.id.tile = iconId;
+
+						default: throw "unexpected ElementData type given as button icon";
+					}
+
+					st.set("icon", ed);
+				}
+
+			default: throw "wrong WidgetContainerData type passed to MenuDisplay.addButton()";
+		}
 		var button : DefaultButton = new DefaultButton(callbacks, applicationTilesheet, d);
 
 		button.setText(text, "partName");
@@ -310,8 +402,8 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 	// Handlers
 
-	private function onClick(?_target:DefaultButton):Void
-	{
+	private function onClick(? _target : DefaultButton) : Void {
+
 		var target = _target;
 		var canStart = false;
 
@@ -319,25 +411,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 			if (buttons.get(key) == target) {
 
-// FIXME				canStart = GameManager.instance.displayPartById(key, true);
-			}
-		}
-		if (canStart) {
-
-// 			var actuator = TweenManager.applyTransition(this, transitionOut);
-			var actuator = onTransitionRequested(this, transitionOut);
-
-			if (actuator != null) {
-
-				actuator.onComplete(function(){
-
-// FIXME					GameManager.instance.hideContextual(instance);
-
-					});
-			
-			} else {
-
-// FIXME				GameManager.instance.hideContextual(instance);
+				onMenuClicked(key);
 			}
 		}
 	}
@@ -360,8 +434,8 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 		}
 	}
 
-	private inline function getUnlockCounterInfos(partId:String):String
-	{
+	private inline function getUnlockCounterInfos(partId : String) : String {
+
 		var output: String = "";
 /* FIXME
 		var parent: Part = GameManager.instance.game.getPart(partId);
@@ -392,14 +466,17 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 		return output;
 	}
 
-	private function updateDynamicFields(e: Event):Void
-	{
-		for(field in dynamicFields){
-			if(field.content == "unlock_counter"){
+	private function updateDynamicFields(e : Event) : Void {
+
+		for (field in dynamicFields) {
+
+			if (field.content == "unlock_counter") {
+
 				var content = getUnlockCounterInfos(field.field.ref);
 				field.field.setContent(content);
-			}
-			else{
+			
+			} else {
+
 				field.field.setContent(field.content);
 				field.field.setContent(onLocalizedContentRequest(field.content));
 			}
@@ -407,56 +484,17 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 		}
 	}
 
-	private function onAdded(e : Event) : Void {
-/* FIXME
-		// Update bookmark
-// FIXME do this in Ctrl
-		var i = 0;
-		while (i < GameManager.instance.game.getAllParts().length && 
-				GameManager.instance.game.getAllParts()[i].isDone) {
+	private function onRemove(e : Event) : Void {
 
-			i++;
-		}
-		var part;
-		
-		if (!buttons.exists(GameManager.instance.game.getAllParts()[i].id)) {
+        if ( timelines.get("in") != null) {
 
-			part = GameManager.instance.game.getAllParts()[i];
-			
-			while (part != null && !buttons.exists(part.id)) {
+            for (elem in timelines.get("in").elements) {
 
-				part = part.parent;
-			}
-		
-		} else {
-
-			part = GameManager.instance.game.getAllParts()[i];
-		}
-		if (part != null) {
-
-			currentPartButton = buttons.get(part.id);
-			
-			if (bookmark != null) {
-
-				bookmark.updatePosition(currentPartButton.x, currentPartButton.y);
-			}
-		}
-
-		if (timelines.exists("in")) {
-
-			timelines.get("in").play();
-		}
-		dispatchEvent(new PartEvent(PartEvent.ENTER_PART));
-*/
-	}
-
-	private function onRemove(e:Event):Void
-	{
-        if( timelines.get("in") != null){
-            for(elem in timelines.get("in").elements)
                 elem.widget.reset();
+            }
         }
-// FIXME		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
-	}
 
+        onMenuRemoved();
+// 		dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+	}
 }

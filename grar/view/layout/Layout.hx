@@ -32,6 +32,8 @@ class Layout {
 		this.onLocaleDataPathRequest = function(p:String){ callbacks.onLocaleDataPathRequest(p); }
 		this.onStylesheetRequest = function(s:String){ return callbacks.onStylesheetRequest(s); }
 
+		this.onNewZone = function(z:Zone){ callbacks.onNewZone(z); }
+
 		if (ld != null) {
 
 			content = new Zone(callbacks, at, Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
@@ -41,6 +43,8 @@ class Layout {
 			content.init(ld.content);
 
 			this.name = ld.name;
+
+			onNewZone(content);
 		
 		} else {
 

@@ -239,11 +239,59 @@ class Controller {
 		state.onPartFinished = function(p : grar.model.part.Part) {
 trace("state.onPartFinished");
 				onPartFinished(p);
+
+				for (part in state.module.getAllParts()) {
+
+					if (!part.isDone && part.canStart()) {
+
+						application.menu.unlockNextPart(part.id);
+						/* Before we had this also (from MenuDisplay)
+						if (!part.canStart()) {
+
+							buttons.get(part.id).toggleState = "lock";
+
+						}
+						*/
+					}
+				}
 			}
 
 		state.onInventoryTokenActivated = function(t : InventoryToken) {
 
 				application.setActivateToken(t);
+			}
+
+		application.onMenuButtonStateRequest = function(partName : String) : { l : Bool, d : Bool } {
+
+				for (part in state.module.getAllParts()) {
+
+					if (part.name == partName) {
+
+						return { l: !part.canStart(), d: part.isDone };
+					}
+				}
+				return null;
+			}
+
+		application.onMenuClicked = function(partId : String) {
+
+				if (displayPartById(partId)) {
+
+					application.menu.setMenuExit();
+				}
+			}
+
+		application.onMenuAdded = function() {
+			
+				var i = 0;
+
+				var allParts : Array<Part> = state.module.getAllParts();
+
+				while (i < allParts.length && allParts[i].isDone) {
+
+					i++;
+				}
+				application.menu.setCurrentPart(allParts[i]);
 			}
 
 		application.onLayoutsChanged = function() {
@@ -397,13 +445,23 @@ trace("onExitPart");
         	}, onError );
 	}
 
+	function displayPartById(? partId : String, interrupt : Bool = false) : Bool {
+
+		return application.displayPart(state.module.start(partId), interrupt);
+	}
+
 	function launchGame() : Void {
 trace("=============> launch game");
 		application.startMenu();
 
 		application.changeLayout("default");
 
-		application.displayPart(state.module.start(null));
+		var startingPart : String = null;
+
+// FIXME		if(game.stateInfos.bookmark > 0)
+// FIXME			startingPart = game.getAllItems()[game.stateInfos.bookmark].id;
+
+		displayPartById(startingPart);
 	}
 
 	function onPartFinished(p : Part) {
@@ -439,5 +497,6 @@ trace("p.next = "+p.next);
 
 		trace("ERROR", e);
 		trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
+		throw "exit";
 	}
 }

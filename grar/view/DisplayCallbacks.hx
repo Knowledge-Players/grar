@@ -23,4 +23,9 @@ typedef DisplayCallbacks = {
 	var onFiltersRequest : Array<String> -> Array<flash.filters.BitmapFilter>;
 
 	var onPartDisplayRequested : grar.model.part.Part -> Void;
+
+	/**
+	 * Layout only
+	 */
+	var onNewZone : grar.view.layout.Zone -> Void;
 }

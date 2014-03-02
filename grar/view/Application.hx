@@ -21,6 +21,7 @@ import grar.view.part.DialogDisplay;
 import grar.view.part.IntroScreen;
 import grar.view.part.StripDisplay;
 import grar.view.layout.Layout;
+import grar.view.layout.Zone;
 import grar.view.style.StyleSheet;
 import grar.view.style.Style;
 import grar.view.tweening.Tweener;
@@ -79,7 +80,8 @@ class Application {
 				onLocaleDataPathRequest: function(p:String){ this.onLocaleDataPathRequest(p); },
 				onStylesheetRequest: function(s:String){ return this.getStyleSheet(s); },
 				onFiltersRequest: function(fids:Array<String>){ return this.getFilters(fids); },
-				onPartDisplayRequested: function(p:Part){ displayPart(p); }
+				onPartDisplayRequested: function(p:Part){ displayPart(p); },
+				onNewZone: function(z:Zone){ zones.push(z); }
 			};
 	}
 
@@ -114,6 +116,8 @@ class Application {
 #end
 
 	public var layouts (default, null) : Null<StringMap<Layout>> = null;
+
+	var zones : Array<Zone>;
 
 
 	// WIP
@@ -182,6 +186,12 @@ class Application {
 	///
 	// CALLBACKS
 	//
+	
+	public dynamic function onMenuButtonStateRequest(partName : String) : { l : Bool, d : Bool } { return null; }
+
+	public dynamic function onMenuClicked(partId : String) : Void { }
+
+	public dynamic function onMenuAdded() : Void { }
 
 	public dynamic function onExitPart(partId : String) : Void { }
 
@@ -357,6 +367,7 @@ class Application {
 	public function createLayouts(lm : StringMap<LayoutData>) : Void {
 
 		var l : StringMap<Layout> = new StringMap();
+		zones = [];
 
 		for (lk in lm.keys()) {
 
@@ -406,6 +417,31 @@ class Application {
 	public function createMenu(d : DisplayData) : Void {
 
 		var m : MenuDisplay = new MenuDisplay(callbacks, tilesheet);
+
+		m.onMenuAdded = function() { onMenuAdded(); }
+		m.onMenuReady = function() {
+
+				for (z in zones) {
+
+					z.setEnterMenu();
+				}
+			}
+		m.onMenuRemoved = function() {
+
+				for (z in zones) {
+
+					z.setExitMenu();
+				}
+			}
+		m.onMenuClicked = function(partId : String) {
+
+				onMenuClicked(partId);
+			}
+		m.onMenuHide = function() {
+
+				doHideContextual(m);
+			}
+		m.onMenuButtonStateRequest = function(partId : String) { return onMenuButtonStateRequest(partId); }
 	
 		if (d.filtersData != null) {
 
@@ -501,7 +537,6 @@ class Application {
 		}
 #end
 trace("display part "+part.id);
-
 		if (interrupt) {
 
 			var oldPart = parts.pop();
@@ -570,7 +605,7 @@ trace("displayContextual "+cd);
 
 	//private function onExitPart(event:Event) : Void {
 	public function setFinishedPart(partId : String) : Void {
-		
+trace("setFinishedPart "+partId);
 		var finishedPart = parts.pop();
 		
 		if (finishedPart.part.id != partId) {
@@ -757,6 +792,7 @@ trace("create part display for "+part.id);
 		if (currentLayout.name == contextual.layout) {
 
 			currentLayout.zones.get(mainLayoutRef).removeChild(contextual);
+
 			changeLayout(previousLayout);
 		}
 	}

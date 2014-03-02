@@ -5,13 +5,9 @@ import aze.display.TileLayer;
 import grar.view.component.container.WidgetContainer;
 import grar.view.component.container.DropdownMenu;
 import grar.view.component.container.DefaultButton;
-import grar.view.contextual.menu.MenuDisplay;
-import grar.view.contextual.NotebookDisplay;
 import grar.view.component.Widget;
 import grar.view.component.ProgressBar;
 import grar.view.Display;
-
-// FIXME import com.knowledgeplayers.grar.event.PartEvent;
 
 import grar.util.DisplayUtils;
 
@@ -153,33 +149,45 @@ class Zone extends Display {
 
 	public function setExitNotebook() : Void {
 
-		for (button in buttonGroups.get(groupNotebook)) {
+		if (buttonGroups.get(groupNotebook) != null) {
 
-			button.toggle(true);
+			for (button in buttonGroups.get(groupNotebook)) {
+
+				button.toggle(true);
+			}
 		}
 	}
 
 	public function setEnterNotebook() : Void {
 
-		for (button in buttonGroups.get(groupNotebook)) {
+		if (buttonGroups.get(groupNotebook) != null) {
 
-			button.toggle(false);
+			for (button in buttonGroups.get(groupNotebook)) {
+
+				button.toggle(false);
+			}
 		}
 	}
 
 	public function setExitMenu() : Void {
 
-		for (button in buttonGroups.get(groupMenu)) {
+		if (buttonGroups.get(groupMenu) != null) {
 
-			button.toggle(true);
+			for (button in buttonGroups.get(groupMenu)) {
+
+				button.toggle(true);
+			}
 		}
 	}
 
 	public function setEnterMenu() : Void {
 
-		for (button in buttonGroups.get(groupMenu)) {
+		if (buttonGroups.get(groupMenu) != null) {
 
-			button.toggle(false);
+			for (button in buttonGroups.get(groupMenu)) {
+
+				button.toggle(false);
+			}
 		}
 	}
 

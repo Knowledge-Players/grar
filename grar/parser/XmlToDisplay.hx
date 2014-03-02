@@ -151,7 +151,7 @@ class XmlToDisplay {
 							var xOffset : Null<Float> = c.has.xOffset ? Std.parseFloat(c.att.xOffset) : null;
 							var yOffset : Null<Float> = c.has.yOffset ? Std.parseFloat(c.att.yOffset) : null;
 							var width : Null<Float> = c.has.width ? Std.parseFloat(c.att.width) : null;
-							var button : Null<WidgetContainerData> = c.has.Button ? XmlToWidgetContainer.parseWidgetContainerData(c.node.Button, DefaultButton(null, null, null, null, null, null, null), templates) : null;
+							var button : Null<WidgetContainerData> = c.hasNode.Button ? XmlToWidgetContainer.parseWidgetContainerData(c.node.Button, DefaultButton(null, null, null, null, null, null, null), templates) : null;
 
 							levelDisplays.set(c.name, Button(xOffset, yOffset, width, button));
 						}
