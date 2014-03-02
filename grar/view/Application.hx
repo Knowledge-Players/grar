@@ -211,6 +211,10 @@ class Application {
 
 	public dynamic function onInterfaceLocaleDataPathRequest() : Void { }
 
+	public dynamic function onSetBookmarkRequest(partId : String) : Void { }
+
+	public dynamic function onGameOverRequested() : Void { }
+
 
 	///
 	// API
@@ -276,7 +280,7 @@ class Application {
 		this.tweener = new Tweener(t);
 	}
 
-	public function changeLayout(l : String) : Void {
+	public function changeLayout(l : String) : Void { trace("CHANGE LAYOUT " + l);
 
 		if (l == null) {
 
@@ -427,10 +431,6 @@ class Application {
 		}
 	}
 
-
-	// WIP
-
-
 	public function changeVolume(nb : Float = 0) : Void {
 
 		nbVolume = nb;
@@ -450,6 +450,7 @@ class Application {
 	public function loadSound(soundUrl:String):Void
 	{
 		if (soundUrl != null && soundUrl != "") {
+
 			var sound = new Sound(new flash.net.URLRequest(soundUrl));
 			sounds.set(soundUrl, sound);
 		}
@@ -513,7 +514,7 @@ trace("display part "+part.id);
 		}
 		if (!parts.isEmpty()) {
 
-// FIXME			parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
+// 			parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 			parts.first().onPartLoaded = function(){ trace("CHECK THIS !!!!"); }
 		}
 		// Display the new part
@@ -525,16 +526,19 @@ trace("display part "+part.id);
 		
 //		parts.first().addEventListener(PartEvent.EXIT_PART, onExitPart);
 		fp.onExit = function(){ onExitPart(parts.first().part.id); }
-// FIXME		parts.first().addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
-		fp.onEnterSubPart = function(sp : Part){ /* TODO */ trace("UNIMPLEMENTED onEnterSubPart"); }
-// FIXME		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
+
+// 		parts.first().addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
+		fp.onEnterSubPart = function(sp : Part){ onEnterSubPart(sp); }
+
+// 		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		fp.onPartLoaded = function(){ onPartLoaded(fp); }
-// FIXME		parts.first().addEventListener(GameEvent.GAME_OVER, function(e:GameEvent) {...});
+
+// 		parts.first().addEventListener(GameEvent.GAME_OVER, function(e:GameEvent) {...});
 		fp.onGameOver = function(){ 
-trace("UNIMPLEMENTED onGameOver");
-// FIXME				game.connection.tracking.setStatus(true);
-// FIXME				game.connection.computeTracking(game.stateInfos);
-// FIXME				dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
+
+				onGameOverRequested();
+
+// FIXME				dispatchEvent(new GameEvent(GameEvent.GAME_OVER)); TODO call setGameOver on ProgressBar
 			}
 
 		fp.onTokenToActivate = onActivateTokenRequested;
@@ -547,6 +551,8 @@ trace("UNIMPLEMENTED onGameOver");
 		return true;
 	}
 
+
+	// WIP
 
 	public function hideContextual(c : ContextualType) : Void {
 	
@@ -617,22 +623,19 @@ trace("UNIMPLEMENTED onGameOver");
 	// INTERNALS
 	//
 
-
-	// WIP
-
 	function getStyleSheet(s : Null<String>) : StyleSheet {
 
 		if (s == null) {
 
 			s = defaultStyleSheetName;
 		}
-//trace("getStyleSheet "+s);
+
 		return stylesheets.get(s);
 	}
 
-	function onPartLoaded(pd : PartDisplay) : Void { trace("onPartLoaded "+pd.part.id);
-
-		// TODO setBookmark(pd.part.id);
+	function onPartLoaded(pd : PartDisplay) : Void {
+trace("onPartLoaded "+pd.part.id);
+		onSetBookmarkRequest(pd.part.id);
 
 		//pd.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		pd.startPart(startIndex);
@@ -641,13 +644,16 @@ trace("UNIMPLEMENTED onGameOver");
 
 			changeLayout(pd.layout);
 		}
-		currentLayout.zones.get(mainLayoutRef).addChild(pd); trace("part added to stage");
+		currentLayout.zones.get(mainLayoutRef).addChild(pd);
 
 		currentLayout.updateDynamicFields();
 
-		// FIXME var event = new PartEvent(PartEvent.ENTER_PART);
-		// FIXME event.part = partDisplay.part;
-		// FIXME dispatchEvent(event);
+		// TODO notify ProgressBar
+	}
+
+	function onEnterSubPart(part : Part) : Void {
+
+		displayPart(part);
 	}
 
 	function createPartDisplay(part : Part) : Null<PartDisplay> {
@@ -662,7 +668,6 @@ trace("create part display for "+part.id);
 
 			part.display.filters = getFilters(part.display.filtersData);
 		}
-		
 		var creation : PartDisplay = null;
 
 		if (part.isDialog()) {
@@ -684,6 +689,20 @@ trace("create part display for "+part.id);
 
 		return creation;
 	}
+
+	function onTransitionRequested(target : Dynamic, transition : String, delay : Float = 0) : IGenericActuator {
+
+		return tweener.applyTransition(target, transition, delay);
+	}
+
+	function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, 
+												? complete : Bool = false, ? sendEvent : Bool = true) : Void {
+
+		tweener.stop(target, properties, complete, sendEvent);
+	}
+
+
+	// WIP
 
 	function getContextual(c : ContextualType) : Display {
 
@@ -740,15 +759,5 @@ trace("create part display for "+part.id);
 			currentLayout.zones.get(mainLayoutRef).removeChild(contextual);
 			changeLayout(previousLayout);
 		}
-	}
-
-	private function onTransitionRequested(target : Dynamic, transition : String, delay : Float = 0) : IGenericActuator {
-
-		return tweener.applyTransition(target, transition, delay);
-	}
-
-	private function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {
-
-		tweener.stop(target, properties, complete, sendEvent);
 	}
 }

@@ -34,7 +34,7 @@ class Controller {
 
 		application = new Application();
 
-		trackingCtrl = new TrackingController(this, state, config);
+		trackingCtrl = new TrackingController(this, state, config, application);
 		localizationCtrl = new LocalizationController(this, state, config, application, gameSrv);
 	}
 
@@ -66,14 +66,14 @@ class Controller {
 				switch(state.module.readyState) {
 
 					case Loading(langsUri, layoutUri, displayXml, structureXml): // FIXME, no more Xml/Fast in ctrl
-//trace("Loading("+langsUri+", ...)");
+
 
 						// layout ref for the view
 						application.mainLayoutRef = state.module.ref;
 
 						// tracking
 						trackingCtrl.initTracking(state.module, function(){
-//trace("$$$ tracking initiated");
+
 								loadStyles(displayXml);
 
 							}, onError);
@@ -82,7 +82,7 @@ class Controller {
 						gameSrv.fetchLangs( langsUri, function(l:StringMap<Locale>){
  
 							state.module.locales = l;
-//trace("$$$ lang list initiated");
+
 						}, onError );
 
 
@@ -90,19 +90,19 @@ class Controller {
 						gameSrv.fetchSpriteSheet( displayXml.node.Ui.att.display, function(t:aze.display.TilesheetEx){
 
 								application.tilesheet = t;
-//trace("$$$ spritesheet initiated");
+
 								loadStyles(displayXml);
 
 							}, onError );
 
 						gameSrv.fetchTransitions( displayXml.node.Transitions.att.display, function(t:StringMap<grar.view.TransitionTemplate>){
-//trace("$$$ transitions fetch");
+
 								application.initTweener(t);
 
 							}, onError );
 
 						gameSrv.fetchFilters( displayXml.node.Filters.att.display, function(f:StringMap<grar.view.FilterData>){
-//trace("$$$ filters fetch");
+
 								application.createFilters(f);
 
 							}, onError );
@@ -114,7 +114,7 @@ class Controller {
 							gameSrv.fetchTemplates( displayXml.node.Templates.att.folder, function(tmpls:StringMap<Xml>){
 
 									templates = tmpls;
-//trace("$$$ templates fetch");
+
 									state.module.readyState = LoadingGame(layoutUri, displayXml, structureXml, templates);
 
 								}, onError );
@@ -126,7 +126,7 @@ class Controller {
 
 
 					case LoadingGame(layoutUri, displayXml, structureXml, templates):
-//trace("LoadingGame("+layoutUri+", ...)");
+
 						var menuData : grar.view.contextual.menu.MenuDisplay.MenuData = null;
 
 						// game model & views (parts, contextuals)
@@ -140,7 +140,7 @@ class Controller {
 								case NOTEBOOK:
 
 									gameSrv.fetchNotebook(contextual.att.file, contextual.att.display, templates, function(m:Notebook,i:StringMap<grar.model.InventoryToken>,v:grar.view.Display.DisplayData){
-//trace("$$$ notebook fetch");
+
 											application.createNotebook(v);
 											state.module.addInventoryTokens(i);
 											state.module.notebook = m;
@@ -150,7 +150,7 @@ class Controller {
 								case GLOSSARY:
 
 									gameSrv.fetchGlossary(contextual.att.file, function(g:grar.model.contextual.Glossary){
-//trace("$$$ glossary fetch");
+
 											application.createGlossary(g);
 
 										}, onError);
@@ -158,7 +158,7 @@ class Controller {
 								case BIBLIOGRAPHY:
 
 									gameSrv.fetchBibliography(contextual.att.file, function(b:grar.model.contextual.Bibliography){
-//trace("$$$ bibliography fetch");
+
 											application.createBibliography(b);
 
 										}, onError);
@@ -166,7 +166,7 @@ class Controller {
 								case MENU:
 
 									gameSrv.fetchMenu(contextual.att.display, contextual.has.file ? contextual.att.file : null, templates, function(d:grar.view.Display.DisplayData, m:Null<grar.view.contextual.menu.MenuDisplay.MenuData>){
-//trace("$$$ menu fetch");
+
 											application.createMenu(d);
 											menuData = m;
 
@@ -192,7 +192,7 @@ class Controller {
 
 				        // Load part models
 						state.onModulePartsChanged = function() {
-//trace("$$$ module parts fetch");
+
 								// Menu hasn't been set, creating the default
 						        if (menuData == null) {
 
@@ -258,6 +258,25 @@ class Controller {
 
 				state.module.activateInventoryToken(tokenId);
 
+			}
+
+		application.onQuitGameRequested = function() {
+
+				// TODO
+				/*
+					if (GameManager.instance.game.connection.tracking.suivi != "")
+						GameManager.instance.game.connection.tracking.exitAU();
+
+					#if flash
+					if (ExternalInterface.available)
+					{
+						ExternalInterface.call("quitModule");
+					}else
+					{
+						System.exit(0);
+					}
+					#end
+				*/
 			}
 
 		state.readyState = true;
@@ -352,7 +371,7 @@ class Controller {
 	        }
 
 			gameSrv.fetchStyles( localizedPathes, function(s : Array<grar.view.style.StyleSheet.StyleSheetData>) {
-//trace("$$$ styles fetch");
+
 					application.createStyles(s);
 
 				}, onError );
@@ -362,7 +381,7 @@ class Controller {
 	function loadlayouts(uri : String, templates : StringMap<Xml>) : Void { // actually, code below also requires the templates to be fetch already (and styles too ?)
 
         gameSrv.fetchLayouts(uri, templates, function(lm : StringMap<grar.view.layout.Layout.LayoutData>, lp : Null<String>){
-//trace("$$$ layouts fetch");
+
 				if (lp != null) {
 
 					// lp is the id/path to the application wide localization file (used by the menu)
@@ -383,33 +402,7 @@ trace("=============> launch game");
 
 		application.displayPart(state.module.start(null));
 	}
-/*
-	function startGame(game : Game, layout : String = "default"):Void
-	{
-		this.game = game;
 
-		changeLayout(layout);
-
-		if(!MenuDisplay.instance.exists || menuLoaded){
-			launchGame();
-		}
-	}
-
-	private function launchGame():Void
-	{
-		var startingPart:String = null;
-
-		if(game.stateInfos.bookmark > 0)
-			startingPart = game.getAllItems()[game.stateInfos.bookmark].id;
-
-		displayPartById(startingPart);
-	}
-
-	public function displayPartById(?id:String, interrupt:Bool = false):Bool
-	{
-		return displayPart(game.start(id), interrupt);
-	}
-*/
 	function onPartFinished(p : Part) {
 
 		application.setFinishedPart(p.id);

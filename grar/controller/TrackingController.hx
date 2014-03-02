@@ -1,5 +1,7 @@
 package grar.controller;
 
+import grar.view.Application;
+
 import grar.Controller;
 
 import grar.model.State;
@@ -13,12 +15,14 @@ import grar.service.ScormService;
 
 class TrackingController {
 	
-	public function new(parent : Controller, state : State, config : Config) {
+	public function new(parent : Controller, state : State, config : Config, application : Application) {
 
 		this.parent = parent;
 
 		this.config = config;
 		this.state = state;
+
+		this.application = application;
 
 		this.aiccSrv = new AiccService();
 		this.autoSrv = new AutoService();
@@ -35,6 +39,8 @@ class TrackingController {
 	var aiccSrv : AiccService;
 	var autoSrv : AutoService;
 	var scormSrv : ScormService;
+
+	var application : Application;
 
 
 	public function init() {
@@ -140,6 +146,32 @@ class TrackingController {
 
 					default: // can't happen
 				}
+			}
+
+		application.onSetBookmarkRequest = function(partId : String) {
+
+				// TODO
+				/*
+				function setBookmark(partId:String):Void
+				{
+					var i = 0;
+					while(i < game.getAllItems().length && game.getAllItems()[i].id != partId){
+						i++;
+					}
+					if(i < game.getAllItems().length){
+						game.stateInfos.bookmark = i;
+						game.connection.computeTracking(game.stateInfos);
+					}
+				}
+				*/
+			}
+
+		application.onGameOverRequested = function() {
+
+				// TODO
+// FIXME				game.connection.tracking.setStatus(true);
+// FIXME				game.connection.computeTracking(game.stateInfos);
+
 			}
 	}
 
