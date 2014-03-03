@@ -5,11 +5,6 @@ import aze.display.TileLayer;
 
 import grar.view.component.container.WidgetContainer;
 
-// FIXME import com.knowledgeplayers.grar.event.GameEvent;
-// FIXME import com.knowledgeplayers.grar.event.PartEvent;
-
-// FIXME import com.knowledgeplayers.grar.factory.UiFactory;
-
 import grar.model.tracking.Trackable;
 
 import grar.util.DisplayUtils;
@@ -33,15 +28,13 @@ class ProgressBar extends WidgetContainer {
 
 		icons = new StringMap();
 
-// FIXME		GameManager.instance.addEventListener(PartEvent.ENTER_PART, onEnterPart);
+// Now done in Application
+//		GameManager.instance.addEventListener(PartEvent.ENTER_PART, onEnterPart);
+// 		allItems = GameManager.instance.game.getAllItems();
 
-// FIXME		GameManager.instance.addEventListener(GameEvent.GAME_OVER, function(e:GameEvent) {
+// call now done in Application
+//		GameManager.instance.addEventListener(GameEvent.GAME_OVER, function(e:GameEvent) { fillBar(maskWidth); });
 
-// FIXME				fillBar(maskWidth);
-
-// FIXME			});
-
-// FIXME		allItems = GameManager.instance.game.getAllItems();
 
 		switch(pbd.type) {
 
@@ -55,13 +48,120 @@ class ProgressBar extends WidgetContainer {
 		}
 	}
 
-	private var backgroundColor:Int;
+	private var backgroundColor : Int;
 	private var progressColor:Int;
 	private var layerProgressBar:TileLayer;
 	private var icons:StringMap<TileClip>;
 	private var iconScale:Float;
 	private var xProgress:Float = 0;
-	private var allItems:Array<Trackable>;
+	private var allItems : Array<Trackable>;
+
+	///
+	// API
+	//
+
+	public function setGameOver() : Void {
+
+		fillBar(maskWidth);
+	}
+
+
+//	private function onEnterPart(e:PartEvent):Void
+	public function setEnterPart(part : grar.model.part.Part, allItems : Array<grar.model.tracking.Trackable>, 
+									allParts : Array<grar.model.part.Part>) : Void {
+
+		if (icons.exists(part.id)) {
+
+			// Toggle icon to done
+			var icon = icons.get(part.id);
+			
+			if (icon.currentFrame == 0) {
+
+				icon.currentFrame = 1;
+			}
+
+			// Update others
+			var i = 0;
+
+			while (i < allItems.length) {
+
+				switch (allItems[i]) {
+
+					case Part(p):
+
+						if(p.id == part.id) {
+
+							break;
+						}
+
+						icons.get(p.id).currentFrame = 1;
+
+						i++;
+				}
+			}
+			for (j in (i + 1)...allItems.length) {
+
+				switch (allItems[j]) {
+
+					case Part(p):
+
+						icons.get(p.id).currentFrame = 0;
+				}
+			}
+
+			layerProgressBar.render();
+
+			// Update ProgressBar
+			if (icon.x > xProgress) {
+
+				fillBar(icon.x);
+			
+			} else {
+
+				unfillBar(icon.x);
+			}
+		
+		} else {
+
+			var index = allParts.length;
+			var lastActive:String = null;
+			var isFirst = true;
+			
+			for (i in 0...allParts.length) {
+
+				if (allParts[i].id == part.id) {
+
+					index = i;
+				
+				} else if (icons.exists(allParts[i].id)) {
+
+					if (isFirst || index > i) {
+
+						icons.get(allParts[i].id).currentFrame = 1;
+						lastActive = allParts[i].id;
+						isFirst = false;
+					
+					} else {
+
+						icons.get(allParts[i].id).currentFrame = 0;
+					}
+				}
+			}
+			if (icons.get(lastActive).x > xProgress) {
+
+				fillBar(icons.get(lastActive).x);
+			
+			} else {
+
+				unfillBar(icons.get(lastActive).x);
+			}
+		}
+	}
+
+
+	///
+	// INTERNALS
+	//
 
 	private function addIcons(prefix:String):Void
 	{
@@ -92,59 +192,7 @@ class ProgressBar extends WidgetContainer {
 		layerProgressBar.render();
 
 	}
-/* FIXME
-	private function onEnterPart(e:PartEvent):Void
-	{
-		if(icons.exists(e.partId)){
-			// Toggle icon to done
-			var icon = icons.get(e.partId);
-			if(icon.currentFrame == 0)
-				icon.currentFrame = 1;
 
-			// Update others
-			var i = 0;
-			while(i < allItems.length && allItems[i].id != e.partId){
-				icons.get(allItems[i].id).currentFrame = 1;
-				i++;
-			}
-
-			for(j in (i + 1)...allItems.length)
-				icons.get(allItems[j].id).currentFrame = 0;
-
-			layerProgressBar.render();
-
-			// Update ProgressBar
-			if(icon.x > xProgress)
-				fillBar(icon.x);
-			else
-				unfillBar(icon.x);
-		}
-		else{
-			var allPart = GameManager.instance.game.getAllParts();
-			var index = allPart.length;
-			var lastActive:String = null;
-			var isFirst = true;
-			for(i in 0...allPart.length){
-				if(allPart[i].id == e.partId)
-					index = i;
-				else if(icons.exists(allPart[i].id)){
-					if(isFirst || index > i){
-						icons.get(allPart[i].id).currentFrame = 1;
-						lastActive = allPart[i].id;
-						isFirst = false;
-					}
-					else
-						icons.get(allPart[i].id).currentFrame = 0;
-				}
-			}
-			if(icons.get(lastActive).x > xProgress)
-				fillBar(icons.get(lastActive).x);
-			else
-				unfillBar(icons.get(lastActive).x);
-		}
-
-	}
-*/
 	private function fillBar(end:Float):Void
 	{
 		DisplayUtils.initSprite(this, end - xProgress, maskHeight, progressColor, xProgress, 0);

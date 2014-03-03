@@ -172,6 +172,8 @@ class TrackingController {
 // FIXME				game.connection.tracking.setStatus(true);
 // FIXME				game.connection.computeTracking(game.stateInfos);
 
+				application.setGameOver();
+
 			}
 	}
 

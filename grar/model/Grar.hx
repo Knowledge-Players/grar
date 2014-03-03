@@ -7,6 +7,7 @@ import grar.model.contextual.Notebook;
 import grar.model.score.ScoreChart;
 import grar.model.part.Part;
 import grar.model.tracking.TrackingMode;
+import grar.model.tracking.Trackable;
 import grar.model.localization.Locale;
 import grar.model.localization.LocaleData;
 
@@ -265,6 +266,20 @@ trace("set currentLocale to " + v);
 	///
 	// API
 	//
+
+	/**
+    * @return all trackable items of the game
+    **/
+    public function getAllItems() : Array<Trackable> {
+
+        var trackable : Array<Trackable> = [];
+        
+        for (part in parts) {
+
+            trackable = trackable.concat(part.getAllItems());
+        }
+        return trackable;
+    }
 
 	/**
     * Restore the previously stored locale

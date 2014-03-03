@@ -198,8 +198,8 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 			addChild(button);
 
 			// Display Tabs
-			var totalX : Float = tabTemplate.x; // FIXME
-			var xOffset : Float = tabTemplate.xOffset; // FIXME
+			var totalX : Float = tabTemplate.x;
+			var xOffset : Float = tabTemplate.xOffset;
 			var first : Bool = true;
 
 			for (page in model.pages) {

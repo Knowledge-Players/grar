@@ -38,7 +38,8 @@ class Layout {
 
 			content = new Zone(callbacks, at, Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
 // 			content.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
-			content.onNewZone = addZone;
+			content.onNewZone = function(r : String, z : Zone){ addZone(r, z); }
+			content.onNewProgressBar = function(pb:grar.view.component.ProgressBar){ onNewProgressBar(pb); }
 
 			content.init(ld.content);
 
@@ -84,6 +85,8 @@ class Layout {
 	///
 	// CALLBACKS
 	//
+
+	public dynamic function onNewProgressBar(b : grar.view.component.ProgressBar) { }
 
 	public dynamic function onNewZone(z : Zone) { }
 

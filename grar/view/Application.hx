@@ -9,6 +9,7 @@ import com.knowledgeplayers.utils.assets.AssetsStorage;
 import grar.model.localization.LocaleData;
 import grar.model.part.Part;
 
+import grar.view.component.ProgressBar;
 import grar.view.component.container.WidgetContainer;
 import grar.view.contextual.menu.MenuDisplay;
 import grar.view.contextual.NotebookDisplay;
@@ -119,6 +120,8 @@ class Application {
 
 	var zones : Array<Zone>;
 
+	var progressBars : Array<ProgressBar>;
+
 
 	// WIP
 
@@ -227,10 +230,21 @@ class Application {
 
 	public dynamic function onMenuUpdateDynamicFieldsRequest() : Void { }
 
+	public dynamic function onPartLoaded(p : Part) : Void { }
+
 
 	///
 	// API
 	//
+
+	public function setPartLoaded(part : Part, allItems : Array<grar.model.tracking.Trackable>, 
+									allParts : Array<grar.model.part.Part>) : Void {
+
+		for (pb in progressBars) {
+
+			pb.setEnterPart(part, allItems, allParts);
+		}
+	}
 
 	public function getFilters(filtersIds : Array<String>) : Array<BitmapFilter> {
 
@@ -370,6 +384,7 @@ class Application {
 
 		var l : StringMap<Layout> = new StringMap();
 		zones = [];
+		progressBars = [];
 
 		for (lk in lm.keys()) {
 
@@ -378,6 +393,7 @@ class Application {
 			l.set(lk, nl);
 
 			nl.onVolumeChangeRequested = changeVolume;
+			nl.onNewProgressBar = function(pb : ProgressBar){ progressBars.push(pb); }
 		}
 		this.layouts = l;
 
@@ -586,14 +602,12 @@ trace("display part "+part.id);
 		fp.onEnterSubPart = function(sp : Part){ onEnterSubPart(sp); }
 
 // 		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
-		fp.onPartLoaded = function(){ onPartLoaded(fp); }
+		fp.onPartLoaded = function(){ onPartDisplayLoaded(fp); }
 
 // 		parts.first().addEventListener(GameEvent.GAME_OVER, function(e:GameEvent) {...});
 		fp.onGameOver = function(){ 
 
 				onGameOverRequested();
-
-// FIXME				dispatchEvent(new GameEvent(GameEvent.GAME_OVER)); TODO call setGameOver on ProgressBar
 			}
 
 		fp.onTokenToActivate = onActivateTokenRequested;
@@ -604,6 +618,15 @@ trace("display part "+part.id);
 		fp.init();
 
 		return true;
+	}
+
+	public function setGameOver() : Void {
+
+		for (pb in progressBars) {
+
+			pb.setGameOver();
+		}
+// 		dispatchEvent(new GameEvent(GameEvent.GAME_OVER)); TODO call setGameOver on ProgressBar
 	}
 
 
@@ -688,7 +711,7 @@ trace("Game Over");
 		return stylesheets.get(s);
 	}
 
-	function onPartLoaded(pd : PartDisplay) : Void {
+	function onPartDisplayLoaded(pd : PartDisplay) : Void {
 trace("onPartLoaded "+pd.part.id);
 		onSetBookmarkRequest(pd.part.id);
 
@@ -703,7 +726,7 @@ trace("onPartLoaded "+pd.part.id);
 
 		currentLayout.updateDynamicFields();
 
-		// TODO notify ProgressBar
+		onPartLoaded(pd.part);
 	}
 
 	function onEnterSubPart(part : Part) : Void {

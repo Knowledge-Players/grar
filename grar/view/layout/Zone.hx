@@ -44,6 +44,8 @@ class Zone extends Display {
 	// CALLBACKS
 	//
 
+	public dynamic function onNewProgressBar(pb : ProgressBar) { }
+
 	public dynamic function onNewZone(ref : String, zone : Zone) { }
 
 	public dynamic function onVolumeChangeRequested(v : Float) : Void { }
@@ -288,6 +290,8 @@ class Zone extends Display {
 		var progress = new ProgressBar(callbacks, applicationTilesheet, d);
 
 		addChild(progress);
+
+		onNewProgressBar(progress);
 
 		return progress;
 	}

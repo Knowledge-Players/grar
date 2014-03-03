@@ -261,6 +261,11 @@ trace("state.onPartFinished");
 				application.setActivateToken(t);
 			}
 
+		application.onPartLoaded = function(p : Part) {
+
+				application.setPartLoaded(p, state.module.getAllItems(), state.module.getAllParts());
+			}
+
 		application.onMenuUpdateDynamicFieldsRequest = function() {
 
 				for (field in application.menu.dynamicFields) {
