@@ -1,0 +1,20 @@
+language: c++
+
+before_install:
+  - sudo apt-get install python-software-properties -y # for the next command
+  - sudo add-apt-repository ppa:eyecreate/haxe -y
+  - sudo apt-get update
+  - sudo apt-get install haxe -y --force-yes
+  - sudo apt-get install gcc-multilib g++-multilib -y # since VM is 64bit but hxcpp builds 32bit by default
+  - sudo apt-get install mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev -y # for nme
+  - mkdir ~/haxelib
+  - haxelib setup ~/haxelib
+  - haxelib install actuate
+  - haxelib install tilelayer
+  - haxelib install nme
+  - haxelib git ExAM https://github.com/Knowledge-Players/ExAM.git src
+  - haxelib dev ExAM ~/haxelib/ExAM/git/src
+  - haxelib install utest
+
+script:
+  - haxe build.hxml
