@@ -19,8 +19,6 @@ import grar.model.contextual.Note;
 import grar.util.ParseUtils;
 import grar.util.DisplayUtils;
 
-// FIXME import com.knowledgeplayers.grar.event.PartEvent; // FIXME
-
 import flash.events.Event;
 import flash.net.URLRequest;
 import flash.geom.Point;
