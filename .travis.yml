@@ -15,6 +15,7 @@ before_install:
   - haxelib git ExAM https://github.com/Knowledge-Players/ExAM.git src
   - haxelib dev ExAM ~/haxelib/ExAM/git/src
   - haxelib install utest
+  - makedir bin
 
 script:
   - haxe build.hxml
