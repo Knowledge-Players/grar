@@ -21,3 +21,14 @@
 #--no-traces
 # uncomment the following line to have traces in Chrome console
 -D redirectTraces
+
+--next
+
+-main grar.parser.XmlToGrarTest
+-cp tests
+-cp .
+-lib tilelayer
+-lib actuate
+-lib exam
+-lib utest
+-swf tests/testResults.swf
