@@ -225,6 +225,8 @@ class Application {
 
 	public dynamic function onGameOverRequested() : Void { }
 
+	public dynamic function onMenuUpdateDynamicFieldsRequest() : Void { }
+
 
 	///
 	// API
@@ -447,6 +449,10 @@ class Application {
 
 			d.filters = getFilters(d.filtersData);
 		}
+		m.onUpdateDynamicFieldsRequest = function(){
+
+				onMenuUpdateDynamicFieldsRequest();
+			}
 
 		m.setContent(d);
 

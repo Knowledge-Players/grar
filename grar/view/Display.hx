@@ -195,6 +195,8 @@ class Display extends Sprite {
 
 	public dynamic function onPartDisplayRequested(p : grar.model.part.Part) : Void { }
 
+	public dynamic function onUpdateDynamicFieldsRequest() : Void { }
+
 
 	///
 	// API

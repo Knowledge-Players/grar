@@ -171,9 +171,12 @@ class Grid extends Guide {
         if(resize){
 
         fitInGrid(object);
+        
         object.addEventListener(Event.CHANGE, function(e){
-            fitInGrid(object);
-        });
+
+	            fitInGrid(object);
+
+	        });
 
         }
 		return object;

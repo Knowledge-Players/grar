@@ -294,6 +294,7 @@ class DefaultButton extends WidgetContainer {
 			renderNeeded = true;
 			enabled = enabledState.get(toggleState);
 			displayContent();
+			
 			dispatchEvent(new Event(Event.CHANGE));
 		}
 	}

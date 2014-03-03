@@ -110,6 +110,24 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 	// API
 	//
 
+	public function updateDynamicFields(numUnlocked : Int, totalChildren : Int) : Void {
+
+		for (field in dynamicFields) {
+
+			if (field.content == "unlock_counter") {
+
+				var content = numUnlocked + "/" + totalChildren;
+				field.field.setContent(content);
+			
+			} else {
+
+				field.field.setContent(field.content);
+				field.field.setContent(onLocalizedContentRequest(field.content));
+			}
+			field.field.updateX();
+		}
+	}
+
 	public function setMenuExit() : Void {
 
 //		var actuator = TweenManager.applyTransition(this, transitionOut);
@@ -291,11 +309,16 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 					currentPartButton = button;
 				}
 
+
 			case ContainerSeparator(d):
 
 				var separator : Widget = new SimpleContainer(callbacks, applicationTilesheet, d);
 
-				separator.addEventListener(Event.CHANGE, updateDynamicFields);
+				separator.addEventListener(Event.CHANGE, function(?_){
+
+						onUpdateDynamicFieldsRequest();
+					});
+
 
 			case ImageSeparator(thickness, color, alpha, origin, destination, x, y):
 
@@ -313,7 +336,10 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 					
 					separator.addChild(line);
 				}
-				separator.addEventListener(Event.CHANGE, updateDynamicFields);
+				separator.addEventListener(Event.CHANGE, function(?_){
+
+						onUpdateDynamicFieldsRequest();
+					});
 
 		}
 		if (level.items != null) {
@@ -431,56 +457,6 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 			for(i in 0...button.content.numChildren){
 				button.renderState("out");
 			}
-		}
-	}
-
-	private inline function getUnlockCounterInfos(partId : String) : String {
-
-		var output: String = "";
-/* FIXME
-		var parent: Part = GameManager.instance.game.getPart(partId);
-		var numUnlocked = 0;
-		if(parent != null){
-			var children = parent.getAllParts();
-			if(children.length <= 1){
-				var totalChildren = 0;
-				var allParts = GameManager.instance.game.getAllParts();
-				for(part in allParts){
-					if(part.id.startsWith(partId) && part.id != partId){
-						totalChildren++;
-						if(part.canStart())
-							numUnlocked++;
-					}
-				}
-				output = numUnlocked+"/"+totalChildren;
-			}
-			else{
-				for(child in children){
-					if(child.canStart())
-						numUnlocked++;
-				}
-				output = numUnlocked+"/"+children.length;
-			}
-		}
-*/
-		return output;
-	}
-
-	private function updateDynamicFields(e : Event) : Void {
-
-		for (field in dynamicFields) {
-
-			if (field.content == "unlock_counter") {
-
-				var content = getUnlockCounterInfos(field.field.ref);
-				field.field.setContent(content);
-			
-			} else {
-
-				field.field.setContent(field.content);
-				field.field.setContent(onLocalizedContentRequest(field.content));
-			}
-			field.field.updateX();
 		}
 	}
 

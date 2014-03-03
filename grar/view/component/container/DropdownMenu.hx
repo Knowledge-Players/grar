@@ -77,8 +77,8 @@ class DropdownMenu extends WidgetContainer {
 
 		labelSprite.addChild(kpTxt.createSprite(maskWidth));
 
-
 		dispatchEvent(new Event(Event.CHANGE));
+		
 		return label;
 	}
 

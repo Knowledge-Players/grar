@@ -51,7 +51,7 @@ class BibliographyDisplay extends Sprite {
 
 	// Private
 
-	private function onFilter(e:Event):Void
+	private function onFilter():Void
 	{
 		while(!displayed.isEmpty())
 			removeChild(displayed.pop());
@@ -108,7 +108,7 @@ class BibliographyDisplay extends Sprite {
 	{
 		filter = new TextField();
 		filter.type = TextFieldType.INPUT;
-		filter.addEventListener(Event.CHANGE, onFilter);
+		filter.addEventListener(Event.CHANGE, function(?_){ onFilter(); });
 		filter.text = "Filtrer...";
 		filter.x = 600;
 		filter.height = filter.textHeight + 10;
@@ -116,7 +116,7 @@ class BibliographyDisplay extends Sprite {
 		addChild(filter);
 
 		drop = new DropdownMenu(callbacks, applicationTilesheet, null, true);
-		drop.addEventListener(Event.CHANGE, onFilter);
+		drop.addEventListener(Event.CHANGE, function(?_){ onFilter(); });
 		drop.items = bibliography.getAllPrograms();
 		drop.x = filter.x + filter.width + 10;
 		addChild(drop);
