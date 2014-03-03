@@ -30,7 +30,7 @@ import flash.display.Sprite;
 import haxe.ds.StringMap;
 import haxe.ds.GenericStack;
 
-class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TODO check use of ContextualDisplay
+class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 
 	static private inline var NOTE_GROUP_NAME : String = "notes";
 	static private inline var TAB_GROUP_NAME : String = "tabs";
@@ -49,15 +49,17 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
 
 				displayPage(currentPage);
-// FIXME				dispatchEvent(new PartEvent(PartEvent.ENTER_PART));
 
+//				dispatchEvent(new PartEvent(PartEvent.ENTER_PART));
+				onNotebookAdded();
 			});
 
 		addEventListener(Event.REMOVED_FROM_STAGE, function(e){
 
-// FIXME				dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
-				clearPage();
+//				dispatchEvent(new PartEvent(PartEvent.EXIT_PART));
+				onNotebookRemoved();
 
+				clearPage();
 			});
 	}
 
@@ -82,6 +84,10 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 	//
 
 	public dynamic function onClose() : Void { }
+
+	public dynamic function onNotebookAdded() : Void { }
+
+	public dynamic function onNotebookRemoved() : Void { }
 
 
 	///
@@ -200,16 +206,43 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 
 			for (page in model.pages) {
 
-				//var cloneXml = Xml.parse(tabTemplate.x.toString()).firstElement(); ???
+				//var cloneXml = Xml.parse(tabTemplate.x.toString()).firstElement();
 				//var tmpTemplate = new Fast(cloneXml);
+				
 				//tmpTemplate.x.set("ref", page.tabContent);
 				tabTemplate.e.wd.ref = page.tabContent;
 
+//				var icons = ParseUtils.selectByAttribute("ref", "icon", tmpTemplate.x);
+//				ParseUtils.updateIconsXml(page.icon, icons);
 
-// FIXME				var icons = ParseUtils.selectByAttribute("ref", "icon", tmpTemplate.x);
-// FIXME				ParseUtils.updateIconsXml(page.icon, icons);
+				switch(tabTemplate.e.type) {
 
-				var tab = new DefaultButton(callbacks, applicationTilesheet, tabTemplate.e); // FIXME
+					case DefaultButton(_, _, _, _, _, _, statesElts):
+
+						for (st in statesElts) {
+
+							var ed : ElementData = st.get("icon");
+
+							switch(ed) {
+
+								case Image(i):
+
+									i.src = page.icon;
+
+								case TileImage(ti):
+
+									ti.id.tile = page.icon;
+
+								default: throw "unexpected ElementData type given as button icon";
+							}
+
+							st.set("icon", ed);
+						}
+
+					default: throw "wrong WidgetContainerData type passed to NotebookDisplay tabTemplate";
+				}
+
+				var tab = new DefaultButton(callbacks, applicationTilesheet, tabTemplate.e);
 
 				tab.x = totalX;
 				totalX += tab.width+xOffset;
@@ -240,19 +273,44 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ { // TO
 						throw "[NotebookDisplay] There is no template for chapter with ref '"+chapter.ref+"'.";
 					}
 
-// FIXME					var icons = ParseUtils.selectByAttribute("ref", "icon", chapterTemplates.get(chapter.ref).x);
-// FIXME					ParseUtils.updateIconsXml(chapter.icon, icons);
-					// Clickable note
-					var button : DefaultButton;
+// 					var icons = ParseUtils.selectByAttribute("ref", "icon", chapterTemplates.get(chapter.ref).x);
+// 					ParseUtils.updateIconsXml(chapter.icon, icons);
 
-					switch (chapterTemplates.get(chapter.ref).e) {
+					switch(chapterTemplates.get(chapter.ref).e) {
 
 						case DefaultButton(d):
 
-							button = new DefaultButton(callbacks, applicationTilesheet, d);
+							switch(d.type) {
 
-						default: throw "";
+								case DefaultButton(_, _, _, _, _, _, statesElts):
+
+									for (st in statesElts) {
+
+										var ed : ElementData = st.get("icon");
+
+										switch(ed) {
+
+											case Image(i):
+
+												i.src = chapter.icon;
+
+											case TileImage(ti):
+
+												ti.id.tile = chapter.icon;
+
+											default: throw "unexpected ElementData type given as button icon";
+										}
+
+										st.set("icon", ed);
+									}
+									button = new DefaultButton(callbacks, applicationTilesheet, d);
+
+								default: throw "wrong WidgetContainerData type passed to NotebookDisplay chapterTemplates";
+							}
+
+						default:  throw "wrong ElementData type passed to NotebookDisplay chapterTemplates";
 					}
+
 					button.y += offsetY;
 					offsetY += button.height + chapterTemplates.get(chapter.ref).offsetY;
 // 					var chapterTitle = Localiser.instance.getItemContent(chapter.name);

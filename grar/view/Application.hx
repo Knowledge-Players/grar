@@ -403,6 +403,20 @@ class Application {
 		var n : NotebookDisplay = new NotebookDisplay(callbacks, tilesheet);
 
 		n.onClose = function() { doHideContextual(n); }
+		n.onNotebookAdded = function() {
+
+				for (z in zones) {
+
+					z.setEnterNotebook();
+				}
+			}
+		n.onNotebookRemoved = function() {
+
+				for (z in zones) {
+
+					z.setExitNotebook();
+				}
+			}
 	
 		if (d.filtersData != null) {
 
