@@ -8,8 +8,6 @@ import grar.view.component.container.ScrollPanel;
 
 import grar.util.DisplayUtils;
 
-// FIXME import com.knowledgeplayers.grar.event.DisplayEvent;
-
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.BitmapData;
@@ -46,6 +44,18 @@ class SimpleContainer extends WidgetContainer {
 	private var tilesheetName : String;
 	private var totalChildren : Int;
 	private var loadedChildren : Int;
+
+
+	///
+	// CALLBACKS
+	//
+
+	public dynamic function onContainerLoaded() : Void { }
+
+
+	///
+	// API
+	//
 
 	override public function maskSprite(sprite: Sprite, maskWidth: Float = 1, maskHeight: Float = 1, maskX: Float = 0, maskY: Float = 0):Void
 	{
@@ -97,16 +107,18 @@ class SimpleContainer extends WidgetContainer {
 			layer.tilesheet = tilesheet;
 			layer.removeAllChildren();
 
-			// FIXME for (child in xml.elements) {
-				
-				// FIXME createElement(child);
-			// FIXME }
+			for (ce in scd.displays) {
+
+				createElement(ce);
+			}
+
 			removeEventListener(Event.ADDED_TO_STAGE, onAdded);
 		}
-//FIXME		dispatchEvent(new DisplayEvent(DisplayEvent.LOADED));
+//		dispatchEvent(new DisplayEvent(DisplayEvent.LOADED));
+		onContainerLoaded();
 	}
 
-	public function setMask(e : Event) : Void {
+	public function setMask() : Void {
 
 		loadedChildren++;
 
@@ -173,7 +185,10 @@ class SimpleContainer extends WidgetContainer {
 
 		var div = new SimpleContainer(callbacks, applicationTilesheet, d);
 		totalChildren++;
-// FIXME		div.addEventListener(DisplayEvent.LOADED, setMask);
+
+// 		div.addEventListener(DisplayEvent.LOADED, setMask);
+		div.onContainerLoaded = function() { setMask(); }
+
 		addElement(div);
 		return div;
 	}
