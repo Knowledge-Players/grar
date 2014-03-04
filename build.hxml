@@ -24,11 +24,15 @@
 
 --next
 
--main grar.parser.XmlToGrarTest
+-main RunTest
+#-cp .
 -cp tests
--cp .
 -lib tilelayer
 -lib actuate
 -lib exam
 -lib utest
+-lib compiletime
 -swf tests/testResults.swf
+-resource tests/resources/goodStructure.xml@goodStructure
+-resource tests/resources/goodTransition.xml@goodTransition
+-resource tests/resources/goodXmlLocale.xml@goodXmlLocale
