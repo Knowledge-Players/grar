@@ -100,15 +100,22 @@ class StripDisplay extends PartDisplay {
 		currentBox = cast(pattern, BoxPattern);
 
 		var nextItem: Item = pattern.getNextItem();
-		if(nextItem != null){
+		
+		if (nextItem != null) {
+
 			currentBoxItem = nextItem;
 			setupItem(nextItem);
 
-// FIXME			for(token in nextItem.tokens)
-// FIXME				GameManager.instance.activateToken(token);
-		}
-		else if(currentBox.nextPattern != "")
+			for (token in nextItem.tokens) {
+
+				//GameManager.instance.activateToken(token);
+				onActivateTokenRequest(token);
+			}
+		
+		} else if (currentBox.nextPattern != "") {
+
 			goToPattern(currentBox.nextPattern);
+		}
 	}
 
 	override private function setBackground(background:String):Void
