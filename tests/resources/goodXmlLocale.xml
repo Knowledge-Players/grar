@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<Localisation>
+    <Element>
+        <key>txt_exit_button</key>
+        <value>QUITTER</value>
+    </Element>
+    <Element>
+        <key>txt_back</key>
+        <value>RETOUR</value>
+    </Element>
+    <Element>
+        <key>inProgress</key>
+        <value>En cours</value>
+    </Element>
+    <Element>
+        <key>title_menu</key>
+        <value>MENU</value>
+    </Element>
+</Localisation>

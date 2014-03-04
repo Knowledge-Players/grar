@@ -12,9 +12,9 @@ before_install:
   - haxelib install actuate
   - haxelib install tilelayer
   - haxelib install nme
-  - haxelib git ExAM https://github.com/Knowledge-Players/ExAM.git src
-  - haxelib dev ExAM ~/haxelib/ExAM/git/src
+  - haxelib install ExAM
   - haxelib install utest
+  - haxelib install compiletime
   - mkdir bin
 
 script:

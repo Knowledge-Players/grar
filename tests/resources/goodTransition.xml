@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Transitions>
+    <Zoom ref="dezoom" duration="100" x="x:x-50" y="y:y-50" width="width:width*0.8" height="height:height*0.8" easingType="cubic" easingStyle="out"/>
+
+    <Fade ref="fadeIn" duration="0.5" alpha="0:1" easingType="cubic" easingStyle="out" delay="1"/>
+
+    <Transform ref="stopBlink" duration="0.8" color="0x00FFFFFF" repeat="0" easingType="expo" easingStyle="in"/>
+
+    <Slide ref="movePersoLeft" duration="10" x="x-50:x" y="y" easingType="quart" easingStyle="out" reflect="true"/>
+</Transitions>
