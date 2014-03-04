@@ -209,33 +209,6 @@ class XmlToWidgetContainer {
 
 				wcd.type = TokenNotification(duration);
 
-			case InventoryDisplay(_, _, _):
-
-				var guide : GuideData = null;
-				var fullscreen : WidgetContainerData = null;
-				var displayTemplates : StringMap<grar.view.contextual.InventoryDisplay.Template> = new StringMap();
-
-				var zIndex : Int = 0;
-
-				for (e in f.elements) {
-
-					if (e.name.toLowerCase() == "guide") {
-
-						guide = XmlToGuide.parseGuideData(e);
-					
-					} else if(e.name.toLowerCase() == "fullscreen") {
-
-						fullscreen = parseWidgetContainerData(e, SimpleContainer(null), templates);
-					
-					} else {
-
-						displayTemplates.set(e.att.ref, { data: parseElement(e, wcd, templates).e, z: zIndex });
-					}
-					zIndex++;
-				}
-
-				wcd.type = InventoryDisplay(guide, fullscreen, displayTemplates);
-
 			default: // nothing
 		}
 
@@ -286,7 +259,7 @@ class XmlToWidgetContainer {
 
 			case WidgetContainer, SimpleContainer(_), BoxDisplay, DefaultButton(_, _, _, _, _, _, _), DropdownMenu(_), 
 				ScrollPanel(_, _, _, _), SoundPlayer, ChronoCircle(_, _, _, _, _), ProgressBar(_, _, _), 
-				InventoryDisplay(_, _, _), BookmarkDisplay(_, _, _), IntroScreen(_), AnimationDisplay, TokenNotification(_):
+				BookmarkDisplay(_, _, _), IntroScreen(_), AnimationDisplay, TokenNotification(_):
 
 				switch (e.name.toLowerCase()) {
 

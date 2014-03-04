@@ -13,8 +13,6 @@ import grar.view.component.ProgressBar;
 import grar.view.component.container.WidgetContainer;
 import grar.view.contextual.menu.MenuDisplay;
 import grar.view.contextual.NotebookDisplay;
-import grar.view.contextual.GlossaryDisplay;
-import grar.view.contextual.BibliographyDisplay;
 import grar.view.element.TokenNotification;
 import grar.view.part.PartDisplay;
 import grar.view.part.ActivityDisplay;
@@ -54,9 +52,6 @@ enum ContextualType {
 
 	MENU;
 	NOTEBOOK;
-	GLOSSARY;
-	BIBLIOGRAPHY;
-	INVENTORY;
 }
 
 class Application {
@@ -145,10 +140,6 @@ class Application {
 	private var nbVolume:Float = 1;
 	private var itemSoundChannel:SoundChannel;
 	private var sounds:Map<String, Sound>;
-
-	var glossary : Null<GlossaryDisplay> = null;
-
-	var bibliography : Null<BibliographyDisplay> = null;
 
 	
 	///
@@ -398,20 +389,6 @@ class Application {
 		this.layouts = l;
 
 		onLayoutsChanged();
-	}
-
-	public function createBibliography(b : grar.model.contextual.Bibliography) : Void {
-
-		bibliography = new BibliographyDisplay(callbacks, tilesheet, b);
-
-		//onBibliographyChanged();
-	}
-
-	public function createGlossary(g : grar.model.contextual.Glossary) : Void {
-
-		glossary = new GlossaryDisplay(g);
-
-		//onGlossaryChanged();
 	}
 
 	public function createNotebook(d : DisplayData) : Void {
@@ -793,18 +770,6 @@ trace("create part display for "+part.id);
 			case NOTEBOOK:
 
 				return notebook;
-			
-			case GLOSSARY:
-
-				return cast glossary; // this is just very ugly ! We should use an enum...
-			
-			case BIBLIOGRAPHY:
-
-				return cast bibliography; // this is just very ugly ! We should use an enum...
-			
-			case INVENTORY: // nothing ?
-
-				//
 		}
 		return null;
 	}

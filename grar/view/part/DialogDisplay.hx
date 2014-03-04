@@ -50,10 +50,6 @@ class DialogDisplay extends PartDisplay {
 	override private function startPattern(pattern:Pattern):Void
 	{
 		super.startPattern(pattern);
-		if(Std.is(pattern, ChoicePattern) && inventory != null)
-			inventory.visible = false;
-		else if(inventory != null)
-			inventory.visible = true;
 
 		if(currentPattern != pattern)
 			currentPattern = pattern;
