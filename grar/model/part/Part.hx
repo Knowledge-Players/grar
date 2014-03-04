@@ -183,6 +183,13 @@ class Part /* implements Part */ {
 
 
 	///
+	// CALLBACKS
+	//
+
+	public dynamic function onActivateTokenRequest(tokenId : String) : Void { }
+
+
+	///
 	// GETTER / SETTER
 	//
 

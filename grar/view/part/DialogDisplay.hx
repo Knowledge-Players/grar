@@ -150,7 +150,7 @@ class DialogDisplay extends PartDisplay {
 			}
 
 // 			TweenManager.applyTransition(tooltip, pattern.tooltipTransition);
-			onTransitionRequested(tooltip, pattern.tooltipTransition);
+			onTransitionRequest(tooltip, pattern.tooltipTransition);
 
 			addChildAt(tooltip, i);
 		}

@@ -56,7 +56,7 @@ class IntroScreen extends WidgetContainer {
 		if (transitionOut != null) {
 
 //			TweenManager.applyTransition(this, transitionOut).onComplete(function() {
-			onTransitionRequested(this, transitionOut).onComplete(function() {
+			onTransitionRequest(this, transitionOut).onComplete(function() {
 
 					dispose();
 
@@ -81,7 +81,7 @@ class IntroScreen extends WidgetContainer {
 		addEventListener(Event.ADDED_TO_STAGE, function(e:Event) {
 			
 // 				TweenManager.applyTransition(this, transition);
-				onTransitionRequested(this, transition);
+				onTransitionRequest(this, transition);
 				
 				Timer.delay(hide, duration);
 			});

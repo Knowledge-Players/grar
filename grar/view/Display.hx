@@ -99,16 +99,16 @@ class Display extends Sprite {
 		this.displayTemplates = new StringMap();
 
 		this.callbacks = callbacks;
-		this.onContextualDisplayRequested = function(c : grar.view.Application.ContextualType, ? ho : Bool = true){ callbacks.onContextualDisplayRequested(c, ho); }
-		this.onContextualHideRequested = function(c : grar.view.Application.ContextualType){ callbacks.onContextualHideRequested(c); }
-		this.onQuitGameRequested = function(){ callbacks.onQuitGameRequested(); }
-		this.onTransitionRequested = function(t : Dynamic, tt : String, ? de : Float = 0) { return callbacks.onTransitionRequested(t, tt, de); }
-		this.onStopTransitionRequested = function(t : Dynamic, ? p : Null<Dynamic>, ? c : Bool = false, ? se : Bool = true){ callbacks.onStopTransitionRequested(t, p, c, se); }
+		this.onContextualDisplayRequest = function(c : grar.view.Application.ContextualType, ? ho : Bool = true){ callbacks.onContextualDisplayRequest(c, ho); }
+		this.onContextualHideRequest = function(c : grar.view.Application.ContextualType){ callbacks.onContextualHideRequest(c); }
+		this.onQuitGameRequest = function(){ callbacks.onQuitGameRequest(); }
+		this.onTransitionRequest = function(t : Dynamic, tt : String, ? de : Float = 0) { return callbacks.onTransitionRequest(t, tt, de); }
+		this.onStopTransitionRequest = function(t : Dynamic, ? p : Null<Dynamic>, ? c : Bool = false, ? se : Bool = true){ callbacks.onStopTransitionRequest(t, p, c, se); }
 		this.onRestoreLocaleRequest = function(){ callbacks.onRestoreLocaleRequest(); }
 		this.onLocalizedContentRequest = function(k : String){ return callbacks.onLocalizedContentRequest(k); }
 		this.onLocaleDataPathRequest = function(p : String){ callbacks.onLocaleDataPathRequest(p); }
 		this.onStylesheetRequest = function(s : String){ return callbacks.onStylesheetRequest(s); }
-		this.onPartDisplayRequested = function(p : grar.model.part.Part){ callbacks.onPartDisplayRequested(p); }
+		this.onPartDisplayRequest = function(p : grar.model.part.Part){ callbacks.onPartDisplayRequest(p); }
 		this.onSoundToLoad = function(sndUri : String){ callbacks.onSoundToLoad(sndUri); }
 		this.onSoundToPlay = function(sndUri : String){ callbacks.onSoundToPlay(sndUri); }
 		this.onSoundToStop = function(){ callbacks.onSoundToStop(); }
@@ -178,15 +178,15 @@ class Display extends Sprite {
 	// CALLBACKS
 	//
 
-	public dynamic function onContextualDisplayRequested(c : grar.view.Application.ContextualType, ? hideOther : Bool = true) : Void { }
+	public dynamic function onContextualDisplayRequest(c : grar.view.Application.ContextualType, ? hideOther : Bool = true) : Void { }
 
-	public dynamic function onContextualHideRequested(c : grar.view.Application.ContextualType) : Void { }
+	public dynamic function onContextualHideRequest(c : grar.view.Application.ContextualType) : Void { }
 
-	public dynamic function onQuitGameRequested() : Void { }
+	public dynamic function onQuitGameRequest() : Void { }
 
-	public dynamic function onTransitionRequested(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
+	public dynamic function onTransitionRequest(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
 
-	public dynamic function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
+	public dynamic function onStopTransitionRequest(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
 
 	public dynamic function onRestoreLocaleRequest() : Void { }
 
@@ -196,7 +196,7 @@ class Display extends Sprite {
 
 	public dynamic function onStylesheetRequest(s : Null<String>) : grar.view.style.StyleSheet { return null; }
 
-	public dynamic function onPartDisplayRequested(p : grar.model.part.Part) : Void { }
+	public dynamic function onPartDisplayRequest(p : grar.model.part.Part) : Void { }
 
 	public dynamic function onUpdateDynamicFieldsRequest() : Void { }
 
@@ -253,7 +253,7 @@ trace("TRANSITION IN");
 			addEventListener(Event.ADDED_TO_STAGE, function(e){
 trace("display added to stage");
 // 					TweenManager.applyTransition(this, transitionIn);
-					onTransitionRequested(this, transitionIn);
+					onTransitionRequest(this, transitionIn);
 
 				});
 		}
@@ -580,7 +580,7 @@ trace("display added to stage");
 			button.buttonAction = function(? target) {
 
 // 					GameManager.instance.displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout);
-					onContextualDisplayRequested(MENU);
+					onContextualDisplayRequest(MENU);
 
 				}
 
@@ -595,7 +595,7 @@ trace("display added to stage");
 			button.buttonAction = function(? target) {
 
 // 					GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
-					onContextualDisplayRequested(NOTEBOOK);
+					onContextualDisplayRequest(NOTEBOOK);
 
 				}
 			
@@ -610,7 +610,7 @@ trace("display added to stage");
 			button.buttonAction = function(? target) {
 
 // 				GameManager.instance.hideContextual(MenuDisplay.instance);
-				onContextualHideRequested(MENU);
+				onContextualHideRequest(MENU);
 
 			}
 
@@ -660,6 +660,6 @@ trace("display added to stage");
 	private inline function quit(? target : DefaultButton) : Void {
 
 // 		GameManager.instance.quitGame();
-		onQuitGameRequested();
+		onQuitGameRequest();
 	}
 }

@@ -166,7 +166,7 @@ class TrackingController {
 				*/
 			}
 
-		application.onGameOverRequested = function() {
+		application.onGameOverRequest = function() {
 
 				// TODO
 // FIXME				game.connection.tracking.setStatus(true);

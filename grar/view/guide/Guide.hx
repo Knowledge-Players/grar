@@ -19,8 +19,8 @@ class Guide {
 
 	public function new(callbacks : grar.view.DisplayCallbacks) {
 
-		this.onTransitionRequested = function(target : Dynamic, transition : String, ? delay : Float = 0) { return callbacks.onTransitionRequested(target, transition, delay); }
-        this.onStopTransitionRequested = function(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true){ callbacks.onStopTransitionRequested(target, properties, complete, sendEvent); }
+		this.onTransitionRequest = function(target : Dynamic, transition : String, ? delay : Float = 0) { return callbacks.onTransitionRequest(target, transition, delay); }
+        this.onStopTransitionRequest = function(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true){ callbacks.onStopTransitionRequest(target, properties, complete, sendEvent); }
 	}
 
 	/**
@@ -43,9 +43,9 @@ class Guide {
 	// CALLBACKS
 	//
 
-	public dynamic function onTransitionRequested(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
+	public dynamic function onTransitionRequest(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
 
-	public dynamic function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
+	public dynamic function onStopTransitionRequest(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
 
 
 	///

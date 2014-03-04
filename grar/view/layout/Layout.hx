@@ -22,11 +22,11 @@ class Layout {
 		zones = new StringMap();
 
 		this.callbacks = callbacks;
-		this.onContextualDisplayRequested = function(c : grar.view.Application.ContextualType, ? ho : Bool = true){ callbacks.onContextualDisplayRequested(c, ho); }
-		this.onContextualHideRequested = function(c : grar.view.Application.ContextualType){ callbacks.onContextualHideRequested(c); }
-		this.onQuitGameRequested = function(){ callbacks.onQuitGameRequested(); }
-		this.onTransitionRequested = function(t : Dynamic, tt : String, ? de : Float = 0) { return callbacks.onTransitionRequested(t, tt, de); }
-		this.onStopTransitionRequested = function(t : Dynamic, ? p : Null<Dynamic>, ? c : Bool = false, ? se : Bool = true){ callbacks.onStopTransitionRequested(t, p, c, se); }
+		this.onContextualDisplayRequest = function(c : grar.view.Application.ContextualType, ? ho : Bool = true){ callbacks.onContextualDisplayRequest(c, ho); }
+		this.onContextualHideRequest = function(c : grar.view.Application.ContextualType){ callbacks.onContextualHideRequest(c); }
+		this.onQuitGameRequest = function(){ callbacks.onQuitGameRequest(); }
+		this.onTransitionRequest = function(t : Dynamic, tt : String, ? de : Float = 0) { return callbacks.onTransitionRequest(t, tt, de); }
+		this.onStopTransitionRequest = function(t : Dynamic, ? p : Null<Dynamic>, ? c : Bool = false, ? se : Bool = true){ callbacks.onStopTransitionRequest(t, p, c, se); }
 		this.onRestoreLocaleRequest = function(){ callbacks.onRestoreLocaleRequest(); }
 		this.onLocalizedContentRequest = function(k : String){ return callbacks.onLocalizedContentRequest(k); }
 		this.onLocaleDataPathRequest = function(p:String){ callbacks.onLocaleDataPathRequest(p); }
@@ -90,19 +90,19 @@ class Layout {
 
 	public dynamic function onNewZone(z : Zone) { }
 
-	public dynamic function onVolumeChangeRequested(v : Float) : Void { }
+	public dynamic function onVolumeChangeRequest(v : Float) : Void { }
 
 	
 
-	public dynamic function onContextualDisplayRequested(c : grar.view.Application.ContextualType, ? hideOther : Bool = true) : Void { }
+	public dynamic function onContextualDisplayRequest(c : grar.view.Application.ContextualType, ? hideOther : Bool = true) : Void { }
 
-	public dynamic function onContextualHideRequested(c : grar.view.Application.ContextualType) : Void { }
+	public dynamic function onContextualHideRequest(c : grar.view.Application.ContextualType) : Void { }
 
-	public dynamic function onQuitGameRequested() : Void { }
+	public dynamic function onQuitGameRequest() : Void { }
 
-	public dynamic function onTransitionRequested(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
+	public dynamic function onTransitionRequest(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
 
-	public dynamic function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
+	public dynamic function onStopTransitionRequest(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
 
 	public dynamic function onRestoreLocaleRequest() : Void { }
 
@@ -173,7 +173,7 @@ class Layout {
 
 		zones.set(ref, zone);
 
-		zone.onVolumeChangeRequested = onVolumeChangeRequested;
+		zone.onVolumeChangeRequest = onVolumeChangeRequest;
 
 		onNewZone(zone);
 	}

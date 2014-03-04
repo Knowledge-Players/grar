@@ -24,8 +24,8 @@ class Timeline /* extends EventDispatcher */ {
 
         //super();
 
-        this.onTransitionRequested = function(target : Dynamic, transition : String, ? delay : Float = 0) { return callbacks.onTransitionRequested(target, transition, delay); }
-        this.onStopTransitionRequested = function(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true){ callbacks.onStopTransitionRequested(target, properties, complete, sendEvent); }
+        this.onTransitionRequest = function(target : Dynamic, transition : String, ? delay : Float = 0) { return callbacks.onTransitionRequest(target, transition, delay); }
+        this.onStopTransitionRequest = function(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true){ callbacks.onStopTransitionRequest(target, properties, complete, sendEvent); }
         
         this.name = name;
         this.elements = [];
@@ -48,9 +48,9 @@ class Timeline /* extends EventDispatcher */ {
     // CALLBACKS
     //
 
-    public dynamic function onTransitionRequested(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
+    public dynamic function onTransitionRequest(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
 
-    public dynamic function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
+    public dynamic function onStopTransitionRequest(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
 
     // dispatchEvent(new Event(elemRef));
     public dynamic function onCompleteTransition(elemRef : String) : Void { }
@@ -82,7 +82,7 @@ class Timeline /* extends EventDispatcher */ {
         for (elem in elements) {
 
 //          var actuator = TweenManager.applyTransition(elem.widget,elem.transition,elem.delay);
-            var actuator = onTransitionRequested(elem.widget,elem.transition,elem.delay);
+            var actuator = onTransitionRequest(elem.widget,elem.transition,elem.delay);
             
             if (actuator != null) {
 

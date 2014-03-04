@@ -22,7 +22,7 @@ class BookmarkDisplay extends WidgetContainer {
 					onComplete = function() {
 
 // 							TweenManager.applyTransition(this, a);
-							onTransitionRequested(this, a);
+							onTransitionRequest(this, a);
 						}
 				}
 				this.xOffset = xo;

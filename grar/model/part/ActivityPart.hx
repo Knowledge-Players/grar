@@ -1,7 +1,5 @@
 package grar.model.part;
 
-//import com.knowledgeplayers.grar.display.GameManager; FIXME (see below)
-
 import grar.model.part.Part;
 
 import haxe.ds.GenericStack;
@@ -175,7 +173,8 @@ class ActivityPart extends Part {
 
 					if (input.selected) {
 
-						// GameManager.instance.activateToken(input.id); FIXME
+						// GameManager.instance.activateToken(input.id);
+						onActivateTokenRequest(input.id);
 					}
 				}
 			}

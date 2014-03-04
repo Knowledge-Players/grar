@@ -314,7 +314,7 @@ class ActivityDisplay extends PartDisplay {
 
 				case Part(p):
 
-					onPartDisplayRequested(p);
+					onPartDisplayRequest(p);
 
 				default: throw "[ActivityPart] Thresholds must point to Part.";
 			}
@@ -382,7 +382,7 @@ class ActivityDisplay extends PartDisplay {
 
 						case Part(p):
 
-							onPartDisplayRequested(p);
+							onPartDisplayRequest(p);
 
 						default: throw "target not a part"; // remove this throw if it happens normally
 					}

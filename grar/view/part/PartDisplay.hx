@@ -43,6 +43,8 @@ class PartDisplay extends Display {
 	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, part : Part) {
 
 		super(callbacks, applicationTilesheet);
+		
+		this.onActivateTokenRequest = function(tokenId : String){ callbacks.onActivateTokenRequest(tokenId); }
 
 		this.part = part;
 //		resizeD = ResizeManager.get_instance();
@@ -83,7 +85,7 @@ class PartDisplay extends Display {
 
 	public dynamic function onGameOver() : Void { }
 
-	public dynamic function onTokenToActivate(token : String) : Void { }
+	public dynamic function onActivateTokenRequest(token : String) : Void { }
 
 
 	///
@@ -194,7 +196,7 @@ class PartDisplay extends Display {
 	public function startPart(startPosition:Int = -1):Void
 	{
 // 		TweenManager.applyTransition(this, transitionIn);
- 		onTransitionRequested(this, transitionIn);
+ 		onTransitionRequest(this, transitionIn);
 
 		nextElement(startPosition);
 	}
@@ -482,7 +484,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
  		for (token in item.tokens) {
 
 // 			GameManager.instance.activateToken(token);
-			onTokenToActivate(token);
+			onActivateTokenRequest(token);
  		}
 		if (isFirst) {
 

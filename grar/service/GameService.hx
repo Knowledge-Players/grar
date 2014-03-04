@@ -472,6 +472,7 @@ class GameService {
 
 						ret.p.elements.push(Part(sp));
 						sp.parent = ret.p;
+						sp.onActivateTokenRequest = ret.p.onActivateTokenRequest;
 
 						if (sp.file == null) {
 

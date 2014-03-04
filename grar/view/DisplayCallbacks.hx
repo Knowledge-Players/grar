@@ -2,15 +2,15 @@ package grar.view;
 
 typedef DisplayCallbacks = {
 
-	var onContextualDisplayRequested : grar.view.Application.ContextualType -> Bool -> Void;
+	var onContextualDisplayRequest : grar.view.Application.ContextualType -> Bool -> Void;
 
-	var onContextualHideRequested : grar.view.Application.ContextualType -> Void;
+	var onContextualHideRequest : grar.view.Application.ContextualType -> Void;
 
-	var onQuitGameRequested : Void -> Void;
+	var onQuitGameRequest : Void -> Void;
 
-	var onTransitionRequested : Dynamic -> String -> Float -> motion.actuators.GenericActuator.IGenericActuator;
+	var onTransitionRequest : Dynamic -> String -> Float -> motion.actuators.GenericActuator.IGenericActuator;
 
-	var onStopTransitionRequested : Dynamic -> Null<Dynamic> -> Bool -> Bool -> Void;
+	var onStopTransitionRequest : Dynamic -> Null<Dynamic> -> Bool -> Bool -> Void;
 
 	var onRestoreLocaleRequest : Void -> Void;
 
@@ -22,13 +22,20 @@ typedef DisplayCallbacks = {
 
 	var onFiltersRequest : Array<String> -> Array<flash.filters.BitmapFilter>;
 
-	var onPartDisplayRequested : grar.model.part.Part -> Void;
+	var onPartDisplayRequest : grar.model.part.Part -> Void;
 
 	var onSoundToLoad : String -> Void;
 
 	var onSoundToPlay : String -> Void;
 
 	var onSoundToStop : Void -> Void;
+
+
+	/**
+	 * PartDisplay only
+	 */
+
+	var onActivateTokenRequest : String -> Void;
 
 
 	/**

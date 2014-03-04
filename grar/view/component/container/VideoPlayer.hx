@@ -695,9 +695,9 @@ class VideoPlayer extends WidgetContainer {
 		if (controlsHidden) {
 
 // 			TweenManager.stop(containerControls);
-			onStopTransitionRequested(containerControls);
+			onStopTransitionRequest(containerControls);
 // 			TweenManager.applyTransition(containerControls, "fadeInVideoControls").onComplete(checkAgain);
-			onTransitionRequested(containerControls, "fadeInVideoControls").onComplete(checkAgain);
+			onTransitionRequest(containerControls, "fadeInVideoControls").onComplete(checkAgain);
 		}
 	}
 
@@ -707,10 +707,10 @@ class VideoPlayer extends WidgetContainer {
 		if (controlsHidden) {
 
 // 			TweenManager.stop(containerControls);
-			onStopTransitionRequested(containerControls);
+			onStopTransitionRequest(containerControls);
 
 // 			TweenManager.applyTransition(containerControls, "fadeOutVideoControls",3);
-			onTransitionRequested(containerControls, "fadeOutVideoControls", 3).onComplete(checkAgain);
+			onTransitionRequest(containerControls, "fadeOutVideoControls", 3).onComplete(checkAgain);
 		}
 
 	}

@@ -48,7 +48,7 @@ class Zone extends Display {
 
 	public dynamic function onNewZone(ref : String, zone : Zone) { }
 
-	public dynamic function onVolumeChangeRequested(v : Float) : Void { }
+	public dynamic function onVolumeChangeRequest(v : Float) : Void { }
 
 	
 	///
@@ -219,14 +219,14 @@ class Zone extends Display {
 		if (soundState) {
 
 // 			GameManager.instance.changeVolume(0);
-			onVolumeChangeRequested(0);
+			onVolumeChangeRequest(0);
 
 			soundState = false;
 			if(_target != null) _target.toggle(false);
 		}
 		else{
 // 			GameManager.instance.changeVolume(1);
-			onVolumeChangeRequested(1);
+			onVolumeChangeRequest(1);
 
 			soundState = true;
 			if(_target != null) _target.toggle(true);

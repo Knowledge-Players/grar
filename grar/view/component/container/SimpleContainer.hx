@@ -236,7 +236,7 @@ class SimpleContainer extends WidgetContainer {
 					if (transitionOut != null) {
 
 // 						TweenManager.applyTransition(this, transitionOut).onComplete(function(){
-						onTransitionRequested(this, transitionOut).onComplete(function(){
+						onTransitionRequest(this, transitionOut).onComplete(function(){
 
 								parent.removeChild(this);
 

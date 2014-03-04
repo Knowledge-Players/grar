@@ -131,7 +131,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 	public function setMenuExit() : Void {
 
 //		var actuator = TweenManager.applyTransition(this, transitionOut);
-		var actuator = onTransitionRequested(this, transitionOut);
+		var actuator = onTransitionRequest(this, transitionOut);
 
 		if (actuator != null) {
 

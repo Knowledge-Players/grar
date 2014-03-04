@@ -79,12 +79,12 @@ class Line extends Guide {
 		if (tween != null) {
 
 //			TweenManager.applyTransition(object, tween);
-			onTransitionRequested(object, tween);
+			onTransitionRequest(object, tween);
 		
 		} else if(transitionIn != null) {
 
 //			TweenManager.applyTransition(object, transitionIn);
-			onTransitionRequested(object, transitionIn);
+			onTransitionRequest(object, transitionIn);
 		}
 
 		return object;

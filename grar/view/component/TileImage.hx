@@ -63,7 +63,7 @@ class TileImage extends Image {
 				this.visible = true;
 
 // 				TweenManager.applyTransition(this, transformation);
-				onTransitionRequested(this, transformation);
+				onTransitionRequest(this, transformation);
 
 				if (onComplete != null) {
 
@@ -252,7 +252,7 @@ class TileImage extends Image {
 
 			reset();
 // 			actuator = TweenManager.applyTransition(tileSprite, transitionIn);
- 			actuator = onTransitionRequested(tileSprite, transitionIn);
+ 			actuator = onTransitionRequest(tileSprite, transitionIn);
 
 			if (actuator != null && onComplete != null) {
 
@@ -262,7 +262,7 @@ class TileImage extends Image {
 		} else {
 
 //			actuator = TweenManager.applyTransition(tileSprite, transitionOut);
-			actuator = onTransitionRequested(tileSprite, transitionOut);
+			actuator = onTransitionRequest(tileSprite, transitionOut);
 		}
 		renderNeeded();
 		if(actuator != null)

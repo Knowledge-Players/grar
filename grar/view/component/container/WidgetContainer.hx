@@ -392,14 +392,14 @@ class WidgetContainer extends Widget {
 		}
 
 //      TweenManager.applyTransition(content, contentTransition);
-		onTransitionRequested(content, contentTransition);
+		onTransitionRequest(content, contentTransition);
 
 		for (child in children) {
 
             if (child.transformation != null) {
 
 //              TweenManager.applyTransition(child, child.transformation);
-				onTransitionRequested(child, child.transformation);
+				onTransitionRequest(child, child.transformation);
             }
         }
 	}

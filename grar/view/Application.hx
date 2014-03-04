@@ -66,21 +66,22 @@ class Application {
 
 		this.callbacks = {
 
-				onContextualDisplayRequested: function(c : ContextualType, ? ho : Bool = true){ this.displayContextual(c, ho); },
-				onContextualHideRequested: function(c : ContextualType){ this.hideContextual(c); },
-				onQuitGameRequested: function(){ this.onQuitGameRequested(); },
-				onTransitionRequested: function(t : Dynamic, tt : String, de : Float = 0){ return this.onTransitionRequested(t, tt, de); },
-				onStopTransitionRequested: function(t : Dynamic, ? p : Null<Dynamic>, ? c : Bool = false, ? se : Bool = true){ this.onStopTransitionRequested(t, p, c, se); },
+				onContextualDisplayRequest: function(c : ContextualType, ? ho : Bool = true){ this.displayContextual(c, ho); },
+				onContextualHideRequest: function(c : ContextualType){ this.hideContextual(c); },
+				onQuitGameRequest: function(){ this.onQuitGameRequest(); },
+				onTransitionRequest: function(t : Dynamic, tt : String, de : Float = 0){ return this.onTransitionRequest(t, tt, de); },
+				onStopTransitionRequest: function(t : Dynamic, ? p : Null<Dynamic>, ? c : Bool = false, ? se : Bool = true){ this.onStopTransitionRequest(t, p, c, se); },
 				onRestoreLocaleRequest: function(){ this.onRestoreLocaleRequest(); },
 				onLocalizedContentRequest: function(k:String){ return this.onLocalizedContentRequest(k); },
 				onLocaleDataPathRequest: function(p:String){ this.onLocaleDataPathRequest(p); },
 				onStylesheetRequest: function(s:String){ return this.getStyleSheet(s); },
 				onFiltersRequest: function(fids:Array<String>){ return this.getFilters(fids); },
-				onPartDisplayRequested: function(p:Part){ displayPart(p); },
+				onPartDisplayRequest: function(p:Part){ displayPart(p); },
 				onNewZone: function(z:Zone){ zones.push(z); },
 				onSoundToLoad: function(sndUri:String){ loadSound(sndUri); },
 				onSoundToPlay: function(sndUri:String){ playSound(sndUri); },
-				onSoundToStop: function(){ stopSound(); }
+				onSoundToStop: function(){ stopSound(); },
+				onActivateTokenRequest: function(tid : String){ onActivateTokenRequest(tid); }
 			};
 	}
 
@@ -206,9 +207,9 @@ class Application {
 
 	public dynamic function onStylesChanged() : Void { }
 
-	public dynamic function onQuitGameRequested() : Void { }
+	public dynamic function onQuitGameRequest() : Void { }
 
-	public dynamic function onActivateTokenRequested(tokenName : String) : Void { }
+	public dynamic function onActivateTokenRequest(tokenName : String) : Void { }
 
 	public dynamic function onRestoreLocaleRequest() : Void { }
 
@@ -220,7 +221,7 @@ class Application {
 
 	public dynamic function onSetBookmarkRequest(partId : String) : Void { }
 
-	public dynamic function onGameOverRequested() : Void { }
+	public dynamic function onGameOverRequest() : Void { }
 
 	public dynamic function onMenuUpdateDynamicFieldsRequest() : Void { }
 
@@ -386,7 +387,7 @@ class Application {
 
 			l.set(lk, nl);
 
-			nl.onVolumeChangeRequested = changeVolume;
+			nl.onVolumeChangeRequest = changeVolume;
 			nl.onNewProgressBar = function(pb : ProgressBar){ progressBars.push(pb); }
 		}
 		this.layouts = l;
@@ -587,10 +588,8 @@ trace("display part "+part.id);
 // 		parts.first().addEventListener(GameEvent.GAME_OVER, function(e:GameEvent) {...});
 		fp.onGameOver = function(){ 
 
-				onGameOverRequested();
+				onGameOverRequest();
 			}
-
-		fp.onTokenToActivate = onActivateTokenRequested;
 
 		fp.init();
 
@@ -744,12 +743,12 @@ trace("create part display for "+part.id);
 		return creation;
 	}
 
-	function onTransitionRequested(target : Dynamic, transition : String, delay : Float = 0) : IGenericActuator {
+	function onTransitionRequest(target : Dynamic, transition : String, delay : Float = 0) : IGenericActuator {
 
 		return tweener.applyTransition(target, transition, delay);
 	}
 
-	function onStopTransitionRequested(target : Dynamic, ? properties : Null<Dynamic>, 
+	function onStopTransitionRequest(target : Dynamic, ? properties : Null<Dynamic>, 
 												? complete : Bool = false, ? sendEvent : Bool = true) : Void {
 
 		tweener.stop(target, properties, complete, sendEvent);

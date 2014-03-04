@@ -202,6 +202,11 @@ trace("set currentLocale to " + v);
 			return parts;
 		}
 		parts = v;
+
+		for (p in parts) {
+
+			p.onActivateTokenRequest = function(tid : String){ activateInventoryToken(tid); };
+		}
 		onPartsChanged();
 
 		return parts;
@@ -431,9 +436,4 @@ trace("set currentLocale to " + v);
         }
         return array;
     }
-
-
-    ///
-    // INTERNALS
-    //
 }

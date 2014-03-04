@@ -326,13 +326,13 @@ trace("onExitPart");
 				state.module.setPartFinished(pid);
 			}
 
-		application.onActivateTokenRequested = function(tokenId : String) {
+		application.onActivateTokenRequest = function(tokenId : String) {
 
 				state.module.activateInventoryToken(tokenId);
 
 			}
 
-		application.onQuitGameRequested = function() {
+		application.onQuitGameRequest = function() {
 
 				// TODO
 				/*
