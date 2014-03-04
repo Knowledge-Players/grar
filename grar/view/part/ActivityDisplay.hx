@@ -180,9 +180,9 @@ class ActivityDisplay extends PartDisplay {
 
 			var lastTemplate : Template = displayTemplates.get(inputs.first().ref);
 			
-			if (lastTemplate.data.validation != null) {
+			if (lastTemplate.validation != null) {
 
-				validationRef = lastTemplate.data.validation;
+				validationRef = lastTemplate.validation;
 			}
 		}
 	}
@@ -195,27 +195,28 @@ class ActivityDisplay extends PartDisplay {
 		}
 		var button : DefaultButton;
 
-		switch (displayTemplates.get(input.ref).data.data) {
+		switch (displayTemplates.get(input.ref).data) {
 
 			case DefaultButton(d):
 
 				button = new DefaultButton(callbacks, applicationTilesheet, d);
 
+				guide.add(button);
+
+				buttonsToInputs.set(button, input);
+
+				for (contentKey in input.content.keys()) {
+
+		//			button.setText(Localiser.instance.getItemContent(input.content.get(contentKey)), contentKey);
+					button.setText(onLocalizedContentRequest(input.content.get(contentKey)), contentKey);
+
+				}
+				button.setAllListeners(onInputEvents);
+// should be useless now:				button.zz = displayTemplates.get(input.ref).z;
+				inputs.add(button);
+
 			default: throw "unexpected ElementData type";
 		}
-		guide.add(button);
-
-		buttonsToInputs.set(button, input);
-
-		for (contentKey in input.content.keys()) {
-
-//			button.setText(Localiser.instance.getItemContent(input.content.get(contentKey)), contentKey);
-			button.setText(onLocalizedContentRequest(input.content.get(contentKey)), contentKey);
-
-		}
-		button.setAllListeners(onInputEvents);
-		button.zz = displayTemplates.get(input.ref).z;
-		inputs.add(button);
 	}
 
 

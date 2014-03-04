@@ -279,8 +279,19 @@ class Zone extends Display {
 #end
 			default: // nothing
 		}
-
 		//layer.render();
+		switch (e) {
+
+			case DefaultButton(d):
+trace("ZONE => just created a => "+elem);
+
+			elem.addEventListener(Event.ADDED_TO_STAGE, function(e){
+trace("*********** DEFAULT BUTTON ADDED TO STAGE !!!");
+				//this.toggleState = this.defaultState;
+
+			});
+			default:
+		}
 		return elem;
 	}
 
@@ -297,9 +308,9 @@ class Zone extends Display {
 	}
 
 	//override private function addElement(elem:Widget, node:Fast):Void
-	override private function addElement(elem : Widget, ref : String, ? isBackground : Bool = false) : Void {
+	override private function addElement(elem : Widget, ref : String) : Void {
 
-		super.addElement(elem, ref, isBackground);
+		super.addElement(elem, ref);
 
 		addChild(elem);
 	}

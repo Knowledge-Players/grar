@@ -82,7 +82,7 @@ class DefaultButton extends WidgetContainer {
 #end
 
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
-
+//trace("*********** DEFAULT BUTTON ADDED TO STAGE !!!");
 				this.toggleState = this.defaultState;
 
 			});
@@ -468,7 +468,7 @@ class DefaultButton extends WidgetContainer {
 
 	override private inline function addElement(elem : Widget) : Void {
 
-		elem.zz = zIndex;
-		zIndex++;
+//		elem.zz = zIndex;
+//		zIndex++;
 	}
 }

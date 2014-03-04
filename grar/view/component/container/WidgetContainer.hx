@@ -188,7 +188,7 @@ class WidgetContainer extends Widget {
 	**/
 	public var children (default, default):Array<Widget>;
 
-	public var zIndex : Int = 0;
+//	public var zIndex : Int = 0;
 	public var renderNeeded : Bool = false;
 
 	private var scrollBarName : String;
@@ -493,13 +493,13 @@ class WidgetContainer extends Widget {
 
 	private function addElement(elem:Widget):Void
 	{
-		elem.zz = zIndex;
+//		elem.zz = zIndex;
         displays.set(elem.ref,elem);
 
 		content.addChild(elem);
 		children.push(elem);
 
-        zIndex++;
+//        zIndex++;
 		dispatchEvent(new Event(Event.CHANGE));
 	}
 

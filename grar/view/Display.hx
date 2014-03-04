@@ -41,8 +41,8 @@ using StringTools;
 
 typedef Template = {
 
-	var data : { data : ElementData, validation : Null<String> };
-	var z : Int;
+	var data : ElementData;
+	var validation : Null<String>;
 }
 
 enum DisplayType {
@@ -161,7 +161,7 @@ class Display extends Sprite {
 	public var scrollBars (default, null) : StringMap<ScrollBar>;
 
 	private var displays : StringMap<Widget>;
-	private var zIndex : Int = 0;
+//	private var zIndex : Int = 0;
 	private var layers : StringMap<TileLayer>;
 
 	private var totalSpriteSheets : Int = 0;
@@ -381,9 +381,9 @@ trace("display added to stage");
 
 				return timer;
 
-			case Template(d): // d : { data : ElementData, validation : Null<String> }
+			case Template(d):
 
-				displayTemplates.set(r, { data: d, z: zIndex++});
+				displayTemplates.set(r, d);
 
 				return null;
 
@@ -531,7 +531,7 @@ trace("display added to stage");
 		}
 		var img = new TileImage(callbacks, applicationTilesheet, d, layers.get(d.tilesheetName));
 		
-		addElement(img, r, d.id.isBackground);
+		addElement(img, r);
 		
 		return img;
 	}
@@ -539,7 +539,7 @@ trace("display added to stage");
 
 		var img =  new Image(callbacks, applicationTilesheet, d, spritesheets.get(d.tilesheetRef));
 
-		addElement(img, r, d.isBackground);
+		addElement(img, r);
 		
 		return img;
 	}
@@ -555,20 +555,20 @@ trace("display added to stage");
 	}
 
 	//private function addElement(elem:Widget, node:Fast):Void
-	private function addElement(elem : Widget, ref : String, ? isBackground : Bool = false) : Void {
+	private function addElement(elem : Widget, ref : String) : Void {
 
-		if (isBackground) {
+		//if (isBackground) {
 
-			elem.zz = 0;
+		//	elem.zz = 0;
 		
-		} else {
+		//} else {
 
-			elem.zz = zIndex;
-		}
+		//	elem.zz = zIndex;
+		//}
 		displays.set(ref, elem);
 
 // 		ResizeManager.instance.addDisplayObjects(elem, node);
-		zIndex++;
+		//zIndex++;
 	}
 
 	private function setButtonAction(button : DefaultButton, action : String) : Bool {
@@ -649,6 +649,10 @@ trace("display added to stage");
 
 	private inline function sortDisplayObjects(x:Widget, y:Widget):Int
 	{
+		if (x.zz < 0 || y.zz < 0) {
+
+			throw "negative z index order not allowed";
+		}
 		if(x.zz < y.zz)
 			return -1;
 		else if(x.zz > y.zz)

@@ -22,7 +22,7 @@ enum ElementData {
 	ScrollBar(d : { width : Float, bgColor : Null<String>, cursorColor : Null<String>, bgTile : Null<String>, tile : String, tilesheet : Null<String>, cursor9Grid : Array<Float>, bg9Grid : Null<Array<Float>> });
 	SimpleContainer(d : WidgetContainerData);
 	ChronoCircle(d : WidgetContainerData);
-	Template(d : { data : ElementData, validation : Null<String> });
+	Template(d : grar.view.Display.Template);
 	ApplicationTemplate(tplRef : String, attrs : StringMap<String>);
 
 	// PartDisplay only

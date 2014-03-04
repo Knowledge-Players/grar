@@ -110,10 +110,12 @@ class XmlToWidgetContainer {
 				
 						// createStates
 						var list = new StringMap();
+
+						var zIndex : Int = 0;
 		
 						for (elem in e.elements) {
 		
-							var ed : { r : String, e : ElementData} = parseElement(elem, wcd, templates);
+							var ed : { r : String, e : ElementData} = parseElement(elem, wcd, templates, zIndex);
 							list.set(ed.r, ed.e);
 						}
 						return list;
@@ -137,8 +139,10 @@ class XmlToWidgetContainer {
 
 					statesElts.set(defaultState + "_out", createStates(f));
 				}
-
+				wcd.displays = new StringMap();
 				wcd.type = DefaultButton(defaultState, isToggleEnabled, action, group, enabled, states, statesElts);
+
+				return wcd; // no need to go further in this context
 
 			case DropdownMenu(_):
 
@@ -221,13 +225,15 @@ class XmlToWidgetContainer {
 
 		wcd.displays = new StringMap();
 
-		switch(wcd.type) {
+		switch (wcd.type) {
 
 			default: // all cases
 
+				var zIndex : Int = Type.enumEq(wcd.type, BoxDisplay) ? 1 : 0; // BoxDisplay inner elements have z index starting at 1
+
 				for (e in f.elements) {
 
-					var ret : { e: ElementData, r: String } = parseElement(e, wcd, templates);
+					var ret : { e: ElementData, r: String } = parseElement(e, wcd, templates, zIndex);
 
 					if (ret.e != null && ret.r != null) {
 
@@ -237,7 +243,7 @@ class XmlToWidgetContainer {
 
 						switch (e.name.toLowerCase()) {
 
-							case "active", "inactive", "true": return wcd; // don't know if that's normal
+							//case "active", "inactive", "true": return wcd; // don't know if that's normal
 
 							default:
 							
@@ -245,19 +251,20 @@ class XmlToWidgetContainer {
 						}
 
 					}
+					zIndex++;
 				}
 		}
 		return wcd;
 	}
 
-	static function parseElement(e : Fast, wcd : WidgetContainerData, templates : StringMap<Xml>) : { e: ElementData, r: String } {
+	static function parseElement(e : Fast, wcd : WidgetContainerData, templates : StringMap<Xml>, ? zIndex : Int = -1) : { e: ElementData, r: String } {
 
 		var ref : String = null;
 		var ed : ElementData = null;
 
 		switch(wcd.type) {
 
-			case WidgetContainer, SimpleContainer(_), BoxDisplay, DefaultButton(_, _, _, _, _, _, _), DropdownMenu(_), 
+			case WidgetContainer, BoxDisplay, SimpleContainer(_), BoxDisplay, DefaultButton(_, _, _, _, _, _, _), DropdownMenu(_), 
 				ScrollPanel(_, _, _, _), SoundPlayer, ChronoCircle(_, _, _, _, _), ProgressBar(_, _, _), 
 				BookmarkDisplay(_, _, _), IntroScreen(_), AnimationDisplay, TokenNotification(_):
 
@@ -269,12 +276,16 @@ class XmlToWidgetContainer {
 
 				            var id : ImageData = XmlToImage.parseImageData(e);
 
+				            id.wd.zz = zIndex;
+
 				            ref = id.wd.ref;
 				            ed = Image(id);
 				        
 				        } else {
 
 				            var tid : TileImageData = XmlToImage.parseTileImageData(e,null,true,true);
+
+				            tid.id.wd.zz = zIndex;
 				            
 				            ref = tid.id.wd.ref;
 				            ed = TileImage(tid);
@@ -284,6 +295,8 @@ class XmlToWidgetContainer {
 
 						var dbd : WidgetContainerData = parseWidgetContainerData(e, DefaultButton(null, null, null, null, null, null, null), templates);
 
+				        dbd.wd.zz = zIndex;
+
 						ref = dbd.wd.ref;
 						ed = DefaultButton(dbd);
 
@@ -291,12 +304,16 @@ class XmlToWidgetContainer {
 
 						var spd : WidgetContainerData = parseWidgetContainerData(e, ScrollPanel(null, null, null, null), templates);
 
+				        spd.wd.zz = zIndex;
+
 						ref = spd.wd.ref;
 						ed = ScrollPanel(spd);
 
 				    case "timer":
 
 						var ccd : WidgetContainerData = parseWidgetContainerData(e, ChronoCircle(null, null, null, null, null), templates);
+
+				        ccd.wd.zz = zIndex;
 
 						ref = ccd.wd.ref;
 						ed = ChronoCircle(ccd);
@@ -312,7 +329,7 @@ class XmlToWidgetContainer {
 								tmpXml.set(att, e.x.get(att));
 							}
 						}
-						var pe = parseElement(new Fast(tmpXml), wcd, templates);
+						var pe = parseElement(new Fast(tmpXml), wcd, templates, zIndex);
 
 						ref = pe.r;
 						ed = pe.e;
@@ -320,6 +337,8 @@ class XmlToWidgetContainer {
 					case "div":
 
 						var scd : WidgetContainerData = parseWidgetContainerData(e, SimpleContainer(null), templates);
+
+				        scd.wd.zz = zIndex;
 
 						ref = scd.wd.ref;
 						ed = SimpleContainer(scd);
@@ -332,13 +351,15 @@ class XmlToWidgetContainer {
 
 			case VideoPlayer(ch, af):
 
+				// parse the element as in a WidgetContainer context
 				wcd.type = WidgetContainer;
 
-				var ret = parseElement(e, wcd, templates);
+				var ret = parseElement(e, wcd, templates, zIndex);
 
 				ref = ret.r;
 				ed = ret.e;
 
+				// come back to the VideoPlayer context
 				wcd.type = VideoPlayer(ch, af);
 					
 				switch (e.name.toLowerCase()) {

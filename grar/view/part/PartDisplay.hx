@@ -339,9 +339,9 @@ class PartDisplay extends Display {
 			case IntroScreen(d):
 
 				var intro = new IntroScreen(callbacks, applicationTilesheet, d);
-				intro.zz = zIndex;
+//				intro.zz = zIndex;
 				displays.set(r, intro);
-				zIndex++;
+//				zIndex++;
 				return intro;
 
 			default: 

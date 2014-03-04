@@ -36,10 +36,10 @@ class BoxDisplay extends WidgetContainer {
 
 	override private function addElement(elem : Widget) : Void {
 
-		if (zIndex == 0) {
+//		if (zIndex == 0) {
 
-			zIndex++;
-		}
+//			zIndex++;
+//		}
 		super.addElement(elem);
 	}
 }

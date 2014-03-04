@@ -190,14 +190,18 @@ class XmlToDisplay {
 
 	static function parseDisplay(f : Fast, type : DisplayType, dd : DisplayData, templates : StringMap<Xml>) : DisplayData {
 
-		for (child in f.elements) {
+		var zIndex : Int = 0;
 
-			var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(child, dd, templates);
+		for (e in f.elements) {
+
+			var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(e, dd, templates, zIndex);
 			
 			if (ret.e != null && ret.r != null) {
 
 				dd.displays.set(ret.r, ret.e);
 			}
+
+			zIndex++;
 		}
 		for (c in f.nodes.Timeline) {
 
@@ -222,7 +226,7 @@ class XmlToDisplay {
 	}
 
 	//static function createElement(elemNode:Fast) : Widget {
-	static public function parseElement(f : Fast, dd : DisplayData, templates : StringMap<Xml>) : { e : Null<ElementData>, r : Null<String> } {
+	static public function parseElement(f : Fast, dd : DisplayData, templates : StringMap<Xml>, ? zIndex : Int = -1) : { e : Null<ElementData>, r : Null<String> } {
 
 		var e : Null<ElementData> = null;
 		var r : Null<String> = f.has.ref ? f.att.ref : null;
@@ -236,12 +240,18 @@ class XmlToDisplay {
 
 					case "box":
 
-						e = BoxDisplay(XmlToWidgetContainer.parseWidgetContainerData(f, BoxDisplay, templates));
+						var bdd : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(f, BoxDisplay, templates);
+
+				        bdd.wd.zz = zIndex;
+
+						e = BoxDisplay(bdd);
 
 					case "background": // in StripDisplay, "background" means Image (not TileImage)
 
 						var id : ImageData = XmlToImage.parseImageData(f, f.has.spritesheet ? f.att.spritesheet : "ui");
 						id.isBackground = true;
+
+				        id.wd.zz = 0;
 
 						e = Image(id);
 
@@ -254,7 +264,11 @@ class XmlToDisplay {
 
 					case "intro":
 
-						e = IntroScreen(XmlToWidgetContainer.parseWidgetContainerData(f, IntroScreen(null), templates));
+						var id : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(f, IntroScreen(null), templates);
+
+				        id.wd.zz = zIndex;
+
+						e = IntroScreen(id);
 
 					default: // nothing
 				}
@@ -263,9 +277,10 @@ class XmlToDisplay {
 
 				switch (f.name.toLowerCase()) {
 
-					case "menu":
+// I think this is useless now...
+//					case "menu":
 
-						e = Menu(parseDisplayData(f.x, Menu(null, null, null, null, null), templates));
+//						e = Menu(parseDisplayData(f.x, Menu(null, null, null, null, null), templates));
 
 					case "progressbar":
 
@@ -293,7 +308,7 @@ class XmlToDisplay {
 
 					for (c in f.elements) {
 
-						var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(c, dd, templates);
+						var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(c, dd, templates, zIndex); // TODO check if zIndex ok
 
 						if (ret.e != null) {
 
@@ -310,6 +325,8 @@ class XmlToDisplay {
 						var id : ImageData = XmlToImage.parseImageData(f, f.has.spritesheet ? f.att.spritesheet : "ui");
 						id.isBackground = f.name.toLowerCase() == "background";
 
+				        id.wd.zz = id.isBackground ? 0 : zIndex;
+
 						e = Image(id);
 					
 					} else {
@@ -317,28 +334,50 @@ class XmlToDisplay {
 						var tid : TileImageData = XmlToImage.parseTileImageData(f, f.has.spritesheet ? f.att.spritesheet : "ui");
 						tid.id.isBackground = f.name.toLowerCase() == "background";
 
+				        tid.id.wd.zz = tid.id.isBackground ? 0 : zIndex;
+
 						e = TileImage(tid);
 					}
 				
 				case "character":
+
+					var cd : CharacterData = XmlToCharacter.parseCharacterData(f);
+
+				    cd.tid.id.wd.zz = zIndex;
 			
-					e = Character(XmlToCharacter.parseCharacterData(f));
+					e = Character(cd);
 				
 				case "button":
 
-					e = DefaultButton(XmlToWidgetContainer.parseWidgetContainerData(f, DefaultButton(null, null, null, null, null, null, null), templates));
+					var dbd : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(f, DefaultButton(null, null, null, null, null, null, null), templates);
+
+				    dbd.wd.zz = zIndex;
+
+					e = DefaultButton(dbd);
 				
 				case "text":
 
-					e = ScrollPanel(XmlToWidgetContainer.parseWidgetContainerData(f, ScrollPanel(null, null, null, null), templates));
+					var spd : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(f, ScrollPanel(null, null, null, null), templates);
+
+				    spd.wd.zz = zIndex;
+
+					e = ScrollPanel(spd);
 				
 				case "video":
+
+					var vpd : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(f, VideoPlayer(null, null), templates);
+
+				    vpd.wd.zz = zIndex;
 #if flash
-					e = VideoPlayer(XmlToWidgetContainer.parseWidgetContainerData(f, VideoPlayer(null, null), templates));
+					e = VideoPlayer(vpd);
 #end
 				case "sound":
 
-					e = SoundPlayer(XmlToWidgetContainer.parseWidgetContainerData(f, SoundPlayer, templates));
+					var spd : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(f, SoundPlayer, templates);
+
+				    spd.wd.zz = zIndex;
+
+					e = SoundPlayer(spd);
 
 				case "scrollbar":
 
@@ -354,16 +393,26 @@ class XmlToDisplay {
 
 				case "div":
 
-					e = SimpleContainer(XmlToWidgetContainer.parseWidgetContainerData(f, SimpleContainer(null), templates));
+					var scd : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(f, SimpleContainer(null), templates);
+
+				    scd.wd.zz = zIndex;
+
+					e = SimpleContainer(scd);
 	            
 	            case "timer":
 
-		            e = ChronoCircle(XmlToWidgetContainer.parseWidgetContainerData(f, ChronoCircle(null, null, null, null, null), templates));
+		            var ccd : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(f, ChronoCircle(null, null, null, null, null), templates);
+
+				    ccd.wd.zz = zIndex;
+
+		            e = ChronoCircle(ccd);
 				
 				case "template": // use seen only in ActivityDisplay
 
 					// At the moment, templates seem to be DefaultButton templates only
 					var td : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(f, DefaultButton(null, null, null, null, null, null, null), templates);
+
+				    td.wd.zz = zIndex;
 
 					e = Template({ data: DefaultButton(td), validation: f.has.validation ? f.att.validation : null });
 				
@@ -382,7 +431,7 @@ class XmlToDisplay {
 							tmpXml.set(att, f.x.get(att));
 						}
 					}
-					var tr = parseElement(new Fast(tmpXml), dd, templates);
+					var tr = parseElement(new Fast(tmpXml), dd, templates, zIndex);
 
 					e = tr.e;
 
@@ -426,14 +475,17 @@ class XmlToDisplay {
 			trace("This zone is empty. Is your XML correct ?");
 		}
 
-		for (child in f.elements) { //trace("just found "+child.name+" in zone");
+		var zIndex : Int = 0;
 
-			var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(child, dd, templates);
+		for (ce in f.elements) { //trace("just found "+child.name+" in zone");
+
+			var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(ce, dd, templates, zIndex);
 			
 			if (ret.e != null && ret.r != null) {
 
 				dd.displays.set(ret.r, ret.e);
 			}
+			zIndex++;
 		}
 
 		return dd;
