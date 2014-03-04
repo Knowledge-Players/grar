@@ -29,7 +29,7 @@
 -cp tests
 -lib tilelayer
 -lib actuate
--lib exam
+-lib ExAM
 -lib utest
 -lib compiletime
 -swf tests/testResults.swf
