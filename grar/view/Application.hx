@@ -54,9 +54,6 @@ enum ContextualType {
 
 	MENU;
 	NOTEBOOK;
-	GLOSSARY;
-	BIBLIOGRAPHY;
-	INVENTORY;
 }
 
 class Application {
@@ -398,20 +395,6 @@ class Application {
 		this.layouts = l;
 
 		onLayoutsChanged();
-	}
-
-	public function createBibliography(b : grar.model.contextual.Bibliography) : Void {
-
-		bibliography = new BibliographyDisplay(callbacks, tilesheet, b);
-
-		//onBibliographyChanged();
-	}
-
-	public function createGlossary(g : grar.model.contextual.Glossary) : Void {
-
-		glossary = new GlossaryDisplay(g);
-
-		//onGlossaryChanged();
 	}
 
 	public function createNotebook(d : DisplayData) : Void {
@@ -793,18 +776,6 @@ trace("create part display for "+part.id);
 			case NOTEBOOK:
 
 				return notebook;
-			
-			case GLOSSARY:
-
-				return cast glossary; // this is just very ugly ! We should use an enum...
-			
-			case BIBLIOGRAPHY:
-
-				return cast bibliography; // this is just very ugly ! We should use an enum...
-			
-			case INVENTORY: // nothing ?
-
-				//
 		}
 		return null;
 	}

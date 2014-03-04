@@ -147,22 +147,6 @@ class Controller {
 
 										}, onError);
 								
-								case GLOSSARY:
-
-									gameSrv.fetchGlossary(contextual.att.file, function(g:grar.model.contextual.Glossary){
-
-											application.createGlossary(g);
-
-										}, onError);
-								
-								case BIBLIOGRAPHY:
-
-									gameSrv.fetchBibliography(contextual.att.file, function(b:grar.model.contextual.Bibliography){
-
-											application.createBibliography(b);
-
-										}, onError);
-								
 								case MENU:
 
 									gameSrv.fetchMenu(contextual.att.display, contextual.has.file ? contextual.att.file : null, templates, function(d:grar.view.Display.DisplayData, m:Null<grar.view.contextual.menu.MenuDisplay.MenuData>){
@@ -175,20 +159,6 @@ class Controller {
 								default: // nothing
 							}
 						}
-
-				        if (structureXml.has.inventory) {
-#if (flash || openfl)
-				        	gameSrv.fetchInventory(structureXml.att.inventory, templates, function(i:StringMap<InventoryToken>, tn:grar.view.component.container.WidgetContainer.WidgetContainerData, ti:StringMap<{ small:flash.display.BitmapData, large:flash.display.BitmapData }>){
-#else
-				        	gameSrv.fetchInventory(structureXml.att.inventory, templates, function(i:StringMap<InventoryToken>, tn:grar.view.component.container.WidgetContainer.WidgetContainerData, ti:StringMap<{ small:String, large:String }>){
-#end
-				        			state.module.addInventoryTokens(i);
-				        			application.createTokenNotification(tn);
-									application.tokensImages = ti;
-									// TODO create id
-
-				        		}, onError);
-				        }
 
 				        // Load part models
 						state.onModulePartsChanged = function() {
