@@ -77,7 +77,10 @@ class Application {
 				onStylesheetRequest: function(s:String){ return this.getStyleSheet(s); },
 				onFiltersRequest: function(fids:Array<String>){ return this.getFilters(fids); },
 				onPartDisplayRequested: function(p:Part){ displayPart(p); },
-				onNewZone: function(z:Zone){ zones.push(z); }
+				onNewZone: function(z:Zone){ zones.push(z); },
+				onSoundToLoad: function(sndUri:String){ loadSound(sndUri); },
+				onSoundToPlay: function(sndUri:String){ playSound(sndUri); },
+				onSoundToStop: function(){ stopSound(); }
 			};
 	}
 
@@ -126,7 +129,7 @@ class Application {
 
 	public var currentLayout : Null<Layout> = null;
 
-	public var previousLayout : String = null; // FIXME shouldn't be here
+	public var previousLayout : String = null;
 
 	var parts : GenericStack<PartDisplay>;
 
@@ -589,9 +592,6 @@ trace("display part "+part.id);
 
 		fp.onTokenToActivate = onActivateTokenRequested;
 
-		fp.onSoundToLoad = loadSound;
-		fp.onSoundToPlay = playSound;
-
 		fp.init();
 
 		return true;
@@ -670,7 +670,6 @@ trace("Game Over");
 			tokenNotification.setToken(t.name, t.icon);
 		}
 		notebook.setActivateToken(t);
-		// FIXME inventory.setActivateToken(t.id);
 	}
 
 

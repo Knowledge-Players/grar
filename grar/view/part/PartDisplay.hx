@@ -85,10 +85,6 @@ class PartDisplay extends Display {
 
 	public dynamic function onTokenToActivate(token : String) : Void { }
 
-	public dynamic function onSoundToLoad(sound : String) : Void { }
-
-	public dynamic function onSoundToPlay(sound : String) : Void { }
-
 
 	///
 	// API
