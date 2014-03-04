@@ -14,6 +14,7 @@ before_install:
   - haxelib install nme
   - haxelib install ExAM
   - haxelib install utest
+  - haxelib install compiletime
   - mkdir bin
 
 script:
