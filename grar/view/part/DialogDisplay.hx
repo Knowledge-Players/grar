@@ -4,8 +4,6 @@ import grar.view.component.container.DefaultButton;
 import grar.view.component.container.ScrollPanel;
 import grar.view.part.PartDisplay;
 
-// FIXME import com.knowledgeplayers.grar.event.GameEvent;		// FIXME
-
 import grar.model.part.Item;
 import grar.model.part.PartElement;
 import grar.model.part.Part;
@@ -37,7 +35,8 @@ class DialogDisplay extends PartDisplay {
 
 	override public function next(? target : DefaultButton) : Void {
 
-// FIXME		GameManager.instance.stopSound();
+// 		GameManager.instance.stopSound();
+		onSoundToStop();
 
 		startPattern(currentPattern);
 	}
@@ -50,10 +49,6 @@ class DialogDisplay extends PartDisplay {
 	override private function startPattern(pattern:Pattern):Void
 	{
 		super.startPattern(pattern);
-		if(Std.is(pattern, ChoicePattern) && inventory != null)
-			inventory.visible = false;
-		else if(inventory != null)
-			inventory.visible = true;
 
 		if(currentPattern != pattern)
 			currentPattern = pattern;
@@ -112,13 +107,16 @@ class DialogDisplay extends PartDisplay {
 
 	private function onChoice(?choice: DefaultButton):Void
 	{
-// FIXME		GameManager.instance.stopSound();
+// 		GameManager.instance.stopSound();
+		onSoundToStop();
+
 		cast(currentPattern, ChoicePattern).numChoices++;
 		var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
 		cast(currentPattern, ChoicePattern).choices.get(choice.ref).viewed = true;
 
 		choice.removeEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
 		choice.toggle(false);
+		
 		// Clean tooltip
 		onOutChoice(null);
 		goToPattern(target);

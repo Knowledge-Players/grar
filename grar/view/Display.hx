@@ -106,9 +106,12 @@ class Display extends Sprite {
 		this.onStopTransitionRequested = function(t : Dynamic, ? p : Null<Dynamic>, ? c : Bool = false, ? se : Bool = true){ callbacks.onStopTransitionRequested(t, p, c, se); }
 		this.onRestoreLocaleRequest = function(){ callbacks.onRestoreLocaleRequest(); }
 		this.onLocalizedContentRequest = function(k : String){ return callbacks.onLocalizedContentRequest(k); }
-		this.onLocaleDataPathRequest = function(p:String){ callbacks.onLocaleDataPathRequest(p); }
-		this.onStylesheetRequest = function(s:String){ return callbacks.onStylesheetRequest(s); }
+		this.onLocaleDataPathRequest = function(p : String){ callbacks.onLocaleDataPathRequest(p); }
+		this.onStylesheetRequest = function(s : String){ return callbacks.onStylesheetRequest(s); }
 		this.onPartDisplayRequested = function(p : grar.model.part.Part){ callbacks.onPartDisplayRequested(p); }
+		this.onSoundToLoad = function(sndUri : String){ callbacks.onSoundToLoad(sndUri); }
+		this.onSoundToPlay = function(sndUri : String){ callbacks.onSoundToPlay(sndUri); }
+		this.onSoundToStop = function(){ callbacks.onSoundToStop(); }
 
 		this.applicationTilesheet = applicationTilesheet;
 
@@ -196,6 +199,12 @@ class Display extends Sprite {
 	public dynamic function onPartDisplayRequested(p : grar.model.part.Part) : Void { }
 
 	public dynamic function onUpdateDynamicFieldsRequest() : Void { }
+
+	public dynamic function onSoundToLoad(sound : String) : Void { }
+
+	public dynamic function onSoundToPlay(sound : String) : Void { }
+
+	public dynamic function onSoundToStop() : Void { }
 
 
 	///

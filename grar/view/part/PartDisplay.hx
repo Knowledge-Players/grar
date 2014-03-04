@@ -10,7 +10,6 @@ import grar.view.component.Widget;
 import grar.view.component.Image;
 import grar.view.component.CharacterDisplay;
 import grar.view.element.Timeline;
-import grar.view.contextual.InventoryDisplay;
 
 // import com.knowledgeplayers.grar.display.ResizeManager;
 
@@ -65,7 +64,6 @@ class PartDisplay extends Display {
 	private var displayLoaded : Bool = false;
 	private var currentItems : GenericStack<Widget>;
 	private var currentItem : Item;
-	private var inventory : InventoryDisplay;
 	private var itemSound : Sound;
 	private var itemSoundChannel : SoundChannel;
 	private var numWidgetAdded : Int;
@@ -86,10 +84,6 @@ class PartDisplay extends Display {
 	public dynamic function onGameOver() : Void { }
 
 	public dynamic function onTokenToActivate(token : String) : Void { }
-
-	public dynamic function onSoundToLoad(sound : String) : Void { }
-
-	public dynamic function onSoundToPlay(sound : String) : Void { }
 
 
 	///
@@ -270,7 +264,6 @@ class PartDisplay extends Display {
 				item = null;
 		currentItems = null;
 		currentItem = null;
-		inventory = null;
 		itemSound = null;
 		itemSoundChannel = null;
 	}
@@ -340,13 +333,6 @@ class PartDisplay extends Display {
 	override private function createElement(e : ElementData, r : String) : Widget {
 
 		switch (e) {
-
-			case InventoryDisplay(d):
-
-				inventory = new InventoryDisplay(callbacks, applicationTilesheet, d);
-				inventory.init(part.tokens);
-				addElement(inventory, r);
-				return null;
 
 			case IntroScreen(d):
 
@@ -685,9 +671,6 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 			else
 				addChild(obj);
 		}
-
-		if(inventory != null && currentSpeaker != null)
-			addChild(inventory);
 	}
 
 	private function cleanDisplay():Void
@@ -700,8 +683,6 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 		for(item in currentItems){
 			toRemove.add(item);
 		}
-		if(inventory != null && contains(inventory))
-			toRemove.add(inventory);
 		for(obj in toRemove)
 			if(contains(obj))
 				removeChild(obj);
@@ -828,10 +809,6 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 
 		// Exclude IntroScreen
 		if(Std.is(object, IntroScreen))
-			return false;
-
-		// Exclude Inventory
-		if(Std.is(object, InventoryDisplay))
 			return false;
 
 		return true;

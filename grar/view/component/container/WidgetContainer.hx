@@ -10,7 +10,6 @@ import grar.view.ElementData;
 import grar.view.Display;
 import grar.view.Color;
 import grar.view.guide.Guide;
-import grar.view.contextual.InventoryDisplay.Template;
 import grar.view.element.ChronoCircle;
 import grar.view.component.Widget;
 import grar.view.component.Image;
@@ -62,7 +61,6 @@ enum WidgetContainerType {
 	ChronoCircle(? colorCircle : Null<Color>, ? minRadius : Null<Int>, ? maxRadius : Null<Int>, ? colorBackground : Null<Color>, ? centerCircle : Null<Color>);
 	VideoPlayer(? controlsHidden : Bool, ? autoFullscreen : Null<Bool>);
 	ProgressBar(? iconScale : Float, ? progressColor : Int, ? icon : String);
-	InventoryDisplay(? guide : GuideData, ? fullscreen : WidgetContainerData, ? displayTemplates : StringMap<Template>);
 	BookmarkDisplay(? animation : Null<String>, ? xOffset : Float, ? yOffset : Float);
 	IntroScreen(? duration : Int);
 	AnimationDisplay;

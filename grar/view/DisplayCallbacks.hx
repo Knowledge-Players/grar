@@ -24,6 +24,13 @@ typedef DisplayCallbacks = {
 
 	var onPartDisplayRequested : grar.model.part.Part -> Void;
 
+	var onSoundToLoad : String -> Void;
+
+	var onSoundToPlay : String -> Void;
+
+	var onSoundToStop : Void -> Void;
+
+
 	/**
 	 * Layout only
 	 */

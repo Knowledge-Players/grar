@@ -252,10 +252,6 @@ class XmlToDisplay {
 
 				switch (f.name.toLowerCase()) {
 
-					case "inventory":
-
-						e = InventoryDisplay(XmlToWidgetContainer.parseWidgetContainerData(f, InventoryDisplay(null, null, null), templates));
-
 					case "intro":
 
 						e = IntroScreen(XmlToWidgetContainer.parseWidgetContainerData(f, IntroScreen(null), templates));

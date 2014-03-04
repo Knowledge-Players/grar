@@ -13,8 +13,6 @@ import grar.view.component.ProgressBar;
 import grar.view.component.container.WidgetContainer;
 import grar.view.contextual.menu.MenuDisplay;
 import grar.view.contextual.NotebookDisplay;
-import grar.view.contextual.GlossaryDisplay;
-import grar.view.contextual.BibliographyDisplay;
 import grar.view.element.TokenNotification;
 import grar.view.part.PartDisplay;
 import grar.view.part.ActivityDisplay;
@@ -54,9 +52,6 @@ enum ContextualType {
 
 	MENU;
 	NOTEBOOK;
-	GLOSSARY;
-	BIBLIOGRAPHY;
-	INVENTORY;
 }
 
 class Application {
@@ -82,7 +77,10 @@ class Application {
 				onStylesheetRequest: function(s:String){ return this.getStyleSheet(s); },
 				onFiltersRequest: function(fids:Array<String>){ return this.getFilters(fids); },
 				onPartDisplayRequested: function(p:Part){ displayPart(p); },
-				onNewZone: function(z:Zone){ zones.push(z); }
+				onNewZone: function(z:Zone){ zones.push(z); },
+				onSoundToLoad: function(sndUri:String){ loadSound(sndUri); },
+				onSoundToPlay: function(sndUri:String){ playSound(sndUri); },
+				onSoundToStop: function(){ stopSound(); }
 			};
 	}
 
@@ -131,7 +129,7 @@ class Application {
 
 	public var currentLayout : Null<Layout> = null;
 
-	public var previousLayout : String = null; // FIXME shouldn't be here
+	public var previousLayout : String = null;
 
 	var parts : GenericStack<PartDisplay>;
 
@@ -145,10 +143,6 @@ class Application {
 	private var nbVolume:Float = 1;
 	private var itemSoundChannel:SoundChannel;
 	private var sounds:Map<String, Sound>;
-
-	var glossary : Null<GlossaryDisplay> = null;
-
-	var bibliography : Null<BibliographyDisplay> = null;
 
 	
 	///
@@ -400,20 +394,6 @@ class Application {
 		onLayoutsChanged();
 	}
 
-	public function createBibliography(b : grar.model.contextual.Bibliography) : Void {
-
-		bibliography = new BibliographyDisplay(callbacks, tilesheet, b);
-
-		//onBibliographyChanged();
-	}
-
-	public function createGlossary(g : grar.model.contextual.Glossary) : Void {
-
-		glossary = new GlossaryDisplay(g);
-
-		//onGlossaryChanged();
-	}
-
 	public function createNotebook(d : DisplayData) : Void {
 
 		var n : NotebookDisplay = new NotebookDisplay(callbacks, tilesheet);
@@ -612,9 +592,6 @@ trace("display part "+part.id);
 
 		fp.onTokenToActivate = onActivateTokenRequested;
 
-		fp.onSoundToLoad = loadSound;
-		fp.onSoundToPlay = playSound;
-
 		fp.init();
 
 		return true;
@@ -693,7 +670,6 @@ trace("Game Over");
 			tokenNotification.setToken(t.name, t.icon);
 		}
 		notebook.setActivateToken(t);
-		// FIXME inventory.setActivateToken(t.id);
 	}
 
 
@@ -793,18 +769,6 @@ trace("create part display for "+part.id);
 			case NOTEBOOK:
 
 				return notebook;
-			
-			case GLOSSARY:
-
-				return cast glossary; // this is just very ugly ! We should use an enum...
-			
-			case BIBLIOGRAPHY:
-
-				return cast bibliography; // this is just very ugly ! We should use an enum...
-			
-			case INVENTORY: // nothing ?
-
-				//
 		}
 		return null;
 	}
