@@ -391,22 +391,24 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 				for (st in statesElts) {
 
-					var ed : ElementData = st.get("icon");
+					for (c in st) {
 
-					switch(ed) {
+						if (c.ref == "icon") {
 
-						case Image(i):
+							switch(c.ed) {
 
-							i.src = iconId;
+								case Image(i):
 
-						case TileImage(ti):
+									i.src = iconId;
 
-							ti.id.tile = iconId;
+								case TileImage(ti):
 
-						default: throw "unexpected ElementData type given as button icon";
+									ti.id.tile = iconId;
+
+								default: throw "unexpected ElementData type given as button icon";
+							}
+						}
 					}
-
-					st.set("icon", ed);
 				}
 
 			default: throw "wrong WidgetContainerData type passed to MenuDisplay.addButton()";

@@ -212,7 +212,7 @@ trace("set ActivityDisplay content");
 
 				}
 				button.setAllListeners(onInputEvents);
-// should be useless now:				button.zz = displayTemplates.get(input.ref).z;
+// 				button.zz = displayTemplates.get(input.ref).z; // TODO check if still useful
 				inputs.add(button);
 
 			default: throw "unexpected ElementData type";

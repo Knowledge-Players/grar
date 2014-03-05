@@ -219,22 +219,24 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 
 						for (st in statesElts) {
 
-							var ed : ElementData = st.get("icon");
+							for (c in st) {
 
-							switch(ed) {
+								if (c.ref == "icon") {
 
-								case Image(i):
+									switch(c.ed) {
 
-									i.src = page.icon;
+										case Image(i):
 
-								case TileImage(ti):
+											i.src = page.icon;
 
-									ti.id.tile = page.icon;
+										case TileImage(ti):
 
-								default: throw "unexpected ElementData type given as button icon";
+											ti.id.tile = page.icon;
+
+										default: throw "unexpected ElementData type given as button icon";
+									}
+								}
 							}
-
-							st.set("icon", ed);
 						}
 
 					default: throw "wrong WidgetContainerData type passed to NotebookDisplay tabTemplate";
@@ -284,22 +286,24 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 
 									for (st in statesElts) {
 
-										var ed : ElementData = st.get("icon");
+										for (c in st) {
 
-										switch(ed) {
+											if (c.ref == "icon") {
 
-											case Image(i):
+												switch(c.ed) {
 
-												i.src = chapter.icon;
+													case Image(i):
 
-											case TileImage(ti):
+														i.src = chapter.icon;
 
-												ti.id.tile = chapter.icon;
+													case TileImage(ti):
 
-											default: throw "unexpected ElementData type given as button icon";
+														ti.id.tile = chapter.icon;
+
+													default: throw "unexpected ElementData type given as button icon";
+												}
+											}
 										}
-
-										st.set("icon", ed);
 									}
 									button = new DefaultButton(callbacks, applicationTilesheet, d);
 

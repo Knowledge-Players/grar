@@ -26,7 +26,7 @@ class DefaultButton extends WidgetContainer {
 		
 		this.timelines = new Map<String, Timeline>();
 		this.enabledState = new Map<String, Bool>();
-		this.states = new Map<String, Map<String, Widget>>();
+		this.states = new Map<String, { zorder : Array<Widget>, refs : StringMap<Widget> }>();
 
 		if (dbd == null) {
 
@@ -101,7 +101,7 @@ class DefaultButton extends WidgetContainer {
 	/**
     * Different states of the button
     **/
-	public var states (default, null):Map<String, Map<String, Widget>>;
+	public var states (default, null) : Map<String, { zorder : Array<Widget>, refs : StringMap<Widget> }>;
 
 	/**
 	* Group of buttons containing it
@@ -206,14 +206,14 @@ class DefaultButton extends WidgetContainer {
 	{
 		if(pKey != null && pKey != " "){
 			for(state in states){
-				if(state.exists(pKey)){
-					cast(state.get(pKey), ScrollPanel).setContent(pContent);
+				if(state.refs.exists(pKey)){
+					cast(state.refs.get(pKey), ScrollPanel).setContent(pContent);
 				}
 			}
 		}
 		else{
 			for(state in states){
-				for(elem in state){
+				for(elem in state.zorder){
 					if(Std.is(elem, ScrollPanel)){
 						cast(elem, ScrollPanel).setContent(pContent);
 						break;
@@ -226,7 +226,8 @@ class DefaultButton extends WidgetContainer {
 	public function renderState(state:String)
 	{
 		var changeState = false;
-		var list:Map<String, Widget>;
+		var list :  { zorder : Array<Widget>, refs : StringMap<Widget> };
+
 		if(states.exists(toggleState + "_" + state)){
 			list = states.get(toggleState + "_" + state);
 			if(currentState != toggleState + "_" + state){
@@ -271,24 +272,25 @@ class DefaultButton extends WidgetContainer {
 			if(list == null)
 				throw "There is no information for state \"" + currentState + "\" for button \"" + ref + "\".";
 
-			var array = new Array<Widget>();
 			var layerIndex: Int = -1;
-			for(widget in list){
-				array.push(widget);
-			}
 
-			array.sort(sortDisplayObjects);
-			for(obj in array){
-				content.addChild(obj);
-				children.push(obj);
-				if(Std.is(obj, TileImage)){
-					if(layerIndex == -1) layerIndex = obj.zz;
+			for (i in 0...list.zorder.length) {
+
+				content.addChild(list.zorder[i]);
+				children.push(list.zorder[i]);
+				
+				if (Std.is(list.zorder[i], TileImage)) {
+
+					if (layerIndex == -1) layerIndex = i;
 				}
 			}
 
 			var j = 0;
-			while(j < content.numChildren && cast(content.getChildAt(j), Widget).zz < layerIndex)
+			
+			while (j < content.numChildren && getZPosition(list.zorder, cast(content.getChildAt(j), Widget)) < layerIndex) {
+
 				j++;
+			}
 			content.addChildAt(layer.view, j);
 
 			renderNeeded = true;
@@ -299,9 +301,21 @@ class DefaultButton extends WidgetContainer {
 		}
 	}
 
+	private function getZPosition(list : Array<Widget>, w : Widget) : Int {
+
+		for (j in 0...list.length) {
+
+			if (list[j] == w) {
+
+				return j;
+			}
+		}
+		return -1;
+	}
+
 	//public function initStates(?xml: Fast, ?timelines: Map<String, Timeline>):Void
-	public function initStates(? dbd : Null<WidgetContainerData>, ? timelines: Map<String, Timeline>):Void
-	{
+	public function initStates(? dbd : Null<WidgetContainerData>, ? timelines: Map<String, Timeline>) : Void {
+
 		if (dbd != null) {
 
 			tmpdata = dbd;
@@ -311,8 +325,6 @@ class DefaultButton extends WidgetContainer {
 			switch (tmpdata.type) {
 
 				case DefaultButton(_, _, _, _, _, st, stElts):
-// : Array<{ timeline : Null<String>, name : String, enabled : Bool }> 
-// : haxe.ds.StringMap<haxe.ds.StringMap<grar.view.ElementData>>
 
 					for (se in stElts.keys()) {
 
@@ -358,15 +370,16 @@ class DefaultButton extends WidgetContainer {
 	//
 
 	//private inline function createStates(node:Fast):Map<String, Widget>
-	private inline function createStates(sm : StringMap<ElementData>) : Map<String, Widget> {
+	private inline function createStates(sm : Array<{ ref : String, ed : ElementData }>) :  { zorder : Array<Widget>, refs : StringMap<Widget> } {
 
-		var list = new Map<String, Widget>();
+		var list = { zorder : new Array(), refs : new StringMap() }; //new Map<String, Widget>();
 
-		for (sk in sm.keys()) {
+		for (s in sm) {
 
-			var w : Widget = createElement(sm.get(sk));
+			var w : Widget = createElement(s.ed);
 
-			list.set(w.ref, w);
+			list.zorder.push(w);
+			list.refs.set(s.ref, w);
 		}
 
 		return list;
@@ -419,16 +432,6 @@ class DefaultButton extends WidgetContainer {
 	private inline function onClickUp(event : MouseEvent) : Void {
 
 		renderState("out");
-	}
-
-	private inline function sortDisplayObjects(x : Widget, y : Widget) : Int {
-
-		if(x.zz < y.zz)
-			return -1;
-		else if(x.zz > y.zz)
-			return 1;
-		else
-			return 0;
 	}
 
 	private inline function removeAllEventsListeners(listener : MouseEvent -> Void) : Void {

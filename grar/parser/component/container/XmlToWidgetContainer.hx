@@ -104,19 +104,17 @@ class XmlToWidgetContainer {
 				var group : Null<String> = f.has.group ? f.att.group.toLowerCase() : null;
 				var enabled : Bool = f.has.action || f.name != "Button";
 				var states : Array<{ name : String, timeline : Null<String>, enabled : Bool }> = [];
-				var statesElts : StringMap<StringMap<ElementData>> = new StringMap();
+				var statesElts : StringMap<Array<{ ref : String, ed : ElementData }>> = new StringMap();
 
-				var createStates = function(e : Fast) : StringMap<ElementData>{
+				var createStates = function(e : Fast) : Array<{ ref : String, ed : ElementData }>{
 				
 						// createStates
-						var list = new StringMap();
-
-						var zIndex : Int = 0;
+						var list : Array<{ ref : String, ed : ElementData }> = new Array();
 		
 						for (elem in e.elements) {
 		
-							var ed : { r : String, e : ElementData} = parseElement(elem, wcd, templates, zIndex);
-							list.set(ed.r, ed.e);
+							var ed : { r : String, e : ElementData} = parseElement(elem, wcd, templates);
+							list.push({ ref: ed.r, ed: ed.e });
 						}
 						return list;
 					}
@@ -233,7 +231,7 @@ class XmlToWidgetContainer {
 
 				for (e in f.elements) {
 
-					var ret : { e: ElementData, r: String } = parseElement(e, wcd, templates, zIndex);
+					var ret : { e: ElementData, r: String } = parseElement(e, wcd, templates);
 
 					if (ret.e != null && ret.r != null) {
 
@@ -257,7 +255,7 @@ class XmlToWidgetContainer {
 		return wcd;
 	}
 
-	static function parseElement(e : Fast, wcd : WidgetContainerData, templates : StringMap<Xml>, ? zIndex : Int = -1) : { e: ElementData, r: String } {
+	static function parseElement(e : Fast, wcd : WidgetContainerData, templates : StringMap<Xml>) : { e: ElementData, r: String } {
 
 		var ref : String = null;
 		var ed : ElementData = null;
@@ -319,7 +317,7 @@ class XmlToWidgetContainer {
 								tmpXml.set(att, e.x.get(att));
 							}
 						}
-						var pe = parseElement(new Fast(tmpXml), wcd, templates, zIndex);
+						var pe = parseElement(new Fast(tmpXml), wcd, templates);
 
 						ref = pe.r;
 						ed = pe.e;
@@ -342,7 +340,7 @@ class XmlToWidgetContainer {
 				// parse the element as in a WidgetContainer context
 				wcd.type = WidgetContainer;
 
-				var ret = parseElement(e, wcd, templates, zIndex);
+				var ret = parseElement(e, wcd, templates);
 
 				ref = ret.r;
 				ed = ret.e;

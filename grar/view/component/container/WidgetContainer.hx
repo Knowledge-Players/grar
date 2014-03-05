@@ -53,7 +53,7 @@ enum WidgetContainerType {
 	WidgetContainer; // TODO remove ?
 	SimpleContainer(? mask : Null<String>);
 	BoxDisplay;
-	DefaultButton(defaultState : Null<String>, isToggleEnabled : Null<Bool>, action : Null<String>, group : Null<String>, enabled : Null<Bool>, states : Null<Array<{ name : String, timeline : Null<String>, enabled : Bool }>>, statesElts : Null<StringMap<StringMap<ElementData>>>);
+	DefaultButton(defaultState : Null<String>, isToggleEnabled : Null<Bool>, action : Null<String>, group : Null<String>, enabled : Null<Bool>, states : Null<Array<{ name : String, timeline : Null<String>, enabled : Bool }>>, statesElts : Null<StringMap<Array<{ ref : String, ed : ElementData}>>>);
 	DropdownMenu(? color : Color);
 	ScrollPanel(? styleSheet : Null<String>, ? style : Null<String>, ? content : Null<String>, ? trim : Bool);
 	SimpleBubble;
