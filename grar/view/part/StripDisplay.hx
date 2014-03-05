@@ -54,7 +54,7 @@ class StripDisplay extends PartDisplay {
 	//
 
 	override private function createDisplay(d : DisplayData) : Void {
-
+trace("create strip display");
 		super.createDisplay(d);
 
 		for (elem in part.elements) {
@@ -146,6 +146,7 @@ class StripDisplay extends PartDisplay {
 
 	override private function setupItem(item:Item, ?isFirst:Bool = true):Void
 	{
+trace("SETTING CURRENT ITEM TO "+item);
 		currentItem = item;
 		if(isFirst)
 			setBackground(item.background);

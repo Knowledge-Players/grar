@@ -13,6 +13,10 @@ import haxe.ds.StringMap;
 import haxe.xml.Fast;
 
 class XmlToItem {
+
+	///
+	// API
+	//
 	
 	static public function parse(xml : Xml) : Null<Item> {
 
@@ -40,10 +44,16 @@ class XmlToItem {
 
 				throw "unexpected type attribute value " + t;
 		}
+
 		return creation;
 	}
 
-	static public function parseItem(f : Fast) : ItemData {
+
+	///
+	// INTERNALS
+	//
+
+	static function parseItem(f : Fast) : ItemData {
 
 		var id : String = "";
 		var content : String = "";
@@ -105,7 +115,7 @@ class XmlToItem {
 						timelineOut: timelineOut };
 	}
 
-	static public function parseTextItem(xml : Xml) : TextItem {
+	static function parseTextItem(xml : Xml) : TextItem {
 
 		var f : Fast = new Fast(xml);
 
@@ -148,7 +158,7 @@ class XmlToItem {
 		return new TextItem(id, author, transition, sound, introScreen);
 	}
 
-	static public function parseVideoItem(xml : Xml) : VideoItem {
+	static function parseVideoItem(xml : Xml) : VideoItem {
 
 		var f : Fast = new Fast(xml);
 
@@ -174,7 +184,7 @@ class XmlToItem {
 		return new VideoItem( id, autoStart, autoFullscreen, loop, defaultVolume, capture, thumbnail );
 	}
 
-	static public function parseSoundItem(xml : Xml) : SoundItem {
+	static function parseSoundItem(xml : Xml) : SoundItem {
 
 		var f : Fast = new Fast(xml);
 

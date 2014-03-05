@@ -140,7 +140,7 @@ class ActivityDisplay extends PartDisplay {
 
 	//override public function parseContent(content:Xml):Void
 	override public function setContent(d : DisplayData) : Void {
-
+trace("set ActivityDisplay content");
 		super.setContent(d);
 
 		switch (d.type) {

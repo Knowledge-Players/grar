@@ -161,7 +161,9 @@ class XmlToPart {
 
 	static function parsePartElement(pd : PartData, node : Fast) : PartData {
 
-		switch (node.name.toLowerCase()) {
+		var n : String = node.name.toLowerCase();
+
+		switch (n) {
 
 			case "text":
 
@@ -215,6 +217,13 @@ class XmlToPart {
 			case "pattern": // should happen only for DialogParts and StripParts
 			
 				pd.elements.push(Pattern(XmlToPattern.parse(node.x)));
+
+			default: 
+
+				if (n != "group" && n != "rule") {
+
+					throw "unexpected "+node.name;
+				}
 		}
 
 		return pd;

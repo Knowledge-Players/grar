@@ -104,30 +104,6 @@ class Item /* implements PartElement */ {
 	/**
     * @return false
     **/
-	public function isActivity():Bool
-	{
-		return false;
-	}
-
-	/**
-    * @return false
-    **/
-	public function isPattern():Bool
-	{
-		return false;
-	}
-
-	/**
-    * @return false
-    **/
-	public function isPart():Bool
-	{
-		return false;
-	}
-
-	/**
-    * @return false
-    **/
 	public function isVideo():Bool
 	{
 		return false;

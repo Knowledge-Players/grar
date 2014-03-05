@@ -242,7 +242,7 @@ trace("setContent, display type is "+d.type);
 		if (d.spritesheets != null) {
 
 			for (sk in d.spritesheets.keys()) {
-trace("add TileLayer " + sk);
+//trace("add TileLayer " + sk);
 				var layer = new TileLayer(spritesheets.get(sk));
 				layers.set(sk, layer);
 
@@ -560,7 +560,7 @@ trace("display added to stage");
 
 			createElement(d.get(ek).obj, ek);
 		}
-		textGroups.set(r, d);
+		textGroups.set(r, d); //trace("Add TextGroup "+r);
 	}
 
 	//private function addElement(elem:Widget, node:Fast):Void
@@ -646,18 +646,16 @@ trace("display added to stage");
 		}
 	}
 
-	private inline function sortDisplayObjects(x:Widget, y:Widget):Int
-	{
-		if (x.zz < 0 || y.zz < 0) {
+	private function getZPosition(x : Widget) : Int {
 
-			throw "negative z index order not allowed";
+		for (ei in 0...displays.length) {
+
+			if (displays[ei].w == x) {
+
+				return ei;
+			}
 		}
-		if(x.zz < y.zz)
-			return -1;
-		else if(x.zz > y.zz)
-			return 1;
-		else
-			return 0;
+		return -1;
 	}
 
 	private inline function quit(? target : DefaultButton) : Void {

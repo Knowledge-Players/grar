@@ -273,8 +273,8 @@ class PartDisplay extends Display {
 	private function crawlTextGroup(item : Item, ? pattern : Pattern) : Void {
 
 		if (textGroups != null) {
-
-			var groupKey: String = null;
+//trace("crawlTextGroup "+item.ref);
+			var groupKey : String = null;
 			
 			for (key in textGroups.keys()) {
 
@@ -284,6 +284,7 @@ class PartDisplay extends Display {
 					break;
 				}
 			}
+//trace("FOUND GROUP "+groupKey);
 			if (groupKey != null) {
 
 				var textItem = null;
@@ -320,7 +321,9 @@ class PartDisplay extends Display {
 // 						dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
 						onGameOver();
 					}
+//trace("SETTING UP ITEM "+textItem.ref);
 					setupItem(cast(textItem, Item), (i == 0));
+
 					i++;
 				}
 			
@@ -480,6 +483,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 
 			return;
 		}
+//trace("SETTING CURRENT ITEM TO "+item);
 		currentItem = item;
 
  		for (token in item.tokens) {
@@ -562,9 +566,11 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 			
 			while (i < numChildren && !found) {
 
-				if (Std.is(getChildAt(i),Widget) && (cast(getChildAt(i),Widget).zz > displaysRefs.get(item.ref).zz)) {
+				//if (Std.is(getChildAt(i),Widget) && (cast(getChildAt(i),Widget).zz > displaysRefs.get(item.ref).zz)) {
+				if (Std.is(getChildAt(i), Widget) && getZPosition(cast(getChildAt(i),Widget)) > getZPosition(displaysRefs.get(item.ref))) {
+//trace("Add "+item.ref+" at "+i);
+					addChildAt(displaysRefs.get(item.ref), i);
 
-					addChildAt(displaysRefs.get(item.ref),i);
 					found = true;
 				}
 				i++;
@@ -838,7 +844,7 @@ trace("Image or Container ignored: "+key);
 		} else {
 
 			if (Std.is(object, ScrollPanel)) {
-trace("ScrollPanel ignored: "+key);
+
 				return false;
 			}
 		}
