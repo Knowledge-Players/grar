@@ -32,7 +32,7 @@ class XmlToLocale {
 		if (xml.firstElement().nodeName == "Workbook") {
 
 			tradHash = parseExcelContent(xml);
-		
+
 		} else {
 
 			tradHash = parseXmlContent(xml);
@@ -52,7 +52,7 @@ class XmlToLocale {
 
 		var tradHash : Map<String, String> = new Map();
 
-		for (e in f.nodes.Element) { 
+		for (e in f.nodes.Element) {
 
 			tradHash.set(e.node.key.innerData, e.node.value.innerData);
 		}
@@ -66,7 +66,7 @@ class XmlToLocale {
 
 		var table : Xml = null;
 
-		var tradHash : Map<String, String> = null;
+		var tradHash : StringMap<String> = new StringMap<String>();
 
 		for (element in content.firstElement().elements()) {
 
@@ -81,7 +81,7 @@ class XmlToLocale {
 
 				var key:String = "";
 				var value:String = "";
-				
+
 				for (cell in row.elements()) {
 
 					if (cell.nodeName == "Cell") {
@@ -92,8 +92,8 @@ class XmlToLocale {
 
 								if (key != "") {
 
-									value = data.firstChild().toString();
-								
+									value = StringTools.htmlUnescape(data.firstChild().toString());
+
 								} else {
 
 									key = data.firstChild().toString();
