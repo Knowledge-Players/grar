@@ -81,7 +81,7 @@ typedef WidgetContainerData = {
 	var maskWidth : Null<Float>;
 	var maskHeight : Null<Float>;
 	var background : BackgroundData;
-	var displays : StringMap<ElementData>;
+	var displays : Array<ElementData>;
 	var transitionIn : Null<String>;
 }
 
@@ -103,7 +103,8 @@ class WidgetContainer extends Widget {
 		}
 
 		this.content = new Sprite();
-		this.displays = new StringMap();
+		this.displays = new Array();
+		this.displaysRefs = new StringMap();
 		this.buttonGroups = new StringMap();
 		this.children = new Array();
 
@@ -195,7 +196,10 @@ class WidgetContainer extends Widget {
 	private var scrollBar : ScrollBar;
 	private var scrollNeeded : Bool;
 	private var layer : TileLayer;
-	private var displays : StringMap<Widget>;
+
+	private var displays : Array<Widget>;
+	private var displaysRefs : StringMap<Widget>;
+
 	private var buttonGroups : StringMap<GenericStack<DefaultButton>>;
 
 
@@ -494,7 +498,8 @@ class WidgetContainer extends Widget {
 	private function addElement(elem:Widget):Void
 	{
 //		elem.zz = zIndex;
-        displays.set(elem.ref,elem);
+        displays.push(elem);
+        displaysRefs.set(elem.ref, elem);
 
 		content.addChild(elem);
 		children.push(elem);

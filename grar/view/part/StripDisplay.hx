@@ -65,11 +65,11 @@ class StripDisplay extends PartDisplay {
 
 					if (i.isText()) {
 
-						addChild(displays.get(i.ref));
+						addChild(displaysRefs.get(i.ref));
 						
 						for (image in i.images) {
 
-							addChild(displays.get(image));
+							addChild(displaysRefs.get(image));
 						}
 					}
 
@@ -135,7 +135,7 @@ class StripDisplay extends PartDisplay {
 					if (i.isText()) {
 
 //						cast(displays.get(i.ref), ScrollPanel).setContent(Localiser.instance.getItemContent(i.content));
-						cast(displays.get(i.ref), ScrollPanel).setContent(onLocalizedContentRequest(i.content));
+						cast(displaysRefs.get(i.ref), ScrollPanel).setContent(onLocalizedContentRequest(i.content));
 					}
 
 				default: // nothing
@@ -186,9 +186,9 @@ class StripDisplay extends PartDisplay {
 			else{
 				addChild(box);
 				for(key in currentBox.buttons.keys()){
-					if(!displays.exists(key))
+					if(!displaysRefs.exists(key))
 						throw "[StripDisplay] There is no Button with ref \""+key+"\"";
-					addChild(displays.get(key));
+					addChild(displaysRefs.get(key));
 				}
 			}
 		}

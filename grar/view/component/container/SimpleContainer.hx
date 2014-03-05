@@ -75,8 +75,8 @@ class SimpleContainer extends WidgetContainer {
 	public function setText(pContent:String, ?pKey:String):Void
 	{
 		if(pKey != null && pKey != " "){
-			if(displays.exists(pKey)){
-					cast(displays.get(pKey), ScrollPanel).setContent(pContent);
+			if(displaysRefs.exists(pKey)){
+					cast(displaysRefs.get(pKey), ScrollPanel).setContent(pContent);
 			}
 		}
 		else{

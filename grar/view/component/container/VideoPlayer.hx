@@ -92,7 +92,7 @@ class VideoPlayer extends WidgetContainer {
 
 		video = new Video();
 
-        containerThumbnail.addChild(displays.get("thumbnail"));
+        containerThumbnail.addChild(displaysRefs.get("thumbnail"));
 		connection = new NetConnection();
 		connection.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
 		addEventListener(Event.REMOVED_FROM_STAGE , unsetVideo, false, 0, true);
@@ -103,22 +103,22 @@ class VideoPlayer extends WidgetContainer {
 				controls.add(cast(content.getChildAt(i), Widget));
 			}
 		}
-		if(displays.exists("time")){
-			timeArea = cast(displays.get("time"), ScrollPanel);
+		if(displaysRefs.exists("time")){
+			timeArea = cast(displaysRefs.get("time"), ScrollPanel);
 			controls.add(timeArea);
 		}
 
-		if (displays.exists("timeCurrent")){
-			timeCurrent = cast(displays.get("timeCurrent"), ScrollPanel);
+		if (displaysRefs.exists("timeCurrent")){
+			timeCurrent = cast(displaysRefs.get("timeCurrent"), ScrollPanel);
 			controls.add(timeCurrent);
 		}
 
-		if (displays.exists("timeTotal")){
-			timeTotal = cast(displays.get("timeTotal"), ScrollPanel);
+		if (displaysRefs.exists("timeTotal")){
+			timeTotal = cast(displaysRefs.get("timeTotal"), ScrollPanel);
 			controls.add(timeTotal);
 		}
 
-		yBigPlay =  displays.get("bigPlay").y;
+		yBigPlay =  displaysRefs.get("bigPlay").y;
 
 		switch(vpd.type) {
 
@@ -197,7 +197,7 @@ class VideoPlayer extends WidgetContainer {
 			this.autoFullscreen.isSet = true;
 		}
         if (thumbnail != null){
-            var thumb:Image =   cast(displays.get("thumbnail"),Image);
+            var thumb:Image =   cast(displaysRefs.get("thumbnail"),Image);
             thumb.setBmp(thumbnail);
             video.visible =false;
         }
@@ -291,7 +291,7 @@ class VideoPlayer extends WidgetContainer {
 		if(contains(containerControls))
 			removeChild(containerControls);
         containerThumbnail.visible=true;
-        displays.get("bigPlay").visible=true;
+        displaysRefs.get("bigPlay").visible=true;
 		if(stream != null){
 			stream.pause();
 			fastForward(0);
@@ -300,7 +300,7 @@ class VideoPlayer extends WidgetContainer {
 
 	private function playOrPause(?target: DefaultButton)
 	{
-		displays.get("bigPlay").visible = false;
+		displaysRefs.get("bigPlay").visible = false;
 		containerThumbnail.visible=false;
 		if(!isPlaying)
 			playVideo();
@@ -336,7 +336,7 @@ class VideoPlayer extends WidgetContainer {
 
 	public function hideControllers():Void
 	{
-		removeChild(displays.get("bigPlay"));
+		removeChild(displaysRefs.get("bigPlay"));
 		containerControls.visible = false;
 	}
 
@@ -367,7 +367,7 @@ class VideoPlayer extends WidgetContainer {
             containerControls.x = Lib.current.stage.stageWidth/2-containerControls.width/2;
 			containerControls.y = Lib.current.stage.stageHeight - containerControls.height - 20;
 
-			displays.get("bigPlay").y = Lib.current.stage.stageHeight/2-displays.get("bigPlay").height/2-containerControls.y ;
+			displaysRefs.get("bigPlay").y = Lib.current.stage.stageHeight/2-displaysRefs.get("bigPlay").height/2-containerControls.y ;
 			fullscreenButton.toggle();
 
 		}
@@ -378,7 +378,7 @@ class VideoPlayer extends WidgetContainer {
 			addChild(containerVideo);
             addChild(containerThumbnail);
 			addChild(containerControls);
-            addChild(displays.get("bigPlay"));
+            addChild(displaysRefs.get("bigPlay"));
 			stage.displayState = StageDisplayState.NORMAL;
 			containerVideo.width = maskWidth;
 			containerVideo.height = maskHeight;
@@ -387,7 +387,7 @@ class VideoPlayer extends WidgetContainer {
 			containerControls.x = xControls;
 			containerControls.y = yControls;
 			fullscreenButton.toggle();
-			displays.get("bigPlay").y = yBigPlay;
+			displaysRefs.get("bigPlay").y = yBigPlay;
 
 		}
 	}
@@ -510,7 +510,7 @@ class VideoPlayer extends WidgetContainer {
 
 		containerControls.addChild(content);
 
-		addChild(displays.get("bigPlay"));
+		addChild(displaysRefs.get("bigPlay"));
 
 		containerControls.addEventListener(MouseEvent.MOUSE_OVER,showControls);
 		containerControls.addEventListener(MouseEvent.MOUSE_OUT,hideControls);

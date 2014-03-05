@@ -340,7 +340,8 @@ class PartDisplay extends Display {
 
 				var intro = new IntroScreen(callbacks, applicationTilesheet, d);
 //				intro.zz = zIndex;
-				displays.set(r, intro);
+				displays.push({ w: intro, ref: r });
+				displaysRefs.set(r, intro);
 //				zIndex++;
 				return intro;
 
@@ -375,7 +376,7 @@ class PartDisplay extends Display {
 
 	override private function setButtonAction(button:DefaultButton, action:String):Bool
 	{
-if(part.id == "intro") trace("setButtonAction "+action);
+//if(part.id == "intro") trace("setButtonAction "+action);
 		if (super.setButtonAction(button, action)) {
 
 			return true;
@@ -431,7 +432,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 			if(previousBackground != null && previousBackground != background){
 				sameBackground = false;
 				for(b in previousBackground.split(","))
-					removeChild(displays.get(b));
+					removeChild(displaysRefs.get(b));
 			}
 			else if(previousBackground == null)
 				sameBackground = false;
@@ -440,7 +441,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 				var bkgs = background.split(",");
 				bkgs.reverse();
 				for(b in bkgs){
-					if(!displays.exists(b))
+					if(!displaysRefs.exists(b))
 						throw '[PartDisplay] There is no background with ref "$b"';
 				}
 				previousBackground = background;
@@ -450,10 +451,10 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 
 	private function setSpeaker(author:String, ?transition:String):Void
 	{
-		if(author != null && displays.exists(author)){
-			if(!displays.exists(author))
+		if(author != null && displaysRefs.exists(author)){
+			if(!displaysRefs.exists(author))
 				throw "[PartDisplay] There is no Character with ref " + author;
-			var char = cast(displays.get(author), CharacterDisplay);
+			var char = cast(displaysRefs.get(author), CharacterDisplay);
 
 			if(char != currentSpeaker){
 				if(currentSpeaker != null && contains(currentSpeaker) && !Std.is(this, StripDisplay)){
@@ -461,8 +462,8 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 				}
 				currentSpeaker = char;
 
-				if(char.nameRef != null && displays.exists(char.nameRef))
-					cast(displays.get(char.nameRef), ScrollPanel).setContent(currentSpeaker.charRef);
+				if(char.nameRef != null && displaysRefs.exists(char.nameRef))
+					cast(displaysRefs.get(char.nameRef), ScrollPanel).setContent(currentSpeaker.charRef);
 				else if(char.nameRef != null)
 					throw "[PartDisplay] There is no TextArea with ref " + char.nameRef;
 			}
@@ -503,7 +504,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 
 				// The intro screen automatically removes itself after its duration
 				var intro = text.introScreen;
-				var introDisplay:IntroScreen = cast(displays.get(intro.ref), IntroScreen);
+				var introDisplay:IntroScreen = cast(displaysRefs.get(intro.ref), IntroScreen);
  
 				for (field in intro.content.keys()) {
 
@@ -529,24 +530,24 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 		
 		} else if (item.isVideo()) {
 
-			if (!displays.exists(item.ref)) {
+			if (!displaysRefs.exists(item.ref)) {
 
 				throw "[PartDisplay] There is no VideoPlayer with ref '"+ item.ref+"'.";
 			}
 			var video = cast(item, VideoItem);
 
-			cast(displays.get(item.ref), VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture,video.autoFullscreen,video.thumbnail);
-			cast(displays.get(item.ref), VideoPlayer).addEventListener(Event.COMPLETE, onVideoComplete);
+			cast(displaysRefs.get(item.ref), VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture,video.autoFullscreen,video.thumbnail);
+			cast(displaysRefs.get(item.ref), VideoPlayer).addEventListener(Event.COMPLETE, onVideoComplete);
 		
 		} else {
 
-            if (!displays.exists(item.ref)) {
+            if (!displaysRefs.exists(item.ref)) {
 
                 throw "[PartDisplay] There is no SoundPlayer with ref '"+ item.ref+"'.";
             }
             var sound = cast(item, SoundItem);
 
-            cast(displays.get(item.ref), SoundPlayer).setSound(sound.content, sound.autoStart, sound.loop, sound.defaultVolume);
+            cast(displaysRefs.get(item.ref), SoundPlayer).setSound(sound.content, sound.autoStart, sound.loop, sound.defaultVolume);
         }
 
 		// Display Part
@@ -561,9 +562,9 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 			
 			while (i < numChildren && !found) {
 
-				if (Std.is(getChildAt(i),Widget) && (cast(getChildAt(i),Widget).zz > displays.get(item.ref).zz)) {
+				if (Std.is(getChildAt(i),Widget) && (cast(getChildAt(i),Widget).zz > displaysRefs.get(item.ref).zz)) {
 
-					addChildAt(displays.get(item.ref),i);
+					addChildAt(displaysRefs.get(item.ref),i);
 					found = true;
 				}
 				i++;
@@ -583,11 +584,11 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 
 		if (item.ref != null) {
 
-			if (!displays.exists(item.ref)) {
+			if (!displaysRefs.exists(item.ref)) {
 
 				throw "[PartDisplay] There is no TextArea with ref " + item.ref;
 			}
-			cast(displays.get(item.ref), ScrollPanel).setContent(content);
+			cast(displaysRefs.get(item.ref), ScrollPanel).setContent(content);
 		}
 
 		//GameManager.instance.loadSound(item.sound);
@@ -598,8 +599,6 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 
 		// Clean-up buttons
 		cleanDisplay();
-
-		var array = selectElements();
 
 		// Dynamic timeline
 		var tl: Timeline = null;
@@ -621,13 +620,13 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 					var index = 0;
 					if(Std.parseInt(bkgRegExp.matchedRight()) != null)
 						index = Std.parseInt(bkgRegExp.matchedRight());
-					elem.widget = displays.get(bkgs[index]);
+					elem.widget = displaysRefs.get(bkgs[index]);
 				}
 				else if(elem.dynamicValue.startsWith("$character") && currentItem.isText()){
 					var index = Std.parseInt(elem.dynamicValue.replace("$character", ""));
 					var i = 0;
 					for(item in cast(currentItem, TextItem).images){
-						var object: Widget = displays.get(item);
+						var object: Widget = displaysRefs.get(item);
 						if(Std.is(object, CharacterDisplay))
 							i++;
 						if(i == index){
@@ -637,7 +636,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 					}
 				}
 				else if(elem.dynamicValue == "$nameRef"){
-					elem.widget = displays.get(currentSpeaker.nameRef);
+					elem.widget = displaysRefs.get(currentSpeaker.nameRef);
 				}
 			}
 		}
@@ -663,15 +662,35 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 				}
 		}
 
-		array.sort(sortDisplayObjects);
+		displayPartElements();
+	}
+
+	private function displayPartElements() : Void {
+
 		numWidgetReady = 0;
-		numWidgetAdded = array.length;
-		for(obj in array){
-			obj.onComplete = onWidgetAdded;
-			if(obj.zz == 0)
+		numWidgetAdded = 0;
+
+		for (obj in displays) {
+
+			if (!mustBeDisplayed(obj.ref)) {
+
+				continue;
+			}
+			obj.w.onComplete = onWidgetAdded;
+			
+			addChild(obj.w);
+
+			numWidgetAdded++;
+			/*
+			if (obj.zz == 0) {
+
 				addChildAt(obj, 0);
-			else
+			
+			} else {
+
 				addChild(obj);
+			}
+			*/
 		}
 	}
 
@@ -710,41 +729,34 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 
 					targetedText = contentKey;
 				}
-				cast(displays.get(buttonRef), DefaultButton).setText(onLocalizedContentRequest(buttonContent.get(contentKey)), targetedText);
+				cast(displaysRefs.get(buttonRef), DefaultButton).setText(onLocalizedContentRequest(buttonContent.get(contentKey)), targetedText);
 			}
 		}
 	}
 
-	private function selectElements():Array<Widget>
-	{
-		var array = new Array<Widget>();
-		for(key in displays.keys()){
-			if(mustBeDisplayed(key))
-				array.push(displays.get(key));
-		}
-		return array;
-	}
+	private function mustBeDisplayed(key : String) : Bool {
 
-	private function mustBeDisplayed(key:String):Bool
-	{
-		var object: Widget = displays.get(key);
-		#if flash
-		if(Std.is(object, VideoPlayer)){
+		var object : Widget = displaysRefs.get(key);
+#if flash
+		if (Std.is(object, VideoPlayer)) {
+
 			return currentItem.ref == key;
 		}
-		#end
-
+#end
 		// If the object is already displayed
-		if(contains(object)){
+		if (contains(object)) {
+trace("object already on scene: "+key);
 			return false;
 		}
 
 		// Background
-		if(key == previousBackground)
+		if (key == previousBackground) {
+
 			return true;
+		}
 
 		// Buttons
-		if(Std.is(object, DefaultButton)){
+		if (Std.is(object, DefaultButton)) {
 
 			var button : StringMap<StringMap<String>> = null;
 
@@ -758,7 +770,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 
 					button = p.buttons;
 
-				default: // nothing
+				default: throw "unexpected current element type";
 			}
 			if (button.exists(key)) {
 
@@ -766,53 +778,75 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 				
 				if (timelines.get(currentItem.timelineOut) != null) {
 
-					cast(displays.get(key), DefaultButton).timeline = timelines.get(currentItem.timelineOut);
+					cast(displaysRefs.get(key), DefaultButton).timeline = timelines.get(currentItem.timelineOut);
 				}
 				return true;
 			
 			} else {
-
+trace("unexisting button: "+key);
 				return false;
 			}
 		}
 
 		// If the character is present on the scene
-		if(Std.is(object, CharacterDisplay)){
-			if(object == currentSpeaker)
+		if (Std.is(object, CharacterDisplay)) {
+
+			if (object == currentSpeaker) {
+
 				return true;
-			else if((currentItem != null && currentItem.isText() && Lambda.has(cast(currentItem, TextItem).images, key))){
+			
+			} else if ((currentItem != null && currentItem.isText() && 
+							Lambda.has(cast(currentItem, TextItem).images, key))) {
+
 				currentItems.add(object);
+
 				return true;
-			}
-			else
+			
+			} else {
+trace("CharacterDisplay ignored: "+key);
 				return false;
+			}
 		}
 
 		// Image displayed with text items
-		if(currentItem != null && currentItem.isText()){
+		if (currentItem != null && currentItem.isText()) {
+
 			var text = cast(currentItem, TextItem);
-			if(currentSpeaker != null && Std.is(object, ScrollPanel) && key == currentSpeaker.nameRef)
+			
+			if (currentSpeaker != null && Std.is(object, ScrollPanel) && key == currentSpeaker.nameRef) {
+
 				return true;
-			if(Std.is(object, ScrollPanel) && key != text.ref)
+			}
+			if (Std.is(object, ScrollPanel) && key != text.ref) {
+trace("ScrollPanel ignored: "+key);
 				return false;
-			if(Std.is(object, Image) || Std.is(object,SimpleContainer)){
-				if(Lambda.has(text.images, key)){
+			}
+			if (Std.is(object, Image) || Std.is(object,SimpleContainer)) {
+
+				if (Lambda.has(text.images, key)) {
+
 					currentItems.add(object);
+
 					return true;
-				}
-				else
+				
+				} else {
+trace("Image or Container ignored: "+key);
 					return false;
+				}
+			}
+		
+		} else {
+
+			if (Std.is(object, ScrollPanel)) {
+trace("ScrollPanel ignored: "+key);
+				return false;
 			}
 		}
-		else{
-			if(Std.is(object, ScrollPanel))
-				return false;
-		}
-
 		// Exclude IntroScreen
-		if(Std.is(object, IntroScreen))
+		if (Std.is(object, IntroScreen)) {
+trace("IntroScreen ignored: "+key);
 			return false;
-
+		}
 		return true;
 	}
 }

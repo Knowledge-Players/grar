@@ -59,9 +59,9 @@ class DialogDisplay extends PartDisplay {
 			var choicePattern = cast(currentPattern, ChoicePattern);
 			// Init button with choice's view state
 			for(choice in choicePattern.choices.keys()){
-				if(!displays.exists(choice))
+				if(!displaysRefs.exists(choice))
 					throw "[DialogDisplay] There is no template for choice named '"+choice+"'.";
-				cast(displays.get(choice), DefaultButton).toggle(!choicePattern.choices.get(choice).viewed);
+				cast(displaysRefs.get(choice), DefaultButton).toggle(!choicePattern.choices.get(choice).viewed);
 			}
 			if(choicePattern.minimumChoice == choicePattern.numChoices){
 				exitPattern = true;
@@ -132,9 +132,9 @@ class DialogDisplay extends PartDisplay {
 				choice = pattern.choices.get(key);
 		}
 		if(choice != null && pattern.tooltipRef != null && choice.toolTip != null){
-			if(!displays.exists(pattern.tooltipRef))
+			if(!displaysRefs.exists(pattern.tooltipRef))
 				throw "[DialogDisplay] There is no ToolTip with ref " + pattern.tooltipRef;
-			var tooltip = cast(displays.get(pattern.tooltipRef), ScrollPanel);
+			var tooltip = cast(displaysRefs.get(pattern.tooltipRef), ScrollPanel);
 			
 			if (contains(tooltip)) {
 				removeChild(tooltip);
@@ -164,6 +164,6 @@ class DialogDisplay extends PartDisplay {
 	{
 		var pattern = cast(currentPattern, ChoicePattern);
 		if(pattern.tooltipRef != null)
-			removeChild(displays.get(pattern.tooltipRef));
+			removeChild(displaysRefs.get(pattern.tooltipRef));
 	}
 }

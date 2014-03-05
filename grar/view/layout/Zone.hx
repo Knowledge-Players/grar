@@ -97,9 +97,9 @@ class Zone extends Display {
 
 					addChild(layers.get("ui").view);
 
-					for (e in d.displays.keys()) {
+					for (e in d.displays) {
 //trace("CREATE ZONE ELT "+d.displays.get(e));
-						createElement(d.displays.get(e), e);
+						createElement(e.ed, e.ref);
 					}
 				
 				} else if(rows != null) {
@@ -283,10 +283,10 @@ class Zone extends Display {
 		switch (e) {
 
 			case DefaultButton(d):
-trace("ZONE => just created a => "+elem);
+//trace("ZONE => just created a => "+elem);
 
 			elem.addEventListener(Event.ADDED_TO_STAGE, function(e){
-trace("*********** DEFAULT BUTTON ADDED TO STAGE !!!");
+//trace("*********** DEFAULT BUTTON ADDED TO STAGE !!!");
 				//this.toggleState = this.defaultState;
 
 			});

@@ -73,7 +73,7 @@ typedef DisplayData = {
 	@:optional var filters : Null<Array<flash.filters.BitmapFilter>>; // set in a second step
 #end
 	@:optional var timelines : StringMap<{ ref : String, elements : Array<{ ref : String, transition : String, delay : Float }> }>;
-	var displays : StringMap<ElementData>;
+	var displays : Array<{ ed : ElementData, ref : String }>;
 	@:optional var layers : Null<StringMap<TileLayer>>; // set in a second step
 	@:optional var layersSrc : StringMap<String>;
 }
@@ -87,7 +87,8 @@ class Display extends Sprite {
 
 		super();
 		
-		this.displays = new StringMap();
+		this.displays = new Array();
+		this.displaysRefs = new StringMap();
 		this.spritesheets = new StringMap();
 		this.textGroups = new StringMap();
 		this.buttonGroups = new StringMap();
@@ -160,7 +161,15 @@ class Display extends Sprite {
 	**/
 	public var scrollBars (default, null) : StringMap<ScrollBar>;
 
-	private var displays : StringMap<Widget>;
+	/**
+	 * An array to keep the original z order from XML
+	 */
+	private var displays : Array<{ w : Widget, ref : String }>;
+	/**
+	 * A StringMap to ease retreiving widgets by ref
+	 */
+	private var displaysRefs : StringMap<Widget>;
+
 //	private var zIndex : Int = 0;
 	private var layers : StringMap<TileLayer>;
 
@@ -284,9 +293,9 @@ trace("display added to stage");
 
 	private function createDisplay(d : DisplayData) : Void {
 
-		for (c in d.displays.keys()) {
+		for (c in d.displays) {
 
-			createElement(d.displays.get(c), c);
+			createElement(c.ed, c.ref);
 		}
 		for (t in d.timelines) {
 
@@ -303,22 +312,22 @@ trace("display added to stage");
 
 					timeline.addElement(mock, e.transition, e.delay);
 				
-				} else if(!displays.exists(e.ref)) {
+				} else if(!displaysRefs.exists(e.ref)) {
 
 					throw "[Display] Can't add unexisting widget '"+e.ref+"' in timeline '"+t.ref+"'.";
 				
 				} else {
 
-					timeline.addElement(displays.get(e.ref), e.transition, e.delay);
+					timeline.addElement(displaysRefs.get(e.ref), e.transition, e.delay);
 				}
 			}
 			timelines.set(t.ref, timeline);
 		}
 		for (elem in displays) {
 
-			if (Std.is(elem, DefaultButton)) { // could be avoided / improved with a collection of enums
+			if (Std.is(elem.w, DefaultButton)) { // could be avoided / improved with a collection of enums
 
-				cast(elem,DefaultButton).initStates(timelines);
+				cast(elem.w,DefaultButton).initStates(timelines);
 			}
 		}
 	}
@@ -557,18 +566,8 @@ trace("display added to stage");
 	//private function addElement(elem:Widget, node:Fast):Void
 	private function addElement(elem : Widget, ref : String) : Void {
 
-		//if (isBackground) {
-
-		//	elem.zz = 0;
-		
-		//} else {
-
-		//	elem.zz = zIndex;
-		//}
-		displays.set(ref, elem);
-
-// 		ResizeManager.instance.addDisplayObjects(elem, node);
-		//zIndex++;
+		displays.push({ ref: ref, w: elem });
+		displaysRefs.set(ref, elem);
 	}
 
 	private function setButtonAction(button : DefaultButton, action : String) : Bool {

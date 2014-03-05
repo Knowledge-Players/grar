@@ -139,7 +139,7 @@ class XmlToWidgetContainer {
 
 					statesElts.set(defaultState + "_out", createStates(f));
 				}
-				wcd.displays = new StringMap();
+				wcd.displays = new Array();
 				wcd.type = DefaultButton(defaultState, isToggleEnabled, action, group, enabled, states, statesElts);
 
 				return wcd; // no need to go further in this context
@@ -223,7 +223,7 @@ class XmlToWidgetContainer {
 
 	static function parseElements(f : Fast, wcd : WidgetContainerData, templates : StringMap<Xml>) : WidgetContainerData {
 
-		wcd.displays = new StringMap();
+		wcd.displays = new Array();
 
 		switch (wcd.type) {
 
@@ -237,7 +237,7 @@ class XmlToWidgetContainer {
 
 					if (ret.e != null && ret.r != null) {
 
-						wcd.displays.set(ret.r, ret.e);
+						wcd.displays.push(ret.e);
 //trace("elt "+ret.r+" created");
 					} else {
 
@@ -276,16 +276,12 @@ class XmlToWidgetContainer {
 
 				            var id : ImageData = XmlToImage.parseImageData(e);
 
-				            id.wd.zz = zIndex;
-
 				            ref = id.wd.ref;
 				            ed = Image(id);
 				        
 				        } else {
 
 				            var tid : TileImageData = XmlToImage.parseTileImageData(e,null,true,true);
-
-				            tid.id.wd.zz = zIndex;
 				            
 				            ref = tid.id.wd.ref;
 				            ed = TileImage(tid);
@@ -295,27 +291,21 @@ class XmlToWidgetContainer {
 
 						var dbd : WidgetContainerData = parseWidgetContainerData(e, DefaultButton(null, null, null, null, null, null, null), templates);
 
-				        dbd.wd.zz = zIndex;
-
-						ref = dbd.wd.ref;
+				        ref = dbd.wd.ref;
 						ed = DefaultButton(dbd);
 
 					case "text":
 
 						var spd : WidgetContainerData = parseWidgetContainerData(e, ScrollPanel(null, null, null, null), templates);
 
-				        spd.wd.zz = zIndex;
-
-						ref = spd.wd.ref;
+				        ref = spd.wd.ref;
 						ed = ScrollPanel(spd);
 
 				    case "timer":
 
 						var ccd : WidgetContainerData = parseWidgetContainerData(e, ChronoCircle(null, null, null, null, null), templates);
 
-				        ccd.wd.zz = zIndex;
-
-						ref = ccd.wd.ref;
+				        ref = ccd.wd.ref;
 						ed = ChronoCircle(ccd);
 
 					case "include" :
@@ -338,9 +328,7 @@ class XmlToWidgetContainer {
 
 						var scd : WidgetContainerData = parseWidgetContainerData(e, SimpleContainer(null), templates);
 
-				        scd.wd.zz = zIndex;
-
-						ref = scd.wd.ref;
+				        ref = scd.wd.ref;
 						ed = SimpleContainer(scd);
 
 					default:

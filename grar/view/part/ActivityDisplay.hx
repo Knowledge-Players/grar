@@ -99,9 +99,9 @@ class ActivityDisplay extends PartDisplay {
 		if(validationRules.length > 1)
 			throw "[ActivityDisplay] Multiple correction rules in activity '"+part.id+"'. Pick only one!";
 		if(validationRules.length == 1){
-			if(!displays.exists(validationRules[0].id))
+			if(!displaysRefs.exists(validationRules[0].id))
 				throw "[ActivityDisplay] You must have a button with ref '"+validationRules[0].id+"' (same as the id of your rule) in order to use the correction rule.";
-			validationButton = cast(displays.get(validationRules[0].id), DefaultButton);
+			validationButton = cast(displaysRefs.get(validationRules[0].id), DefaultButton);
 			switch(validationRules[0].value){
 				case "auto": autoCorrect = true;
 				case "onvalidate":
@@ -283,7 +283,7 @@ class ActivityDisplay extends PartDisplay {
 		var debriefRules = cast(part, ActivityPart).getRulesByType("debrief");
 		for(rule in debriefRules){
 			switch(rule.value.toLowerCase()){
-				case "onvalidate": cast(displays.get(rule.id), DefaultButton).toggle();
+				case "onvalidate": cast(displaysRefs.get(rule.id), DefaultButton).toggle();
 			}
 		}
 
@@ -326,7 +326,7 @@ class ActivityDisplay extends PartDisplay {
 
 	override private function mustBeDisplayed(key:String):Bool
 	{
-		var object: Widget = displays.get(key);
+		var object: Widget = displaysRefs.get(key);
 
 		// Display all buttons/inputs
 		if(Std.is(object, DefaultButton)){
@@ -341,12 +341,18 @@ class ActivityDisplay extends PartDisplay {
 		return super.mustBeDisplayed(key);
 	}
 
-	override private function selectElements():Array<Widget>
-	{
-		var array = super.selectElements();
-		for(input in inputs)
-			array.push(input);
-		return array;
+	override private function displayPartElements() : Void {
+
+		super.displayPartElements();
+
+		for (input in inputs) {
+
+			input.onComplete = onWidgetAdded;
+
+			addChild(input);
+
+			numWidgetAdded++;
+		}
 	}
 
 	override private function cleanDisplay():Void

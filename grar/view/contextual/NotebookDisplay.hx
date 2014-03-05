@@ -173,12 +173,12 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 
 			// Display bkg
 			if(model.background != null){
-				addChildAt(displays.get(model.background), 0);
+				addChildAt(displaysRefs.get(model.background), 0);
 			}
 
 			for(item in model.items){
-				if(displays.exists(item)){
-					addChild(displays.get(item));
+				if(displaysRefs.exists(item)){
+					addChild(displaysRefs.get(item));
 				}
 				else
 					throw '[NotebookDisplay] There is no item with ref "$item."';
@@ -191,7 +191,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 
 
 			// Display close button
-			var button: DefaultButton = cast(displays.get(model.closeButton.ref), DefaultButton);
+			var button: DefaultButton = cast(displaysRefs.get(model.closeButton.ref), DefaultButton);
 // 			button.setText(Localiser.instance.getItemContent(model.closeButton.content));
 			button.setText(onLocalizedContentRequest(model.closeButton.content));
 
@@ -354,7 +354,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 		onLocaleDataPathRequest(model.file);
 
 		// Display title
-		var title: ScrollPanel = cast(displays.get(currentPage.title.ref), ScrollPanel);
+		var title: ScrollPanel = cast(displaysRefs.get(currentPage.title.ref), ScrollPanel);
 
 //		title.setContent(Localiser.instance.getItemContent(currentPage.title.content));
 		title.setContent(onLocalizedContentRequest(currentPage.title.content));
@@ -374,8 +374,8 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 		}*/
 		clearPage();
 
-        if(displays.exists("player") && contains(displays.get("player")))
-			removeChild(displays.get("player"));
+        if(displaysRefs.exists("player") && contains(displaysRefs.get("player")))
+			removeChild(displaysRefs.get("player"));
 
 		for(chapter in chapterMap.keys()){
 			if(Lambda.has(currentPage.chapters, chapterMap.get(chapter)) && chapterMap.get(chapter).isActivated)
@@ -480,13 +480,13 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 //			Localiser.instance.layoutPath = model.file;
 			onLocaleDataPathRequest(model.file);
 
-//			cast(displays.get(chapter.titleRef), ScrollPanel).setContent(Localiser.instance.getItemContent(chapter.name));
-			cast(displays.get(chapter.titleRef), ScrollPanel).setContent(onLocalizedContentRequest(chapter.name));
+//			cast(displaysRefs.get(chapter.titleRef), ScrollPanel).setContent(Localiser.instance.getItemContent(chapter.name));
+			cast(displaysRefs.get(chapter.titleRef), ScrollPanel).setContent(onLocalizedContentRequest(chapter.name));
 
 // 			Localiser.instance.popLocale();
 			onRestoreLocaleRequest();
 
-			addChild(displays.get(chapter.titleRef));
+			addChild(displaysRefs.get(chapter.titleRef));
 		}
 		var i = 0;
 		while(i < notes.length && !notes[i].isActivated)
@@ -500,7 +500,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 //		Localiser.instance.layoutPath = model.file;
 		onLocaleDataPathRequest(model.file);
 
-		var panel = cast(displays.get(note.ref), ScrollPanel);
+		var panel = cast(displaysRefs.get(note.ref), ScrollPanel);
 
 		if (note.content.indexOf("/") < 1) {
 
@@ -513,12 +513,12 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 			addChild(panel);
 
 			if(note.video != null){
-				var player = cast(displays.get("player"), VideoPlayer);
+				var player = cast(displaysRefs.get("player"), VideoPlayer);
 				player.setVideo(note.video);
 				addChild(player);
 			}
-			else if(displays.exists("player")){
-				var player = cast(displays.get("player"), VideoPlayer);
+			else if(displaysRefs.exists("player")){
+				var player = cast(displaysRefs.get("player"), VideoPlayer);
 				player.stopVideo();
 				if(contains(player))
 					removeChild(player);
@@ -562,8 +562,8 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 		clearSteps();
 		if(chapterMap.exists(currentChapter)){
 			for(note in chapterMap.get(currentChapter).notes){
-				if(contains(displays.get(note.ref)))
-					removeChild(displays.get(note.ref));
+				if(contains(displaysRefs.get(note.ref)))
+					removeChild(displaysRefs.get(note.ref));
 			}
 		}
 		for(chapter in chapterMap.keys())

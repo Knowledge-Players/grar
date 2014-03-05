@@ -32,7 +32,6 @@ typedef WidgetData = {
 	var filtersData : Null<Array<String>>;
 	var borderStyle : Null<{ thickness : Float, color : Color }>;
 	var position : Null<Positioning>;
-	var zz : Int;
 }
 
 typedef BorderStyle = {
@@ -78,7 +77,7 @@ class Widget extends Sprite {
 
 			this.ref  = wd.ref;
 			this.scale = wd.scale;
-			this.zz = wd.zz;
+
 			if (wd.scaleX != null) {
 
 				this.scaleX = wd.scaleX;
