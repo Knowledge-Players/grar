@@ -11,8 +11,6 @@ import grar.view.component.Image;
 import grar.view.component.CharacterDisplay;
 import grar.view.element.Timeline;
 
-// import com.knowledgeplayers.grar.display.ResizeManager;
-
 import grar.model.part.sound.SoundItem;
 import grar.model.part.Item;
 import grar.model.part.video.VideoItem;
@@ -168,7 +166,7 @@ class PartDisplay extends Display {
 
 			case Item(i):
 
-				if (i.endScreen) { // TODO check if this is possible
+				if (i.endScreen) {
 
 					part.isDone = true;
 // 					dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
@@ -178,7 +176,7 @@ class PartDisplay extends Display {
 
 			case Pattern(p):
 
-				if (p.endScreen) { // TODO check if this is possible
+				if (p.endScreen) {
 
 					part.isDone = true;
 // 					dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
