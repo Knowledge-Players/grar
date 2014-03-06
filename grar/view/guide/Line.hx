@@ -68,8 +68,8 @@ class Line extends Guide {
 		for(obj in objects){
 			nextPoint = nextPoint.add(step);
 			if(tile){
-				cast(obj, TileImage).set_x(nextPoint.x + (center ? obj.width/2 : 0));
-				cast(obj, TileImage).set_y(nextPoint.y + (center ? obj.height/2 : 0));
+				cast(obj, grar.view.component.TileImage).set_x(nextPoint.x + (center ? obj.width/2 : 0));
+				cast(obj, grar.view.component.TileImage).set_y(nextPoint.y + (center ? obj.height/2 : 0));
 			}
 			else{
 				obj.x = nextPoint.x + (center ? obj.width/2 : 0);

@@ -61,7 +61,7 @@ class DialogDisplay extends PartDisplay {
 			for(choice in choicePattern.choices.keys()){
 				if(!displaysRefs.exists(choice))
 					throw "[DialogDisplay] There is no template for choice named '"+choice+"'.";
-				cast(displaysRefs.get(choice), DefaultButton).toggle(!choicePattern.choices.get(choice).viewed);
+				cast(displaysRefs.get(choice), grar.view.component.container.DefaultButton).toggle(!choicePattern.choices.get(choice).viewed);
 			}
 			if(choicePattern.minimumChoice == choicePattern.numChoices){
 				exitPattern = true;
@@ -124,7 +124,7 @@ class DialogDisplay extends PartDisplay {
 
 	private function onOverChoice(e:MouseEvent):Void
 	{
-		var choiceButton = cast(e.currentTarget, DefaultButton);
+		var choiceButton = cast(e.currentTarget, grar.view.component.container.DefaultButton);
 		var pattern = cast(currentPattern, ChoicePattern);
 		var choice:Choice = null;
 		for(key in pattern.choices.keys()){
@@ -134,7 +134,7 @@ class DialogDisplay extends PartDisplay {
 		if(choice != null && pattern.tooltipRef != null && choice.toolTip != null){
 			if(!displaysRefs.exists(pattern.tooltipRef))
 				throw "[DialogDisplay] There is no ToolTip with ref " + pattern.tooltipRef;
-			var tooltip = cast(displaysRefs.get(pattern.tooltipRef), ScrollPanel);
+			var tooltip : grar.view.component.container.ScrollPanel = cast displaysRefs.get(pattern.tooltipRef);
 			
 			if (contains(tooltip)) {
 				removeChild(tooltip);
@@ -145,7 +145,7 @@ class DialogDisplay extends PartDisplay {
 			tooltip.setContent(content);
 
 			var i:Int = 0;
-			while(!Std.is(getChildAt(i), DefaultButton)){
+			while(!Std.is(getChildAt(i), grar.view.component.container.DefaultButton)){
 				i++;
 			}
 

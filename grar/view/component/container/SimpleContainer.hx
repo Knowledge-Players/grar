@@ -76,13 +76,13 @@ class SimpleContainer extends WidgetContainer {
 	{
 		if(pKey != null && pKey != " "){
 			if(displaysRefs.exists(pKey)){
-					cast(displaysRefs.get(pKey), ScrollPanel).setContent(pContent);
+					cast(displaysRefs.get(pKey), grar.view.component.container.ScrollPanel).setContent(pContent);
 			}
 		}
 		else{
 			for(elem in displays){
-				if(Std.is(elem, ScrollPanel)){
-					cast(elem, ScrollPanel).setContent(pContent);
+				if(Std.is(elem, grar.view.component.container.ScrollPanel)){
+					cast(elem, grar.view.component.container.ScrollPanel).setContent(pContent);
 					break;
 				}
 			}
@@ -162,7 +162,7 @@ class SimpleContainer extends WidgetContainer {
 
 		        var child = content.removeChildAt(content.numChildren-1);
 		        
-		        if (Std.is(child, ScrollPanel)) {
+		        if (Std.is(child, grar.view.component.container.ScrollPanel)) {
 
 					text = child;
 		        }
@@ -207,13 +207,13 @@ class SimpleContainer extends WidgetContainer {
 
 							var display : DisplayObject = parent;
 							
-							while (display != null && !Std.is(display, Display)) {
+							while (display != null && !Std.is(display, grar.view.Display)) {
 
 								display = display.parent;
 							}
 							if (display != null) {
 
-								var kpParent : Display = cast(display, Display);
+								var kpParent : grar.view.Display = cast display;
 								kpParent.dynamicFields.push({ field: panel, content: content.substr(1) });
 							}
 							// Warn its parent about its change

@@ -466,7 +466,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 				currentSpeaker = char;
 
 				if(char.nameRef != null && displaysRefs.exists(char.nameRef))
-					cast(displaysRefs.get(char.nameRef), ScrollPanel).setContent(currentSpeaker.charRef);
+					cast(displaysRefs.get(char.nameRef), grar.view.component.container.ScrollPanel).setContent(currentSpeaker.charRef);
 				else if(char.nameRef != null)
 					throw "[PartDisplay] There is no TextArea with ref " + char.nameRef;
 			}
@@ -508,7 +508,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 
 				// The intro screen automatically removes itself after its duration
 				var intro = text.introScreen;
-				var introDisplay:IntroScreen = cast(displaysRefs.get(intro.ref), IntroScreen);
+				var introDisplay : grar.view.part.IntroScreen = cast displaysRefs.get(intro.ref);
  
 				for (field in intro.content.keys()) {
 
@@ -540,8 +540,8 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 			}
 			var video = cast(item, VideoItem);
 
-			cast(displaysRefs.get(item.ref), VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture,video.autoFullscreen,video.thumbnail);
-			cast(displaysRefs.get(item.ref), VideoPlayer).addEventListener(Event.COMPLETE, onVideoComplete);
+			cast(displaysRefs.get(item.ref), grar.view.component.container.VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture,video.autoFullscreen,video.thumbnail);
+			cast(displaysRefs.get(item.ref), grar.view.component.container.VideoPlayer).addEventListener(Event.COMPLETE, onVideoComplete);
 		
 		} else {
 
@@ -551,7 +551,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
             }
             var sound = cast(item, SoundItem);
 
-            cast(displaysRefs.get(item.ref), SoundPlayer).setSound(sound.content, sound.autoStart, sound.loop, sound.defaultVolume);
+            cast(displaysRefs.get(item.ref), grar.view.component.container.SoundPlayer).setSound(sound.content, sound.autoStart, sound.loop, sound.defaultVolume);
         }
 
 		// Display Part
@@ -594,7 +594,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 
 				throw "[PartDisplay] There is no TextArea with ref " + item.ref;
 			}
-			cast(displaysRefs.get(item.ref), ScrollPanel).setContent(content);
+			cast(displaysRefs.get(item.ref), grar.view.component.container.ScrollPanel).setContent(content);
 		}
 
 		//GameManager.instance.loadSound(item.sound);
@@ -704,7 +704,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 	{
 		var toRemove = new GenericStack<DisplayObject>();
 		for(i in 0...numChildren){
-			if(Std.is(getChildAt(i), DefaultButton) || Std.is(getChildAt(i), ScrollPanel))
+			if(Std.is(getChildAt(i), grar.view.component.container.DefaultButton) || Std.is(getChildAt(i), grar.view.component.container.ScrollPanel))
 				toRemove.add(getChildAt(i));
 		}
 		for(item in currentItems){
@@ -735,7 +735,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 
 					targetedText = contentKey;
 				}
-				cast(displaysRefs.get(buttonRef), DefaultButton).setText(onLocalizedContentRequest(buttonContent.get(contentKey)), targetedText);
+				cast(displaysRefs.get(buttonRef), grar.view.component.container.DefaultButton).setText(onLocalizedContentRequest(buttonContent.get(contentKey)), targetedText);
 			}
 		}
 	}
@@ -744,7 +744,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 
 		var object : Widget = displaysRefs.get(key);
 #if flash
-		if (Std.is(object, VideoPlayer)) {
+		if (Std.is(object, grar.view.component.container.VideoPlayer)) {
 
 			return currentItem.ref == key;
 		}
@@ -762,7 +762,7 @@ trace("object already on scene: "+key);
 		}
 
 		// Buttons
-		if (Std.is(object, DefaultButton)) {
+		if (Std.is(object, grar.view.component.container.DefaultButton)) {
 
 			var button : StringMap<StringMap<String>> = null;
 
@@ -819,15 +819,15 @@ trace("CharacterDisplay ignored: "+key);
 
 			var text = cast(currentItem, TextItem);
 			
-			if (currentSpeaker != null && Std.is(object, ScrollPanel) && key == currentSpeaker.nameRef) {
+			if (currentSpeaker != null && Std.is(object, grar.view.component.container.ScrollPanel) && key == currentSpeaker.nameRef) {
 
 				return true;
 			}
-			if (Std.is(object, ScrollPanel) && key != text.ref) {
+			if (Std.is(object, grar.view.component.container.ScrollPanel) && key != text.ref) {
 trace("ScrollPanel ignored: "+key);
 				return false;
 			}
-			if (Std.is(object, Image) || Std.is(object,SimpleContainer)) {
+			if (Std.is(object, grar.view.component.Image) || Std.is(object, grar.view.component.container.SimpleContainer)) {
 
 				if (Lambda.has(text.images, key)) {
 
@@ -843,13 +843,13 @@ trace("Image or Container ignored: "+key);
 		
 		} else {
 
-			if (Std.is(object, ScrollPanel)) {
+			if (Std.is(object, grar.view.component.container.ScrollPanel)) {
 
 				return false;
 			}
 		}
 		// Exclude IntroScreen
-		if (Std.is(object, IntroScreen)) {
+		if (Std.is(object, grar.view.part.IntroScreen)) {
 trace("IntroScreen ignored: "+key);
 			return false;
 		}

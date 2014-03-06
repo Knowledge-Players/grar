@@ -37,16 +37,16 @@ class IntroScreen extends WidgetContainer {
 		var i = 0;
 		var firstText: Int = -1;
 		while(i < children.length && key != children[i].ref){
-			if(Std.is(children[i], ScrollPanel) && firstText == -1)
+			if(Std.is(children[i], grar.view.component.container.ScrollPanel) && firstText == -1)
 				firstText = i;
 			i++;
 		}
 		if(key == null || StringTools.trim(key) == "")
-			cast(children[firstText], ScrollPanel).setContent(content);
+			cast(children[firstText], grar.view.component.container.ScrollPanel).setContent(content);
 		else if(i == children.length)
 			throw "[IntroScreen] Unable to find a Text field with ref '"+key+"'.";
 		else
-			cast(children[i], ScrollPanel).setContent(content);
+			cast(children[i], grar.view.component.container.ScrollPanel).setContent(content);
 	}
 
 	// Privates

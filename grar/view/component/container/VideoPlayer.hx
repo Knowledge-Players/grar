@@ -99,22 +99,22 @@ class VideoPlayer extends WidgetContainer {
 		connection.connect(null);
 
 		for(i in 0...content.numChildren){
-			if(Std.is(content.getChildAt(i), Widget)){
-				controls.add(cast(content.getChildAt(i), Widget));
+			if(Std.is(content.getChildAt(i), grar.view.component.Widget)){
+				controls.add(cast(content.getChildAt(i), grar.view.component.Widget));
 			}
 		}
 		if(displaysRefs.exists("time")){
-			timeArea = cast(displaysRefs.get("time"), ScrollPanel);
+			timeArea = cast(displaysRefs.get("time"), grar.view.component.container.ScrollPanel);
 			controls.add(timeArea);
 		}
 
 		if (displaysRefs.exists("timeCurrent")){
-			timeCurrent = cast(displaysRefs.get("timeCurrent"), ScrollPanel);
+			timeCurrent = cast(displaysRefs.get("timeCurrent"), grar.view.component.container.ScrollPanel);
 			controls.add(timeCurrent);
 		}
 
 		if (displaysRefs.exists("timeTotal")){
-			timeTotal = cast(displaysRefs.get("timeTotal"), ScrollPanel);
+			timeTotal = cast(displaysRefs.get("timeTotal"), grar.view.component.container.ScrollPanel);
 			controls.add(timeTotal);
 		}
 
@@ -197,7 +197,7 @@ class VideoPlayer extends WidgetContainer {
 			this.autoFullscreen.isSet = true;
 		}
         if (thumbnail != null){
-            var thumb:Image =   cast(displaysRefs.get("thumbnail"),Image);
+            var thumb:Image =   cast(displaysRefs.get("thumbnail"), grar.view.component.Image);
             thumb.setBmp(thumbnail);
             video.visible =false;
         }

@@ -135,7 +135,7 @@ trace("create strip display");
 					if (i.isText()) {
 
 //						cast(displays.get(i.ref), ScrollPanel).setContent(Localiser.instance.getItemContent(i.content));
-						cast(displaysRefs.get(i.ref), ScrollPanel).setContent(onLocalizedContentRequest(i.content));
+						cast(displaysRefs.get(i.ref), grar.view.component.container.ScrollPanel).setContent(onLocalizedContentRequest(i.content));
 					}
 
 				default: // nothing

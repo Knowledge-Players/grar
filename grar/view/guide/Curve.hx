@@ -98,8 +98,8 @@ class Curve extends Guide
 		for(i in 0...objects.length){
 			var a = MathUtils.degreeToRad(angle+(angle*2*i)+minAngle);
 			if(tile){
-				cast(objects[i], TileImage).set_x(Math.cos(a)*radius + center.x - (centerObject ? objects[i].width/2 : 0));
-				cast(objects[i], TileImage).set_y(Math.sin(a)*radius + center.y - (centerObject ? objects[i].height/2 : 0));
+				cast(objects[i], grar.view.component.TileImage).set_x(Math.cos(a)*radius + center.x - (centerObject ? objects[i].width/2 : 0));
+				cast(objects[i], grar.view.component.TileImage).set_y(Math.sin(a)*radius + center.y - (centerObject ? objects[i].height/2 : 0));
 			}
 			else{
 				objects[i].x = Math.cos(a)*radius + center.x - (centerObject ? objects[i].width/2 : 0);

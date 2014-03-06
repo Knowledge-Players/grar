@@ -191,7 +191,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 
 
 			// Display close button
-			var button: DefaultButton = cast(displaysRefs.get(model.closeButton.ref), DefaultButton);
+			var button : grar.view.component.container.DefaultButton = cast displaysRefs.get(model.closeButton.ref);
 // 			button.setText(Localiser.instance.getItemContent(model.closeButton.content));
 			button.setText(onLocalizedContentRequest(model.closeButton.content));
 
@@ -358,7 +358,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 		onLocaleDataPathRequest(model.file);
 
 		// Display title
-		var title: ScrollPanel = cast(displaysRefs.get(currentPage.title.ref), ScrollPanel);
+		var title : grar.view.component.container.ScrollPanel = cast displaysRefs.get(currentPage.title.ref);
 
 //		title.setContent(Localiser.instance.getItemContent(currentPage.title.content));
 		title.setContent(onLocalizedContentRequest(currentPage.title.content));
@@ -460,7 +460,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 			// Create steps
 			for(i in 0...numActive) {
 
-				var step : DefaultButton = cast(createButton(stepData.r, stepData.e), DefaultButton);
+				var step : grar.view.component.container.DefaultButton = cast createButton(stepData.r, stepData.e);
 				step.setText(Std.string(i+1));
 				step.name = Std.string(i);
 				var transitionIn = null;
@@ -485,7 +485,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 			onLocaleDataPathRequest(model.file);
 
 //			cast(displaysRefs.get(chapter.titleRef), ScrollPanel).setContent(Localiser.instance.getItemContent(chapter.name));
-			cast(displaysRefs.get(chapter.titleRef), ScrollPanel).setContent(onLocalizedContentRequest(chapter.name));
+			cast(displaysRefs.get(chapter.titleRef), grar.view.component.container.ScrollPanel).setContent(onLocalizedContentRequest(chapter.name));
 
 // 			Localiser.instance.popLocale();
 			onRestoreLocaleRequest();
@@ -504,7 +504,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 //		Localiser.instance.layoutPath = model.file;
 		onLocaleDataPathRequest(model.file);
 
-		var panel = cast(displaysRefs.get(note.ref), ScrollPanel);
+		var panel = cast(displaysRefs.get(note.ref), grar.view.component.container.ScrollPanel);
 
 		if (note.content.indexOf("/") < 1) {
 
@@ -517,12 +517,12 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 			addChild(panel);
 
 			if(note.video != null){
-				var player = cast(displaysRefs.get("player"), VideoPlayer);
+				var player = cast(displaysRefs.get("player"), grar.view.component.container.VideoPlayer);
 				player.setVideo(note.video);
 				addChild(player);
 			}
 			else if(displaysRefs.exists("player")){
-				var player = cast(displaysRefs.get("player"), VideoPlayer);
+				var player = cast(displaysRefs.get("player"), grar.view.component.container.VideoPlayer);
 				player.stopVideo();
 				if(contains(player))
 					removeChild(player);

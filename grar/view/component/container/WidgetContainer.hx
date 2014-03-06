@@ -412,15 +412,15 @@ class WidgetContainer extends Widget {
 	{
 		var partDisplay = parent;
 
-		while(!Std.is(partDisplay, Display)){
+		while(!Std.is(partDisplay, grar.view.Display)){
 			partDisplay = partDisplay.parent;
 		}
 		if(scrollBarName == null){
 			var keyArray = [];
-			for (key in cast(partDisplay, Display).scrollBars.keys()) keyArray.push(key);
+			for (key in cast(partDisplay, grar.view.Display).scrollBars.keys()) keyArray.push(key);
 			scrollBarName = keyArray[0];
 		}
-		scrollBar = cast(partDisplay, Display).scrollBars.get(scrollBarName);
+		scrollBar = cast(partDisplay, grar.view.Display).scrollBars.get(scrollBarName);
 
 
 		scrollBar.setHeight(maskHeight);

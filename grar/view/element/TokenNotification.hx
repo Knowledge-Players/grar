@@ -37,14 +37,14 @@ class TokenNotification extends WidgetContainer {
 
 		if (displaysRefs.exists("icon")) {
 
-			cast(displaysRefs.get("icon"), Image).setBmp(tokenIcon);
+			cast(displaysRefs.get("icon"), grar.view.component.Image).setBmp(tokenIcon);
 		}
 
 //		cast(displaysRefs.get("name"), ScrollPanel).setContent(Localiser.instance.getItemContent(tokenName));
-		cast(displaysRefs.get("name"), ScrollPanel).setContent(onLocalizedContentRequest(tokenName));
+		cast(displaysRefs.get("name"), grar.view.component.container.ScrollPanel).setContent(onLocalizedContentRequest(tokenName));
 
 //		cast(displaysRefs.get("title"), ScrollPanel).setContent(Localiser.instance.getItemContent("unlock"));
-		cast(displaysRefs.get("title"), ScrollPanel).setContent(onLocalizedContentRequest("unlock"));
+		cast(displaysRefs.get("title"), grar.view.component.container.ScrollPanel).setContent(onLocalizedContentRequest("unlock"));
 
 
 		Timer.delay(hideNotification, duration);

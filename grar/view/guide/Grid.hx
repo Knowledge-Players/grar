@@ -161,8 +161,8 @@ class Grid extends Guide {
 		}
 
         if(tile){
-            cast(object, TileImage).set_x(targetX);
-            cast(object, TileImage).set_y(targetY);
+            cast(object, grar.view.component.TileImage).set_x(targetX);
+            cast(object, grar.view.component.TileImage).set_y(targetY);
         }
         else{
             object.x = targetX;

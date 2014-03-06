@@ -394,7 +394,7 @@ class Widget extends Sprite {
 			var maxWidth: Float = 0;
 			// Only look for widget under itself
 			for(i in 0...parent.getChildIndex(this)){
-				if(!Std.is(parent.getChildAt(i), DropdownMenu) && maxX < parent.getChildAt(i).x){
+				if(!Std.is(parent.getChildAt(i), grar.view.component.container.DropdownMenu) && maxX < parent.getChildAt(i).x){
 					maxX = parent.getChildAt(i).x;
 					maxWidth = parent.getChildAt(i).width;
 				}

@@ -207,15 +207,15 @@ class DefaultButton extends WidgetContainer {
 		if(pKey != null && pKey != " "){
 			for(state in states){
 				if(state.refs.exists(pKey)){
-					cast(state.refs.get(pKey), ScrollPanel).setContent(pContent);
+					cast(state.refs.get(pKey), grar.view.component.container.ScrollPanel).setContent(pContent);
 				}
 			}
 		}
 		else{
 			for(state in states){
 				for(elem in state.zorder){
-					if(Std.is(elem, ScrollPanel)){
-						cast(elem, ScrollPanel).setContent(pContent);
+					if(Std.is(elem, grar.view.component.container.ScrollPanel)){
+						cast(elem, grar.view.component.container.ScrollPanel).setContent(pContent);
 						break;
 					}
 				}
@@ -279,7 +279,7 @@ class DefaultButton extends WidgetContainer {
 				content.addChild(list.zorder[i]);
 				children.push(list.zorder[i]);
 				
-				if (Std.is(list.zorder[i], TileImage)) {
+				if (Std.is(list.zorder[i], grar.view.component.TileImage)) {
 
 					if (layerIndex == -1) layerIndex = i;
 				}

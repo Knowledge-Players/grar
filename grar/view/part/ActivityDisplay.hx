@@ -101,7 +101,7 @@ class ActivityDisplay extends PartDisplay {
 		if(validationRules.length == 1){
 			if(!displaysRefs.exists(validationRules[0].id))
 				throw "[ActivityDisplay] You must have a button with ref '"+validationRules[0].id+"' (same as the id of your rule) in order to use the correction rule.";
-			validationButton = cast(displaysRefs.get(validationRules[0].id), DefaultButton);
+			validationButton = cast(displaysRefs.get(validationRules[0].id), grar.view.component.container.DefaultButton);
 			switch(validationRules[0].value){
 				case "auto": autoCorrect = true;
 				case "onvalidate":
@@ -256,8 +256,8 @@ trace("set ActivityDisplay content");
 			for(child in target.children){
 				var correction = cast(part, ActivityPart).validate(buttonsToInputs.get(target), value);
 				result = correction;
-				if(child.ref == validationRef && Std.is(child, DefaultButton))
-					cast(child, DefaultButton).toggleState = Std.string(correction);
+				if(child.ref == validationRef && Std.is(child, grar.view.component.container.DefaultButton))
+					cast(child, grar.view.component.container.DefaultButton).toggleState = Std.string(correction);
 			}
 			var allValidated = true;
 			for(input in inputs){
@@ -273,8 +273,8 @@ trace("set ActivityDisplay content");
 				var input: Input = buttonsToInputs.get(button);
 				var correction = cast(part, ActivityPart).validate(input, Std.string(input.selected));
 				for(child in button.children)
-					if(child.ref == validationRef && Std.is(child, DefaultButton))
-						cast(child, DefaultButton).toggleState = Std.string(correction);
+					if(child.ref == validationRef && Std.is(child, grar.view.component.container.DefaultButton))
+						cast(child, grar.view.component.container.DefaultButton).toggleState = Std.string(correction);
 			}
 			validationButton.buttonAction = endActivity;
 			validationButton.toggleState = "end";
@@ -283,7 +283,7 @@ trace("set ActivityDisplay content");
 		var debriefRules = cast(part, ActivityPart).getRulesByType("debrief");
 		for(rule in debriefRules){
 			switch(rule.value.toLowerCase()){
-				case "onvalidate": cast(displaysRefs.get(rule.id), DefaultButton).toggle();
+				case "onvalidate": cast(displaysRefs.get(rule.id), grar.view.component.container.DefaultButton).toggle();
 			}
 		}
 
@@ -329,7 +329,7 @@ trace("set ActivityDisplay content");
 		var object: Widget = displaysRefs.get(key);
 
 		// Display all buttons/inputs
-		if(Std.is(object, DefaultButton)){
+		if(Std.is(object, grar.view.component.container.DefaultButton)){
 			if(part.buttons.exists(key)){
 				setButtonText(key, part.buttons.get(key));
 				return true;
@@ -408,16 +408,16 @@ trace("set ActivityDisplay content");
 				case "drop":
 					e.target.stopDrag();
 					var drop: DisplayObject = cast(e.target.dropTarget, DisplayObject);
-					while(drop != null && !(drop.is(DefaultButton) && (inputs.has(cast(drop, DefaultButton)) || cast(drop, Widget).ref == dropRef)))
+					while(drop != null && !(drop.is(grar.view.component.container.DefaultButton) && (inputs.has(cast(drop, grar.view.component.container.DefaultButton)) || cast(drop, Widget).ref == dropRef)))
 						drop = drop.parent;
-					if(drop != null && validate(e.target, (buttonsToInputs.exists(cast(drop, DefaultButton)) ? buttonsToInputs.get(cast(drop, DefaultButton)).id : drop.name))){
+					if(drop != null && validate(e.target, (buttonsToInputs.exists(cast(drop, grar.view.component.container.DefaultButton)) ? buttonsToInputs.get(cast(drop, grar.view.component.container.DefaultButton)).id : drop.name))){
 						copyCoordinates(e.target, drop);
-						if(buttonsToInputs.exists(cast(drop, DefaultButton))){
+						if(buttonsToInputs.exists(cast(drop, grar.view.component.container.DefaultButton))){
 							var dropZone = new DefaultButton(callbacks, applicationTilesheet);
 							dropZone.enabled = false;
 							dropZone.initSprite(drop.width, drop.height, 0.001);
 							dropZone.ref = dropRef;
-							dropZone.name = buttonsToInputs.get(cast(drop, DefaultButton)).id;
+							dropZone.name = buttonsToInputs.get(cast(drop, grar.view.component.container.DefaultButton)).id;
 							copyCoordinates(dropZone, drop);
 							drop.parent.addChild(dropZone);
 						}

@@ -270,7 +270,7 @@ class Tweener {
 
 		var mask : Sprite;
 
-		if (Std.is(display.parent, ScrollPanel)) {
+		if (Std.is(display.parent, grar.view.component.container.ScrollPanel)) {
 
 			mask = display.getChildAt(1).mask;
 		

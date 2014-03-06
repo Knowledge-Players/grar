@@ -350,15 +350,15 @@ class TileImage extends Image {
 				removeEventListener(Event.ADDED_TO_STAGE, renderNeeded);
 
 			var container = parent;
-			while(container != null && !Std.is(container, Display) && !Std.is(container, WidgetContainer))
+			while(container != null && !Std.is(container, grar.view.Display) && !Std.is(container, grar.view.component.container.WidgetContainer))
 				container = container.parent;
 
 			// TODO unify (MVP)
-			if(Std.is(container, Display)){
-				cast(container, Display).renderLayers.set(tileSprite.layer, true);
+			if(Std.is(container, grar.view.Display)){
+				cast(container, grar.view.Display).renderLayers.set(tileSprite.layer, true);
 			}
-			if(Std.is(container, WidgetContainer)){
-				cast(container, WidgetContainer).renderNeeded = true;
+			if(Std.is(container, grar.view.component.container.WidgetContainer)){
+				cast(container, grar.view.component.container.WidgetContainer).renderNeeded = true;
 			}
 		}
 	}
