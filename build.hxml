@@ -32,7 +32,12 @@
 -lib ExAM
 -lib utest
 -lib compiletime
+-debug
+#-D fdb
 -swf tests/testResults.swf
 -resource tests/resources/goodStructure.xml@goodStructure
+-resource tests/resources/badStructure.xml@badStructure
 -resource tests/resources/goodTransition.xml@goodTransition
 -resource tests/resources/goodXmlLocale.xml@goodXmlLocale
+-resource tests/resources/goodExcelLocale.xml@goodExcelLocale
+-resource tests/resources/goodPart.xml@goodPart

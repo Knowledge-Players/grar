@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+          xmlns:o="urn:schemas-microsoft-com:office:office"
+          xmlns:x="urn:schemas-microsoft-com:office:excel"
+          xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+          xmlns:html="http://www.w3.org/TR/REC-html40">
+    <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+        <Author>Knowledge-Players</Author>
+        <LastAuthor>Loremipfy</LastAuthor>
+        <Created>2014-02-26T09:16:05Z</Created>
+        <Company>Knowledge-Players</Company>
+        <Version>14.0</Version>
+    </DocumentProperties>
+    <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
+        <AllowPNG/>
+    </OfficeDocumentSettings>
+    <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+        <WindowHeight>12020</WindowHeight>
+        <WindowWidth>28800</WindowWidth>
+        <WindowTopX>0</WindowTopX>
+        <WindowTopY>0</WindowTopY>
+        <Date1904/>
+        <ProtectStructure>False</ProtectStructure>
+        <ProtectWindows>False</ProtectWindows>
+    </ExcelWorkbook>
+    <Styles>
+        <Style ss:ID="Default" ss:Name="Normal">
+            <Alignment ss:Vertical="Bottom"/>
+            <Borders/>
+            <Font ss:FontName="Verdana"/>
+            <Interior/>
+            <NumberFormat/>
+            <Protection/>
+        </Style>
+        <Style ss:ID="s62">
+            <Borders>
+                <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+            </Borders>
+            <Interior ss:Color="#FFFFFF" ss:Pattern="ThinDiagStripe"
+                      ss:PatternColor="#000000"/>
+        </Style>
+        <Style ss:ID="s63">
+            <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+            <Borders>
+                <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+            </Borders>
+            <Interior ss:Color="#FFFFFF" ss:Pattern="ThinDiagStripe"
+                      ss:PatternColor="#000000"/>
+        </Style>
+        <Style ss:ID="s64">
+            <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+            <Borders>
+                <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+            </Borders>
+            <Interior ss:Color="#FFFFFF" ss:Pattern="ThinDiagStripe"
+                      ss:PatternColor="#000000"/>
+        </Style>
+        <Style ss:ID="s65">
+            <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+            <Borders>
+                <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+            </Borders>
+            <Interior/>
+        </Style>
+        <Style ss:ID="s67">
+            <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+            <Borders>
+                <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+            </Borders>
+            <Interior/>
+        </Style>
+        <Style ss:ID="s69">
+            <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+            <Borders>
+                <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+                <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+            </Borders>
+        </Style>
+        <Style ss:ID="s71">
+            <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+            <Font ss:FontName="Cambria" ss:Size="12"/>
+        </Style>
+        <Style ss:ID="s73">
+            <Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:Indent="2"
+                       ss:WrapText="1"/>
+            <Font ss:FontName="Cambria" ss:Size="12"/>
+        </Style>
+    </Styles>
+    <Worksheet ss:Name="Feuil1">
+        <Table ss:ExpandedColumnCount="2" ss:ExpandedRowCount="4" x:FullColumns="1"
+               x:FullRows="1" ss:StyleID="s62" ss:DefaultColumnWidth="66">
+            <Column ss:StyleID="s63" ss:AutoFitWidth="0" ss:Width="90"/>
+            <Column ss:StyleID="s64" ss:AutoFitWidth="0" ss:Width="375"/>
+            <Row ss:AutoFitHeight="0" ss:Height="26">
+                <Cell><Data ss:Type="String">conclusion</Data></Cell>
+                <Cell ss:StyleID="s65"><Data ss:Type="String" x:Ticked="1">Conclusion</Data></Cell>
+            </Row><Row ss:AutoFitHeight="0" ss:Height="26">
+            <Cell><Data ss:Type="String">thanks</Data></Cell>
+            <Cell ss:StyleID="s65"><Data ss:Type="String" x:Ticked="1">Merci</Data></Cell>
+        </Row><Row ss:AutoFitHeight="0" ss:Height="26">
+            <Cell><Data ss:Type="String">episode_title</Data></Cell>
+            <Cell ss:StyleID="s65"><Data ss:Type="String" x:Ticked="1">Titre de l'épisode</Data></Cell>
+        </Row>
+        </Table>
+        <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+            <PageSetup>
+                <Header
+                        x:Data="&amp;CFichier de Traduction Knowledge-playersVeillez à ne pas insérer de lignes et ne pas modifier les cellules hachurées"/>
+                <Footer x:Margin="0.4921259845"/>
+                <PageMargins x:Left="0.75196850393700798" x:Right="0.75196850393700798"/>
+            </PageSetup>
+            <Print>
+                <ValidPrinterInfo/>
+                <HorizontalResolution>-4</HorizontalResolution>
+                <VerticalResolution>-4</VerticalResolution>
+            </Print>
+            <ShowPageLayoutZoom/>
+            <PageLayoutZoom>100</PageLayoutZoom>
+            <Selected/>
+            <TopRowVisible>7</TopRowVisible>
+            <Panes>
+                <Pane>
+                    <Number>3</Number>
+                    <ActiveRow>12</ActiveRow>
+                    <ActiveCol>1</ActiveCol>
+                </Pane>
+            </Panes>
+            <ProtectObjects>False</ProtectObjects>
+            <ProtectScenarios>False</ProtectScenarios>
+        </WorksheetOptions>
+    </Worksheet>
+</Workbook>
+

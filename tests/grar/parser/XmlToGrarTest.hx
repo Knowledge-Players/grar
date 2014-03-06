@@ -32,4 +32,10 @@ class XmlToGrarTest {
 			case _: "none";
 		}
 	}
+
+	public function testBadParsing():Void
+	{
+		var badStructure = Xml.parse(Resource.getString('badStructure'));
+		Assert.raises(function(){ XmlToGrar.parse(badStructure);}, String);
+	}
 }
