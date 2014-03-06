@@ -53,7 +53,7 @@ class DefaultButton extends WidgetContainer {
 					}
 					this.defaultState = ds;
 					
-					if (tmpdata != null) {
+					if (tmpdata == null) {
 
 						initStates(dbd);
 					}
