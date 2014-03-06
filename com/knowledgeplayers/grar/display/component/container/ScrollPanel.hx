@@ -117,6 +117,7 @@ class ScrollPanel extends WidgetContainer {
 			DisplayUtils.initSprite(maskLine, text.width, maskHeight, 0, 1, minPaddingLeft);
 		content.addChild(maskLine);
 		text.mask = maskLine;
+		content.mouseEnabled = false;
 		addChild(content);
 		displayContent(trim);
 

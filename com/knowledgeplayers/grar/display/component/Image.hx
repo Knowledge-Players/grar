@@ -51,10 +51,10 @@ class Image extends Widget{
 		}
 	}
 
-    public function setBmp(_bmpData:String):Void
+    public function setBmp(src:String):Void
     {
-         if(_bmpData.indexOf(".")<0){
-             var stringColor = ParseUtils.parseStringArray(_bmpData);
+         if(src.indexOf(".")<0){
+             var stringColor = ParseUtils.parseStringArray(src);
              var colors = new Array<Int>();
              var alphas = new Array<Float>();
              for(color in stringColor){
@@ -75,11 +75,13 @@ class Image extends Widget{
                 bitmap = new Bitmap();
                 addChild(bitmap);
             }
-            #if flash
-                bitmap.bitmapData = AssetsStorage.getBitmapData(_bmpData);
-            #else
-                bitmap.bitmapData = Assets.getBitmapData(_bmpData);
-            #end
+	        if(AssetsStorage.hasAsset(src)){
+	            #if flash
+	                bitmap.bitmapData = AssetsStorage.getBitmapData(src);
+	            #else
+	                bitmap.bitmapData = Assets.getBitmapData(src);
+	            #end
+	        }
          }
     }
 

@@ -62,7 +62,7 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 	}
 
 	@:getter(width)
-	public function get_width():Float
+	override public function get_width():Float
 	{
 		return tileSprite != null ? tileSprite.width : 0;
 	}
@@ -84,7 +84,7 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 	}
 
 	@:getter(height)
-	public function get_height():Float
+	override public function get_height():Float
 	{
 		return tileSprite != null ? tileSprite.height : 0;
 	}

@@ -142,6 +142,18 @@ class Widget extends Sprite{
 		super.alpha = alpha;
 	}
 
+	@:getter(width)
+	public function get_width():Float
+	{
+		return super.width + (borderStyle != null ? borderStyle.thickness : 0);
+	}
+
+	@:getter(height)
+	public function get_height():Float
+	{
+		return super.height + (borderStyle != null ? borderStyle.thickness : 0);
+	}
+
 	override public function toString():String
 	{
 		return '$ref: $x;$y $width x $height ($scale) $transitionIn->$transitionOut';
@@ -290,9 +302,11 @@ class Widget extends Sprite{
 
 	private function drawBorders(?e:Event):Void
 	{
+		x += borderStyle.thickness;
+		y += borderStyle.thickness;
 		graphics.clear();
 		graphics.lineStyle(borderStyle.thickness, borderStyle.color.color, borderStyle.color.alpha);
-		graphics.drawRect(-borderStyle.thickness, -borderStyle.thickness, width/scaleX+(2*borderStyle.thickness), height/scaleY+(2*borderStyle.thickness));
+		graphics.drawRect(-borderStyle.thickness, -borderStyle.thickness, super.width/scaleX+(2*borderStyle.thickness), super.height/scaleY+(2*borderStyle.thickness));
 		if(e != null)
 			removeEventListener(Event.ADDED_TO_STAGE, drawBorders);
 	}

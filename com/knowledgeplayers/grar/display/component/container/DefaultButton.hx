@@ -1,7 +1,7 @@
 package com.knowledgeplayers.grar.display.component.container;
 
-import haxe.Timer;
-import com.knowledgeplayers.grar.util.ParseUtils;
+import com.knowledgeplayers.grar.util.DisplayUtils;
+import flash.display.Shape;
 import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.display.component.container.WidgetContainer;
 import haxe.xml.Fast;
@@ -9,20 +9,15 @@ import aze.display.TileLayer;
 import aze.display.TileSprite;
 import com.knowledgeplayers.grar.display.component.container.ScrollPanel;
 import com.knowledgeplayers.grar.event.ButtonActionEvent;
-import flash.display.DisplayObject;
-import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
+
+using Lambda;
 
 /**
  * Custom base button class
  */
 class DefaultButton extends WidgetContainer {
-
-	/**
-	* Number of seconds before the button can render again
-	**/
-	private static var RENDER_INTERVAL: Float = 0.08;
 
 	/**
      * Switch to enable the button
@@ -61,13 +56,20 @@ class DefaultButton extends WidgetContainer {
 	private var defaultState: String;
 	private var enabledState: Map<String, Bool>;
 	private var innerTimelines: Map<String, Timeline>;
-	private var tmpContent:Sprite;
-	private var lastRender:Float;
+	private var timelinesFinished:Int;
+	private var removeList:Array<Widget>;
+	private var hitZone:Shape;
 
 	/**
      * Action to execute on click
      */
 	public dynamic function buttonAction(?target: DefaultButton): Void{}
+
+	/**
+     * Action to execute on over
+     */
+	public dynamic function onOver(?target: DefaultButton): Void{}
+
 	/**
      * Constructor.
      * @param	tilesheet : UI Sheet
@@ -79,7 +81,8 @@ class DefaultButton extends WidgetContainer {
 		timelines = new Map<String, Timeline>();
 		enabledState = new Map<String, Bool>();
 		innerTimelines = new Map<String, Timeline>();
-		lastRender = 0;
+		timelinesFinished = 0;
+		hitZone = new Shape();
 
 		if(pStates != null)
 			states = pStates;
@@ -114,17 +117,10 @@ class DefaultButton extends WidgetContainer {
 
 		setAllListeners(onMouseEvent);
 
-		// Hack for C++ hitArea (NME 3.5.5)
-		#if cpp
-			graphics.beginFill (0xFFFFFF, 0.01);
-			graphics.drawRect (-width/2, -height/2, width, height);
-			graphics.endFill();
-		#end
+		/*if(tmpXml == null)
+			toggleState = defaultState;*/
 
-		addEventListener(Event.ADDED_TO_STAGE, function(e){
-			if(toggleState == null)
-				toggleState = defaultState;
-		});
+		addChild(hitZone);
 	}
 
 	public function initStates(?xml: Fast, ?timelines: Map<String, Timeline>):Void
@@ -162,7 +158,7 @@ class DefaultButton extends WidgetContainer {
 				states.set(defaultState+"_out", createStates(tmpXml));
 			tmpXml = null;
 		}
-
+		toggleState = defaultState;
 	}
 
 	@:setter(alpha)
@@ -242,44 +238,45 @@ class DefaultButton extends WidgetContainer {
 		}
 	}
 
-	public function renderState(stateName:String)
+	public function renderState(stateName:String, forced: Bool = false)
 	{
 		var changeState = false;
+		var futureState = null;
 		var oldState: State = states[currentState];
 		var state:State = null;
 		if(states.exists(toggleState + "_" + stateName)){
 			state = states.get(toggleState + "_" + stateName);
 			if(currentState != toggleState + "_" + stateName){
-				currentState = toggleState + "_" + stateName;
+				futureState = toggleState + "_" + stateName;
 				changeState = true;
 			}
 		}
 		else if(states.exists(toggleState + "_" + "out")){
 			state = states.get(toggleState + "_" + "out");
 			if(currentState != toggleState + "_" + "out"){
-				currentState = toggleState + "_" + "out";
+				futureState = toggleState + "_" + "out";
 				changeState = true;
 			}
 		}
 		else if(states.exists("active" + "_" + stateName)){
 			state = states.get("active" + "_" + stateName);
 			if(currentState != "active" + "_" + stateName){
-				currentState = "active" + "_" + stateName;
+				futureState = "active" + "_" + stateName;
 				changeState = true;
 			}
 		}
 		else{
 			state = states.get("active_out");
 			if(currentState != "active_out"){
-				currentState = "active_out";
+				futureState = "active_out";
 				changeState = true;
 			}
 		}
-		if(changeState && Timer.stamp()-lastRender > RENDER_INTERVAL){
-			tmpContent = new Sprite();
+		if(changeState){
 			if(state == null)
 				throw "There is no information for state \"" + currentState + "\" for button \"" + ref + "\".";
 
+			currentState = futureState;
 			var array = new Array<Widget>();
 			var layerIndex: Int = -1;
 			for(widget in state.widgets){
@@ -288,43 +285,62 @@ class DefaultButton extends WidgetContainer {
 
 			array.sort(sortDisplayObjects);
 			for(obj in array){
-				tmpContent.addChild(obj);
-				children.push(obj);
+				if(!children.has(obj)){
+					children.push(obj);
+					content.addChild(obj);
+				}
 				if(Std.is(obj, TileImage)){
 					if(layerIndex == -1) layerIndex = obj.zz;
 				}
 			}
 
-			var j = 0;
-			while(j < tmpContent.numChildren && cast(tmpContent.getChildAt(j), Widget).zz < layerIndex)
-				j++;
-			tmpContent.addChildAt(layer.view, j);
+			removeList = children.filter(function(child: Widget){
+				return !array.has(child);
+			});
 
 			enabled = enabledState.get(toggleState);
 
+			var noTimeline = true;
+			var oldStateTimelineOK = false;
 			if(oldState != null && oldState.timelineOut != null){
+				var oldStateTimelineOK = true;
 				// Update timeline
 				for(elem in oldState.widgets){
 					insertWidget(elem, oldState.timelineOut);
 				}
-				oldState.timelineOut.onComplete = onChangeStateFinished;
+				if(state.timelineIn != null)
+					oldState.timelineOut.onComplete = multiTimelineHandler;
+				else
+					oldState.timelineOut.onComplete = onChangeStateFinished;
+				noTimeline = false;
+					oldState.timelineOut.onComplete = onChangeStateFinished;
+				noTimeline = false;
 				oldState.timelineOut.play();
 			}
 			else{
-				onChangeStateFinished();
+				for(child in removeList){
+					content.removeChild(child);
+					children.remove(child);
+				}
+				removeList = null;
 			}
-
-			if(tmpContent != content)
-				addChildAt(tmpContent, getChildIndex(content));
 
 			if(state.timelineIn != null){
 				// Update timeline
 				for(elem in state.widgets){
 					insertWidget(elem, state.timelineIn);
 				}
+				if(oldStateTimelineOK)
+					state.timelineIn.onComplete = multiTimelineHandler;
+				else
+					state.timelineIn.onComplete = onChangeStateFinished;
+				noTimeline = false;
 				state.timelineIn.play();
 			}
-			lastRender = Timer.stamp();
+
+			if(noTimeline){
+				onChangeStateFinished();
+			}
 		}
 	}
 
@@ -352,25 +368,28 @@ class DefaultButton extends WidgetContainer {
 
 	// Private
 
+	private inline function multiTimelineHandler():Void
+	{
+		if(++timelinesFinished == 2)
+			onChangeStateFinished();
+	}
+
 	private inline function onChangeStateFinished():Void
 	{
-		// Clear state
-		while(content.numChildren > 0){
-			content.removeChildAt(content.numChildren - 1);
+		if(removeList != null){
+			for(child in removeList){
+				content.removeChild(child);
+				children.remove(child);
+			}
+			removeList = null;
 		}
-		if(layer != null)
-			for(child in layer.children)
-				child.visible = false;
-		scale = scaleX = scaleY = 1;
-		layer.render();
 
-		// Reset children
-		children = new Array<Widget>();
+		if(hitZone.width == 0 && hitZone.height == 0){
+			hitZone.graphics.beginFill(0, 0.001);
+			hitZone.graphics.drawRect(-5, -5, width+10, height+10);
+			hitZone.graphics.endFill();
+		}
 
-		addChildAt(tmpContent, getChildIndex(content));
-		content = tmpContent;
-
-		displayContent();
 		dispatchEvent(new Event(Event.CHANGE));
 	}
 
@@ -388,8 +407,9 @@ class DefaultButton extends WidgetContainer {
 			buttonAction(this);
 	}
 
-	private inline function onOver(event:MouseEvent):Void
+	private inline function onOverEvent(event:MouseEvent):Void
 	{
+		onOver(this);
 		renderState("over");
 	}
 
@@ -443,6 +463,13 @@ class DefaultButton extends WidgetContainer {
 		return {name: node.name, timelineIn: timelineIn, timelineOut: timelineOut, widgets: list};
 	}
 
+	override private function createImage(itemNode:Fast):Widget
+	{
+		var img = new Image(itemNode, itemNode.has.src ? null : layer.tilesheet);
+		addElement(img);
+		return img;
+	}
+
 	// Listener
 
 	override private function createButton(buttonNode:Fast):Widget
@@ -459,7 +486,7 @@ class DefaultButton extends WidgetContainer {
 		switch (event.type) {
 			/*case MouseEvent.MOUSE_OUT: onOut(event);
 			case MouseEvent.MOUSE_OVER: onOver(event);*/
-			case MouseEvent.ROLL_OVER: onOver(event);
+			case MouseEvent.ROLL_OVER: onOverEvent(event);
 			case MouseEvent.ROLL_OUT: onOut(event);
 			case MouseEvent.CLICK: onClick(event);
 			case MouseEvent.MOUSE_DOWN: onClickDown(event);

@@ -236,6 +236,8 @@ class ActivityPart extends StructurePart
 			rules = ParseUtils.parseStringArray(xml.att.rules);
 		}
 		var group: Group = {id: xml.att.id, ref: xml.att.ref, rules: rules, groups: new Array<Group>(), inputs: new Array<Input>(), items: new Array<Item>(), buttons: new Array<Button>()};
+		if(xml.has.timelineIn)
+			group.timelineIn = xml.att.timelineIn;
 		for(elem in xml.elements){
 			switch(elem.name.toLowerCase()){
 				case "group":   group.groups.push(createGroup(elem));
@@ -262,6 +264,7 @@ typedef Group = {
 	@:optional var inputs: Array<Input>;
 	@:optional var items: Array<Item>;
 	@:optional var buttons: Array<Button>;
+	@:optional var timelineIn: String;
 }
 
 typedef Rule = {

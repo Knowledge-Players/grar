@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.part;
 
+import com.knowledgeplayers.grar.display.element.Timeline;
 import com.knowledgeplayers.grar.util.ParseUtils;
 import com.knowledgeplayers.grar.display.component.container.DefaultButton;
 import flash.display.DisplayObject;
@@ -118,6 +119,7 @@ class ActivityDisplay extends PartDisplay {
 		validatedInputs = new Map<DefaultButton, Bool>();
 
 		currentGroup = activity.getNextGroup();
+		nextTimeline = currentGroup.timelineIn;
 		inputs = new List<DefaultButton>();
 		// Create inputs, place & display them
 		if(currentGroup.inputs != null){
@@ -126,13 +128,12 @@ class ActivityDisplay extends PartDisplay {
 				createInput(input, guide);
 			}
 		}
-
 		for(group in currentGroup.groups){
 			var guide = createGroupGuide(group);
 			// Specify inputs because of an "Can't iterate on a Dynamic value" error
 			var inputs: Array<Input> = group.inputs;
 
-			if(currentGroup.id=='dossier')
+			if(currentGroup.id == 'dossier')
 				nbDrops = inputs.length;
 
 			for(input in inputs)
@@ -145,6 +146,10 @@ class ActivityDisplay extends PartDisplay {
 			first = false;
 			needDisplay = false;
 		}
+
+		if(timelines.exists(currentGroup.timelineIn))
+			timelines.get(currentGroup.timelineIn).play();
+
 		if(!inputs.isEmpty()){
 			var lastTemplate: Fast = displayTemplates.get(inputs.first().ref).fast;
 			if(lastTemplate.has.validation)
@@ -231,6 +236,15 @@ class ActivityDisplay extends PartDisplay {
 		inputs.add(button);
 		if(input.selected)
 			toggleInput(button);
+
+		if(nextTimeline != null && timelines.exists(nextTimeline)){
+			var tl: Timeline = timelines.get(nextTimeline);
+			var i = 0;
+			while(i < tl.elements.length && tl.elements[i].dynamicValue != "$"+input.ref)
+				i++;
+			if(i < tl.elements.length)
+				tl.addElement(button, tl.elements[i].transition, tl.elements[i].delay);
+		}
 	}
 
 	private inline function createGroupGuide(groupe: Group):Guide

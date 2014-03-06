@@ -186,6 +186,7 @@ class WidgetContainer extends Widget{
 	{
 		super(xml);
 		content = new Sprite();
+		content.name = "root_content";
 		displays = new Map<String, Widget>();
 		buttonGroups = new Map<String, GenericStack<DefaultButton>>();
 		children = new Array<Widget>();

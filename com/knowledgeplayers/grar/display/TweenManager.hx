@@ -48,7 +48,7 @@ class TweenManager {
 
 		if(refs != null && refs != "" && display != null){
 			// Reset widget to clean previous tweens
-			if(Std.is(display, Widget))
+			if(Std.is(display, Widget) && display.stage == null)
 				cast(display, Widget).reset();
 
 			var arrayRef:Array<String> = ParseUtils.parseStringArray(refs);
