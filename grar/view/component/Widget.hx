@@ -32,6 +32,7 @@ typedef WidgetData = {
 	var filtersData : Null<Array<String>>;
 	var borderStyle : Null<{ thickness : Float, color : Color }>;
 	var position : Null<Positioning>;
+	@:optional var isBackground : Bool;
 }
 
 typedef BorderStyle = {
@@ -157,6 +158,8 @@ class Widget extends Sprite {
 	var callbacks : DisplayCallbacks;
 
 	var applicationTilesheet : TilesheetEx;
+
+	public var isBackground (default, null) : Bool = false;
 
 	/**
 	* Scale of the widget

@@ -242,7 +242,7 @@ trace("setContent, display type is "+d.type);
 		if (d.spritesheets != null) {
 
 			for (sk in d.spritesheets.keys()) {
-//trace("add TileLayer " + sk);
+trace("add TileLayer " + sk);
 				var layer = new TileLayer(spritesheets.get(sk));
 				layers.set(sk, layer);
 

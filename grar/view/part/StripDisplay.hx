@@ -210,7 +210,7 @@ trace("SETTING CURRENT ITEM TO "+item);
 //	override private function createImage(itemNode:Fast):Widget
 	override private function createImage(r : String, d : ImageData) : Widget {
 
-		if (d.isBackground) {
+		if (d.wd.isBackground) {
 
 			var img = new Image(callbacks, applicationTilesheet, d, spritesheets.get(d.tilesheetRef != null ? d.tilesheetRef : "ui"));
 			

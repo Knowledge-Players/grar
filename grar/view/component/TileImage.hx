@@ -54,7 +54,7 @@ class TileImage extends Image {
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove, 1000);
 		
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
-
+trace("TileImage "+ref+" added to stage");
 				if (tileSprite != null) {
 
 					origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY, alpha: tileSprite.alpha};

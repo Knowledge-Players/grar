@@ -42,7 +42,6 @@ typedef ImageData = {
 	var tilesheetRef : Null<String>;
 //	var tilesheet : Null<TilesheetEx>; // set in second step (instanciation)
 	var tile : Null<String>;
-	var isBackground : Bool;
 }
 
 /**
@@ -62,6 +61,8 @@ class Image extends Widget {
 		} else {
 
 			super(callbacks, applicationTilesheet, id.wd);
+
+			this.isBackground = id.wd.isBackground;
 
 			createImg(id);
 

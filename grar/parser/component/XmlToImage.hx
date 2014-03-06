@@ -32,7 +32,7 @@ class XmlToImage {
 
 		id.wd = XmlToWidget.parseWidgetData(f);
 		id.tilesheetRef = tilesheetRef;
-		id.isBackground = false;
+		id.wd.isBackground = false;
 		
 		if (f != null) {
 

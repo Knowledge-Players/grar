@@ -243,7 +243,7 @@ class XmlToDisplay {
 					case "background": // in StripDisplay, "background" means Image (not TileImage)
 
 						var id : ImageData = XmlToImage.parseImageData(f, f.has.spritesheet ? f.att.spritesheet : "ui");
-						id.isBackground = true;
+						id.wd.isBackground = true;
 
 						e = Image(id);
 
@@ -313,14 +313,14 @@ class XmlToDisplay {
 					if (f.has.src || f.has.filters || (f.has.extract && f.att.extract == "true")) {
 
 						var id : ImageData = XmlToImage.parseImageData(f, f.has.spritesheet ? f.att.spritesheet : "ui");
-						id.isBackground = f.name.toLowerCase() == "background";
+						id.wd.isBackground = f.name.toLowerCase() == "background";
 
 				        e = Image(id);
 					
 					} else {
 
 						var tid : TileImageData = XmlToImage.parseTileImageData(f, f.has.spritesheet ? f.att.spritesheet : "ui");
-						tid.id.isBackground = f.name.toLowerCase() == "background";
+						tid.id.wd.isBackground = f.name.toLowerCase() == "background";
 
 				        e = TileImage(tid);
 					}

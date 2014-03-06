@@ -269,7 +269,7 @@ class PartDisplay extends Display {
 	}
 
 	private function crawlTextGroup(item : Item, ? pattern : Pattern) : Void {
-
+trace("crawl "+item.ref);
 		if (textGroups != null) {
 //trace("crawlTextGroup "+item.ref);
 			var groupKey : String = null;
@@ -295,7 +295,7 @@ class PartDisplay extends Display {
 						if (pattern != null) {
 
 							textItem = pattern.getNextItem();
-						
+trace("got from pattern "+textItem.ref);
 						} else {
 
 							//textItem = cast(part.getNextElement(), Item);
@@ -304,7 +304,7 @@ class PartDisplay extends Display {
 								case Item(i):
 
 									textItem = i;
-
+trace("got from part "+textItem.ref);
 								default: // nothing
 							}
 						}
@@ -312,6 +312,7 @@ class PartDisplay extends Display {
 					} else {
 
 						textItem = item;
+trace("got from item "+textItem.ref);
 					}
 					if (textItem != null && textItem.endScreen) {
 
@@ -538,8 +539,11 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 			}
 			var video = cast(item, VideoItem);
 
-			cast(displaysRefs.get(item.ref), grar.view.component.container.VideoPlayer).setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, video.capture,video.autoFullscreen,video.thumbnail);
-			cast(displaysRefs.get(item.ref), grar.view.component.container.VideoPlayer).addEventListener(Event.COMPLETE, onVideoComplete);
+			cast(displaysRefs.get(item.ref), grar.view.component.container.VideoPlayer)
+				.setVideo(video.content, video.autoStart, video.loop, video.defaultVolume, 
+						video.capture,video.autoFullscreen,video.thumbnail);
+			cast(displaysRefs.get(item.ref), grar.view.component.container.VideoPlayer)
+				.addEventListener(Event.COMPLETE, onVideoComplete);
 		
 		} else {
 
@@ -549,7 +553,8 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
             }
             var sound = cast(item, SoundItem);
 
-            cast(displaysRefs.get(item.ref), grar.view.component.container.SoundPlayer).setSound(sound.content, sound.autoStart, sound.loop, sound.defaultVolume);
+            cast(displaysRefs.get(item.ref), grar.view.component.container.SoundPlayer)
+            	.setSound(sound.content, sound.autoStart, sound.loop, sound.defaultVolume);
         }
 
 		// Display Part
@@ -565,8 +570,9 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 			while (i < numChildren && !found) {
 
 				//if (Std.is(getChildAt(i),Widget) && (cast(getChildAt(i),Widget).zz > displaysRefs.get(item.ref).zz)) {
-				if (Std.is(getChildAt(i), Widget) && getZPosition(cast(getChildAt(i),Widget)) > getZPosition(displaysRefs.get(item.ref))) {
-//trace("Add "+item.ref+" at "+i);
+				if (Std.is(getChildAt(i), Widget) && 
+						getZPosition(cast(getChildAt(i),Widget)) > getZPosition(displaysRefs.get(item.ref))) {
+trace("Add item "+item.ref+" at "+i);
 					addChildAt(displaysRefs.get(item.ref), i);
 
 					found = true;
@@ -673,50 +679,62 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 
 		numWidgetReady = 0;
 		numWidgetAdded = 0;
+		var backs : Array<Widget> = [];
 
 		for (obj in displays) {
-
+//trace("about to add "+obj.ref);
 			if (!mustBeDisplayed(obj.ref)) {
-
+//trace("must not be displayed "+obj.ref);
 				continue;
 			}
 			obj.w.onComplete = onWidgetAdded;
 			
-			addChild(obj.w);
-
 			numWidgetAdded++;
-			/*
-			if (obj.zz == 0) {
 
-				addChildAt(obj, 0);
-			
-			} else {
+			if (obj.w.isBackground) {
 
-				addChild(obj);
+				backs.push(obj.w);
+				continue;
 			}
-			*/
+			addChild(obj.w);
+		}
+		while (backs.length > 0) {
+
+			addChildAt(backs.pop(), 0);
 		}
 	}
 
-	private function cleanDisplay():Void
-	{
+	private function cleanDisplay() : Void {
+
 		var toRemove = new GenericStack<DisplayObject>();
-		for(i in 0...numChildren){
-			if(Std.is(getChildAt(i), grar.view.component.container.DefaultButton) || Std.is(getChildAt(i), grar.view.component.container.ScrollPanel))
+
+		for (i in 0...numChildren) {
+
+			if (Std.is(getChildAt(i), grar.view.component.container.DefaultButton) || 
+					Std.is(getChildAt(i), grar.view.component.container.ScrollPanel)) {
+
 				toRemove.add(getChildAt(i));
+			}
 		}
-		for(item in currentItems){
+		for (item in currentItems) {
+
 			toRemove.add(item);
 		}
-		for(obj in toRemove)
-			if(contains(obj))
+		for (obj in toRemove) {
+
+			if (contains(obj)) {
+
 				removeChild(obj);
+			}
+		}
 	}
 
 	private inline function onWidgetAdded() : Void {
-
+//trace("onWidgetAdded");
 		numWidgetReady++;
-		if(numWidgetAdded == numWidgetReady && timelines.exists(nextTimeline)){
+
+		if (numWidgetAdded == numWidgetReady && timelines.exists(nextTimeline)) {
+trace("play timeline");
 			timelines.get(nextTimeline).play();
 		}
 	}
@@ -828,7 +846,7 @@ trace("ScrollPanel ignored: "+key);
 			if (Std.is(object, grar.view.component.Image) || Std.is(object, grar.view.component.container.SimpleContainer)) {
 
 				if (Lambda.has(text.images, key)) {
-
+trace("Added to currentItems "+object.ref);
 					currentItems.add(object);
 
 					return true;
