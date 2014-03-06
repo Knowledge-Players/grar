@@ -242,7 +242,7 @@ trace("setContent, display type is "+d.type);
 		if (d.spritesheets != null) {
 
 			for (sk in d.spritesheets.keys()) {
-trace("add TileLayer " + sk);
+//trace("add TileLayer " + sk);
 				var layer = new TileLayer(spritesheets.get(sk));
 				layers.set(sk, layer);
 
@@ -251,16 +251,16 @@ trace("add TileLayer " + sk);
 		}
 		var uiLayer = new TileLayer(applicationTilesheet);
 		layers.set("ui", uiLayer);
-		addChild(uiLayer.view);
+		addChild(uiLayer.view);// trace("add ui TileLayer ");
 
 		createDisplay(d);
 
 		if (d.transitionIn != null) {
 
 			transitionIn = d.transitionIn;
-trace("TRANSITION IN");
+//trace("TRANSITION IN");
 			addEventListener(Event.ADDED_TO_STAGE, function(e){
-trace("display added to stage");
+//trace("display added to stage");
 // 					TweenManager.applyTransition(this, transitionIn);
 					onTransitionRequest(this, transitionIn);
 
@@ -533,6 +533,10 @@ trace("display added to stage");
 	//private function createImage(itemNode:Fast):Widget
 	private function createTileImage(r : String, d : TileImageData) : Widget {
 
+		if (d.tilesheetName == null) {
+
+			d.tilesheetName = "ui";
+		}
 		if (!layers.exists(d.tilesheetName)) {
 
 			var layer = new TileLayer(applicationTilesheet);
@@ -636,11 +640,14 @@ trace("display added to stage");
 		}
 	}
 
-	private function checkRender(e:Event):Void
-	{
-		for(layer in renderLayers.keys()){
-			if(renderLayers.get(layer)){
+	private function checkRender(e:Event):Void {
+
+		for (layer in renderLayers.keys()) {
+
+			if (renderLayers.get(layer)) {
+
 				layer.render();
+
 				renderLayers.set(layer, false);
 			}
 		}

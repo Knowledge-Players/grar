@@ -269,7 +269,7 @@ class PartDisplay extends Display {
 	}
 
 	private function crawlTextGroup(item : Item, ? pattern : Pattern) : Void {
-trace("crawl "+item.ref);
+//trace("crawl "+item.ref);
 		if (textGroups != null) {
 //trace("crawlTextGroup "+item.ref);
 			var groupKey : String = null;
@@ -295,7 +295,7 @@ trace("crawl "+item.ref);
 						if (pattern != null) {
 
 							textItem = pattern.getNextItem();
-trace("got from pattern "+textItem.ref);
+//trace("got from pattern "+textItem.ref);
 						} else {
 
 							//textItem = cast(part.getNextElement(), Item);
@@ -304,7 +304,7 @@ trace("got from pattern "+textItem.ref);
 								case Item(i):
 
 									textItem = i;
-trace("got from part "+textItem.ref);
+//trace("got from part "+textItem.ref);
 								default: // nothing
 							}
 						}
@@ -312,7 +312,7 @@ trace("got from part "+textItem.ref);
 					} else {
 
 						textItem = item;
-trace("got from item "+textItem.ref);
+//trace("got from item "+textItem.ref);
 					}
 					if (textItem != null && textItem.endScreen) {
 
@@ -572,7 +572,7 @@ trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
 				//if (Std.is(getChildAt(i),Widget) && (cast(getChildAt(i),Widget).zz > displaysRefs.get(item.ref).zz)) {
 				if (Std.is(getChildAt(i), Widget) && 
 						getZPosition(cast(getChildAt(i),Widget)) > getZPosition(displaysRefs.get(item.ref))) {
-trace("Add item "+item.ref+" at "+i);
+//trace("Add item "+item.ref+" at "+i);
 					addChildAt(displaysRefs.get(item.ref), i);
 
 					found = true;
@@ -696,6 +696,7 @@ trace("Add item "+item.ref+" at "+i);
 				backs.push(obj.w);
 				continue;
 			}
+//trace("adding "+obj.ref);
 			addChild(obj.w);
 		}
 		while (backs.length > 0) {
@@ -736,6 +737,8 @@ trace("Add item "+item.ref+" at "+i);
 		if (numWidgetAdded == numWidgetReady && timelines.exists(nextTimeline)) {
 trace("play timeline");
 			timelines.get(nextTimeline).play();
+
+			layers.get("ui").render();
 		}
 	}
 

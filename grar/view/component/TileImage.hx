@@ -39,7 +39,7 @@ class TileImage extends Image {
 		this.tid = tid;
 
 		if (tid.tilesheetName != null) {
-
+//trace("For TileImage "+tid.id.wd.ref+" tilesheetName = "+tilesheetName);
 			tilesheetName = tid.tilesheetName;
             addEventListener(Event.ADDED_TO_STAGE, setTilesheet);
 
@@ -54,7 +54,7 @@ class TileImage extends Image {
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove, 1000);
 		
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
-trace("TileImage "+ref+" added to stage");
+//trace("TileImage "+ref+" added to stage");
 				if (tileSprite != null) {
 
 					origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY, alpha: tileSprite.alpha};
@@ -325,7 +325,7 @@ trace("TileImage "+ref+" added to stage");
 	//
 
 	private inline function init() : Void {
-
+//trace("init TileImage "+tid.id.wd.ref+" with "+tid.id.tile+"  and trueLayer is "+trueLayer);
 		tileSprite = new TileSprite(trueLayer, tid.id.tile);
 
 		if (tid.id.mirror != null) {
@@ -335,6 +335,7 @@ trace("TileImage "+ref+" added to stage");
 		tileSprite.visible = isVisible;
 
         trueLayer.addChild(tileSprite);
+
 		renderNeeded();
 	}
 
@@ -342,34 +343,44 @@ trace("TileImage "+ref+" added to stage");
 
 	private function renderNeeded(?e: Event): Void
 	{
-		if(parent == null){
+		if (parent == null) {
+
 			addEventListener(Event.ADDED_TO_STAGE, renderNeeded);
-		}
-		else{
-			if(hasEventListener(Event.ADDED_TO_STAGE))
+		
+		} else { 
+
+			if (hasEventListener(Event.ADDED_TO_STAGE)) {
+
 				removeEventListener(Event.ADDED_TO_STAGE, renderNeeded);
+			}
 
 			var container = parent;
-			while(container != null && !Std.is(container, grar.view.Display) && !Std.is(container, grar.view.component.container.WidgetContainer))
+			while (container != null && !Std.is(container, grar.view.Display) && 
+					!Std.is(container, grar.view.component.container.WidgetContainer)) {
+
 				container = container.parent;
+			}
 
 			// TODO unify (MVP)
-			if(Std.is(container, grar.view.Display)){
+			if (Std.is(container, grar.view.Display)) {
+
 				cast(container, grar.view.Display).renderLayers.set(tileSprite.layer, true);
 			}
-			if(Std.is(container, grar.view.component.container.WidgetContainer)){
+			if (Std.is(container, grar.view.component.container.WidgetContainer)) {
+
 				cast(container, grar.view.component.container.WidgetContainer).renderNeeded = true;
 			}
 		}
 	}
 
-	private inline function onRemove(e:Event):Void
-	{
+	private inline function onRemove(e : Event) : Void {
+
 		visible = false;
 	}
 
-	private function setTilesheet(e:Event):Void // This ugly workaround could be easily avoided by passing the layer in new() ?
+	private function setTilesheet(e : Event) : Void // This ugly workaround could be easily avoided by passing the layer in new() ?
 	{
+//trace("setTilesheet "+tilesheetName+" for "+ref);
 		removeEventListener(Event.ADDED_TO_STAGE, setTilesheet);
 		
 		var ancestor = parent;
@@ -383,7 +394,7 @@ trace("TileImage "+ref+" added to stage");
 			throw "[TileImage] Unable to find spritesheet '"+tilesheetName+"' for image '"+ref+"'.";
 		}
 		trueLayer = cast(ancestor, PartDisplay).getLayer(tilesheetName);
-
+//trace("trueLayer= "+trueLayer);
 		init();
 	}
 
