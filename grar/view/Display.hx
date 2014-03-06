@@ -325,7 +325,7 @@ trace("display added to stage");
 		}
 		for (elem in displays) {
 
-			if (Std.is(elem.w, DefaultButton)) { // could be avoided / improved with a collection of enums
+			if (Std.is(elem.w, grar.view.component.container.DefaultButton)) { // could be avoided / improved with a collection of enums
 
 				cast(elem.w,DefaultButton).initStates(timelines);
 			}
