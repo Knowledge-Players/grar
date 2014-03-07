@@ -19,6 +19,7 @@ class StyleSheet  {
 	}
 
 	public var name (default, null) : String;
+
 	public var styles (default, null) : StringMap<Style>;
 
 

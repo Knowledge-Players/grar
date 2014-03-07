@@ -43,6 +43,7 @@ class KpTextDownElement {
 	public function createSprite(_width:Float, trim: Bool = false):Sprite
 	{
 		var styleName = style;
+		
 		var output = new Sprite();
 		width = _width;
 		// Image Style
@@ -64,14 +65,14 @@ class KpTextDownElement {
             output = new UrlField(regexLink.matched(2));
         }
 		// Add background and sprite to textfield
-		var style = styleSheet.getStyle(styleName);
-		if(style != null){
+		var styleObj = styleSheet.getStyle(styleName);
+		if(styleObj != null){
 			var hasIcon = false;
-			if(style.icon != null){
+			if(styleObj.icon != null){
 				setIcons(content, styleName, output, trim);
 				hasIcon = true;
 			}
-			if(style.background != null){
+			if(styleObj.background != null){
 				setBackground(styleName, output);
 			}
 			if(!hasIcon && content != "")
@@ -115,15 +116,15 @@ class KpTextDownElement {
 			container.addChild(objLeft);
 	}
 
-	private function createTextField(content:String, ?styleName:String, trim: Bool = false, iconWidth: Float = 0):Sprite
-	{
+	private function createTextField(content:String, ?styleName:String, trim: Bool = false, iconWidth: Float = 0) : Sprite {
+
 		var container = new Sprite();
 		var tf = new StyledTextField(styleSheet.getStyle("text"));
 
 		var modificators = new Array<{match:{pos:Int, len:Int}, offset:Int, style:String}>();
 
-		var style:Style = styleSheet.getStyle(styleName);
-		tf.style = style;
+		var styleObj:Style = styleSheet.getStyle(styleName);
+		tf.style = styleObj;
 
 		styleName = StringTools.replace(styleName, "text", "");
 		if(styleName != "")
@@ -163,12 +164,12 @@ class KpTextDownElement {
 				return -1;
 		});
 
-		if(style.exists("case")){
-			if(style.getCase().toLowerCase() == "upper")
+		if(styleObj.exists("case")){
+			if(styleObj.getCase().toLowerCase() == "upper")
 				tf.text = content.toUpperCase();
-			else if(style.getCase().toLowerCase() == "lower")
+			else if(styleObj.getCase().toLowerCase() == "lower")
 				tf.text = content.toLowerCase();
-			else if(style.getCase().toLowerCase() == "title")
+			else if(styleObj.getCase().toLowerCase() == "title")
 				tf.text = content.substr(0,1).toUpperCase() + content.substr(1).toLowerCase();
 			else
 				tf.text = content;
@@ -181,17 +182,17 @@ class KpTextDownElement {
 		else
 			tf.width += (iconWidth + 5);
 		tf.wordWrap = true;
-		#if flash
-            tf.autoSize = style.getAlignment();
-        #else
-		tf.autoSize = switch(style.getAlignment().toLowerCase()){
+#if flash
+            tf.autoSize = styleObj.getAlignment();
+#else
+		tf.autoSize = switch(styleObj.getAlignment().toLowerCase()){
 			case "left": TextFieldAutoSize.LEFT;
 			case "center": TextFieldAutoSize.CENTER;
 			case "right": TextFieldAutoSize.RIGHT;
-			default: throw "[KpTextDownElement] Unsupported alignement "+style.getAlignment()+".";
+			default: throw "[KpTextDownElement] Unsupported alignement "+styleObj.getAlignment()+".";
 		}
-		#end
-		tf.height += style.getPadding()[2];
+#end
+		tf.height += styleObj.getPadding()[2];
 
 		container.addChild(tf);
 
@@ -199,23 +200,23 @@ class KpTextDownElement {
 		for(mod in modificators){
 			var position = mod.match.pos - offset;
 			offset += mod.offset;
-			var style: Style = styleSheet.getStyle(mod.style);
-			if(style == null)
+			var st: Style = styleSheet.getStyle(mod.style);
+			if(st == null)
 				throw "[Style] There is no style named '"+mod.style+"'.";
-			tf.setPartialStyle(style, position, position + mod.match.len - mod.offset);
+			tf.setPartialStyle(st, position, position + mod.match.len - mod.offset);
 		}
 
-		if(style.exists("highlight")){
+		if(styleObj.exists("highlight")){
 			var currentY = 0.0;
 			for(i in 0...tf.numLines){
 				var textField = new StyledTextField(tf.style);
 				textField.text = tf.getLineText(i);
 
-				setHighlight(style.get("highlight"), container, Math.max(textField.textWidth, textField.width), Math.max(textField.textHeight, textField.height), 0, currentY);
+				setHighlight(styleObj.get("highlight"), container, Math.max(textField.textWidth, textField.width), Math.max(textField.textHeight, textField.height), 0, currentY);
 				currentY += textField.textHeight;
 			}
 		}
-		if(style.exists("ruled")){
+		if(styleObj.exists("ruled")){
 			var currentY = 0.0;
 			for(i in 0...tf.numLines){
 				var textField = new StyledTextField(tf.style);
@@ -223,7 +224,7 @@ class KpTextDownElement {
 
 				if(i == 0)
 					currentY += textField.textHeight/2;
-				var rulingLine = style.get("ruled").split(" "); // 0 is thickness in px, 1 is color/bmp
+				var rulingLine = styleObj.get("ruled").split(" "); // 0 is thickness in px, 1 is color/bmp
 				if(rulingLine.length == 1)
 					rulingLine.push("0"); // Default color
 
@@ -235,6 +236,7 @@ class KpTextDownElement {
 		lineHeight = tf.textHeight / tf.numLines;
 		numLines = tf.numLines;
 		lineWidth = tf.textWidth;
+
 		return container;
 	}
 

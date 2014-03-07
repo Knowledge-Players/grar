@@ -29,7 +29,7 @@ class StyledTextField extends TextField {
 
 		//Default Values
 		autoSize = flash.text.TextFieldAutoSize.LEFT;
-		embedFonts = true;
+		embedFonts = false; //true; // FIXME problem with openfl Assets.getFont
 		selectable = mouseEnabled = false;
 	}
 
@@ -70,9 +70,13 @@ class StyledTextField extends TextField {
 
 	// Private
 
-	private function applyStyle(style:Style, startIndex:Int = -1, endIndex:Int = -1):Void
+	private function applyStyle(style : Style, startIndex : Int = -1, endIndex : Int = -1):Void
 	{
+//trace("font name is : "+style.getFont().fontName+", "+style.getFont().fontStyle+", "+style.getFont().fontType+
+//		", Asset is "+style.getFont());
+
 		var textFormat:TextFormat = new TextFormat(style.getFont().fontName, style.getSize(), style.getColor(), style.getBold(), style.getItalic(), style.getUnderline(), null, null, style.getAlignment(), 0, 0, 0, style.getLeading()[0]);
+		//var textFormat:TextFormat = new TextFormat(style.get("font"), style.getSize(), style.getColor(), style.getBold(), style.getItalic(), style.getUnderline(), null, null, style.getAlignment(), 0, 0, 0, style.getLeading()[0]);
 
 		if(startIndex == -1 || endIndex == -1)
 			defaultTextFormat = textFormat;

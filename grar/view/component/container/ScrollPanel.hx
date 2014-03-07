@@ -39,7 +39,7 @@ class ScrollPanel extends WidgetContainer {
 
 					this.styleSheetRef = ss;
 					this.style = s;
-					
+if (ref == "titreintro") trace("styleSheetRef= "+styleSheetRef+"    style= "+style);
 					if (c != null) {
 
 						setContent(onLocalizedContentRequest(c));
@@ -83,16 +83,9 @@ class ScrollPanel extends WidgetContainer {
 	{
 		clear();
 
-		if (styleSheetRef != null) {
+		styleSheet = onStylesheetRequest(styleSheetRef); // could be passed at new()
 
-			styleSheet = onStylesheetRequest(styleSheetRef);
-//trace("got stylesheet with id "+styleSheetRef+" => "+styleSheet);
-		} else {
-
-			styleSheet = onStylesheetRequest(null);
-//trace("got stylesheet with id "+styleSheetRef+" => "+styleSheet);
-		}
-
+if (ref == "titreintro") trace("got stylesheet with id "+styleSheetRef+" => "+styleSheet);
 		var offSetY : Float = 0;
 		var isFirst : Bool = true;
 
@@ -112,7 +105,7 @@ class ScrollPanel extends WidgetContainer {
 			element.styleSheet = styleSheet;
 //trace("styleSheet = "+styleSheet);
 			var st : Style = styleSheet.getStyle(element.style);
-			
+if (ref == "titreintro") trace("element with contentString = "+contentString+"   element.style= "+element.style+"   styleSheet= "+styleSheet+"    style= "+st);
 			if (st == null) {
 
 				throw "[ScrollPanel] There is no style \"" + element.style + "\" in style sheet \"" + styleSheet.name + "\".";
@@ -129,7 +122,7 @@ class ScrollPanel extends WidgetContainer {
 				iconOffset += st.iconMargin[1] + st.iconMargin[3];
 			}
 			var item = element.createSprite(maskWidth - padding[1] - padding[3] - iconOffset, trim);
-
+if (ref == "titreintro") trace("created text sprite with w: "+item.width+", h: "+item.height);
 			if (isFirst) {
 
 				offSetY += padding[0];
@@ -145,7 +138,7 @@ class ScrollPanel extends WidgetContainer {
 			offSetY += item.height + st.getLeading()[1];
 			
 			if (scrollable) {
-
+if (ref == "titreintro") trace("scrollable");
 				for (i in 0...element.numLines) {
 
 					var m = new Sprite();
@@ -158,15 +151,16 @@ class ScrollPanel extends WidgetContainer {
 			}
 			text.addChild(item);
 		}
+if (ref == "titreintro") trace("alpha is "+contentAlpha);
 		content.alpha = contentAlpha;
 		content.addChild(text);
 		
 		if (!scrollable) {
-
+if (ref == "titreintro") trace("not scrollable, mask w: "+text.width+", h: "+maskHeight);
 			DisplayUtils.initSprite(maskLine, text.width, maskHeight, 0, 1, minPaddingLeft);
 		}
-		content.addChild(maskLine);
-		text.mask = maskLine;
+		//content.addChild(maskLine);
+		//text.mask = maskLine;
 		addChild(content);
 		displayContent(trim);
 	}

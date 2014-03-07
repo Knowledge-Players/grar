@@ -8,6 +8,8 @@ import grar.util.ParseUtils;
 import haxe.ds.StringMap;
 import haxe.xml.Fast;
 
+using StringTools;
+
 class XmlToStyleSheet {
 
     static public function parse( xml : Xml ) : StyleSheetData {
@@ -36,34 +38,36 @@ class XmlToStyleSheet {
 		}
 		for (c in f.elements) {
 
-			if (c.name.toLowerCase() == "icon") {
+			switch (c.name.toLowerCase()) {
 
-				if (c.att.value.indexOf(".") < 0) {
+				case "icon":
 
-					style.iconSrc = c.att.value;
-				
-				} else {
+					if (c.att.value.indexOf(".") < 0) {
 
-					style.iconSrc = c.att.value;
-				}
-				style.iconPosition = c.att.position.toLowerCase();
-				
-				if (c.has.margin) {
+						style.iconSrc = c.att.value;
+					
+					} else {
 
-					setIconMargin(style, c.att.margin);
-				
-				} else {
+						style.iconSrc = c.att.value;
+					}
+					style.iconPosition = c.att.position.toLowerCase();
+					
+					if (c.has.margin) {
 
-					setIconMargin(style, "");
-				}
-			
-			} else if (c.name.toLowerCase() == "background") {
+						setIconMargin(style, c.att.margin);
+					
+					} else {
 
-				style.backgroundSrc = c.att.value;
+						setIconMargin(style, "");
+					}
 
-			} else {
+				case "background":
 
-				style.values.set(c.name, c.att.value);
+					style.backgroundSrc = c.att.value;
+
+				default:
+
+					style.values.set(c.name, c.att.value);
 			}
 		}
 		return style;

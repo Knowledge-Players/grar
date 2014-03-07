@@ -73,26 +73,31 @@ class JsonToStyleSheet {
 
 		for (field in fields) {
 
-			if (field == "icon") {
+			switch (field) {
 
-				// Icon src
-				if (Reflect.field(styleInfos, field).graphic.indexOf(".") < 0) {
+				case "icon":
 
-					style.iconSrc = styleInfos.icon.graphic;
-				}
-				// Icon margin
-				XmlToStyleSheet.setIconMargin(style, Reflect.hasField(styleInfos.icon, "margin") ? Reflect.field(styleInfos.icon, "margin") : "");
+					// Icon src
+					if (Reflect.field(styleInfos, field).graphic.indexOf(".") < 0) {
 
-				// Icon position
-				style.iconPosition = Reflect.field(styleInfos.icon, "position");
-			
-			} else if (field == "background") {
+						style.iconSrc = styleInfos.icon.graphic;
+					}
+					// Icon margin
+					XmlToStyleSheet.setIconMargin(style, Reflect.hasField(styleInfos.icon, "margin") ? Reflect.field(styleInfos.icon, "margin") : "");
 
-				style.backgroundSrc = Std.string(Reflect.field(styleInfos, field));
+					// Icon position
+					style.iconPosition = Reflect.field(styleInfos.icon, "position");
 
-			} else if (field != "inherit") {
+				case "background":
 
-				style.values.set(field, Reflect.field(styleInfos, field));
+					style.backgroundSrc = Std.string(Reflect.field(styleInfos, field));
+
+				default:
+
+					if (field != "inherit") {
+
+						style.values.set(field, Reflect.field(styleInfos, field));
+					}
 			}
 		}
 	}
