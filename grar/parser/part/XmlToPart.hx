@@ -30,6 +30,7 @@ class XmlToPart {
 	 * @param Xml describing the part
 	 */
 	static public function parse(xml : Xml) : PartialPart {
+
 		var f : Fast = new Fast(xml);
 
 		var pp : PartialPart = cast { };
@@ -204,7 +205,7 @@ class XmlToPart {
 
 							switch (elt) {
 
-								case Item(i) if (i.isText() || i.content == node.att.goTo):
+								case Item(i) if (i.isText() && i.content == node.att.goTo):
 
 									pd.buttonTargets.set(node.att.ref, elt);
 
