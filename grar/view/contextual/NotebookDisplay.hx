@@ -34,9 +34,10 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 	static private inline var TAB_GROUP_NAME : String = "tabs";
 	static private inline var STEP_GROUP_NAME : String = "steps";
 
-	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>) {
 
-		super(callbacks, applicationTilesheet);
+		super(callbacks, applicationTilesheet, transitions);
 
 // 		GameManager.instance.addEventListener(TokenEvent.ADD, onUnlocked); // replaced by setActivateToken()
 		
@@ -242,7 +243,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 					default: throw "wrong WidgetContainerData type passed to NotebookDisplay tabTemplate";
 				}
 
-				var tab = new DefaultButton(callbacks, applicationTilesheet, tabTemplate.e);
+				var tab = new DefaultButton(callbacks, applicationTilesheet, transitions, tabTemplate.e);
 
 				tab.x = totalX;
 				totalX += tab.width+xOffset;
@@ -305,7 +306,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 											}
 										}
 									}
-									button = new DefaultButton(callbacks, applicationTilesheet, d);
+									button = new DefaultButton(callbacks, applicationTilesheet, transitions, d);
 
 								default: throw "wrong WidgetContainerData type passed to NotebookDisplay chapterTemplates";
 							}
@@ -446,15 +447,15 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 
 				case Line(d):
 
-					guide = new Line(callbacks, d);
+					guide = new Line(transitions, d);
 
 				case Grid(d):
 
-					guide = new Grid(callbacks, d);
+					guide = new Grid(transitions, d);
 
 				case Curve(d):
 
-					guide = new Curve(callbacks, d);
+					guide = new Curve(transitions, d);
 			}
 			
 			// Create steps

@@ -1,9 +1,14 @@
 package grar.view.guide;
 
 import grar.view.component.TileImage;
+import grar.view.TransitionTemplate;
 
 import flash.display.DisplayObject;
 import flash.geom.Point;
+
+import grar.util.TweenUtils;
+
+import haxe.ds.StringMap;
 
 typedef LineData = {
 
@@ -19,9 +24,9 @@ typedef LineData = {
 class Line extends Guide {
 
 	//public function new(start: Point, end: Point, centerObject: Bool = false, ?transitionIn: String)
-	public function new(callbacks : grar.view.DisplayCallbacks, d : LineData) {
+	public function new(transitions : StringMap<TransitionTemplate>, d : LineData) {
 
-		super(callbacks);
+		super(transitions);
 		
 		startPoint = new Point(d.start[0],d.start[1]);
 		endPoint = new Point(d.end[0],d.end[1]);
@@ -79,12 +84,12 @@ class Line extends Guide {
 		if (tween != null) {
 
 //			TweenManager.applyTransition(object, tween);
-			onTransitionRequest(object, tween);
+			TweenUtils.applyTransition(object, transitions , tween);
 		
 		} else if(transitionIn != null) {
 
 //			TweenManager.applyTransition(object, transitionIn);
-			onTransitionRequest(object, transitionIn);
+			TweenUtils.applyTransition(object, transitions , transitionIn);
 		}
 
 		return object;

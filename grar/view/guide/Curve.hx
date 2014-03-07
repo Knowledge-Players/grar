@@ -1,13 +1,18 @@
 package grar.view.guide;
 
 import grar.view.component.TileImage;
+import grar.view.TransitionTemplate;
 
 import grar.util.MathUtils;
+
+import grar.util.TweenUtils;
 
 import flash.Lib;
 import flash.display.Shape;
 import flash.display.DisplayObject;
 import flash.geom.Point;
+
+import haxe.ds.StringMap;
 
 typedef CurveData = {
 
@@ -26,9 +31,9 @@ class Curve extends Guide
 {
 
 	//public function new(?center: Point, radius: Float = 1, minAngle: Float = 0, maxAngle: Float = 360, centerObject: Bool = false)
-	public function new(callbacks : grar.view.DisplayCallbacks, d : CurveData) {
+	public function new(transitions : StringMap<TransitionTemplate>, d : CurveData) {
 
-		super(callbacks);
+		super(transitions);
 
 		if (d.center != null) {
 
@@ -111,12 +116,12 @@ class Curve extends Guide
 		if (tween != null) {
 
 // 			TweenManager.applyTransition(object, tween);
-			onTransitionRequest(object, tween);
+			TweenUtils.applyTransition(object, transitions, tween);
 		
 		} else if(transitionIn != null) {
 
 // 			TweenManager.applyTransition(object, transitionIn);
-			onTransitionRequest(object, transitionIn);
+			TweenUtils.applyTransition(object, transitions, transitionIn);
 		}
 
 		return object;

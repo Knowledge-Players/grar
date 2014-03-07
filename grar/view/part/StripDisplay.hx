@@ -24,9 +24,10 @@ import haxe.ds.StringMap;
  */
 class StripDisplay extends PartDisplay {
 
-	public function new(callbacks, applicationTilesheet : aze.display.TilesheetEx, part : Part) {
+	public function new(callbacks, applicationTilesheet : aze.display.TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>, part : Part) {
 
-		super(callbacks, applicationTilesheet, part);
+		super(callbacks, applicationTilesheet, transitions, part);
 
 		boxes = new StringMap();
 	}
@@ -87,7 +88,7 @@ trace("create strip display");
 
 			case BoxDisplay(d):
 
-				elem = new BoxDisplay(callbacks, applicationTilesheet, d, spritesheets.get(d.spritesheetRef));
+				elem = new BoxDisplay(callbacks, applicationTilesheet, transitions, d, spritesheets.get(d.spritesheetRef));
 
 			default: // nothing
 		}
@@ -212,7 +213,7 @@ trace("SETTING CURRENT ITEM TO "+item);
 
 		if (d.wd.isBackground) {
 
-			var img = new Image(callbacks, applicationTilesheet, d, spritesheets.get(d.tilesheetRef != null ? d.tilesheetRef : "ui"));
+			var img = new Image(callbacks, applicationTilesheet, transitions, d, spritesheets.get(d.tilesheetRef != null ? d.tilesheetRef : "ui"));
 			
 			addChild(img);
 			

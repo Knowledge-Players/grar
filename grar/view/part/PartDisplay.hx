@@ -11,6 +11,8 @@ import grar.view.component.Image;
 import grar.view.component.CharacterDisplay;
 import grar.view.element.Timeline;
 
+import grar.util.TweenUtils;
+
 import grar.model.part.sound.SoundItem;
 import grar.model.part.Item;
 import grar.model.part.video.VideoItem;
@@ -38,9 +40,10 @@ class PartDisplay extends Display {
      * Constructor
      * @param	part : Part to display
      */
-	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, part : Part) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>, part : Part) {
 
-		super(callbacks, applicationTilesheet);
+		super(callbacks, applicationTilesheet, transitions);
 		
 		this.onActivateTokenRequest = function(tokenId : String){ callbacks.onActivateTokenRequest(tokenId); }
 
@@ -194,7 +197,7 @@ class PartDisplay extends Display {
 	public function startPart(startPosition:Int = -1):Void
 	{
 // 		TweenManager.applyTransition(this, transitionIn);
- 		onTransitionRequest(this, transitionIn);
+ 		TweenUtils.applyTransition(this, transitions, transitionIn);
 
 		nextElement(startPosition);
 	}
@@ -340,7 +343,7 @@ class PartDisplay extends Display {
 
 			case IntroScreen(d):
 
-				var intro = new IntroScreen(callbacks, applicationTilesheet, d);
+				var intro = new IntroScreen(callbacks, applicationTilesheet, transitions, d);
 //				intro.zz = zIndex;
 				displays.push({ w: intro, ref: r });
 				displaysRefs.set(r, intro);

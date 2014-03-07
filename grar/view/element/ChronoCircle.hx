@@ -8,12 +8,15 @@ import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.Sprite;
 
+import haxe.ds.StringMap;
+
 class ChronoCircle extends WidgetContainer {
 
     //public function new(_node:Fast):Void
-    public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, ccd : WidgetContainerData) : Void {
+    public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>, ccd : WidgetContainerData) : Void {
 
-        super(callbacks, applicationTilesheet, ccd);
+        super(callbacks, applicationTilesheet, transitions, ccd);
 
         switch(ccd.type) {
 

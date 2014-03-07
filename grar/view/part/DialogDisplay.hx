@@ -10,8 +10,12 @@ import grar.model.part.Part;
 import grar.model.part.dialog.ChoicePattern;
 import grar.model.part.Pattern;
 
+import grar.util.TweenUtils;
+
 import flash.events.Event;
 import flash.events.MouseEvent;
+
+import haxe.ds.StringMap;
 
 /**
  * Display of a dialog
@@ -23,9 +27,10 @@ class DialogDisplay extends PartDisplay {
      * Constructor
      * @param	part : DialogPart to display
      */
-	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, part : Part) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>, part : Part) {
 
-		super(callbacks, applicationTilesheet, part);
+		super(callbacks, applicationTilesheet, transitions, part);
 	}
 
 	/**
@@ -150,7 +155,7 @@ class DialogDisplay extends PartDisplay {
 			}
 
 // 			TweenManager.applyTransition(tooltip, pattern.tooltipTransition);
-			onTransitionRequest(tooltip, pattern.tooltipTransition);
+			TweenUtils.applyTransition(tooltip, transitions, pattern.tooltipTransition);
 
 			addChildAt(tooltip, i);
 		}

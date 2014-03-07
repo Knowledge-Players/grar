@@ -8,10 +8,6 @@ typedef DisplayCallbacks = {
 
 	var onQuitGameRequest : Void -> Void;
 
-	var onTransitionRequest : Dynamic -> String -> Float -> motion.actuators.GenericActuator.IGenericActuator;
-
-	var onStopTransitionRequest : Dynamic -> Null<Dynamic> -> Bool -> Bool -> Void;
-
 	var onRestoreLocaleRequest : Void -> Void;
 
 	var onLocalizedContentRequest : String -> String;

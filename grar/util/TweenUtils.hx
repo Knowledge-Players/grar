@@ -1,4 +1,4 @@
-package grar.view.tweening;
+package grar.util;
 
 import motion.Actuate;
 import motion.actuators.GenericActuator;
@@ -31,17 +31,11 @@ import flash.geom.ColorTransform;
 /**
  * Manage the most frequently used tweens
  */
-class Tweener {
-
-	public function new(t : StringMap<TransitionTemplate>) {
-
-		this.transitions = t;
-	}
-
-	private var transitions : StringMap<TransitionTemplate>;
+class TweenUtils {
+/*
 
 	private var discovering : { display : Sprite, ref : String };
-
+*/
 
 	///
 	// API
@@ -53,7 +47,7 @@ class Tweener {
     * @param   ref : The name of the fade transition to applied
     * @return the actuator
     **/
-	public function applyTransition(display : Dynamic, refs : String, ? delay : Float = 0) : Null<IGenericActuator> {
+	static public function applyTransition(display : Dynamic, transitions : StringMap<TransitionTemplate>, refs : String, ? delay : Float = 0) : Null<IGenericActuator> {
 
 		var transition : IGenericActuator = null;
 
@@ -63,14 +57,14 @@ class Tweener {
 			
 			for (ref in arrayRef) {
 
-				transition = startTransition(display, ref, delay);
+				transition = startTransition(display, transitions, ref, delay);
 			}
 		}
 
 		return transition;
 	}
-
-	public function fastForwardDiscover():Void
+/*
+	static public function fastForwardDiscover():Void
 	{
 		if(discovering != null){
 			for(i in 0...discovering.display.numChildren)
@@ -80,8 +74,8 @@ class Tweener {
 		if(discovering != null)
 			discover(discovering.display, discovering.ref, discovering.display.numChildren);
 	}
-
-	public function stop(target : Dynamic, properties : Dynamic = null, complete : Bool = false, sendEvent : Bool = true) : Void {
+*/
+	static public function stop(target : Dynamic, properties : Dynamic = null, complete : Bool = false, sendEvent : Bool = true) : Void {
 
 		Actuate.stop(target, properties, complete, sendEvent);
 	}
@@ -91,7 +85,7 @@ class Tweener {
 	// INTERNALS
 	//
 
-	private function startTransition(display : Dynamic, ref : String, delay : Float = 0) : Null<IGenericActuator> {
+	static private function startTransition(display : Dynamic, transitions : StringMap<TransitionTemplate>, ref : String, delay : Float = 0) : Null<IGenericActuator> {
 
 		var transition : Null<TransitionTemplate> = transitions.get(ref);
 
@@ -107,29 +101,29 @@ class Tweener {
 
 		switch (transition.type) {
 
-			case Zoom(x, y, width, height):
+			case Zoom(_, _, _, _):
 
 				actuator = zoom(display, transition);
 
-			case Fade(alpha):
+			case Fade(_):
 
 				actuator = fade(display, transition);
 
-			case Slide(x, y):
+			case Slide(_, _):
 
 				actuator = slide(display, transition);
 
-			case Rotate(x, y, r):
+			case Rotate(_, _, _):
 
 				actuator = rotate(display, transition);
 
-			case Transform(color):
+			case Transform(_):
 
 				actuator = transform(display, transition);
 
-			case Mask(transitions, chaining):
+			case Mask(_, _):
 
-				actuator = discover(display, ref, 0);
+				actuator = discover(display, transitions, ref, 0);
 
 		}
         actuator.delay(totalDelay);
@@ -152,7 +146,7 @@ class Tweener {
      * @param   ref : The name of the fade transition to applied
      * @return the actuator
      **/
-	private function fade(display : Dynamic, t : TransitionTemplate) : IGenericActuator {
+	static private function fade(display : Dynamic, t : TransitionTemplate) : IGenericActuator {
 
 		switch (t.type) {
 
@@ -176,7 +170,7 @@ class Tweener {
     * @param    ref : The name of the fade transition to applied
     * @return the actuator
     **/
-	private function zoom(display : Dynamic, t : TransitionTemplate) : IGenericActuator {
+	static private function zoom(display : Dynamic, t : TransitionTemplate) : IGenericActuator {
 
 		switch (t.type) {
 
@@ -206,7 +200,7 @@ class Tweener {
      * @param    ref : The name of the fade transition to applied
      * @return the actuator
      */
-	private function slide(display : Dynamic, t : TransitionTemplate) : IGenericActuator {
+	static private function slide(display : Dynamic, t : TransitionTemplate) : IGenericActuator {
 
 		switch (t.type) {
 
@@ -225,7 +219,7 @@ class Tweener {
 		return null;
 	}
 
-    private function rotate(display : Dynamic, t : TransitionTemplate) : IGenericActuator {
+    static private function rotate(display : Dynamic, t : TransitionTemplate) : IGenericActuator {
 
 		switch (t.type) {
 
@@ -246,7 +240,7 @@ class Tweener {
 		return null;
     }
 
-	private function transform(display : Dynamic, t : TransitionTemplate) : IGenericActuator {
+	static private function transform(display : Dynamic, t : TransitionTemplate) : IGenericActuator {
 
 		switch (t.type) {
 
@@ -266,7 +260,7 @@ class Tweener {
      * @param   ref : The name of the fade transition to applied
      * @return the actuator
      **/
-	private function discover(display : Dynamic, ref : String, it : Int) : IGenericActuator {
+	static private function discover(display : Dynamic, transitions : StringMap<TransitionTemplate>, ref : String, it : Int) : IGenericActuator {
 
 		var mask : Sprite;
 
@@ -284,7 +278,7 @@ class Tweener {
 		}
 		if (it < mask.numChildren) {
 
-			discovering = { display: mask, ref: ref };
+			//discovering = { display: mask, ref: ref }; // FIXME
 
 			for (i in 0...mask.numChildren) {
 
@@ -349,7 +343,7 @@ class Tweener {
 		} else {
 
 			// Element is scrollable. Can't use discover
-			discovering = null;
+			//discovering = null; // FIXME ?
 			
 			for (i in 0...mask.numChildren) {
 
@@ -361,7 +355,7 @@ class Tweener {
 		}
 	}
 
-	private function getEasing(t : TransitionTemplate) : IEasing {
+	static private function getEasing(t : TransitionTemplate) : IEasing {
 
 		if (t.easingType != null) {
 
@@ -376,12 +370,12 @@ class Tweener {
 		}
 	}
 
-	private function resetTransform(display:Dynamic):Void
+	static private function resetTransform(display:Dynamic):Void
 	{
 		display.transform.colorTransform = new ColorTransform(1, 1, 1, 1, 0, 0, 0, 0);
 	}
 
-	private function parseValue(parameter:String, value:String, display:Dynamic):Array<Float>
+	static private function parseValue(parameter:String, value:String, display:Dynamic):Array<Float>
 	{
 		var inOut:Array<String> = value.split(":");
 		var output:Array<Float> = new Array<Float>();
@@ -412,7 +406,7 @@ class Tweener {
 		return output;
 	}
 
-    private function createTransition(display:Dynamic,duration:Float,params:Dynamic):IGenericActuator
+    static private function createTransition(display:Dynamic,duration:Float,params:Dynamic):IGenericActuator
     {
         return Actuate.tween(display, duration, params);
     }
@@ -426,7 +420,7 @@ class Tweener {
 	 * @param	customActuator		A custom actuator to use instead of the default (Optional)
 	 * @return		The current actuator instance, which can be used to apply properties like ease, delay, onComplete or onUpdate
 	 */
-	private function tween (target:Dynamic, duration:Float, properties:Dynamic, overwrite:Bool = true, customActuator:Class <GenericActuator> = null):IGenericActuator
+	static private function tween (target:Dynamic, duration:Float, properties:Dynamic, overwrite:Bool = true, customActuator:Class <GenericActuator> = null):IGenericActuator
 	{
 		return Actuate.tween(target, duration, properties, overwrite, customActuator);
 	}

@@ -12,17 +12,19 @@ import flash.media.SoundChannel;
 import flash.media.Sound;
 
 import haxe.ds.GenericStack;
+import haxe.ds.StringMap;
 
-class SoundPlayer extends WidgetContainer
-{
+class SoundPlayer extends WidgetContainer {
 
     //public function new(?xml: Fast, ?tilesheet: TilesheetEx)
-    public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, spd : WidgetContainerData, ? tilesheet : TilesheetEx) {
+    public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
+                            transitions : StringMap<TransitionTemplate>, spd : WidgetContainerData, 
+                            ? tilesheet : TilesheetEx) {
 
         playButtons = new GenericStack<DefaultButton>();
 
         //super(xml, tilesheet);
-        super(callbacks, applicationTilesheet, spd, tilesheet);
+        super(callbacks, applicationTilesheet, transitions, spd, tilesheet);
 
         soundChannel = new SoundChannel();
     }

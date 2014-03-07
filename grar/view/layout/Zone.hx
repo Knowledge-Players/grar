@@ -8,6 +8,7 @@ import grar.view.component.container.DefaultButton;
 import grar.view.component.Widget;
 import grar.view.component.ProgressBar;
 import grar.view.Display;
+import grar.view.TransitionTemplate;
 
 import grar.util.DisplayUtils;
 
@@ -17,15 +18,18 @@ import flash.events.KeyboardEvent;
 import flash.events.Event;
 import flash.Lib;
 
+import haxe.ds.StringMap;
+
 /**
  * Graphic zone in the layout
  **/
 class Zone extends Display {
 
 	//public function new(_width:Float, _height:Float):Void
-	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, _width : Float, _height : Float) : Void {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>, _width : Float, _height : Float) : Void {
 
-		super(callbacks, applicationTilesheet);
+		super(callbacks, applicationTilesheet, transitions);
 
 		zoneWidth = _width;
 		zoneHeight = _height;
@@ -110,7 +114,7 @@ class Zone extends Display {
 					
 					for (row in zones) {
 
-						var zone = new Zone(callbacks, applicationTilesheet, zoneWidth, heights[i]);
+						var zone = new Zone(callbacks, applicationTilesheet, transitions, zoneWidth, heights[i]);
 						zone.x = 0;
 						zone.y = yOffset;
 
@@ -131,7 +135,7 @@ class Zone extends Display {
 
 					for (column in zones) {
 
-						var zone = new Zone(callbacks, applicationTilesheet, widths[j], zoneHeight);
+						var zone = new Zone(callbacks, applicationTilesheet, transitions, widths[j], zoneHeight);
 						zone.x = xOffset;
 						zone.y = 0;
 
@@ -275,7 +279,7 @@ class Zone extends Display {
 
 				d.applicationTilesheet = applicationTilesheet;
 
-				fastnav = new DropdownMenu(callbacks, applicationTilesheet, d, true);
+				fastnav = new DropdownMenu(callbacks, applicationTilesheet, transitions, d, true);
 #end
 			default: // nothing
 		}
@@ -298,7 +302,7 @@ class Zone extends Display {
 //	private function createProgressBar(element : Fast) : ProgressBar {
 	private function createProgressBar(d : WidgetContainerData) : ProgressBar {
 
-		var progress = new ProgressBar(callbacks, applicationTilesheet, d);
+		var progress = new ProgressBar(callbacks, applicationTilesheet, transitions, d);
 
 		addChild(progress);
 

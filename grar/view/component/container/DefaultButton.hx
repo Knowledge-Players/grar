@@ -22,7 +22,7 @@ class DefaultButton extends WidgetContainer {
 
 // public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>) // pStates never passed ??
 	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
-							? dbd : Null<WidgetContainerData>) {
+							transitions : StringMap<TransitionTemplate>, ? dbd : Null<WidgetContainerData>) {
 		
 		this.timelines = new Map<String, Timeline>();
 		this.enabledState = new Map<String, Bool>();
@@ -30,14 +30,14 @@ class DefaultButton extends WidgetContainer {
 
 		if (dbd == null) {
 
-			super(callbacks, applicationTilesheet);
+			super(callbacks, applicationTilesheet, transitions);
 
 			this.defaultState = "active";
 			this.enabled = true;
 
 		} else {
 
-			super(callbacks, applicationTilesheet, dbd);
+			super(callbacks, applicationTilesheet, transitions, dbd);
 
 			switch(dbd.type) {
 

@@ -23,7 +23,7 @@ import grar.view.layout.Layout;
 import grar.view.layout.Zone;
 import grar.view.style.StyleSheet;
 import grar.view.style.Style;
-import grar.view.tweening.Tweener;
+//import grar.view.tweening.Tweener;
 import grar.view.FilterData;
 import grar.view.TransitionTemplate;
 import grar.view.ElementData;
@@ -69,8 +69,6 @@ class Application {
 				onContextualDisplayRequest: function(c : ContextualType, ? ho : Bool = true){ this.displayContextual(c, ho); },
 				onContextualHideRequest: function(c : ContextualType){ this.hideContextual(c); },
 				onQuitGameRequest: function(){ this.onQuitGameRequest(); },
-				onTransitionRequest: function(t : Dynamic, tt : String, de : Float = 0){ return this.onTransitionRequest(t, tt, de); },
-				onStopTransitionRequest: function(t : Dynamic, ? p : Null<Dynamic>, ? c : Bool = false, ? se : Bool = true){ this.onStopTransitionRequest(t, p, c, se); },
 				onRestoreLocaleRequest: function(){ this.onRestoreLocaleRequest(); },
 				onLocalizedContentRequest: function(k:String){ return this.onLocalizedContentRequest(k); },
 				onLocaleDataPathRequest: function(p:String){ this.onLocaleDataPathRequest(p); },
@@ -89,6 +87,8 @@ class Application {
 	 * The application tilesheet (previously in UIFactory)
 	 */
 	public var tilesheet (default, default) : TilesheetEx;
+
+	public var transitions (default, default) : StringMap<TransitionTemplate>;
 
 	public var filters (default, default) : Null<StringMap<BitmapFilter>>;
 
@@ -126,7 +126,7 @@ class Application {
 
 	var callbacks : grar.view.DisplayCallbacks;
 
-	var tweener : Null<Tweener> = null;
+	//var tweener : Null<Tweener> = null;
 
 	public var currentLayout : Null<Layout> = null;
 
@@ -295,12 +295,12 @@ class Application {
 			this.filters.set(fk, nf);
 		}
 	}
-
+/*
 	public function initTweener(t : StringMap<TransitionTemplate>) : Void {
 
 		this.tweener = new Tweener(t);
 	}
-
+*/
 	public function changeLayout(l : String) : Void { trace("CHANGE LAYOUT " + l);
 
 		if (l == null) {
@@ -370,7 +370,7 @@ class Application {
 
 	public function createTokenNotification(d : WidgetContainerData) : Void {
 
-		tokenNotification = new TokenNotification(callbacks, tilesheet, d);
+		tokenNotification = new TokenNotification(callbacks, tilesheet, transitions, d);
 
 		onTokenNotificationChanged();
 	}
@@ -383,7 +383,7 @@ class Application {
 
 		for (lk in lm.keys()) {
 
-			var nl : Layout = new Layout(callbacks, tilesheet, null, null, lm.get(lk));
+			var nl : Layout = new Layout(callbacks, tilesheet, transitions, null, null, lm.get(lk));
 
 			l.set(lk, nl);
 
@@ -397,7 +397,7 @@ class Application {
 
 	public function createNotebook(d : DisplayData) : Void {
 
-		var n : NotebookDisplay = new NotebookDisplay(callbacks, tilesheet);
+		var n : NotebookDisplay = new NotebookDisplay(callbacks, tilesheet, transitions);
 
 		n.onClose = function() { doHideContextual(n); }
 		n.onNotebookAdded = function() {
@@ -429,7 +429,7 @@ class Application {
 
 	public function createMenu(d : DisplayData) : Void {
 
-		var m : MenuDisplay = new MenuDisplay(callbacks, tilesheet);
+		var m : MenuDisplay = new MenuDisplay(callbacks, tilesheet, transitions);
 
 		m.onMenuAdded = function() { onMenuAdded(); }
 		m.onMenuReady = function() {
@@ -725,35 +725,23 @@ trace("create part display for "+part.id);
 
 		if (part.isDialog()) {
 
-			creation = new DialogDisplay(callbacks, tilesheet, part);
+			creation = new DialogDisplay(callbacks, tilesheet, transitions, part);
 		
 		} else if(part.isStrip()) {
 
-			creation = new StripDisplay(callbacks, tilesheet, part);
+			creation = new StripDisplay(callbacks, tilesheet, transitions, part);
 		
 		} else if(part.isActivity()) {
 
-			creation = new ActivityDisplay(callbacks, tilesheet, part);
+			creation = new ActivityDisplay(callbacks, tilesheet, transitions, part);
 		
 		} else {
 
-			creation = new PartDisplay(callbacks, tilesheet, part);
+			creation = new PartDisplay(callbacks, tilesheet, transitions, part);
 		}
 
 		return creation;
 	}
-
-	function onTransitionRequest(target : Dynamic, transition : String, delay : Float = 0) : IGenericActuator {
-
-		return tweener.applyTransition(target, transition, delay);
-	}
-
-	function onStopTransitionRequest(target : Dynamic, ? properties : Null<Dynamic>, 
-												? complete : Bool = false, ? sendEvent : Bool = true) : Void {
-
-		tweener.stop(target, properties, complete, sendEvent);
-	}
-
 
 	// WIP
 

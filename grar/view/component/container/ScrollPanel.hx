@@ -16,6 +16,8 @@ import com.knowledgeplayers.utils.assets.AssetsStorage;
 import flash.display.BitmapData;
 import flash.display.Sprite;
 
+import haxe.ds.StringMap;
+
 /**
  * ScrollPanel to manage text overflow, with auto scrollbar
  */
@@ -23,15 +25,15 @@ class ScrollPanel extends WidgetContainer {
 
 //  public function new(?xml: Fast, ?width:Float, ?height:Float, ?_styleSheet:String) {
 	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
-							? spd : Null<WidgetContainerData>) {
+							transitions : StringMap<TransitionTemplate>, ? spd : Null<WidgetContainerData>) {
 
 		if (spd == null) {
 
-			super(callbacks, applicationTilesheet);
+			super(callbacks, applicationTilesheet, transitions);
 
 		} else {
 
-			super(callbacks, applicationTilesheet, spd);
+			super(callbacks, applicationTilesheet, transitions, spd);
 
 			switch(spd.type) {
 
@@ -39,7 +41,7 @@ class ScrollPanel extends WidgetContainer {
 
 					this.styleSheetRef = ss;
 					this.style = s;
-if (ref == "titreintro") trace("styleSheetRef= "+styleSheetRef+"    style= "+style);
+//if (ref == "titreintro") trace("styleSheetRef= "+styleSheetRef+"    style= "+style);
 					if (c != null) {
 
 						setContent(onLocalizedContentRequest(c));
@@ -85,7 +87,7 @@ if (ref == "titreintro") trace("styleSheetRef= "+styleSheetRef+"    style= "+sty
 
 		styleSheet = onStylesheetRequest(styleSheetRef); // could be passed at new()
 
-if (ref == "titreintro") trace("got stylesheet with id "+styleSheetRef+" => "+styleSheet);
+//if (ref == "titreintro") trace("got stylesheet with id "+styleSheetRef+" => "+styleSheet);
 		var offSetY : Float = 0;
 		var isFirst : Bool = true;
 
@@ -105,7 +107,7 @@ if (ref == "titreintro") trace("got stylesheet with id "+styleSheetRef+" => "+st
 			element.styleSheet = styleSheet;
 //trace("styleSheet = "+styleSheet);
 			var st : Style = styleSheet.getStyle(element.style);
-if (ref == "titreintro") trace("element with contentString = "+contentString+"   element.style= "+element.style+"   styleSheet= "+styleSheet+"    style= "+st);
+//if (ref == "titreintro") trace("element with contentString = "+contentString+"   element.style= "+element.style+"   styleSheet= "+styleSheet+"    style= "+st);
 			if (st == null) {
 
 				throw "[ScrollPanel] There is no style \"" + element.style + "\" in style sheet \"" + styleSheet.name + "\".";
@@ -122,7 +124,7 @@ if (ref == "titreintro") trace("element with contentString = "+contentString+"  
 				iconOffset += st.iconMargin[1] + st.iconMargin[3];
 			}
 			var item = element.createSprite(maskWidth - padding[1] - padding[3] - iconOffset, trim);
-if (ref == "titreintro") trace("created text sprite with w: "+item.width+", h: "+item.height);
+//if (ref == "titreintro") trace("created text sprite with w: "+item.width+", h: "+item.height);
 			if (isFirst) {
 
 				offSetY += padding[0];
@@ -138,7 +140,7 @@ if (ref == "titreintro") trace("created text sprite with w: "+item.width+", h: "
 			offSetY += item.height + st.getLeading()[1];
 			
 			if (scrollable) {
-if (ref == "titreintro") trace("scrollable");
+//if (ref == "titreintro") trace("scrollable");
 				for (i in 0...element.numLines) {
 
 					var m = new Sprite();
@@ -151,12 +153,12 @@ if (ref == "titreintro") trace("scrollable");
 			}
 			text.addChild(item);
 		}
-if (ref == "titreintro") trace("alpha is "+contentAlpha);
+//if (ref == "titreintro") trace("alpha is "+contentAlpha);
 		content.alpha = contentAlpha;
 		content.addChild(text);
 		
 		if (!scrollable) {
-if (ref == "titreintro") trace("not scrollable, mask w: "+text.width+", h: "+maskHeight);
+//if (ref == "titreintro") trace("not scrollable, mask w: "+text.width+", h: "+maskHeight);
 			DisplayUtils.initSprite(maskLine, text.width, maskHeight, 0, 1, minPaddingLeft);
 		}
 		//content.addChild(maskLine);

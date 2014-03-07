@@ -5,8 +5,11 @@ import motion.actuators.GenericActuator.IGenericActuator;
 import grar.view.guide.Line;
 import grar.view.guide.Grid;
 import grar.view.guide.Curve;
+import grar.view.TransitionTemplate;
 
 import flash.display.DisplayObject;
+
+import haxe.ds.StringMap;
 
 enum GuideData {
 
@@ -17,10 +20,9 @@ enum GuideData {
 
 class Guide {
 
-	public function new(callbacks : grar.view.DisplayCallbacks) {
+	public function new(transitions : StringMap<TransitionTemplate>) {
 
-		this.onTransitionRequest = function(target : Dynamic, transition : String, ? delay : Float = 0) { return callbacks.onTransitionRequest(target, transition, delay); }
-        this.onStopTransitionRequest = function(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true){ callbacks.onStopTransitionRequest(target, properties, complete, sendEvent); }
+		this.transitions = transitions;
 	}
 
 	/**
@@ -38,14 +40,7 @@ class Guide {
 	 **/
 	public var transitionIn (default, default) : String;
 
-
-	///
-	// CALLBACKS
-	//
-
-	public dynamic function onTransitionRequest(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
-
-	public dynamic function onStopTransitionRequest(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
+	var transitions : StringMap<TransitionTemplate>;
 
 
 	///

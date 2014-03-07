@@ -12,16 +12,19 @@ import flash.geom.ColorTransform;
 import flash.geom.Rectangle;
 import flash.events.MouseEvent;
 
+import haxe.ds.StringMap;
+
 /**
  * Scrollbar for text overflow
  */
 class ScrollBar extends Widget {
 
-	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, width : Float, 
-							tilesheet : TilesheetEx, tile : String, ? bgTile : Null<String>,  scale9Grid : Rectangle, 
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>, width : Float, 
+							tilesheet : TilesheetEx, tile : String, ? bgTile : Null<String>, scale9Grid : Rectangle, 
 							? bgScale9Grid : Rectangle, ? cursorColor : String, ? bgColor : String) {
 
-		super(callbacks, applicationTilesheet);
+		super(callbacks, applicationTilesheet, transitions);
 
 		bgSprite = new Sprite();
 		var bgData : BitmapData = DisplayUtils.getBitmapDataFromLayer(tilesheet, bgTile != null ? bgTile : tile);

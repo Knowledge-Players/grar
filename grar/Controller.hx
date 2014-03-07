@@ -97,7 +97,7 @@ class Controller {
 
 						gameSrv.fetchTransitions( displayXml.node.Transitions.att.display, function(t:StringMap<grar.view.TransitionTemplate>){
 
-								application.initTweener(t);
+								application.transitions = t;
 
 							}, onError );
 

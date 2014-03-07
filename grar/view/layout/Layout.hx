@@ -17,16 +17,17 @@ typedef LayoutData = {
 class Layout {
 
 //	public function new(?_name:String, ?_content:Zone, ?_fast:Fast):Void
-	public function new(callbacks : grar.view.DisplayCallbacks, at : aze.display.TilesheetEx, ? n : Null<String>, ? c : Null<Zone>, ? ld : Null<LayoutData>) : Void {
+	public function new(callbacks : grar.view.DisplayCallbacks, at : aze.display.TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>, ? n : Null<String>, 
+							? c : Null<Zone>, ? ld : Null<LayoutData>) : Void {
 
 		zones = new StringMap();
 
 		this.callbacks = callbacks;
+
 		this.onContextualDisplayRequest = function(c : grar.view.Application.ContextualType, ? ho : Bool = true){ callbacks.onContextualDisplayRequest(c, ho); }
 		this.onContextualHideRequest = function(c : grar.view.Application.ContextualType){ callbacks.onContextualHideRequest(c); }
 		this.onQuitGameRequest = function(){ callbacks.onQuitGameRequest(); }
-		this.onTransitionRequest = function(t : Dynamic, tt : String, ? de : Float = 0) { return callbacks.onTransitionRequest(t, tt, de); }
-		this.onStopTransitionRequest = function(t : Dynamic, ? p : Null<Dynamic>, ? c : Bool = false, ? se : Bool = true){ callbacks.onStopTransitionRequest(t, p, c, se); }
 		this.onRestoreLocaleRequest = function(){ callbacks.onRestoreLocaleRequest(); }
 		this.onLocalizedContentRequest = function(k : String){ return callbacks.onLocalizedContentRequest(k); }
 		this.onLocaleDataPathRequest = function(p:String){ callbacks.onLocaleDataPathRequest(p); }
@@ -34,9 +35,11 @@ class Layout {
 
 		this.onNewZone = function(z:Zone){ callbacks.onNewZone(z); }
 
+		this.transitions = transitions;
+
 		if (ld != null) {
 
-			content = new Zone(callbacks, at, Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
+			content = new Zone(callbacks, at, transitions, Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
 // 			content.addEventListener(LayoutEvent.NEW_ZONE, onNewZone);
 			content.onNewZone = function(r : String, z : Zone){ addZone(r, z); }
 			content.onNewProgressBar = function(pb:grar.view.component.ProgressBar){ onNewProgressBar(pb); }
@@ -54,7 +57,9 @@ class Layout {
 		}
 	}
 
-	var callbacks : grar.view.DisplayCallbacks;
+	var callbacks : grar.view.DisplayCallbacks; 
+	
+	var transitions : StringMap<TransitionTemplate>;
 
 	/**
      * All the child zones of this layout
@@ -92,17 +97,11 @@ class Layout {
 
 	public dynamic function onVolumeChangeRequest(v : Float) : Void { }
 
-	
-
 	public dynamic function onContextualDisplayRequest(c : grar.view.Application.ContextualType, ? hideOther : Bool = true) : Void { }
 
 	public dynamic function onContextualHideRequest(c : grar.view.Application.ContextualType) : Void { }
 
 	public dynamic function onQuitGameRequest() : Void { }
-
-	public dynamic function onTransitionRequest(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
-
-	public dynamic function onStopTransitionRequest(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
 
 	public dynamic function onRestoreLocaleRequest() : Void { }
 

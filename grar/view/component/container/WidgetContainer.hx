@@ -20,6 +20,8 @@ import grar.view.component.container.VideoPlayer;
 import grar.util.ParseUtils;
 import grar.util.DisplayUtils;
 
+import grar.util.TweenUtils;
+
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.events.Event;
@@ -91,15 +93,17 @@ typedef WidgetContainerData = {
 class WidgetContainer extends Widget {
 
 	//private function new( ? xml : Fast, ? tilesheet : TilesheetEx ) {
-	private function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, ? wcd : Null<WidgetContainerData>, ? tilesheet : Null<TilesheetEx> ) {
+	private function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>,  
+							? wcd : Null<WidgetContainerData>, ? tilesheet : Null<TilesheetEx> ) {
 
 		if (wcd == null) {
 
-			super(callbacks, applicationTilesheet);
+			super(callbacks, applicationTilesheet, transitions);
 
 		} else  {
 
-			super(callbacks, applicationTilesheet, wcd.wd);
+			super(callbacks, applicationTilesheet, transitions, wcd.wd);
 		}
 
 		this.content = new Sprite();
@@ -253,7 +257,7 @@ class WidgetContainer extends Widget {
 				}
 				ParseUtils.formatToFour(b.radius);
                 
-                var bubble : SimpleBubble = new SimpleBubble(callbacks, applicationTilesheet, b.bubbleWidth!=0 ? b.bubbleWidth:maskWidth,b.bubbleHeight!=0 ? b.bubbleHeight:maskHeight,colors,b.arrowX,b.arrowY,b.radius,b.line,b.colorLine,b.shadow,b.gap,alphas,b.bubbleX,b.bubbleY);
+                var bubble : SimpleBubble = new SimpleBubble(callbacks, applicationTilesheet, transitions, b.bubbleWidth!=0 ? b.bubbleWidth:maskWidth,b.bubbleHeight!=0 ? b.bubbleHeight:maskHeight,colors,b.arrowX,b.arrowY,b.radius,b.line,b.colorLine,b.shadow,b.gap,alphas,b.bubbleX,b.bubbleY);
                 
                 addChildAt(bubble,0);
             
@@ -333,13 +337,13 @@ class WidgetContainer extends Widget {
 
 			case Image(d):
 
-				var img : Image = new Image(callbacks, applicationTilesheet, d);
+				var img : Image = new Image(callbacks, applicationTilesheet, transitions, d);
 	            addElement(img);
 				return img;
 
 			case TileImage(d):
 
-	            var tileImg : TileImage = new TileImage(callbacks, applicationTilesheet, d, layer, true);
+	            var tileImg : TileImage = new TileImage(callbacks, applicationTilesheet, transitions, d, layer, true);
 	            addElement(tileImg);
 		        return tileImg;
 
@@ -396,14 +400,14 @@ class WidgetContainer extends Widget {
 		}
 
 //      TweenManager.applyTransition(content, contentTransition);
-		onTransitionRequest(content, contentTransition);
+		TweenUtils.applyTransition(content, transitions, contentTransition);
 
 		for (child in children) {
 
             if (child.transformation != null) {
 
 //              TweenManager.applyTransition(child, child.transformation);
-				onTransitionRequest(child, child.transformation);
+				TweenUtils.applyTransition(child, transitions, child.transformation);
             }
         }
 	}
@@ -441,21 +445,21 @@ class WidgetContainer extends Widget {
 
 	private function createTimer(d : WidgetContainerData) : ChronoCircle {
 
-		var timer = new ChronoCircle(callbacks, applicationTilesheet, d);
+		var timer = new ChronoCircle(callbacks, applicationTilesheet, transitions, d);
 		addElement(timer);
         return timer;
 	}
 
 	private function createSimpleContainer(d : WidgetContainerData) : Widget {
 
-		var div = new SimpleContainer(callbacks, applicationTilesheet, d);
+		var div = new SimpleContainer(callbacks, applicationTilesheet, transitions, d);
 		addElement(div);
 		return div;
 	}
 
 	private function createButton(d : WidgetContainerData) : Widget {
 
-		var button : DefaultButton = new DefaultButton(callbacks, applicationTilesheet, d);
+		var button : DefaultButton = new DefaultButton(callbacks, applicationTilesheet, transitions, d);
 
 		switch(d.type) {
 
@@ -490,7 +494,7 @@ class WidgetContainer extends Widget {
 	//private function createText(textNode : Fast) : Widget {
 	private function createText(d : WidgetContainerData) : ScrollPanel {
 
-		var text = new ScrollPanel(callbacks, applicationTilesheet, d);
+		var text = new ScrollPanel(callbacks, applicationTilesheet, transitions, d);
 		addElement(text);
         return text;
 	}

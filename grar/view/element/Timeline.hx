@@ -5,8 +5,12 @@ import motion.actuators.GenericActuator.IGenericActuator;
 import grar.view.component.TileImage;
 import grar.view.component.Widget;
 
+import grar.util.TweenUtils;
+
 import flash.events.Event;
 import flash.events.EventDispatcher;
+
+import haxe.ds.StringMap;
 
 using StringTools;
 
@@ -20,16 +24,18 @@ typedef TimelineElement = {
 
 class Timeline /* extends EventDispatcher */ {
 
-    public function new(callbacks : grar.view.DisplayCallbacks, ? name : String) : Void {
+    public function new(callbacks : grar.view.DisplayCallbacks, transitions : StringMap<TransitionTemplate>,
+                             ? name : String) : Void {
 
         //super();
 
-        this.onTransitionRequest = function(target : Dynamic, transition : String, ? delay : Float = 0) { return callbacks.onTransitionRequest(target, transition, delay); }
-        this.onStopTransitionRequest = function(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true){ callbacks.onStopTransitionRequest(target, properties, complete, sendEvent); }
+        this.transitions = transitions;
         
         this.name = name;
         this.elements = [];
     }
+
+    var transitions : StringMap<TransitionTemplate>;
 
 	/**
 	 * Name of the timeline
@@ -47,10 +53,6 @@ class Timeline /* extends EventDispatcher */ {
     ///
     // CALLBACKS
     //
-
-    public dynamic function onTransitionRequest(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
-
-    public dynamic function onStopTransitionRequest(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
 
     // dispatchEvent(new Event(elemRef));
     public dynamic function onCompleteTransition(elemRef : String) : Void { }
@@ -82,7 +84,7 @@ class Timeline /* extends EventDispatcher */ {
         for (elem in elements) {
 
 //          var actuator = TweenManager.applyTransition(elem.widget,elem.transition,elem.delay);
-            var actuator = onTransitionRequest(elem.widget,elem.transition,elem.delay);
+            var actuator = TweenUtils.applyTransition(elem.widget, transitions, elem.transition, elem.delay);
             
             if (actuator != null) {
 

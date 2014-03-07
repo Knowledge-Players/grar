@@ -9,6 +9,7 @@ import grar.view.component.container.WidgetContainer;
 import grar.view.component.container.SimpleContainer;
 import grar.view.component.container.DefaultButton;
 
+import grar.util.TweenUtils;
 import grar.util.ParseUtils;
 
 import flash.events.MouseEvent;
@@ -45,9 +46,10 @@ enum MenuLevel {
  */
 class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
-	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>) {
 
-		super(callbacks, applicationTilesheet);
+		super(callbacks, applicationTilesheet, transitions);
 
 		buttons = new StringMap();
 		buttonGroups.set(btnGroupName, new GenericStack<DefaultButton>());
@@ -131,7 +133,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 	public function setMenuExit() : Void {
 
 //		var actuator = TweenManager.applyTransition(this, transitionOut);
-		var actuator = onTransitionRequest(this, transitionOut);
+		var actuator = TweenUtils.applyTransition(this, transitions, transitionOut);
 
 		if (actuator != null) {
 
@@ -205,7 +207,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 				if (b != null) {
 
-					this.bookmark = new BookmarkDisplay(callbacks, applicationTilesheet, b);
+					this.bookmark = new BookmarkDisplay(callbacks, applicationTilesheet, transitions, b);
 				}
 			default: throw "wrong DisplayData type given to MenuDisplay.setContent()";
         }
@@ -312,7 +314,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 			case ContainerSeparator(d):
 
-				var separator : Widget = new SimpleContainer(callbacks, applicationTilesheet, d);
+				var separator : Widget = new SimpleContainer(callbacks, applicationTilesheet, transitions, d);
 
 				separator.addEventListener(Event.CHANGE, function(?_){
 
@@ -322,7 +324,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 			case ImageSeparator(thickness, color, alpha, origin, destination, x, y):
 
-				var separator : Widget = new Image(callbacks, applicationTilesheet);
+				var separator : Widget = new Image(callbacks, applicationTilesheet, transitions);
 
 				if (thickness != null) {
 
@@ -413,7 +415,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 			default: throw "wrong WidgetContainerData type passed to MenuDisplay.addButton()";
 		}
-		var button : DefaultButton = new DefaultButton(callbacks, applicationTilesheet, d);
+		var button : DefaultButton = new DefaultButton(callbacks, applicationTilesheet, transitions, d);
 
 		button.setText(text, "partName");
 		button.buttonAction = onClick;

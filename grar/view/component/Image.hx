@@ -20,6 +20,8 @@ import flash.display.BitmapData;
 
 import haxe.xml.Fast;
 
+import haxe.ds.StringMap;
+
 using Lambda;
 
 typedef Point2D = {
@@ -50,17 +52,19 @@ typedef ImageData = {
 class Image extends Widget {
 
 	//public function new( ? xml : Fast, ? tilesheet : TilesheetEx ) {
-	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, ? id : Null<ImageData>, ? tilesheet : TilesheetEx) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>, ? id : Null<ImageData>, 
+								? tilesheet : TilesheetEx) {
 
 		this.tilesheet = tilesheet != null ? tilesheet : applicationTilesheet;
 
 		if (id == null) {
 
-			super(callbacks, applicationTilesheet);
+			super(callbacks, applicationTilesheet, transitions);
 
 		} else {
 
-			super(callbacks, applicationTilesheet, id.wd);
+			super(callbacks, applicationTilesheet, transitions, id.wd);
 
 			this.isBackground = id.wd.isBackground;
 
@@ -201,7 +205,7 @@ class Image extends Widget {
 				if (id.width != null && id.height != null) {
 
 					ParseUtils.formatToFour(id.radius);
-					addChild(new SimpleBubble(callbacks, applicationTilesheet, id.width, id.height, colors, id.radius, alphas));
+					addChild(new SimpleBubble(callbacks, applicationTilesheet, transitions, id.width, id.height, colors, id.radius, alphas));
 				
 				} else {
 

@@ -11,9 +11,13 @@ import grar.view.part.PartDisplay;
 import grar.view.component.Image;
 import grar.view.Display;
 
+import grar.util.TweenUtils;
+
 import flash.events.Event;
 import flash.filters.BitmapFilter;
 import flash.display.Sprite;
+
+import haxe.ds.StringMap;
 
 typedef TileImageData = {
 
@@ -32,7 +36,9 @@ typedef TileImageData = {
 class TileImage extends Image {
 
 	//public function new(xml: Fast, layer: TileLayer, visible: Bool = true, ?div:Bool=false)
-	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, tid : TileImageData, layer : TileLayer, visible : Bool = true) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>, tid : TileImageData, 
+								layer : TileLayer, visible : Bool = true) {
 
 		this.isVisible = visible;
 
@@ -49,7 +55,7 @@ class TileImage extends Image {
             init();
 		}
 
-		super(callbacks, applicationTilesheet, tid.id);
+		super(callbacks, applicationTilesheet, transitions, tid.id);
 
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove, 1000);
 		
@@ -63,7 +69,7 @@ class TileImage extends Image {
 				this.visible = true;
 
 // 				TweenManager.applyTransition(this, transformation);
-				onTransitionRequest(this, transformation);
+				TweenUtils.applyTransition(this, transitions, transformation);
 
 				if (onComplete != null) {
 
@@ -252,7 +258,7 @@ class TileImage extends Image {
 
 			reset();
 // 			actuator = TweenManager.applyTransition(tileSprite, transitionIn);
- 			actuator = onTransitionRequest(tileSprite, transitionIn);
+ 			actuator = TweenUtils.applyTransition(tileSprite, transitions, transitionIn);
 
 			if (actuator != null && onComplete != null) {
 
@@ -262,7 +268,7 @@ class TileImage extends Image {
 		} else {
 
 //			actuator = TweenManager.applyTransition(tileSprite, transitionOut);
-			actuator = onTransitionRequest(tileSprite, transitionOut);
+			actuator = TweenUtils.applyTransition(tileSprite, transitions, transitionOut);
 		}
 		renderNeeded();
 		if(actuator != null)

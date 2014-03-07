@@ -12,6 +12,8 @@ import grar.view.component.container.WidgetContainer;
 
 import grar.util.DisplayUtils;
 
+import grar.util.TweenUtils;
+
 import flash.display.Bitmap;
 import flash.display.Sprite;
 import flash.display.BitmapData;
@@ -30,6 +32,7 @@ import flash.net.NetStream;
 import flash.Lib;
 
 import haxe.ds.GenericStack;
+import haxe.ds.StringMap;
 
 typedef SuperBool = {
 
@@ -67,7 +70,9 @@ typedef VideoBackgroundData = {
 class VideoPlayer extends WidgetContainer {
 
 	//public function new(?xml: Fast, ?tilesheet: TilesheetEx)
-	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, vpd : WidgetContainerData, ? tilesheet : TilesheetEx) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>,  
+							vpd : WidgetContainerData, ? tilesheet : TilesheetEx) {
 
 		playButtons = new GenericStack<DefaultButton>();
 		controls = new GenericStack<Widget>();
@@ -88,7 +93,7 @@ class VideoPlayer extends WidgetContainer {
 
 
 		//super(xml, tilesheet);
-		super(callbacks, applicationTilesheet, vpd, tilesheet);
+		super(callbacks, applicationTilesheet, transitions, vpd, tilesheet);
 
 		video = new Video();
 
@@ -123,7 +128,7 @@ class VideoPlayer extends WidgetContainer {
 		switch(vpd.type) {
 
 			case VideoPlayer(ch, af):
-
+trace("new VideoPlayer with controlsHidden= "+ch);
 				controlsHidden = ch;
 
 				if (af != null) {
@@ -132,7 +137,7 @@ class VideoPlayer extends WidgetContainer {
 					autoFullscreen.isSet = true;
 				}
 
-			default: // hidden
+			default: throw "wrong WidgetContainer type passed to VideoPlayer";
 		}
 
 		init();
@@ -153,7 +158,7 @@ class VideoPlayer extends WidgetContainer {
 	private var loop : Bool;
 	private var autoStart : Bool;
 	private var autoFullscreen : SuperBool;
-	private var progressBar: Image;
+	private var progressBar : Image;
 	private var controls: GenericStack<Widget>;
 	private var timeArea: ScrollPanel;
 	private var timeCurrent: ScrollPanel;
@@ -266,7 +271,7 @@ class VideoPlayer extends WidgetContainer {
 
             case "NetStream.Play.Stop":
 
-                    cursor.x = progressBar.x-cursor.width/2;
+                    cursor.x = progressBar.x - cursor.width / 2;
                     fastForward(0);
                     setFullscreen(false);
                     containerThumbnail.visible=true;
@@ -407,7 +412,7 @@ class VideoPlayer extends WidgetContainer {
 
 			case VideoBackground(d):
 
-				backgroundControls = new Widget(callbacks, applicationTilesheet);
+				backgroundControls = new Widget(callbacks, applicationTilesheet, transitions);
 
 				backgroundControls.graphics.beginFill(d.color,d.alpha);
 				backgroundControls.graphics.drawRect(d.x,d.y,d.w,d.h);
@@ -419,14 +424,14 @@ class VideoPlayer extends WidgetContainer {
 
 			case VideoProgressBar(d):
 
-				progressBar = new Image(callbacks, applicationTilesheet);
+				progressBar = new Image(callbacks, applicationTilesheet, transitions);
 				//progressBar.ref = elemNode.att.ref;
 				progressBar.x = d.x;
 				progressBar.y = d.y;
 				addElement(progressBar);
 				
 				var mask : Sprite = null;
-				var mt : TileImage = new TileImage(callbacks, applicationTilesheet, d.mask, layer);
+				var mt : TileImage = new TileImage(callbacks, applicationTilesheet, transitions, d.mask, layer);
 				mt.x = (progressBar.x + mt.width/2);
 				mt.y = (progressBar.y + mt.height/2);
 				mask = mt.getMask();
@@ -437,8 +442,8 @@ class VideoPlayer extends WidgetContainer {
 				bar.scaleX = 0;
 				progressBar.addChild(bar);
 
-				var ct : TileImage = new TileImage(callbacks, applicationTilesheet, d.cursor.tile, new TileLayer(layer.tilesheet));
-				cursor = new Widget(callbacks, applicationTilesheet);
+				var ct : TileImage = new TileImage(callbacks, applicationTilesheet, transitions, d.cursor.tile, new TileLayer(layer.tilesheet));
+				cursor = new Widget(callbacks, applicationTilesheet, transitions);
 				cursor.ref = d.cursor.ref;
 				cursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(ct.tileSprite.layer.tilesheet, ct.tileSprite.tile)));
 				cursor.x = d.cursor.x + progressBar.x - cursor.width / 2;
@@ -455,19 +460,19 @@ class VideoPlayer extends WidgetContainer {
 
 			case VideoSlider(d):
 
-				soundSlider = new Image(callbacks, applicationTilesheet);
+				soundSlider = new Image(callbacks, applicationTilesheet, transitions);
 				//soundSlider.ref = elemNode.att.ref;
 				soundSlider.x = d.x;
 				soundSlider.y = d.y;
 
-				var bt : TileImage = new TileImage(callbacks, applicationTilesheet, d.bar.tile, new TileLayer(layer.tilesheet));
+				var bt : TileImage = new TileImage(callbacks, applicationTilesheet, transitions, d.bar.tile, new TileLayer(layer.tilesheet));
 				var cur = new Bitmap(DisplayUtils.getBitmapDataFromLayer(bt.tileSprite.layer.tilesheet, bt.tileSprite.tile));
 				cur.x = d.bar.x;
 				cur.y = d.bar.y;
 				soundSlider.addChild(cur);
 
-				var ct : TileImage = new TileImage(callbacks, applicationTilesheet, d.cursor.tile, new TileLayer(layer.tilesheet));
-				soundCursor = new Widget(callbacks, applicationTilesheet);
+				var ct : TileImage = new TileImage(callbacks, applicationTilesheet, transitions, d.cursor.tile, new TileLayer(layer.tilesheet));
+				soundCursor = new Widget(callbacks, applicationTilesheet, transitions);
 				soundCursor.ref = d.cursor.ref;
 				soundCursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(ct.tileSprite.layer.tilesheet, ct.tileSprite.tile)));
 				soundCursor.x = d.cursor.x + soundSlider.x + d.cursor.vol * soundSlider.width - soundCursor.width / 2;
@@ -494,20 +499,27 @@ class VideoPlayer extends WidgetContainer {
 		content.setChildIndex(layer.view,1);
 
 		progressBar.addEventListener(MouseEvent.CLICK, onClickTimeline);
+		
 		cursor.buttonMode = true;
 		cursor.addEventListener(MouseEvent.MOUSE_DOWN, dragCursor);
+		
 		soundCursor.buttonMode = true;
 		soundCursor.addEventListener(MouseEvent.MOUSE_DOWN, dragSoundCursor);
+		
 		soundSlider.addEventListener(MouseEvent.CLICK, onClickSoundLine);
-		if(timeArea != null)
+		
+		if (timeArea != null) {
+
 			timeArea.setContent(videoTimeConvert(0) + "/" + videoTimeConvert(0));
+		}
+		if (timeCurrent != null) {
 
-		if(timeCurrent != null)
 			timeCurrent.setContent(videoTimeConvert(0));
+		}
+		if (timeTotal != null) {
 
-		if(timeTotal != null)
 			timeTotal.setContent(videoTimeConvert(0));
-
+		}
 		containerControls.addChild(content);
 
 		addChild(displaysRefs.get("bigPlay"));
@@ -516,6 +528,7 @@ class VideoPlayer extends WidgetContainer {
 		containerControls.addEventListener(MouseEvent.MOUSE_OUT,hideControls);
 
 		containerVideo.addEventListener(MouseEvent.MOUSE_MOVE,onMouseMove);
+		
 		containerControls.alpha = 0;
 	}
 
@@ -614,10 +627,10 @@ class VideoPlayer extends WidgetContainer {
 		addEventListener(Event.ENTER_FRAME, enterFrame);*/
 	}
 
-	private function enterFrame(?e:Event):Void
-	{
-		var nowSecs:Float = Math.floor(stream.time);
-		var totalSecs:Float = Math.floor(totalLength);
+	private function enterFrame(? e : Event) : Void {
+
+		var nowSecs : Float = Math.floor(stream.time);
+		var totalSecs : Float = Math.floor(totalLength);
 
 		/*if (bCapture2) {
 			if (nowSecs >= (_timeToCapture)) {
@@ -626,26 +639,35 @@ class VideoPlayer extends WidgetContainer {
 			}
 		}*/
 
-		if(nowSecs > 0)	{
-			if(timeArea != null)
+		if (nowSecs > 0) {
+
+			if (timeArea != null) {
+
 				timeArea.setContent("-"+videoTimeConvert(nowSecs) + "/" + videoTimeConvert(totalSecs));
-
-			if(timeCurrent != null)
-				timeCurrent.setContent(videoTimeConvert(nowSecs));
-
-			if(timeTotal != null)
-				timeTotal.setContent(videoTimeConvert(totalSecs));
-
-			var amountPlayed:Float = nowSecs / totalSecs;
-			var amountLoaded:Float = stream.bytesLoaded / stream.bytesTotal;
-			var oldWidth = progressBar.getChildAt(1).width;
-			progressBar.getChildAt(1).scaleX = amountPlayed;
-			progressBar.getChildAt(0).scaleX = amountLoaded;
-			if(!lockCursor){
-				cursor.x += progressBar.getChildAt(1).width - oldWidth;
 			}
-			else{
-				cursor.x = progressBar.getChildAt(1).width + progressBar.x - cursor.width/2;
+			if (timeCurrent != null) {
+
+				timeCurrent.setContent(videoTimeConvert(nowSecs));
+			}
+			if (timeTotal != null) {
+
+				timeTotal.setContent(videoTimeConvert(totalSecs));
+			}
+			var amountPlayed : Float = nowSecs / totalSecs;
+			var amountLoaded : Float = stream.bytesLoaded / stream.bytesTotal;
+			
+			var oldWidth = progressBar.mask.width; // was getChildAt(1) instead of mask
+			
+			progressBar.mask.scaleX = amountPlayed; // was getChildAt(1) instead of mask
+			progressBar.getChildAt(0).scaleX = amountLoaded;
+			
+			if (!lockCursor) {
+
+				cursor.x += progressBar.mask.width - oldWidth; // was getChildAt(1) instead of mask
+			
+			} else {
+
+				cursor.x = progressBar.mask.width + progressBar.x - cursor.width/2; // was getChildAt(1) instead of mask
 				lockCursor = false;
 			}
 		}
@@ -690,29 +712,29 @@ class VideoPlayer extends WidgetContainer {
 		this.isPlaying = isPlaying;
 	}
 
-	private function showControls(e:MouseEvent=null):Void
-	{
+	private function showControls(? e : MouseEvent = null) : Void {
+
+trace("showControls controlsHidden= "+controlsHidden);
 		if (controlsHidden) {
 
 // 			TweenManager.stop(containerControls);
-			onStopTransitionRequest(containerControls);
+			TweenUtils.stop(containerControls);
+
 // 			TweenManager.applyTransition(containerControls, "fadeInVideoControls").onComplete(checkAgain);
-			onTransitionRequest(containerControls, "fadeInVideoControls").onComplete(checkAgain);
+			TweenUtils.applyTransition(containerControls, transitions, "fadeInVideoControls").onComplete(checkAgain);
 		}
 	}
 
-	private function hideControls(e:MouseEvent=null):Void
-	{
-
+	private function hideControls(? e : MouseEvent = null) : Void {
+trace("hide controls   controlsHidden= "+controlsHidden+"   containerControls= "+containerControls);
 		if (controlsHidden) {
 
 // 			TweenManager.stop(containerControls);
-			onStopTransitionRequest(containerControls);
+			TweenUtils.stop(containerControls);
 
 // 			TweenManager.applyTransition(containerControls, "fadeOutVideoControls",3);
-			onTransitionRequest(containerControls, "fadeOutVideoControls", 3).onComplete(checkAgain);
+			TweenUtils.applyTransition(containerControls, transitions, "fadeOutVideoControls", 3).onComplete(checkAgain);
 		}
-
 	}
 
 	private function checkPositionMouse():Void{
@@ -726,9 +748,10 @@ class VideoPlayer extends WidgetContainer {
 			hideControls();
 		}
 	}
-    private function checkAgain():Void{
-
-		if(containerVideo.hitTestPoint(Lib.current.stage.mouseX,Lib.current.stage.mouseY)){
+    private function checkAgain() : Void {
+trace("checkAgain ");
+		if (containerVideo.hitTestPoint(Lib.current.stage.mouseX, Lib.current.stage.mouseY)) {
+trace("checkAgain => hide");
             hideControls();
         }
 	}

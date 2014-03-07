@@ -3,17 +3,22 @@ package grar.view.part;
 import grar.view.component.container.WidgetContainer;
 import grar.view.component.container.ScrollPanel;
 
+import grar.util.TweenUtils;
+
 import flash.events.Event;
 
 import haxe.Timer;
 
+import haxe.ds.StringMap;
+
 class IntroScreen extends WidgetContainer {
 
 	//public function new(?xml:Fast)
-	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, isd : WidgetContainerData) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>, isd : WidgetContainerData) {
 
 		//super(xml);
-		super(callbacks, applicationTilesheet, isd);
+		super(callbacks, applicationTilesheet, transitions, isd);
 		
 		switch(isd.type) {
 
@@ -56,7 +61,7 @@ class IntroScreen extends WidgetContainer {
 		if (transitionOut != null) {
 
 //			TweenManager.applyTransition(this, transitionOut).onComplete(function() {
-			onTransitionRequest(this, transitionOut).onComplete(function() {
+			TweenUtils.applyTransition(this, transitions, transitionOut).onComplete(function() {
 
 					dispose();
 
@@ -81,7 +86,7 @@ class IntroScreen extends WidgetContainer {
 		addEventListener(Event.ADDED_TO_STAGE, function(e:Event) {
 			
 // 				TweenManager.applyTransition(this, transition);
-				onTransitionRequest(this, transition);
+				TweenUtils.applyTransition(this, transitions, transition);
 				
 				Timer.delay(hide, duration);
 			});

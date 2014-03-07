@@ -8,6 +8,8 @@ import grar.view.component.container.ScrollPanel;
 
 import grar.util.DisplayUtils;
 
+import grar.util.TweenUtils;
+
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.BitmapData;
@@ -16,17 +18,20 @@ import flash.events.Event;
 
 using StringTools;
 
+import haxe.ds.StringMap;
+
 class SimpleContainer extends WidgetContainer {
 
 	//public function new( ? xml : Fast, ? tilesheet : TilesheetEx ) {
 	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>,  
 							? scd : Null<WidgetContainerData>, ? tilesheet : TilesheetEx) {
 
         this.scd = scd;
 
 		this.totalChildren = this.loadedChildren = 0;
 
-		super(callbacks, applicationTilesheet, scd, tilesheet);
+		super(callbacks, applicationTilesheet, transitions, scd, tilesheet);
 		
 		if (scd != null && scd.spritesheetRef != null) {
 
@@ -183,7 +188,7 @@ class SimpleContainer extends WidgetContainer {
 
 	override private function createSimpleContainer(d : WidgetContainerData) : Widget {
 
-		var div = new SimpleContainer(callbacks, applicationTilesheet, d);
+		var div = new SimpleContainer(callbacks, applicationTilesheet, transitions, d);
 		totalChildren++;
 
 // 		div.addEventListener(DisplayEvent.LOADED, setMask);
@@ -236,7 +241,7 @@ class SimpleContainer extends WidgetContainer {
 					if (transitionOut != null) {
 
 // 						TweenManager.applyTransition(this, transitionOut).onComplete(function(){
-						onTransitionRequest(this, transitionOut).onComplete(function(){
+						TweenUtils.applyTransition(this, transitions, transitionOut).onComplete(function(){
 
 								parent.removeChild(this);
 

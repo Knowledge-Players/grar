@@ -3,8 +3,13 @@ package grar.view.element;
 import grar.view.component.container.WidgetContainer;
 import grar.view.component.Image;
 import grar.view.component.container.ScrollPanel;
+import grar.view.TransitionTemplate;
+
+import grar.util.TweenUtils;
 
 import haxe.Timer;
+
+import haxe.ds.StringMap;
 
 /**
  * Graphic representation of a token of the game
@@ -12,10 +17,11 @@ import haxe.Timer;
 class TokenNotification extends WidgetContainer {
 
 	//public function new(fast : Fast) : Void {
-	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, tnd : WidgetContainerData) : Void {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx,
+							transitions : StringMap<TransitionTemplate>, tnd : WidgetContainerData) : Void {
 
 		//super(fast);
-		super(callbacks, applicationTilesheet, tnd);
+		super(callbacks, applicationTilesheet, transitions, tnd);
 
 		switch(tnd.type) {
 

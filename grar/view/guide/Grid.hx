@@ -1,10 +1,15 @@
 package grar.view.guide;
 
 import grar.view.component.TileImage;
+import grar.view.TransitionTemplate;
 
 import flash.events.Event;
 import flash.display.DisplayObject;
 import flash.geom.Point;
+
+import grar.util.TweenUtils;
+
+import haxe.ds.StringMap;
 
 typedef GridData = {
 
@@ -46,9 +51,9 @@ typedef Size = {
 class Grid extends Guide {
 
 	//public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?alignment:GridAlignment, resize: Bool = true, ?transitionIn: String)
-	public function new(callbacks : grar.view.DisplayCallbacks, d : GridData) {
+	public function new(transitions : StringMap<TransitionTemplate>, d : GridData) {
 
-		super(callbacks);
+		super(transitions);
 
 		this.numRow = d.numRow;
 		this.numCol = d.numCol;
@@ -152,12 +157,12 @@ class Grid extends Guide {
 		if (tween != null) {
 
 //		    TweenManager.applyTransition(object,tween);
-		    onTransitionRequest(object,tween);
+		    TweenUtils.applyTransition(object, transitions, tween);
 		
 		} else if (transitionIn != null) {
 
 //			TweenManager.applyTransition(object,transitionIn);
-			onTransitionRequest(object,transitionIn);
+			TweenUtils.applyTransition(object, transitions, transitionIn);
 		}
 
         if(tile){

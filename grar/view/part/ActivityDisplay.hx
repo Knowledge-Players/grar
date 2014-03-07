@@ -38,9 +38,10 @@ typedef Coordinates = {
  */
 class ActivityDisplay extends PartDisplay {
 
-	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, model : Part) {
+	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>, model : Part) {
 
-		super(callbacks, applicationTilesheet, model);
+		super(callbacks, applicationTilesheet, transitions, model);
 
 		autoCorrect = false;
 		hasCorrection = true;
@@ -199,7 +200,7 @@ trace("set ActivityDisplay content");
 
 			case DefaultButton(d):
 
-				button = new DefaultButton(callbacks, applicationTilesheet, d);
+				button = new DefaultButton(callbacks, applicationTilesheet, transitions, d);
 
 				guide.add(button);
 
@@ -231,15 +232,15 @@ trace("set ActivityDisplay content");
 
 			case Line(d):
 
-				guide = new Line(callbacks, d);
+				guide = new Line(transitions, d);
 
 			case Grid(d):
 
-				guide = new Grid(callbacks, d);
+				guide = new Grid(transitions, d);
 
 			case Curve(d):
 
-				guide = new Curve(callbacks, d);
+				guide = new Curve(transitions, d);
 		}
 
 		// Set guide to place inputs
@@ -413,7 +414,7 @@ trace("set ActivityDisplay content");
 					if(drop != null && validate(e.target, (buttonsToInputs.exists(cast(drop, grar.view.component.container.DefaultButton)) ? buttonsToInputs.get(cast(drop, grar.view.component.container.DefaultButton)).id : drop.name))){
 						copyCoordinates(e.target, drop);
 						if(buttonsToInputs.exists(cast(drop, grar.view.component.container.DefaultButton))){
-							var dropZone = new DefaultButton(callbacks, applicationTilesheet);
+							var dropZone = new DefaultButton(callbacks, applicationTilesheet, transitions);
 							dropZone.enabled = false;
 							dropZone.initSprite(drop.width, drop.height, 0.001);
 							dropZone.ref = dropRef;

@@ -4,14 +4,19 @@ import aze.display.TilesheetEx;
 
 import grar.view.component.container.WidgetContainer;
 
+import grar.util.TweenUtils;
+
+import haxe.ds.StringMap;
+
 class BookmarkDisplay extends WidgetContainer {
 
 	//public function new( ? xml : Fast, ? tilesheet : TilesheetEx) {
 	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>, 
 							bdd : WidgetContainerData, ? tilesheet : TilesheetEx) {
 
 		//super(xml, tilesheet);
-		super(callbacks, applicationTilesheet, bdd, tilesheet);
+		super(callbacks, applicationTilesheet, transitions, bdd, tilesheet);
 
 		switch(bdd.type) {
 
@@ -22,7 +27,7 @@ class BookmarkDisplay extends WidgetContainer {
 					onComplete = function() {
 
 // 							TweenManager.applyTransition(this, a);
-							onTransitionRequest(this, a);
+							TweenUtils.applyTransition(this, transitions, a);
 						}
 				}
 				this.xOffset = xo;

@@ -5,6 +5,8 @@ import aze.display.TilesheetEx;
 import grar.view.DisplayCallbacks;
 import grar.view.component.container.DropdownMenu;
 
+import grar.util.TweenUtils;
+
 import motion.actuators.GenericActuator;
 
 import flash.events.Event;
@@ -12,6 +14,8 @@ import flash.geom.Matrix;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Sprite;
+
+import haxe.ds.StringMap;
 
 using StringTools;
 
@@ -56,7 +60,8 @@ class Widget extends Sprite {
 	 * Never called directly (only in sub-classes)
 	 */
 	//private function new(?xml: Fast)
-	private function new(callbacks : DisplayCallbacks, applicationTilesheet : TilesheetEx, ? wd : Null<WidgetData>) {
+	private function new(callbacks : DisplayCallbacks, applicationTilesheet : TilesheetEx, 
+							transitions : StringMap<TransitionTemplate>, ? wd : Null<WidgetData>) {
 
 		super();
 
@@ -64,8 +69,6 @@ class Widget extends Sprite {
 		this.onContextualDisplayRequest = function(c : grar.view.Application.ContextualType, ? ho : Bool = true){ callbacks.onContextualDisplayRequest(c, ho); }
 		this.onContextualHideRequest = function(c : grar.view.Application.ContextualType){ callbacks.onContextualHideRequest(c); }
 		this.onQuitGameRequest = function(){ callbacks.onQuitGameRequest(); }
-		this.onTransitionRequest = function(t : Dynamic, tt : String, ? de : Float = 0) { return callbacks.onTransitionRequest(t, tt, de); }
-		this.onStopTransitionRequest = function(t : Dynamic, ? p : Null<Dynamic>, ? c : Bool = false, ? se : Bool = true){ callbacks.onStopTransitionRequest(t, p, c, se); }
 		this.onRestoreLocaleRequest = function(){ callbacks.onRestoreLocaleRequest(); }
 		this.onLocalizedContentRequest = function(k : String){ return callbacks.onLocalizedContentRequest(k); }
 		this.onLocaleDataPathRequest = function(p:String){ callbacks.onLocaleDataPathRequest(p); }
@@ -73,6 +76,8 @@ class Widget extends Sprite {
 		this.onFiltersRequest = function(fids:Array<String>){ return callbacks.onFiltersRequest(fids); }
 
 		this.applicationTilesheet = applicationTilesheet;
+
+		this.transitions = transitions;
 
 		if (wd != null) {
 
@@ -155,6 +160,8 @@ class Widget extends Sprite {
 		}
 	}
 
+	var transitions : StringMap<TransitionTemplate>;
+
 	var callbacks : DisplayCallbacks;
 
 	var applicationTilesheet : TilesheetEx;
@@ -225,10 +232,6 @@ class Widget extends Sprite {
 
 	public dynamic function onQuitGameRequest() : Void { }
 
-	public dynamic function onTransitionRequest(target : Dynamic, transition : String, ? delay : Float = 0) : IGenericActuator { return null; }
-
-	public dynamic function onStopTransitionRequest(target : Dynamic, ? properties : Null<Dynamic>, ? complete : Bool = false, ? sendEvent : Bool = true) : Void {  }
-
 	public dynamic function onRestoreLocaleRequest() : Void { }
 
 	public dynamic function onLocalizedContentRequest(k : String) : String { return null; }
@@ -282,7 +285,7 @@ class Widget extends Sprite {
 	public function set_transformation(transformation : String) : String {
 
 // 		TweenManager.applyTransition(this, transformation);
-		onTransitionRequest(this, transformation);
+		TweenUtils.applyTransition(this, transitions, transformation);
 
 		return this.transformation = transformation;
 	}
@@ -301,7 +304,7 @@ class Widget extends Sprite {
 				if (visible) {
 
 	// 				var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
-					var actuator : IGenericActuator = onTransitionRequest(this, transition);
+					var actuator : IGenericActuator = TweenUtils.applyTransition(this, transitions, transition);
 
 					if (actuator != null && onComplete != null) {
 
@@ -327,7 +330,7 @@ class Widget extends Sprite {
 		addEventListener(Event.REMOVED_FROM_STAGE, function(e:Event) {
 
 // 				var actuator: IGenericActuator = TweenManager.applyTransition(this, transition);
-				onTransitionRequest(this, transition);
+				TweenUtils.applyTransition(this, transitions, transition);
 
 			});
 
