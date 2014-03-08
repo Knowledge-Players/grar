@@ -66,7 +66,7 @@ class Application {
 
 		this.callbacks = {
 
-				onContextualDisplayRequest: function(c : ContextualType, ? ho : Bool = true){ this.displayContextual(c, ho); },
+				onContextualDisplayRequest: function(c : ContextualType, ? ho : Bool = true){ trace("onContextualDisplayRequest"); this.displayContextual(c, ho); },
 				onContextualHideRequest: function(c : ContextualType){ this.hideContextual(c); },
 				onQuitGameRequest: function(){ this.onQuitGameRequest(); },
 				onRestoreLocaleRequest: function(){ this.onRestoreLocaleRequest(); },

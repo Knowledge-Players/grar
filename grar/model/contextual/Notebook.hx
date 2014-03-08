@@ -36,6 +36,7 @@ class Notebook {
 		this.texts = t;
 		this.pages = p;
 		this.closeButton = cb;
+		this.file = file;
 	}
 
 	/**

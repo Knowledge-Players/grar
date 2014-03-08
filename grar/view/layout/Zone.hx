@@ -33,6 +33,17 @@ class Zone extends Display {
 
 		zoneWidth = _width;
 		zoneHeight = _height;
+
+		addEventListener(Event.ADDED_TO_STAGE, function(e){ // HOTFIX because Event.ADDED_TO_STAGE not always thrown on buttons
+//trace("zone added to stage");
+				for (btnG in buttonGroups ) {
+
+					for (btn in btnG) {
+
+						btn.resetToggle();
+					}
+				}
+			});
 	}
 
 	public var ref : String;
@@ -155,7 +166,7 @@ class Zone extends Display {
 
 	public function setExitNotebook() : Void {
 
-		if (buttonGroups.get(groupNotebook) != null) {
+		if (buttonGroups.get(groupNotebook) != null) { trace("EXIT NOTEBOOK");
 
 			for (button in buttonGroups.get(groupNotebook)) {
 
@@ -166,7 +177,7 @@ class Zone extends Display {
 
 	public function setEnterNotebook() : Void {
 
-		if (buttonGroups.get(groupNotebook) != null) {
+		if (buttonGroups.get(groupNotebook) != null) { trace("ENTER NOTEBOOK");
 
 			for (button in buttonGroups.get(groupNotebook)) {
 
@@ -177,7 +188,7 @@ class Zone extends Display {
 
 	public function setExitMenu() : Void {
 
-		if (buttonGroups.get(groupMenu) != null) {
+		if (buttonGroups.get(groupMenu) != null) { trace("EXIT MENU");
 
 			for (button in buttonGroups.get(groupMenu)) {
 
@@ -188,7 +199,7 @@ class Zone extends Display {
 
 	public function setEnterMenu() : Void {
 
-		if (buttonGroups.get(groupMenu) != null) {
+		if (buttonGroups.get(groupMenu) != null) { trace("ENTER MENU");
 
 			for (button in buttonGroups.get(groupMenu)) {
 
@@ -212,7 +223,7 @@ class Zone extends Display {
 
 				case "sound_toggle": activeSound;
 				
-				default: null;
+				default: button.buttonAction;
 			}
 
 		return button.buttonAction != null;

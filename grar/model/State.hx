@@ -71,12 +71,13 @@ class State {
 
 		module = s;
 
-		module.onPartsChanged = function(){ onModulePartsChanged(); };
-		module.onLocaleListChanged = function(){ onLocaleListChanged(); };
-		module.onCurrentLocaleChanged = function(){ onCurrentLocaleChanged(); };
-		module.onCurrentLocalePathChanged = function(){ onCurrentLocalePathChanged(); };
-		module.onPartFinished = function(p:grar.model.part.Part){ onPartFinished(p); };
-		module.onInventoryTokenActivated = function(it : grar.model.InventoryToken){ onInventoryTokenActivated(it); };
+		module.onPartsChanged = function(){ onModulePartsChanged(); }
+		module.onLocaleListChanged = function(){ onLocaleListChanged(); }
+		module.onCurrentLocaleChanged = function(){ onCurrentLocaleChanged(); }
+		module.onCurrentLocalePathChanged = function(){ onCurrentLocalePathChanged(); }
+		module.onPartFinished = function(p:grar.model.part.Part){ onPartFinished(p); }
+		module.onInventoryTokenActivated = function(it : grar.model.InventoryToken){ onInventoryTokenActivated(it); }
+		module.onNotebookChanged = function(){ onModuleNotebookChanged(); }
 
 		onModuleChanged();
 
@@ -110,6 +111,8 @@ class State {
 	public dynamic function onModuleStateChanged() : Void { }
 
 	public dynamic function onModulePartsChanged() : Void { }
+
+	public dynamic function onModuleNotebookChanged() : Void { }
 
 	public dynamic function onCurrentStyleSheetChanged() : Void { }
 

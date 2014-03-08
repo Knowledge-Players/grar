@@ -79,7 +79,7 @@ class Grar {
 
 	public var interfaceLocaleDataPath (default, set) : Null<String> = null;
 
-	public var localeData : LocaleData;
+	public var localeData : Null<LocaleData> = null;
 
 	private var stashedLocaleData : GenericStack<LocaleData>;
 
@@ -314,7 +314,7 @@ trace("set currentLocale to " + v);
 		
 		} else {
 
-			trace("No locale set. Returning null for key '"+key+"'.");
+			trace("No locale data set. Returning null for key '"+key+"'.");
 
 			return null;
 		}

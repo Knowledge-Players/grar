@@ -594,9 +594,9 @@ class Display extends Sprite {
 			buttonGroups.get(groupMenu).add(button);
 		
 		} else if(action.toLowerCase() == "open_inventory") {
-
+//trace("found open_inventory button");
 			button.buttonAction = function(? target) {
-
+//trace("open_inventory action");
 // 					GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
 					onContextualDisplayRequest(NOTEBOOK);
 

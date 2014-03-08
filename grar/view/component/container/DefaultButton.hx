@@ -68,6 +68,7 @@ class DefaultButton extends WidgetContainer {
 				default: throw "Wrong WidgetContainerData type passed to DefaultButton constructor";
 			}
 //if (ref == "btn_ready_welcome") trace("just built a new DefaultButton instance");
+
 		}
 
 		this.mouseChildren = false;
@@ -75,20 +76,20 @@ class DefaultButton extends WidgetContainer {
 
 		setAllListeners(onMouseEvent);
 
-		// Hack for C++ hitArea (NME 3.5.5)
 #if cpp
+		// Hack for C++ hitArea (NME 3.5.5)
 		graphics.beginFill (0xFFFFFF, 0.01);
 		graphics.drawRect (-width/2, -height/2, width, height);
 		graphics.endFill();
 #end
 
+//if (ref == "inventory") trace("INVENTORY button created, toggleState= "+toggleState+"   defaultState= "+defaultState);
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
-//if (ref == "btn_ready_welcome") trace("*********** DEFAULT BUTTON ADDED TO STAGE !!!");
+
 				if (this.toggleState == null) { // HOTFIX, ask JB about it...
 
 					this.toggleState = this.defaultState;
 				}
-
 			});
 	}
 
@@ -194,13 +195,13 @@ class DefaultButton extends WidgetContainer {
 	 * Define if the button is in state active or inactive
 	 **/
 	public inline function toggle(? toggle : Bool) : Void {
-//if (ref == "btn_ready_welcome") trace("toggle "+toggle);
+//if (ref == "inventory") trace("toggle "+toggle+" ==> "+(toggle != (toggleState == "active")));
 		// Don't do anything if the toggle doesn't change
 		if (toggle != (toggleState == "active")) {
 
 			// If param is null, switch state
 			if (toggle == null) {
-
+//if (ref == "inventory") trace("toggle was null thus now inactive");
 				toggle = toggleState == "inactive";
 			}
 //if (ref == "btn_ready_welcome") trace("setting toggleState to "+(toggle ? "active" : "inactive"));
@@ -229,8 +230,8 @@ class DefaultButton extends WidgetContainer {
 		}
 	}
 
-	public function renderState(state:String)
-	{
+	public function renderState(state : String) {
+//trace("render state "+state+"  toggleState= "+toggleState);
 		var changeState = false;
 		var list :  { zorder : Array<Widget>, refs : StringMap<Widget> };
 
@@ -408,9 +409,8 @@ class DefaultButton extends WidgetContainer {
 
 			//timelineOut.addEventListener(Event.COMPLETE,function(e){
 			timelineOut.onTimelineEnded = function(){
-
+//if (ref == "inventory") trace("CLICK button action is "+buttonAction);
 					buttonAction(this);
-
 				}
 
 			timelineOut.play();
@@ -422,12 +422,12 @@ class DefaultButton extends WidgetContainer {
 	}
 
 	private inline function onOver(event : MouseEvent) : Void {
-
+//if (ref == "inventory") trace("onOver toggleState= "+toggleState);
 		renderState("over");
 	}
 
 	private inline function onOut(event : MouseEvent) : Void {
-
+//if (ref == "inventory") trace("onOut toggleState= "+toggleState);
 		renderState("out");
 	}
 

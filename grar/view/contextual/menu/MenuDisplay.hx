@@ -364,7 +364,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 		if (level.items != null) {
 
 			for (elem in level.items) {
-trace("inner item in "+elem.id);
+
 				createMenuLevel(elem);
 			}
 		}
@@ -420,7 +420,7 @@ trace("inner item in "+elem.id);
 
 									case Image(i):
 
-										i.tile = iconId; trace("set icon Image to "+iconId);
+										i.tile = iconId;
 										var tid : TileImageData = cast { id: i };
 										c.ed = TileImage(tid);
 

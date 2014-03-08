@@ -197,6 +197,14 @@ class Controller {
 				}
 			}
 
+		state.onModuleNotebookChanged = function() {
+
+			if (state.module.notebook != null) {
+
+				application.notebook.model = state.module.notebook;
+			}
+		}
+
 		state.onModuleChanged = function() {
 
 				// place here cleaning code for any potential previous module

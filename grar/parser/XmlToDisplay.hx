@@ -19,6 +19,8 @@ import haxe.ds.StringMap;
 
 import haxe.xml.Fast;
 
+using StringTools;
+
 class XmlToDisplay {
 
 	///
@@ -82,7 +84,12 @@ class XmlToDisplay {
 
 				for (c in f.nodes.Chapter) {
 
-					chapterTemplates.set(c.att.ref, { offsetY: Std.parseFloat(c.att.offsetY), e: parseElement(c, dd, templates).e});
+					// clone Chapter node and parse it as a Button node
+					var tempNode : Fast = new Fast(Xml.parse(c.x.toString().replace("<Chapter", "<Button").replace("</Chapter", "</Button")).firstElement());
+
+					var tempE = parseElement(tempNode, dd, templates).e;
+
+					chapterTemplates.set(c.att.ref, { offsetY: Std.parseFloat(c.att.offsetY), e: tempE });
 				}
 
 				var tabTemplate : { x : Float, xOffset : Float, e : WidgetContainerData } = { x: Std.parseFloat(f.node.Tab.att.x), xOffset: Std.parseFloat(f.node.Tab.att.xOffset), e: XmlToWidgetContainer.parseWidgetContainerData(f.node.Tab, DefaultButton(null, null, null, null, null, null, null), templates) };

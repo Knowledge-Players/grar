@@ -6,6 +6,7 @@ import grar.view.component.container.ScrollPanel;
 import grar.view.component.container.WidgetContainer;
 import grar.view.component.Widget;
 import grar.view.component.Image;
+import grar.view.component.TileImage.TileImageData;
 import grar.view.guide.Guide;
 import grar.view.guide.Line;
 import grar.view.guide.Grid;
@@ -167,9 +168,10 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 		}
 	}
 
-	public function set_model(model:Notebook):Notebook
-	{
-		if(model != this.model){
+	public function set_model(model : Notebook) : Notebook {
+
+		if (model != this.model) {
+
 			this.model = model;
 
 			// Display bkg
@@ -185,9 +187,9 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 					throw '[NotebookDisplay] There is no item with ref "$item."';
 			}
 
-
 			// Set Locale
-// 			Localiser.instance.layoutPath = model.file;
+// 			Localiser.instance.layoutPath = model.file
+trace("LOCALE PATH "+model.file);
 			onLocaleDataPathRequest(model.file);
 
 
@@ -224,17 +226,38 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 
 								if (c.ref == "icon") {
 
-									switch(c.ed) {
+									if (page.icon.indexOf(".") < 0) {
 
-										case Image(i):
+										switch(c.ed) {
 
-											i.src = page.icon;
+											case Image(i):
 
-										case TileImage(ti):
+												i.tile = page.icon; // trace("set icon Image to "+page.icon);
+												var tid : TileImageData = cast { id: i };
+												c.ed = TileImage(tid);
 
-											ti.id.tile = page.icon;
+											case TileImage(ti):
 
-										default: throw "unexpected ElementData type given as button icon";
+												ti.id.tile = page.icon;
+
+											default: throw "unexpected ElementData type given as button icon (not an Image)";
+										}
+
+									} else {
+
+										switch(c.ed) {
+
+											case Image(i):
+
+												i.src = page.icon;
+
+											case TileImage(ti):
+
+												ti.id.src = page.icon;
+												c.ed = Image(ti.id);
+
+											default: throw "unexpected ElementData type given as button icon (not an Image)";
+										}
 									}
 								}
 							}
@@ -291,17 +314,38 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 
 											if (c.ref == "icon") {
 
-												switch(c.ed) {
+												if (chapter.icon.indexOf(".") < 0) {
 
-													case Image(i):
+													switch(c.ed) {
 
-														i.src = chapter.icon;
+														case Image(i):
 
-													case TileImage(ti):
+															i.tile = chapter.icon;// trace("set icon Image to "+chapter.icon);
+															var tid : TileImageData = cast { id: i };
+															c.ed = TileImage(tid);
 
-														ti.id.tile = chapter.icon;
+														case TileImage(ti):
 
-													default: throw "unexpected ElementData type given as button icon";
+															ti.id.tile = chapter.icon;
+
+														default: throw "unexpected ElementData type given as button icon (not an Image)";
+													}
+
+												} else {
+
+													switch(c.ed) {
+
+														case Image(i):
+
+															i.src = chapter.icon;
+
+														case TileImage(ti):
+
+															ti.id.src = chapter.icon;
+															c.ed = Image(ti.id);
+
+														default: throw "unexpected ElementData type given as button icon (not an Image)";
+													}
 												}
 											}
 										}
