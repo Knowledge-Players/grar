@@ -103,23 +103,29 @@ class VideoPlayer extends WidgetContainer {
 		addEventListener(Event.REMOVED_FROM_STAGE , unsetVideo, false, 0, true);
 		connection.connect(null);
 
-		for(i in 0...content.numChildren){
-			if(Std.is(content.getChildAt(i), grar.view.component.Widget)){
+		for (i in 0...content.numChildren) {
+
+			if (Std.is(content.getChildAt(i), grar.view.component.Widget)) {
+
 				controls.add(cast(content.getChildAt(i), grar.view.component.Widget));
 			}
 		}
-		if(displaysRefs.exists("time")){
+		if (displaysRefs.exists("time")) {
+
 			timeArea = cast(displaysRefs.get("time"), grar.view.component.container.ScrollPanel);
+			
 			controls.add(timeArea);
 		}
+		if (displaysRefs.exists("timeCurrent")) {
 
-		if (displaysRefs.exists("timeCurrent")){
 			timeCurrent = cast(displaysRefs.get("timeCurrent"), grar.view.component.container.ScrollPanel);
+			
 			controls.add(timeCurrent);
 		}
+		if (displaysRefs.exists("timeTotal")) {
 
-		if (displaysRefs.exists("timeTotal")){
 			timeTotal = cast(displaysRefs.get("timeTotal"), grar.view.component.container.ScrollPanel);
+			
 			controls.add(timeTotal);
 		}
 
@@ -128,7 +134,7 @@ class VideoPlayer extends WidgetContainer {
 		switch(vpd.type) {
 
 			case VideoPlayer(ch, af):
-trace("new VideoPlayer with controlsHidden= "+ch);
+
 				controlsHidden = ch;
 
 				if (af != null) {
@@ -186,10 +192,14 @@ trace("new VideoPlayer with controlsHidden= "+ch);
 
 	dynamic private function onVideoPlay(){};
 
-	public function setVideo(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1, capture:Float = 0, autoFullscreen:Bool = false,?thumbnail:String, ?onVideoPlay: Void -> Void): Void
-	{
-		if(url == null || url == "")
+	public function setVideo(url : String, autoStart : Bool = false, loop : Bool = false, 
+								defaultVolume : Float = 1, capture : Float = 0, autoFullscreen : Bool = false,
+								? thumbnail : String, ? onVideoPlay : Void -> Void) : Void {
+
+		if (url == null || url == "") {
+
 			throw '[VideoPlayer] Invalid url "$url" for video stream.';
+		}
 		//if(stream != null)
 		//	init();
 		//_timeToCapture = capture
@@ -397,9 +407,12 @@ trace("new VideoPlayer with controlsHidden= "+ch);
 		}
 	}
 
-	public function imageCapture():BitmapData {
+	public function imageCapture() : BitmapData {
+
 		var bmp:BitmapData = new BitmapData(Math.round(width), Math.round(height));
+		
 		bmp.draw(this);
+		
 		return bmp;
 	}
 
@@ -494,9 +507,9 @@ trace("new VideoPlayer with controlsHidden= "+ch);
 	// INTERNALS
 	//
 
-	private function init():Void
-	{
-		content.setChildIndex(layer.view,1);
+	private function init() : Void {
+
+		content.setChildIndex(layer.view, 1);
 
 		progressBar.addEventListener(MouseEvent.CLICK, onClickTimeline);
 		
@@ -530,6 +543,7 @@ trace("new VideoPlayer with controlsHidden= "+ch);
 		containerVideo.addEventListener(MouseEvent.MOUSE_MOVE,onMouseMove);
 		
 		containerControls.alpha = 0;
+		//addChild(containerControls); // if we wanted controls appearing before video play
 	}
 
 	private function onMouseMove(e:MouseEvent):Void{
@@ -714,7 +728,6 @@ trace("new VideoPlayer with controlsHidden= "+ch);
 
 	private function showControls(? e : MouseEvent = null) : Void {
 
-trace("showControls controlsHidden= "+controlsHidden);
 		if (controlsHidden) {
 
 // 			TweenManager.stop(containerControls);
@@ -726,7 +739,7 @@ trace("showControls controlsHidden= "+controlsHidden);
 	}
 
 	private function hideControls(? e : MouseEvent = null) : Void {
-trace("hide controls   controlsHidden= "+controlsHidden+"   containerControls= "+containerControls);
+
 		if (controlsHidden) {
 
 // 			TweenManager.stop(containerControls);
@@ -749,9 +762,9 @@ trace("hide controls   controlsHidden= "+controlsHidden+"   containerControls= "
 		}
 	}
     private function checkAgain() : Void {
-trace("checkAgain ");
+
 		if (containerVideo.hitTestPoint(Lib.current.stage.mouseX, Lib.current.stage.mouseY)) {
-trace("checkAgain => hide");
+
             hideControls();
         }
 	}

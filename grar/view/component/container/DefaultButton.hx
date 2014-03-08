@@ -67,6 +67,7 @@ class DefaultButton extends WidgetContainer {
 
 				default: throw "Wrong WidgetContainerData type passed to DefaultButton constructor";
 			}
+//if (ref == "btn_ready_welcome") trace("just built a new DefaultButton instance");
 		}
 
 		this.mouseChildren = false;
@@ -82,8 +83,11 @@ class DefaultButton extends WidgetContainer {
 #end
 
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
-//trace("*********** DEFAULT BUTTON ADDED TO STAGE !!!");
-				this.toggleState = this.defaultState;
+//if (ref == "btn_ready_welcome") trace("*********** DEFAULT BUTTON ADDED TO STAGE !!!");
+				if (this.toggleState == null) { // HOTFIX, ask JB about it...
+
+					this.toggleState = this.defaultState;
+				}
 
 			});
 	}
@@ -91,7 +95,7 @@ class DefaultButton extends WidgetContainer {
 	/**
      * Switch to enable the button
      */
-	public var enabled (default, set_enabled):Bool;
+	public var enabled (default, set):Bool;
 
 	/**
     * Class of style for the button
@@ -111,7 +115,7 @@ class DefaultButton extends WidgetContainer {
 	/**
 	* State of the button.
 	**/
-	public var toggleState (default, set_toggleState):String;
+	public var toggleState (default, set) : String;
 
 	/**
 	* Timeline that will play on the next click
@@ -161,9 +165,10 @@ class DefaultButton extends WidgetContainer {
 		return activate;
 	}
 
-	public inline function set_toggleState(state:String):String
-	{
-		if(states.exists(state+"_out")){
+	public inline function set_toggleState(state : String) : String {
+//if (ref == "btn_ready_welcome") trace("toggleState about to be set to "+state);
+		if (states.exists(state+"_out")) {
+//if (ref == "btn_ready_welcome") trace("states.exists("+state+"_out) => setting to "+state);
 			toggleState = state;
 			timeline = timelines.get(toggleState);
 			renderState("out");
@@ -189,7 +194,7 @@ class DefaultButton extends WidgetContainer {
 	 * Define if the button is in state active or inactive
 	 **/
 	public inline function toggle(? toggle : Bool) : Void {
-
+//if (ref == "btn_ready_welcome") trace("toggle "+toggle);
 		// Don't do anything if the toggle doesn't change
 		if (toggle != (toggleState == "active")) {
 
@@ -198,6 +203,7 @@ class DefaultButton extends WidgetContainer {
 
 				toggle = toggleState == "inactive";
 			}
+//if (ref == "btn_ready_welcome") trace("setting toggleState to "+(toggle ? "active" : "inactive"));
 			toggleState = toggle ? "active" : "inactive";
 		}
 	}
@@ -361,6 +367,7 @@ class DefaultButton extends WidgetContainer {
 
 	public inline function resetToggle():Void
 	{
+//if (ref == "btn_ready_welcome") trace("reset toggle");
 		toggleState = defaultState;
 	}
 

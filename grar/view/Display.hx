@@ -635,7 +635,7 @@ trace("setContent, display type is "+d.type);
 		for (b in buttonGroups.get(button.group)) {
 
 			if (b != button) {
-
+trace("TOGGLE "+b.ref+"  "+(button.toggleState != "active"));
 				b.toggle(button.toggleState != "active");
 			}
 		}
