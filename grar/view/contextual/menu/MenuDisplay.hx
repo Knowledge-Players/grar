@@ -4,6 +4,7 @@ import grar.model.part.Part;
 
 import grar.view.Display;
 import grar.view.component.Image;
+import grar.view.component.TileImage.TileImageData;
 import grar.view.component.Widget;
 import grar.view.component.container.WidgetContainer;
 import grar.view.component.container.SimpleContainer;
@@ -223,7 +224,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
         		this.orientation = o;
         		this.levelDisplays = ld;
 
-				// WHY AGAIN ??? super.createDisplay();
+				super.createDisplay(data);
 
 				this.xBase = xb;
 				this.yBase = yb;
@@ -254,6 +255,11 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 		}
 	}
 
+
+	///
+	// GETTER / SETTER
+	//
+
 	/**
     * @:setter for orientation
     * @param    orientation : The orientation set
@@ -269,6 +275,17 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 	///
 	// INTERNALS
 	//
+
+	// This is so because super.createDisplay() is called later in MenuDisplay
+	override private function createDisplay(d : DisplayData) : Void {  }
+
+	//override private function addElement(elem : Widget, node : Fast) : Void {
+	override private function addElement(elem : Widget, ref : String) : Void {
+
+		super.addElement(elem, ref);
+
+		addChild(elem);
+	}
 
 	private function createMenuLevel(level : LevelData) : Void {
 
@@ -347,7 +364,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 		if (level.items != null) {
 
 			for (elem in level.items) {
-
+trace("inner item in "+elem.id);
 				createMenuLevel(elem);
 			}
 		}
@@ -394,20 +411,41 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 				for (st in statesElts) {
 
 					for (c in st) {
-
+//trace("c.ref = "+c.ref);
 						if (c.ref == "icon") {
 
-							switch(c.ed) {
+							if (iconId.indexOf(".") < 0) {
 
-								case Image(i):
+								switch(c.ed) {
 
-									i.src = iconId;
+									case Image(i):
 
-								case TileImage(ti):
+										i.tile = iconId; trace("set icon Image to "+iconId);
+										var tid : TileImageData = cast { id: i };
+										c.ed = TileImage(tid);
 
-									ti.id.tile = iconId;
+									case TileImage(ti):
 
-								default: throw "unexpected ElementData type given as button icon";
+										ti.id.tile = iconId;
+
+									default: throw "unexpected ElementData type given as button icon (not an Image)";
+								}
+
+							} else {
+
+								switch(c.ed) {
+
+									case Image(i):
+
+										i.src = iconId;
+
+									case TileImage(ti):
+
+										ti.id.src = iconId;
+										c.ed = Image(ti.id);
+
+									default: throw "unexpected ElementData type given as button icon (not an Image)";
+								}
 							}
 						}
 					}
@@ -427,8 +465,6 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 
 		return button;
 	}
-
-	override private function createDisplay(d : DisplayData) : Void { } // ?
 
 	// Handlers
 

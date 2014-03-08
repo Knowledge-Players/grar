@@ -85,15 +85,6 @@ class Part /* implements Part */ {
 		this.requirements = pd.requirements;
 		this.next = pd.next;
 		this.buttonTargets = pd.buttonTargets;
-if (id == "intro") {
-trace("DEBUGGING BTN TARGETS");
-	for (bt in buttonTargets.keys()) {
-if (buttonTargets.get(bt) == null) {
-trace("target for "+bt+" is null"); continue;
-}
-		trace(bt+" => "+switch(buttonTargets.get(bt)){ case Part(p): " part "+p.name; case Item(i): " item "+i.ref; case Pattern(p): " pattern "+p.id; });
-	}
-}
 		this.nbSubPartTotal = pd.nbSubPartTotal;
 		this.soundLoopChannel = pd.soundLoopChannel;
 	}

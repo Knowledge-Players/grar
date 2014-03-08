@@ -168,7 +168,7 @@ class PartDisplay extends Display {
 				onEnterSubPart(p);
 
 			case Item(i):
-trace("Next Element is an item");
+//trace("Next Element is an item");
 				if (i.endScreen) {
 
 					part.isDone = true;
@@ -178,7 +178,7 @@ trace("Next Element is an item");
 				crawlTextGroup(i);
 
 			case Pattern(p):
-trace("Next Element is a Pattern");
+//trace("Next Element is a Pattern");
 				if (p.endScreen) {
 
 					part.isDone = true;
@@ -253,7 +253,7 @@ trace("Next Element is a Pattern");
 
 	private function unLoad():Void
 	{
-trace("UNLOAD !!!");
+//trace("UNLOAD !!!");
 		while(numChildren > 0){
 			var child = removeChildAt(numChildren - 1);
 			child = null;

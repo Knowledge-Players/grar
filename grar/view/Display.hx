@@ -103,6 +103,7 @@ class Display extends Sprite {
 		this.displayTemplates = new StringMap();
 
 		this.callbacks = callbacks;
+
 		this.onContextualDisplayRequest = function(c : grar.view.Application.ContextualType, ? ho : Bool = true){ callbacks.onContextualDisplayRequest(c, ho); }
 		this.onContextualHideRequest = function(c : grar.view.Application.ContextualType){ callbacks.onContextualHideRequest(c); }
 		this.onQuitGameRequest = function(){ callbacks.onQuitGameRequest(); }
@@ -223,7 +224,7 @@ class Display extends Sprite {
 
 	//public function parseContent(content:Xml):Void
 	public function setContent(d : DisplayData) : Void {
-trace("setContent, display type is "+d.type);
+//trace("setContent, display type is "+d.type);
 		this.data = d;
 
 		if (d.x != null) {
@@ -293,7 +294,7 @@ trace("setContent, display type is "+d.type);
 	//
 
 	private function createDisplay(d : DisplayData) : Void {
-
+//trace("create display ");
 		for (c in d.displays) {
 
 			createElement(c.ed, c.ref);
@@ -534,16 +535,14 @@ trace("setContent, display type is "+d.type);
 	//private function createImage(itemNode:Fast):Widget
 	private function createTileImage(r : String, d : TileImageData) : Widget {
 
-		if (d.tilesheetName == null) {
+		var tsn : String = d.tilesheetName == null ? "ui" : d.tilesheetName;
 
-			d.tilesheetName = "ui";
-		}
-		if (!layers.exists(d.tilesheetName)) {
+		if (!layers.exists(tsn)) {
 
 			var layer = new TileLayer(applicationTilesheet);
-			layers.set(d.tilesheetName, layer);
+			layers.set(tsn, layer);
 		}
-		var img = new TileImage(callbacks, applicationTilesheet, transitions, d, layers.get(d.tilesheetName));
+		var img = new TileImage(callbacks, applicationTilesheet, transitions, d, layers.get(tsn));
 		
 		addElement(img, r);
 		
@@ -635,7 +634,7 @@ trace("setContent, display type is "+d.type);
 		for (b in buttonGroups.get(button.group)) {
 
 			if (b != button) {
-trace("TOGGLE "+b.ref+"  "+(button.toggleState != "active"));
+//trace("TOGGLE "+b.ref+"  "+(button.toggleState != "active"));
 				b.toggle(button.toggleState != "active");
 			}
 		}
