@@ -433,53 +433,74 @@ class PartDisplay extends Display {
 	}
 
 
-	private function setBackground(background:String):Void
-	{
-		if(background != null && background != ""){
+	private function setBackground(background : String) : Void {
+//if(part.id == "ep1_intro") trace("setBackground "+background);
+		if (background != null && background != "") {
+
 			var sameBackground = true;
 			// Clean previous background
-			if(previousBackground != null && previousBackground != background){
+			
+			if (previousBackground != null && previousBackground != background) {
+
 				sameBackground = false;
-				for(b in previousBackground.split(",")) {
+				
+				for (b in previousBackground.split(",")) {
+
 					removeChild(displaysRefs.get(b)); // trace("child "+b+" removed !!!");
 				}
-			}
-			else if(previousBackground == null)
+			
+			} else if (previousBackground == null) {
+
 				sameBackground = false;
+			}
 			// Add new background if different from previous one
-			if(!sameBackground){
+			if (!sameBackground) {
+
 				var bkgs = background.split(",");
 				bkgs.reverse();
-				for(b in bkgs){
-					if(!displaysRefs.exists(b))
+				
+				for (b in bkgs) {
+
+					if (!displaysRefs.exists(b)) {
+
 						throw '[PartDisplay] There is no background with ref "$b"';
+					}
 				}
 				previousBackground = background;
+//if(part.id == "ep1_intro") trace("previousBackground now is "+previousBackground);
 			}
 		}
 	}
 
-	private function setSpeaker(author:String, ?transition:String):Void
-	{
-		if(author != null && displaysRefs.exists(author)){
-			if(!displaysRefs.exists(author))
-				throw "[PartDisplay] There is no Character with ref " + author;
+	private function setSpeaker(author : String, ? transition : String) : Void {
+
+		if (author != null && displaysRefs.exists(author)) {
+
 			var char = cast(displaysRefs.get(author), CharacterDisplay);
 
-			if(char != currentSpeaker){
-				if(currentSpeaker != null && contains(currentSpeaker) && !Std.is(this, StripDisplay)){
+			if (char != currentSpeaker) {
+
+				if (currentSpeaker != null && contains(currentSpeaker) && !Std.is(this, StripDisplay)) {
+
 					removeChild(currentSpeaker);
 				}
 				currentSpeaker = char;
 
-				if(char.nameRef != null && displaysRefs.exists(char.nameRef))
-					cast(displaysRefs.get(char.nameRef), grar.view.component.container.ScrollPanel).setContent(currentSpeaker.charRef);
-				else if(char.nameRef != null)
+				if (char.nameRef != null && displaysRefs.exists(char.nameRef)) {
+
+					//cast(displays.get(char.nameRef), ScrollPanel).setContent(currentSpeaker.model.getName());
+					cast(displaysRefs.get(char.nameRef), grar.view.component.container.ScrollPanel).setContent(currentSpeaker.getName());
+				
+				} else if (char.nameRef != null) {
+
 					throw "[PartDisplay] There is no TextArea with ref " + char.nameRef;
+				}
 			}
-		}
-		else if(currentSpeaker != null && contains(currentSpeaker)){
+		
+		} else if (currentSpeaker != null && contains(currentSpeaker)) {
+
 			removeChild(currentSpeaker);
+
 			currentSpeaker = null;
 		}
 	}
@@ -509,8 +530,9 @@ class PartDisplay extends Display {
 			if (text.introScreen != null) {
 //trace("call clean display");
 				cleanDisplay();
-
+//trace("setSpeaker "+text.author);
 				setSpeaker(text.author, text.transition);
+//trace("setText "+text.ref);
 				setText(text, isFirst);
 
 				// The intro screen automatically removes itself after its duration
@@ -580,7 +602,7 @@ class PartDisplay extends Display {
 				//if (Std.is(getChildAt(i),Widget) && (cast(getChildAt(i),Widget).zz > displaysRefs.get(item.ref).zz)) {
 				if (Std.is(getChildAt(i), grar.view.component.Widget) && 
 						getZPosition(cast(getChildAt(i), grar.view.component.Widget)) > getZPosition(displaysRefs.get(item.ref))) {
-//trace("Add item "+item.ref+" at "+i);
+//if (item.ref == "hand") trace("Add item "+item.ref+" at "+i);
 					addChildAt(displaysRefs.get(item.ref), i);
 
 					found = true;
@@ -690,6 +712,7 @@ class PartDisplay extends Display {
 
 //		 					GameManager.instance.playSound(cast(currentItem, TextItem).sound);
 							onSoundToPlay(cast(currentItem, TextItem).sound);
+trace("play sound : "+cast(currentItem, TextItem).sound);
 						}
 					}
 				}
@@ -699,29 +722,32 @@ class PartDisplay extends Display {
 	}
 
 	private function displayPartElements() : Void {
-// trace("displayPartElements called");
+
 		numWidgetReady = 0;
 		numWidgetAdded = 0;
+
 		var backs : Array<Widget> = [];
 
 		for (obj in displays) {
-//trace("about to add "+obj.ref);
-			if (!mustBeDisplayed(obj.ref)) {
-//if (obj.ref == "btn_ready_welcome") trace("must not be displayed "+obj.ref);
-				continue;
-			}
-//if (obj.ref == "btn_ready_welcome") trace("can be displayed "+obj.ref);
-			obj.w.onComplete = onWidgetAdded;
+
+			if (mustBeDisplayed(obj.ref)) {
+
+				obj.w.onComplete = onWidgetAdded;
 			
-			numWidgetAdded++;
+				numWidgetAdded++;
 
-			if (obj.w.isBackground) {
+				if (obj.w.isBackground) {
 
-				backs.push(obj.w);
-				continue;
+					backs.push(obj.w);
+//if (part.id == "ep1_dialogue1") trace("adding "+obj.ref);
+
+				} else {
+
+					addChild(obj.w);
+
+//if (part.id == "ep1_dialogue1") trace("adding "+obj.ref);
+				}
 			}
-//trace("adding "+obj.ref);
-			addChild(obj.w);
 		}
 		while (backs.length > 0) {
 
@@ -784,24 +810,25 @@ class PartDisplay extends Display {
 	}
 
 	private function mustBeDisplayed(key : String) : Bool {
-
+////if (key == "hand") trace("should we display hand ???");
 		var object : Widget = displaysRefs.get(key);
 #if flash
 		if (Std.is(object, grar.view.component.container.VideoPlayer)) {
-
+////if (key == "hand") trace("is video player");
 			return currentItem.ref == key;
 		}
 #end
 //if (key == "btn_ready_welcome") trace("contains object? "+contains(object));
 		// If the object is already displayed
 		if (contains(object)) {
-//trace("object already on scene: "+key);
+////if (key == "hand") trace("NOOOOO");
 			return false;
 		}
 
 		// Background
-		if (key == previousBackground) {
-
+		//if (key == previousBackground) {
+		if (previousBackground != null && Lambda.has( previousBackground.split(",") , key )) {
+////if (key == "hand") trace("in previousBackground");
 			return true;
 		}
 
@@ -830,10 +857,11 @@ class PartDisplay extends Display {
 
 					cast(displaysRefs.get(key), DefaultButton).timeline = timelines.get(currentItem.timelineOut);
 				}
+////if (key == "hand") trace("in button");
 				return true;
 			
 			} else {
-//trace("unexisting button: "+key);
+////if (key == "hand") trace("NOOOOO");
 				return false;
 			}
 		}
@@ -842,18 +870,18 @@ class PartDisplay extends Display {
 		if (Std.is(object, CharacterDisplay)) {
 
 			if (object == currentSpeaker) {
-
+////if (key == "hand") trace("is current speaker");
 				return true;
 			
 			} else if ((currentItem != null && currentItem.isText() && 
 							Lambda.has(cast(currentItem, TextItem).images, key))) {
 
 				currentItems.add(object);
-
+////if (key == "hand") trace("in text imgs");
 				return true;
 			
 			} else {
-//trace("CharacterDisplay ignored: "+key);
+////if (key == "hand") trace("NOOOOO");
 				return false;
 			}
 		}
@@ -864,11 +892,11 @@ class PartDisplay extends Display {
 			var text = cast(currentItem, TextItem);
 			
 			if (currentSpeaker != null && Std.is(object, grar.view.component.container.ScrollPanel) && key == currentSpeaker.nameRef) {
-
+//if (key == "hand") trace("img 1");
 				return true;
 			}
 			if (Std.is(object, grar.view.component.container.ScrollPanel) && key != text.ref) {
-//trace("ScrollPanel ignored: "+key);
+//if (key == "hand") trace("NOOOOO");
 				return false;
 			}
 			if (Std.is(object, grar.view.component.Image) || Std.is(object, grar.view.component.container.SimpleContainer)) {
@@ -876,11 +904,11 @@ class PartDisplay extends Display {
 				if (Lambda.has(text.images, key)) {
 //trace("Added to currentItems "+object.ref);
 					currentItems.add(object);
-
+//if (key == "hand") trace("img 2");
 					return true;
 				
 				} else {
-//trace("Image or Container ignored: "+key);
+//if (key == "hand") trace("NOOOOO");
 					return false;
 				}
 			}
@@ -888,15 +916,16 @@ class PartDisplay extends Display {
 		} else {
 
 			if (Std.is(object, grar.view.component.container.ScrollPanel)) {
-
+//if (key == "hand") trace("NOOOOO");
 				return false;
 			}
 		}
 		// Exclude IntroScreen
 		if (Std.is(object, grar.view.part.IntroScreen)) {
-//trace("IntroScreen ignored: "+key);
+//if (key == "hand") trace("NOOOOO");
 			return false;
 		}
+//if (key == "hand") trace("default case");
 		return true;
 	}
 }

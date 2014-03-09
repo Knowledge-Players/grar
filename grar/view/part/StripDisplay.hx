@@ -55,7 +55,7 @@ class StripDisplay extends PartDisplay {
 	//
 
 	override private function createDisplay(d : DisplayData) : Void {
-trace("create strip display");
+//trace("create strip display");
 		super.createDisplay(d);
 
 		for (elem in part.elements) {
@@ -88,7 +88,7 @@ trace("create strip display");
 
 			case BoxDisplay(d):
 
-				elem = new BoxDisplay(callbacks, applicationTilesheet, transitions, d, spritesheets.get(d.spritesheetRef));
+				boxes.set(r, new BoxDisplay(callbacks, applicationTilesheet, transitions, d, spritesheets.get(d.spritesheetRef)));
 
 			default: // nothing
 		}
@@ -145,35 +145,38 @@ trace("create strip display");
 		displayPart();
 	}
 
-	override private function setupItem(item:Item, ?isFirst:Bool = true):Void
-	{
-trace("SETTING CURRENT ITEM TO "+item);
+	override private function setupItem(item : Item, ? isFirst : Bool = true) : Void {
+//trace("SETTING CURRENT ITEM TO "+item);
 		currentItem = item;
-		if(isFirst)
-			setBackground(item.background);
+		
+		if (isFirst) {
 
-		if(item.isText()){
+			setBackground(item.background);
+		}
+		if (item.isText()) {
+
 			var text = cast(item, TextItem);
 			setSpeaker(text.author, text.transition);
 			setText(text, isFirst);
 		}
 	}
 
-	override private function displayPart():Void
-	{
-		if(currentBox != null){
-	        var box: BoxDisplay = boxes.get(currentBox.id);
-			var nextItem: Item = currentBoxItem;
+	override private function displayPart() : Void {
+
+		if (currentBox != null) {
+
+	        var box : BoxDisplay = boxes.get(currentBox.id);
+			var nextItem : Item = currentBoxItem;
 			
 			while (nextItem != null) {
 
 				if (nextItem != null) {
-
+//trace("box= "+box+"   nextItem= "+nextItem);
 //					box.textFields.get(nextItem.ref).setContent(Localiser.instance.getItemContent(nextItem.content));
 					box.textFields.get(nextItem.ref).setContent(onLocalizedContentRequest(nextItem.content));
 
 					if (Std.is(nextItem, TextItem)) {
-
+//trace("onSoundToPlay "+cast(nextItem, TextItem).sound);
 //						GameManager.instance.playSound(cast(nextItem, TextItem).sound);
 						onSoundToPlay(cast(nextItem, TextItem).sound);
 					}
@@ -181,20 +184,27 @@ trace("SETTING CURRENT ITEM TO "+item);
 
 				nextItem = currentBox.getNextItem();
 			}
-			if(Lambda.count(currentBox.buttons) == 0){
+			if (Lambda.count(currentBox.buttons) == 0) {
+
 				box.onComplete = onBoxVisible;
 				addChild(box);
-			}
-			else{
+			
+			} else { 
+
 				addChild(box);
-				for(key in currentBox.buttons.keys()){
-					if(!displaysRefs.exists(key))
+				
+				for (key in currentBox.buttons.keys()) {
+
+					if (!displaysRefs.exists(key)) {
+
 						throw "[StripDisplay] There is no Button with ref \""+key+"\"";
+					}
 					addChild(displaysRefs.get(key));
 				}
 			}
-		}
-		else{
+		
+		} else { 
+
 			super.displayPart();
 			nextElement();
 		}

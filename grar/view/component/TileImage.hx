@@ -40,7 +40,8 @@ class TileImage extends Image {
 							transitions : StringMap<TransitionTemplate>, tid : TileImageData, 
 								layer : TileLayer, visible : Bool = true) {
 
-		this.isVisible = visible;
+		//this.isVisible = visible;
+		this.isVisible = false; // I had to do this to avoid TileImages not added to stage to be displayed anyway :S !
 
 		this.tid = tid;
 
@@ -60,7 +61,7 @@ class TileImage extends Image {
 		addEventListener(Event.REMOVED_FROM_STAGE, onRemove, 1000);
 		
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
-//trace("TileImage "+ref+" added to stage");
+
 				if (tileSprite != null) {
 
 					origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY, alpha: tileSprite.alpha};
@@ -95,8 +96,8 @@ class TileImage extends Image {
 	//
 
 	@:setter(filters)
-	public function set_filters(filters:Array<BitmapFilter>):Void
-	{
+	public function set_filters(filters : Array<BitmapFilter>) : Void {
+		
 		super.filters = trueLayer.view.filters = filters;
 	}
 

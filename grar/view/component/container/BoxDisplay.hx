@@ -30,8 +30,11 @@ class BoxDisplay extends WidgetContainer {
 	override private function createText(d : WidgetContainerData) : ScrollPanel {
 
 		var text = new ScrollPanel(callbacks, applicationTilesheet, transitions, d);
+
 		addElement(text);
+//trace("setting "+text.ref+" to "+text);
 		textFields.set(text.ref, text);
+		
 		return text;
 	}
 

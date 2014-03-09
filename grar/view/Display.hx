@@ -524,7 +524,7 @@ class Display extends Sprite {
 	}
 
 	private function createCharacter(r : String, d : CharacterData) : Widget {
-//new CharacterDisplay(character, layers.get(character.att.spritesheet), new Character(character.att.ref));
+//trace("CREATE CHARACTER WITH "+d.tid.tilesheetName);
 		var c : CharacterDisplay = new CharacterDisplay(callbacks, applicationTilesheet, transitions, d, layers.get(d.tid.tilesheetName));
 		
 		addElement(c, r);

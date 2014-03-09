@@ -200,9 +200,12 @@ class KpTextDownElement {
 		for(mod in modificators){
 			var position = mod.match.pos - offset;
 			offset += mod.offset;
-			var st: Style = styleSheet.getStyle(mod.style);
-			if(st == null)
-				throw "[Style] There is no style named '"+mod.style+"'.";
+			var st : Style = styleSheet.getStyle(mod.style);
+			
+			if (st == null) {
+
+				throw "there is no style named '"+mod.style+"'.";
+			}
 			tf.setPartialStyle(st, position, position + mod.match.len - mod.offset);
 		}
 

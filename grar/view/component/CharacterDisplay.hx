@@ -23,6 +23,8 @@ class CharacterDisplay extends TileImage {
 	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
 							transitions : StringMap<TransitionTemplate>, cd : CharacterData, layer : TileLayer) {
 
+		cd.tid.tilesheetName = null;
+
 		super(callbacks, applicationTilesheet, transitions, cd.tid, layer, false);
 
 		this.charRef = cd.charRef;
@@ -48,7 +50,7 @@ class CharacterDisplay extends TileImage {
 	// API
 	//
 
-	public function getName() : String { // TODO invert calls (replace by a setName function)
+	public function getName() : String { // would be better to invert calls (replace by a setName function)
 
 		return onLocalizedContentRequest(charRef.split("_")[0]);
 	}

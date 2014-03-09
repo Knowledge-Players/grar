@@ -29,7 +29,7 @@ class DialogDisplay extends PartDisplay {
      */
 	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, 
 							transitions : StringMap<TransitionTemplate>, part : Part) {
-
+//trace("new Dialog part");
 		super(callbacks, applicationTilesheet, transitions, part);
 	}
 
@@ -72,22 +72,31 @@ class DialogDisplay extends PartDisplay {
 				exitPattern = true;
 			}
 		}
+		if (pattern != null) {
 
-		if(pattern != null){
-			var next: Item = pattern.getNextItem();
-			if(next != null && !exitPattern){
+			var next : Item = pattern.getNextItem();
+			
+			if (next != null && !exitPattern) {
+//trace("1");
 				crawlTextGroup(next, pattern);
-			}
-			else if(currentPattern.nextPattern != "")
+			
+			} else if (currentPattern.nextPattern != "") {
+//trace("2");
 				goToPattern(currentPattern.nextPattern);
-			else{
+			
+			} else {
+//trace("3");
 				var nextIndex = part.getElementIndex(Pattern(currentPattern));
+				
 				currentPattern = null;
+				
 				nextElement(nextIndex);
 			}
-		}
-		else
+		
+		} else {
+//trace("4");
 			nextElement();
+		}
 	}
 
 	override private function setButtonAction(button : DefaultButton, action : String) : Bool {
@@ -156,7 +165,7 @@ class DialogDisplay extends PartDisplay {
 
 // 			TweenManager.applyTransition(tooltip, pattern.tooltipTransition);
 			TweenUtils.applyTransition(tooltip, transitions, pattern.tooltipTransition);
-
+trace("adding tooltip $$$$");
 			addChildAt(tooltip, i);
 		}
 		else{

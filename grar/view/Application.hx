@@ -63,10 +63,11 @@ class Application {
 		// the GRAR instance.
 
 		this.parts = new GenericStack<PartDisplay>();
+		this.sounds = new StringMap();
 
 		this.callbacks = {
 
-				onContextualDisplayRequest: function(c : ContextualType, ? ho : Bool = true){ trace("onContextualDisplayRequest"); this.displayContextual(c, ho); },
+				onContextualDisplayRequest: function(c : ContextualType, ? ho : Bool = true){ this.displayContextual(c, ho); },
 				onContextualHideRequest: function(c : ContextualType){ this.hideContextual(c); },
 				onQuitGameRequest: function(){ this.onQuitGameRequest(); },
 				onRestoreLocaleRequest: function(){ this.onRestoreLocaleRequest(); },
@@ -141,9 +142,9 @@ class Application {
 	public var mainLayoutRef (default, default) : Null<String> = null;
 
 
-	private var nbVolume:Float = 1;
-	private var itemSoundChannel:SoundChannel;
-	private var sounds:Map<String, Sound>;
+	private var nbVolume : Float = 1;
+	private var itemSoundChannel : SoundChannel;
+	private var sounds : StringMap<Sound>;
 
 	
 	///
@@ -301,7 +302,7 @@ class Application {
 		this.tweener = new Tweener(t);
 	}
 */
-	public function changeLayout(l : String) : Void { trace("CHANGE LAYOUT " + l);
+	public function changeLayout(l : String) : Void { //trace("CHANGE LAYOUT " + l);
 
 		if (l == null) {
 
@@ -500,11 +501,12 @@ class Application {
 	* Pre load a sound. Then use playSound with the same url to play it
 	* @param soundUrl : Path to the sound file
 	**/
-	public function loadSound(soundUrl:String):Void
-	{
+	public function loadSound(soundUrl : String) : Void {
+//trace("load sound with url= "+soundUrl);
 		if (soundUrl != null && soundUrl != "") {
 
 			var sound = new Sound(new flash.net.URLRequest(soundUrl));
+
 			sounds.set(soundUrl, sound);
 		}
 	}
@@ -513,10 +515,10 @@ class Application {
     * Play a sound. May cause error if the sound is not preloaded with loadSound()
     * @param soundUrl : Path to the sound file
     **/
-	public function playSound(soundUrl: String):Void
-	{
-		if (soundUrl != null) {
+	public function playSound(soundUrl : String) : Void {
 
+		if (soundUrl != null) {
+//trace("playSound = "+soundUrl);
 			stopSound();
 			
 			if (!sounds.exists(soundUrl)) {
@@ -624,7 +626,7 @@ trace("displayContextual "+cd);
 
 	//private function onExitPart(event:Event) : Void {
 	public function setFinishedPart(partId : String) : Void {
-trace("setFinishedPart "+partId);
+//trace("setFinishedPart "+partId);
 		var finishedPart = parts.pop();
 		
 		if (finishedPart.part.id != partId) {
@@ -687,7 +689,7 @@ trace("Game Over");
 	}
 
 	function onPartDisplayLoaded(pd : PartDisplay) : Void {
-trace("onPartLoaded "+pd.part.id);
+//trace("onPartLoaded "+pd.part.id);
 		onSetBookmarkRequest(pd.part.id);
 
 		//pd.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
