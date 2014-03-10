@@ -36,8 +36,8 @@ class StateInfos {
 		var trackable:Array<String> = stateInfosArray[2].split("-");
 
 		if(allItem.length > 0){
-            if (allItem.length != trackable.length)
-                trackable = initTrackable();
+            while(allItem.length != trackable.length)
+                trackable.push("0");
 			for(i in 0...trackable.length){
 				if(i < allItem.length){
 					completion.set(allItem[i].id, Std.parseInt(trackable[i]));
@@ -61,7 +61,7 @@ class StateInfos {
 		checksum = Std.parseInt(stateInfosArray[3]);
 	}
 
-    public function initTrackable():Array<String>
+    /*public function initTrackable():Array<String>
     {
         var a:Array<String> = new Array<String>();
         allItem = GameManager.instance.game.getAllItems();
@@ -69,7 +69,7 @@ class StateInfos {
             a.push("0");
         }
         return a;
-    }
+    }*/
 
 	public function saveStateInfos():String
 	{

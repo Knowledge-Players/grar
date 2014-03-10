@@ -254,7 +254,7 @@ class ActivityDisplay extends PartDisplay {
         zButton++;
 		inputs.add(button);
 		if(input.selected)
-			toggleInput(button);
+			toggleInput(button, "true");
 
 		if(nextTimeline != null && timelines.exists(nextTimeline)){
 			var tl: Timeline = timelines.get(nextTimeline);
@@ -400,9 +400,12 @@ class ActivityDisplay extends PartDisplay {
 		}
 	}
 
-	private function toggleInput(input:DefaultButton):Void
+	private function toggleInput(input:DefaultButton, ?targetedState: String):Void
 	{
-		input.toggle();
+		if(targetedState != null)
+			input.toggle(targetedState == "true");
+		else
+			input.toggle();
 		var selected: Bool = buttonsToInputs.get(input).selected;
 		validatedInputs.set(input, selected);
 		if(autoCorrect)
@@ -439,7 +442,6 @@ class ActivityDisplay extends PartDisplay {
 
 					while(drop != null && !(drop.is(DefaultButton) && (inputs.has(cast(drop, DefaultButton)) || cast(drop, Widget).ref == dropRef)))
 						drop = drop.parent;
-
 					if(drop != null && validate(e.target, (buttonsToInputs.exists(cast(drop, DefaultButton)) ? buttonsToInputs.get(cast(drop, DefaultButton)).id : drop.name))){
 						copyCoordinates(e.target, cast(drop, DefaultButton));
 
@@ -499,6 +501,9 @@ class ActivityDisplay extends PartDisplay {
 							copyCoordinates(dropZone, drop);
 							drop.parent.addChild(dropZone);
 						}
+						else
+							setChildIndex(drop, numChildren-1);
+
 					}
 					else{
 						copyCoordinates(e.target, dragOrigin);

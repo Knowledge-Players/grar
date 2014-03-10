@@ -154,9 +154,9 @@ class GameManager extends EventDispatcher {
 
 	public function changeLayout(layout:String):Void
 	{
-		if(layout == null)
-			layout = "default";
-		if(this.layout == null || layout != this.layout.name){
+		/*if(layout == null)
+			layout = "default";*/
+		if(this.layout == null || (layout != null && layout != this.layout.name)){
 			previousLayout = this.layout == null ? "default" : this.layout.name;
 			if(this.layout != null)
 				Lib.current.removeChild(this.layout.content);

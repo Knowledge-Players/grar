@@ -86,7 +86,7 @@ class StripDisplay extends PartDisplay {
 		    super.setBackground(currentBox.background);
 	}
 
-	override private function setText(item:TextItem, isFirst:Bool = true):Void
+	override private function setText(item:TextItem):Void
 	{
 		for(elem in part.elements){
 			if(elem.isText()){
@@ -106,7 +106,7 @@ class StripDisplay extends PartDisplay {
 		if(item.isText()){
 			var text = cast(item, TextItem);
 			setSpeaker(text.author, text.transition);
-			setText(text, isFirst);
+			setText(text);
 		}
 	}
 
