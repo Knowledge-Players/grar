@@ -67,7 +67,7 @@ class ActivityDisplay extends PartDisplay {
 	private var dragOrigin : Coordinates;
 
 	override public function nextElement(startIndex : Int = -1) : Void {
-
+trace("nextElement");
 		// If startIndex == 0, it's called from startPart, no verification needed
 		if(startIndex == 0 || cast(part, ActivityPart).hasNextGroup()){
 			for(elem in part.elements){
@@ -90,26 +90,45 @@ class ActivityDisplay extends PartDisplay {
 			exitPart();
 	}
 
-	override public function startPart(startPosition:Int = -1):Void
-	{
+	override public function startPart(startPosition:Int = -1) : Void {
+
+trace("startPart");
 		//displayInputs();
 
 		// Checking rules
 		// Validation
 		var validationRules = cast(part, ActivityPart).getRulesByType("correction");
-		if(validationRules.length > 1)
+		
+		if (validationRules.length > 1) {
+
 			throw "[ActivityDisplay] Multiple correction rules in activity '"+part.id+"'. Pick only one!";
-		if(validationRules.length == 1){
-			if(!displaysRefs.exists(validationRules[0].id))
+		}
+		if (validationRules.length == 1) {
+
+			if (!displaysRefs.exists(validationRules[0].id)) {
+
 				throw "[ActivityDisplay] You must have a button with ref '"+validationRules[0].id+"' (same as the id of your rule) in order to use the correction rule.";
+			}
 			validationButton = cast(displaysRefs.get(validationRules[0].id), grar.view.component.container.DefaultButton);
-			switch(validationRules[0].value){
-				case "auto": autoCorrect = true;
+			
+			switch (validationRules[0].value) {
+
+				case "auto":
+
+					autoCorrect = true;
+				
 				case "onvalidate":
+
 					validationButton.buttonAction = onValidate;
-				case "off": hasCorrection = false;
+				
+				case "off":
+
+					hasCorrection = false;
 					validationButton.buttonAction = endActivity;
-				default: trace("Unknown value '"+validationRules[0].value+"' as a validation rule");
+				
+				default: 
+
+					trace("Unknown value '"+validationRules[0].value+"' as a validation rule");
 			}
 		}
 		// Selection limits
@@ -156,25 +175,35 @@ trace("set ActivityDisplay content");
 
 	// Private
 
-	private function displayInputs():Void
-	{
+	private function displayInputs() : Void {
+trace("displayInputs");
 		var activity = cast(part, ActivityPart);
 
-		var currentGroup: Group = activity.getNextGroup();
+		var currentGroup : Group = activity.getNextGroup();
+		
 		// Create inputs, place & display them
-		if(currentGroup.inputs != null){
+		if (currentGroup.inputs != null) {
+
 			var guide = createGroupGuide(currentGroup);
-			for(input in currentGroup.inputs){
+			
+			for (input in currentGroup.inputs) {
+
 				createInput(input, guide);
 			}
 		}
-		if(currentGroup.groups != null){
-			for(group in currentGroup.groups){
+		if (currentGroup.groups != null) {
+
+			for (group in currentGroup.groups) {
+
 				var guide = createGroupGuide(group);
+
 				// Specify inputs because of an "Can't iterate on a Dynamic value" error
-				var inputs: Array<Input> = group.inputs;
-				for(input in inputs)
+				var inputs : Array<Input> = group.inputs;
+				
+				for (input in inputs) {
+
 					createInput(input, guide);
+				}
 			}
 		}
 		if (!inputs.isEmpty()) {
@@ -201,7 +230,7 @@ trace("set ActivityDisplay content");
 			case DefaultButton(d):
 
 				button = new DefaultButton(callbacks, applicationTilesheet, transitions, d);
-
+trace("created input "+button.ref);
 				guide.add(button);
 
 				buttonsToInputs.set(button, input);
@@ -216,7 +245,7 @@ trace("set ActivityDisplay content");
 // 				button.zz = displayTemplates.get(input.ref).z; // TODO check if still useful
 				inputs.add(button);
 
-			default: throw "unexpected ElementData type";
+			default : throw "unexpected ElementData type";
 		}
 	}
 

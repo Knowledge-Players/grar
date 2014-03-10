@@ -390,7 +390,7 @@ class GameService {
 
 				var pp : PartialPart = XmlToPart.parse(partXml.x);
 
-				fetchPartContent( partXml.x, pp, templates, function(p : Part) {
+				fetchPartContent( partXml.x, pp, templates, null, function(p : Part) {
 
 						pa.push(p);
 
@@ -416,7 +416,7 @@ class GameService {
 	// INTERNALS
 	//
 
-	private function fetchPartContent(innerXml : Xml, pp : PartialPart, templates : StringMap<Xml>, onInnerSuccess : Part -> Void, onInnerError : String -> Void) {
+	private function fetchPartContent(innerXml : Xml, pp : PartialPart, templates : StringMap<Xml>, parentDisplaySrc : Null<String>, onInnerSuccess : Part -> Void, onInnerError : String -> Void) {
 
 		var ret : { p : Part, pps : Array<PartialPart> } = null;
 #if (flash || openfl)
@@ -425,24 +425,16 @@ class GameService {
 			pp.pd.soundLoop = AssetsStorage.getSound(pp.pd.soundLoopSrc);// trace("fetch sound "+pp.pd.soundLoopSrc);
 		}
 #end
+		if (pp.pd.displaySrc == null && parentDisplaySrc != null) {
+
+trace("spp.pd.displaySrc was "+pp.pd.displaySrc+" and is now "+parentDisplaySrc);
+			pp.pd.displaySrc = parentDisplaySrc;
+		}
 		if (pp.pd.displaySrc != null) {
 
 			// fetch part display
-			pp.pd.display = switch (pp.type) {
+			pp.pd.display = fetchPartDisplay(pp, templates);
 
-				case Dialog, Part: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Part, templates);
-
-				case Strip: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Strip, templates);
-
-				case Activity: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Activity(null), templates);
-			}
-			pp.pd.display.spritesheets = new StringMap();
-
-			for (sk in pp.pd.display.spritesheetsSrc.keys()) {
-
-				pp.pd.display.spritesheets.set(sk, AssetsStorage.getSpritesheet(pp.pd.display.spritesheetsSrc.get(sk)));
-
-			}
 		}
 		if (pp.pd.file != null) {
 
@@ -467,7 +459,7 @@ class GameService {
 //trace("ret.pps = "+pp.pd.partialSubParts);
 			for ( spp in ret.pps ) {
 
-				fetchPartContent(spp.pd.xml, spp, templates, function(sp : Part) {
+				fetchPartContent(spp.pd.xml, spp, templates, pp.pd.displaySrc, function(sp : Part) {
 
 						cnt--;
 
@@ -478,8 +470,6 @@ class GameService {
 						if (sp.file == null) {
 
 							sp.file = ret.p.file; // probably useless now
-
-							sp.display = ret.p.display;
 						}
 						if (cnt == 0) {
 
@@ -489,5 +479,26 @@ class GameService {
 					}, onInnerError);
 			}
 		}
+	}
+
+	function fetchPartDisplay(pp : PartialPart, templates : StringMap<Xml>) : DisplayData {
+
+		var pd : DisplayData = switch (pp.type) {
+
+				case Dialog, Part: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Part, templates);
+
+				case Strip: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Strip, templates);
+
+				case Activity: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Activity(null), templates);
+			}
+
+		pd.spritesheets = new StringMap();
+
+		for (sk in pd.spritesheetsSrc.keys()) {
+
+			pd.spritesheets.set(sk, AssetsStorage.getSpritesheet(pd.spritesheetsSrc.get(sk)));
+
+		}
+		return pd;
 	}
 }
