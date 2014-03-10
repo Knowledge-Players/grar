@@ -244,20 +244,8 @@ class KpDisplay extends Sprite {
 	private function createImage(itemNode:Fast):Widget
 	{
 		var spritesheet = itemNode.has.spritesheet?itemNode.att.spritesheet:"ui";
-		var img = null;
+		var img = new Image(itemNode, spritesheets.get(spritesheet));
 
-		if(itemNode.has.src || itemNode.has.filters || (itemNode.has.extract && itemNode.att.extract == "true")){
-			img = new Image(itemNode, spritesheets.get(spritesheet));
-		}
-		else{
-			if(!layers.exists(spritesheet)){
-				var layer = new TileLayer(UiFactory.tilesheet);
-				layers.set(spritesheet, layer);
-
-			}
-
-			img = new TileImage(itemNode, layers.get(spritesheet), false);
-		}
 		addElement(img, itemNode);
 		return img;
 	}

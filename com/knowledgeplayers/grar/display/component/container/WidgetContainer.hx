@@ -249,11 +249,6 @@ class WidgetContainer extends Widget{
 		content.y = -position * content.height;
 	}
 
-	private inline function moveCursor(delta:Float)
-	{
-		scrollBar.moveCursor(delta);
-	}
-
 	private function displayContent(trim: Bool = false):Void
 	{
 		maskSprite(content, (trim ? content.width:maskWidth), maskHeight);
@@ -415,6 +410,11 @@ class WidgetContainer extends Widget{
 			if(scrollBar != null)
 				moveCursor(e.delta);
 		}
+	}
+
+	private inline function moveCursor(delta:Float)
+	{
+		scrollBar.moveCursor(delta);
 	}
 
 	private inline function checkRender(e:Event):Void

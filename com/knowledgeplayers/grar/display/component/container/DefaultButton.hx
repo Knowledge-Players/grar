@@ -68,7 +68,7 @@ class DefaultButton extends WidgetContainer {
 	/**
      * Action to execute on over
      */
-	public dynamic function onOver(?target: DefaultButton): Void{}
+	public dynamic function onOver(): Void{}
 
 	/**
      * Constructor.
@@ -83,6 +83,11 @@ class DefaultButton extends WidgetContainer {
 		innerTimelines = new Map<String, Timeline>();
 		timelinesFinished = 0;
 		hitZone = new Shape();
+
+		mouseChildren = false;
+		useHandCursor = buttonMode = enabled;
+
+		setAllListeners(onMouseEvent);
 
 		if(pStates != null)
 			states = pStates;
@@ -111,11 +116,6 @@ class DefaultButton extends WidgetContainer {
 			defaultState = "active";
 			enabled = true;
 		}
-
-		mouseChildren = false;
-		useHandCursor = buttonMode = enabled;
-
-		setAllListeners(onMouseEvent);
 
 		/*if(tmpXml == null)
 			toggleState = defaultState;*/
@@ -386,11 +386,12 @@ class DefaultButton extends WidgetContainer {
 
 		if(hitZone.width == 0 && hitZone.height == 0){
 			hitZone.graphics.beginFill(0, 0.001);
-			hitZone.graphics.drawRect(-5, -5, width+10, height+10);
+			hitZone.graphics.drawRect(0, 0, width, height);
 			hitZone.graphics.endFill();
 		}
 
 		dispatchEvent(new Event(Event.CHANGE));
+		displayContent();
 	}
 
 	private function onClick(event:MouseEvent):Void
@@ -409,7 +410,7 @@ class DefaultButton extends WidgetContainer {
 
 	private inline function onOverEvent(event:MouseEvent):Void
 	{
-		onOver(this);
+		onOver();
 		renderState("over");
 	}
 

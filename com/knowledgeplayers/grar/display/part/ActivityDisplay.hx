@@ -78,17 +78,21 @@ class ActivityDisplay extends PartDisplay {
 					selection.add(inputs.indexOf(input));
 			GameManager.instance.game.stateInfos.storeActivityData(part.id, selection.toString());
 		}
-		// If startIndex == 0, it's called from startPart, no verification needed
-		if(startIndex == 0 || cast(part, ActivityPart).hasNextGroup()){
-			for(elem in part.elements){
-				if(elem.isText()){
-					setupItem(cast(elem, Item));
-				}
+		if(currentGroup != null && currentGroup.timelineOut != null){
+			var tl: Timeline = timelines.get(currentGroup.timelineOut);
+			var i = 0;
+			while(i < tl.elements.length && tl.elements[i].dynamicValue != "$"+inputs.first().ref)
+				i++;
+			if(i < tl.elements.length)
+				for(input in inputs)
+					tl.addElement(input, tl.elements[i].transition, tl.elements[i].delay);
+			tl.onComplete = function(){
+				displayNextGroup(startIndex);
 			}
-			displayInputs();
+			tl.play();
 		}
 		else
-			endActivity();
+			displayNextGroup(startIndex);
 	}
 
 	override public function startPart(startPosition:Int = -1):Void
@@ -106,6 +110,21 @@ class ActivityDisplay extends PartDisplay {
 	}
 
 	// Private
+
+	private inline function displayNextGroup(startIndex: Int):Void
+	{
+		// If startIndex == 0, it's called from startPart, no verification needed
+		if(startIndex == 0 || cast(part, ActivityPart).hasNextGroup()){
+			for(elem in part.elements){
+				if(elem.isText()){
+					setupItem(cast(elem, Item));
+				}
+			}
+			displayInputs();
+		}
+		else
+			endActivity();
+	}
 
 	private function displayInputs():Void
 	{
@@ -397,7 +416,7 @@ class ActivityDisplay extends PartDisplay {
 		var needValidation = false;
 		var updateButton = false;
 		var goNext = false;
-		var input: Input = buttonsToInputs.get(e.target);
+		var input: Input = buttonsToInputs.get(e.currentTarget);
 		var clickRules = cast(part, ActivityPart).getRulesByType(e.type, input.group);
 		for(rule in clickRules){
 			switch(rule.value.toLowerCase()){
