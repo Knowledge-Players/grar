@@ -88,15 +88,17 @@ class Timeline /* extends EventDispatcher */ {
             
             if (actuator != null) {
 
-	            actuator.onComplete(onCompleteTransition, [elem.widget.ref]);
-            }
-            nbCompleteTransitions++;
+	            actuator.onComplete(function(){
 
-            onCompleteTransition(elem.widget.ref);
-        
-            if (nbCompleteTransitions == elements.length) {
+                    nbCompleteTransitions++;
 
-                onTimelineEnded();
+                    onCompleteTransition(elem.widget.ref);
+
+                    if (nbCompleteTransitions == elements.length) {
+
+                        onTimelineEnded();
+                    }
+                });
             }
         }
     }

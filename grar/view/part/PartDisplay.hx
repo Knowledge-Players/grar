@@ -636,7 +636,7 @@ class PartDisplay extends Display {
 	}
 
 	private function displayPart() : Void {
-// trace("call clean display");
+trace("displayPart "+part.id);
 		// Clean-up buttons
 		cleanDisplay();
 
@@ -650,7 +650,7 @@ class PartDisplay extends Display {
 		}
 		if (tl != null) {
 
-			for (elem in tl.elements){ 
+			for (elem in tl.elements) { 
 
 				if (elem.dynamicValue == null) {
 
@@ -712,7 +712,7 @@ class PartDisplay extends Display {
 
 //		 					GameManager.instance.playSound(cast(currentItem, TextItem).sound);
 							onSoundToPlay(cast(currentItem, TextItem).sound);
-trace("play sound : "+cast(currentItem, TextItem).sound);
+//trace("play sound : "+cast(currentItem, TextItem).sound);
 						}
 					}
 				}
