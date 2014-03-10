@@ -427,6 +427,7 @@ class GameService {
 #end
 		if (pp.pd.displaySrc != null) {
 
+			// fetch part display
 			pp.pd.display = switch (pp.type) {
 
 				case Dialog, Part: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Part, templates);
@@ -435,7 +436,7 @@ class GameService {
 
 				case Activity: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Activity(null), templates);
 			}
-			pp.pd.display.spritesheets = new StringMap(); // TODO make a function for this code that is repeated several times
+			pp.pd.display.spritesheets = new StringMap();
 
 			for (sk in pp.pd.display.spritesheetsSrc.keys()) {
 
@@ -476,7 +477,9 @@ class GameService {
 
 						if (sp.file == null) {
 
-							sp.file = ret.p.file;
+							sp.file = ret.p.file; // probably useless now
+
+							sp.display = ret.p.display;
 						}
 						if (cnt == 0) {
 

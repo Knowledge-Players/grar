@@ -66,7 +66,6 @@ class TileImage extends Image {
 
 					origin = {x: tileSprite.x, y: tileSprite.y, scaleX: tileSprite.scaleX, scaleY: tileSprite.scaleY, alpha: tileSprite.alpha};
 				}
-				
 				this.visible = true;
 
 // 				TweenManager.applyTransition(this, transformation);

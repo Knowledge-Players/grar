@@ -23,9 +23,13 @@ class CharacterDisplay extends TileImage {
 	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
 							transitions : StringMap<TransitionTemplate>, cd : CharacterData, layer : TileLayer) {
 
+		var tempTsn : String = cd.tid.tilesheetName;
+
 		cd.tid.tilesheetName = null;
 
 		super(callbacks, applicationTilesheet, transitions, cd.tid, layer, false);
+
+		cd.tid.tilesheetName = tempTsn;
 
 		this.charRef = cd.charRef;
 		
