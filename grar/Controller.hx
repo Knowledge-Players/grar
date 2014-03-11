@@ -142,7 +142,7 @@ class Controller {
 									gameSrv.fetchNotebook(contextual.att.file, contextual.att.display, templates, function(m:Notebook,i:StringMap<grar.model.InventoryToken>,v:grar.view.Display.DisplayData){
 
 											application.createNotebook(v);
-											state.module.addInventoryTokens(i);
+											state.module.inventory = i;
 											state.module.notebook = m;
 
 										}, onError);

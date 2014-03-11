@@ -280,44 +280,6 @@ class GameService {
 		onSuccess(b);
 	}
 
-#if (flash || openfl)
-	public function fetchInventory(path : String, templates : StringMap<Xml>, onSuccess : StringMap<InventoryToken> -> WidgetContainerData -> StringMap<{ small : flash.display.BitmapData, large : flash.display.BitmapData }> -> Void, onError : String -> Void) : Void {
-#else
-	public function fetchInventory(path : String, templates : StringMap<Xml>, onSuccess : StringMap<InventoryToken> -> WidgetContainerData -> StringMap<{ small : String, large : String }> -> Void, onError : String -> Void) : Void {
-#end
-
-		var i : { m : StringMap<InventoryToken>, d : String };
-		var id : { tn : WidgetContainerData, ti : StringMap<{ small : String, large : String }> };
-#if (flash || openfl)
-		var ti : StringMap<{ small : flash.display.BitmapData, large : flash.display.BitmapData }> = new StringMap();
-#end
-		try {
-
-			var tXml : Xml = AssetsStorage.getXml(path);
-
-			i = XmlToInventory.parse(tXml);
-
-			var dtXml : Xml = AssetsStorage.getXml(i.d);
-
-			id = XmlToInventory.parseDisplayToken(dtXml, templates);
-#if (flash || openfl)
-			for (k in id.ti.keys()) {
-
-				ti.set(k, { small: AssetsStorage.getBitmapData(id.ti.get(k).small), large: AssetsStorage.getBitmapData(id.ti.get(k).large) });
-			}
-#end
-		} catch (e:String) {
-
-			onError(e);
-			return;
-		}
-#if (flash || openfl)
-		onSuccess(i.m, id.tn, ti);
-#else
-		onSuccess(i.m, id.tn, id.ti);
-#end
-	}
-
 	public function fetchStyles(localizedPathes : Array<{ p : String, e : String }>, onSuccess : Array<StyleSheetData> -> Void, onError : String -> Void) : Void {
 
 		var s : Array<StyleSheetData> = [];
@@ -427,7 +389,7 @@ class GameService {
 #end
 		if (pp.pd.displaySrc == null && parentDisplaySrc != null) {
 
-trace("spp.pd.displaySrc was "+pp.pd.displaySrc+" and is now "+parentDisplaySrc);
+//trace("spp.pd.displaySrc was "+pp.pd.displaySrc+" and is now "+parentDisplaySrc);
 			pp.pd.displaySrc = parentDisplaySrc;
 		}
 		if (pp.pd.displaySrc != null) {

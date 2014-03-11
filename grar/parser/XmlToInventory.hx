@@ -45,7 +45,7 @@ class XmlToInventory {
 	}
 	
 	static function parseTokenData(f : Fast) : Null<TokenData> {
-
+//trace("parsing token data on "+f.x);
 		if (f != null) {
 
 			var id : String = f.has.id ? f.att.id : f.att.name;
@@ -54,8 +54,8 @@ class XmlToInventory {
 			var isActivated : Bool = f.has.unlocked ? f.att.unlocked == "true" : false;
 			var name : Null<String> = f.has.name ? f.att.name : null;
 			var content : String = f.att.content;
-			var icon : String = f.att.icon;
-			var image : String = f.att.src;
+			var icon : String = f.has.icon ? f.att.icon : null;
+			var image : String = f.has.src ? f.att.src : null;
 			var fullScreenContent : Null<String> = f.has.fullScreenContent ? f.att.fullScreenContent : null;
 
 			return { id: id, ref: ref, type: type, isActivated: isActivated, name: name, content: content, 
@@ -73,14 +73,14 @@ class XmlToInventory {
 	}
 
 	static public function parseNoteToken(xml : Xml) : Note {
-
+//trace("parsing Note "+xml);
 		var f : Fast = new Fast(xml);
 		var td : Null<TokenData>;
 
-		for (tf in f.nodes.Token) {
+		//for (tf in f.nodes.Token) {
 	
-			td = parseTokenData(tf);
-		}		
+			td = parseTokenData(f);
+		//}		
 
 		var video : Null<String> = null;
 

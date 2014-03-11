@@ -324,7 +324,7 @@ trace("set currentLocale to " + v);
 
 		if (!inventory.exists(tid)) {
 
-			throw 'unknown token "$tid".';
+			throw 'unknown token "$tid". '+Lambda.array({ iterator: inventory.keys });
 		}
 		var it : InventoryToken = inventory.get(tid);
 
@@ -339,14 +339,6 @@ trace("set currentLocale to " + v);
 		completion.set(pid, 2);
 
 		onPartFinished(getPartById(pid));
-	}
-
-	public function addInventoryTokens(t : StringMap<InventoryToken>) : Void {
-
-		for (k in t.keys()) {
-
-			inventory.set(k, t.get(k));
-		}
 	}
 
 	/**
