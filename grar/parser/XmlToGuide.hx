@@ -58,8 +58,8 @@ class XmlToGuide {
 						gapRow: f.has.gapRow ? Std.parseFloat(f.att.gapRow) : null,
 						alignment: f.has.alignment ? f.att.alignment : null,
 						transitionIn: f.has.transitionIn ? f.att.transitionIn : null,
-						cellWidth: 0,
-						cellHeight: 0
+						cellWidth: f.has.width ? Std.parseFloat(f.att.width) : 0,
+						cellHeight: f.has.height ? Std.parseFloat(f.att.height) : 0
 					};
 
 				creation = Grid(d);

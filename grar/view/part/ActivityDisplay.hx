@@ -176,7 +176,7 @@ trace("set ActivityDisplay content");
 	// Private
 
 	private function displayInputs() : Void {
-trace("displayInputs");
+//trace("displayInputs");
 		var activity = cast(part, ActivityPart);
 
 		var currentGroup : Group = activity.getNextGroup();
@@ -230,7 +230,7 @@ trace("displayInputs");
 			case DefaultButton(d):
 
 				button = new DefaultButton(callbacks, applicationTilesheet, transitions, d);
-trace("created input "+button.ref);
+//trace("created input "+button.ref);
 				guide.add(button);
 
 				buttonsToInputs.set(button, input);

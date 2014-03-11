@@ -119,41 +119,56 @@ class Grid extends Guide {
 	/**
 	* @inherits
 	**/
-	override public function add(object:DisplayObject, ?tween:String, tile: Bool = false):DisplayObject
-	{
-		if(cellSize.width == 0){
+	override public function add(object : DisplayObject, ? tween : String, tile : Bool = false) : DisplayObject {
+
+		if (cellSize.width == 0) {
+
 			cellSize.width = object.width;
 		}
-		if(cellSize.height == 0){
+		if (cellSize.height == 0) {
+
 			cellSize.height = object.height;
 		}
-
-		var targetX:Float = x + nextCell.x * cellSize.width;
+//trace("nextCell.x is "+nextCell.x+" and cellSize.width = "+cellSize.width);
+		var targetX : Float = x + nextCell.x * cellSize.width;
+		
 		targetX += gapCol * nextCell.x;
-		targetX += switch(alignment){
-			case CENTER, TOP_MIDDLE, BOTTOM_MIDDLE: cellSize.width / 2 - object.width / 2;
-			case TOP_RIGHT, MIDDLE_RIGHT, BOTTOM_RIGHT: cellSize.width - object.width;
-			default: 0;// Already on the left
-		}
 
-		var targetY:Float = y + nextCell.y * cellSize.height;
+		targetX += switch (alignment) {
+
+				case CENTER, TOP_MIDDLE, BOTTOM_MIDDLE: cellSize.width / 2 - object.width / 2;
+
+				case TOP_RIGHT, MIDDLE_RIGHT, BOTTOM_RIGHT: cellSize.width - object.width;
+
+				default: 0;// Already on the left
+			}
+
+		var targetY : Float = y + nextCell.y * cellSize.height;
+
 		targetY += gapRow * nextCell.y;
-		targetY += switch(alignment){
-			case CENTER, MIDDLE_LEFT, MIDDLE_RIGHT: cellSize.height / 2 - object.height / 2;
-			case BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT: cellSize.height - object.height;
-			default: 0;// Already on top
-		}
+		
+		targetY += switch (alignment) {
 
-		if(nextCell.x < numCol - 1){
-			nextCell.x++;
-		}
-		else if(nextCell.y < numRow){
+				case CENTER, MIDDLE_LEFT, MIDDLE_RIGHT: cellSize.height / 2 - object.height / 2;
+
+				case BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT: cellSize.height - object.height;
+
+				default: 0;// Already on top
+			}
+
+		if (nextCell.x < numCol - 1) {
+
+			nextCell.x++; //trace("incrementing nextCell.x => "+nextCell.x);
+		
+		} else if (nextCell.y < numRow) {
+
 			nextCell.x = 0;
 			nextCell.y++;
-		}
-		else
-			throw "This grid is already full!";
+		
+		} else {
 
+			throw "This grid is already full!";
+		}
 		if (tween != null) {
 
 //		    TweenManager.applyTransition(object,tween);
@@ -164,26 +179,30 @@ class Grid extends Guide {
 //			TweenManager.applyTransition(object,transitionIn);
 			TweenUtils.applyTransition(object, transitions, transitionIn);
 		}
+        if (tile) {
 
-        if(tile){
             cast(object, grar.view.component.TileImage).set_x(targetX);
+            
             cast(object, grar.view.component.TileImage).set_y(targetY);
-        }
-        else{
+//trace("place tile at "+targetX+", "+targetY); 
+        } else {
+
             object.x = targetX;
             object.y = targetY;
+//trace("place item at "+targetX+", "+targetY);
         }
-        if(resize){
+        if (resize) {
 
-        fitInGrid(object);
-        
-        object.addEventListener(Event.CHANGE, function(e){
+	        fitInGrid(object);
+	        
+	        object.addEventListener(Event.CHANGE, function(e) {
 
-	            fitInGrid(object);
+		            fitInGrid(object);
 
-	        });
+		        });
 
         }
+
 		return object;
 	}
 
