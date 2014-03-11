@@ -51,24 +51,34 @@ class DialogDisplay extends PartDisplay {
 	// INTERNALS
 	//
 
-	override private function startPattern(pattern:Pattern):Void
-	{
+	override private function startPattern(pattern : Pattern) : Void {
+//trace("start pattern "+pattern.id);
 		super.startPattern(pattern);
 
-		if(currentPattern != pattern)
+		if (currentPattern != pattern) {
+
 			currentPattern = pattern;
+		}
 
 		// Check if minimum choices requirements is met
 		var exitPattern = false;
-		if(Std.is(currentPattern, ChoicePattern)){
+
+		if (Std.is(currentPattern, ChoicePattern)) {
+//trace("is choice pattern");
 			var choicePattern = cast(currentPattern, ChoicePattern);
+			
 			// Init button with choice's view state
-			for(choice in choicePattern.choices.keys()){
-				if(!displaysRefs.exists(choice))
+			for (choice in choicePattern.choices.keys()) {
+
+				if (!displaysRefs.exists(choice)) {
+
 					throw "[DialogDisplay] There is no template for choice named '"+choice+"'.";
+				}
 				cast(displaysRefs.get(choice), grar.view.component.container.DefaultButton).toggle(!choicePattern.choices.get(choice).viewed);
+//trace(choice+" toggle "+(!choicePattern.choices.get(choice).viewed));
 			}
-			if(choicePattern.minimumChoice == choicePattern.numChoices){
+			if (choicePattern.minimumChoice == choicePattern.numChoices) {
+//trace("exitPattern");
 				exitPattern = true;
 			}
 		}
@@ -165,7 +175,7 @@ class DialogDisplay extends PartDisplay {
 
 // 			TweenManager.applyTransition(tooltip, pattern.tooltipTransition);
 			TweenUtils.applyTransition(tooltip, transitions, pattern.tooltipTransition);
-trace("adding tooltip $$$$");
+//trace("adding tooltip $$$$");
 			addChildAt(tooltip, i);
 		}
 		else{

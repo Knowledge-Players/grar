@@ -23,7 +23,7 @@ class DefaultButton extends WidgetContainer {
 // public function new(?xml: Fast, ?pStates:Map<String, Map<String, Widget>>) // pStates never passed ??
 	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : TilesheetEx, 
 							transitions : StringMap<TransitionTemplate>, ? dbd : Null<WidgetContainerData>) {
-		
+
 		this.timelines = new Map<String, Timeline>();
 		this.enabledState = new Map<String, Bool>();
 		this.states = new Map<String, { zorder : Array<Widget>, refs : StringMap<Widget> }>();
@@ -91,6 +91,8 @@ class DefaultButton extends WidgetContainer {
 					this.toggleState = this.defaultState;
 				}
 			});
+//if (ref.indexOf("choice") == 0) trace(ref+" button created transitions= "+transitions);
+//if (ref.indexOf("choice") == 0) trace(" and WidgetContainerData= "+dbd);
 	}
 
 	/**

@@ -416,12 +416,16 @@ class Widget extends Sprite {
 		removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 	}
 
-	private function drawBorders(?e:Event):Void
-	{
+	private function drawBorders(? e : Event) : Void {
+
 		graphics.clear();
+
 		graphics.lineStyle(borderStyle.thickness, borderStyle.color.color, borderStyle.color.alpha);
 		graphics.drawRect(-borderStyle.thickness, -borderStyle.thickness, width/scaleX+(2*borderStyle.thickness), height/scaleY+(2*borderStyle.thickness));
-		if(e != null)
+		
+		if (e != null) {
+
 			removeEventListener(Event.ADDED_TO_STAGE, drawBorders);
+		}
 	}
 }

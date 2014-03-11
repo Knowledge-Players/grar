@@ -513,7 +513,7 @@ class Display extends Sprite {
 // 					btn.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 					btn.onToggle = function(){ onButtonToggle(btn); };
 				}
-
+//if (r == "choice1_verticalText" || r == "choice2" || r == "choice3_verticalText") { trace("created button "+r); }
 				addElement(btn, r);
 				
 				return btn;

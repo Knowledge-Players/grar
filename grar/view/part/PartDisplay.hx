@@ -727,6 +727,7 @@ trace("displayPart "+part.id);
 		numWidgetAdded = 0;
 
 		var backs : Array<Widget> = [];
+		var fores : Array<Widget> = [];
 
 		for (obj in displays) {
 
@@ -743,15 +744,20 @@ trace("displayPart "+part.id);
 
 				} else {
 
-					addChild(obj.w);
+					//addChild(obj.w);
+					fores.push(obj.w);
 
-//if (part.id == "ep1_dialogue1") trace("adding "+obj.ref);
+//if (part.id == "ep2_dialogue2" || part.id == "ep1_dialogue1") trace("adding "+obj.ref+" is visible ? "+obj.w.visible);
 				}
 			}
 		}
 		while (backs.length > 0) {
 
 			addChildAt(backs.pop(), 0);
+		}
+		while (fores.length > 0) {
+
+			addChild(fores.shift());
 		}
 	}
 
@@ -785,7 +791,7 @@ trace("displayPart "+part.id);
 		numWidgetReady++;
 
 		if (numWidgetAdded == numWidgetReady && timelines.exists(nextTimeline)) {
-//trace("play timeline");
+//if (part.id == "ep2_dialogue2") trace("play timeline "+nextTimeline);
 			timelines.get(nextTimeline).play();
 
 			layers.get("ui").render();
