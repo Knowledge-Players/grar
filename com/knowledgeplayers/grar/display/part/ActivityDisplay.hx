@@ -97,7 +97,7 @@ class ActivityDisplay extends PartDisplay {
 
 	override public function startPart(startPosition:Int = -1):Void
 	{
-
+		savedData = null;
 		super.startPart(0);
 	}
 

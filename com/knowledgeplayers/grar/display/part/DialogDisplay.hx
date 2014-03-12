@@ -157,4 +157,17 @@ class DialogDisplay extends PartDisplay {
 		if(pattern.tooltipRef != null)
 			removeChild(displays.get(pattern.tooltipRef));
 	}
+
+	override private function mustBeDisplayed(key:String):Bool
+	{
+		var superReturn = super.mustBeDisplayed(key);
+		if(!superReturn && currentPattern != null){
+			var buttons = cast(currentPattern, Pattern).buttons;
+			if(buttons.exists(key)){
+				setButtonText(key, buttons.get(key));
+				superReturn = true;
+			}
+		}
+		return superReturn;
+	}
 }

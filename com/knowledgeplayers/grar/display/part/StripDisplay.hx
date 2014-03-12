@@ -97,7 +97,7 @@ class StripDisplay extends PartDisplay {
 		displayPart();
 	}
 
-	override private function setupItem(item:Item, ?isFirst:Bool = true, ?groupName: String):Void
+	override private function setupItem(item:Item, ?isFirst:Bool = true):Void
 	{
 		currentItem = item;
 		if(isFirst)

@@ -74,6 +74,8 @@ class Pattern implements PartElement {
 						buttons.set(itemNode.att.ref, new Map<String, String>());
 				case "dynamic":
 					patternContent.push(new DynamicItem(itemNode));
+				case "group":
+					patternContent.push(new GroupItem(itemNode));
 			}
 		}
 

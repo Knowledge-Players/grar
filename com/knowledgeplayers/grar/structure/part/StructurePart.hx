@@ -482,6 +482,8 @@ class StructurePart extends EventDispatcher implements Part{
 				}
 			case "dynamic":
 				elements.push(new DynamicItem(node));
+			case "group":
+				elements.push(new GroupItem(node));
 		}
 	}
 
