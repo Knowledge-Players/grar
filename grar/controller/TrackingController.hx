@@ -150,30 +150,45 @@ class TrackingController {
 
 		application.onSetBookmarkRequest = function(partId : String) {
 
-				// TODO
-				/*
-				function setBookmark(partId:String):Void
-				{
-					var i = 0;
-					while(i < game.getAllItems().length && game.getAllItems()[i].id != partId){
-						i++;
-					}
-					if(i < game.getAllItems().length){
-						game.stateInfos.bookmark = i;
-						game.connection.computeTracking(game.stateInfos);
+				var i : Int = 0;
+
+				for (ti in state.module.getAllItems()) {
+
+					i++;
+
+					switch(ti) {
+
+						case Part(p):
+
+							if (partId == p.id) {
+
+								state.module.bookmark = i;
+
+								var stateStr : String = saveStateInfos();
+
+								if (!(state.module.currentLocale == null && state.module.bookmark == -1 && 
+										state.module.completionOrdered.length == 0)) {
+
+									state.tracking.location = stateStr;
+								}
+							}
 					}
 				}
-				*/
 			}
 
 		application.onGameOverRequest = function() {
 
-				// TODO
-// FIXME				game.connection.tracking.setStatus(true);
-// FIXME				game.connection.computeTracking(game.stateInfos);
+				state.tracking.setStatus(true);
+
+				var stateStr : String = saveStateInfos();
+
+				if (!(state.module.currentLocale == null && state.module.bookmark == -1 && 
+						state.module.completionOrdered.length == 0)) {
+
+					state.tracking.location = stateStr;
+				}
 
 				application.setGameOver();
-
 			}
 	}
 
@@ -273,6 +288,11 @@ class TrackingController {
 		}
 	}
 
+
+	///
+	// INTERNALS
+	//
+
     private function initTrackable() : Array<String> {
 
         var a : Array<String> = new Array<String>();
@@ -285,4 +305,35 @@ class TrackingController {
         }
         return a;
     }
+
+	private function saveStateInfos() : String {
+
+		var stringBuf : StringBuf = new StringBuf();
+		
+		stringBuf.add(state.module.currentLocale);
+		stringBuf.add("@");
+		stringBuf.add(state.module.bookmark);
+		stringBuf.add("@");
+		stringBuf.add(completionString());
+		stringBuf.add("@");
+		stringBuf.add(state.module.checksum);
+
+		return stringBuf.toString();
+	}
+
+	private function completionString() : String {
+
+		var buffer = new StringBuf();
+
+		for (i in 0...state.module.completionOrdered.length) {
+
+			buffer.add(state.module.completion.get(state.module.completionOrdered[i]));
+			
+			if (i != state.module.completionOrdered.length - 1) {
+
+				buffer.add("-");
+			}
+		}
+		return buffer.toString();
+	}
 }
