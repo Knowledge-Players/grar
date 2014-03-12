@@ -411,14 +411,14 @@ class GameService {
 
 		//var cnt : Int = pp.pd.partialSubParts.length;
 		var cnt : Int = ret.pps.length;
-//trace("found "+cnt+" sub parts");
+
 		if (cnt == 0) {
 
 			//ret.p.loaded = true; // TODO check if still useful
 			onInnerSuccess( ret.p );
 
 		} else {
-//trace("ret.pps = "+pp.pd.partialSubParts);
+
 			for ( spp in ret.pps ) {
 
 				fetchPartContent(spp.pd.xml, spp, templates, pp.pd.displaySrc, function(sp : Part) {
@@ -427,7 +427,6 @@ class GameService {
 
 						ret.p.elements.push(Part(sp));
 						sp.parent = ret.p;
-						sp.onActivateTokenRequest = ret.p.onActivateTokenRequest;
 
 						if (sp.file == null) {
 

@@ -98,7 +98,7 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 	 * FIXME The view shouldn't activate the chapter but only its button
 	 */
 	public function setActivateToken(t : grar.model.InventoryToken) : Void {
-
+//trace("TOKEN ACTIVATED: "+t.id+"   model.getAllNotes() =>  "+model.getAllNotes().length+"  t.type= "+t.type);
 		if (t.type == "note") {
 
 			var notes = model.getAllNotes();
@@ -108,37 +108,38 @@ class NotebookDisplay extends Display /* implements ContextualDisplay */ {
 
 				k++;
 			}
+//trace("Token found ? k="+k);
 			if (k != notes.length) {
 
 				var chapter : Chapter = null;
 				var i = 0;
-				
+//trace("iterate over pages: "+model.pages.length);
 				while (i < model.pages.length && chapter == null) {
 
 					var j = 0;
 					
 					while (j < model.pages[i].chapters.length && !Lambda.has(model.pages[i].chapters[j].notes, notes[k])) {
-
+//trace("For page "+i+", we have "+model.pages[i].chapters.length+" chapters");
 						j++;
 					}
 					chapter = j == model.pages[i].chapters.length ? null : model.pages[i].chapters[j];
 					i++;
 				}
 				if (chapter != null) {
-
+//trace("chapter not null");
 					chapter.isActivated = true;
 					
 					for (button in chapterMap.keys()) {
-
+//trace("Trying to activate button "+button.ref+" for which chapter is "+chapterMap.get(button));
 						if (chapterMap.get(button) == chapter) {
-
+//trace("setting alpha 1 for button "+button.ref);
 							button.alpha = 1;
 							break ;
 						}
 					}
 				}
 			}
-		}
+		} else { trace("TOKEN of TYPE "+t.type+" NOT MANAGED"); }
 	}
 
 //	override public function parseContent(content:Xml):Void
@@ -296,6 +297,7 @@ trace("LOCALE PATH "+model.file);
 
 						throw "[NotebookDisplay] There is no template for chapter with ref '"+chapter.ref+"'.";
 					}
+					var button : DefaultButton;
 
 // 					var icons = ParseUtils.selectByAttribute("ref", "icon", chapterTemplates.get(chapter.ref).x);
 // 					ParseUtils.updateIconsXml(chapter.icon, icons);
@@ -369,6 +371,7 @@ trace("LOCALE PATH "+model.file);
 
 // 					button.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 					button.onToggle = function() { onButtonToggle(button); }
+					button.addEventListener(Event.ADDED_TO_STAGE, function(?_){ trace("NOTE BUTTON "+button.ref+" added to stage"); });
 
 					// Fill hit box
 					DisplayUtils.initSprite(button, button.width, button.height, 0, 0.001);
@@ -395,7 +398,7 @@ trace("LOCALE PATH "+model.file);
 	//
 
 	private function displayPage(page : Page) : Void {
-
+//trace("DISPLAY PAGE "+page.title.ref);
 		currentPage = page;
 
 		// Set Locale
@@ -425,12 +428,18 @@ trace("LOCALE PATH "+model.file);
 
         if(displaysRefs.exists("player") && contains(displaysRefs.get("player")))
 			removeChild(displaysRefs.get("player"));
+//trace("We have "+Lambda.count(chapterMap)+" chapter buttons");
+		for (chapter in chapterMap.keys()) {
+//trace("cond 1: "+Lambda.has(currentPage.chapters, chapterMap.get(chapter))+",  cond 2: "+chapterMap.get(chapter).isActivated);
+			if (Lambda.has(currentPage.chapters, chapterMap.get(chapter)) && 
+					chapterMap.get(chapter).isActivated) {
 
-		for(chapter in chapterMap.keys()){
-			if(Lambda.has(currentPage.chapters, chapterMap.get(chapter)) && chapterMap.get(chapter).isActivated)
-				addChild(chapter);
-			else if(contains(chapter))
-				removeChild(chapter);
+				addChild(chapter); trace("ADDED CHAPTER BTN "+chapter.ref);
+			
+			} else if (contains(chapter)) {
+
+				removeChild(chapter); trace("REMOVED CHAPTER BTN "+chapter.ref);
+			}
 		}
 
 //		Localiser.instance.popLocale();

@@ -161,7 +161,7 @@ class ActivityPart extends Part {
 
 				var currentGroup = groups[groupIndex];
 				var inputs = currentGroup.inputs;
-				
+
 				if (currentGroup.groups != null) {
 
 					for (group in currentGroup.groups) {

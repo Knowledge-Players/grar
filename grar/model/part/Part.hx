@@ -112,7 +112,7 @@ class Part /* implements Part */ {
 	/**
 	 * Parent of this part
 	 **/
-	public var parent (default, default) : Null<Part>;
+	public var parent (default, set) : Null<Part>;
 
 	/**
      * True if the part is done
@@ -192,6 +192,21 @@ class Part /* implements Part */ {
 	///
 	// GETTER / SETTER
 	//
+
+	public function set_parent(pt : Null<Part>) : Null<Part> {
+
+		if (pt == parent) {
+
+			return parent;
+		}
+		parent = pt;
+
+		this.onActivateTokenRequest = function(itId : String){ parent.onActivateTokenRequest(itId); }
+
+		//onParentChanged();
+
+		return parent;
+	}
 
     public function set_isDone(completed : Bool = true) : Bool {
 

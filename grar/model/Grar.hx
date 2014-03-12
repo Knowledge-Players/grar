@@ -199,6 +199,7 @@ trace("set currentLocale to " + v);
 	public function set_parts(v : Null<Array<Part>>) : Null<Array<Part>> {
 
 		if (parts == v) {
+
 			return parts;
 		}
 		parts = v;
@@ -321,7 +322,7 @@ trace("set currentLocale to " + v);
 	}
 
 	public function activateInventoryToken(tid : String) : Void {
-
+trace("ON NEW TOKEN ACTIVATED "+tid);
 		if (!inventory.exists(tid)) {
 
 			throw 'unknown token "$tid". '+Lambda.array({ iterator: inventory.keys });

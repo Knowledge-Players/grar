@@ -171,15 +171,7 @@ class Controller {
 						        	application.menuData = addMenuPartsInfo(menuData);
 						        }
 
-// FIXME / TODO in tracking controller            if (stateInfos.tmpState != null) {
-
-// FIXME / TODO in tracking controller                stateInfos.loadStateInfos(stateInfos.tmpState);
-// FIXME / TODO in tracking controller            }
-// FIXME / TODO in tracking controller            for (part in getAllParts()) {
-
-// FIXME / TODO in tracking controller                part.isDone = stateInfos.isPartFinished(part.id);
-// FIXME / TODO in tracking controller                part.isStarted = stateInfos.isPartStarted(part.id);
-// FIXME / TODO in tracking controller            }
+						        trackingCtrl.updatePartsStates();
 
 						        loadlayouts(layoutUri, templates);
 							}
@@ -346,17 +338,17 @@ trace("onExitPart");
 				/*
 					if (GameManager.instance.game.connection.tracking.suivi != "")
 						GameManager.instance.game.connection.tracking.exitAU();
-
-					#if flash
-					if (ExternalInterface.available)
-					{
-						ExternalInterface.call("quitModule");
-					}else
-					{
-						System.exit(0);
-					}
-					#end
 				*/
+#if flash
+				if (flash.external.ExternalInterface.available) {
+
+					flash.external.ExternalInterface.call("quitModule");
+				
+				} else {
+
+					flash.system.System.exit(0);
+				}
+#end
 			}
 
 		state.readyState = true;

@@ -250,4 +250,18 @@ class TrackingController {
 		}
 		//tracking.init(isNote, activation);
 	}
+
+	public function updatePartsStates() {
+/*
+		if (stateInfos.tmpState != null) {
+
+		    stateInfos.loadStateInfos(stateInfos.tmpState);
+		}
+		for (part in getAllParts()) {
+
+		    part.isDone = stateInfos.isPartFinished(part.id);
+		    part.isStarted = stateInfos.isPartStarted(part.id);
+		}
+*/
+	}
 }
