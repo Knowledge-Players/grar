@@ -334,21 +334,18 @@ trace("onExitPart");
 
 		application.onQuitGameRequest = function() {
 
-				// TODO
-				/*
-					if (GameManager.instance.game.connection.tracking.suivi != "")
-						GameManager.instance.game.connection.tracking.exitAU();
-				*/
+				trackingCtrl.exitModule(state.module, function() {
 #if flash
-				if (flash.external.ExternalInterface.available) {
+						if (flash.external.ExternalInterface.available) {
 
-					flash.external.ExternalInterface.call("quitModule");
-				
-				} else {
+							flash.external.ExternalInterface.call("quitModule");
+						
+						} else {
 
-					flash.system.System.exit(0);
-				}
+							flash.system.System.exit(0);
+						}
 #end
+					}, onError);
 			}
 
 		state.readyState = true;

@@ -176,6 +176,43 @@ class ScormService {
 		}
 	}
 
+	public function exit() : Bool {
+
+		var result : Bool = false;
+
+#if flash
+		if (activeConnection) {
+
+			var eiCall : String = Std.string(ExternalInterface.call("pipwerks.SCORM.quit"));
+			
+			result = eiCall == "true";
+			
+			if (result) {
+
+				activeConnection = false;
+			
+			} else {
+
+				var errorCode : Int = getDebugCode();
+				var debugInfo : String = getDebugInfo(errorCode);
+				
+				displayDebugInfo("pipwerks.SCORM.quit() failed. \n"
+									+ "Error code: " + errorCode + "\n"
+									+ "Error info: " + debugInfo);
+			}
+		
+		} else {
+
+			displayDebugInfo("pipwerks.SCORM.quit aborted: connection already inactive.");
+		}
+#elseif js
+		var wrapper : Dynamic = untyped __js__('pipwerks.SCORM.quit()');
+		
+		result = wrapper == "true";
+#end
+		return result;
+	}
+
 
 	///
 	// Internals

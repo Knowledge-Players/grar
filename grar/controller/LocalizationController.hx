@@ -44,14 +44,13 @@ class LocalizationController {
 
 				if (state.module.currentLocaleDataPath != null && state.module.localeData == null) {
 
-//trace("onCurrentLocaleChanged");
+
 					initLocaleData();
 				}
-				// TODO something similar to StyleParser.currentLocale = currentLocale;
 			}
 
 		state.onCurrentLocalePathChanged = function() {
-//trace("state.onCurrentLocalePathChanged");
+
 				if (state.module.currentLocaleDataPath != null && state.module.currentLocale != null) {
 
 					initLocaleData();
@@ -60,36 +59,36 @@ class LocalizationController {
 
 
 		state.onLocaleListChanged = function() {
-//trace("state.onLocaleListChanged");
-				// TODO ? doesn't seem to be used...
+
+				// doesn't seem to be used ?
 				// for each lang, flags.set(value, flagIconPath);
 
 				// implement a loadCurrentLocale(); ?
 			}
 
 		application.onRestoreLocaleRequest = function() {
-//trace("application.onRestoreLocaleRequest");
+
 				restoreLocaleData();
 			}
 
 		application.onInterfaceLocaleDataPathRequest = function() {
-//trace("application.onInterfaceLocaleDataPathRequest");
+
 				setInterfaceLocaleData();
 			}
 
 		application.onLocaleDataPathRequest = function(path : String) {
-//trace("application.onLocaleDataPathRequest");
+
 				state.module.currentLocaleDataPath = path;
 			}
 
 		application.onLocalizedContentRequest = function(k : String) : String {
-//trace("application.onLocalizedContentRequest " + k);
+
 				return state.module.getLocalizedContent(k);
 			}
 	}
 
 	function initLocaleData() : Void {
-//trace("initLocaleData "+state.module.currentLocaleDataPath);
+
 		var fullPath = state.module.currentLocaleDataPath.split("/");
 
 		var localePath : StringBuf = new StringBuf();

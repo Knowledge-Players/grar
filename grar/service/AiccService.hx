@@ -187,4 +187,14 @@ class AiccService {
 
 		http.request(true);
 	}
+
+	public function exit() : Bool {
+
+#if flash
+		ExternalInterface.call("exitAU");
+#elseif js
+		untyped __js__('exitAU()');
+#end
+		return true;
+	}
 }

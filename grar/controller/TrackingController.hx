@@ -192,7 +192,7 @@ class TrackingController {
 			}
 	}
 
-	public function initTracking(m : Grar, onSuccess : Void -> Void, onError : String -> Void ) : Void {
+	public function initTracking(m : Grar, onSuccess : Void -> Void, onError : String -> Void) : Void {
 
 		var loadStateInfos = function(stateStr : String) : Void {
 				
@@ -285,6 +285,30 @@ class TrackingController {
 		    p.isDone = state.module.isPartFinished(p.id);
 
 		    p.isStarted = state.module.isPartStarted(p.id);
+		}
+	}
+
+	public function exitModule(m : Grar, onSuccess : Void -> Void, onError : String -> Void) : Void {
+
+		var ret : Bool = switch (m.mode) {
+
+			case AICC :
+
+				aiccSrv.exit();
+
+			case SCORM, SCORM2004:
+
+				scormSrv.exit();
+
+			default: true; // nothing
+		}
+		if (ret) {
+
+			onSuccess();
+
+		} else {
+
+			onError("Exiting module with error from tracking system");
 		}
 	}
 
