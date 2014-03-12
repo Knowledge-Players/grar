@@ -228,12 +228,10 @@ class Part /* implements Part */ {
         return completed;
     }
 
-    /**
-	 * Start the part
-	 **/
     public function set_isStarted(completed : Bool = true) : Bool {
 
         isStarted = completed;
+
         return completed;
     }
 

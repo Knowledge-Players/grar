@@ -94,10 +94,10 @@ class Grar {
 
 	public var checksum (default,default) : Int;
 
-	//public var tmpState (default, null) : String;
+	public var completion : StringMap<Int>;
 
-	private var completion : StringMap<Int>;
 	public var completionOrdered : Array<String>;
+
 	//private var allItem : Array<Trackable>;
 
 	var partIndex : Int = 0;
@@ -335,11 +335,28 @@ trace("ON NEW TOKEN ACTIVATED "+tid);
 	}
 
 
+    public function setPartStarted(pid : String) : Void {
+
+        completion.set(pid, 1);
+
+        // onPartStarted(getPartById(pid));
+    }
+
 	public function setPartFinished(pid : String) : Void {
 
 		completion.set(pid, 2);
 
 		onPartFinished(getPartById(pid));
+	}
+
+    public function isPartStarted(pid : String) : Bool {
+
+        return completion.get(pid) == 1;
+    }
+
+	public function isPartFinished(pid : String) : Bool {
+
+		return completion.get(pid) == 2;
 	}
 
 	/**

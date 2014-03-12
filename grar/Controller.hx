@@ -171,7 +171,7 @@ class Controller {
 						        	application.menuData = addMenuPartsInfo(menuData);
 						        }
 
-						        trackingCtrl.updatePartsStates();
+						        trackingCtrl.updatePartsCompletion();
 
 						        loadlayouts(layoutUri, templates);
 							}

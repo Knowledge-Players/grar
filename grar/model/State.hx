@@ -18,27 +18,13 @@ class State {
 
 	public var module (default,set) : Null<Grar> = null;
 
-	/** WIP **/
-
 	public var tracking (default,set) : Null<Tracking> = null;
 
-	/*********/
-
-	public var currentStyleSheet (default, set) : Null<String> = null;
-
+	public var trackingInitString (default,default) : Null<String> = null;
 
 	///
 	// GETTER / SETTER
 	//
-
-	function set_currentStyleSheet( v : Null<String> ) : Null<String> {
-
-		currentStyleSheet = v;
-
-		onCurrentStyleSheetChanged();
-
-		return currentStyleSheet;
-	}
 
 	function set_tracking( v : Tracking ) : Tracking {
 

@@ -179,33 +179,15 @@ class TrackingController {
 
 	public function initTracking(m : Grar, onSuccess : Void -> Void, onError : String -> Void ) : Void {
 
-		var loadStateInfos = function(stateStr:String):Void {
+		var loadStateInfos = function(stateStr : String) : Void {
 				
-				// TODO commented code
-				//allItem = GameManager.instance.game.getAllItems();
 				var stateInfosArray : Array<String> = stateStr.split("@");
+
 				state.module.currentLocale = stateInfosArray[0];
 				state.module.bookmark = Std.parseInt(stateInfosArray[1]);
-
-				/* TODO This will have to be done once parts loaded !!!
-				var trackable:Array<String> = stateInfosArray[2].split("-");
-
-				if(allItem.length > 0){
-		            if (allItem.length != trackable.length)
-		                trackable = initTrackable();
-					for(i in 0...trackable.length){
-						if(i < allItem.length){
-							completion.set(allItem[i].id, Std.parseInt(trackable[i]));
-							completionOrdered.push(allItem[i].id);
-						}
-					}
-
-				} else {
-
-					tmpState = stateStr;
-				}
-				*/
 				state.module.checksum = Std.parseInt(stateInfosArray[3]);
+
+				state.trackingInitString = stateStr;
 
 				onSuccess();
 			}
@@ -251,17 +233,56 @@ class TrackingController {
 		//tracking.init(isNote, activation);
 	}
 
-	public function updatePartsStates() {
-/*
-		if (stateInfos.tmpState != null) {
+	public function updatePartsCompletion() : Void {
 
-		    stateInfos.loadStateInfos(stateInfos.tmpState);
-		}
-		for (part in getAllParts()) {
+		// "trackable items" completion
+		var allItem = state.module.getAllItems();
 
-		    part.isDone = stateInfos.isPartFinished(part.id);
-		    part.isStarted = stateInfos.isPartStarted(part.id);
+		var stateInfosArray : Array<String> = state.trackingInitString.split("@");
+		
+		var trackable : Array<String> = stateInfosArray[2].split("-");
+
+		if (allItem.length > 0) {
+
+            if (allItem.length != trackable.length) {
+
+                trackable = initTrackable();
+            }
+			for (i in 0...trackable.length) {
+
+				if (i < allItem.length) {
+
+					switch(allItem[i]) {
+
+						case Part(p):
+
+							state.module.completion.set(p.id, Std.parseInt(trackable[i]));
+
+							state.module.completionOrdered.push(p.id);
+					}
+				}
+			}
 		}
-*/
+
+		// parts completion
+		for (p in state.module.getAllParts()) {
+
+		    p.isDone = state.module.isPartFinished(p.id);
+
+		    p.isStarted = state.module.isPartStarted(p.id);
+		}
 	}
+
+    private function initTrackable() : Array<String> {
+
+        var a : Array<String> = new Array<String>();
+
+        var allItem = state.module.getAllItems();
+        
+        for (i in 0...allItem.length) {
+
+            a.push("0");
+        }
+        return a;
+    }
 }
