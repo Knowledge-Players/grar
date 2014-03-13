@@ -5,6 +5,7 @@ import grar.model.contextual.Glossary;
 import grar.model.contextual.Bibliography;
 import grar.model.contextual.Notebook;
 import grar.model.score.ScoreChart;
+import grar.model.score.Perk;
 import grar.model.part.Part;
 import grar.model.tracking.TrackingMode;
 import grar.model.tracking.Trackable;
@@ -207,6 +208,8 @@ trace("set currentLocale to " + v);
 		for (p in parts) {
 
 			p.onActivateTokenRequest = function(tid : String){ activateInventoryToken(tid); };
+
+			p.onScoreToAdd = function(perk : String, score : Int){ scoreChart.addScoreToPerk(perk, score); }
 		}
 		onPartsChanged();
 
@@ -272,6 +275,24 @@ trace("set currentLocale to " + v);
 	///
 	// API
 	//
+
+	public function canStart(p : Part) : Bool {
+
+		var can : Bool = true;
+
+		for (perk in p.requirements.keys()) {
+
+			if (!scoreChart.perks.exists(perk)) {
+
+				scoreChart.perks.set(perk, new Perk(perk));
+			}
+			if (scoreChart.perks.get(perk).getScore() < p.requirements.get(perk)) {
+
+				can = false;
+			}
+		}
+		return can;
+	}
 
 	/**
     * @return all trackable items of the game

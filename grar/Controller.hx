@@ -210,7 +210,7 @@ trace("state.onPartFinished");
 
 				for (part in state.module.getAllParts()) {
 
-					if (!part.isDone && part.canStart()) {
+					if (!part.isDone && state.module.canStart(part)) {
 
 						application.menu.unlockNextPart(part.id);
 						/* Before we had this also (from MenuDisplay)
@@ -227,6 +227,11 @@ trace("state.onPartFinished");
 		state.onInventoryTokenActivated = function(t : InventoryToken) {
 
 				application.setActivateToken(t);
+			}
+
+		application.onPartDisplayRequest = function(p : Part) {
+
+				displayPart(p);
 			}
 
 		application.onPartLoaded = function(p : Part) {
@@ -258,7 +263,7 @@ trace("state.onPartFinished");
 
 										totalChildren++;
 										
-										if (part.canStart()) {
+										if (state.module.canStart(part)) {
 
 											numUnlocked++;
 										}
@@ -270,7 +275,7 @@ trace("state.onPartFinished");
 
 								for (child in children) {
 
-									if (child.canStart()) {
+									if (state.module.canStart(child)) {
 
 										numUnlocked++;
 									}
@@ -288,7 +293,7 @@ trace("state.onPartFinished");
 
 					if (part.name == partName) {
 
-						return { l: !part.canStart(), d: part.isDone };
+						return { l: !state.module.canStart(part), d: part.isDone };
 					}
 				}
 				return null;
@@ -463,9 +468,23 @@ trace("onExitPart");
         	}, onError );
 	}
 
-	function displayPartById(? partId : String, interrupt : Bool = false) : Bool {
+	function displayPart(p : Part) : Bool {
 
-		return application.displayPart(state.module.start(partId), interrupt);
+#if !kpdebug
+		// Part doesn't meet the requirements to start
+		if (!state.module.canStart(p)) {
+
+			return false;
+		}
+#end
+		application.displayPart(p);
+
+		return true;
+	}
+
+	function displayPartById(? partId : String) : Bool {
+
+		return displayPart(state.module.start(partId));
 	}
 
 	function launchGame() : Void {
@@ -496,7 +515,7 @@ trace("p.next = "+p.next);
 				
 				if (nextPart != null) {
 
-					application.displayPart(nextPart);
+					displayPart(nextPart);
 				
 				} else {
 

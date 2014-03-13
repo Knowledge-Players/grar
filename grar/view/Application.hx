@@ -75,7 +75,7 @@ class Application {
 				onLocaleDataPathRequest: function(p:String){ this.onLocaleDataPathRequest(p); },
 				onStylesheetRequest: function(s:String){ return this.getStyleSheet(s); },
 				onFiltersRequest: function(fids:Array<String>){ return this.getFilters(fids); },
-				onPartDisplayRequest: function(p:Part){ displayPart(p); },
+				onPartDisplayRequest: function(p:Part){ this.onPartDisplayRequest(p); },
 				onNewZone: function(z:Zone){ zones.push(z); },
 				onSoundToLoad: function(sndUri:String){ loadSound(sndUri); },
 				onSoundToPlay: function(sndUri:String){ playSound(sndUri); },
@@ -227,6 +227,8 @@ class Application {
 	public dynamic function onMenuUpdateDynamicFieldsRequest() : Void { }
 
 	public dynamic function onPartLoaded(p : Part) : Void { }
+
+	public dynamic function onPartDisplayRequest(p : Part) : Void { }
 
 
 	///
@@ -548,13 +550,6 @@ class Application {
     */
 	public function displayPart(part : Part, interrupt : Bool = false, startPosition : Int = -1) : Bool {
 
-#if !kpdebug
-		// Part doesn't meet the requirements to start
-		if (!part.canStart()) {
-
-			return false;
-		}
-#end
 trace("display part "+part.id);
 		if (interrupt) {
 
@@ -708,7 +703,8 @@ trace("Game Over");
 
 	function onEnterSubPart(part : Part) : Void {
 trace("onEnterSubPart "+part.id);
-		displayPart(part);
+		//displayPart(part);
+		onPartDisplayRequest(part);
 	}
 
 	function createPartDisplay(part : Part) : Null<PartDisplay> {

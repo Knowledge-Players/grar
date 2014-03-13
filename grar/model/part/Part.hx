@@ -188,6 +188,8 @@ class Part /* implements Part */ {
 
 	public dynamic function onActivateTokenRequest(tokenId : String) : Void { }
 
+	public dynamic function onScoreToAdd(perk : String, score : Int) : Void { }
+
 
 	///
 	// GETTER / SETTER
@@ -203,6 +205,8 @@ class Part /* implements Part */ {
 
 		this.onActivateTokenRequest = function(itId : String){ parent.onActivateTokenRequest(itId); }
 
+		this.onScoreToAdd = function(perk : String, score : Int){ parent.onScoreToAdd(perk, score); }
+
 		//onParentChanged();
 
 		return parent;
@@ -216,7 +220,8 @@ class Part /* implements Part */ {
 
             for (perk in perks.keys()) {
 
-                //ScoreChart.instance.addScoreToPerk(perk, perks.get(perk)); // FIXME
+                //ScoreChart.instance.addScoreToPerk(perk, perks.get(perk));
+                onScoreToAdd(perk, perks.get(perk));
             }
         }
 
@@ -394,24 +399,6 @@ class Part /* implements Part */ {
 		items.push(Part(this));
 
 		return items;
-	}
-
-	public function canStart() : Bool {
-
-		var can : Bool = true;
-
-		for (perk in requirements.keys()) {
-
-			// FIXME if (!ScoreChart.instance.perks.exists(perk)) {
-
-			// FIXME 	ScoreChart.instance.perks.set(perk, new Perk(perk));
-			// FIXME }
-			// FIXME if (ScoreChart.instance.perks.get(perk).getScore() < requirements.get(perk)) {
-
-			// FIXME 	can = false;
-			// FIXME }
-		}
-		return can;
 	}
 
 	public function getElementById(id : String) : PartElement {
