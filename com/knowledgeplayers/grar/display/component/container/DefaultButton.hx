@@ -208,13 +208,10 @@ class DefaultButton extends WidgetContainer {
 		// Init toggle
 		if(toggleState == null)
 			toggleState = defaultState;
-		// Don't do anything if the toggle doesn't change
-		if(toggle != (toggleState == "active")){
-			// If param is null, switch state
-			if(toggle == null)
-				toggle = toggleState == "inactive";
-			toggleState = toggle ? "active" : "inactive";
-		}
+		// If param is null, switch state
+		if(toggle == null)
+			toggle = toggleState == "inactive";
+		toggleState = toggle ? "active" : "inactive";
 	}
 
 	public function setText(pContent:String, ?pKey:String):Void
