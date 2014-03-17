@@ -310,7 +310,7 @@ class GameService {
 
 					if (st.values.get("font") != null) {
 
-						st.font =  Assets.getFont(st.values.get("font"));// trace("got font "+st.values.get("font")+" => "+st.font);
+						st.font =  Assets.getFont(st.values.get("font"));
 					}
 					if (st.iconSrc != null && st.iconSrc.indexOf(".") > 0) {
 
@@ -384,12 +384,11 @@ class GameService {
 #if (flash || openfl)
 		if (pp.pd.soundLoopSrc != null) {
 
-			pp.pd.soundLoop = AssetsStorage.getSound(pp.pd.soundLoopSrc);// trace("fetch sound "+pp.pd.soundLoopSrc);
+			pp.pd.soundLoop = AssetsStorage.getSound(pp.pd.soundLoopSrc);
 		}
 #end
 		if (pp.pd.displaySrc == null && parentDisplaySrc != null) {
 
-//trace("spp.pd.displaySrc was "+pp.pd.displaySrc+" and is now "+parentDisplaySrc);
 			pp.pd.displaySrc = parentDisplaySrc;
 		}
 		if (pp.pd.displaySrc != null) {
@@ -401,7 +400,7 @@ class GameService {
 		if (pp.pd.file != null) {
 
 			// at the moment, grar fetches its data from embedded assets only
-			ret = XmlToPart.parseContent(pp, AssetsStorage.getXml(pp.pd.file)); // { p : Part, pps : Array<PartialPart> }
+			ret = XmlToPart.parseContent(pp, AssetsStorage.getXml(pp.pd.file));
 
 		} else if (innerXml.elements().hasNext()) {
 

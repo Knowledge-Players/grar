@@ -63,7 +63,7 @@ class XmlToPart {
 
 				throw "unexpected type attribute value $t";
 		}
-//trace("parsed "+pp);
+
 		return pp;
 	}
 
@@ -173,7 +173,7 @@ class XmlToPart {
 			case "part":
 
 				pd.nbSubPartTotal++;
-//trace("found sub part "+node.att.id);
+
 				pd.partialSubParts.push( parse(node.x) );
 			
 			case "sound":

@@ -55,7 +55,7 @@ class StripDisplay extends PartDisplay {
 	//
 
 	override private function createDisplay(d : DisplayData) : Void {
-//trace("create strip display");
+
 		super.createDisplay(d);
 
 		for (elem in part.elements) {
@@ -146,7 +146,7 @@ class StripDisplay extends PartDisplay {
 	}
 
 	override private function setupItem(item : Item, ? isFirst : Bool = true) : Void {
-//trace("SETTING CURRENT ITEM TO "+item);
+
 		currentItem = item;
 		
 		if (isFirst) {
@@ -171,12 +171,12 @@ class StripDisplay extends PartDisplay {
 			while (nextItem != null) {
 
 				if (nextItem != null) {
-//trace("box= "+box+"   nextItem= "+nextItem);
+
 //					box.textFields.get(nextItem.ref).setContent(Localiser.instance.getItemContent(nextItem.content));
 					box.textFields.get(nextItem.ref).setContent(onLocalizedContentRequest(nextItem.content));
 
 					if (Std.is(nextItem, TextItem)) {
-//trace("onSoundToPlay "+cast(nextItem, TextItem).sound);
+
 //						GameManager.instance.playSound(cast(nextItem, TextItem).sound);
 						onSoundToPlay(cast(nextItem, TextItem).sound);
 					}

@@ -145,7 +145,7 @@ class PartDisplay extends Display {
 	public function nextElement(startIndex : Int = -1) : Void {
 
 		currentElement = part.getNextElement(startIndex);
-//trace("nextElement "+startIndex+"  currentElement= "+currentElement);
+
 		if (currentElement == null) {
 
 			exitPart();
@@ -154,7 +154,7 @@ class PartDisplay extends Display {
 		switch (currentElement) {
 
 			case Part(p):
-//trace("Next Element is a part");
+
 				if (p.endScreen) {
 
 					part.isDone = true;
@@ -168,7 +168,7 @@ class PartDisplay extends Display {
 				onEnterSubPart(p);
 
 			case Item(i):
-//trace("Next Element is an item");
+
 				if (i.endScreen) {
 
 					part.isDone = true;
@@ -178,7 +178,7 @@ class PartDisplay extends Display {
 				crawlTextGroup(i);
 
 			case Pattern(p):
-//trace("Next Element is a Pattern");
+
 				if (p.endScreen) {
 
 					part.isDone = true;
@@ -253,7 +253,6 @@ class PartDisplay extends Display {
 
 	private function unLoad():Void
 	{
-//trace("UNLOAD !!!");
 		while(numChildren > 0){
 			var child = removeChildAt(numChildren - 1);
 			child = null;
@@ -273,9 +272,9 @@ class PartDisplay extends Display {
 	}
 
 	private function crawlTextGroup(item : Item, ? pattern : Pattern) : Void {
-//trace("crawl "+item.ref);
+
 		if (textGroups != null) {
-//trace("crawlTextGroup "+item.ref);
+
 			var groupKey : String = null;
 			
 			for (key in textGroups.keys()) {
@@ -286,7 +285,7 @@ class PartDisplay extends Display {
 					break;
 				}
 			}
-//trace("FOUND GROUP "+groupKey);
+
 			if (groupKey != null) {
 
 				var textItem = null;
@@ -299,7 +298,7 @@ class PartDisplay extends Display {
 						if (pattern != null) {
 
 							textItem = pattern.getNextItem();
-//trace("got from pattern "+textItem.ref);
+
 						} else {
 
 							var ne : Null<PartElement> = part.getNextElement();
@@ -311,7 +310,7 @@ class PartDisplay extends Display {
 									case Item(i):
 
 										textItem = i;
-//trace("got from part "+textItem.ref);
+
 									default: // nothing
 								}
 							}
@@ -320,7 +319,7 @@ class PartDisplay extends Display {
 					} else {
 
 						textItem = item;
-//trace("got from item "+textItem.ref);
+
 					}
 					if (textItem != null && textItem.endScreen) {
 
@@ -328,7 +327,7 @@ class PartDisplay extends Display {
 // 						dispatchEvent(new GameEvent(GameEvent.GAME_OVER));
 						onGameOver();
 					}
-//trace("SETTING UP ITEM "+textItem.ref);
+
 					setupItem(cast(textItem, Item), (i == 0));
 
 					i++;
@@ -385,7 +384,7 @@ class PartDisplay extends Display {
 	}
 
 	override private function setButtonAction(button : DefaultButton, action : String) : Bool {
-//if(part.id == "intro") trace("setButtonAction "+action);
+
 		if (super.setButtonAction(button, action)) {
 
 			return true;
@@ -405,7 +404,7 @@ class PartDisplay extends Display {
 					button.buttonAction = function(? target : DefaultButton) {
 
 							var goToTarget : PartElement = part.buttonTargets.get(button.ref);
-//trace("button actionned goto " + button.ref+ "  goToTarget= "+goToTarget);
+
 							if (goToTarget == null) {
 
 								exitPart();
@@ -434,7 +433,7 @@ class PartDisplay extends Display {
 
 
 	private function setBackground(background : String) : Void {
-//if(part.id == "ep1_intro") trace("setBackground "+background);
+
 		if (background != null && background != "") {
 
 			var sameBackground = true;
@@ -446,7 +445,7 @@ class PartDisplay extends Display {
 				
 				for (b in previousBackground.split(",")) {
 
-					removeChild(displaysRefs.get(b)); // trace("child "+b+" removed !!!");
+					removeChild(displaysRefs.get(b));
 				}
 			
 			} else if (previousBackground == null) {
@@ -467,7 +466,6 @@ class PartDisplay extends Display {
 					}
 				}
 				previousBackground = background;
-//if(part.id == "ep1_intro") trace("previousBackground now is "+previousBackground);
 			}
 		}
 	}
@@ -488,7 +486,6 @@ class PartDisplay extends Display {
 
 				if (char.nameRef != null && displaysRefs.exists(char.nameRef)) {
 
-					//cast(displays.get(char.nameRef), ScrollPanel).setContent(currentSpeaker.model.getName());
 					cast(displaysRefs.get(char.nameRef), grar.view.component.container.ScrollPanel).setContent(currentSpeaker.getName());
 				
 				} else if (char.nameRef != null) {
@@ -511,7 +508,7 @@ class PartDisplay extends Display {
 
 			return;
 		}
-//trace("SETTING CURRENT ITEM TO "+item);
+
 		currentItem = item;
 
  		for (token in item.tokens) {
@@ -528,11 +525,11 @@ class PartDisplay extends Display {
 			var text = cast(item, TextItem);
 
 			if (text.introScreen != null) {
-//trace("call clean display");
+
 				cleanDisplay();
-//trace("setSpeaker "+text.author);
+
 				setSpeaker(text.author, text.transition);
-//trace("setText "+text.ref);
+
 				setText(text, isFirst);
 
 				// The intro screen automatically removes itself after its duration
@@ -552,7 +549,7 @@ class PartDisplay extends Display {
 					});
 
 				introScreenOn = true;
-//trace("add intro display");
+
 				addChild(introDisplay);
 			
 			} else {
@@ -589,7 +586,7 @@ class PartDisplay extends Display {
 
 		// Display Part
 		if (!introScreenOn && isFirst) {
-//trace("displayPart");
+
 			displayPart();
 		
 		} else if (!introScreenOn) {
@@ -599,10 +596,9 @@ class PartDisplay extends Display {
 			
 			while (i < numChildren && !found) {
 
-				//if (Std.is(getChildAt(i),Widget) && (cast(getChildAt(i),Widget).zz > displaysRefs.get(item.ref).zz)) {
 				if (Std.is(getChildAt(i), grar.view.component.Widget) && 
 						getZPosition(cast(getChildAt(i), grar.view.component.Widget)) > getZPosition(displaysRefs.get(item.ref))) {
-//if (item.ref == "hand") trace("Add item "+item.ref+" at "+i);
+
 					addChildAt(displaysRefs.get(item.ref), i);
 
 					found = true;
@@ -636,7 +632,7 @@ class PartDisplay extends Display {
 	}
 
 	private function displayPart() : Void {
-trace("displayPart "+part.id);
+
 		// Clean-up buttons
 		cleanDisplay();
 
@@ -712,7 +708,6 @@ trace("displayPart "+part.id);
 
 //		 					GameManager.instance.playSound(cast(currentItem, TextItem).sound);
 							onSoundToPlay(cast(currentItem, TextItem).sound);
-//trace("play sound : "+cast(currentItem, TextItem).sound);
 						}
 					}
 				}
@@ -740,14 +735,10 @@ trace("displayPart "+part.id);
 				if (obj.w.isBackground) {
 
 					backs.push(obj.w);
-//if (part.id == "ep1_dialogue1") trace("adding "+obj.ref);
 
 				} else {
 
-					//addChild(obj.w);
 					fores.push(obj.w);
-
-//if (part.id == "ep2_dialogue2" || part.id == "ep1_dialogue1") trace("adding "+obj.ref+" is visible ? "+obj.w.visible);
 				}
 			}
 		}
@@ -762,7 +753,7 @@ trace("displayPart "+part.id);
 	}
 
 	private function cleanDisplay() : Void {
-//trace("CLEAN DISPLAY");
+
 		var toRemove = new GenericStack<DisplayObject>();
 
 		for (i in 0...numChildren) {
@@ -787,11 +778,11 @@ trace("displayPart "+part.id);
 	}
 
 	private inline function onWidgetAdded() : Void {
-//trace("onWidgetAdded");
+
 		numWidgetReady++;
 
 		if (numWidgetAdded == numWidgetReady && timelines.exists(nextTimeline)) {
-//if (part.id == "ep2_dialogue2") trace("play timeline "+nextTimeline);
+
 			timelines.get(nextTimeline).play();
 
 			layers.get("ui").render();
@@ -816,25 +807,25 @@ trace("displayPart "+part.id);
 	}
 
 	private function mustBeDisplayed(key : String) : Bool {
-////if (key == "hand") trace("should we display hand ???");
+
 		var object : Widget = displaysRefs.get(key);
 #if flash
 		if (Std.is(object, grar.view.component.container.VideoPlayer)) {
-////if (key == "hand") trace("is video player");
+
 			return currentItem.ref == key;
 		}
 #end
-//if (key == "btn_ready_welcome") trace("contains object? "+contains(object));
+
 		// If the object is already displayed
 		if (contains(object)) {
-////if (key == "hand") trace("NOOOOO");
+
 			return false;
 		}
 
 		// Background
 		//if (key == previousBackground) {
 		if (previousBackground != null && Lambda.has( previousBackground.split(",") , key )) {
-////if (key == "hand") trace("in previousBackground");
+
 			return true;
 		}
 
@@ -863,11 +854,11 @@ trace("displayPart "+part.id);
 
 					cast(displaysRefs.get(key), DefaultButton).timeline = timelines.get(currentItem.timelineOut);
 				}
-////if (key == "hand") trace("in button");
+
 				return true;
 			
 			} else {
-////if (key == "hand") trace("NOOOOO");
+
 				return false;
 			}
 		}
@@ -876,18 +867,18 @@ trace("displayPart "+part.id);
 		if (Std.is(object, CharacterDisplay)) {
 
 			if (object == currentSpeaker) {
-////if (key == "hand") trace("is current speaker");
+
 				return true;
 			
 			} else if ((currentItem != null && currentItem.isText() && 
 							Lambda.has(cast(currentItem, TextItem).images, key))) {
 
 				currentItems.add(object);
-////if (key == "hand") trace("in text imgs");
+
 				return true;
 			
 			} else {
-////if (key == "hand") trace("NOOOOO");
+
 				return false;
 			}
 		}
@@ -898,23 +889,23 @@ trace("displayPart "+part.id);
 			var text = cast(currentItem, TextItem);
 			
 			if (currentSpeaker != null && Std.is(object, grar.view.component.container.ScrollPanel) && key == currentSpeaker.nameRef) {
-//if (key == "hand") trace("img 1");
+
 				return true;
 			}
 			if (Std.is(object, grar.view.component.container.ScrollPanel) && key != text.ref) {
-//if (key == "hand") trace("NOOOOO");
+
 				return false;
 			}
 			if (Std.is(object, grar.view.component.Image) || Std.is(object, grar.view.component.container.SimpleContainer)) {
 
 				if (Lambda.has(text.images, key)) {
-//trace("Added to currentItems "+object.ref);
+
 					currentItems.add(object);
-//if (key == "hand") trace("img 2");
+
 					return true;
 				
 				} else {
-//if (key == "hand") trace("NOOOOO");
+
 					return false;
 				}
 			}
@@ -922,16 +913,16 @@ trace("displayPart "+part.id);
 		} else {
 
 			if (Std.is(object, grar.view.component.container.ScrollPanel)) {
-//if (key == "hand") trace("NOOOOO");
+
 				return false;
 			}
 		}
 		// Exclude IntroScreen
 		if (Std.is(object, grar.view.part.IntroScreen)) {
-//if (key == "hand") trace("NOOOOO");
+
 			return false;
 		}
-//if (key == "hand") trace("default case");
+
 		return true;
 	}
 }

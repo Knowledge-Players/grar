@@ -24,7 +24,7 @@ class XmlToWidgetContainer {
 
 		var wcd : WidgetContainerData = cast { };
 		wcd.type = type == null ? WidgetContainer : type;
-//trace("type= "+wcd.type);
+
 		switch (wcd.type) {
 			case SimpleBubble: return null;
 			default: // nothing
@@ -236,17 +236,10 @@ class XmlToWidgetContainer {
 					if (ret.e != null && ret.r != null) {
 
 						wcd.displays.push(ret.e);
-//trace("elt "+ret.r+" created");
+
 					} else {
 
-						switch (e.name.toLowerCase()) {
-
-							//case "active", "inactive", "true": return wcd; // don't know if that's normal
-
-							default:
-							
-								trace("XmlToWidgetContainer.parseElement return null with "+e+" "+wcd); throw e.x.toString();
-						}
+						trace("XmlToWidgetContainer.parseElement return null with "+e+" "+wcd); throw e.x.toString();
 
 					}
 					zIndex++;

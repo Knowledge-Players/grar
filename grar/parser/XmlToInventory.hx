@@ -45,7 +45,7 @@ class XmlToInventory {
 	}
 	
 	static function parseTokenData(f : Fast) : Null<TokenData> {
-//trace("parsing token data on "+f.x);
+
 		if (f != null) {
 
 			var id : String = f.has.id ? f.att.id : f.att.name;
@@ -73,14 +73,10 @@ class XmlToInventory {
 	}
 
 	static public function parseNoteToken(xml : Xml) : Note {
-//trace("parsing Note "+xml);
-		var f : Fast = new Fast(xml);
-		var td : Null<TokenData>;
 
-		//for (tf in f.nodes.Token) {
-	
-			td = parseTokenData(f);
-		//}		
+		var f : Fast = new Fast(xml);
+
+		var td : Null<TokenData> = parseTokenData(f);
 
 		var video : Null<String> = null;
 

@@ -123,13 +123,7 @@ class Style {
      */
 #if (flash || openfl)
  	public function getFont() : Null<Font> {
- /*
-trace("debugging "+values.get("font")+"  is font a Font ? "+Std.is(font, flash.text.Font));
-for (f in Reflect.fields(font)) {
 
-	trace(f+" => "+Reflect.field(font, f));
-}
-*/
  		return font;
  		//return openfl.Assets.getFont(values.get("font"));
 #else

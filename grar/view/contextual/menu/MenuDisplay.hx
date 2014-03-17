@@ -411,7 +411,7 @@ class MenuDisplay extends Display /* implements ContextualDisplay */ {
 				for (st in statesElts) {
 
 					for (c in st) {
-//trace("c.ref = "+c.ref);
+
 						if (c.ref == "icon") {
 
 							if (iconId.indexOf(".") < 0) {

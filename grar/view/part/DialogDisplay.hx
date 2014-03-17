@@ -29,7 +29,7 @@ class DialogDisplay extends PartDisplay {
      */
 	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, 
 							transitions : StringMap<TransitionTemplate>, part : Part) {
-//trace("new Dialog part");
+
 		super(callbacks, applicationTilesheet, transitions, part);
 	}
 
@@ -40,7 +40,6 @@ class DialogDisplay extends PartDisplay {
 
 	override public function next(? target : DefaultButton) : Void {
 
-// 		GameManager.instance.stopSound();
 		onSoundToStop();
 
 		startPattern(currentPattern);
@@ -52,7 +51,7 @@ class DialogDisplay extends PartDisplay {
 	//
 
 	override private function startPattern(pattern : Pattern) : Void {
-//trace("start pattern "+pattern.id);
+
 		super.startPattern(pattern);
 
 		if (currentPattern != pattern) {
@@ -64,7 +63,7 @@ class DialogDisplay extends PartDisplay {
 		var exitPattern = false;
 
 		if (Std.is(currentPattern, ChoicePattern)) {
-//trace("is choice pattern");
+
 			var choicePattern = cast(currentPattern, ChoicePattern);
 			
 			// Init button with choice's view state
@@ -75,10 +74,10 @@ class DialogDisplay extends PartDisplay {
 					throw "[DialogDisplay] There is no template for choice named '"+choice+"'.";
 				}
 				cast(displaysRefs.get(choice), grar.view.component.container.DefaultButton).toggle(!choicePattern.choices.get(choice).viewed);
-//trace(choice+" toggle "+(!choicePattern.choices.get(choice).viewed));
+
 			}
 			if (choicePattern.minimumChoice == choicePattern.numChoices) {
-//trace("exitPattern");
+
 				exitPattern = true;
 			}
 		}
@@ -87,15 +86,15 @@ class DialogDisplay extends PartDisplay {
 			var next : Item = pattern.getNextItem();
 			
 			if (next != null && !exitPattern) {
-//trace("1");
+
 				crawlTextGroup(next, pattern);
 			
 			} else if (currentPattern.nextPattern != "") {
-//trace("2");
+
 				goToPattern(currentPattern.nextPattern);
 			
 			} else {
-//trace("3");
+
 				var nextIndex = part.getElementIndex(Pattern(currentPattern));
 				
 				currentPattern = null;
@@ -104,7 +103,7 @@ class DialogDisplay extends PartDisplay {
 			}
 		
 		} else {
-//trace("4");
+
 			nextElement();
 		}
 	}
@@ -163,7 +162,6 @@ class DialogDisplay extends PartDisplay {
 			if (contains(tooltip)) {
 				removeChild(tooltip);
 			}
-//			var content = Localiser.instance.getItemContent(choice.toolTip);
 			var content = onLocalizedContentRequest(choice.toolTip);
 
 			tooltip.setContent(content);
@@ -173,9 +171,8 @@ class DialogDisplay extends PartDisplay {
 				i++;
 			}
 
-// 			TweenManager.applyTransition(tooltip, pattern.tooltipTransition);
 			TweenUtils.applyTransition(tooltip, transitions, pattern.tooltipTransition);
-//trace("adding tooltip $$$$");
+
 			addChildAt(tooltip, i);
 		}
 		else{

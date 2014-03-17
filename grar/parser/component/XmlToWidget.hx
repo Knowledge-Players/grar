@@ -16,14 +16,12 @@ class XmlToWidget {
 
 	static public function parseWidgetData(f : Fast) : WidgetData {
 
-		//var f : Fast = new Fast(xml);
-
 		var wd : WidgetData = cast { };
 
 		if (f != null) {
 
 			if (!f.has.ref) {
-//trace("f= "+f.x);
+
 				throw "expected ref attribute not found";
 			
 			} else {

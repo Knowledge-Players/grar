@@ -67,7 +67,7 @@ class ActivityDisplay extends PartDisplay {
 	private var dragOrigin : Coordinates;
 
 	override public function nextElement(startIndex : Int = -1) : Void {
-trace("nextElement");
+
 		// If startIndex == 0, it's called from startPart, no verification needed
 		if(startIndex == 0 || cast(part, ActivityPart).hasNextGroup()){
 			for(elem in part.elements){
@@ -92,7 +92,6 @@ trace("nextElement");
 
 	override public function startPart(startPosition:Int = -1) : Void {
 
-trace("startPart");
 		//displayInputs();
 
 		// Checking rules
@@ -160,7 +159,7 @@ trace("startPart");
 
 	//override public function parseContent(content:Xml):Void
 	override public function setContent(d : DisplayData) : Void {
-trace("set ActivityDisplay content");
+
 		super.setContent(d);
 
 		switch (d.type) {
@@ -176,7 +175,7 @@ trace("set ActivityDisplay content");
 	// Private
 
 	private function displayInputs() : Void {
-//trace("displayInputs");
+
 		var activity = cast(part, ActivityPart);
 
 		var currentGroup : Group = activity.getNextGroup();
@@ -230,7 +229,7 @@ trace("set ActivityDisplay content");
 			case DefaultButton(d):
 
 				button = new DefaultButton(callbacks, applicationTilesheet, transitions, d);
-//trace("created input "+button.ref);
+
 				guide.add(button);
 
 				buttonsToInputs.set(button, input);

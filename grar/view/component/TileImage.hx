@@ -46,7 +46,7 @@ class TileImage extends Image {
 		this.tid = tid;
 
 		if (tid.tilesheetName != null) {
-//trace("For TileImage "+tid.id.wd.ref+" tilesheetName = "+tilesheetName);
+
 			tilesheetName = tid.tilesheetName;
             addEventListener(Event.ADDED_TO_STAGE, setTilesheet);
 
@@ -331,7 +331,7 @@ class TileImage extends Image {
 	//
 
 	private inline function init() : Void {
-//trace("init TileImage "+tid.id.wd.ref+" with "+tid.id.tile+"  and trueLayer is "+trueLayer);
+
 		tileSprite = new TileSprite(trueLayer, tid.id.tile);
 
 		if (tid.id.mirror != null) {
@@ -386,7 +386,7 @@ class TileImage extends Image {
 
 	private function setTilesheet(e : Event) : Void // This ugly workaround could be easily avoided by passing the layer in new() ?
 	{
-//trace("setTilesheet "+tilesheetName+" for "+ref);
+
 		removeEventListener(Event.ADDED_TO_STAGE, setTilesheet);
 		
 		var ancestor = parent;
@@ -400,7 +400,7 @@ class TileImage extends Image {
 			throw "[TileImage] Unable to find spritesheet '"+tilesheetName+"' for image '"+ref+"'.";
 		}
 		trueLayer = cast(ancestor, PartDisplay).getLayer(tilesheetName);
-//trace("trueLayer= "+trueLayer);
+
 		init();
 	}
 

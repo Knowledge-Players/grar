@@ -66,10 +66,7 @@ class KeyboardService {
 
 						if (zone.fastnav!=null) {
 
-							trace(zone.fastnav.ref + " : "+zone.fastnav.visible);
 							zone.fastnav.visible = !zone.fastnav.visible;
-
-							//zone.fastnav.onAdd();
 						}
 					}
 				}

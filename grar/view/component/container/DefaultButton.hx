@@ -67,7 +67,6 @@ class DefaultButton extends WidgetContainer {
 
 				default: throw "Wrong WidgetContainerData type passed to DefaultButton constructor";
 			}
-//if (ref == "btn_ready_welcome") trace("just built a new DefaultButton instance");
 
 		}
 
@@ -83,7 +82,6 @@ class DefaultButton extends WidgetContainer {
 		graphics.endFill();
 #end
 
-//if (ref == "inventory") trace("INVENTORY button created, toggleState= "+toggleState+"   defaultState= "+defaultState);
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
 
 				if (this.toggleState == null) { // HOTFIX, ask JB about it...
@@ -91,8 +89,6 @@ class DefaultButton extends WidgetContainer {
 					this.toggleState = this.defaultState;
 				}
 			});
-//if (ref.indexOf("choice") == 0) trace(ref+" button created transitions= "+transitions);
-//if (ref.indexOf("choice") == 0) trace(" and WidgetContainerData= "+dbd);
 	}
 
 	/**
@@ -169,9 +165,9 @@ class DefaultButton extends WidgetContainer {
 	}
 
 	public inline function set_toggleState(state : String) : String {
-//if (ref == "btn_ready_welcome") trace("toggleState about to be set to "+state);
+
 		if (states.exists(state+"_out")) {
-//if (ref == "btn_ready_welcome") trace("states.exists("+state+"_out) => setting to "+state);
+
 			toggleState = state;
 			timeline = timelines.get(toggleState);
 			renderState("out");
@@ -197,16 +193,16 @@ class DefaultButton extends WidgetContainer {
 	 * Define if the button is in state active or inactive
 	 **/
 	public inline function toggle(? toggle : Bool) : Void {
-//if (ref == "inventory") trace("toggle "+toggle+" ==> "+(toggle != (toggleState == "active")));
+
 		// Don't do anything if the toggle doesn't change
 		if (toggle != (toggleState == "active")) {
 
 			// If param is null, switch state
 			if (toggle == null) {
-//if (ref == "inventory") trace("toggle was null thus now inactive");
+
 				toggle = toggleState == "inactive";
 			}
-//if (ref == "btn_ready_welcome") trace("setting toggleState to "+(toggle ? "active" : "inactive"));
+
 			toggleState = toggle ? "active" : "inactive";
 		}
 	}
@@ -233,7 +229,7 @@ class DefaultButton extends WidgetContainer {
 	}
 
 	public function renderState(state : String) {
-//trace("render state "+state+"  toggleState= "+toggleState);
+
 		var changeState = false;
 		var list :  { zorder : Array<Widget>, refs : StringMap<Widget> };
 
@@ -370,7 +366,7 @@ class DefaultButton extends WidgetContainer {
 
 	public inline function resetToggle():Void
 	{
-//if (ref == "btn_ready_welcome") trace("reset toggle");
+
 		toggleState = defaultState;
 	}
 
@@ -404,14 +400,13 @@ class DefaultButton extends WidgetContainer {
 		if (isToggleEnabled) {
 
 			toggle(toggleState != "active");
-//			dispatchEvent(new ButtonActionEvent(ButtonActionEvent.TOGGLE));
+
 			onToggle();
 		}
 		if (timelineOut != null) {
 
-			//timelineOut.addEventListener(Event.COMPLETE,function(e){
 			timelineOut.onTimelineEnded = function(){
-//if (ref == "inventory") trace("CLICK button action is "+buttonAction);
+
 					buttonAction(this);
 				}
 
@@ -424,12 +419,12 @@ class DefaultButton extends WidgetContainer {
 	}
 
 	private inline function onOver(event : MouseEvent) : Void {
-//if (ref == "inventory") trace("onOver toggleState= "+toggleState);
+
 		renderState("over");
 	}
 
 	private inline function onOut(event : MouseEvent) : Void {
-//if (ref == "inventory") trace("onOut toggleState= "+toggleState);
+
 		renderState("out");
 	}
 

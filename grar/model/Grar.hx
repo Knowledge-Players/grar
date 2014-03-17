@@ -91,15 +91,13 @@ class Grar {
 
 	// From StateInfos
 
-	public var bookmark (default,default) : Int = -1;
+	public var bookmark (default, default) : Int = -1;
 
-	public var checksum (default,default) : Int;
+	public var checksum (default, default) : Int;
 
 	public var completion : StringMap<Int>;
 
 	public var completionOrdered : Array<String>;
-
-	//private var allItem : Array<Trackable>;
 
 	var partIndex : Int = 0;
 
@@ -136,7 +134,7 @@ class Grar {
 	//
 
 	public function set_currentLocale( v : String ) : String {
-trace("set currentLocale to " + v);
+
 		if (v == currentLocale) {
 			return v;
 		}
@@ -343,7 +341,7 @@ trace("set currentLocale to " + v);
 	}
 
 	public function activateInventoryToken(tid : String) : Void {
-trace("ON NEW TOKEN ACTIVATED "+tid);
+
 		if (!inventory.exists(tid)) {
 
 			throw 'unknown token "$tid". '+Lambda.array({ iterator: inventory.keys });

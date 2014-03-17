@@ -224,7 +224,7 @@ class Display extends Sprite {
 
 	//public function parseContent(content:Xml):Void
 	public function setContent(d : DisplayData) : Void {
-//trace("setContent, display type is "+d.type);
+
 		this.data = d;
 
 		if (d.x != null) {
@@ -244,7 +244,7 @@ class Display extends Sprite {
 		if (d.spritesheets != null) {
 
 			for (sk in d.spritesheets.keys()) {
-//trace("add TileLayer " + sk);
+
 				var layer = new TileLayer(spritesheets.get(sk));
 				layers.set(sk, layer);
 
@@ -260,10 +260,9 @@ class Display extends Sprite {
 		if (d.transitionIn != null) {
 
 			transitionIn = d.transitionIn;
-//trace("TRANSITION IN");
+
 			addEventListener(Event.ADDED_TO_STAGE, function(e){
-//trace("display added to stage");
-// 					TweenManager.applyTransition(this, transitionIn);
+
 					TweenUtils.applyTransition(this, transitions, transitionIn);
 
 				});
@@ -280,7 +279,6 @@ class Display extends Sprite {
 
 			filters = d.filters;
 		}
-// 		ResizeManager.instance.onResize();
 	}
 
 	public function getLayer(id : String) : TileLayer {
@@ -294,7 +292,7 @@ class Display extends Sprite {
 	//
 
 	private function createDisplay(d : DisplayData) : Void {
-//trace("create display ");
+
 		for (c in d.displays) {
 
 			createElement(c.ed, c.ref);
@@ -513,7 +511,6 @@ class Display extends Sprite {
 // 					btn.addEventListener(ButtonActionEvent.TOGGLE, onButtonToggle);
 					btn.onToggle = function(){ onButtonToggle(btn); };
 				}
-//if (r == "choice1_verticalText" || r == "choice2" || r == "choice3_verticalText") { trace("created button "+r); }
 				addElement(btn, r);
 				
 				return btn;
@@ -524,7 +521,7 @@ class Display extends Sprite {
 	}
 
 	private function createCharacter(r : String, d : CharacterData) : Widget {
-//trace("CREATE CHARACTER WITH "+d.tid.tilesheetName+" => "+layers.get(d.tid.tilesheetName));
+
 		var c : CharacterDisplay = new CharacterDisplay(callbacks, applicationTilesheet, transitions, d, layers.get(d.tid.tilesheetName));
 		
 		addElement(c, r);
@@ -564,7 +561,7 @@ class Display extends Sprite {
 
 			createElement(d.get(ek).obj, ek);
 		}
-		textGroups.set(r, d); //trace("Add TextGroup "+r);
+		textGroups.set(r, d);
 	}
 
 	//private function addElement(elem:Widget, node:Fast):Void
@@ -582,7 +579,6 @@ class Display extends Sprite {
 
 			button.buttonAction = function(? target) {
 
-// 					GameManager.instance.displayContextual(MenuDisplay.instance, MenuDisplay.instance.layout);
 					onContextualDisplayRequest(MENU);
 
 				}
@@ -594,10 +590,9 @@ class Display extends Sprite {
 			buttonGroups.get(groupMenu).add(button);
 		
 		} else if(action.toLowerCase() == "open_inventory") {
-//trace("found open_inventory button");
+
 			button.buttonAction = function(? target) {
-//trace("open_inventory action");
-// 					GameManager.instance.displayContextual(NotebookDisplay.instance, NotebookDisplay.instance.layout);
+
 					onContextualDisplayRequest(NOTEBOOK);
 
 				}
@@ -612,7 +607,6 @@ class Display extends Sprite {
 
 			button.buttonAction = function(? target) {
 
-// 				GameManager.instance.hideContextual(MenuDisplay.instance);
 				onContextualHideRequest(MENU);
 
 			}
@@ -634,7 +628,7 @@ class Display extends Sprite {
 		for (b in buttonGroups.get(button.group)) {
 
 			if (b != button) {
-//trace("TOGGLE "+b.ref+"  "+(button.toggleState != "active"));
+
 				b.toggle(button.toggleState != "active");
 			}
 		}
@@ -667,7 +661,6 @@ class Display extends Sprite {
 
 	private inline function quit(? target : DefaultButton) : Void {
 
-// 		GameManager.instance.quitGame();
 		onQuitGameRequest();
 	}
 }

@@ -184,7 +184,7 @@ class Controller {
 
 
 				    case Ready:
-//trace("Ready");
+
 				    	launchGame();
 				}
 			}
@@ -205,7 +205,7 @@ class Controller {
 			}
 
 		state.onPartFinished = function(p : grar.model.part.Part) {
-trace("state.onPartFinished");
+
 				onPartFinished(p);
 
 				for (part in state.module.getAllParts()) {
@@ -327,7 +327,7 @@ trace("state.onPartFinished");
 			}
 
 		application.onExitPart = function(pid : String) {
-trace("onExitPart");
+
 				state.module.setPartFinished(pid);
 			}
 
@@ -488,23 +488,29 @@ trace("onExitPart");
 	}
 
 	function launchGame() : Void {
-trace("=============> launch game");
+
 		application.startMenu();
 
 		application.changeLayout("default");
 
 		var startingPart : String = null;
 
-// FIXME		if(game.stateInfos.bookmark > 0)
-// FIXME			startingPart = game.getAllItems()[game.stateInfos.bookmark].id;
+		if (state.module.bookmark > 0) {
 
+			switch (state.module.getAllItems()[state.module.bookmark]) {
+
+				case Part(p):
+
+					startingPart = p.id;
+			}
+		}
 		displayPartById(startingPart);
 	}
 
 	function onPartFinished(p : Part) {
 
 		application.setFinishedPart(p.id);
-trace("p.next = "+p.next);
+
 		if (p.next != null) {
 
 			var i = 0;
@@ -530,6 +536,9 @@ trace("p.next = "+p.next);
 		}
 	}
 
+	/**
+	 * TODO print a nice error message ?
+	 */
 	public function onError(e:String) : Void {
 
 		trace("ERROR", e);

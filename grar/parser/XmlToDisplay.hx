@@ -420,7 +420,7 @@ class XmlToDisplay {
 	}
 
 	static function parseZoneContent(f : Fast, templates : StringMap<Xml>) : DisplayData {
-//trace("parseZoneContent "+ f.x);
+
 		var zones : Array<DisplayData> = [];
 
 		var dd : DisplayData = {
@@ -452,7 +452,7 @@ class XmlToDisplay {
 			trace("This zone is empty. Is your XML correct ?");
 		}
 
-		for (ce in f.elements) { //trace("just found "+child.name+" in zone");
+		for (ce in f.elements) {
 
 			var ret : { e : Null<ElementData>, r : Null<String> } = parseElement(ce, dd, templates);
 			

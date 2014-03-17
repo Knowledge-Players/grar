@@ -298,13 +298,8 @@ class Application {
 			this.filters.set(fk, nf);
 		}
 	}
-/*
-	public function initTweener(t : StringMap<TransitionTemplate>) : Void {
 
-		this.tweener = new Tweener(t);
-	}
-*/
-	public function changeLayout(l : String) : Void { //trace("CHANGE LAYOUT " + l);
+	public function changeLayout(l : String) : Void {
 
 		if (l == null) {
 
@@ -325,7 +320,7 @@ class Application {
 
 				throw "there is no layout '"+l+"'";
 			}
-			Lib.current.addChild(currentLayout.content); trace("Layout "+currentLayout.name+" just added");
+			Lib.current.addChild(currentLayout.content);
 
 		} else {
 
@@ -367,7 +362,7 @@ class Application {
 		}
 
 		stylesheets = newStyles;
-//trace("styles ready");
+
 		onStylesChanged();
 	}
 
@@ -504,7 +499,7 @@ class Application {
 	* @param soundUrl : Path to the sound file
 	**/
 	public function loadSound(soundUrl : String) : Void {
-//trace("load sound with url= "+soundUrl);
+
 		if (soundUrl != null && soundUrl != "") {
 
 			var sound = new Sound(new flash.net.URLRequest(soundUrl));
@@ -520,7 +515,7 @@ class Application {
 	public function playSound(soundUrl : String) : Void {
 
 		if (soundUrl != null) {
-//trace("playSound = "+soundUrl);
+
 			stopSound();
 			
 			if (!sounds.exists(soundUrl)) {
@@ -550,20 +545,17 @@ class Application {
     */
 	public function displayPart(part : Part, interrupt : Bool = false, startPosition : Int = -1) : Bool {
 
-trace("display part "+part.id);
 		if (interrupt) {
 
 			var oldPart = parts.pop();
 
 			if (oldPart != null) {
 
-// 				oldPart.removeEventListener(PartEvent.EXIT_PART, onExitPart);
 				oldPart.exitPart();
 			}
 		}
 		if (!parts.isEmpty()) {
 
-// 			parts.first().removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 			parts.first().onPartLoaded = function(){ trace("CHECK THIS !!!!"); }
 		}
 		// Display the new part
@@ -573,16 +565,12 @@ trace("display part "+part.id);
 
 		startIndex = startPosition;
 		
-//		parts.first().addEventListener(PartEvent.EXIT_PART, onExitPart);
 		fp.onExit = function(){ onExitPart(parts.first().part.id); }
 
-// 		parts.first().addEventListener(PartEvent.ENTER_SUB_PART, onEnterSubPart);
 		fp.onEnterSubPart = function(sp : Part){ onEnterSubPart(sp); }
 
-// 		parts.first().addEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		fp.onPartLoaded = function(){ onPartDisplayLoaded(fp); }
 
-// 		parts.first().addEventListener(GameEvent.GAME_OVER, function(e:GameEvent) {...});
 		fp.onGameOver = function(){ 
 
 				onGameOverRequest();
@@ -599,7 +587,6 @@ trace("display part "+part.id);
 
 			pb.setGameOver();
 		}
-// 		dispatchEvent(new GameEvent(GameEvent.GAME_OVER)); TODO call setGameOver on ProgressBar
 	}
 
 
@@ -615,13 +602,12 @@ trace("display part "+part.id);
 	public function displayContextual(c : ContextualType, ? hideOther : Bool = true) : Void {
 	
 		var cd : Display = getContextual(c);
-trace("displayContextual "+cd);
+
 		doDisplayContextual(cd, cd.layout, hideOther);
 	}
 
-	//private function onExitPart(event:Event) : Void {
 	public function setFinishedPart(partId : String) : Void {
-//trace("setFinishedPart "+partId);
+
 		var finishedPart = parts.pop();
 		
 		if (finishedPart.part.id != partId) {
@@ -647,8 +633,8 @@ trace("displayContextual "+cd);
 			}
 
 		} else {
-trace("Game Over");
-			// dispatchEvent(new GameEvent(GameEvent.GAME_OVER)); TODO call setGameOver on ProgressBar
+
+			// dispatchEvent(new GameEvent(GameEvent.GAME_OVER)); call setGameOver on ProgressBar or not used anymore ?
 		}
 	}
 
@@ -684,10 +670,9 @@ trace("Game Over");
 	}
 
 	function onPartDisplayLoaded(pd : PartDisplay) : Void {
-//trace("onPartLoaded "+pd.part.id);
+
 		onSetBookmarkRequest(pd.part.id);
 
-		//pd.removeEventListener(PartEvent.PART_LOADED, onPartLoaded);
 		pd.startPart(startIndex);
 
 		if (pd.visible && pd.layout != null) {
@@ -702,13 +687,12 @@ trace("Game Over");
 	}
 
 	function onEnterSubPart(part : Part) : Void {
-trace("onEnterSubPart "+part.id);
-		//displayPart(part);
+
 		onPartDisplayRequest(part);
 	}
 
 	function createPartDisplay(part : Part) : Null<PartDisplay> {
-trace("create part display for "+part.id);
+
 		if (part == null) {
 
 			return null;

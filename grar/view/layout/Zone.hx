@@ -35,7 +35,7 @@ class Zone extends Display {
 		zoneHeight = _height;
 
 		addEventListener(Event.ADDED_TO_STAGE, function(e){ // HOTFIX because Event.ADDED_TO_STAGE not always thrown on buttons
-//trace("zone added to stage");
+
 				for (btnG in buttonGroups ) {
 
 					for (btn in btnG) {
@@ -113,12 +113,12 @@ class Zone extends Display {
 					addChild(layers.get("ui").view);
 
 					for (e in d.displays) {
-//trace("CREATE ZONE ELT "+d.displays.get(e));
+
 						createElement(e.ed, e.ref);
 					}
 				
 				} else if(rows != null) {
-//trace("FOUND ONE ZONE WITH ROWS");
+
 					var heights = initSize(rows, zoneHeight);
 					var yOffset : Float = 0;
 					var i = 0;
@@ -139,7 +139,7 @@ class Zone extends Display {
 					}
 				
 				} else if (columns != null) {
-//trace("FOUND ONE ZONE WITH COLUMNS");
+
 					var widths = initSize(columns, zoneWidth);
 					var xOffset : Float = 0;
 					var j = 0;
@@ -166,7 +166,7 @@ class Zone extends Display {
 
 	public function setExitNotebook() : Void {
 
-		if (buttonGroups.get(groupNotebook) != null) { trace("EXIT NOTEBOOK");
+		if (buttonGroups.get(groupNotebook) != null) {
 
 			for (button in buttonGroups.get(groupNotebook)) {
 
@@ -177,7 +177,7 @@ class Zone extends Display {
 
 	public function setEnterNotebook() : Void {
 
-		if (buttonGroups.get(groupNotebook) != null) { trace("ENTER NOTEBOOK");
+		if (buttonGroups.get(groupNotebook) != null) {
 
 			for (button in buttonGroups.get(groupNotebook)) {
 
@@ -188,7 +188,7 @@ class Zone extends Display {
 
 	public function setExitMenu() : Void {
 
-		if (buttonGroups.get(groupMenu) != null) { trace("EXIT MENU");
+		if (buttonGroups.get(groupMenu) != null) {
 
 			for (button in buttonGroups.get(groupMenu)) {
 
@@ -199,7 +199,7 @@ class Zone extends Display {
 
 	public function setEnterMenu() : Void {
 
-		if (buttonGroups.get(groupMenu) != null) { trace("ENTER MENU");
+		if (buttonGroups.get(groupMenu) != null) {
 
 			for (button in buttonGroups.get(groupMenu)) {
 
@@ -295,18 +295,6 @@ class Zone extends Display {
 			default: // nothing
 		}
 		//layer.render();
-		switch (e) {
-
-			case DefaultButton(d):
-//trace("ZONE => just created a => "+elem);
-
-			elem.addEventListener(Event.ADDED_TO_STAGE, function(e){
-//trace("*********** DEFAULT BUTTON ADDED TO STAGE !!!");
-				//this.toggleState = this.defaultState;
-
-			});
-			default:
-		}
 		return elem;
 	}
 
@@ -334,7 +322,7 @@ class Zone extends Display {
 
 	private function onFastNav(e: Event):Void
 	{
-/* FIXME
+/* FIXME ?
 		var track = fastnav.currentLabel;
 		var items = GameManager.instance.game.getAllItems();
 		var i = 0;
