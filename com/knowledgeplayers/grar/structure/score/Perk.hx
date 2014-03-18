@@ -60,6 +60,11 @@ class Perk {
 		score += delta;
 	}
 
+	public function removeToScore(delta:Int):Void
+	{
+		score -= delta;
+	}
+
 	/**
      * @return a string-based representation of the object
      */

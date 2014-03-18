@@ -51,8 +51,15 @@ class ScoreChart {
 	{
 		if(!perks.exists(perk))
 			perks.set(perk, new Perk(perk));
-		//else
-			perks.get(perk).addToScore(score);
+		perks.get(perk).addToScore(score);
+	}
+
+	public function removeScoreToPerk(perk:String, score:Int):Void
+	{
+		if(!perks.exists(perk))
+			perks.set(perk, new Perk(perk));
+		else
+			perks.get(perk).removeToScore(score);
 	}
 
 	/**

@@ -36,7 +36,7 @@ class StateInfos {
 		var trackable:Array<String> = stateInfosArray[2].split("-");
 
 		if(allItem.length > 0){
-            while(allItem.length != trackable.length)
+            while(allItem.length > trackable.length)
                 trackable.push("0");
 			for(i in 0...trackable.length){
 				if(i < allItem.length){
