@@ -19,6 +19,8 @@ class Glossary {
 
 	private var definitions:Map<String, String>;
 
+    public var alphabet:String;
+
 	/**
      * @return the instance
      */
@@ -91,9 +93,12 @@ class Glossary {
 	private function parseContent(content:Xml):Void
 	{
 		var fast:Fast = new Fast(content).node.Glossary;
+
 		for(def in fast.nodes.Definition){
 			addEntry(def.att.word, def.innerData);
 		}
+
+        alphabet  = new Fast(content).node.Glossary.att.alphabet;
 	}
 
 	private function sortWords(x:String, y:String):Int
