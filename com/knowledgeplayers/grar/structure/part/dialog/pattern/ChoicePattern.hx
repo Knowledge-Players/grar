@@ -42,6 +42,14 @@ class ChoicePattern extends Pattern {
 		numChoices = 0;
 	}
 
+    public function reInit():Void{
+
+        for (choice in choices){
+
+           choice.viewed = false;
+        }
+
+    }
 	override public function init(xml:Fast):Void
 	{
 		super.init(xml);
