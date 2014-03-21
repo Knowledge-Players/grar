@@ -55,7 +55,6 @@ class ScrollBar extends Widget
 			cursorData.colorTransform(new Rectangle(0,0,cursorData.width,cursorData.height), color);
 		}
 
-
 		var bmp = new ScaleBitmap(cursorData, true);
 		bmp.bitmapScale9Grid = scale9Grid;
 		bmp.bitmapWidth = width;
