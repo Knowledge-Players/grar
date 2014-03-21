@@ -75,6 +75,15 @@ class Glossary {
 		return words;
 	}
 
+	public function get_wordsFromLetter(_letter:String):Array<String>
+	{
+
+        var myFilterWords:Array<String> = words.filter(function(word: String){return StringTools.startsWith(word.toLowerCase(), _letter.toLowerCase());});
+
+		return myFilterWords;
+
+	}
+
 	/**
      * @return a string-based representation of the glossary
      */
