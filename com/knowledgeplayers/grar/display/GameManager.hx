@@ -319,7 +319,11 @@ class GameManager extends EventDispatcher {
 
 	public function finishPart(partId:String):Void
 	{
-		game.stateInfos.setPartFinished(partId);
+		var part: Part = game.getPart(partId);
+		if(part.isDone)
+			game.stateInfos.setPartFinished(partId);
+		else
+			game.stateInfos.setPartStarted(partId);
 		var event = new PartEvent(PartEvent.EXIT_PART);
 		event.partId = partId;
 		dispatchEvent(event);

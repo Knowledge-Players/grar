@@ -79,7 +79,10 @@ class Notebook
 			var title = {ref: page.node.Title.att.ref, content: page.node.Title.att.content};
 			var contentRef = page.node.Chapter.att.ref;
 			var titleRef = page.node.Chapter.att.titleRef;
-			var newPage:Page = {title: title, contentRef: contentRef, titleRef: titleRef, tabContent: page.att.tabContent, icon: page.att.icon, chapters: new Array<Chapter>()};
+			var items = new List<String>();
+			for(img in page.nodes.Image)
+				items.add(img.att.ref);
+			var newPage:Page = {title: title, contentRef: contentRef, titleRef: titleRef, tabContent: page.att.tabContent, icon: page.att.icon, chapters: new Array<Chapter>(), items: items};
 			for(chapter in page.nodes.Chapter){
 				var chap: Chapter = {notes: new Array<Note>(), titleRef: chapter.att.titleRef, icon: chapter.att.icon, name: chapter.att.name, subtitle: chapter.att.subtitle, ref: chapter.att.ref, isActivated: chapter.has.unlocked ? chapter.att.unlocked == "true" : false};
 				for(noteFast in chapter.nodes.Note){
@@ -102,6 +105,7 @@ typedef Page = {
 	var titleRef: String;
 	var tabContent: String;
 	var icon: String;
+	var items: List<String>;
 }
 
 typedef Chapter = {

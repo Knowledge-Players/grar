@@ -80,16 +80,6 @@ class ActivityDisplay extends PartDisplay {
 		}
 		if(currentGroup != null && currentGroup.timelineOut != null){
 			var tl: Timeline = timelines.get(currentGroup.timelineOut);
-			if(!inputs.isEmpty()){
-                var i = 0;
-
-                while(i < tl.elements.length && tl.elements[i].dynamicValue != "$"+inputs.first().ref)
-                    i++;
-                if(i < tl.elements.length)
-                    for(input in inputs)
-                        tl.addElement(input, tl.elements[i].transition, tl.elements[i].delay);
-
-            }
 			tl.onComplete = function(){
 				displayNextGroup(startIndex);
 			}
@@ -260,8 +250,7 @@ class ActivityDisplay extends PartDisplay {
 		if(input.selected)
 			toggleInput(button, "true");
 
-		if(nextTimeline != null && timelines.exists(nextTimeline)){
-			var tl: Timeline = timelines.get(nextTimeline);
+		for(tl in timelines){
 			var i = 0;
 			while(i < tl.elements.length && tl.elements[i].dynamicValue != "$"+input.ref)
 				i++;
