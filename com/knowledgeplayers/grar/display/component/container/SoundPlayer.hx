@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.display.GameManager;
 import flash.media.SoundTransform;
 import com.knowledgeplayers.grar.display.element.ChronoCircle;
 import flash.events.Event;
@@ -56,7 +57,8 @@ class SoundPlayer extends WidgetContainer
 	{
 		if(loaded){
 			setPlaying(true);
-			var volume = new SoundTransform(defaultVolume);
+			var master = GameManager.instance.masterVolume;
+			var volume = new SoundTransform(master == 1 ? defaultVolume : master);
 			soundChannel = sound.play(pausePosition);
 			soundChannel.soundTransform = volume;
 			soundChannel.addEventListener(Event.SOUND_COMPLETE,onSoundComplete);

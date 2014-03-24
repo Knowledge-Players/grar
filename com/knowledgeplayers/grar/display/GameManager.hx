@@ -74,12 +74,13 @@ class GameManager extends EventDispatcher {
     **/
 	public var tokensImages (default, null):Map<String, {small:BitmapData, large:BitmapData}>;
 
+	public var masterVolume (default, set):Float = 1;
+
 	public var menuLoaded (default, set_menuLoaded):Bool = false;
 
 	public var layout(default,null):Layout;
 	private var previousLayout: String;
 
-	private var nbVolume:Float = 1;
 	private var itemSoundChannel:SoundChannel;
 
 	private var startIndex:Int;
@@ -174,14 +175,15 @@ class GameManager extends EventDispatcher {
     * Change volume
     **/
 
-	public function changeVolume(nb:Float = 0):Void
+	public function set_masterVolume(nb:Float):Float
 	{
-		nbVolume = nb;
+		masterVolume = nb;
 		if(itemSoundChannel != null){
 			var soundControl = itemSoundChannel.soundTransform;
-			soundControl.volume = nbVolume;
+			soundControl.volume = masterVolume;
 			itemSoundChannel.soundTransform = soundControl;
 		}
+		return nb;
 	}
 
 	/**
@@ -334,7 +336,7 @@ class GameManager extends EventDispatcher {
 	**/
 	public function quitGame():Void
 	{
-		if (GameManager.instance.game.connection.tracking.suivi != "")
+		if(GameManager.instance.game.connection.tracking.suivi != "")
 			GameManager.instance.game.connection.tracking.exitAU();
 
 		#if flash

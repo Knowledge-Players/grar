@@ -203,8 +203,10 @@ class VideoPlayer extends WidgetContainer
 
 	public function playVideo(?target: DefaultButton):Void
 	{
-        video.visible =true;
-
+        video.visible = true;
+		var master = GameManager.instance.masterVolume;
+		var volume = new SoundTransform(master == 1 ? currentVolume : master);
+		stream.soundTransform = volume;
 		addEventListener(Event.ENTER_FRAME, enterFrame);
         stream.addEventListener(NetStatusEvent.NET_STATUS,statusHandler);
 		onVideoPlay();

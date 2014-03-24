@@ -170,4 +170,14 @@ class DialogDisplay extends PartDisplay {
 		}
 		return superReturn;
 	}
+
+	override public function exitPart(completed:Bool = true):Void
+	{
+		super.exitPart(completed);
+		for(pattern in part.elements){
+			if(Std.is(pattern, ChoicePattern))
+				cast(pattern, ChoicePattern).reInit();
+		}
+	}
+
 }

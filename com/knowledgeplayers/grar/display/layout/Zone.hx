@@ -177,12 +177,12 @@ class Zone extends KpDisplay {
 	private function activeSound(?_target:DefaultButton):Void
 	{
 		if(soundState){
-			GameManager.instance.changeVolume(0);
+			GameManager.instance.masterVolume = 0;
 			soundState = false;
 			if(_target != null) _target.toggle(false);
 		}
 		else{
-			GameManager.instance.changeVolume(1);
+			GameManager.instance.masterVolume = 1;
 			soundState = true;
 			if(_target != null) _target.toggle(true);
 		}
