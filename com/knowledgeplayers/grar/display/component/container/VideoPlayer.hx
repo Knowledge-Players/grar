@@ -334,6 +334,7 @@ class VideoPlayer extends WidgetContainer
 			containerControls.y = Lib.current.stage.stageHeight - containerControls.height - 20;
 
 			displays.get("bigPlay").y = Lib.current.stage.stageHeight/2-displays.get("bigPlay").height/2-containerControls.y ;
+            if(fullscreenButton!= null)
 			fullscreenButton.toggle();
 
 		}
@@ -352,7 +353,8 @@ class VideoPlayer extends WidgetContainer
 			containerVideo.y = yVideo;
 			containerControls.x = xControls;
 			containerControls.y = yControls;
-			fullscreenButton.toggle();
+            if(fullscreenButton!= null)
+			    fullscreenButton.toggle();
 			displays.get("bigPlay").y = yBigPlay;
 
 		}
