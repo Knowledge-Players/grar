@@ -1,7 +1,6 @@
 package grar.parser.contextual;
 
-import grar.view.contextual.menu.MenuDisplay.MenuData;
-import grar.view.contextual.menu.MenuDisplay.LevelData;
+import grar.model.contextual.MenuData;
 
 import haxe.xml.Fast;
 

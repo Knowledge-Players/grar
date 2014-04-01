@@ -1,7 +1,8 @@
 package grar.model.part;
 
+import grar.model.part.item.Item;
+
 import haxe.ds.GenericStack;
-import haxe.ds.StringMap;
 
 typedef PatternData = {
 
@@ -9,7 +10,7 @@ typedef PatternData = {
 	var patternContent : Array<Item>;
 	var ref : String;
 	var nextPattern : String;
-	var buttons : StringMap<StringMap<String>>;
+	var buttons : List<ButtonData>;
 	var tokens : GenericStack<String>;
 	var endScreen : Bool;
 	var itemIndex : Int;
@@ -52,7 +53,7 @@ class Pattern /* implements PartElement */ {
 	/**
      * Buttons for this pattern
 	 **/
-	public var buttons (default, null) : StringMap<StringMap<String>>;
+	public var buttons (default, null) : Null<List<ButtonData>>;
 
 	public var tokens (default, null) : GenericStack<String>;
 
@@ -77,7 +78,7 @@ class Pattern /* implements PartElement */ {
 
 			itemIndex++;
 			return patternContent[itemIndex - 1];
-		
+
 		} else {
 
 			restart();

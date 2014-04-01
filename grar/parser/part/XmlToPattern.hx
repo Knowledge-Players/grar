@@ -1,5 +1,6 @@
 package grar.parser.part;
 
+import grar.model.part.ButtonData;
 import grar.model.part.Pattern;
 import grar.model.part.dialog.ChoicePattern;
 import grar.model.part.video.VideoPattern;
@@ -24,19 +25,19 @@ class XmlToPattern {
 			case "link":
 
 				p = parsePattern(f);
-			
+
 			case "box":
 
 				p = parseBoxPattern(f, f.has.background ? f.att.background: null);
-			
+
 			case "choice":
 
 				p = parseChoicePattern(f);
-			
+
 			case "video":
 
 				p = parseVideoPattern(f);
-			
+
 			default:
 
 				throw "unexpected pattern type attribute value " + f.att.type;
@@ -50,7 +51,7 @@ class XmlToPattern {
 		var pd : PatternData = cast { };
 
 		pd.patternContent = [];
-		pd.buttons = new StringMap();
+		pd.buttons = new List<ButtonData>();
 		pd.tokens = new GenericStack<String>();
 		pd.id = f.att.id;
 		pd.nextPattern = f.att.next;
@@ -67,11 +68,11 @@ class XmlToPattern {
 
 				if (child.has.content) {
 
-					pd.buttons.set(child.att.ref, ParseUtils.parseHash(child.att.content));
-				
+					pd.buttons.add({ref: child.att.ref, content: ParseUtils.parseHash(child.att.content), action: child.att.action});
+
 				} else {
 
-					pd.buttons.set(child.att.ref, new StringMap());
+					pd.buttons.add({ref: child.att.ref, content: new StringMap(), action: child.att.action});
 				}
 			}
 		}
@@ -117,7 +118,7 @@ class XmlToPattern {
 				tooltip = choiceNode.att.toolTip;
 			}
 			var choice = { ref: choiceNode.att.ref, toolTip: tooltip, goTo: choiceNode.att.goTo, viewed: false };
-			
+
 			choices.set(choiceNode.att.ref, choice);
 		}
 		return new ChoicePattern(pd, tooltipRef, choices, numChoices, minimumChoice, tooltipTransition);

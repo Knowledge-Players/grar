@@ -1,8 +1,8 @@
 package grar.service;
 
-import openfl.Assets;
-import com.knowledgeplayers.utils.assets.AssetsStorage;
+import haxe.Http;
 
+import grar.model.contextual.MenuData;
 import grar.model.Grar;
 import grar.model.InventoryToken;
 import grar.model.localization.Locale;
@@ -12,34 +12,13 @@ import grar.model.contextual.Bibliography;
 import grar.model.contextual.Notebook;
 import grar.model.part.Part;
 
-import grar.view.Display;
-import grar.view.FilterData;
-import grar.view.TransitionTemplate;
-import grar.view.style.StyleSheet;
-import grar.view.element.TokenNotification;
-import grar.view.layout.Layout.LayoutData;
-import grar.view.contextual.menu.MenuDisplay.MenuData;
-import grar.view.contextual.NotebookDisplay;
-import grar.view.component.container.WidgetContainer;
-
-import grar.parser.XmlToDisplay;
 import grar.parser.XmlToGrar;
-import grar.parser.XmlToTransition;
-import grar.parser.XmlToFilter;
-import grar.parser.XmlToInventory;
 import grar.parser.contextual.XmlToBibliography;
 import grar.parser.contextual.XmlToGlossary;
 import grar.parser.contextual.XmlToNotebook;
 import grar.parser.contextual.XmlToMenu;
-import grar.parser.layout.XmlToLayouts;
 import grar.parser.part.XmlToPart;
 import grar.parser.localization.XmlToLocale;
-import grar.parser.style.XmlToStyleSheet;
-import grar.parser.style.JsonToStyleSheet;
-
-import aze.display.TilesheetEx;
-
-import com.knowledgeplayers.utils.assets.loaders.concrete.TextAsset;
 
 import haxe.ds.StringMap;
 
@@ -50,121 +29,31 @@ class GameService {
 	public function fetchLocaleData(locale : String, path : String, onSuccess : LocaleData -> Void, onError : String -> Void) : Void {
 
 		var ret : LocaleData;
-
-		try {
-
-			ret = XmlToLocale.parseData(locale, AssetsStorage.getXml(path));
-
-		} catch(e:String) {
-
-			onError(e);
-			return;
-		}
-		onSuccess(ret);
-	}
-
-	public function fetchLayouts(path : String, templates : StringMap<Xml>, onSuccess : StringMap<LayoutData> -> Null<String> -> Void, onError : String -> Void) : Void {
-
-		var ret : { lp : Null<String>, lm : StringMap<LayoutData> };
-
-		try {
-
-			ret = XmlToLayouts.parse(AssetsStorage.getXml(path), templates);
-
-		} catch(e:String) {
-
-			onError(e);
-			return;
-		}
-		onSuccess(ret.lm, ret.lp);
+		loadXml(path, function(xml: Xml){
+			ret = XmlToLocale.parseData(locale, xml);
+			onSuccess(ret);
+		}, onError);
 	}
 
 	public function fetchModule(uri : String, onSuccess : Grar -> Void, onError : String -> Void) : Void {
 
 		var m : Grar;
-
-		try {
-
-			// at the moment, grar fetches its data from embedded assets only
-			m =  XmlToGrar.parse(AssetsStorage.getXml(uri));
-
-		} catch(e:String) {
-
-			onError(e);
-			return;
-		}
-		onSuccess(m);
-	}
-
-	public function fetchTransitions(uri : String, onSuccess : StringMap<TransitionTemplate> -> Void, onError : String -> Void) : Void {
-
-		var t : StringMap<TransitionTemplate>;
-
-		try {
-
-			// at the moment, grar fetches its data from embedded assets only
-			t =  XmlToTransition.parse(AssetsStorage.getXml(uri));
-
-		} catch (e:String) {
-
-			onError(e);
-			return;
-		}
-		onSuccess(t);
-	}
-
-	public function fetchFilters(uri : String, onSuccess : StringMap<FilterData> -> Void, onError : String -> Void) : Void {
-
-		var f : StringMap<FilterData>;
-
-		try {
-
-			// at the moment, grar fetches its data from embedded assets only
-			f =  XmlToFilter.parse(AssetsStorage.getXml(uri));
-
-		} catch (e:String) {
-
-			onError(e);
-			return;
-		}
-		onSuccess(f);
-	}
-
-	public function fetchSpriteSheet(uri : String, onSuccess : TilesheetEx -> Void, onError : String -> Void) : Void {
-
-		var t : TilesheetEx;
-
-		try {
-
-			// at the moment, grar fetches its data from embedded assets only
-			t =  AssetsStorage.getSpritesheet(uri);
-
-		} catch (e:String) {
-
-			onError(e);
-			return;
-		}
-		onSuccess(t);
+		loadXml(uri, function(xml: Xml){
+				m =  XmlToGrar.parse(xml);
+				onSuccess(m);
+			}, onError);
 	}
 
 	public function fetchLangs(uri : String, onSuccess : StringMap<Locale> -> Void, onError : String -> Void) : Void {
 
 		var l : StringMap<Locale>;
-
-		try {
-
-			// at the moment, grar fetches its data from embedded assets only
-			l = XmlToLocale.parseLangList(AssetsStorage.getXml(uri));
-
-		} catch (e:String) {
-
-			onError(e);
-			return;
-		}
-		onSuccess(l);
+		loadXml(uri, function(xml: Xml){
+				l = XmlToLocale.parseLangList(xml);
+				onSuccess(l);
+			}, onError);
 	}
 
-	public function fetchTemplates( path : String, onSuccess : StringMap<Xml> -> Void, onError : String -> Void ) : Void {		
+	/*public function fetchTemplates( path : String, onSuccess : StringMap<Xml> -> Void, onError : String -> Void ) : Void {
 
 	    var tmpls : StringMap<Xml> = new StringMap();
 
@@ -186,101 +75,50 @@ class GameService {
 			return;
 		}
 		onSuccess(tmpls);
-	}
+	}*/
 
-	public function fetchNotebook(mPath : String, vPath : String, templates : StringMap<Xml>, onSuccess : Notebook -> StringMap<InventoryToken> -> DisplayData -> Void, onError : String -> Void) : Void {
+	public function fetchNotebook(uri : String, onSuccess : Notebook -> StringMap<InventoryToken> -> Void, onError : String -> Void) : Void {
 
 		var m : { n: Notebook, i: StringMap<InventoryToken> };
-		var v : DisplayData;
-
-		try {
-
-			// at the moment, grar fetches its data from embedded assets only
-			m = XmlToNotebook.parseModel(mPath, AssetsStorage.getXml(mPath));
-
-			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Notebook(null, null, null, null, null), templates);
-
-			v.spritesheets = new StringMap();
-
-			for (sk in v.spritesheetsSrc.keys()) {
-
-				v.spritesheets.set(sk, AssetsStorage.getSpritesheet(sk));
-
-			}
-
-		} catch (e:String) {
-
-			onError(e);
-			return;
-		}
-		onSuccess(m.n, m.i, v);
+		loadXml(uri, function(xml: Xml){
+				m = XmlToNotebook.parseModel(uri, xml);
+				onSuccess(m.n, m.i);
+			}, onError);
 	}
 
-	public function fetchMenu(vPath : String, mPath : Null<String>, templates : StringMap<Xml>, onSuccess : DisplayData -> Null<MenuData> -> Void, onError : String -> Void) : Void {
+	public function fetchMenu(uri : Null<String>, onSuccess :Null<MenuData> -> Void, onError : String -> Void) : Void {
 
-		var v : DisplayData;
 		var m : Null<MenuData> = null;
 
-		try {
-
-			// at the moment, grar fetches its data from embedded assets only
-			v = XmlToDisplay.parseDisplayData(AssetsStorage.getXml(vPath), Menu(null, null, null, null, null), templates);
-
-			v.spritesheets = new StringMap();
-
-			for (sk in v.spritesheetsSrc.keys()) {
-
-				v.spritesheets.set(sk, AssetsStorage.getSpritesheet(sk));
-			}
-
-			if (mPath != null) {
-
-				m = XmlToMenu.parse(AssetsStorage.getXml(mPath));
-			}
-
-		} catch (e:String) {
-
-			onError(e);
-			return;
+		if (uri != null) {
+			loadXml(uri, function(xml: Xml){
+				m = XmlToMenu.parse(xml);
+				onSuccess(m);
+			}, onError);
 		}
-		onSuccess(v, m);
+		else
+			onSuccess(m);
 	}
 
-	public function fetchGlossary(path : String, onSuccess : Glossary -> Void, onError : String -> Void) : Void {
+	public function fetchGlossary(uri : String, onSuccess : Glossary -> Void, onError : String -> Void) : Void {
 
 		var g : Glossary;
-
-		try {
-
-			// at the moment, grar fetches its data from embedded assets only
-			g = XmlToGlossary.parse(AssetsStorage.getXml(path));
-
-		} catch (e:String) {
-
-			onError(e);
-			return;
-		}
-		onSuccess(g);
+		loadXml(uri, function(xml: Xml){
+				g = XmlToGlossary.parse(xml);
+				onSuccess(g);
+			}, onError);
 	}
 
-	public function fetchBibliography(path : String, onSuccess : Bibliography -> Void, onError : String -> Void) : Void {
+	public function fetchBibliography(uri : String, onSuccess : Bibliography -> Void, onError : String -> Void) : Void {
 
 		var b : Bibliography;
-
-		try {
-
-			// at the moment, grar fetches its data from embedded assets only
-			b = XmlToBibliography.parse(AssetsStorage.getXml(path));
-
-		} catch (e:String) {
-
-			onError(e);
-			return;
-		}
-		onSuccess(b);
+		loadXml(uri, function(xml: Xml){
+				b = XmlToBibliography.parse(xml);
+				onSuccess(b);
+			}, onError);
 	}
 
-	public function fetchStyles(localizedPathes : Array<{ p : String, e : String }>, onSuccess : Array<StyleSheetData> -> Void, onError : String -> Void) : Void {
+	/*public function fetchStyles(localizedPathes : Array<{ p : String, e : String }>, onSuccess : Array<StyleSheetData> -> Void, onError : String -> Void) : Void {
 
 		var s : Array<StyleSheetData> = [];
 
@@ -336,31 +174,31 @@ class GameService {
 		}
 
 		onSuccess(s);
-	}
+	}*/
 
-	public function fetchParts(xml : Xml, templates : StringMap<Xml>, onSuccess : Array<Part> -> Void, onError : String -> Void) : Void {
+	public function fetchParts(xml : Xml, onSuccess : Array<Part> -> Void, onError : String -> Void) : Void {
 
 		try {
 
-			var pa : Array<Part> = [];
+			var parts : Array<Part> = [];
 
 			var f : haxe.xml.Fast = new haxe.xml.Fast(xml);
 
-			var cnt : Int = f.nodes.Part.length;
+			var numPart : Int = f.nodes.Part.length;
 
 			for (partXml in f.nodes.Part) {
 
 				var pp : PartialPart = XmlToPart.parse(partXml.x);
 
-				fetchPartContent( partXml.x, pp, templates, null, function(p : Part) {
+				fetchPartContent(partXml.x, pp, function(p : Part) {
 
-						pa.push(p);
+						parts.push(p);
 
-						cnt--;
+						numPart--;
 
-						if (cnt == 0) {
+						if (numPart == 0) {
 
-							onSuccess(pa);
+							onSuccess(parts);
 						}
 
 					}, onError );
@@ -378,87 +216,72 @@ class GameService {
 	// INTERNALS
 	//
 
-	private function fetchPartContent(innerXml : Xml, pp : PartialPart, templates : StringMap<Xml>, parentDisplaySrc : Null<String>, onInnerSuccess : Part -> Void, onInnerError : String -> Void) {
+	private function fetchPartContent(innerXml : Xml, pp : PartialPart, onInnerSuccess : Part -> Void, onInnerError : String -> Void) {
 
 		var ret : { p : Part, pps : Array<PartialPart> } = null;
-#if (flash || openfl)
+#if (flash)
 		if (pp.pd.soundLoopSrc != null) {
 
 			pp.pd.soundLoop = AssetsStorage.getSound(pp.pd.soundLoopSrc);
 		}
 #end
-		if (pp.pd.displaySrc == null && parentDisplaySrc != null) {
 
-			pp.pd.displaySrc = parentDisplaySrc;
-		}
-		if (pp.pd.displaySrc != null) {
-
-			// fetch part display
-			pp.pd.display = fetchPartDisplay(pp, templates);
-
-		}
 		if (pp.pd.file != null) {
-
-			// at the moment, grar fetches its data from embedded assets only
-			ret = XmlToPart.parseContent(pp, AssetsStorage.getXml(pp.pd.file));
+			loadXml(pp.pd.file, function(xml: Xml){
+				ret = XmlToPart.parseContent(pp, xml);
+				fetchPartContentRecursive(ret, pp, onInnerSuccess, onInnerError);
+			}, onInnerError);
 
 		} else if (innerXml.elements().hasNext()) {
-
 			ret = XmlToPart.parseContent(pp, innerXml);
-			
+			fetchPartContentRecursive(ret, pp, onInnerSuccess, onInnerError);
 		}
 
-		//var cnt : Int = pp.pd.partialSubParts.length;
+	}
+
+	private function fetchPartContentRecursive(ret : {p : Part, pps : Array<PartialPart>}, pp : PartialPart, onInnerSuccess : Part -> Void, onInnerError : String -> Void):Void
+	{
 		var cnt : Int = ret.pps.length;
 
-		if (cnt == 0) {
-
-			//ret.p.loaded = true; // TODO check if still useful
+		if (cnt == 0)
 			onInnerSuccess( ret.p );
-
-		} else {
+		else {
 
 			for ( spp in ret.pps ) {
 
-				fetchPartContent(spp.pd.xml, spp, templates, pp.pd.displaySrc, function(sp : Part) {
+				fetchPartContent(spp.pd.xml, spp, function(sp : Part) {
 
-						cnt--;
+					cnt--;
 
-						ret.p.elements.push(Part(sp));
-						sp.parent = ret.p;
+					ret.p.elements.push(Part(sp));
+					sp.parent = ret.p;
 
-						if (sp.file == null) {
+					if (sp.file == null) {
 
-							sp.file = ret.p.file; // probably useless now
-						}
-						if (cnt == 0) {
+						sp.file = ret.p.file; // probably useless now
+					}
+					if (cnt == 0) {
 
-							onInnerSuccess(ret.p);
-						}
+						onInnerSuccess(ret.p);
+					}
 
-					}, onInnerError);
+				}, onInnerError);
 			}
 		}
 	}
 
-	function fetchPartDisplay(pp : PartialPart, templates : StringMap<Xml>) : DisplayData {
-
-		var pd : DisplayData = switch (pp.type) {
-
-				case Dialog, Part: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Part, templates);
-
-				case Strip: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Strip, templates);
-
-				case Activity: XmlToDisplay.parseDisplayData(AssetsStorage.getXml(pp.pd.displaySrc), Activity(null), templates);
+	private function loadXml(uri:String, onSuccess: Xml -> Void, onError: String -> Void):Void
+	{
+		if(uri != null && uri != ""){
+			var http = new Http(uri);
+			http.onData = function(data){
+				onSuccess(Xml.parse(data));
 			}
 
-		pd.spritesheets = new StringMap();
-
-		for (sk in pd.spritesheetsSrc.keys()) {
-
-			pd.spritesheets.set(sk, AssetsStorage.getSpritesheet(pd.spritesheetsSrc.get(sk)));
-
+			http.onError = function(msg){
+				onError(msg);
+			}
+			http.request();
 		}
-		return pd;
 	}
 }

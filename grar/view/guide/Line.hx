@@ -1,14 +1,6 @@
 package grar.view.guide;
 
-import grar.view.component.TileImage;
-import grar.view.TransitionTemplate;
-
-import flash.display.DisplayObject;
-import flash.geom.Point;
-
-import grar.util.TweenUtils;
-
-import haxe.ds.StringMap;
+import js.html.Element;
 
 typedef LineData = {
 
@@ -23,21 +15,19 @@ typedef LineData = {
 **/
 class Line extends Guide {
 
-	//public function new(start: Point, end: Point, centerObject: Bool = false, ?transitionIn: String)
-	public function new(transitions : StringMap<TransitionTemplate>, d : LineData) {
+	public function new( d : LineData) {
 
-		super(transitions);
-		
-		startPoint = new Point(d.start[0],d.start[1]);
-		endPoint = new Point(d.end[0],d.end[1]);
+		super();
+
+		startPoint = new Point(d.start[0], d.start[1]);
+		endPoint = new Point(d.end[0], d.end[1]);
 		objects = new Array();
-		this.transitionIn = d.transitionIn;
 	}
 
 	private var startPoint: Point;
 	private var endPoint: Point;
 	private var nextPoint: Point;
-	private var objects: Array<DisplayObject>;
+	private var objects: Array<Element>;
 	private var center: Bool;
 
 
@@ -65,31 +55,15 @@ class Line extends Guide {
 	/**
 	* @inherits
 	**/
-	override public function add(object:DisplayObject, ?tween:String, tile: Bool = false):DisplayObject
+	override public function add(object:Element):Element
 	{
 		objects.push(object);
 		var step = getFragment(startPoint, endPoint, objects.length+1);
 		nextPoint = startPoint;
 		for(obj in objects){
 			nextPoint = nextPoint.add(step);
-			if(tile){
-				cast(obj, grar.view.component.TileImage).set_x(nextPoint.x + (center ? obj.width/2 : 0));
-				cast(obj, grar.view.component.TileImage).set_y(nextPoint.y + (center ? obj.height/2 : 0));
-			}
-			else{
-				obj.x = nextPoint.x + (center ? obj.width/2 : 0);
-				obj.y = nextPoint.y + (center ? obj.height/2 : 0);
-			}
-		}
-		if (tween != null) {
-
-//			TweenManager.applyTransition(object, tween);
-			TweenUtils.applyTransition(object, transitions , tween);
-		
-		} else if(transitionIn != null) {
-
-//			TweenManager.applyTransition(object, transitionIn);
-			TweenUtils.applyTransition(object, transitions , transitionIn);
+			var rect = obj.getBoundingClientRect();
+			setCoordinates(obj, (nextPoint.x + (center ? rect.width/2 : 0)), (nextPoint.y + (center ? rect.height/2 : 0)));
 		}
 
 		return object;

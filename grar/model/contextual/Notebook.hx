@@ -1,6 +1,6 @@
 package grar.model.contextual;
 
-import grar.model.part.Item;
+import grar.model.part.item.Item;
 import grar.model.contextual.Note;
 
 import haxe.ds.GenericStack;
@@ -28,7 +28,7 @@ typedef Chapter = {
 
 class Notebook {
 
-	public function new(file : String, b : String, i : GenericStack<String>, t : GenericStack<Item>, 
+	public function new(file : String, b : String, i : GenericStack<String>, t : GenericStack<Item>,
 							p : Array<Page>, cb : {ref: String, content: String}) {
 
 		this.background = b;
@@ -65,7 +65,7 @@ class Notebook {
 	public inline function getAllNotes() : Array<Note> {
 
 		var notes = new Array<Note>();
-		
+
 		for (page in pages) {
 
 			for (chapter in page.chapters) {

@@ -1,15 +1,6 @@
 package grar.view.guide;
 
-import grar.view.component.TileImage;
-import grar.view.TransitionTemplate;
-
-import flash.events.Event;
-import flash.display.DisplayObject;
-import flash.geom.Point;
-
-import grar.util.TweenUtils;
-
-import haxe.ds.StringMap;
+import js.html.Element;
 
 typedef GridData = {
 
@@ -21,7 +12,6 @@ typedef GridData = {
 	var gapCol : Null<Float>;
 	var gapRow : Null<Float>;
 	var alignment : Null<String>;
-	var transitionIn : Null<String>;
 	@:optional var cellWidth : Float;
 	@:optional var cellHeight : Float;
 }
@@ -50,17 +40,15 @@ typedef Size = {
  */
 class Grid extends Guide {
 
-	//public function new(numRow:Int, numCol:Int, cellWidth:Float = 0, cellHeight:Float = 0, gapCol:Float = 0, gapRow:Float = 0, ?alignment:GridAlignment, resize: Bool = true, ?transitionIn: String)
-	public function new(transitions : StringMap<TransitionTemplate>, d : GridData) {
+	public function new(d : GridData) {
 
-		super(transitions);
+		super();
 
 		this.numRow = d.numRow;
 		this.numCol = d.numCol;
 		this.gapCol = d.gapCol;
 		this.gapRow = d.gapRow;
 		this.resize = d.resize;
-		this.transitionIn = d.transitionIn;
 
 		this.alignment = d.alignment != null ? Type.createEnum(GridAlignment, d.alignment.toUpperCase()) : GridAlignment.TOP_LEFT;
 
@@ -119,26 +107,27 @@ class Grid extends Guide {
 	/**
 	* @inherits
 	**/
-	override public function add(object : DisplayObject, ? tween : String, tile : Bool = false) : DisplayObject {
+	override public function add(object : Element) : Element {
+
+		var rect = object.getBoundingClientRect();
 
 		if (cellSize.width == 0) {
 
-			cellSize.width = object.width;
+			cellSize.width = rect.width;
 		}
 		if (cellSize.height == 0) {
 
-			cellSize.height = object.height;
+			cellSize.height = rect.height;
 		}
-//trace("nextCell.x is "+nextCell.x+" and cellSize.width = "+cellSize.width);
 		var targetX : Float = x + nextCell.x * cellSize.width;
-		
+
 		targetX += gapCol * nextCell.x;
 
 		targetX += switch (alignment) {
 
-				case CENTER, TOP_MIDDLE, BOTTOM_MIDDLE: cellSize.width / 2 - object.width / 2;
+				case CENTER, TOP_MIDDLE, BOTTOM_MIDDLE: cellSize.width / 2 - rect.width / 2;
 
-				case TOP_RIGHT, MIDDLE_RIGHT, BOTTOM_RIGHT: cellSize.width - object.width;
+				case TOP_RIGHT, MIDDLE_RIGHT, BOTTOM_RIGHT: cellSize.width - rect.width;
 
 				default: 0;// Already on the left
 			}
@@ -146,12 +135,12 @@ class Grid extends Guide {
 		var targetY : Float = y + nextCell.y * cellSize.height;
 
 		targetY += gapRow * nextCell.y;
-		
+
 		targetY += switch (alignment) {
 
-				case CENTER, MIDDLE_LEFT, MIDDLE_RIGHT: cellSize.height / 2 - object.height / 2;
+				case CENTER, MIDDLE_LEFT, MIDDLE_RIGHT: cellSize.height / 2 - rect.height / 2;
 
-				case BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT: cellSize.height - object.height;
+				case BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT: cellSize.height - rect.height;
 
 				default: 0;// Already on top
 			}
@@ -159,49 +148,21 @@ class Grid extends Guide {
 		if (nextCell.x < numCol - 1) {
 
 			nextCell.x++; //trace("incrementing nextCell.x => "+nextCell.x);
-		
+
 		} else if (nextCell.y < numRow) {
 
 			nextCell.x = 0;
 			nextCell.y++;
-		
+
 		} else {
 
 			throw "This grid is already full!";
 		}
-		if (tween != null) {
 
-//		    TweenManager.applyTransition(object,tween);
-		    TweenUtils.applyTransition(object, transitions, tween);
-		
-		} else if (transitionIn != null) {
+		setCoordinates(object, targetX, targetY);
 
-//			TweenManager.applyTransition(object,transitionIn);
-			TweenUtils.applyTransition(object, transitions, transitionIn);
-		}
-        if (tile) {
-
-            cast(object, grar.view.component.TileImage).set_x(targetX);
-            
-            cast(object, grar.view.component.TileImage).set_y(targetY);
-//trace("place tile at "+targetX+", "+targetY); 
-        } else {
-
-            object.x = targetX;
-            object.y = targetY;
-//trace("place item at "+targetX+", "+targetY);
-        }
-        if (resize) {
-
+        if (resize)
 	        fitInGrid(object);
-	        
-	        object.addEventListener(Event.CHANGE, function(e) {
-
-		            fitInGrid(object);
-
-		        });
-
-        }
 
 		return object;
 	}
@@ -217,12 +178,12 @@ class Grid extends Guide {
 
 	public function empty():Void
 	{
-		nextCell = new Point(0, 0);
+		nextCell = new Point();
 	}
 
-	private inline function fitInGrid(object: DisplayObject):Void
+	private inline function fitInGrid(object: Element):Void
 	{
-		object.width = cellSize.width;
-		object.height = cellSize.height;
+		object.style.width = Std.string(cellSize.width)+"px";
+		object.style.height = Std.string(cellSize.height)+"px";
 	}
 }

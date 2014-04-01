@@ -1,18 +1,8 @@
 package grar.view.guide;
 
-import grar.view.component.TileImage;
-import grar.view.TransitionTemplate;
-
 import grar.util.MathUtils;
 
-import grar.util.TweenUtils;
-
-import flash.Lib;
-import flash.display.Shape;
-import flash.display.DisplayObject;
-import flash.geom.Point;
-
-import haxe.ds.StringMap;
+import js.html.Element;
 
 typedef CurveData = {
 
@@ -29,11 +19,9 @@ typedef CurveData = {
 **/
 class Curve extends Guide
 {
+	public function new(d : CurveData) {
 
-	//public function new(?center: Point, radius: Float = 1, minAngle: Float = 0, maxAngle: Float = 360, centerObject: Bool = false)
-	public function new(transitions : StringMap<TransitionTemplate>, d : CurveData) {
-
-		super(transitions);
+		super();
 
 		if (d.center != null) {
 
@@ -69,8 +57,8 @@ class Curve extends Guide
 	**/
 	public var centerObject (default, default):Bool;
 
-	private var objects: Array<DisplayObject>;
-	private var objToAngles : Map<DisplayObject, Float>;
+	private var objects: Array<Element>;
+	private var objToAngles : Map<Element, Float>;
 
 
 	///
@@ -96,32 +84,16 @@ class Curve extends Guide
 	/**
 	* @inherits
 	**/
-	override public function add(object:DisplayObject, ?tween:String, tile: Bool = false):DisplayObject
+	override public function add(object:Element):Element
 	{
 		objects.push(object);
 		var angle = (maxAngle - minAngle)/(2*objects.length);
 		for(i in 0...objects.length){
+			var obj = objects[i];
+			var rect = obj.getBoundingClientRect();
 			var a = MathUtils.degreeToRad(angle+(angle*2*i)+minAngle);
-			if(tile){
-				cast(objects[i], grar.view.component.TileImage).set_x(Math.cos(a)*radius + center.x - (centerObject ? objects[i].width/2 : 0));
-				cast(objects[i], grar.view.component.TileImage).set_y(Math.sin(a)*radius + center.y - (centerObject ? objects[i].height/2 : 0));
-			}
-			else{
-				objects[i].x = Math.cos(a)*radius + center.x - (centerObject ? objects[i].width/2 : 0);
-				objects[i].y = Math.sin(a)*radius + center.y - (centerObject ? objects[i].height/2 : 0);
-			}
+			setCoordinates(obj, (Math.cos(a)*radius + center.x - (centerObject ? rect.width/2 : 0)), (Math.sin(a)*radius + center.y - (centerObject ? rect.height/2 : 0)));
 			objToAngles.set(objects[i], a);
-		}
-
-		if (tween != null) {
-
-// 			TweenManager.applyTransition(object, tween);
-			TweenUtils.applyTransition(object, transitions, tween);
-		
-		} else if(transitionIn != null) {
-
-// 			TweenManager.applyTransition(object, transitionIn);
-			TweenUtils.applyTransition(object, transitions, transitionIn);
 		}
 
 		return object;
@@ -132,7 +104,7 @@ class Curve extends Guide
 	* @param obj    :   Desired object
 	* @return the angle for this object
 	**/
-	public function getAngle(obj: DisplayObject): Float
+	public function getAngle(obj: Element): Float
 	{
 		return objToAngles[obj];
 	}
@@ -140,7 +112,7 @@ class Curve extends Guide
 	/**
 	* @return true if the object is in the curve
 	**/
-	public function contains(obj: DisplayObject): Bool
+	public function contains(obj: Element): Bool
 	{
 		return objToAngles.exists(obj);
 	}
@@ -152,43 +124,7 @@ class Curve extends Guide
 	{
 		for(obj in objects)
 			obj = null;
-		objects = new Array<DisplayObject>();
-	}
-
-	/**
-	* Draw the curve for debugging purpose
-	**/
-	public function drawCurve():Void
-	{
-		var curve = new Shape();
-		curve.graphics.lineStyle(2, 0);
-		curve.graphics.moveTo(center.x+Math.cos(minAngle)*radius, center.y+Math.sin(minAngle)*radius);
-		var segments:Int = 8;
-
-		var theta:Float = (maxAngle-minAngle)/segments;
-		var angle:Float = minAngle; // start drawing at angle ...
-
-		var ctrlRadius:Float = radius/Math.cos(theta/2); // this gets the radius of the control point
-		for (i in 0...segments) {
-		// increment the angle
-			angle += theta;
-			var angleMid:Float = angle-(theta/2);
-				// calculate our control point
-			var cx:Float = center.x+Math.cos(angleMid)*(ctrlRadius);
-			var cy:Float = center.y+Math.sin(angleMid)*(ctrlRadius);
-				// calculate our end point
-			var px:Float = center.x+Math.cos(angle)*radius;
-			var py:Float = center.y+Math.sin(angle)*radius;
-				// draw the circle segment
-			curve.graphics.curveTo(cx, cy, px, py);
-		}
-
-		curve.graphics.moveTo(center.x-1, center.y-1);
-		curve.graphics.lineTo(center.x+1, center.y+1);
-		curve.graphics.moveTo(center.x-1, center.y+1);
-		curve.graphics.lineTo(center.x+1, center.y-1);
-
-		Lib.current.addChild(curve);
+		objects = new Array<Element>();
 	}
 
 	public function toString():String

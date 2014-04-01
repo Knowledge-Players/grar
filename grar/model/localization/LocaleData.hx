@@ -1,8 +1,6 @@
 package grar.model.localization;
 
-//import flash.events.EventDispatcher;
-
-class LocaleData /* extends EventDispatcher */ {
+class LocaleData{
 
 	/**
      * Name of the localisation

@@ -1,15 +1,15 @@
 package grar.model.part;
 
+import grar.model.part.item.Item;
 import grar.model.score.Perk;
 import grar.model.score.ScoreChart;
 import grar.model.part.Pattern;
-import grar.model.part.TextItem;
 import grar.model.tracking.Trackable;
 
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
 
-#if (flash || openfl)
+#if (flash)
 import flash.media.Sound;
 import flash.media.SoundChannel;
 #end
@@ -33,20 +33,18 @@ typedef PartData = {
 	var name : String;
 	var id : String;
 	var file : String;
-	var displaySrc : String;
-	var display : grar.view.Display.DisplayData;
 	var parent : Null<Part>;
 	var isDone : Bool;
 	var isStarted : Bool;
 	var tokens : GenericStack<String>;
-#if (flash || openfl)
+#if (flash)
 	var soundLoop : Sound;
 	var soundLoopSrc : String;
 #else
 	var soundLoop : String;
 #end
 	var elements : Array<PartElement>;
-	var buttons : StringMap<StringMap<String>>;
+	var buttons : List<ButtonData>;
 	var perks : StringMap<Int>;
 	var score : Int;
 	var ref : String;
@@ -54,39 +52,33 @@ typedef PartData = {
 	var next : Null<Array<String>>;
 	var buttonTargets : StringMap<PartElement>;
 	var nbSubPartTotal : Int;
-	var soundLoopChannel : SoundChannel;
+	//var soundLoopChannel : SoundChannel;
 	// partial data
 	var partialSubParts : Array<PartialPart>;
 	var xml : Xml;
 }
 
-class Part /* implements Part */ {
+class Part{
 
 	public function new(pd : PartData) {
-
 		this.name = pd.name;
 		this.id = pd.id;
 		this.file = pd.file;
-		this.display = pd.display;
 		this.parent = pd.parent;
-		if (display == null && parent != null) {
-
-			display = parent.display;
-		}
-		this.isDone = pd.isDone;
-		this.isStarted = pd.isStarted;
+		this.perks = pd.perks;
 		this.tokens = pd.tokens;
 		this.soundLoop = pd.soundLoop;
 		this.elements = pd.elements;
 		this.buttons = pd.buttons;
-		this.perks = pd.perks;
 		this.score = pd.score;
 		this.ref = pd.ref;
 		this.requirements = pd.requirements;
 		this.next = pd.next;
 		this.buttonTargets = pd.buttonTargets;
 		this.nbSubPartTotal = pd.nbSubPartTotal;
-		this.soundLoopChannel = pd.soundLoopChannel;
+		this.isDone = pd.isDone;
+		this.isStarted = pd.isStarted;
+		//this.soundLoopChannel = pd.soundLoopChannel;
 	}
 
 	/**
@@ -103,11 +95,6 @@ class Part /* implements Part */ {
      * Path to the XML structure file
      */
 	public var file (default, default) : String;
-
-	/**
-     * Display data for the part
-     */
-	public var display (default, default) : grar.view.Display.DisplayData;
 
 	/**
 	 * Parent of this part
@@ -146,7 +133,7 @@ class Part /* implements Part */ {
 	/**
      * Button of the part
      **/
-	public var buttons (default, default) : StringMap<StringMap<String>>;
+	public var buttons (default, default) : List<ButtonData>;
 
 	/**
 	 * Perks of this part
@@ -178,7 +165,7 @@ class Part /* implements Part */ {
 	private var nbSubPartTotal : Int = 0;
 	private var partIndex : Int = 0;
 	private var elemIndex : Int = 0;
-	private var soundLoopChannel : SoundChannel;
+	//private var soundLoopChannel : SoundChannel;
 	private var loaded : Bool = false;
 
 
@@ -217,7 +204,6 @@ class Part /* implements Part */ {
         isDone = completed;
 // Add bounty to the right perks
         if (isDone) {
-
             for (perk in perks.keys()) {
 
                 //ScoreChart.instance.addScoreToPerk(perk, perks.get(perk));
@@ -226,10 +212,10 @@ class Part /* implements Part */ {
         }
 
 // Stop sound loop
-        if (soundLoopChannel != null) {
+       /* if (soundLoopChannel != null) {
 
             soundLoopChannel.stop();
-        }
+        }*/
         return completed;
     }
 
@@ -261,15 +247,14 @@ class Part /* implements Part */ {
 	}
 
 
+	// Useless ?
 	public function startElement(elemId: String):Void
 	{
-//		if (elemIndex == 0 || elemId != elements[elemIndex-1].id) {
-		if (elemIndex == 0 || elemId != switch(elements[elemIndex-1]){ case Part(p): p.id; case Pattern(p): p.id; case Item(i): i.id; }) {
+		if (elemIndex == 0 || elemId != switch(elements[elemIndex-1]){ case Part(p): p.id; case Pattern(p): p.id; case Item(i): i.id; case GroupItem(g): g.id;}) {
 
 			var tmpIndex = 0;
-			
-			//while (tmpIndex < elements.length && elements[tmpIndex].id != elemId) {
-			while (tmpIndex < elements.length && elemId != switch(elements[tmpIndex]){ case Part(p): p.id; case Pattern(p): p.id; case Item(i): i.id; }) {
+
+			while (tmpIndex < elements.length && elemId != switch(elements[tmpIndex]){ case Part(p): p.id; case Pattern(p): p.id; case Item(i): i.id; case GroupItem(g): g.id;}) {
 
 				tmpIndex++;
 			}
@@ -280,13 +265,10 @@ class Part /* implements Part */ {
 			switch (elements[elemIndex]) {
 
 				case Part(p):
-
-					//if (p.next == null || p.next == "") {
 					if (p.next == null) {
 
 						elemIndex++;
 					}
-
 				default: // nothing
 			}
 		}
@@ -305,7 +287,7 @@ class Part /* implements Part */ {
 		if (elemIndex < elements.length) {
 
 			return elements[elemIndex++];
-		
+
 		} else {
 
 			return null;
@@ -356,7 +338,7 @@ class Part /* implements Part */ {
 		var a : Array<Part> = [];
 
 		a.push(this);
-		
+
 		for (e in elements) {
 
 			switch (e) {
@@ -424,6 +406,12 @@ class Part /* implements Part */ {
 				case Item(i):
 
 					if (i.id == id) {
+
+						return e;
+					}
+
+				case GroupItem(g):
+					if (g.id == id) {
 
 						return e;
 					}

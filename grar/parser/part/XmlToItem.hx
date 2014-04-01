@@ -1,9 +1,7 @@
 package grar.parser.part;
 
-import grar.model.part.Item;
-import grar.model.part.TextItem;
-import grar.model.part.sound.SoundItem;
-import grar.model.part.video.VideoItem;
+import grar.model.part.ButtonData;
+import grar.model.part.item.Item;
 
 import grar.util.ParseUtils;
 
@@ -17,35 +15,35 @@ class XmlToItem {
 	///
 	// API
 	//
-	
+
 	static public function parse(xml : Xml) : Null<Item> {
 
 		var f : Fast = new Fast(xml);
 
-		var t : String = f.has.type ? f.att.type.toLowerCase() : "";
+		/*var t : String = f.has.type ? f.att.type.toLowerCase() : "";
 
 		var creation : Item = null;
-		
+
 		switch (t) {
 
 			case "":
 
 				creation = parseTextItem(xml);
-			
+
 			case "video":
 
 				creation = parseVideoItem(xml);
-			
+
 			case "sound":
 
 				creation = parseSoundItem(xml);
-			
+
 			default:
 
 				throw "unexpected type attribute value " + t;
-		}
+		}*/
 
-		return creation;
+		return new Item(parseItem(f));
 	}
 
 
@@ -58,13 +56,12 @@ class XmlToItem {
 		var id : String = "";
 		var content : String = "";
 		var background : Null<String> = null;
-		var button : Null<StringMap<StringMap<String>>> = null;
+		var author: Null<String> = null;
+		var button : Null<List<ButtonData>> = null;
 		var ref : Null<String> = null;
 		var tokens : GenericStack<String> = new GenericStack<String>();
-		var images : GenericStack<String> = new GenericStack<String>();
+		var images : List<String> = new List<String>();
 		var endScreen : Bool = false;
-		var timelineIn : Null<String> = null;
-		var timelineOut : Null<String> = null;
 
 		if (f != null) {
 
@@ -80,42 +77,37 @@ class XmlToItem {
 
 				background = f.att.background;
 			}
-			if (f.has.timelineIn) {
-
-				timelineIn = f.att.timelineIn;
-			}
-			if (f.has.timelineOut) {
-
-				timelineOut = f.att.timelineOut;
-			}
 			for (node in f.nodes.Token) {
 
 				tokens.add(node.att.ref);
 			}
-            button = new StringMap();
+            button = new List();
 
             for (elem in f.nodes.Button) {
 
-                button.set(elem.att.ref, ParseUtils.parseHash(elem.att.content));
+                button.add({ref: elem.att.ref, content: ParseUtils.parseHash(elem.att.content), action: elem.att.action});
+			}
+			if (f.has.author) {
+
+				author = f.att.author;
 			}
 			if (f.has.endScreen) {
 
 				endScreen = f.att.endScreen == "true";
 			}
 			for (elem in f.elements) {
-			
+
 				images.add(elem.att.ref);
 			}
 
 		}
 		id = content;
 
-		return { id: id, content: content, background: background, button: button, ref: ref, 
-					tokens: tokens, images: images, endScreen: endScreen, timelineIn: timelineIn, 
-						timelineOut: timelineOut };
+		return { id: id, content: content, author: author, background: background, button: button, ref: ref,
+					tokens: tokens, images: images, endScreen: endScreen};
 	}
 
-	static function parseTextItem(xml : Xml) : TextItem {
+	/*static function parseTextItem(xml : Xml) : TextItem {
 
 		var f : Fast = new Fast(xml);
 
@@ -146,14 +138,13 @@ class XmlToItem {
 			}
 		}
 
-		// Reverse pile order to match XML order
-		var tmpStack : GenericStack<String> = new GenericStack<String>();
-		
+		var imgList : List<String> = new List<String>();
+
 		for (img in id.images) {
 
-			tmpStack.add(img);
+			imgList.add(img);
 		}
-		id.images = tmpStack;
+		id.images = imgList;
 
 		return new TextItem(id, author, transition, sound, introScreen);
 	}
@@ -202,5 +193,5 @@ class XmlToItem {
         }
 
         return new SoundItem( id, autoStart, loop, defaultVolume );
-	}
+	}*/
 }

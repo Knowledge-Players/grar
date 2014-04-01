@@ -8,7 +8,6 @@
     "releasenote": "Improve tracking + misc fixes & updates",
     "contributors": [ "knowledge-players" ],
     "dependencies": {
-        "openfl": "",
         "actuate": "",
         "ExAM": ""
     }

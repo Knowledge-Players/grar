@@ -1,15 +1,10 @@
 package grar.view.guide;
 
-import motion.actuators.GenericActuator.IGenericActuator;
-
 import grar.view.guide.Line;
 import grar.view.guide.Grid;
 import grar.view.guide.Curve;
-import grar.view.TransitionTemplate;
 
-import flash.display.DisplayObject;
-
-import haxe.ds.StringMap;
+import js.html.Element;
 
 enum GuideData {
 
@@ -20,9 +15,7 @@ enum GuideData {
 
 class Guide {
 
-	public function new(transitions : StringMap<TransitionTemplate>) {
-
-		this.transitions = transitions;
+	public function new() {
 	}
 
 	/**
@@ -35,20 +28,13 @@ class Guide {
      **/
 	public var y (default, set) : Float;
 
-	/**
-	 * Reference to the transition played when an item is added to the grid.
-	 **/
-	public var transitionIn (default, default) : String;
-
-	var transitions : StringMap<TransitionTemplate>;
-
 
 	///
 	// GETTER / SETTER
 	//
 
 	public function set_x(v : Float) : Float {
-		
+
 		x = v;
 
 		return x;
@@ -72,5 +58,16 @@ class Guide {
 	 * @param withTween  :   Play a tween when adding. Override properties transitionIn
 	 * @return the added object
 	 **/
-	public function add(object : DisplayObject, ? tween : String, tile : Bool = false) : DisplayObject { return null; }
+	public function add(object : Element) : Element { return null; }
+
+	///
+	// Internals
+	//
+
+	private function setCoordinates(obj: Element, x: Float, y: Float):Void
+	{
+		obj.style.position = "absolute";
+		obj.style.left = Std.string(x)+"px";
+		obj.style.top = Std.string(y)+"px";
+	}
 }

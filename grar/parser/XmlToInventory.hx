@@ -3,10 +3,6 @@ package grar.parser;
 import grar.model.InventoryToken;
 import grar.model.contextual.Note;
 
-import grar.view.component.container.WidgetContainer;
-
-import grar.parser.component.container.XmlToWidgetContainer;
-
 import haxe.ds.StringMap;
 
 import haxe.xml.Fast;
@@ -28,22 +24,6 @@ class XmlToInventory {
 		return { m: i, d: d };
 	}
 
-	static public function parseDisplayToken(xml : Xml, templates : StringMap<Xml>) : { tn : WidgetContainerData, ti : StringMap<{ small : String, large : String }> } {
-
-		var dtf : Fast = new Fast(xml.firstElement());
-
-		var tn : WidgetContainerData = XmlToWidgetContainer.parseWidgetContainerData(dtf, TokenNotification(null), templates); // dtf.node.Hud.att.duration
-
-		var ti : StringMap<{ small : String, large : String }> = new StringMap();
-		
-		for (t in dtf.nodes.Token) {
-
-			ti.set(t.att.ref, { small: t.att.src.substr(0, t.att.src.indexOf(",")), large: t.att.src.substr(t.att.src.indexOf(",") + 1) });
-		}
-
-		return { tn: tn, ti: ti };
-	}
-	
 	static function parseTokenData(f : Fast) : Null<TokenData> {
 
 		if (f != null) {
@@ -58,17 +38,17 @@ class XmlToInventory {
 			var image : String = f.has.src ? f.att.src : null;
 			var fullScreenContent : Null<String> = f.has.fullScreenContent ? f.att.fullScreenContent : null;
 
-			return { id: id, ref: ref, type: type, isActivated: isActivated, name: name, content: content, 
+			return { id: id, ref: ref, type: type, isActivated: isActivated, name: name, content: content,
 						icon: icon, image: image, fullScreenContent: fullScreenContent };
 		}
 
 		return null;
 	}
-	
+
 	static function parseInventoryToken(f : Fast) : InventoryToken {
 
 		var td : Null<TokenData> = parseTokenData(f);
-		
+
 		return new InventoryToken(td);
 	}
 

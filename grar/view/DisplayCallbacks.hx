@@ -8,18 +8,6 @@ typedef DisplayCallbacks = {
 
 	var onQuitGameRequest : Void -> Void;
 
-	var onRestoreLocaleRequest : Void -> Void;
-
-	var onLocalizedContentRequest : String -> String;
-
-	var onLocaleDataPathRequest : String -> Void;
-
-	var onStylesheetRequest : Null<String> -> grar.view.style.StyleSheet;
-
-	var onFiltersRequest : Array<String> -> Array<flash.filters.BitmapFilter>;
-
-	var onPartDisplayRequest : grar.model.part.Part -> Void;
-
 	var onSoundToLoad : String -> Void;
 
 	var onSoundToPlay : String -> Void;
@@ -32,10 +20,4 @@ typedef DisplayCallbacks = {
 	 */
 
 	var onActivateTokenRequest : String -> Void;
-
-
-	/**
-	 * Layout only
-	 */
-	var onNewZone : grar.view.layout.Zone -> Void;
 }

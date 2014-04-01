@@ -1,31 +1,22 @@
 package grar.view.part;
 
-import grar.view.component.Image;
-import grar.view.component.Widget;
-import grar.view.component.container.DefaultButton;
+import js.html.Element;
+
 import grar.view.part.PartDisplay;
 import grar.view.guide.Guide;
 import grar.view.guide.Curve;
 import grar.view.guide.Line;
 import grar.view.guide.Grid;
-import grar.view.Display;
 
-import grar.model.part.Item;
 import grar.model.part.ActivityPart;
-import grar.model.part.Part;
 
 import grar.util.ParseUtils;
-
-import flash.display.DisplayObject;
-import flash.events.Event;
-import flash.events.MouseEvent;
 
 import haxe.ds.StringMap;
 import haxe.ds.GenericStack;
 
 using Lambda;
 using Std;
-using grar.util.DisplayUtils;
 
 typedef Coordinates = {
 
@@ -38,16 +29,15 @@ typedef Coordinates = {
  */
 class ActivityDisplay extends PartDisplay {
 
-	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, 
-							transitions : StringMap<TransitionTemplate>, model : Part) {
+	public function new(callbacks : grar.view.DisplayCallbacks) {
 
-		super(callbacks, applicationTilesheet, transitions, model);
+		super(callbacks);
 
 		autoCorrect = false;
 		hasCorrection = true;
 		groups = new StringMap();
 		buttonsToInputs = new Map();
-		inputs = new GenericStack<DefaultButton>();
+		inputs = new GenericStack<Element>();
 		validatedInputs = new Map();
 	}
 
@@ -55,18 +45,27 @@ class ActivityDisplay extends PartDisplay {
 
 	private var groups : StringMap<{ x : Float, y : Float, guide : GuideData }>;
 
-	private var buttonsToInputs : Map<DefaultButton, Input>;
+	private var buttonsToInputs : Map<Element, Input>;
 	private var autoCorrect : Bool;
 	private var hasCorrection : Bool;
-	private var inputs : GenericStack<DefaultButton>;
+	private var inputs : GenericStack<Element>;
 	private var validationRef : String;
-	private var validatedInputs : Map<DefaultButton, Bool>;
+	private var validatedInputs : Map<Element, Bool>;
 	private var minSelect : Int;
 	private var maxSelect : Int;
-	private var validationButton : DefaultButton;
+	private var validationButton : Element;
 	private var dragOrigin : Coordinates;
 
-	override public function nextElement(startIndex : Int = -1) : Void {
+
+	///
+	// CALLBACKS
+	//
+
+	public dynamic function onValidate() : Void { }
+
+	public dynamic function onInputEvents(inputRef: String, eventType: String) : Void { }
+
+	/*override public function nextElement(startIndex : Int = -1) : Void {
 
 		// If startIndex == 0, it's called from startPart, no verification needed
 		if(startIndex == 0 || cast(part, ActivityPart).hasNextGroup()){
@@ -90,42 +89,42 @@ class ActivityDisplay extends PartDisplay {
 			exitPart();
 	}
 
-	override public function startPart(startPosition:Int = -1) : Void {
+	public function startPart(startPosition:Int = -1) : Void {
 
 		//displayInputs();
 
 		// Checking rules
 		// Validation
 		var validationRules = cast(part, ActivityPart).getRulesByType("correction");
-		
+
 		if (validationRules.length > 1) {
 
 			throw "[ActivityDisplay] Multiple correction rules in activity '"+part.id+"'. Pick only one!";
 		}
 		if (validationRules.length == 1) {
 
-			if (!displaysRefs.exists(validationRules[0].id)) {
+			if (document.getElementById(validationRules[0].id) == null) {
 
 				throw "[ActivityDisplay] You must have a button with ref '"+validationRules[0].id+"' (same as the id of your rule) in order to use the correction rule.";
 			}
-			validationButton = cast(displaysRefs.get(validationRules[0].id), grar.view.component.container.DefaultButton);
-			
+			validationButton = document.getElementById(validationRules[0].id);
+
 			switch (validationRules[0].value) {
 
 				case "auto":
 
 					autoCorrect = true;
-				
+
 				case "onvalidate":
 
-					validationButton.buttonAction = onValidate;
-				
+					validationButton.onclick = function(_) onValidate();
+
 				case "off":
 
 					hasCorrection = false;
-					validationButton.buttonAction = endActivity;
-				
-				default: 
+					validationButton.onclick = function(_) endActivity();
+
+				default:
 
 					trace("Unknown value '"+validationRules[0].value+"' as a validation rule");
 			}
@@ -150,26 +149,16 @@ class ActivityDisplay extends PartDisplay {
 			else
 				throw "[ActivityDisplay] There is more than 2 limits of selection in activity '"+part.id+"'. Just set a minimum and a maximum.";
 			if(minSelect > 0 && validationButton != null){
-				validationButton.toggle(false);
+				validationButton.classList.add("locked");
 			}
 		}
 
-		super.startPart(0);
+		//super.startPart(0);
 	}
 
-	//override public function parseContent(content:Xml):Void
-	override public function setContent(d : DisplayData) : Void {
-
-		super.setContent(d);
-
-		switch (d.type) {
-
-			case Activity(g):
-
-				this.groups = g;
-
-			default: throw "wrong DisplayData type passed to ActivityDisplay.setContent()";
-		}
+	public function checkInput(inputRef:String):Void
+	{
+		document.getElementById(inputRef).classList.add("checked");
 	}
 
 	// Private
@@ -179,12 +168,12 @@ class ActivityDisplay extends PartDisplay {
 		var activity = cast(part, ActivityPart);
 
 		var currentGroup : Group = activity.getNextGroup();
-		
+
 		// Create inputs, place & display them
 		if (currentGroup.inputs != null) {
 
 			var guide = createGroupGuide(currentGroup);
-			
+
 			for (input in currentGroup.inputs) {
 
 				createInput(input, guide);
@@ -198,7 +187,7 @@ class ActivityDisplay extends PartDisplay {
 
 				// Specify inputs because of an "Can't iterate on a Dynamic value" error
 				var inputs : Array<Input> = group.inputs;
-				
+
 				for (input in inputs) {
 
 					createInput(input, guide);
@@ -207,45 +196,35 @@ class ActivityDisplay extends PartDisplay {
 		}
 		if (!inputs.isEmpty()) {
 
-			var lastTemplate : Template = displayTemplates.get(inputs.first().ref);
-			
-			if (lastTemplate.validation != null) {
+			var lastTemplate : Element = inputs.first();
 
-				validationRef = lastTemplate.validation;
+			if (lastTemplate.hasAttribute('validation')) {
+
+				validationRef = lastTemplate.getAttribute('validation');
 			}
 		}
 	}
 
 	private inline function createInput(input : Input, guide : Guide) : Void {
 
-		if (!displayTemplates.exists(input.ref)) {
+		var inputElement = document.getElementById(input.ref);
+		if (inputElement == null) {
 
 			throw "[ActivityDisplay] There is no template for input named "+input.ref+".";
 		}
-		var button : DefaultButton;
 
-		switch (displayTemplates.get(input.ref).data) {
-
-			case DefaultButton(d):
-
-				button = new DefaultButton(callbacks, applicationTilesheet, transitions, d);
-
-				guide.add(button);
-
-				buttonsToInputs.set(button, input);
-
-				for (contentKey in input.content.keys()) {
-
-		//			button.setText(Localiser.instance.getItemContent(input.content.get(contentKey)), contentKey);
-					button.setText(onLocalizedContentRequest(input.content.get(contentKey)), contentKey);
-
-				}
-				button.setAllListeners(onInputEvents);
-// 				button.zz = displayTemplates.get(input.ref).z; // TODO check if still useful
-				inputs.add(button);
-
-			default : throw "unexpected ElementData type";
+		var newInput: Element = cast inputElement.cloneNode(true);
+		// Generate a unique ID for each input
+		newInput.id += haxe.Timer.stamp();
+		guide.add(newInput);
+		buttonsToInputs.set(newInput, input);
+		for (contentKey in input.content.keys()) {
+			document.getElementById(contentKey).innerHTML = input.content.get(contentKey);
 		}
+		newInput.onmouseover = function(e) onInputEvents(newInput.id, e.type);
+		newInput.onclick = function(e) onInputEvents(newInput.id, e.type);
+		newInput.onmousedown = function(e) onInputEvents(newInput.id, e.type);
+		inputs.add(newInput);
 	}
 
 
@@ -260,15 +239,15 @@ class ActivityDisplay extends PartDisplay {
 
 			case Line(d):
 
-				guide = new Line(transitions, d);
+				guide = new Line(d);
 
 			case Grid(d):
 
-				guide = new Grid(transitions, d);
+				guide = new Grid(d);
 
 			case Curve(d):
 
-				guide = new Curve(transitions, d);
+				guide = new Curve(d);
 		}
 
 		// Set guide to place inputs
@@ -278,7 +257,7 @@ class ActivityDisplay extends PartDisplay {
 		return guide;
 	}
 
-	private function validate(?target: DefaultButton, value: String):Bool
+	/*private function validate(value: String):Bool
 	{
 		var result: Bool = true;
 		if(autoCorrect){
@@ -317,14 +296,15 @@ class ActivityDisplay extends PartDisplay {
 		}
 
 		return result;
-	}
+	}*/
 
-	private function endActivity(?target:DefaultButton):Void
+	/*private function endActivity():Void
 	{
 		if(!hasCorrection){
 			for(button in inputs){
-				cast(part, ActivityPart).validate(buttonsToInputs.get(button), Std.string(button.toggleState == "active"));
-				button.resetToggle();
+				cast(part, ActivityPart).validate(buttonsToInputs.get(button), Std.string(button.classList.contains("checked")));
+				button.classList.remove("checked");
+				button.classList.remove("locked");
 			}
 		}
 		var idNext = cast(part, ActivityPart).endActivity();
@@ -353,135 +333,33 @@ class ActivityDisplay extends PartDisplay {
 			exitPart();
 	}
 
-	override private function mustBeDisplayed(key:String):Bool
-	{
-		var object: Widget = displaysRefs.get(key);
-
-		// Display all buttons/inputs
-		if(Std.is(object, grar.view.component.container.DefaultButton)){
-			if(part.buttons.exists(key)){
-				setButtonText(key, part.buttons.get(key));
-				return true;
-			}
-			else
-				return false;
-		}
-
-		return super.mustBeDisplayed(key);
-	}
-
-	override private function displayPartElements() : Void {
-
-		super.displayPartElements();
-
-		for (input in inputs) {
-
-			input.onComplete = onWidgetAdded;
-
-			addChild(input);
-
-			numWidgetAdded++;
-		}
-	}
-
-	override private function cleanDisplay():Void
-	{
-	}
-
 	private inline function disableInputs():Void
 	{
 		for(input in inputs){
-			if(input.toggleState == "inactive")
-				input.enabled = false;
+			if(input.classList.contains("checked"))
+				input.classList.add("locked");
 		}
 	}
 
 	private inline function enableInputs():Void
 	{
 		for(input in inputs){
-			input.enabled = true;
+			input.classList.remove("locked");
 		}
-	}
+	}*/
 
 	// Handler
-	private function onInputEvents(e: MouseEvent):Void
+
+	/*private inline function onValidate():Void
 	{
-		var needValidation = false;
-		var input: Input = buttonsToInputs.get(e.target);
-		var clickRules = cast(part, ActivityPart).getRulesByType(e.type, input.group);
-		for(rule in clickRules){
-			switch(rule.value.toLowerCase()){
-				case "goto":
-					var target = part.getElementById(buttonsToInputs.get(e.target).values[0]);
-
-					switch (target) {
-
-						case Part(p):
-
-							onPartDisplayRequest(p);
-
-						default: throw "target not a part"; // remove this throw if it happens normally
-					}
-
-					needValidation = true;
-
-				case "toggle":
-					e.target.toggle();
-					var selected = buttonsToInputs.get(e.target).selected = e.target.toggleState == "active";
-					validatedInputs.set(e.target, selected);
-					needValidation = true;
-				case "drag":
-					e.target.startDrag();
-					e.target.parent.setChildIndex(e.target, e.target.parent.numChildren-1);
-					dragOrigin = {x: e.target.x, y: e.target.y};
-				case "drop":
-					e.target.stopDrag();
-					var drop: DisplayObject = cast(e.target.dropTarget, DisplayObject);
-					while(drop != null && !(drop.is(grar.view.component.container.DefaultButton) && (inputs.has(cast(drop, grar.view.component.container.DefaultButton)) || cast(drop, Widget).ref == dropRef)))
-						drop = drop.parent;
-					if(drop != null && validate(e.target, (buttonsToInputs.exists(cast(drop, grar.view.component.container.DefaultButton)) ? buttonsToInputs.get(cast(drop, grar.view.component.container.DefaultButton)).id : drop.name))){
-						copyCoordinates(e.target, drop);
-						if(buttonsToInputs.exists(cast(drop, grar.view.component.container.DefaultButton))){
-							var dropZone = new DefaultButton(callbacks, applicationTilesheet, transitions);
-							dropZone.enabled = false;
-							dropZone.initSprite(drop.width, drop.height, 0.001);
-							dropZone.ref = dropRef;
-							dropZone.name = buttonsToInputs.get(cast(drop, grar.view.component.container.DefaultButton)).id;
-							copyCoordinates(dropZone, drop);
-							drop.parent.addChild(dropZone);
-						}
-					}
-					else{
-						copyCoordinates(e.target, dragOrigin);
-					}
-			}
-		}
-		if(needValidation && autoCorrect)
-			validate(e.target, Std.string(e.target.toggleState == "active"));
-
-		// Selection limits
-		var validated = Lambda.count(validatedInputs, function(input){
-			return input;
-		});
-
-		// Activate validation button
-		if(validationButton != null)
-			validationButton.toggle(validated >= minSelect);
-		// Toggle inputs
-		if(validated == maxSelect)
-			disableInputs();
-		else
-			enableInputs();
+		onValidate(Std.string(target.toggleState == "active"));
 	}
 
-	private inline function onValidate(?target:DefaultButton):Void
+	private inline function copyCoordinates(object: Element, source: Element):Void
 	{
-		validate(target, Std.string(target.toggleState == "active"));
-	}
-
-	private inline function copyCoordinates(object: DisplayObject, src: Dynamic):Void
-	{
-		object.x = src.x;
-		object.y = src.y;
-	}
+		var position = source.getBoundingClientRect();
+		object.style.position = "absolute";
+		object.style.left = Std.string(position.left)+"px";
+		object.style.top = Std.string(position.top)+"px";
+	}*/
 }

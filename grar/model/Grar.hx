@@ -23,8 +23,8 @@ typedef InitState = {
 
 enum ReadyState {
 
-	Loading(langs : String, layout : String, displayNode : haxe.xml.Fast, structureNode : haxe.xml.Fast);
-	LoadingGame(layoutUri : String, displayXml : haxe.xml.Fast, structureXml : haxe.xml.Fast, templates : Null<StringMap<Xml>>);
+	Loading(langs : String, structureNode : haxe.xml.Fast);
+	LoadingGame(structureXml : haxe.xml.Fast);
 	Ready;
 }
 
@@ -33,12 +33,11 @@ enum ReadyState {
  */
 class Grar {
 
-	public function new(m : TrackingMode, id : String, s : InitState, r : String, rs : ReadyState) {
+	public function new(mode : TrackingMode, id : String, s : InitState, rs : ReadyState) {
 
-		this.mode = m;
+		this.mode = mode;
 		this.id = id;
 		this.state = s;
-		this.ref = r;
 		this.readyState = rs;
 		this.inventory = new StringMap();
 		this.scoreChart = new ScoreChart();
@@ -55,7 +54,7 @@ class Grar {
 
 	public var state (default, null) : InitState;
 
-	public var ref (default, set) : String; // ref for the layout (?)
+	//public var ref (default, set) : String; // ref for the layout (?)
 
 	public var notebook (default, set) : Notebook;
 
@@ -173,18 +172,18 @@ class Grar {
 			if (currentLocaleDataPath != v) {
 
 				stashedLocaleData.add(localeData);
-				
+
 				currentLocaleDataPath = v;
 
 				sameLocale = false;
 
 				onCurrentLocalePathChanged();
-			
+
 			} else {
 
 				sameLocale = true;
 			}
-		
+
 		} else {
 
 			currentLocaleDataPath = v;
@@ -247,7 +246,7 @@ class Grar {
 		return readyState;
 	}
 
-	public function set_ref(v : String) : String {
+	/*public function set_ref(v : String) : String {
 
 		if (ref == v) {
 			return ref;
@@ -256,7 +255,7 @@ class Grar {
 		onRefChanged();
 
 		return ref;
-	}
+	}*/
 
 	public function set_notebook(v : Notebook) : Notebook {
 
@@ -298,7 +297,7 @@ class Grar {
     public function getAllItems() : Array<Trackable> {
 
         var trackable : Array<Trackable> = [];
-        
+
         for (part in parts) {
 
             trackable = trackable.concat(part.getAllItems());
@@ -314,7 +313,7 @@ class Grar {
 		if (!sameLocale && !stashedLocaleData.isEmpty()) {
 
 			localeData = stashedLocaleData.pop();
-			
+
 			currentLocaleDataPath = null; // shouldn't we restore it too ???
 		}
 	}
@@ -324,14 +323,14 @@ class Grar {
 		if (localeData != null) {
 
 			var content = localeData.getItem(key);
-			
+
 			if (content == null) {
 
 				content = "unknown localized content key " + key;
 			}
 
 			return content;
-		
+
 		} else {
 
 			trace("No locale data set. Returning null for key '"+key+"'.");
@@ -401,22 +400,22 @@ class Grar {
     public function start(? partId : Null<String>) : Null<Part> {
 
         var nextPart : Null<Part> = null;
-        
+
         if (partId == null) {
 
             do {
 
                 nextPart = parts[partIndex].start();
                 partIndex++;
-            
+
             } while (nextPart == null && partIndex < parts.length);
-        
+
         } else if (partId != null) {
 
             var i : Int = 0;
 
             var allParts : Array<Part> = getAllParts();
-            
+
             while (i < allParts.length && allParts[i].id != partId) {
 
                 i++;
@@ -426,7 +425,7 @@ class Grar {
                 nextPart = allParts[i].start(true);
 	            var j = 0;
 	            var k = 0;
-	            
+
 	            while (j <= i) {
 
 	                if (allParts[j] == parts[k] && j > 0) {
@@ -458,8 +457,8 @@ class Grar {
     public function getAllParts() : Array<Part> {
 
         var array = new Array<Part>();
-        
-        for (part in parts){ 
+
+        for (part in parts){
 
             array = array.concat(part.getAllParts());
         }

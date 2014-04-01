@@ -1,7 +1,7 @@
 package grar.model.part.dialog;
 
 import grar.model.part.Pattern;
-import grar.model.part.Item;
+import grar.model.part.item.Item;
 
 import haxe.ds.StringMap;
 

@@ -6,7 +6,7 @@ package grar.model;
 class Config {
 
 	static inline var VARNAME_STRUCTURE_FILE_URI : String = "structureUri";
-	
+
 	public function new() { }
 
 	/**

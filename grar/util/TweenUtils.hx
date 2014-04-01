@@ -14,19 +14,11 @@ import motion.easing.Quint;
 import motion.easing.Sine;
 import motion.easing.IEasing;
 
-import aze.display.TileSprite;
-
-import grar.view.component.container.ScrollPanel; // ugly
-
 import grar.view.TransitionTemplate;
 
 import grar.util.ParseUtils; // FIXME
 
 import haxe.ds.StringMap;
-
-import flash.display.Sprite;
-import flash.display.DisplayObject;
-import flash.geom.ColorTransform;
 
 /**
  * Manage the most frequently used tweens
@@ -54,7 +46,7 @@ class TweenUtils {
 		if (refs != null && display != null) {
 
 			var arrayRef : Array<String> = ParseUtils.parseListOfValues(refs);
-			
+
 			for (ref in arrayRef) {
 
 				transition = startTransition(display, transitions, ref, delay);
@@ -260,14 +252,14 @@ class TweenUtils {
      * @param   ref : The name of the fade transition to applied
      * @return the actuator
      **/
-	static private function discover(display : Dynamic, transitions : StringMap<TransitionTemplate>, ref : String, it : Int) : IGenericActuator {
+	/*static private function discover(display : Dynamic, transitions : StringMap<TransitionTemplate>, ref : String, it : Int) : IGenericActuator {
 
 		var mask : Sprite;
 
 		if (Std.is(display.parent, grar.view.component.container.ScrollPanel)) {
 
 			mask = display.getChildAt(1).mask;
-		
+
 		} else {
 
 			mask = display.mask;
@@ -323,7 +315,7 @@ class TweenUtils {
 							return Actuate.tween(msk, shutter.duration, { scaleY : 1 }).ease(Linear.easeNone).onComplete(discover, [display, ref, it + 1]);
 
 						case "down" :
-			
+
 							msk.scaleX = 1;
 							msk.scaleY = 1;
 							var h = msk.height;
@@ -344,7 +336,7 @@ class TweenUtils {
 
 			// Element is scrollable. Can't use discover
 			//discovering = null; // FIXME ?
-			
+
 			for (i in 0...mask.numChildren) {
 
 				mask.getChildAt(i).scaleX = 1;
@@ -353,7 +345,7 @@ class TweenUtils {
 
 			return new GenericActuator(display, 0, {});
 		}
-	}
+	}*/
 
 	static private function getEasing(t : TransitionTemplate) : IEasing {
 
@@ -363,16 +355,11 @@ class TweenUtils {
 			var easingStyle = "Ease" + t.easingStyle.charAt(0).toUpperCase() + t.easingStyle.substr(1).toLowerCase();
 
 			return Type.createEmptyInstance(Type.resolveClass("motion.easing." + easingType + easingStyle));
-		
+
 		} else {
 
 			return Linear.easeNone;
 		}
-	}
-
-	static private function resetTransform(display:Dynamic):Void
-	{
-		display.transform.colorTransform = new ColorTransform(1, 1, 1, 1, 0, 0, 0, 0);
 	}
 
 	static private function parseValue(parameter:String, value:String, display:Dynamic):Array<Float>

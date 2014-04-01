@@ -1,6 +1,7 @@
 package grar;
 
 import grar.model.Config;
+import grar.Controller;
 
 class App {
 
@@ -20,9 +21,7 @@ class App {
 
 		// by default, grar starts with an asset-embedded structure.xml file
 		c.parseConfigParameter( "structureUri", "structure.xml" );
-
 		controller = new Controller(c);
-
 		controller.init();
 	}
 }

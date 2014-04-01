@@ -1,5 +1,6 @@
 package grar;
 
+import grar.model.contextual.MenuData;
 import grar.model.Config;
 import grar.model.State;
 import grar.model.Grar;
@@ -13,12 +14,11 @@ import grar.service.GameService;
 
 import grar.controller.TrackingController;
 import grar.controller.LocalizationController;
+import grar.controller.PartController;
 
 import grar.view.Application;
 
 import haxe.ds.StringMap;
-
-import haxe.xml.Fast; // FIXME
 
 /**
  * GRAR main controller
@@ -26,7 +26,6 @@ import haxe.xml.Fast; // FIXME
 class Controller {
 
 	public function new(c : Config) {
-
 		config = c;
 		state = new State();
 
@@ -36,6 +35,7 @@ class Controller {
 
 		trackingCtrl = new TrackingController(this, state, config, application);
 		localizationCtrl = new LocalizationController(this, state, config, application, gameSrv);
+		partCtrl = new PartController(this, state, application);
 	}
 
 	var config : Config;
@@ -45,6 +45,7 @@ class Controller {
 
 	var trackingCtrl : TrackingController;
 	var localizationCtrl : LocalizationController;
+	var partCtrl : PartController;
 
 	var application : Application;
 
@@ -53,81 +54,44 @@ class Controller {
 	 */
 	public function init() : Void {
 
+		partCtrl.onLocaleDataPathRequest = function(uri, ?onSuccess){
+			localizationCtrl.setLocaleDataPath(uri, onSuccess);
+		}
+
+		partCtrl.onRestoreLocaleRequest = function(){
+			localizationCtrl.restoreLocaleData();
+		}
+
 		state.onReadyStateChanged = function() {
 
 				if (state.readyState && config.structureFileUri != null) {
-
 					gameSrv.fetchModule( config.structureFileUri, function(m:Grar){ state.module = m; }, onError );
 				}
 			}
 
 		state.onModuleStateChanged = function() {
-
 				switch(state.module.readyState) {
 
-					case Loading(langsUri, layoutUri, displayXml, structureXml): // FIXME, no more Xml/Fast in ctrl
-
+					case Loading(langsUri, structureXml):
 
 						// layout ref for the view
-						application.mainLayoutRef = state.module.ref;
+						//application.mainLayoutRef = state.module.ref;
 
 						// tracking
-						trackingCtrl.initTracking(state.module, function(){
-
-								loadStyles(displayXml);
-
-							}, onError);
+						trackingCtrl.initTracking(state.module, function(){}, onError);
 
 						// langs list
 						gameSrv.fetchLangs( langsUri, function(l:StringMap<Locale>){
- 
+
 							state.module.locales = l;
 
 						}, onError );
 
+						state.module.readyState = LoadingGame(structureXml);
 
-						// view (styles, ui, transitions, filters, templates)
-						gameSrv.fetchSpriteSheet( displayXml.node.Ui.att.display, function(t:aze.display.TilesheetEx){
-
-								application.tilesheet = t;
-
-								loadStyles(displayXml);
-
-							}, onError );
-
-						gameSrv.fetchTransitions( displayXml.node.Transitions.att.display, function(t:StringMap<grar.view.TransitionTemplate>){
-
-								application.transitions = t;
-
-							}, onError );
-
-						gameSrv.fetchFilters( displayXml.node.Filters.att.display, function(f:StringMap<grar.view.FilterData>){
-
-								application.createFilters(f);
-
-							}, onError );
-
-						var templates : Null<StringMap<Xml>> = null;
-
-						if (displayXml.hasNode.Templates) {
-
-							gameSrv.fetchTemplates( displayXml.node.Templates.att.folder, function(tmpls:StringMap<Xml>){
-
-									templates = tmpls;
-
-									state.module.readyState = LoadingGame(layoutUri, displayXml, structureXml, templates);
-
-								}, onError );
-					    
-					    } else {
-
-					    	state.module.readyState = LoadingGame(layoutUri, displayXml, structureXml, templates);
-					    }
-
-
-					case LoadingGame(layoutUri, displayXml, structureXml, templates):
-
-						var menuData : grar.view.contextual.menu.MenuDisplay.MenuData = null;
+					case LoadingGame(structureXml):
+						// TODO MenuController
+						var menuData : MenuData = null;
 
 						// game model & views (parts, contextuals)
 
@@ -139,19 +103,19 @@ class Controller {
 
 								case NOTEBOOK:
 
-									gameSrv.fetchNotebook(contextual.att.file, contextual.att.display, templates, function(m:Notebook,i:StringMap<grar.model.InventoryToken>,v:grar.view.Display.DisplayData){
+									gameSrv.fetchNotebook(contextual.att.file, function(m:Notebook,i:StringMap<grar.model.InventoryToken>){
 
-											application.createNotebook(v);
+											//application.createNotebook();
 											state.module.inventory = i;
 											state.module.notebook = m;
 
 										}, onError);
-								
+
 								case MENU:
 
-									gameSrv.fetchMenu(contextual.att.display, contextual.has.file ? contextual.att.file : null, templates, function(d:grar.view.Display.DisplayData, m:Null<grar.view.contextual.menu.MenuDisplay.MenuData>){
+									gameSrv.fetchMenu(contextual.has.file ? contextual.att.file : null, function(m:Null<MenuData>){
 
-											application.createMenu(d);
+											//application.createMenu(d);
 											menuData = m;
 
 										}, onError);
@@ -165,7 +129,7 @@ class Controller {
 						        if (menuData == null) {
 
 						        	createDefaultMenu();
-						        
+
 						        } else {
 
 						        	application.menuData = addMenuPartsInfo(menuData);
@@ -173,18 +137,16 @@ class Controller {
 
 						        trackingCtrl.updatePartsCompletion();
 
-						        loadlayouts(layoutUri, templates);
+								state.module.readyState = Ready;
 							}
 
-						gameSrv.fetchParts(structureXml.x, templates, function(pa:Array<Part>){
-
+						gameSrv.fetchParts(structureXml.x, function(pa:Array<Part>){
 				        		state.module.parts = pa;
 
 			        		}, onError);
 
 
 				    case Ready:
-
 				    	launchGame();
 				}
 			}
@@ -193,7 +155,7 @@ class Controller {
 
 			if (state.module.notebook != null) {
 
-				application.notebook.model = state.module.notebook;
+				//application.notebook.model = state.module.notebook;
 			}
 		}
 
@@ -212,7 +174,7 @@ class Controller {
 
 					if (!part.isDone && state.module.canStart(part)) {
 
-						application.menu.unlockNextPart(part.id);
+						//application.menu.unlockNextPart(part.id);
 						/* Before we had this also (from MenuDisplay)
 						if (!part.canStart()) {
 
@@ -229,19 +191,9 @@ class Controller {
 				application.setActivateToken(t);
 			}
 
-		application.onPartDisplayRequest = function(p : Part) {
-
-				displayPart(p);
-			}
-
-		application.onPartLoaded = function(p : Part) {
-
-				application.setPartLoaded(p, state.module.getAllItems(), state.module.getAllParts());
-			}
-
 		application.onMenuUpdateDynamicFieldsRequest = function() {
 
-				for (field in application.menu.dynamicFields) {
+				/*for (field in application.menu.dynamicFields) {
 
 					if (field.content == "unlock_counter") {
 
@@ -251,18 +203,18 @@ class Controller {
 						if (parent != null) {
 
 							var children = parent.getAllParts();
-							
+
 							if (children.length <= 1) {
 
 								var totalChildren = 0;
 								var allParts = state.module.getAllParts();
-								
+
 								for (part in allParts) {
 
 									if (StringTools.startsWith(part.id, field.field.ref) && part.id != field.field.ref) {
 
 										totalChildren++;
-										
+
 										if (state.module.canStart(part)) {
 
 											numUnlocked++;
@@ -270,7 +222,7 @@ class Controller {
 									}
 								}
 								application.menu.updateDynamicFields(numUnlocked, totalChildren);
-							
+
 							} else {
 
 								for (child in children) {
@@ -284,7 +236,7 @@ class Controller {
 							}
 						}
 					}
-				}
+				}*/
 			}
 
 		application.onMenuButtonStateRequest = function(partName : String) : { l : Bool, d : Bool } {
@@ -303,12 +255,12 @@ class Controller {
 
 				if (displayPartById(partId)) {
 
-					application.menu.setMenuExit();
+					//application.menu.setMenuExit();
 				}
 			}
 
 		application.onMenuAdded = function() {
-			
+
 				var i = 0;
 
 				var allParts : Array<Part> = state.module.getAllParts();
@@ -317,7 +269,7 @@ class Controller {
 
 					i++;
 				}
-				application.menu.setCurrentPart(allParts[i]);
+				//application.menu.setCurrentPart(allParts[i]);
 			}
 
 		application.onLayoutsChanged = function() {
@@ -326,37 +278,43 @@ class Controller {
         		//application.initMenu();
 			}
 
-		application.onExitPart = function(pid : String) {
-
-				state.module.setPartFinished(pid);
-			}
-
-		application.onActivateTokenRequest = function(tokenId : String) {
+		/*application.onActivateTokenRequest = function(tokenId : String) {
 
 				state.module.activateInventoryToken(tokenId);
 
-			}
+			}*/
 
 		application.onQuitGameRequest = function() {
 
-				trackingCtrl.exitModule(state.module, function() {
-#if flash
-						if (flash.external.ExternalInterface.available) {
-
-							flash.external.ExternalInterface.call("quitModule");
-						
-						} else {
-
-							flash.system.System.exit(0);
-						}
-#end
-					}, onError);
+				gameOver();
 			}
 
 		state.readyState = true;
 	}
 
-	function createMenuLevel(p : Part, ? l : Int = 1) : grar.view.contextual.menu.MenuDisplay.LevelData {
+	public function gameOver():Void
+	{
+		trace("GAME OVER");
+		trackingCtrl.exitModule(state.module, function() {
+			#if flash
+						if (flash.external.ExternalInterface.available) {
+
+							flash.external.ExternalInterface.call("quitModule");
+
+						} else {
+
+							flash.system.System.exit(0);
+						}
+#end
+		}, onError);
+	}
+
+	///
+	// INTERNALS
+	//
+
+	// TODO MenuController
+	/*function createMenuLevel(p : Part, ? l : Int = 1) : Dynamic {
 
 		var name : String = "h" + l;
 		var id : String = p.id;
@@ -372,19 +330,20 @@ class Controller {
 					if (sp.hasParts()) {
 
 						items.push(createMenuLevel(sp, l++));
-					
+
 					} else {
 
 						items.push({ name: "item", id: sp.id });
 					}
-				
+
 				default: // nothing
 			}
         }
         return { name: name, id: id, icon: icon, items: items };
-	}
+	}*/
 
-	function addPartsInfoToLevel(la : Array<grar.view.contextual.menu.MenuDisplay.LevelData>) : Array<grar.view.contextual.menu.MenuDisplay.LevelData> {
+	// TODO MenuController
+	function addPartsInfoToLevel(la : Array<Dynamic>) : Array<Dynamic> {
 
 		for (l in la) {
 
@@ -402,57 +361,26 @@ class Controller {
 		return la;
 	}
 
-	function addMenuPartsInfo(md : grar.view.contextual.menu.MenuDisplay.MenuData) : grar.view.contextual.menu.MenuDisplay.MenuData {
+	// TODO MenuController
+	function addMenuPartsInfo(md : Dynamic) : Dynamic {
 
 		md.levels = addPartsInfoToLevel(md.levels);
-		
+
 		return md;
 	}
 
 	function createDefaultMenu() : Void {
 
-    	var md : grar.view.contextual.menu.MenuDisplay.MenuData = { levels: [] };
+    	var md : MenuData = { levels: [] };
 
-    	for (part in state.module.parts) {
+    	/*for (part in state.module.parts) {
 
             md.levels.push(createMenuLevel(part));
-        }
+        }*/
         application.menuData = addMenuPartsInfo(md);
 	}
 
-	function loadStyles(displayXml : Fast) : Void { // FIXME avoid Fast in ctrl
-
-		if (state.module.currentLocale != null && application.tilesheet != null) { // check if enought
-
-			// only when tilesheet loaded and currentLocale known
-	        var localizedPathes : Array<{ p : String, e : String }> = [];
-
-			for (s in displayXml.nodes.Style) {
-
-	            var fullPath = s.att.file.split("/");
-	            var lp : String = "";
-
-	            for (i in 0...fullPath.length - 1) {
-
-	                lp += fullPath[i] + "/";
-	            }
-	            lp += state.module.currentLocale + "/";
-	            lp += fullPath[fullPath.length - 1];
-
-		        var extension : String = lp.substr(lp.lastIndexOf(".") + 1);
-
-		        localizedPathes.push({ p: lp, e: extension });
-	        }
-
-			gameSrv.fetchStyles( localizedPathes, function(s : Array<grar.view.style.StyleSheet.StyleSheetData>) {
-
-					application.createStyles(s);
-
-				}, onError );
-		}
-	}
-
-	function loadlayouts(uri : String, templates : StringMap<Xml>) : Void { // actually, code below also requires the templates to be fetch already (and styles too ?)
+	/*function loadlayouts(uri : String, templates : StringMap<Xml>) : Void { // actually, code below also requires the templates to be fetch already (and styles too ?)
 
         gameSrv.fetchLayouts(uri, templates, function(lm : StringMap<grar.view.layout.Layout.LayoutData>, lp : Null<String>){
 
@@ -466,7 +394,7 @@ class Controller {
 				state.module.readyState = Ready; // FIXME reorganize init tasks and place in the safest place
 
         	}, onError );
-	}
+	}*/
 
 	function displayPart(p : Part) : Bool {
 
@@ -477,7 +405,7 @@ class Controller {
 			return false;
 		}
 #end
-		application.displayPart(p);
+		partCtrl.displayPart(p);
 
 		return true;
 	}
@@ -509,20 +437,20 @@ class Controller {
 
 	function onPartFinished(p : Part) {
 
-		application.setFinishedPart(p.id);
+		//application.setFinishedPart(p.id);
 
 		if (p.next != null) {
 
 			var i = 0;
-			
+
 			for (next in p.next) {
 
 				var nextPart = state.module.start(next);
-				
+
 				if (nextPart != null) {
 
 					displayPart(nextPart);
-				
+
 				} else {
 
 					application.displayContextual(Type.createEnum(ContextualType, next.toUpperCase()), (i == 0));
@@ -530,9 +458,9 @@ class Controller {
 				i++;
 			}
 
-		} else {
-
-			application.displayNext(p);
+		}
+		else {
+			gameOver();
 		}
 	}
 

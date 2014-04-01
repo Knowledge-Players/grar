@@ -1,19 +1,12 @@
 package grar.view.part;
 
-import grar.view.component.container.DefaultButton;
-import grar.view.component.container.ScrollPanel;
+import js.html.Element;
+
 import grar.view.part.PartDisplay;
 
-import grar.model.part.Item;
-import grar.model.part.PartElement;
 import grar.model.part.Part;
 import grar.model.part.dialog.ChoicePattern;
 import grar.model.part.Pattern;
-
-import grar.util.TweenUtils;
-
-import flash.events.Event;
-import flash.events.MouseEvent;
 
 import haxe.ds.StringMap;
 
@@ -27,10 +20,9 @@ class DialogDisplay extends PartDisplay {
      * Constructor
      * @param	part : DialogPart to display
      */
-	public function new(callbacks : grar.view.DisplayCallbacks, applicationTilesheet : aze.display.TilesheetEx, 
-							transitions : StringMap<TransitionTemplate>, part : Part) {
+	public function new(callbacks : grar.view.DisplayCallbacks) {
 
-		super(callbacks, applicationTilesheet, transitions, part);
+		super(callbacks);
 	}
 
 	/**
@@ -38,19 +30,19 @@ class DialogDisplay extends PartDisplay {
 	 **/
 	public var currentPattern : Pattern;
 
-	override public function next(? target : DefaultButton) : Void {
+	/*override public function next() : Void {
 
-		onSoundToStop();
+		//onSoundToStop();
 
-		startPattern(currentPattern);
-	}
+		//startPattern(currentPattern);
+	}*/
 
-	
+
 	///
 	// INTERNALS
 	//
 
-	override private function startPattern(pattern : Pattern) : Void {
+	/*override private function startPattern(pattern : Pattern) : Void {
 
 		super.startPattern(pattern);
 
@@ -65,56 +57,56 @@ class DialogDisplay extends PartDisplay {
 		if (Std.is(currentPattern, ChoicePattern)) {
 
 			var choicePattern = cast(currentPattern, ChoicePattern);
-			
+
 			// Init button with choice's view state
 			for (choice in choicePattern.choices.keys()) {
 
-				if (!displaysRefs.exists(choice)) {
-
+				var choiceTemplate = Browser.document.getElementById(choice);
+				if(choiceTemplate == null)
 					throw "[DialogDisplay] There is no template for choice named '"+choice+"'.";
-				}
-				cast(displaysRefs.get(choice), grar.view.component.container.DefaultButton).toggle(!choicePattern.choices.get(choice).viewed);
 
+				if(!choicePattern.choices.get(choice).viewed)
+					choiceTemplate.classList.add("viewed");
 			}
-			if (choicePattern.minimumChoice == choicePattern.numChoices) {
 
+			if (choicePattern.minimumChoice == choicePattern.numChoices) {
 				exitPattern = true;
 			}
 		}
 		if (pattern != null) {
 
 			var next : Item = pattern.getNextItem();
-			
+
 			if (next != null && !exitPattern) {
 
 				crawlTextGroup(next, pattern);
-			
+
 			} else if (currentPattern.nextPattern != "") {
 
 				goToPattern(currentPattern.nextPattern);
-			
+
 			} else {
 
 				var nextIndex = part.getElementIndex(Pattern(currentPattern));
-				
+
 				currentPattern = null;
-				
+
 				nextElement(nextIndex);
 			}
-		
+
 		} else {
 
 			nextElement();
 		}
-	}
+	}*/
 
-	override private function setButtonAction(button : DefaultButton, action : String) : Bool {
+	/*override private function setButtonAction(button : Element, action : String) : Bool {
 
 		if (action.toLowerCase() == "goto") {
 
-			button.buttonAction = onChoice;
-			button.addEventListener(MouseEvent.MOUSE_OVER, onOverChoice);
-			button.addEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
+			button.onclick = function(_) onChoice(button);
+			//button.onmouseover = function() onOverChoice(button);
+			//button.onmouseout =  function() onOutChoice(button);
 
 			return true;
 		}
@@ -122,30 +114,27 @@ class DialogDisplay extends PartDisplay {
 		return super.setButtonAction(button, action);
 	}
 
-	override private function onVideoComplete(e: Event):Void
+	override private function onVideoComplete(_):Void
 	{
-		super.onVideoComplete(e);
+		super.onVideoComplete();
 		next();
-	}
+	}*/
 
-	private function onChoice(?choice: DefaultButton):Void
+	private function onChoice(?choice: Element):Void
 	{
-// 		GameManager.instance.stopSound();
-		onSoundToStop();
+		//onSoundToStop();
 
 		cast(currentPattern, ChoicePattern).numChoices++;
-		var target = cast(currentPattern, ChoicePattern).choices.get(choice.ref).goTo;
-		cast(currentPattern, ChoicePattern).choices.get(choice.ref).viewed = true;
+		var target = cast(currentPattern, ChoicePattern).choices.get(choice.id).goTo;
+		cast(currentPattern, ChoicePattern).choices.get(choice.id).viewed = true;
 
-		choice.removeEventListener(MouseEvent.MOUSE_OUT, onOutChoice);
-		choice.toggle(false);
-		
-		// Clean tooltip
-		onOutChoice(null);
-		goToPattern(target);
+		choice.onmouseout = null;
+		choice.classList.add("visited");
+
+		//goToPattern(target);
 	}
 
-	private function onOverChoice(e:MouseEvent):Void
+	/*private function onOverChoice(e:MouseEvent):Void
 	{
 		var choiceButton = cast(e.currentTarget, grar.view.component.container.DefaultButton);
 		var pattern = cast(currentPattern, ChoicePattern);
@@ -158,7 +147,7 @@ class DialogDisplay extends PartDisplay {
 			if(!displaysRefs.exists(pattern.tooltipRef))
 				throw "[DialogDisplay] There is no ToolTip with ref " + pattern.tooltipRef;
 			var tooltip : grar.view.component.container.ScrollPanel = cast displaysRefs.get(pattern.tooltipRef);
-			
+
 			if (contains(tooltip)) {
 				removeChild(tooltip);
 			}
@@ -186,5 +175,5 @@ class DialogDisplay extends PartDisplay {
 		var pattern = cast(currentPattern, ChoicePattern);
 		if(pattern.tooltipRef != null)
 			removeChild(displaysRefs.get(pattern.tooltipRef));
-	}
+	}*/
 }

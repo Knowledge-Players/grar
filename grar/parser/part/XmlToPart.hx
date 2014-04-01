@@ -1,12 +1,13 @@
 package grar.parser.part;
 
+import grar.model.part.GroupItem;
 import grar.model.part.Part;
 import grar.model.part.PartElement;
 import grar.model.part.ActivityPart;
 import grar.model.part.dialog.DialogPart;
 import grar.model.part.strip.StripPart;
 import grar.model.part.Pattern;
-import grar.model.part.Item;
+import grar.model.part.item.Item;
 
 import grar.parser.part.XmlToPattern;
 import grar.parser.part.XmlToItem;
@@ -59,7 +60,7 @@ class XmlToPart {
 				pp.type = Part;
 				pp.pd = parsePartData(f);
 
-			default: 
+			default:
 
 				throw "unexpected type attribute value $t";
 		}
@@ -154,6 +155,8 @@ class XmlToPart {
 
 						pd.tokens.add(image);
 					}
+
+				default: //nothing
 			}
 		}
 
@@ -169,43 +172,39 @@ class XmlToPart {
 			case "text":
 
 				pd.elements.push( Item(XmlToItem.parse(node.x)) );
-			
+
 			case "part":
 
 				pd.nbSubPartTotal++;
 
 				pd.partialSubParts.push( parse(node.x) );
-			
-			case "sound":
 
-#if (flash || openfl)
-				pd.soundLoopSrc = node.att.content;
-#else
+			case "sound":
 				pd.soundLoop = node.att.content;
-#end
+
 			case "button":
 
 				var content = null;
-				
-				if (node.has.content) {
 
+				if (node.has.content)
 					content = ParseUtils.parseHash(node.att.content);
-				}
-				pd.buttons.set(node.att.ref, content);
-				
+				else
+					content = new StringMap();
+				pd.buttons.add({ref: node.att.ref, content: content, action: node.att.action});
+
 				if (node.has.goTo) {
 
 					if (node.att.goTo == "") {
 
 						pd.buttonTargets.set(node.att.ref, null);
-					
+
 					} else {
 
 						for (elt in pd.elements) {
 
 							switch (elt) {
 
-								case Item(i) if (i.isText() && i.content == node.att.goTo):
+								case Item(i) if (i.content == node.att.goTo):
 
 									pd.buttonTargets.set(node.att.ref, elt);
 
@@ -214,12 +213,15 @@ class XmlToPart {
 						}
 					}
 				}
-			
+
 			case "pattern": // should happen only for DialogParts and StripParts
-			
+
 				pd.elements.push(Pattern(XmlToPattern.parse(node.x)));
 
-			default: 
+			case "group":
+				pd.elements.push(GroupItem(XmlToGroup.parse(node.x)));
+
+			default:
 
 				if (n != "group" && n != "rule") {
 
@@ -233,7 +235,7 @@ class XmlToPart {
 	static function parseActivityPartContent(pd : PartData, xml : Xml) : { pd : PartData, g : Array<Group>, r : StringMap<Rule>, gi : Int, nra : Int } {
 
 		var f : Fast = (xml.nodeType == Xml.Element && xml.nodeName == "Part") ? new Fast(xml) : new Fast(xml).node.Part;
-		
+
 		var groups : Array<Group> = new Array();
 		var rules : StringMap<Rule> = new StringMap();
 		var groupIndex : Int = -1;
@@ -278,7 +280,7 @@ class XmlToPart {
 		if (f.has.values) {
 
 			values = ParseUtils.parseListOfValues(f.att.values);
-		
+
 		} else {
 
 			values = new Array<String>();
@@ -289,7 +291,7 @@ class XmlToPart {
 	static inline function createGroup(f : Fast) : Group {
 
 		var rules : Array<String> = null;
-		
+
 		if (f.has.rules) {
 
 			rules = ParseUtils.parseListOfValues(f.att.rules);
@@ -305,13 +307,13 @@ class XmlToPart {
 			var group : Group = {id: f.att.id, ref: f.att.ref, rules: rules, groups: groups};
 
 			return group;
-		
+
 		} else {
 
 			var inputs : Array<Input> = [];
 
 			var group: Group = {id: f.att.id, ref: f.att.ref, rules: rules, inputs: inputs};
-			
+
 			for (input in f.elements) {
 
 				inputs.push(createInput(input, group));
@@ -324,7 +326,7 @@ class XmlToPart {
 	static function parsePartPerks(pd : PartData, perks : String, ? hash : Null<StringMap<Int>> = null) : PartData {
 
 		var map = ParseUtils.parseHash(perks);
-		
+
 		for (perk in map.keys()) {
 
 			if (hash == null) {
@@ -339,25 +341,24 @@ class XmlToPart {
 
 	static function parsePartHeader(pd : PartData, f : Fast) : PartData {
 
-		if (f.has.name) { 
+		if(f.has.ref)
+			pd.ref = f.att.ref;
+
+		if (f.has.name) {
 
 			pd.name = f.att.name;
 		}
-		if (f.has.file) { 
+		if (f.has.file) {
 
 			pd.file = f.att.file;
 		}
-		if (f.has.display) { 
-
-			pd.displaySrc = f.att.display;
-		}
 		pd.next = f.has.next && f.att.next.trim() != "" ? ParseUtils.parseListOfValues(f.att.next) : pd.next;
 
-		if (f.has.bounty) { 
+		if (f.has.bounty) {
 
 			pd = parsePartPerks(pd, f.att.bounty);
 		}
-		if (f.has.requires) { 
+		if (f.has.requires) {
 
 			pd = parsePartPerks(pd, f.att.requires, pd.requirements);
 		}
@@ -373,7 +374,7 @@ class XmlToPart {
 		pd.nbSubPartTotal = 0;
 		pd.elements = new Array();
 		pd.tokens = new GenericStack<String>();
-		pd.buttons = new StringMap();
+		pd.buttons = new List();
 		pd.buttonTargets = new StringMap();
 		pd.perks = new StringMap();
 		pd.requirements = new StringMap();

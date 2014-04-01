@@ -13,7 +13,7 @@ import grar.view.Application;
 import grar.service.GameService;
 
 class LocalizationController {
-	
+
 	public function new(parent : Controller, state : State, config : Config, application : Application, gameSrv : GameService) {
 
 		this.parent = parent;
@@ -36,7 +36,13 @@ class LocalizationController {
 	var application : Application;
 
 	var gameSrv : GameService;
+	var localeChangeCallback: Void -> Void;
 
+	public function setLocaleDataPath(path:String, ?onSuccess: Void -> Void):Void
+	{
+		state.module.currentLocaleDataPath = path;
+		localeChangeCallback = onSuccess;
+	}
 
 	function init() : Void {
 
@@ -78,7 +84,7 @@ class LocalizationController {
 
 		application.onLocaleDataPathRequest = function(path : String) {
 
-				state.module.currentLocaleDataPath = path;
+				setLocaleDataPath(path);
 			}
 
 		application.onLocalizedContentRequest = function(k : String) : String {
@@ -89,22 +95,30 @@ class LocalizationController {
 
 	function initLocaleData() : Void {
 
-		var fullPath = state.module.currentLocaleDataPath.split("/");
+		var fullPath: Array<String> = state.module.currentLocaleDataPath.split("/");
 
-		var localePath : StringBuf = new StringBuf();
+		var path: String = null;
+		if(fullPath.length == 1)
+			path = state.module.currentLocale + "/" + fullPath[0];
+		else{
+			var localePath : StringBuf = new StringBuf();
 
-		localePath.add(fullPath[0] + "/");
-		localePath.add(state.module.currentLocale + "/");
-		
-		for (i in 1...fullPath.length-1) {
+			localePath.add(fullPath[0] + "/");
+			localePath.add(state.module.currentLocale + "/");
 
-			localePath.add(fullPath[i] + "/");
+			for (i in 1...fullPath.length-1) {
+
+				localePath.add(fullPath[i] + "/");
+			}
+			localePath.add(fullPath[fullPath.length-1]);
+			path = localePath.toString();
 		}
-		localePath.add(fullPath[fullPath.length-1]);
-		
-		gameSrv.fetchLocaleData(state.module.currentLocale, localePath.toString(), function(ld : LocaleData){
+
+		gameSrv.fetchLocaleData(state.module.currentLocale, path, function(ld : LocaleData){
 
 				state.module.localeData = ld;
+				if(localeChangeCallback != null)
+					localeChangeCallback();
 
 			}, parent.onError);
 	}
