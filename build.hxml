@@ -24,7 +24,3 @@
 #-resource tests/resources/goodXmlLocale.xml@goodXmlLocale
 #-resource tests/resources/goodExcelLocale.xml@goodExcelLocale
 #-resource tests/resources/goodPart.xml@goodPart
-
---next
-
--cmd rsync -r --exclude '*.svn' $(pwd)/bin/*.js root@prod.knowledge-players.com:/home/knowledge-players/public_html/tests/grar

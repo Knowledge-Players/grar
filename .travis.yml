@@ -10,7 +10,7 @@ before_install:
   - haxelib setup ~/haxelib
   #- haxelib install utest
   #- haxelib install compiletime
-   - mkdir bin
+  - mkdir bin
 
 script:
   - haxe build.hxml
