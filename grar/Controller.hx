@@ -1,5 +1,6 @@
 package grar;
 
+import grar.service.KalturaService;
 import grar.model.contextual.MenuData;
 import grar.model.Config;
 import grar.model.State;
@@ -50,6 +51,11 @@ class Controller {
 	var application : Application;
 
 	/**
+	 * Kaltura Session
+	 */
+	public var ks (default, null):String;
+
+	/**
 	 * Inits the MVC part of the Controller
 	 */
 	public function init() : Void {
@@ -82,9 +88,7 @@ class Controller {
 
 						// langs list
 						gameSrv.fetchLangs( langsUri, function(l:StringMap<Locale>){
-
 							state.module.locales = l;
-
 						}, onError );
 
 						state.module.readyState = LoadingGame(structureXml);
@@ -145,8 +149,14 @@ class Controller {
 
 			        		}, onError);
 
-
 				    case Ready:
+					    // Connect to Kaltura
+					    if(state.module.kSettings != null){
+					        var srv = new KalturaService();
+						    srv.createSession(state.module.kSettings.partnerId, state.module.kSettings.secret, state.module.kSettings.serviceUrl, function(result){
+							    ks = result;
+						    });
+					    }
 				    	launchGame();
 				}
 			}
@@ -459,8 +469,12 @@ class Controller {
 			}
 
 		}
-		else {
-			gameOver();
+		else{
+			var next = state.module.getNextPart(p);
+			if(next != null)
+				displayPart(next);
+			else
+				gameOver();
 		}
 	}
 

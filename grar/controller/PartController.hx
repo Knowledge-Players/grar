@@ -1,5 +1,7 @@
 package grar.controller;
 
+import StringTools;
+import grar.service.KalturaService;
 import grar.model.part.PartElement;
 import grar.model.part.ButtonData;
 import haxe.ds.StringMap;
@@ -94,7 +96,7 @@ class PartController
 		});
 
 		display.onExit = function(){ exitPart(part); }
-		display.onEnterSubPart = function(sp : Part) enterSubPart(sp);
+		//display.onEnterSubPart = function(sp : Part) enterSubPart(sp);
 		display.onGameOver = function() parent.gameOver();
 
 		return true;
@@ -214,7 +216,7 @@ class PartController
 
 	private function onVideoComplete():Void
 	{
-		// Nothing. See subclass
+		nextElement();
 	}
 
 	private function startPattern(p : Pattern):Void
@@ -245,7 +247,29 @@ class PartController
 			initButtons(b);
 
 		var introScreenOn = false;
-		if (item.introScreen != null) {
+
+		if(item.videoData != null) {
+			if(parent.ks != null){
+				var srv = new KalturaService();
+				srv.getUrl(item.content, 400, parent.ks, function(url){
+					var errCode = ~/code/;
+					if(errCode.match(url))
+						trace("Cannot retrieve video");
+					else{
+						var decodeUrl = StringTools.replace(url, "\\/", "/");
+						display.setVideo(item.ref, decodeUrl, item.videoData.autoStart, item.videoData.loop, item.videoData.defaultVolume, item.videoData.capture,item.videoData.fullscreen, function(){trace("playing");}, function() onVideoComplete());
+					}
+				});
+			}
+			else
+				display.setVideo(item.ref, item.content, item.videoData.autoStart, item.videoData.loop, item.videoData.defaultVolume, item.videoData.capture,item.videoData.fullscreen, function(){}, function() onVideoComplete());
+
+
+		}
+		else if(item.soundData != null){
+			display.setSound(item.ref, item.content, item.soundData.autoStart, item.soundData.loop, item.soundData.defaultVolume);
+		}
+		else if (item.introScreen != null) {
 
 			introScreenOn = true;
 			//display.cleanDisplay();
@@ -269,14 +293,6 @@ class PartController
 			setAuthor(item);
 			display.setText(item.ref, getLocalizedContent(item.content));
 		}
-
-		if(item.videoData != null) {
-			display.setVideo(item.ref, item.content, item.videoData.autoStart, item.videoData.loop, item.videoData.defaultVolume, item.videoData.capture,item.videoData.fullscreen, function(){}, function() onVideoComplete());
-
-		}
-		else if(item.soundData != null){
-            display.setSound(item.ref, item.content, item.soundData.autoStart, item.soundData.loop, item.soundData.defaultVolume);
-        }
 
 		// Display Part
 		/*if (!introScreenOn)
@@ -325,7 +341,7 @@ class PartController
 				button = i.button;
 			case Pattern(p):
 				button = p.buttons;
-			default: throw "unexpected current element type";
+			default:
 		}
 		if(button != null){
 			for(b in button){

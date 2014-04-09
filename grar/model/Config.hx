@@ -6,6 +6,7 @@ package grar.model;
 class Config {
 
 	static inline var VARNAME_STRUCTURE_FILE_URI : String = "structureUri";
+	static inline var VARNAME_BITRATE : String = "bitrate";
 
 	public function new() { }
 
@@ -14,6 +15,11 @@ class Config {
 	 */
 	public var structureFileUri(default, null) : Null<String>;
 
+	/**
+	* Bitrate of the client. Use mostly by video player
+	**/
+	public var bitrate(default, null) : Null<Float>;
+
 	public function parseConfigParameter(key : String, value : String) : Void {
 
 		switch (key) {
@@ -21,6 +27,10 @@ class Config {
 			case VARNAME_STRUCTURE_FILE_URI:
 
 				structureFileUri = value;
+
+			case VARNAME_BITRATE:
+
+				bitrate = Std.parseFloat(value);
 
 			default:
 

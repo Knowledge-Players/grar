@@ -21,6 +21,12 @@ typedef InitState = {
 	var tracking : String;
 }
 
+typedef KalturaSettings = {
+	var partnerId: Int;
+	var secret: String;
+	@:optional var serviceUrl: String;
+}
+
 enum ReadyState {
 
 	Loading(langs : String, structureNode : haxe.xml.Fast);
@@ -33,11 +39,11 @@ enum ReadyState {
  */
 class Grar {
 
-	public function new(mode : TrackingMode, id : String, s : InitState, rs : ReadyState) {
-
+	public function new(mode : TrackingMode, id : String, ks: KalturaSettings, s : InitState, rs : ReadyState) {
 		this.mode = mode;
 		this.id = id;
 		this.state = s;
+		this.kSettings = ks;
 		this.readyState = rs;
 		this.inventory = new StringMap();
 		this.scoreChart = new ScoreChart();
@@ -53,6 +59,8 @@ class Grar {
 	public var id (default, null) : String;
 
 	public var state (default, null) : InitState;
+
+	public var kSettings (default, default):KalturaSettings;
 
 	//public var ref (default, set) : String; // ref for the layout (?)
 
@@ -325,8 +333,7 @@ class Grar {
 			var content = localeData.getItem(key);
 
 			if (content == null) {
-
-				content = "unknown localized content key " + key;
+				content = "Unknown localized content key '" + key+"'.";
 			}
 
 			return content;
@@ -391,6 +398,19 @@ class Grar {
         }
         return name;
     }
+
+	/**
+	* @param part: starting point
+	* @return the part after the starting point
+	**/
+	public function getNextPart(p:Part):Null<Part>
+	{
+		var i = 0;
+		while(i < parts.length && parts[i] != p)
+			i++;
+
+		return i < parts.length ? parts[i+1] : null;
+	}
 
 	/**
      * Start the game

@@ -10,7 +10,9 @@ class App {
 	static public function main() : Void {
 
 		if (controller == null) {
-
+			#if !js
+			cocktail.api.Cocktail.boot();
+			#end
 			init();
 		}
 	}
@@ -21,6 +23,15 @@ class App {
 
 		// by default, grar starts with an asset-embedded structure.xml file
 		c.parseConfigParameter( "structureUri", "structure.xml" );
+
+		// Bitrate
+		var bt = untyped __js__('typeof BITRATE != "undefined" ? BITRATE : null;');
+		if(bt != null)
+			c.parseConfigParameter( "bitrate", untyped __js__('BITRATE') );
+		else{
+			trace("No bitrate defined. Setting to default: 350");
+			c.parseConfigParameter( "bitrate", "350" );
+		}
 		controller = new Controller(c);
 		controller.init();
 	}

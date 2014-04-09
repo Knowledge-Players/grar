@@ -14,6 +14,8 @@ typedef ItemData = {
 	var tokens : GenericStack<String>;
 	var images : List<String>;
 	var endScreen : Bool;
+	var videoData: VideoData;
+	var soundData: SoundData;
 }
 
 typedef VideoData = {
@@ -73,6 +75,8 @@ class Item{
 		this.tokens = o.tokens;
 		this.images = o.images;
 		this.endScreen = o.endScreen;
+		this.videoData = o.videoData;
+		this.soundData = o.soundData;
 	}
 
 	/**

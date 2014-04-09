@@ -2,12 +2,11 @@ package grar.model.part;
 
 import grar.model.part.Part;
 
-import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
 
 using StringTools;
 
-typedef Group = {
+typedef Inputs = {
 
 	var id : String;
 	var ref : String;
@@ -30,12 +29,12 @@ typedef Input = {
 	var content : StringMap<String>;
 	var values : Array<String>;
 	var selected : Bool;
-	@:optional var group : Group;
+	@:optional var group : Inputs;
 }
 
 class ActivityPart extends Part {
 
-	public function new(pd : PartData, g : Array<Group>, r : StringMap<Rule>, gi : Int, nra : Int) {
+	public function new(pd : PartData, g : Array<Inputs>, r : StringMap<Rule>, gi : Int, nra : Int) {
 
 		super(pd);
 
@@ -58,7 +57,7 @@ class ActivityPart extends Part {
 				for (group in groups) {
 
 					var inputs : Array<Input> =  group.inputs;
-					
+
 					for (i in 0...inputs.length) {
 
 						var rand = Math.floor( Math.random() * inputs.length );
@@ -79,7 +78,7 @@ class ActivityPart extends Part {
 	/**
 	 * Groups of input in this activity
 	 **/
-	private var groups : Array<Group>;
+	private var groups : Array<Inputs>;
 	private var groupIndex : Int;
 	private var numRightAnswers :Int;
 
@@ -93,16 +92,16 @@ class ActivityPart extends Part {
 		return groupIndex < groups.length-1;
 	}
 
-	public inline function getNextGroup() : Group {
+	public inline function getNextGroup() : Inputs {
 
 		return groups[++groupIndex];
 	}
 
-	public function getRulesByType( type : String, ? group : Group ) : Array<Rule> {
+	public function getRulesByType( type : String, ? group : Inputs ) : Array<Rule> {
 
 		var selectedRules : Array<Rule> = new Array();
 		var rulesSet : StringMap<Rule> = new StringMap();
-		
+
 		if (group != null && group.rules != null) {
 
 			for (id in group.rules) {
@@ -130,19 +129,19 @@ class ActivityPart extends Part {
 	public function validate(input : Input, value : String) : Bool {
 
 		var i = 0;
-		
+
 		while (i < input.values.length && input.values[i] != value) {
 
 			i++;
 		}
 		var result = i != input.values.length;
-		
+
 		if (result) {
 
 			numRightAnswers++;
 		}
 		input.selected = value == "true";
-		
+
 		return result;
 	}
 
@@ -154,7 +153,7 @@ class ActivityPart extends Part {
 
 		score = Math.round(numRightAnswers * 100 / groups[groupIndex].inputs.length);
 		var contextuals = getRulesByType("contextual");
-		
+
 		for (rule in contextuals) {
 
 			if (rule.value == "addtonotebook") {
@@ -196,15 +195,15 @@ class ActivityPart extends Part {
 
 			isDone = true;
 			getNextElement();
-		
+
 		} else {
 
 			thresholds.sort(function(t1: Rule, t2: Rule){
-				
+
 					if (Std.parseInt(t1.value) > Std.parseInt(t2.value)) {
 
 						return -1;
-					
+
 					} else {
 
 						return 1;

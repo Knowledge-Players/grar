@@ -62,6 +62,8 @@ class XmlToItem {
 		var tokens : GenericStack<String> = new GenericStack<String>();
 		var images : List<String> = new List<String>();
 		var endScreen : Bool = false;
+		var videoData: VideoData = null;
+		var soundData: SoundData = null;
 
 		if (f != null) {
 
@@ -100,11 +102,28 @@ class XmlToItem {
 				images.add(elem.att.ref);
 			}
 
+			if(f.has.type && f.att.type == "video"){
+				var autoStart : Bool = false;
+				var autoFullscreen : Bool = false;
+				var loop : Bool = false;
+				var defaultVolume : Float = 1;
+				var capture : Float = 0;
+				var thumbnail : Null<String> = null;
+
+				autoStart = f.has.autoStart ? f.att.autoStart == "true" : false;
+				autoFullscreen = f.has.autoFullscreen ? f.att.autoFullscreen == "true" : false;
+				loop = f.has.loop ? f.att.loop == "true" : false;
+				defaultVolume = f.has.volume ? Std.parseFloat(f.att.volume) : 1;
+				capture = f.has.capture ? Std.parseFloat(f.att.capture) : 0;
+				thumbnail = f.has.thumbnail ? f.att.thumbnail : null;
+
+				videoData = {autoStart: autoStart, fullscreen: autoFullscreen, loop: loop, defaultVolume: defaultVolume, capture: capture};
+			}
+			// TODO SoundData
 		}
 		id = content;
 
-		return { id: id, content: content, author: author, background: background, button: button, ref: ref,
-					tokens: tokens, images: images, endScreen: endScreen};
+		return { id: id, content: content, author: author, background: background, button: button, ref: ref, tokens: tokens, images: images, endScreen: endScreen, videoData: videoData, soundData: soundData};
 	}
 
 	/*static function parseTextItem(xml : Xml) : TextItem {

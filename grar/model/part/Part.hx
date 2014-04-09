@@ -1,18 +1,11 @@
 package grar.model.part;
 
 import grar.model.part.item.Item;
-import grar.model.score.Perk;
-import grar.model.score.ScoreChart;
 import grar.model.part.Pattern;
 import grar.model.tracking.Trackable;
 
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
-
-#if (flash)
-import flash.media.Sound;
-import flash.media.SoundChannel;
-#end
 
 enum PartType {
 
@@ -37,12 +30,10 @@ typedef PartData = {
 	var isDone : Bool;
 	var isStarted : Bool;
 	var tokens : GenericStack<String>;
-#if (flash)
-	var soundLoop : Sound;
-	var soundLoopSrc : String;
-#else
+	// TODO SoundLoop
+	//var soundLoop : Sound;
+	//var soundLoopSrc : String;
 	var soundLoop : String;
-#end
 	var elements : Array<PartElement>;
 	var buttons : List<ButtonData>;
 	var perks : StringMap<Int>;
@@ -119,11 +110,7 @@ class Part{
 	/**
      * Sound playing during the part
      */
-#if (flash || openfl)
-	public var soundLoop (default, default) : Sound;
-#else
 	public var soundLoop (default, default) : String;
-#end
 
 	/**
      * Elements of the part
@@ -515,11 +502,8 @@ class Part{
 	{
 		if(parent != null)
 			parent.startElement(id);
-#if (flash || openfl)
-		if(soundLoop != null)
-			soundLoopChannel = soundLoop.play();
-#else
-		// TODO
-#end
+		// TODO SoundLoop
+		//if(soundLoop != null)
+		//soundLoopChannel = soundLoop.play();
 	}
 }

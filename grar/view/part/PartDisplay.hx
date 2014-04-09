@@ -6,9 +6,6 @@ import grar.view.component.VideoPlayer;
 import js.html.Document;
 import js.html.Element;
 
-import grar.model.part.Part;
-import grar.model.part.PartElement;
-
 
 using StringTools;
 
@@ -43,7 +40,7 @@ class PartDisplay{
 
 	public dynamic function onExit() : Void { }
 
-	public dynamic function onEnterSubPart(sp : Part) : Void { }
+	//public dynamic function onEnterSubPart(sp : Part) : Void { }
 
 	public dynamic function onPartLoaded() : Void { }
 
@@ -118,7 +115,8 @@ class PartDisplay{
 	{
 		if(videoPlayer == null)
 			videoPlayer = new VideoPlayer();
-		videoPlayer.init(getChildById(videoRef));
+		videoPlayer.init(cast getChildById(videoRef));
+		show(videoPlayer.root);
 		videoPlayer.setVideo(uri, autoStart, loop, defaultVolume, capture, fullscreen, onVideoPlay, onVideoEnd);
 	}
 
@@ -126,7 +124,7 @@ class PartDisplay{
 	{
 		if(soundPlayer == null)
 			soundPlayer = new SoundPlayer();
-		soundPlayer.init(getChildById(soundRef));
+		soundPlayer.init(cast getChildById(soundRef));
 		soundPlayer.setSound(uri, autoStart, loop, defaultVolume);
 	}
 
@@ -164,6 +162,10 @@ class PartDisplay{
 	private inline function hide(elem: Element) {
 		elem.classList.remove("visible");
 		elem.classList.add("hidden");
+		if(videoPlayer != null && elem == videoPlayer.root)
+			videoPlayer.stop();
+		else if(soundPlayer != null && elem == soundPlayer.root)
+			soundPlayer.pause();
 	}
 
 	private inline function show(elem: Element) {

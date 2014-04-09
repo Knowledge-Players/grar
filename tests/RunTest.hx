@@ -10,10 +10,10 @@ class RunTest {
 	public static function main() {
 		var runner = new Runner();
 
-		CompileTime.importPackage("grar.parser");
+		CompileTime.importPackage("grar");
 
 
-		for ( cls in CompileTime.getAllClasses("grar.parser") ) {
+		for ( cls in CompileTime.getAllClasses("grar") ) {
 			runner.addCase(Type.createInstance( cls, [] ));
 		}
 		var report = Report.create(runner);

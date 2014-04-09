@@ -1,12 +1,6 @@
 package grar.view.component;
 
-import js.html.Element;
-
-typedef SuperBool = {
-
-	var isSet: Bool;
-	var value : Bool;
-}
+import js.html.VideoElement;
 
 /*typedef SliderData = {
 
@@ -37,48 +31,55 @@ typedef VideoBackgroundData = {
 
 class VideoPlayer{
 
+	public var root (default, null): VideoElement;
+
 	public function new(){
 
 	}
 
 	dynamic private function onVideoPlay(){};
 
-	public function init(root:Element):Void
+	public function init(root:VideoElement):Void
 	{
-
+		this.root = root;
 	}
 
 	public function setVideo(url: String, autoStart: Bool = false, loop: Bool = false, defaultVolume : Float = 1, capture: Float = 0, fullscreen : Bool = false, onVideoPlay: Void -> Void, onVideoEnd: Void -> Void) : Void {
-
+		root.src = url;
+		root.autoplay = autoStart;
+		root.loop = loop;
+		root.volume = defaultVolume;
+		if(fullscreen)
+			root.enterFullScreen();
+		root.addEventListener("play", function(_){
+			onVideoPlay();
+		});
+		root.addEventListener("ended", function(_){
+			onVideoEnd();
+		});
 	}
 
-	public function playVideo():Void
+	public function play():Void
 	{
-
+		root.play();
 	}
 
-	public function statusHandler():Void
+	public function pause():Void
 	{
-
+		root.pause();
 	}
 
-	public function pauseVideo():Void
+	public function stop():Void
 	{
-
-	}
-
-	public function stopVideo():Void
-	{
-
+		//root.currentTime = 0;
+		root.pause();
 	}
 
 	private function playOrPause()
 	{
-
-	}
-
-	public function unsetVideo ():Void
-	{
-
+		if(root.paused)
+			play();
+		else
+			pause();
 	}
 }

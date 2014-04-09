@@ -51,7 +51,6 @@ class XmlToPart {
 				pp.pd = parsePartData(f);
 
 			case "activity":
-
 				pp.type = Activity;
 				pp.pd = parsePartData(f);
 
@@ -74,7 +73,6 @@ class XmlToPart {
 
 		var p : Part;
 		var pps : Array<PartialPart>;
-
 		switch (pp.type) {
 
 			case Dialog:
@@ -91,7 +89,7 @@ class XmlToPart {
 
 			case Activity:
 
-				var apd : { pd : PartData, g : Array<Group>, r : StringMap<Rule>, gi : Int, nra : Int } = parseActivityPartContent(pp.pd, xml);
+				var apd : { pd : PartData, g : Array<Inputs>, r : StringMap<Rule>, gi : Int, nra : Int } = parseActivityPartContent(pp.pd, xml);
 				pps = apd.pd.partialSubParts;
 				p = new ActivityPart(apd.pd, apd.g, apd.r, apd.gi, apd.nra);
 
@@ -223,7 +221,7 @@ class XmlToPart {
 
 			default:
 
-				if (n != "group" && n != "rule") {
+				if (n != "group" && n != "rule" && n != "image") {
 
 					throw "unexpected "+node.name;
 				}
@@ -232,11 +230,11 @@ class XmlToPart {
 		return pd;
 	}
 
-	static function parseActivityPartContent(pd : PartData, xml : Xml) : { pd : PartData, g : Array<Group>, r : StringMap<Rule>, gi : Int, nra : Int } {
+	static function parseActivityPartContent(pd : PartData, xml : Xml) : { pd : PartData, g : Array<Inputs>, r : StringMap<Rule>, gi : Int, nra : Int } {
 
 		var f : Fast = (xml.nodeType == Xml.Element && xml.nodeName == "Part") ? new Fast(xml) : new Fast(xml).node.Part;
 
-		var groups : Array<Group> = new Array();
+		var groups : Array<Inputs> = new Array();
 		var rules : StringMap<Rule> = new StringMap();
 		var groupIndex : Int = -1;
 		var numRightAnswers : Int = 0;
@@ -245,9 +243,9 @@ class XmlToPart {
 
 			switch (child.name.toLowerCase()) {
 
-				case "group":
+				case "inputs":
 
-					var group : Group = createGroup(child);
+					var group : Inputs = createInputGroup(child);
 					groups.push(group);
 
 				case "rule" :
@@ -273,7 +271,7 @@ class XmlToPart {
 		return { pd: pd, g: groups, r: rules, gi: groupIndex, nra: numRightAnswers };
 	}
 
-	static function createInput(f : Fast, ? group : Group) : Input {
+	static function createInput(f : Fast, ? group : Inputs) : Input {
 
 		var values;
 
@@ -288,7 +286,7 @@ class XmlToPart {
 		return {id: f.att.id, ref: f.att.ref, content: ParseUtils.parseHash(f.att.content), values: values, selected: false, group: group};
 	}
 
-	static inline function createGroup(f : Fast) : Group {
+	static inline function createInputGroup(f : Fast) : Inputs {
 
 		var rules : Array<String> = null;
 
@@ -296,15 +294,15 @@ class XmlToPart {
 
 			rules = ParseUtils.parseListOfValues(f.att.rules);
 		}
-		if (f.hasNode.Group) {
+		if (f.hasNode.Inputs) {
 
-			var groups : Array<Group> = [];
+			var groups : Array<Inputs> = [];
 
-			for (group in f.nodes.Group) {
+			for (group in f.nodes.Inputs) {
 
-				groups.push(createGroup(group));
+				groups.push(createInputGroup(group));
 			}
-			var group : Group = {id: f.att.id, ref: f.att.ref, rules: rules, groups: groups};
+			var group : Inputs = {id: f.att.id, ref: f.att.ref, rules: rules, groups: groups};
 
 			return group;
 
@@ -312,7 +310,7 @@ class XmlToPart {
 
 			var inputs : Array<Input> = [];
 
-			var group: Group = {id: f.att.id, ref: f.att.ref, rules: rules, inputs: inputs};
+			var group: Inputs = {id: f.att.id, ref: f.att.ref, rules: rules, inputs: inputs};
 
 			for (input in f.elements) {
 

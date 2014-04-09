@@ -8,8 +8,9 @@ before_install:
   - sudo apt-get install gcc-multilib g++-multilib -y # since VM is 64bit but hxcpp builds 32bit by default
   - mkdir ~/haxelib
   - haxelib setup ~/haxelib
-  #- haxelib install utest
-  #- haxelib install compiletime
+  - haxelib install utest
+  - haxelib install compiletime
+  - haxelib install kalturhaxe
   - mkdir bin
 
 script:

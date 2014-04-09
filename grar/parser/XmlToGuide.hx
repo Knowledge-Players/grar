@@ -31,7 +31,7 @@ class XmlToGuide {
 
 		switch(type) {
 
-			case "line": 
+			case "line":
 
 				var d : LineData = {
 
@@ -44,7 +44,7 @@ class XmlToGuide {
 				creation = Line(d);
 
 				//creation = new Line( new Point(start[0], start[1]), new Point(end[0], end[1]), f.has.center ? f.att.center == "true" : false );
-			
+
 			case "grid":
 
 				var d : GridData = {
@@ -57,13 +57,12 @@ class XmlToGuide {
 						gapCol: f.has.gapCol ? Std.parseFloat(f.att.gapCol) : null,
 						gapRow: f.has.gapRow ? Std.parseFloat(f.att.gapRow) : null,
 						alignment: f.has.alignment ? f.att.alignment : null,
-						transitionIn: f.has.transitionIn ? f.att.transitionIn : null,
 						cellWidth: f.has.width ? Std.parseFloat(f.att.width) : 0,
 						cellHeight: f.has.height ? Std.parseFloat(f.att.height) : 0
 					};
 
 				creation = Grid(d);
-			
+
 				// var grid = new Grid( Std.parseInt(f.att.numRow), Std.parseInt(f.att.numCol), f.has.resize ? f.att.resize == "true" : true );
 				/*
 				if (f.has.width) {
@@ -83,7 +82,7 @@ class XmlToGuide {
 					grid.setAlignment(f.att.alignment);
 				}
 				*/
-			
+
 			case "curve":
 
 				var d : CurveData = {
@@ -95,7 +94,7 @@ class XmlToGuide {
 						transitionIn: f.has.transitionIn ? f.att.transitionIn : null,
 						center:	null
 					};
-			
+
 				creation = Curve(d);
 				/*
 				var curve = new Curve();
@@ -119,7 +118,7 @@ class XmlToGuide {
 
 				creation = curve;
 				*/
-			
+
 			default: throw "unexpected Guide type attribute: " + type;
 		}
 		//if (f.has.transitionIn) {

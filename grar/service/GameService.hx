@@ -219,12 +219,12 @@ class GameService {
 	private function fetchPartContent(innerXml : Xml, pp : PartialPart, onInnerSuccess : Part -> Void, onInnerError : String -> Void) {
 
 		var ret : { p : Part, pps : Array<PartialPart> } = null;
-#if (flash)
-		if (pp.pd.soundLoopSrc != null) {
+
+		// TODO SoundLoop
+		/*if (pp.pd.soundLoopSrc != null) {
 
 			pp.pd.soundLoop = AssetsStorage.getSound(pp.pd.soundLoopSrc);
-		}
-#end
+		}*/
 
 		if (pp.pd.file != null) {
 			loadXml(pp.pd.file, function(xml: Xml){

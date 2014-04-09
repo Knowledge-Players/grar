@@ -11,7 +11,8 @@ class XmlToTransitionTest{
 
 	}
 
-	public function setup():Void
+	// Exhume if we use transition again
+	/*public function setup():Void
 	{
 		transitionXml = Xml.parse(Resource.getString('goodTransition'));
 	}
@@ -69,5 +70,5 @@ class XmlToTransitionTest{
 					Assert.equals(0, color.alpha);
 				case Mask(transitions, chaining): null;
 			}
-	}
+	}*/
 }

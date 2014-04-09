@@ -23,12 +23,9 @@ class XmlToGrarTest {
 		Assert.equals(expectedState.value, grarObject.state.value);
 		Assert.equals(expectedState.tracking, grarObject.state.tracking);
 		Assert.equals("Test", grarObject.id);
-		Assert.equals("main", grarObject.ref);
-		Assert.equals("main", grarObject.ref);
 		switch(grarObject.readyState){
-			case Loading(langs, layout, displayNode, structureNode):
+			case Loading(langs, structureNode):
 				Assert.equals("xml/lang.xml", langs);
-				Assert.equals("xml/layout.xml", layout);
 			case _: "none";
 		}
 	}

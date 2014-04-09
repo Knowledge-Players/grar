@@ -46,7 +46,7 @@ class TextDownParser {
 		var styleName = "";
 		var substring:String = line;
 		var level = 1;
-		var output:TextDownElement = {};
+		var output:TextDownElement = {style: "", content: "", bulletChar: ""};
 
 		while (substring.charAt(0) == " ") {
 
@@ -99,7 +99,7 @@ class TextDownParser {
 		if (styleName == "" && substring.charAt(1) == ".") {
 
 			styleName += "ordered" + level;
-			output.bullerChar = substring.substr(0);
+			output.bulletChar = substring.substr(0);
 			substring = substring.substr(2);
 		}
 
