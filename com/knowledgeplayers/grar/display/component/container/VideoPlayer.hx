@@ -410,7 +410,8 @@ class VideoPlayer extends WidgetContainer
 					var alpha = child.has.alpha ? Std.parseFloat(child.att.alpha) : 1;
 					var x = child.has.x ? Std.parseFloat(child.att.x) : 0;
 					var y = child.has.y ? Std.parseFloat(child.att.y) : 0;
-					DisplayUtils.initSprite(bar, mask.width, mask.height, color, alpha, x, y);
+					var radius = child.has.radius ? Std.parseFloat(child.att.radius) : 0;
+					DisplayUtils.initSprite(bar, mask.width, mask.height, color, alpha, x, y,radius);
 					bar.scaleX = 0;
 					progressBar.addChild(bar);
 				}
@@ -420,7 +421,7 @@ class VideoPlayer extends WidgetContainer
 					cursor.ref = child.att.ref;
 					cursor.addChild(new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile)));
 					cursor.x = (child.has.x ? Std.parseFloat(child.att.x) : 0) + progressBar.x-cursor.width/2;
-					cursor.y = progressBar.y-cursor.height/3;
+					cursor.y = (child.has.y ? Std.parseFloat(child.att.y) :0)+ progressBar.y-cursor.height/3;
 					addElement(cursor);
 				}
 			}
@@ -442,13 +443,14 @@ class VideoPlayer extends WidgetContainer
 			addElement(soundSlider);
 			for(child in elemNode.elements){
 				if(child.name.toLowerCase() == "bar"){
-					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
+                    var tile=new TileImage(child, new TileLayer(layer.tilesheet));
 					var cur = new Bitmap(DisplayUtils.getBitmapDataFromLayer(tile.tileSprite.layer.tilesheet, tile.tileSprite.tile));
 					cur.x = child.has.x ? Std.parseFloat(child.att.x) : 0;
 					cur.y = child.has.y ? Std.parseFloat(child.att.y) : 0;
 					soundSlider.addChild(cur);
 
 				}
+
 				if(child.name.toLowerCase() == "cursor"){
 					var tile = new TileImage(child, new TileLayer(layer.tilesheet));
 					soundCursor = new Widget();

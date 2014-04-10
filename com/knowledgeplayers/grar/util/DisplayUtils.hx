@@ -60,11 +60,11 @@ class DisplayUtils {
     * @param    x : x of the top left corner
     * @param    y : y of the top left corner
     **/
-	public static inline function initSprite(?sprite:Sprite, width:Float = 1, height:Float = 1, color:Int = 0, alpha:Float = 1, x:Float = 0, y:Float = 0):Sprite
+	public static inline function initSprite(?sprite:Sprite, width:Float = 1, height:Float = 1, color:Int = 0, alpha:Float = 1, x:Float = 0, y:Float = 0,radius:Float=0):Sprite
 	{
 		var s: Sprite = sprite != null ? sprite : new Sprite();
 		s.graphics.beginFill(color, alpha);
-		s.graphics.drawRect(x, y, width, height);
+        s.graphics.drawRoundRect(x, y, width, height,radius,radius);
 		s.graphics.endFill();
 		return s;
 	}
@@ -80,7 +80,7 @@ class DisplayUtils {
     * @param    y : y of the top left corner
     **/
 	// TODO merge with initSprite
-	public static function initGradientSprite(?sprite: Sprite, width: Float = 1, height: Float = 1, colors: Array<Int>, alphas: Array<Float>, x: Float = 0, y: Float = 0): Sprite
+	public static function initGradientSprite(?sprite: Sprite, width: Float = 1, height: Float = 1, colors: Array<Int>, alphas: Array<Float>, x: Float = 0, y: Float = 0,radius:Float=0): Sprite
 	{
 		if(colors.length == 1)
 			return initSprite(sprite, width, height, colors[0], alphas[0], x, y);
@@ -89,7 +89,7 @@ class DisplayUtils {
 			var matrix:Matrix = new Matrix();
 			matrix.createGradientBox(width, height, Math.PI/2, 0, 0);
 			s.graphics.beginGradientFill(GradientType.LINEAR, colors, alphas, [0x00, 0xFF], matrix);
-			s.graphics.drawRect(x, y, width, height);
+            s.graphics.drawRoundRect(x, y, width, height,radius,radius);
 			s.graphics.endFill();
 			return s;
 		}
