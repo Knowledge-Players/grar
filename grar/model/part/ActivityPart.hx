@@ -6,7 +6,7 @@ import haxe.ds.StringMap;
 
 using StringTools;
 
-typedef Inputs = {
+/*typedef Inputs = {
 
 	var id : String;
 	var ref : String;
@@ -30,7 +30,7 @@ typedef Input = {
 	var values : Array<String>;
 	var selected : Bool;
 	@:optional var group : Inputs;
-}
+}*/
 
 class ActivityPart extends Part {
 
@@ -87,142 +87,11 @@ class ActivityPart extends Part {
 	// API
 	//
 
-	public inline function hasNextGroup() : Bool {
 
-		return groupIndex < groups.length-1;
-	}
 
-	public inline function getNextGroup() : Inputs {
+	override public function nextElement():Void
+	{
 
-		return groups[++groupIndex];
-	}
-
-	public function getRulesByType( type : String, ? group : Inputs ) : Array<Rule> {
-
-		var selectedRules : Array<Rule> = new Array();
-		var rulesSet : StringMap<Rule> = new StringMap();
-
-		if (group != null && group.rules != null) {
-
-			for (id in group.rules) {
-
-				if (rules.exists(id)) {
-
-					rulesSet.set(id, rules.get(id));
-				}
-			}
-
-		} else {
-
-			rulesSet = rules;
-		}
-		for (rule in rulesSet) {
-
-			if (rule.type == type.toLowerCase()) {
-
-				selectedRules.push(rule);
-			}
-		}
-		return selectedRules;
-	}
-
-	public function validate(input : Input, value : String) : Bool {
-
-		var i = 0;
-
-		while (i < input.values.length && input.values[i] != value) {
-
-			i++;
-		}
-		var result = i != input.values.length;
-
-		if (result) {
-
-			numRightAnswers++;
-		}
-		input.selected = value == "true";
-
-		return result;
-	}
-
-	/**
-	 * End an activity
-	 * @return the id of the next Part if there is a threshold. If there is none, return null
-	 **/
-	public function endActivity() : String {
-
-		score = Math.round(numRightAnswers * 100 / groups[groupIndex].inputs.length);
-		var contextuals = getRulesByType("contextual");
-
-		for (rule in contextuals) {
-
-			if (rule.value == "addtonotebook") {
-
-				var currentGroup = groups[groupIndex];
-				var inputs = currentGroup.inputs;
-
-				if (currentGroup.groups != null) {
-
-					for (group in currentGroup.groups) {
-
-						inputs.concat(group.inputs);
-					}
-				}
-				for (input in inputs) {
-
-					if (input.selected) {
-
-						// GameManager.instance.activateToken(input.id);
-						onActivateTokenRequest(input.id);
-					}
-				}
-			}
-		}
-
-		// Reset inputs
-		for (group in groups) {
-
-			for (input in group.inputs) {
-
-				input.selected = false;
-			}
-		}
-
-		var idNext : String = null;
-		var thresholds = getRulesByType("threshold");
-
-		if (thresholds.length == 0) {
-
-			isDone = true;
-			getNextElement();
-
-		} else {
-
-			thresholds.sort(function(t1: Rule, t2: Rule){
-
-					if (Std.parseInt(t1.value) > Std.parseInt(t2.value)) {
-
-						return -1;
-
-					} else {
-
-						return 1;
-					}
-				});
-
-			var i = 0;
-			// Search the highest threshold inferior or equal the score
-			while (i < thresholds.length && score < Std.parseInt(thresholds[i].value)) {
-
-				i++;
-			}
-			if (i == thresholds.length) {
-
-				throw "[ActivityPart] You must have a threshold set to 0.";
-			}
-			idNext = thresholds[i].id;
-		}
-		return idNext;
 	}
 
 	override public function restart() : Void {

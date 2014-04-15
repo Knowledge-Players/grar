@@ -438,8 +438,17 @@ class Controller {
 			switch (state.module.getAllItems()[state.module.bookmark]) {
 
 				case Part(p):
-
+					trace("part: "+p);
 					startingPart = p.id;
+				default: trace("default");
+			}
+		}
+		else{
+			for(item in state.module.getAllItems()){
+				switch(item){
+					case Part(p):
+						startingPart = p.id;
+				}
 			}
 		}
 		displayPartById(startingPart);
@@ -485,6 +494,6 @@ class Controller {
 
 		trace("ERROR", e);
 		trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
-		throw "exit";
+		throw "exit "+e;
 	}
 }

@@ -25,6 +25,7 @@ class App {
 		c.parseConfigParameter( "structureUri", "structure.xml" );
 
 		// Bitrate
+		#if js
 		var bt = untyped __js__('typeof BITRATE != "undefined" ? BITRATE : null;');
 		if(bt != null)
 			c.parseConfigParameter( "bitrate", untyped __js__('BITRATE') );
@@ -32,6 +33,9 @@ class App {
 			trace("No bitrate defined. Setting to default: 350");
 			c.parseConfigParameter( "bitrate", "350" );
 		}
+		#else
+		c.parseConfigParameter( "bitrate", "350" );
+		#end
 		controller = new Controller(c);
 		controller.init();
 	}

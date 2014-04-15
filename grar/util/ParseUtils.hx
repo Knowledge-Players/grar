@@ -17,15 +17,15 @@ class ParseUtils {
 
 			var contentString : String = s.substr(1, s.length - 2);
 			var contents = contentString.split(",");
-			
+
 			for (c in contents) {
 
 				content.set(c.split(":")[0].trim(), c.split(":")[1].trim());
 			}
-		
+
 		} else {
 
-			content.set(" ", s);
+			content.set("_", s);
 		}
 		return content;
 	}

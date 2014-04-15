@@ -3,7 +3,6 @@ package grar.parser.part;
 import grar.model.part.GroupItem;
 import grar.model.part.Part;
 import grar.model.part.PartElement;
-import grar.model.part.ActivityPart;
 import grar.model.part.dialog.DialogPart;
 import grar.model.part.strip.StripPart;
 import grar.model.part.Pattern;
@@ -88,10 +87,11 @@ class XmlToPart {
 				p = new StripPart(pd);
 
 			case Activity:
-
-				var apd : { pd : PartData, g : Array<Inputs>, r : StringMap<Rule>, gi : Int, nra : Int } = parseActivityPartContent(pp.pd, xml);
+				var apd = parseActivityPartContent(pp.pd, xml);
 				pps = apd.pd.partialSubParts;
-				p = new ActivityPart(apd.pd, apd.g, apd.r, apd.gi, apd.nra);
+				p = new Part(apd.pd);
+				p.activityData = apd.ad;
+				//p = new ActivityPart(apd.pd, apd.g, apd.r, apd.gi, apd.nra);
 
 			case Part:
 
@@ -115,7 +115,6 @@ class XmlToPart {
 		pd = parsePartHeader(pd, f); // not sure we need it here too...
 
 		for (child in f.elements) {
-
 			pd = parsePartElement(pd, child);
 		}
 		for (elem in pd.elements) {
@@ -221,7 +220,7 @@ class XmlToPart {
 
 			default:
 
-				if (n != "group" && n != "rule" && n != "image") {
+				if (n != "group" && n != "rule" && n != "image" && n != "inputs") {
 
 					throw "unexpected "+node.name;
 				}
@@ -230,7 +229,7 @@ class XmlToPart {
 		return pd;
 	}
 
-	static function parseActivityPartContent(pd : PartData, xml : Xml) : { pd : PartData, g : Array<Inputs>, r : StringMap<Rule>, gi : Int, nra : Int } {
+	static function parseActivityPartContent(pd : PartData, xml : Xml) : { pd : PartData, ad: ActivityData} {
 
 		var f : Fast = (xml.nodeType == Xml.Element && xml.nodeName == "Part") ? new Fast(xml) : new Fast(xml).node.Part;
 
@@ -267,23 +266,25 @@ class XmlToPart {
 		}
 
 		pd = parsePartContentData(pd, xml);
-
-		return { pd: pd, g: groups, r: rules, gi: groupIndex, nra: numRightAnswers };
+		var activityData: ActivityData = {groups: groups, rules: rules, groupIndex: 0, numRightAnswers: 0};
+		return { pd: pd, ad: activityData };
 	}
 
 	static function createInput(f : Fast, ? group : Inputs) : Input {
 
 		var values;
+		var icons;
 
-		if (f.has.values) {
-
+		if (f.has.values)
 			values = ParseUtils.parseListOfValues(f.att.values);
-
-		} else {
-
+		else
 			values = new Array<String>();
-		}
-		return {id: f.att.id, ref: f.att.ref, content: ParseUtils.parseHash(f.att.content), values: values, selected: false, group: group};
+
+		if(f.has.icon)
+			icons = ParseUtils.parseHash(f.att.icon);
+		else
+			icons = new Map<String, String>();
+		return {id: f.att.id, ref: f.att.ref, content: ParseUtils.parseHash(f.att.content), values: values, selected: false, icon: icons,group: group};
 	}
 
 	static inline function createInputGroup(f : Fast) : Inputs {
@@ -294,6 +295,7 @@ class XmlToPart {
 
 			rules = ParseUtils.parseListOfValues(f.att.rules);
 		}
+
 		if (f.hasNode.Inputs) {
 
 			var groups : Array<Inputs> = [];

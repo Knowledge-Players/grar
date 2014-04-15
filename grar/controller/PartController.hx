@@ -1,23 +1,30 @@
 package grar.controller;
 
 import StringTools;
-import grar.service.KalturaService;
-import grar.model.part.PartElement;
-import grar.model.part.ButtonData;
-import haxe.ds.StringMap;
-import grar.view.Application;
-import grar.view.part.IntroScreen;
+
+import grar.util.Point;
+
+import grar.view.style.TextDownParser;
+import grar.view.part.PartDisplay.InputEvent;
 import grar.view.part.PartDisplay;
+import grar.view.part.IntroScreen;
+import grar.view.Application;
+
+import grar.service.KalturaService;
 
 import grar.model.part.Part;
 import grar.model.part.PartElement;
 import grar.model.part.Pattern;
 import grar.model.part.item.Item;
+import grar.model.part.PartElement;
+import grar.model.part.ButtonData;
 import grar.model.State;
 
 import haxe.ds.GenericStack;
 
 import grar.Controller;
+
+using Lambda;
 
 class PartController
 {
@@ -29,6 +36,8 @@ class PartController
 		this.application = app;
 
 		parts = new GenericStack<Part>();
+
+		dropList = new Map<String, List<String>>();
 
 		init();
 	}
@@ -42,6 +51,13 @@ class PartController
 	var currentElement : PartElement;
 	var currentSpeaker : String;
 	var previousBackground : String;
+
+	// Activity vars
+	var isActivity: Bool = false;
+	var inputs: List<Input>;
+	var dropList: Map<String, List<String>>;
+	var isEnabled: Bool = true;
+	var maxSelect: Int;
 
 	///
 	// CALLBACKS
@@ -60,10 +76,8 @@ class PartController
 	{
 		display = application.partDisplay;
 
-		//application.onPartDisplayRequest = function(p : Part) {
-
-			//displayPart(part);
-		//}
+		// Offer to change parser?
+		display.markupParser = new TextDownParser();
 	}
 
 	/**
@@ -92,7 +106,12 @@ class PartController
 		//startIndex = startPosition;
 		onLocaleDataPathRequest(part.file, function(){
 			display.ref = part.ref;
-			nextElement();
+			if(part.activityData != null){
+				display.onInputEvent = onInputEvent;
+				startActivity();
+			}
+			else
+				nextElement();
 		});
 
 		display.onExit = function(){ exitPart(part); }
@@ -100,6 +119,33 @@ class PartController
 		display.onGameOver = function() parent.gameOver();
 
 		return true;
+	}
+
+	public function startActivity():Void
+	{
+		inputs = new List<Input>();
+		var group: Inputs = part.getNextGroup();
+		if(group.groups != null){
+			for(g in group.groups){
+				display.createInputs(Lambda.map(g.inputs, function(input: Input){
+					var localizedContent = new Map<String, String>();
+					for(key in input.content.keys()){
+						localizedContent[key] = getLocalizedContent(input.content[key]);
+					}
+					return {ref: input.ref, id: input.id, content: localizedContent, icon: input.icon}
+				}), g.ref);
+				inputs = inputs.concat(g.inputs);
+			}
+		}
+
+		// Selection limits
+		var rules = part.getRulesByType("selectionLimits");
+		if(rules.length == 1)
+			maxSelect = Std.parseInt(rules[0].value);
+		else if(rules[1].value == "*")
+			maxSelect = -1;
+		else
+			maxSelect = Std.parseInt(rules[1].value);
 	}
 
 	public function exitPart(part: Part, completed : Bool = true) : Void {
@@ -254,7 +300,7 @@ class PartController
 				srv.getUrl(item.content, 400, parent.ks, function(url){
 					var errCode = ~/code/;
 					if(errCode.match(url))
-						trace("Cannot retrieve video");
+						trace("Cannot retrieve video: "+url);
 					else{
 						var decodeUrl = StringTools.replace(url, "\\/", "/");
 						display.setVideo(item.ref, decodeUrl, item.videoData.autoStart, item.videoData.loop, item.videoData.defaultVolume, item.videoData.capture,item.videoData.fullscreen, function(){trace("playing");}, function() onVideoComplete());
@@ -371,9 +417,47 @@ class PartController
 		display.setButtonAction(bd.ref, action);
 	}
 
-	/*private function onInputEvents(inputRef: String, eventType: String):Void
+	private function onInputEvent(eventType: InputEvent, inputId: String, mousePoint: Point):Void
 	{
-		var needValidation = false;
+		if(!isEnabled)
+			return ;
+		var targetId = null;
+		var rules = switch(eventType){
+			case MOUSE_DOWN(name): part.getRulesByType(name, part.getInputGroup(inputId));
+			case MOUSE_UP(name, target): targetId = target;
+				part.getRulesByType(name, part.getInputGroup(inputId));
+
+			case CLICK(name): part.getRulesByType(name, part.getInputGroup(inputId));
+		}
+		for(rule in rules){
+			switch(rule.value.toLowerCase()){
+				case "drag": display.startDrag(inputId, mousePoint);
+				case "drop":
+					var input: Input = inputs.filter(function(i: Input)return i.id == inputId).first();
+					var drop: Input = inputs.filter(function(i: Input)return i.id == targetId).first();
+					var isValid = drop != null && (input.values.has(targetId) || drop.values.has(inputId));
+					display.stopDrag(inputId, targetId, isValid, mousePoint);
+					if(isValid){
+						if(!dropList.exists(targetId))
+							dropList[targetId] = new List();
+						dropList[targetId].add(inputId);
+						var isFull = drop.values.foreach(function(id: String){
+							return dropList[targetId].has(id);
+						});
+						if(isFull)
+							display.setInputComplete(targetId);
+						part.activityData.numRightAnswers++;
+						display.setText(drop.id+"_completion", part.activityData.numRightAnswers+"/"+maxSelect);
+					}
+				case "showmore":
+					display.displayElements(Lambda.list([inputId+"_more"]));
+			}
+		}
+
+
+		if(maxSelect == part.activityData.numRightAnswers)
+			isEnabled = false;
+		/*var needValidation = false;
 		var input: Input = buttonsToInputs.get(target);
 		var clickRules = cast(part, ActivityPart).getRulesByType(eventType, input.group);
 		for(rule in clickRules){
@@ -438,6 +522,6 @@ class PartController
 		if(validated == maxSelect)
 			disableInputs();
 		else
-			enableInputs();
-	}*/
+			enableInputs();*/
+	}
 }

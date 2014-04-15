@@ -1,11 +1,14 @@
-package grar.parser.style;
+package grar.view.style;
 
-import grar.model.style.TextDownElement;
+import js.Browser;
+import js.html.ParagraphElement;
 
 /**
  * Parser for the MarkUp language
  */
 class TextDownParser {
+
+	public function new(){ }
 
 	///
 	// API
@@ -16,24 +19,19 @@ class TextDownParser {
      * @param	text : text to parse
      * @return a sprite with well-formed text
      */
-	static public function parse(text:String):Array<TextDownElement> {
+	public function parse(text:String):List<ParagraphElement>
+	{
+		var list = new List<ParagraphElement>();
+		// Standardize line endings
+		var lineEnding:EReg = ~/(\r)(\n)?|(&#13;)|(&#10;)|(<br\/>)/g;
+		var uniformedText = lineEnding.replace(text, "\n");
 
-		var array = new Array<TextDownElement>();
+		for (line in uniformedText.split("\n")) {
 
-		if (text != null && text != "") {
-
-			// Standardize line endings
-			var lineEnding:EReg = ~/(\r)(\n)?|(&#13;)|(&#10;)|(<br\/>)/g;
-			var uniformedText = lineEnding.replace(text, "\n");
-
-			for (line in uniformedText.split("\n")) {
-
-				var formattedLine = parseLine(line);
-				array.push(formattedLine);
-			}
+			var formattedLine = parseLine(line);
+			list.add(formattedLine);
 		}
-
-		return array;
+		return list;
 	}
 
 
@@ -41,12 +39,12 @@ class TextDownParser {
 	// INTERNALS
 	//
 
-	static private function parseLine(line : String) : TextDownElement {
+	private function parseLine(line : String) : ParagraphElement {
 
 		var styleName = "";
 		var substring:String = line;
 		var level = 1;
-		var output:TextDownElement = {style: "", content: "", bulletChar: ""};
+		var output = Browser.document.createParagraphElement();
 
 		while (substring.charAt(0) == " ") {
 
@@ -99,26 +97,31 @@ class TextDownParser {
 		if (styleName == "" && substring.charAt(1) == ".") {
 
 			styleName += "ordered" + level;
-			output.bulletChar = substring.substr(0);
+			var span = Browser.document.createSpanElement();
+			span.innerHTML = substring.substr(0);
+			output.appendChild(span);
 			substring = substring.substr(2);
 		}
 
 		// Custom Style on the whole line.
-		var regexStyle:EReg = ~/^\[(.+)\](.+)\[\/(.+)\]$/;
+		var regexStyle:EReg = ~/(\[([^\]]+)\]([^\[]+)\[\/([^\]]+)\])([^[]*)/;
 
 		if (regexStyle.match(substring)) {
-
-			styleName = regexStyle.matched(1);
-			substring = regexStyle.replace(substring, "$2");
+			var style = regexStyle.matched(2);
+			var span = Browser.document.createSpanElement();
+			span.classList.add(style);
+			span.textContent = regexStyle.matched(3);
+			output.appendChild(span);
+			substring = regexStyle.replace(substring, "$5");
 		}
 
 		substring = StringTools.ltrim(substring);
 
 		if (styleName != "") {
 
-			output.style = styleName;
+			output.classList.add(styleName);
 		}
-		output.content = substring;
+		output.appendChild(Browser.document.createTextNode(substring));
 
 		return output;
 	}

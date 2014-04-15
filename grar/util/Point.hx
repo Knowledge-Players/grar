@@ -1,4 +1,4 @@
-package grar.view.guide;
+package grar.util;
 
 class Point{
 

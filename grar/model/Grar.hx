@@ -285,15 +285,17 @@ class Grar {
 
 		var can : Bool = true;
 
-		for (perk in p.requirements.keys()) {
+		if(p.requirements != null){
+			for (perk in p.requirements.keys()) {
 
-			if (!scoreChart.perks.exists(perk)) {
+				if (!scoreChart.perks.exists(perk)) {
 
-				scoreChart.perks.set(perk, new Perk(perk));
-			}
-			if (scoreChart.perks.get(perk).getScore() < p.requirements.get(perk)) {
+					scoreChart.perks.set(perk, new Perk(perk));
+				}
+				if (scoreChart.perks.get(perk).getScore() < p.requirements.get(perk)) {
 
-				can = false;
+					can = false;
+				}
 			}
 		}
 		return can;

@@ -7,22 +7,25 @@
 #--no-traces
 
 # Execute Tests
+#--next
+
+#-main RunTest
+#-cp .
+#-cp tests
+#-lib utest
+#-lib compiletime
+#-lib kalturhaxe
+#-js tests/testResults.js
+#-resource tests/resources/goodStructure.xml@goodStructure
+#-resource tests/resources/badStructure.xml@badStructure
+#-resource tests/resources/goodTransition.xml@goodTransition
+#-resource tests/resources/goodXmlLocale.xml@goodXmlLocale
+#-resource tests/resources/goodExcelLocale.xml@goodExcelLocale
+#-resource tests/resources/goodPart.xml@goodPart
+
 --next
 
--main RunTest
--cp .
--cp tests
--lib utest
--lib compiletime
--lib kalturhaxe
--js tests/testResults.js
--resource tests/resources/goodStructure.xml@goodStructure
--resource tests/resources/badStructure.xml@badStructure
--resource tests/resources/goodTransition.xml@goodTransition
--resource tests/resources/goodXmlLocale.xml@goodXmlLocale
--resource tests/resources/goodExcelLocale.xml@goodExcelLocale
--resource tests/resources/goodPart.xml@goodPart
-
+-cmd rsync -r --exclude '*.svn' $(pwd)/bin/*.js $(pwd)/module_test/index.html $(pwd)/module_test/grar.css $(pwd)/module_test/*.xml root@prod.knowledge-players.com:/home/knowledge-players/public_html/tests/grar
 
 # Cocktail compilation
 #--next
@@ -33,3 +36,7 @@
 #-lib kalturhaxe
 #--remap js:cocktail
 #-cp src
+
+#--next
+
+#-cmd rsync -r --exclude '*.svn' $(pwd)/bin/*.swf root@prod.knowledge-players.com:/home/knowledge-players/public_html/tests/grar

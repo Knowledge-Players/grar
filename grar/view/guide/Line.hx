@@ -1,5 +1,6 @@
 package grar.view.guide;
 
+import util.Point;
 import js.html.Element;
 
 typedef LineData = {

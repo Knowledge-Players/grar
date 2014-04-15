@@ -1,61 +1,31 @@
 package grar.view.guide;
 
+import grar.util.Point;
+
 import js.html.Element;
 
-typedef GridData = {
-
-	var numRow : Int;
-	var numCol : Int;
-	var resize : Bool;
-	var width : Null<Float>;
-	var height : Null<Float>;
-	var gapCol : Null<Float>;
-	var gapRow : Null<Float>;
-	var alignment : Null<String>;
-	@:optional var cellWidth : Float;
-	@:optional var cellHeight : Float;
-}
-
-enum GridAlignment {
-
-	CENTER;
-	TOP_LEFT;
-	TOP_RIGHT;
-	TOP_MIDDLE;
-	MIDDLE_LEFT;
-	MIDDLE_RIGHT;
-	BOTTOM_LEFT;
-	BOTTOM_MIDDLE;
-	BOTTOM_RIGHT;
-}
-
-typedef Size = {
-
-	var width: Float;
-	var height: Float;
-}
 
 /**
  * Manage a grid to place object
  */
-class Grid extends Guide {
+class Grid{
 
-	public function new(d : GridData) {
+	public function new(root: Element, numRow: Int, ?numCol: Int = -1) {
 
-		super();
-
-		this.numRow = d.numRow;
-		this.numCol = d.numCol;
-		this.gapCol = d.gapCol;
-		this.gapRow = d.gapRow;
-		this.resize = d.resize;
-
-		this.alignment = d.alignment != null ? Type.createEnum(GridAlignment, d.alignment.toUpperCase()) : GridAlignment.TOP_LEFT;
-
-		cellSize = { width: d.cellWidth, height: d.cellHeight };
-
+		this.numRow = numRow;
+		this.numCol = numCol;
+		rows = new Array<Element>();
 		// Initialize nextCell to (0;0)
-		empty();
+		nextCell = new Point();
+
+		for(i in 0...numRow){
+			var row = js.Browser.document.createDivElement();
+			row.classList.add("row");
+			root.appendChild(row);
+			rows.push(row);
+		}
+
+
 	}
 
 	/**
@@ -66,124 +36,34 @@ class Grid extends Guide {
     * Number of columns
     **/
 	public var numCol (default, default):Int;
-	/**
-    * Size of a cell
-    **/
-	public var cellSize (default, default):Size;
-	/**
-	* Space between columns
-	**/
-	public var gapCol (default, default):Float;
-	/**
-	* Space between rows
-	**/
-	public var gapRow (default, default):Float;
 
 	private var nextCell:Point;
-
-	private var alignment: GridAlignment;
-	private var resize: Bool;
-
-
-	///
-	// GETTER / SETTER
-	//
-
-	override public function set_x(x : Float) : Float {
-
-		return this.x = x;
-	}
-
-	override public function set_y(y : Float) : Float {
-
-		return this.y = y;
-	}
-
+	private var rows:Array<Element>;
 
 	///
 	// API
 	//
 
 	/**
-	* @inherits
+	* Add an object to the grid
 	**/
-	override public function add(object : Element) : Element {
+	public function add(object : Element) : Element {
 
-		var rect = object.getBoundingClientRect();
+		object.classList.add("cell");
 
-		if (cellSize.width == 0) {
-
-			cellSize.width = rect.width;
-		}
-		if (cellSize.height == 0) {
-
-			cellSize.height = rect.height;
-		}
-		var targetX : Float = x + nextCell.x * cellSize.width;
-
-		targetX += gapCol * nextCell.x;
-
-		targetX += switch (alignment) {
-
-				case CENTER, TOP_MIDDLE, BOTTOM_MIDDLE: cellSize.width / 2 - rect.width / 2;
-
-				case TOP_RIGHT, MIDDLE_RIGHT, BOTTOM_RIGHT: cellSize.width - rect.width;
-
-				default: 0;// Already on the left
+		if(nextCell.y < numRow){
+			rows[Std.int(nextCell.y)].appendChild(object);
+			if (numCol < 0 || nextCell.x < numCol - 1)
+				nextCell.x++;
+			else{
+				nextCell.x = 0;
+				nextCell.y++;
 			}
-
-		var targetY : Float = y + nextCell.y * cellSize.height;
-
-		targetY += gapRow * nextCell.y;
-
-		targetY += switch (alignment) {
-
-				case CENTER, MIDDLE_LEFT, MIDDLE_RIGHT: cellSize.height / 2 - rect.height / 2;
-
-				case BOTTOM_LEFT, BOTTOM_MIDDLE, BOTTOM_RIGHT: cellSize.height - rect.height;
-
-				default: 0;// Already on top
-			}
-
-		if (nextCell.x < numCol - 1) {
-
-			nextCell.x++; //trace("incrementing nextCell.x => "+nextCell.x);
-
-		} else if (nextCell.y < numRow) {
-
-			nextCell.x = 0;
-			nextCell.y++;
-
 		} else {
 
 			throw "This grid is already full!";
 		}
 
-		setCoordinates(object, targetX, targetY);
-
-        if (resize)
-	        fitInGrid(object);
-
 		return object;
-	}
-
-	/**
-    * Align the element in the cell, if the cell is too large
-    **/
-
-	public function setAlignment(alignment: String):Void
-	{
-		this.alignment = Type.createEnum(GridAlignment, alignment.toUpperCase());
-	}
-
-	public function empty():Void
-	{
-		nextCell = new Point();
-	}
-
-	private inline function fitInGrid(object: Element):Void
-	{
-		object.style.width = Std.string(cellSize.width)+"px";
-		object.style.height = Std.string(cellSize.height)+"px";
 	}
 }

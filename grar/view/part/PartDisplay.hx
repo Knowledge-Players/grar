@@ -1,13 +1,35 @@
 package grar.view.part;
 
+import js.html.AnchorElement;
+import js.html.ImageElement;
+import js.html.ClientRect;
+import js.html.ParagraphElement;
+import haxe.Timer;
+import js.html.TouchEvent;
+import js.html.UIEvent;
+import grar.util.Point;
+
+import grar.view.style.TextDownParser;
+import grar.view.part.PartDisplay.InputEvent;
+import grar.view.guide.Grid;
 import grar.view.component.SoundPlayer;
 import grar.view.component.VideoPlayer;
 
+import js.Browser;
+
 import js.html.Document;
 import js.html.Element;
-
+import js.html.Event;
+import js.html.MouseEvent;
 
 using StringTools;
+using Lambda;
+
+enum InputEvent{
+	CLICK(name: String);
+	MOUSE_DOWN(name: String);
+	MOUSE_UP(name: String, targetId: String);
+}
 
 /**
  * Display of a part
@@ -22,16 +44,26 @@ class PartDisplay{
 
 		this.onActivateTokenRequest = function(tokenId : String){ callbacks.onActivateTokenRequest(tokenId); }
 
+		var mobile = ~/mobile/i;
+		isMobile = mobile.match(Browser.navigator.userAgent);
+
 	}
 
 	public var introScreenOn (default, null) : Bool = false;
 
+	public var markupParser (default, default):TextDownParser;
+
 	public var ref (default, set):String;
 
+	static var CLICK = "click";
+	static var MOUSE_DOWN = "mouseDown";
+	static var MOUSE_UP = "mouseUp";
+
 	var root:Element;
-	var document:Document;
 	var videoPlayer: VideoPlayer;
 	var soundPlayer: SoundPlayer;
+	var dragParent:Element;
+	var isMobile: Bool;
 
 
 	///
@@ -54,14 +86,18 @@ class PartDisplay{
 
 	public dynamic function onIntroEnd():Void { }
 
+	public dynamic function onInputEvent(type: InputEvent, inputId: String, mousePoint: Point): Void {}
+
 	///
 	// GETTER / SETTER
 	//
 
 	public function set_ref(ref:String):String
 	{
-		root = js.Browser.document.getElementById(ref);
-		root.style.display = "block";
+		if(root != null)
+			hide(root);
+		root = Browser.document.getElementById(ref);
+		show(root);
 		return this.ref = ref;
 	}
 
@@ -99,16 +135,16 @@ class PartDisplay{
 
 	public function setText(itemRef: String, content: String):Void
 	{
-		if (itemRef != null) {
-			var text = getChildById(itemRef);
-			text.innerHTML = content;
-			show(text);
+		if(itemRef != null) {
+			show(doSetText(itemRef, content));
 		}
 	}
 
 	public function setIntroText(fieldRef: String, content: String):Void
 	{
-		getChildById(fieldRef).innerHTML = content;
+		var field = getChildById(fieldRef);
+		for(elem in markupParser.parse(content))
+			field.appendChild(elem);
 	}
 
 	public function setVideo(videoRef:String, uri: String, autoStart: Bool = false, loop: Bool = false, defaultVolume: Float = 1, capture: Float = 0, fullscreen : Bool = false, ?onVideoPlay: Void -> Void, ?onVideoEnd: Void -> Void):Void
@@ -146,17 +182,224 @@ class PartDisplay{
 		getChildById(buttonId).onclick = function(_) action();
 	}
 
+	public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>}>, groupeRef: String):Void
+	{
+		var parent = getChildById(groupeRef);
+		var grid: Grid = null;
+		if(parent.hasAttribute("data-grid")){
+			var data = parent.getAttribute("data-grid").split(",");
+			if(data.length > 1)
+				grid = new Grid(parent, Std.parseInt(data[0]), Std.parseInt(data[1]));
+			else
+				grid = new Grid(parent, Std.parseInt(data[0]));
+		}
+
+		var i = 0;
+		var templates = new Map<String, Element>();
+		for(r in refs){
+			// Get template and store it if necessary
+			var t: Element;
+			if(templates.exists(r.ref))
+				t = templates[r.ref];
+			else{
+				t = getChildById(r.ref);
+				templates[r.ref] = t;
+			}
+
+			// Clone
+			var newInput: Element = cast t.cloneNode(true);
+
+			// Remove template
+			t.remove();
+
+			// Set attributes
+			newInput.id = r.id;
+			newInput.classList.add("inputs");
+			for(child in newInput.children){
+				if(Std.is(child, Element)){
+					var elem = cast(child, Element);
+					if(elem.hasAttribute("id"))
+						elem.setAttribute("id", r.id+"_"+elem.getAttribute("id"));
+				}
+			}
+
+			// Add to DOM
+			if(grid != null)
+				grid.add(newInput);
+			else
+				parent.appendChild(newInput);
+
+			// Setting input text
+			for(key in r.content.keys()){
+				if(key != "_"){
+					doSetText(r.id+"_"+key, r.content[key]);
+				}
+				else{
+					for(elem in markupParser.parse(r.content[key]))
+						newInput.appendChild(elem);
+				}
+			}
+			// Setting icons
+			for(key in r.icon.keys()){
+				var url = 'url('+r.icon[key]+')';
+				if(key != "_"){
+					var img = getChildById(r.id+"_"+key, newInput);
+					if(Std.is(img, ImageElement))
+						cast(img, ImageElement).src = r.icon[key];
+					else
+						img.style.backgroundImage = url;
+				}
+				else{
+					newInput.style.backgroundImage = url;
+				}
+			}
+			// Event Binding
+			var onStart = function(e: MouseEvent){
+				if(e.button == 0){
+					e.preventDefault();
+					if(!Std.is(e.target, AnchorElement))
+						onInputEvent(InputEvent.MOUSE_DOWN(MOUSE_DOWN), newInput.id, getMousePosition(e));
+				}
+
+			};
+			if(isMobile)
+				newInput.ontouchstart = onStart;
+			else
+				newInput.onmousedown = onStart;
+
+			newInput.onclick = function(e: MouseEvent) onInputEvent(InputEvent.CLICK(CLICK), newInput.id, getMousePosition(e));
+
+			// Display
+			show(newInput);
+			i++;
+		}
+
+		show(parent);
+	}
+
+	public function startDrag(id:String, mousePoint: Point):Void
+	{
+		var elem: Element = getChildById(id);
+		dragParent = elem.parentElement;
+		elem.draggable = true;
+
+		// Extract element for its div
+		root.appendChild(elem);
+		var bound = elem.getBoundingClientRect();
+		elem.style.position = "absolute";
+		elem.style.left = (mousePoint.x-bound.width/2)+"px";
+		elem.style.top = (mousePoint.y-bound.height/2)+"px";
+
+		// Release mouse
+		for(input in Browser.document.getElementsByClassName("inputs")){
+
+		}
+		var onEnd = function(e: Event) {
+			var drop = getDroppedElement(mousePoint, elem.id);
+			onInputEvent(InputEvent.MOUSE_UP(MOUSE_UP, drop != null ? drop.id : ""), elem.id, mousePoint);
+		};
+		if(isMobile){
+			root.ontouchend = onEnd;
+		}
+		else{
+			root.onmouseup = onEnd;
+		}
+
+		// Detect mouse movements
+		var onMove = function(e: UIEvent){
+			e.preventDefault();
+			mousePoint = getMousePosition(e);
+			elem.style.left = (mousePoint.x-bound.width/2)+"px";
+			elem.style.top = (mousePoint.y-bound.height/2)+"px";
+		}
+		if(isMobile)
+			root.ontouchmove = onMove;
+		else
+			root.onmousemove = onMove;
+	}
+
+	public function stopDrag(id:String, dropId: String, isValid: Bool, mousePoint:Point):Void
+	{
+		var drag = getChildById(id);
+		drag.style.top = "0px";
+		drag.style.left = "0px";
+		drag.style.position = "static";
+		drag.onmousemove = null;
+		//trace("is valid ? "+isValid, "parent: "+dragParent.id);
+		if(isValid){
+			getChildById(dropId).appendChild(drag);
+			drag.draggable = false;
+			drag.style.margin = "0px";
+			drag.classList.add("true");
+		}
+		else{
+			dragParent.appendChild(drag);
+		}
+	}
+
+	public function setInputComplete(id:String):Void
+	{
+		getChildById(id).classList.add("complete");
+	}
+
 	///
 	// INTERNALS
 	//
 
+	private inline function getMousePosition(e: UIEvent):Point
+	{
+		var x = (Browser.document.documentElement.scrollLeft != null ? Browser.document.documentElement.scrollLeft : Browser.document.body.scrollLeft);
+		var y = (Browser.document.documentElement.scrollTop != null ? Browser.document.documentElement.scrollTop : Browser.document.body.scrollTop);
+
+		if(isMobile){
+			var event: TouchEvent = cast e;
+			var touch = event.touches.item(0);
+			x += touch.clientX;
+			y += touch.clientY;
+		}
+		else{
+			var event: MouseEvent = cast e;
+			x += event.clientX;
+			y += event.clientY;
+		}
+		return new Point(x, y);
+	}
+
 	/**
      * Unload the display from the scene
      */
-
 	private function unLoad():Void
 	{
 		root.style.display = "none";
+	}
+
+	private function getDroppedElement(mousePoint:Point, dragId: String):Null<Element>
+	{
+		for(input in Browser.document.getElementsByClassName("inputs")){
+			var drop: Element = cast input;
+			if(drop.id != dragId){
+				var bounds: ClientRect = drop.getBoundingClientRect();
+				if((bounds.left <= mousePoint.x && (bounds.left+bounds.width) >= mousePoint.x) && (bounds.top <= mousePoint.y && (bounds.top+bounds.height) >= mousePoint.y))
+					return drop;
+			}
+		}
+		// No element found
+		return null;
+	}
+
+	private function doSetText(ref:String, content:String):Element
+	{
+		var text = getChildById(ref);
+		var html = "";
+		if(Std.is(text, ParagraphElement)){
+			for(elem in markupParser.parse(content))
+				html += elem.innerHTML;
+			text.innerHTML = html;
+		}
+		else
+			for(elem in markupParser.parse(content))
+				text.appendChild(elem);
+		return text;
 	}
 
 	private inline function hide(elem: Element) {
@@ -173,11 +416,13 @@ class PartDisplay{
 		elem.classList.add("visible");
 	}
 
-	private function getChildById(id:String):Element
+	private function getChildById(id:String, ?parent: Element):Null<Element>
 	{
-		var child = root.querySelector('#'+id);
+		var p: Element = parent == null ? root: parent;
+
+		var child = p.querySelector('#'+id);
 		if(child == null)
-			throw "Unable to find a child of "+root.id+" with id '"+id+"'.";
+			trace("Unable to find a child of "+p.id+" with id '"+id+"'.");
 		return child;
 	}
 }

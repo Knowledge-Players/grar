@@ -36,17 +36,51 @@ typedef PartData = {
 	var soundLoop : String;
 	var elements : Array<PartElement>;
 	var buttons : List<ButtonData>;
-	var perks : StringMap<Int>;
+	var perks : Map<String, Int>;
 	var score : Int;
 	var ref : String;
-	var requirements : StringMap<Int>;
+	var requirements : Map<String, Int>;
 	var next : Null<Array<String>>;
-	var buttonTargets : StringMap<PartElement>;
+	var buttonTargets : Map<String, PartElement>;
 	var nbSubPartTotal : Int;
 	//var soundLoopChannel : SoundChannel;
 	// partial data
 	var partialSubParts : Array<PartialPart>;
 	var xml : Xml;
+}
+
+typedef Inputs = {
+
+	var id : String;
+	var ref : String;
+	var rules : Array<String>;
+	@:optional var groups : Array<Inputs>;
+	@:optional var inputs : Array<Input>;
+}
+
+typedef Rule = {
+
+	var id : String;
+	var type : String;
+	var value : String;
+}
+
+typedef Input = {
+
+	var id : String;
+	var ref : String;
+	var content : Map<String, String>;
+	var values : Array<String>;
+	var selected : Bool;
+	var icon: Map<String, String>;
+	@:optional var group : Inputs;
+}
+
+typedef ActivityData = {
+	var rules: Map<String, Rule>;
+	var groups : Array<Inputs>;
+	var groupIndex : Int;
+	var numRightAnswers :Int;
 }
 
 class Part{
@@ -125,7 +159,7 @@ class Part{
 	/**
 	 * Perks of this part
 	 **/
-	public var perks (default, null) : StringMap<Int>;
+	public var perks (default, null) : Map<String, Int>;
 
 	/**
 	 * Score of this part
@@ -140,13 +174,15 @@ class Part{
 	/**
 	 * Perks requirements to start the part
 	 **/
-	public var requirements (default, null) : StringMap<Int>;
+	public var requirements (default, null) : Map<String, Int>;
 
 	public var next (default, default) : Null<Array<String>>;
 
 	public var endScreen (default, null) : Bool = false;
 
-	public var buttonTargets (default, null) : StringMap<PartElement>;
+	public var buttonTargets (default, null) : Map<String, PartElement>;
+
+	public var activityData (default, set):ActivityData;
 
 	private var nbSubPartLoaded : Int = 0;
 	private var nbSubPartTotal : Int = 0;
@@ -212,6 +248,38 @@ class Part{
 
         return completed;
     }
+
+	public function set_activityData(ad:ActivityData):ActivityData
+	{
+		activityData = ad;
+
+		// Ordering Inputs
+		var orderingRules = getRulesByType("ordering");
+
+		if (orderingRules.length > 1) {
+
+			throw "[ActivityPart] Multiple ordering rules in activity '"+id+"'. Pick only one!";
+		}
+		if (orderingRules.length == 1) {
+
+			if (orderingRules[0].value == "shuffle") {
+
+				for (group in activityData.groups) {
+
+					var inputs : Array<Input> =  group.inputs;
+
+					for (i in 0...inputs.length) {
+
+						var rand = Math.floor( Math.random() * inputs.length );
+						var tmp = inputs[i];
+						inputs[i] = inputs[rand];
+						inputs[rand] = tmp;
+					}
+				}
+			}
+		}
+		return activityData;
+	}
 
 
     ///
@@ -420,52 +488,6 @@ class Part{
 		elemIndex = 0;
 	}
 
-		/**
-	     * Tell if this part is a dialog
-	     * @return true if this part is a dialog
-	     */
-
-	public function isDialog():Bool
-	{
-		return false;
-	}
-
-	/**
-     * Tell if this part is a strip
-     * @return true if this part is a strip
-     */
-	public function isStrip():Bool
-	{
-		return false;
-	}
-
-	/**
-     * Tell if this part is a video
-     * @return true if this part is a video
-     */
-	public function isVideo():Bool
-	{
-		return false;
-	}
-
-	/**
-     * Tell if this part is a activity
-     * @return true if this part is a activity
-     */
-	public function isActivity():Bool
-	{
-		return false;
-	}
-
-		/**
-     * Tell if this part is a sound
-     * @return true if this part is a sound
-     */
-	public function isSound():Bool
-	{
-		return false;
-	}
-
 	/**
      * @param    id : Id of the item
      * @return the name of the item
@@ -491,6 +513,189 @@ class Part{
 			}
 		}
 		return null;
+	}
+
+	// Activity API
+
+	public function hasNextGroup() : Bool {
+		if(activityData == null)
+			throw 'This part is not an activity';
+		trace(activityData.groupIndex, activityData.groups.length);
+		return activityData.groupIndex < activityData.groups.length;
+	}
+
+	public function getNextGroup() : Null<Inputs> {
+
+		if(activityData == null)
+			throw 'This part is not an activity';
+		return activityData.groups[activityData.groupIndex++];
+	}
+
+	public function getInputGroup(inputId: String):Inputs
+	{
+		var i = 0;
+		var result: Inputs = null;
+		while(i < activityData.groups.length && result == null){
+			var group = activityData.groups[i];
+			result = searchGroup(group, inputId);
+			i++;
+		}
+		return result;
+	}
+
+	private function searchGroup(group:Inputs, id: String):Inputs
+	{
+		var result: Inputs = null;
+		if(group.groups != null){
+			var j = 0;
+			while(j < group.groups.length && result == null){
+				result = searchGroup(group.groups[j], id);
+				j++;
+			}
+		}
+		if(group.inputs != null){
+			var k = 0;
+			while(k < group.inputs.length && group.inputs[k].id != id)
+				k++;
+			if(k < group.inputs.length)
+				result = group;
+		}
+
+		return result;
+	}
+
+	public function getRulesByType( type : String, ? group : Inputs ) : Array<Rule> {
+
+		if(activityData == null)
+			throw 'This part is not an activity';
+		var selectedRules : Array<Rule> = new Array();
+		var rulesSet : StringMap<Rule> = new StringMap();
+
+		if (group != null && group.rules != null) {
+
+			for (id in group.rules) {
+
+				if (activityData.rules.exists(id)) {
+
+					rulesSet.set(id, activityData.rules.get(id));
+				}
+			}
+
+		} else {
+
+			rulesSet = activityData.rules;
+		}
+		for (rule in rulesSet) {
+
+			if (rule.type == type.toLowerCase()) {
+
+				selectedRules.push(rule);
+			}
+		}
+		return selectedRules;
+	}
+
+	public function validate(input : Input, value : String) : Bool {
+
+		if(activityData == null)
+			throw 'This part is not an activity';
+		var i = 0;
+
+		while (i < input.values.length && input.values[i] != value) {
+
+			i++;
+		}
+		var result = i != input.values.length;
+
+		if (result) {
+
+			activityData.numRightAnswers++;
+		}
+		input.selected = value == "true";
+
+		return result;
+	}
+
+	/**
+	 * End an activity
+	 * @return the id of the next Part if there is a threshold. If there is none, return null
+	 **/
+	public function endActivity() : String {
+
+		if(activityData == null)
+			throw 'This part is not an activity';
+		score = Math.round(activityData.numRightAnswers * 100 / activityData.groups[activityData.groupIndex].inputs.length);
+		var contextuals = getRulesByType("contextual");
+
+		for (rule in contextuals) {
+
+			if (rule.value == "addtonotebook") {
+
+				var currentGroup = activityData.groups[activityData.groupIndex];
+				var inputs = currentGroup.inputs;
+
+				if (currentGroup.groups != null) {
+
+					for (group in currentGroup.groups) {
+
+						inputs.concat(group.inputs);
+					}
+				}
+				for (input in inputs) {
+
+					if (input.selected) {
+
+						// GameManager.instance.activateToken(input.id);
+						onActivateTokenRequest(input.id);
+					}
+				}
+			}
+		}
+
+		// Reset inputs
+		for (group in activityData.groups) {
+
+			for (input in group.inputs) {
+
+				input.selected = false;
+			}
+		}
+
+		var idNext : String = null;
+		var thresholds = getRulesByType("threshold");
+
+		if (thresholds.length == 0) {
+
+			isDone = true;
+			getNextElement();
+
+		} else {
+
+			thresholds.sort(function(t1: Rule, t2: Rule){
+
+				if (Std.parseInt(t1.value) > Std.parseInt(t2.value)) {
+
+					return -1;
+
+				} else {
+
+					return 1;
+				}
+			});
+
+			var i = 0;
+			// Search the highest threshold inferior or equal the score
+			while (i < thresholds.length && score < Std.parseInt(thresholds[i].value)) {
+
+				i++;
+			}
+			if (i == thresholds.length) {
+
+				throw "[ActivityPart] You must have a threshold set to 0.";
+			}
+			idNext = thresholds[i].id;
+		}
+		return idNext;
 	}
 
 

@@ -4,9 +4,6 @@ import grar.model.contextual.MenuData;
 import grar.model.localization.LocaleData;
 
 import grar.view.part.PartDisplay;
-import grar.view.part.ActivityDisplay;
-import grar.view.part.DialogDisplay;
-import grar.view.part.StripDisplay;
 
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
