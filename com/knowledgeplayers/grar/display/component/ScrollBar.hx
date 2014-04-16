@@ -19,6 +19,7 @@ class ScrollBar extends Widget
 	private var bgSprite: Sprite;
 	private var page:Float;
 	private var maxHeight:Float;
+    private var zoneClick:Sprite;
 
 	/**
 	 * Constructor
@@ -66,7 +67,7 @@ class ScrollBar extends Widget
         addEventListener(MouseEvent.MOUSE_OUT, cursorStop);
 		addChild(bgSprite);
 		addChild(cursorSprite);
-
+        addZoneClick();
 
 
 		mouseEnabled = true;
@@ -81,18 +82,24 @@ class ScrollBar extends Widget
 	public function set_ratio(ratio:Float):Float
 	{
 		cast(cursorSprite.getChildAt(0), ScaleBitmap).bitmapHeight = height * ratio;
+        zoneClick.height=  cast(cursorSprite.getChildAt(0), ScaleBitmap).bitmapHeight;
+		return this.ratio = ratio;
+	}
 
-        var zoneClick = new Sprite();
+    public function addZoneClick():Void{
+
+        zoneClick = new Sprite();
         zoneClick.graphics.beginFill(0xFF0000,0);
         zoneClick.graphics.drawRect(-cursorSprite.width/2-10,0,cursorSprite.width*2+20,cursorSprite.height);
         zoneClick.graphics.endFill();
         zoneClick.addEventListener(MouseEvent.MOUSE_DOWN, cursorStart);
         cursorSprite.addChild(zoneClick);
 
-		return this.ratio = ratio;
+    }
 
-
-	}
+    public function initZoneClick():Void{
+        zoneClick.height = cursorSprite.height;
+    }
 
 	/**
 	 * Move the cursor. Can't go out of bound
@@ -101,14 +108,17 @@ class ScrollBar extends Widget
 
 	public function moveCursor(delta:Float)
 	{
+
 		if(cursorSprite.y - delta < 0){
 			cursorSprite.y = 0;
 		}
 		else if(cursorSprite.y + cursorSprite.height - delta > height){
+
 			cursorSprite.y = height - cursorSprite.height;
 		}
 		else{
-			cursorSprite.y -= delta * (cursorSprite.height / height);
+
+			cursorSprite.y -= delta * ratio;
 		}
 	}
 
@@ -133,6 +143,7 @@ class ScrollBar extends Widget
 	private function cursorStart(e:MouseEvent)
 	{
 		cursorSprite.startDrag(false, new Rectangle(0, 0, 0,bgSprite.height-cursorSprite.height ));
+
 		addEventListener(MouseEvent.MOUSE_UP, cursorStop);
         addEventListener(MouseEvent.MOUSE_OUT, cursorStop);
 		parent.addEventListener(MouseEvent.MOUSE_MOVE, onScroll);
