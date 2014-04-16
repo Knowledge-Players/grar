@@ -23,10 +23,6 @@
 #-resource tests/resources/goodExcelLocale.xml@goodExcelLocale
 #-resource tests/resources/goodPart.xml@goodPart
 
---next
-
--cmd rsync -r --exclude '*.svn' $(pwd)/bin/*.js $(pwd)/module_test/index.html $(pwd)/module_test/grar.css $(pwd)/module_test/*.xml root@prod.knowledge-players.com:/home/knowledge-players/public_html/tests/grar
-
 # Cocktail compilation
 #--next
 #-main grar.App
@@ -36,7 +32,3 @@
 #-lib kalturhaxe
 #--remap js:cocktail
 #-cp src
-
-#--next
-
-#-cmd rsync -r --exclude '*.svn' $(pwd)/bin/*.swf root@prod.knowledge-players.com:/home/knowledge-players/public_html/tests/grar

@@ -127,13 +127,29 @@ class PartController
 		var group: Inputs = part.getNextGroup();
 		if(group.groups != null){
 			for(g in group.groups){
-				display.createInputs(Lambda.map(g.inputs, function(input: Input){
+				var inputList = Lambda.map(g.inputs, function(input: Input){
 					var localizedContent = new Map<String, String>();
 					for(key in input.content.keys()){
 						localizedContent[key] = getLocalizedContent(input.content[key]);
 					}
 					return {ref: input.ref, id: input.id, content: localizedContent, icon: input.icon}
-				}), g.ref);
+				});
+				var sort = part.getRulesByType("sort", g);
+				if(sort.length == 1){
+					switch(sort[0].value.toLowerCase()){
+						case "random":
+							var randomList = new List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>}>();
+							for(i in inputList){
+								var rand = Math.random();
+								if(rand < 0.5)
+									randomList.add(i);
+								else
+									randomList.push(i);
+							}
+							inputList = randomList;
+					}
+				}
+				display.createInputs(inputList, g.ref);
 				inputs = inputs.concat(g.inputs);
 			}
 		}

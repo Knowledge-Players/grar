@@ -1,10 +1,9 @@
 package grar.view.part;
 
+import js.html.Node;
 import js.html.AnchorElement;
 import js.html.ImageElement;
 import js.html.ClientRect;
-import js.html.ParagraphElement;
-import haxe.Timer;
 import js.html.TouchEvent;
 import js.html.UIEvent;
 import grar.util.Point;
@@ -44,9 +43,7 @@ class PartDisplay{
 
 		this.onActivateTokenRequest = function(tokenId : String){ callbacks.onActivateTokenRequest(tokenId); }
 
-		var mobile = ~/mobile/i;
-		isMobile = mobile.match(Browser.navigator.userAgent);
-
+		isMobile = ~/ipad|iphone|ipod|android|mobile/i.match(Browser.navigator.userAgent);
 	}
 
 	public var introScreenOn (default, null) : Bool = false;
@@ -173,7 +170,7 @@ class PartDisplay{
 	public function reset():Void
 	{
 		for(child in root.childNodes)
-			if(child.nodeType == 1)
+			if(child.nodeType == Node.ELEMENT_NODE)
 				hide(cast child);
 	}
 
@@ -204,22 +201,26 @@ class PartDisplay{
 			else{
 				t = getChildById(r.ref);
 				templates[r.ref] = t;
+				// Remove template
+				// t.remove() not compatible with IE and Safari
+				t.parentElement.removeChild(t);
 			}
 
 			// Clone
 			var newInput: Element = cast t.cloneNode(true);
 
-			// Remove template
-			t.remove();
-
 			// Set attributes
 			newInput.id = r.id;
 			newInput.classList.add("inputs");
 			for(child in newInput.children){
+				// TODO
+				/* Waiting to resolve Std.is inconsistency on Safari https://github.com/HaxeFoundation/haxe/pull/2857
 				if(Std.is(child, Element)){
-					var elem = cast(child, Element);
-					if(elem.hasAttribute("id"))
-						elem.setAttribute("id", r.id+"_"+elem.getAttribute("id"));
+					var elem = cast(child, Element);*/
+				var id: String = untyped __js__("child.id == undefined ? null : child.id");
+				if(id != null){
+					var elem = getChildById(id, newInput);
+					elem.setAttribute("id", r.id+"_"+id);
 				}
 			}
 
@@ -255,7 +256,7 @@ class PartDisplay{
 			}
 			// Event Binding
 			var onStart = function(e: MouseEvent){
-				if(e.button == 0){
+				if(isMobile || e.button == 0){
 					e.preventDefault();
 					if(!Std.is(e.target, AnchorElement))
 						onInputEvent(InputEvent.MOUSE_DOWN(MOUSE_DOWN), newInput.id, getMousePosition(e));
@@ -324,8 +325,7 @@ class PartDisplay{
 		drag.style.top = "0px";
 		drag.style.left = "0px";
 		drag.style.position = "static";
-		drag.onmousemove = null;
-		//trace("is valid ? "+isValid, "parent: "+dragParent.id);
+		root.onmousemove = root.ontouchmove = null;
 		if(isValid){
 			getChildById(dropId).appendChild(drag);
 			drag.draggable = false;
@@ -350,6 +350,8 @@ class PartDisplay{
 	{
 		var x = (Browser.document.documentElement.scrollLeft != null ? Browser.document.documentElement.scrollLeft : Browser.document.body.scrollLeft);
 		var y = (Browser.document.documentElement.scrollTop != null ? Browser.document.documentElement.scrollTop : Browser.document.body.scrollTop);
+		// TODO get correct scroll
+		//trace(x,y);
 
 		if(isMobile){
 			var event: TouchEvent = cast e;
@@ -391,7 +393,11 @@ class PartDisplay{
 	{
 		var text = getChildById(ref);
 		var html = "";
-		if(Std.is(text, ParagraphElement)){
+		// TODO Std.is inconsistency
+		//if(Std.is(text, ParagraphElement)){
+		var p: Bool = untyped __js__("text.align != null");
+		if(p != null){
+			///
 			for(elem in markupParser.parse(content))
 				html += elem.innerHTML;
 			text.innerHTML = html;
@@ -419,7 +425,6 @@ class PartDisplay{
 	private function getChildById(id:String, ?parent: Element):Null<Element>
 	{
 		var p: Element = parent == null ? root: parent;
-
 		var child = p.querySelector('#'+id);
 		if(child == null)
 			trace("Unable to find a child of "+p.id+" with id '"+id+"'.");
