@@ -1,4 +1,4 @@
-package grar.view.part;
+package
 
 import grar.util.Point;
 
