@@ -1,9 +1,6 @@
-package
+package grar.view.guide;
 
 import grar.util.Point;
-import grar.util.MathUtils;
-
-typedef Element=String;
 
 typedef CurveData = {
 
@@ -18,8 +15,7 @@ typedef CurveData = {
 class Curve extends Guide
 {
     public function new(d : CurveData) {
-
-
+		super();
     }
     /**
 	* Upper value of the angle defining the curve
@@ -41,21 +37,6 @@ class Curve extends Guide
 	* Center the object on the curve. Default is false
 	**/
     public var centerObject (default, default):Bool;
-
-    override public function set_x(x:Float):Float
-    {
-        return 0;
-    }
-
-    override public function set_y(y:Float):Float
-    {
-        return 0;
-    }
-    override public function add(object:Element):Element
-    {
-
-        return null;
-    }
 
     public function getAngle(obj: Element): Float
     {

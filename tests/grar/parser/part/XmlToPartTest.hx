@@ -1,18 +1,33 @@
 package grar.parser.part;
 
-import grar.model.part.Part.PartType;
+import grar.model.part.Part;
 import utest.Assert;
 import haxe.Resource;
+
 class XmlToPartTest{
+
+	var partialPart: PartialPart;
+	var goodXml: Xml;
 
 	public function new(){
 
 	}
 
-	public function testGoodPart():Void
+	public function setup():Void
 	{
-		var partialPart = XmlToPart.parse(Xml.parse(Resource.getString('goodPart')));
+		goodXml = Xml.parse(Resource.getString('goodPart')).firstElement();
+		partialPart = XmlToPart.parse(goodXml);
+	}
+
+	public function testParseGoodPart():Void
+	{
 		Assert.equals(PartType.Part, partialPart.type);
-		trace(partialPart.pd);
+	}
+
+	public function testParseContentGoodPart():Void
+	{
+		var data: { p : Part, pps : Array<PartialPart> } = XmlToPart.parseContent(partialPart, goodXml);
+		Assert.equals(1, data.p.elements.length);
+		Assert.equals(1, data.pps.length);
 	}
 }

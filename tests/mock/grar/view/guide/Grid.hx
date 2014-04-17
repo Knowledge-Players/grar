@@ -2,8 +2,6 @@ package grar.view.guide;
 
 import grar.util.Point;
 
-typedef Element=String;
-
 
 /**
  * Manage a grid to place object

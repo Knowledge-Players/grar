@@ -11,7 +11,7 @@ enum TrackingType {
 class Tracking {
 
 	static inline var TIME_INTERVAL : Int = 1000;
-	
+
 	public function new(ia : Bool, si : String, sn : String, l : Null<String>, s : String, ms : Null<Int>, ls : Null<String>, isn : Null<Bool>, t : TrackingType) {
 
 		this.isActive = ia;
@@ -35,8 +35,10 @@ class Tracking {
 		this.type = t;
 
 		if (isActive && Type.enumConstructor(t) != Type.enumConstructor(Auto(""))) {
+			#if (flash || flash8 || java || js)
 			this.timer = new Timer(TIME_INTERVAL);
 			this.timer.run = updateCurrentTime;
+			#end
 		}
 	}
 
@@ -72,39 +74,39 @@ class Tracking {
 	public function setStatus(status : Bool) : Void {
 
 		var stringStatus : String = "";
-		
+
 		if (this.isNote) {
 
 			if (status) {
 
 				stringStatus = "passed";
-			
+
 			} else if(this.getStatus() != "passed") {
 
 				stringStatus = "failed";
-			
+
 			} else {
 
 				stringStatus = "failed";
 			}
-		
+
 		} else {
 
 			if (status) {
 
 				stringStatus = "completed";
-			
+
 			} else if(this.getStatus() != "completed") {
 
 				stringStatus = "incomplete";
-			
+
 			} else {
 
 				stringStatus = "incomplete";
 			}
 		}
 		lessonStatus = stringStatus;
-		
+
 		onStatusChanged();
 	}
 
@@ -120,7 +122,7 @@ class Tracking {
 				if (is2004) {
 
 					return ss;
-				
+
 				} else {
 
 					return getStatus();
@@ -146,13 +148,13 @@ class Tracking {
 					var _local2 : String = "";
 
 					if (isSuccess) {
-					
+
 						_local2 = "passed";
-					
+
 					} else if(this.getSuccessStatus() != "passed") {
 
 						_local2 = "failed";
-					
+
 					} else {
 
 						_local2 = "failed";
@@ -160,7 +162,7 @@ class Tracking {
 					type = Scorm( is2004, _local2, sd );
 
 					onSuccessStatusChanged();
-				
+
 				} else {
 
 					setStatus(isSuccess);
@@ -177,7 +179,7 @@ class Tracking {
 		if (score == "") {
 
 			return 0;
-		
+
 		} else {
 
 			return Std.parseInt(score);

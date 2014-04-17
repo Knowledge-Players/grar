@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Part next="part2">
+<Part next="part2" id="part1">
     <Text type="text" content="intro_content" ref="text1"/>
     <Part id="e1_1" name="e1_1" type="dialog" file="xml/e1_1.xml" display="xml/e1_1Display.xml" bounty="{e1.1.1: 1, e1.2: 1, e1.3: 1, e2.1: 1, type1: 0}"/>
 </Part>

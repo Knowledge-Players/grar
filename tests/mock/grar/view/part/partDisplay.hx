@@ -1,10 +1,8 @@
-package
+package grar.view.part;
 
 import grar.util.Point;
 
 import grar.view.style.TextDownParser;
-import grar.view.part.PartDisplay.InputEvent;
-import grar.view.guide.Grid;
 import grar.view.component.SoundPlayer;
 import grar.view.component.VideoPlayer;
 
@@ -29,9 +27,6 @@ class PartDisplay{
      */
     public function new(callbacks : grar.view.DisplayCallbacks) {
 
-        this.onActivateTokenRequest = function(tokenId : String){ callbacks.onActivateTokenRequest(tokenId); }
-
-        isMobile = ~/ipad|iphone|ipod|android|mobile/i.match(Browser.navigator.userAgent);
     }
 
     public var introScreenOn (default, null) : Bool = false;
@@ -43,13 +38,6 @@ class PartDisplay{
     static var CLICK = "click";
     static var MOUSE_DOWN = "mouseDown";
     static var MOUSE_UP = "mouseUp";
-
-    var root:Element;
-    var videoPlayer: VideoPlayer;
-    var soundPlayer: SoundPlayer;
-    var dragParent:Element;
-    var isMobile: Bool;
-
 
 ///
 // CALLBACKS

@@ -4,7 +4,14 @@ import grar.view.Application.ContextualType;
 import grar.view.part.PartDisplay;
 import grar.model.localization.LocaleData;
 import grar.model.contextual.MenuData;
+import haxe.ds.GenericStack;
+import haxe.ds.StringMap;
 
+enum ContextualType {
+
+	MENU;
+	NOTEBOOK;
+}
 class Application{
 
 	public function new(){

@@ -1,4 +1,4 @@
-package
+package grar.view.guide;
 
 import grar.view.guide.Line;
 import grar.view.guide.Grid;
@@ -7,11 +7,8 @@ import grar.view.guide.Curve;
 enum GuideData {
 
     Line(d : LineData);
-    Grid(d : GridData);
     Curve(d : CurveData);
 }
-
-typedef Element =String;
 
 class Guide {
 

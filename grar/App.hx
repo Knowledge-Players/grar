@@ -10,7 +10,7 @@ class App {
 	static public function main() : Void {
 
 		if (controller == null) {
-			#if !js
+			#if (!js && cocktail)
 			cocktail.api.Cocktail.boot();
 			#end
 			init();

@@ -87,13 +87,6 @@ class ActivityPart extends Part {
 	// API
 	//
 
-
-
-	override public function nextElement():Void
-	{
-
-	}
-
 	override public function restart() : Void {
 
 		super.restart();
@@ -103,10 +96,5 @@ class ActivityPart extends Part {
 	override public function toString() : String {
 
 		return 'ref: $ref, groups: $groups, rules: $rules';
-	}
-
-	override public function isActivity():Bool
-	{
-		return true;
 	}
 }

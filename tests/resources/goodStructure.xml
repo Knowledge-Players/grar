@@ -4,17 +4,8 @@
         <Mode>SCORM</Mode>
         <Id>Test</Id>
         <State tracking="off">en@0@1-1-1-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0-0@@@1</State>
-        <Layout file="xml/layout.xml"/>
         <Languages file="xml/lang.xml"/>
     </Parameters>
-    <Display>
-        <Style file="xml/style.json"/>
-        <Transitions display="ui/transition.xml"/>
-        <Filters display="ui/filters.xml"/>
-        <Ui display="ui/ui_elements.xml"/>
-        <Activity display="xml/quizDisplay.xml"/>
-        <Templates folder="xml/templates"/>
-    </Display>
     <Structure ref="main">
         <Part id="e0" name="e0" type="dialog" file="xml/e0.xml" display="xml/e0Display.xml"/>
         <Part id="e1" name="e1" type="" file="xml/e1.xml"/>

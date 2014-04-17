@@ -31,7 +31,7 @@ class XmlToPart {
 	 */
 	static public function parse(xml : Xml) : PartialPart {
 
-		var f : Fast = new Fast(xml);
+		var f : Fast = new Fast(xml.nodeType == Xml.Document ? xml.firstElement() : xml);
 
 		var pp : PartialPart = cast { };
 

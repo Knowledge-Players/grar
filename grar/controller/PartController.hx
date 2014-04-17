@@ -7,7 +7,6 @@ import grar.util.Point;
 import grar.view.style.TextDownParser;
 import grar.view.part.PartDisplay.InputEvent;
 import grar.view.part.PartDisplay;
-import grar.view.part.IntroScreen;
 import grar.view.Application;
 
 import grar.service.KalturaService;
