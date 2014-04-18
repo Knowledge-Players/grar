@@ -227,7 +227,7 @@ class GameManager extends EventDispatcher {
     * @param    interrupt : Stop current part to display the new one
     * @return true if the part can be displayed.
     **/
-	public function displayPart(part:Part, interrupt:Bool = false, startPosition:Int = -1):Bool
+	public function displayPart(part:Part, ?interrupt:Bool = false, ?startPosition:Int = -1):Bool
 	{
 		#if !kpdebug
 		// Part doesn't meet the requirements to start

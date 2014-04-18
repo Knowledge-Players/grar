@@ -96,7 +96,7 @@ class WidgetContainer extends Widget{
 				DisplayUtils.initSprite(this, maskWidth, maskHeight, bkgColor.color, bkgColor.alpha);
 			}
             else if(bkg == "bubble"){
-				var colors = new Array<Int>();
+				var colors = new Array<UInt>();
 				var alphas = new Array<Float>();
 				for(i in 0...color.length){
 					var c = ParseUtils.parseColor(color[i]);
@@ -258,7 +258,7 @@ class WidgetContainer extends Widget{
 			if(parent != null)
 				setScrollBar();
 			else
-				addEventListener(Event.ADDED_TO_STAGE, setScrollBar, 10);
+				addEventListener(Event.ADDED_TO_STAGE, setScrollBar, false, 10, false);
 		}
 		else{
 			scrollNeeded = false;

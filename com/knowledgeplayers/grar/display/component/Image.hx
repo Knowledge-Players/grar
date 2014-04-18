@@ -55,7 +55,7 @@ class Image extends Widget{
     {
          if(src.indexOf(".")<0){
              var stringColor = ParseUtils.parseStringArray(src);
-             var colors = new Array<Int>();
+             var colors = new Array<UInt>();
              var alphas = new Array<Float>();
              for(color in stringColor){
                  var c = ParseUtils.parseColor(color);
@@ -101,7 +101,7 @@ class Image extends Widget{
 				}
 				else{
 					var stringColor = ParseUtils.parseStringArray(xml.att.src);
-					var colors = new Array<Int>();
+					var colors = new Array<UInt>();
 					var alphas = new Array<Float>();
 					for(color in stringColor){
 						var c = ParseUtils.parseColor(color);
@@ -125,7 +125,7 @@ class Image extends Widget{
 			}
 			else if(xml.has.radius){
 				var stringColor = ParseUtils.parseStringArray(xml.att.src);
-				var colors = new Array<Int>();
+				var colors = new Array<UInt>();
 				var alphas = new Array<Float>();
 				for(color in stringColor){
 					var c = ParseUtils.parseColor(color);
@@ -144,7 +144,7 @@ class Image extends Widget{
 			else if(xml.att.src.indexOf(".") < 0)
             {
 	            var stringColor = ParseUtils.parseStringArray(xml.att.src);
-	            var colors = new Array<Int>();
+	            var colors = new Array<UInt>();
 	            var alphas = new Array<Float>();
 	            for(color in stringColor){
 		            var c = ParseUtils.parseColor(color);

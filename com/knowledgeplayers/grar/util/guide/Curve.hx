@@ -55,7 +55,7 @@ class Curve implements Guide
 	* @param maxAngle   :   Ending angle. Default is 360
 	* @param centerObject:  Place center of the object on the curve instead of the top left corner. Default is false
 	**/
-	public function new(?center: Point, radius: Float = 1, minAngle: Float = 0, maxAngle: Float = 360, centerObject: Bool = false)
+	public function new(?center: Point, ?radius: Float = 1, ?minAngle: Float = 0, ?maxAngle: Float = 360, ?centerObject: Bool = false)
 	{
 		this.center = center;
 		this.radius = radius;

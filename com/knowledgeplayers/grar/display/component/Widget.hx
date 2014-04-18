@@ -101,7 +101,7 @@ class Widget extends Sprite{
 		if(position == Positioning.FIXED){
 			addEventListener(Event.ADDED_TO_STAGE, function(e){
 				flash.Lib.current.addChild(this);
-			}, 1000);
+			}, false, 1000, false);
 		}
 		return this.position = position;
 	}
@@ -121,7 +121,7 @@ class Widget extends Sprite{
 				actuator.onComplete(onComplete);
 			else if(onComplete != null)
 				onComplete();
-		}, 1000);
+		}, false, 1000, false);
 
 		return transitionIn = transition;
 	}

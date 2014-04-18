@@ -42,7 +42,7 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 		if(xml.has.color)
 			color = xml.att.color;
 
-		addEventListener(Event.REMOVED_FROM_STAGE, onRemove, 1000);
+		addEventListener(Event.REMOVED_FROM_STAGE, onRemove, false, 1000, false);
 		addEventListener(Event.ADDED_TO_STAGE, function(e){
 			this.visible = true;
 
@@ -52,7 +52,7 @@ public function new(xml: Fast, layer: TileLayer, visible: Bool = true,?div:Bool=
 
 			if(onComplete != null)
 				onComplete();
-		}, 1000);
+		}, false, 1000, false);
 	}
 
 	@:setter(filters)

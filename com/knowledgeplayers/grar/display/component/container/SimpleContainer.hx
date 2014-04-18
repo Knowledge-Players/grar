@@ -172,7 +172,7 @@ class SimpleContainer extends WidgetContainer{
 				}
 				// Warn its parent about its change
 				dispatchEvent(new Event(Event.CHANGE));
-			}, 1000);
+			}, false, 1000, false);
 		}
 		return panel;
 	}
