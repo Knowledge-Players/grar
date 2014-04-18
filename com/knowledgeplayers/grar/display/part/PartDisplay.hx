@@ -369,7 +369,7 @@ class PartDisplay extends KpDisplay {
 		}
 	}
 
-	private function setupItem(item:Item, ?isFirst:Bool = true, ?groupName: String):Void
+	private function setupItem(item:Item, ?isFirst:Bool = true):Void
 	{
 		if(item == null)
 			return;
@@ -389,7 +389,7 @@ class PartDisplay extends KpDisplay {
 				cleanDisplay();
 
 				setSpeaker(text.author, text.transition);
-				setText(text, isFirst);
+				setText(text);
 
 				// The intro screen automatically removes itself after its duration
 				var intro = text.introScreen;
@@ -406,7 +406,7 @@ class PartDisplay extends KpDisplay {
 			}
 			else{
 				setSpeaker(text.author, text.transition);
-				setText(text, isFirst);
+				setText(text);
 			}
 		}
 		else if(item.isVideo()){
@@ -445,7 +445,7 @@ class PartDisplay extends KpDisplay {
 		// Nothing. See subclass
 	}
 
-	private function setText(item:TextItem, isFirst:Bool = true):Void
+	private function setText(item:TextItem):Void
 	{
 		var content = Localiser.get_instance().getItemContent(item.content);
 		if(item.ref != null){
