@@ -1,5 +1,6 @@
 package com.knowledgeplayers.grar.display.component.container;
 
+import com.knowledgeplayers.grar.event.PartEvent;
 import com.knowledgeplayers.grar.display.GameManager;
 import flash.media.SoundTransform;
 import com.knowledgeplayers.grar.display.element.ChronoCircle;
@@ -18,6 +19,7 @@ class SoundPlayer extends WidgetContainer
 
 	public var autoPlay (default, default):Bool;
 
+    public var urlSound:String;
     private var isPlaying: Bool = false;
     private var sound:Sound;
     private var soundChannel:SoundChannel;
@@ -26,17 +28,23 @@ class SoundPlayer extends WidgetContainer
 	private var loaded:Bool;
 	private var defaultVolume:Float;
 
-    public function new(?xml: Fast, ?tilesheet: TilesheetEx)
+    public function new(?xml: Fast, ?tilesheet: TilesheetEx,?_urlSound:String)
     {
 	    playButtons = new GenericStack<DefaultButton>();
 
         super(xml, tilesheet);
-
+        urlSound = _urlSound;
         soundChannel = new SoundChannel();
     }
 
     public function setSound(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1, capture:Float = 0,?autoFullscreen:Bool): Void{
 
+
+        var nbPlay:Int= 0;
+        if(loop)
+            {
+                nbPlay=999;
+            }
         if(url == null || url == "")
             throw '[SoundPlayer] Invalid url "$url" for audio stream.';
 
@@ -48,18 +56,18 @@ class SoundPlayer extends WidgetContainer
 	    sound.addEventListener(Event.COMPLETE, function(e){
 	        loaded = true;
 		    if(autoPlay)
-			    playSound();
+			    playSound(nbPlay);
 	    });
 	    sound.load(req);
     }
 
-	public function playSound():Void
+	public function playSound(?nbPlay:Int):Void
 	{
 		if(loaded){
 			setPlaying(true);
 			var master = GameManager.instance.masterVolume;
 			var volume = new SoundTransform(master == 1 ? defaultVolume : master);
-			soundChannel = sound.play(pausePosition);
+			soundChannel = sound.play(pausePosition,nbPlay);
 			soundChannel.soundTransform = volume;
 			soundChannel.addEventListener(Event.SOUND_COMPLETE,onSoundComplete);
 		}
@@ -120,7 +128,7 @@ class SoundPlayer extends WidgetContainer
     }
 
 	private function onEnterFrame(e:Event):Void
-	{
-		chrono.updatePicture((sound.length - soundChannel.position)/sound.length);
+	{   if(chrono !=null)
+		    chrono.updatePicture((sound.length - soundChannel.position)/sound.length);
 	}
 }

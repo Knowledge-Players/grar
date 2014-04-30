@@ -286,7 +286,8 @@ class KpDisplay extends Sprite {
 	{
 
 		var tilesheet = soundNode.has.spritesheet ? spritesheets.get(soundNode.att.spritesheet) : null;
-		var sound = new SoundPlayer(soundNode, tilesheet);
+		var sound = new SoundPlayer(soundNode, tilesheet,soundNode.has.src?soundNode.att.src:"");
+
 		addElement(sound, soundNode);
 		return sound;
 	}
