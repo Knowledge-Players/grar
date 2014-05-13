@@ -1,13 +1,8 @@
 package grar.view.part;
 
-import js.html.Node;
-import js.html.AnchorElement;
-import js.html.ImageElement;
-import js.html.ClientRect;
-import js.html.TouchEvent;
-import js.html.UIEvent;
-import grar.util.Point;
+import haxe.Http;
 
+import grar.util.Point;
 import grar.view.style.TextDownParser;
 import grar.view.part.PartDisplay.InputEvent;
 import grar.view.guide.Grid;
@@ -15,11 +10,15 @@ import grar.view.component.SoundPlayer;
 import grar.view.component.VideoPlayer;
 
 import js.Browser;
-
-import js.html.Document;
 import js.html.Element;
 import js.html.Event;
 import js.html.MouseEvent;
+import js.html.Node;
+import js.html.AnchorElement;
+import js.html.ImageElement;
+import js.html.ClientRect;
+import js.html.TouchEvent;
+import js.html.UIEvent;
 
 using StringTools;
 using Lambda;
@@ -93,8 +92,26 @@ class PartDisplay{
 	{
 		if(root != null)
 			hide(root);
-		root = Browser.document.getElementById(ref);
+		if(ref.indexOf("/") == -1)
+			root = Browser.document.getElementById(ref);
+		else{
+			// Insert HTML into the layout
+			var ids = ref.split("/");
+			root = Browser.document.getElementById(ids[1]);
+			var http = new Http(ids[0]);
+			http.onData = function(data){
+				root.innerHTML = data;
+				onPartLoaded();
+			}
+
+			http.onError = function(msg){
+				throw "Can't load '"+ids[0]+"'.";
+			}
+			http.request();
+		}
+
 		show(root);
+
 		return this.ref = ref;
 	}
 
@@ -254,6 +271,7 @@ class PartDisplay{
 					newInput.style.backgroundImage = url;
 				}
 			}
+
 			// Event Binding
 			var onStart = function(e: MouseEvent){
 				if(isMobile || e.button == 0){

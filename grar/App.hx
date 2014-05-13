@@ -12,8 +12,10 @@ class App {
 		if (controller == null) {
 			#if (!js && cocktail)
 			cocktail.api.Cocktail.boot();
-			#end
+			js.Browser.window.onload = function(_) init();
+			#else
 			init();
+			#end
 		}
 	}
 

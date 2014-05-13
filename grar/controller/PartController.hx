@@ -104,13 +104,15 @@ class PartController
 
 		//startIndex = startPosition;
 		onLocaleDataPathRequest(part.file, function(){
-			display.ref = part.ref;
-			if(part.activityData != null){
-				display.onInputEvent = onInputEvent;
-				startActivity();
+			display.onPartLoaded = function(){
+				if(part.activityData != null){
+					display.onInputEvent = onInputEvent;
+					startActivity();
+				}
+				else
+					nextElement();
 			}
-			else
-				nextElement();
+			display.ref = part.ref;
 		});
 
 		display.onExit = function(){ exitPart(part); }
