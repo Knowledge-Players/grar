@@ -32,13 +32,16 @@ enum InputEvent{
 /**
  * Display of a part
  */
-class PartDisplay{
+class PartDisplay extends BaseDisplay
+{
 
 	/**
      * Constructor
      * @param	part : Part to display
      */
 	public function new(callbacks : grar.view.DisplayCallbacks) {
+
+		super();
 
 		this.onActivateTokenRequest = function(tokenId : String){ callbacks.onActivateTokenRequest(tokenId); }
 
@@ -47,15 +50,12 @@ class PartDisplay{
 
 	public var introScreenOn (default, null) : Bool = false;
 
-	public var markupParser (default, default):TextDownParser;
-
 	public var ref (default, set):String;
 
 	static var CLICK = "click";
 	static var MOUSE_DOWN = "mouseDown";
 	static var MOUSE_UP = "mouseUp";
 
-	var root:Element;
 	var videoPlayer: VideoPlayer;
 	var soundPlayer: SoundPlayer;
 	var dragParent:Element;
@@ -298,6 +298,7 @@ class PartDisplay{
 
 	public function startDrag(id:String, mousePoint: Point):Void
 	{
+		// See if e.dataTransfer.setDragImage() can be use instead
 		var elem: Element = getChildById(id);
 		dragParent = elem.parentElement;
 		elem.draggable = true;
@@ -407,45 +408,13 @@ class PartDisplay{
 		return null;
 	}
 
-	private function doSetText(ref:String, content:String):Element
+	override private function hide(elem:Element)
 	{
-		var text = getChildById(ref);
-		var html = "";
-		// TODO Std.is inconsistency
-		//if(Std.is(text, ParagraphElement)){
-		var p: Bool = untyped __js__("text.align != null");
-		if(p != null){
-			///
-			for(elem in markupParser.parse(content))
-				html += elem.innerHTML;
-			text.innerHTML = html;
-		}
-		else
-			for(elem in markupParser.parse(content))
-				text.appendChild(elem);
-		return text;
-	}
-
-	private inline function hide(elem: Element) {
-		elem.classList.remove("visible");
-		elem.classList.add("hidden");
+		super.hide(elem);
 		if(videoPlayer != null && elem == videoPlayer.root)
-			videoPlayer.stop();
+		videoPlayer.stop();
 		else if(soundPlayer != null && elem == soundPlayer.root)
-			soundPlayer.pause();
+		soundPlayer.pause();
 	}
 
-	private inline function show(elem: Element) {
-		elem.classList.remove("hidden");
-		elem.classList.add("visible");
-	}
-
-	private function getChildById(id:String, ?parent: Element):Null<Element>
-	{
-		var p: Element = parent == null ? root: parent;
-		var child = p.querySelector('#'+id);
-		if(child == null)
-			trace("Unable to find a child of "+p.id+" with id '"+id+"'.");
-		return child;
-	}
 }

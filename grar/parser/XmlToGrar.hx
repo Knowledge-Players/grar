@@ -38,6 +38,9 @@ class XmlToGrar {
         var langs : String = parametersNode.node.Languages.att.file;
         var structureNode : Fast = sFast.node.Grar.node.Structure;
 
-        return new Grar(m, id, kalturaParams, s, Loading(langs, structureNode));
+	    var g = new Grar(m, id, kalturaParams, s, Loading(langs, structureNode));
+	    if(parametersNode.hasNode.InterfaceLocale)
+	        g.interfaceLocaleDataPath = parametersNode.node.InterfaceLocale.att.file;
+        return g;
     }
 }

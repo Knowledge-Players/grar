@@ -1,17 +1,6 @@
 package grar.view.guide;
 
-import grar.view.guide.Line;
-import grar.view.guide.Grid;
-import grar.view.guide.Curve;
-
 import js.html.Element;
-
-enum GuideData {
-
-	Line(d : LineData);
-	Grid(d : GridData);
-	Curve(d : CurveData);
-}
 
 class Guide {
 

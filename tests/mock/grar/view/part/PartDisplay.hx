@@ -19,19 +19,17 @@ enum InputEvent{
 /**
  * Display of a part
  */
-class PartDisplay{
+class PartDisplay extends BaseDisplay{
 
 /**
      * Constructor
      * @param	part : Part to display
      */
     public function new(callbacks : grar.view.DisplayCallbacks) {
-
+		super();
     }
 
     public var introScreenOn (default, null) : Bool = false;
-
-    public var markupParser (default, default):TextDownParser;
 
     public var ref (default, set):String;
 

@@ -89,6 +89,8 @@ class Grar {
 
 	public var localeData : Null<LocaleData> = null;
 
+	//public var interfaceLocale (default, default): Null<String> = null;
+
 	private var stashedLocaleData : GenericStack<LocaleData>;
 
 	private var sameLocale : Bool;
@@ -174,7 +176,6 @@ class Grar {
 	}
 
 	public function set_currentLocaleDataPath(v : Null<String>) : Null<String> {
-
 		if (v != null) {
 
 			if (currentLocaleDataPath != v) {
@@ -398,7 +399,7 @@ class Grar {
             name = parts[i].getItemName(id);
             i++;
         }
-        return name;
+        return getLocalizedContent(name);
     }
 
 	/**

@@ -1,5 +1,7 @@
 package grar;
 
+import grar.view.style.TextDownParser;
+import grar.view.contextual.MenuDisplay;
 import grar.service.KalturaService;
 import grar.model.contextual.MenuData;
 import grar.model.Config;
@@ -49,6 +51,7 @@ class Controller {
 	var partCtrl : PartController;
 
 	var application : Application;
+	var hasMenu: Bool = false;
 
 	/**
 	 * Kaltura Session
@@ -116,12 +119,13 @@ class Controller {
 										}, onError);
 
 								case MENU:
-
+									hasMenu = true;
 									gameSrv.fetchMenu(contextual.has.file ? contextual.att.file : null, function(m:Null<MenuData>){
 
 											//application.createMenu(d);
 											menuData = m;
-
+											if(state.module.readyState == Ready)
+												application.menuData = menuData;
 										}, onError);
 							}
 						}
@@ -130,13 +134,10 @@ class Controller {
 						state.onModulePartsChanged = function() {
 
 								// Menu hasn't been set, creating the default
-						        if (menuData == null) {
-
+						        if(!hasMenu)
 						        	createDefaultMenu();
-
-						        } else {
-
-						        	application.menuData = addMenuPartsInfo(menuData);
+								else if(menuData != null){
+						        	application.menuData = menuData;
 						        }
 
 						        trackingCtrl.updatePartsCompletion();
@@ -200,6 +201,27 @@ class Controller {
 
 				application.setActivateToken(t);
 			}
+
+		application.onMenuDataChanged = function(){
+			var menuData: MenuData = application.menuData;
+			var menuD = new MenuDisplay();
+			menuD.onLevelClick = function(lId: String) {
+				displayPartById(lId);
+			}
+			menuD.onCloseMenuRequest = function() menuD.close();
+
+			// Parser
+			menuD.markupParser = new TextDownParser();
+			menuD.ref = menuData.ref;
+
+			// Set texts in the right locale
+			localizationCtrl.setInterfaceLocaleData();
+			menuData.levels = addPartsInfoToLevel(menuData.levels);
+			menuD.setTitle(state.module.getLocalizedContent(menuData.title));
+			menuD.initLevels(menuData.levels);
+			localizationCtrl.restoreLocaleData();
+			// end locale
+		}
 
 		application.onMenuUpdateDynamicFieldsRequest = function() {
 
@@ -324,12 +346,12 @@ class Controller {
 	//
 
 	// TODO MenuController
-	/*function createMenuLevel(p : Part, ? l : Int = 1) : Dynamic {
+	function createMenuLevel(p : Part, ? l : Int = 1) : LevelData {
 
 		var name : String = "h" + l;
 		var id : String = p.id;
 		var icon : Null<String> = null;
-		var items : Array<grar.view.contextual.menu.MenuDisplay.LevelData> = [];
+		var items : Array<LevelData> = [];
 
 		for (pe in p.elements) {
 
@@ -350,44 +372,29 @@ class Controller {
 			}
         }
         return { name: name, id: id, icon: icon, items: items };
-	}*/
+	}
 
-	// TODO MenuController
-	function addPartsInfoToLevel(la : Array<Dynamic>) : Array<Dynamic> {
-
+	function addPartsInfoToLevel(la : Array<LevelData>) : Array<LevelData> {
 		for (l in la) {
-
 			l.partName = state.module.getItemName(l.id);
-
-			if (l.partName == null) {
-
+			if (l.partName == null)
 				throw "can't find a name for '"+l.id+"'.";
-			}
-			if (l.items != null) {
 
+			if (l.items != null)
 				l.items = addPartsInfoToLevel(l.items);
-			}
 		}
 		return la;
 	}
 
-	// TODO MenuController
-	function addMenuPartsInfo(md : Dynamic) : Dynamic {
-
-		md.levels = addPartsInfoToLevel(md.levels);
-
-		return md;
-	}
-
 	function createDefaultMenu() : Void {
 
-    	var md : MenuData = { levels: [] };
+    	var md : MenuData = { levels: [] , ref: "menu", title: "menu"};
 
-    	/*for (part in state.module.parts) {
+    	for (part in state.module.parts) {
 
             md.levels.push(createMenuLevel(part));
-        }*/
-        application.menuData = addMenuPartsInfo(md);
+        }
+        application.menuData = md;
 	}
 
 	/*function loadlayouts(uri : String, templates : StringMap<Xml>) : Void { // actually, code below also requires the templates to be fetch already (and styles too ?)
