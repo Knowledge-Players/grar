@@ -47,6 +47,9 @@ class Timeline extends EventDispatcher
             var actuator = TweenManager.applyTransition(elem.widget,elem.transition,elem.delay);
             if(actuator != null)
 	            actuator.onComplete(onCompleteTransition, [elem.widget.ref]);
+             else
+                onCompleteTransition(elem.widget.ref);
+
          }
     }
 

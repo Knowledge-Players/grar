@@ -20,7 +20,7 @@ class SoundPlayer extends WidgetContainer
 	public var autoPlay (default, default):Bool;
 
     public var urlSound:String;
-    private var isPlaying: Bool = false;
+    public var isPlaying: Bool = false;
     private var sound:Sound;
     private var soundChannel:SoundChannel;
     private var pausePosition:Float=0;
@@ -37,9 +37,12 @@ class SoundPlayer extends WidgetContainer
         soundChannel = new SoundChannel();
     }
 
+
+
     public function setSound(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1, capture:Float = 0,?autoFullscreen:Bool): Void{
 
 
+        soundChannel.stop();
         var nbPlay:Int= 0;
         if(loop)
             {
