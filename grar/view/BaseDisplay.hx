@@ -1,5 +1,6 @@
 package grar.view;
 
+import js.html.Node;
 import grar.view.style.TextDownParser;
 
 import js.html.Element;
@@ -22,10 +23,17 @@ class BaseDisplay{
 		//if(Std.is(text, ParagraphElement)){
 		var p: Bool = untyped __js__("text.align != null");
 		if(p != null){
-			///
+		///
+			// Clean text node in Textfield
+			for(node in text.childNodes)
+				if(node.nodeType == Node.TEXT_NODE){
+					text.removeChild(node);
+				}
+
 			for(elem in markupParser.parse(content))
 				html += elem.innerHTML;
-			text.innerHTML = html;
+			text.innerHTML += html;
+
 		}
 		else
 			for(elem in markupParser.parse(content))
