@@ -304,31 +304,30 @@ class XmlToPart {
 			rules = ParseUtils.parseListOfValues(f.att.rules);
 		}
 
-		if (f.hasNode.Inputs) {
 
-			var groups : Array<Inputs> = [];
 
-			for (group in f.nodes.Inputs) {
+        var inputs : Array<Input> = [];
+        var items : Array<Item> = [];
+        var groups : Array<Inputs> = [];
 
-				groups.push(createInputGroup(group));
-			}
-			var group : Inputs = {id: f.att.id, ref: f.att.ref, rules: rules, groups: groups};
+        var group: Inputs = {id: f.att.id, ref: f.att.ref, rules: rules, inputs: inputs, items: items, groups: groups};
 
-			return group;
 
-		} else {
 
-			var inputs : Array<Input> = [];
 
-			var group: Inputs = {id: f.att.id, ref: f.att.ref, rules: rules, inputs: inputs};
+        for (input in f.elements) {
+            switch (input.name.toLowerCase()) {
+                case "input" :
+                    inputs.push(createInput(input, group));
+                case "text" :
+                    items.push(XmlToItem.parse(input.x));
+                case "inputs" :
+                    groups.push(createInputGroup(input));
+            }
+        }
 
-			for (input in f.elements) {
+        return group;
 
-				inputs.push(createInput(input, group));
-			}
-
-			return group;
-		}
 	}
 
 	static function parsePartPerks(pd : PartData, perks : String, ? hash : Null<StringMap<Int>> = null) : PartData {

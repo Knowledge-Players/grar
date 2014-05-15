@@ -56,6 +56,7 @@ typedef Inputs = {
 	var rules : Array<String>;
 	@:optional var groups : Array<Inputs>;
 	@:optional var inputs : Array<Input>;
+    @:optional var items : Array<Item>;
 }
 
 typedef Rule = {

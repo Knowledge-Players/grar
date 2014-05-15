@@ -4,13 +4,14 @@ import grar.util.Point;
 
 import js.html.Element;
 
-
 /**
  * Manage a grid to place object
  */
-class Grid{
+class Grid extends Guide {
 
 	public function new(root: Element, numRow: Int, ?numCol: Int = -1) {
+
+        super();
 
 		this.numRow = numRow;
 		this.numCol = numCol;
@@ -47,7 +48,7 @@ class Grid{
 	/**
 	* Add an object to the grid
 	**/
-	public function add(object : Element) : Element {
+	override public function add(object : Element) : Element {
 
 		object.classList.add("cell");
 

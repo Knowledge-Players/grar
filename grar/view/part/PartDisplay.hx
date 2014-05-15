@@ -1,5 +1,7 @@
 package grar.view.part;
 
+import grar.view.guide.Absolute;
+import grar.view.guide.Guide;
 import haxe.Http;
 
 import grar.util.Point;
@@ -213,14 +215,23 @@ class PartDisplay extends BaseDisplay
 	public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>}>, groupeRef: String):Void
 	{
 		var parent = getChildById(groupeRef);
-		var grid: Grid = null;
+		var guide: Guide = null;
 		if(parent.hasAttribute("data-grid")){
 			var data = parent.getAttribute("data-grid").split(",");
 			if(data.length > 1)
-				grid = new Grid(parent, Std.parseInt(data[0]), Std.parseInt(data[1]));
+                guide = new Grid(parent, Std.parseInt(data[0]), Std.parseInt(data[1]));
 			else
-				grid = new Grid(parent, Std.parseInt(data[0]));
-		}
+                guide = new Grid(parent, Std.parseInt(data[0]));
+		} else if (parent.hasAttribute("data-absolute")) {
+            var data = parent.getAttribute("data-absolute").split(",");
+
+            var points = new Array<Point>();
+            for (s in data) {
+               var p:Point = new Point(Std.parseFloat(s.split(";")[0]),Std.parseFloat(s.split(";")[1]));
+               points.push(p);
+            }
+            guide = new Absolute(parent, points);
+        }
 
 		var i = 0;
 		var templates = new Map<String, Element>();
@@ -256,8 +267,8 @@ class PartDisplay extends BaseDisplay
 			}
 
 			// Add to DOM
-			if(grid != null)
-				grid.add(newInput);
+			if(guide != null)
+				guide.add(newInput);
 			else
 				parent.appendChild(newInput);
 
@@ -285,7 +296,6 @@ class PartDisplay extends BaseDisplay
 					newInput.style.backgroundImage = url;
 				}
 			}
-
 			// Event Binding
 			var onStart = function(e: MouseEvent){
 				if(isMobile || e.button == 0){
@@ -309,6 +319,13 @@ class PartDisplay extends BaseDisplay
 
 		show(parent);
 	}
+
+    public function switchElementToVisited (id:String):Void {
+        var elem: Element = getChildById(id);
+        var c = id.substr(0,id.length-1);
+        elem.classList.remove(c);
+        elem.classList.add(c+"Visited");
+    }
 
 	public function startDrag(id:String, mousePoint: Point):Void
 	{

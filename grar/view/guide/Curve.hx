@@ -1,6 +1,6 @@
 package grar.view.guide;
 
-import util.Point;
+import grar.util.Point;
 import grar.util.MathUtils;
 
 import js.html.Element;

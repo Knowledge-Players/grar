@@ -125,45 +125,55 @@ class PartController
 	public function startActivity():Void
 	{
 		inputs = new List<Input>();
-		var group: Inputs = part.getNextGroup();
+            var group: Inputs = part.getNextGroup();
 		if(group.groups != null){
 			for(g in group.groups){
-				var inputList = Lambda.map(g.inputs, function(input: Input){
-					var localizedContent = new Map<String, String>();
-					for(key in input.content.keys()){
-						localizedContent[key] = getLocalizedContent(input.content[key]);
-					}
-					return {ref: input.ref, id: input.id, content: localizedContent, icon: input.icon}
-				});
-				var sort = part.getRulesByType("sort", g);
-				if(sort.length == 1){
-					switch(sort[0].value.toLowerCase()){
-						case "random":
-							var randomList = new List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>}>();
-							for(i in inputList){
-								var rand = Math.random();
-								if(rand < 0.5)
-									randomList.add(i);
-								else
-									randomList.push(i);
-							}
-							inputList = randomList;
-					}
-				}
-				display.createInputs(inputList, g.ref);
-				inputs = inputs.concat(g.inputs);
+                createInputs(g);
 			}
-		}
+		} else if (group != null) {
+            createInputs(group);
+        }
+
+        for (item in group.items) {
+               display.setText(item.ref, getLocalizedContent(item.content));
+        }
 
 		// Selection limits
 		var rules = part.getRulesByType("selectionLimits");
 		if(rules.length == 1)
 			maxSelect = Std.parseInt(rules[0].value);
-		else if(rules[1].value == "*")
+		else if(rules.length > 1 && rules[1].value == "*")
 			maxSelect = -1;
-		else
+		else if(rules.length > 1)
 			maxSelect = Std.parseInt(rules[1].value);
 	}
+
+    private function createInputs(group:Inputs) {
+        var inputList = Lambda.map(group.inputs, function(input: Input){
+            var localizedContent = new Map<String, String>();
+            for(key in input.content.keys()){
+                localizedContent[key] = getLocalizedContent(input.content[key]);
+            }
+            return {ref: input.ref, id: input.id, content: localizedContent, icon: input.icon}
+        });
+        var sort = part.getRulesByType("sort", group);
+        if(sort.length == 1){
+            switch(sort[0].value.toLowerCase()){
+                case "random":
+                    var randomList = new List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>}>();
+                    for(i in inputList){
+                        var rand = Math.random();
+                        if(rand < 0.5)
+                            randomList.add(i);
+                        else
+                            randomList.push(i);
+                    }
+                    inputList = randomList;
+            }
+        }
+        display.createInputs(inputList, group.ref);
+        inputs = inputs.concat(group.inputs);
+    }
 
 	public function exitPart(part: Part, completed : Bool = true) : Void {
 
@@ -496,6 +506,13 @@ class PartController
 					}
 				case "showmore":
 					display.displayElements(Lambda.list([inputId+"_more"]));
+                case "toggle" :
+                    display.switchElementToVisited(inputId);
+                case "replacecontent" :
+                    var input: Input = inputs.filter(function(i: Input)return i.id == inputId).first();
+                    var output: Input = inputs.filter(function(i: Input)return i.id == input.values[0]).first();
+                    var loc = getLocalizedContent(input.content[input.values[0]]);
+                    display.setText(output.id,loc);
 			}
 		}
 
