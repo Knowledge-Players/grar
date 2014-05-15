@@ -62,8 +62,22 @@ class Pattern /* implements PartElement */ {
 	/**
      * Current item index
 	 **/
-	private var itemIndex : Int = 0;
+	public var itemIndex (default, set): Int = -1;
 
+	///
+	// GETTER/SETTER
+	//
+
+	public function set_itemIndex(index: Int):Int
+	{
+		if(index < 0)
+			itemIndex = 0;
+		else if(index > patternContent.length)
+			itemIndex = patternContent.length -1;
+		else
+			itemIndex = index;
+		return itemIndex;
+	}
 
 	///
 	// API
@@ -74,16 +88,23 @@ class Pattern /* implements PartElement */ {
      */
 	public function getNextItem() : Null<Item> {
 
-		if (itemIndex < patternContent.length) {
-
-			itemIndex++;
-			return patternContent[itemIndex - 1];
-
-		} else {
-
+		if (itemIndex < patternContent.length)
+			return patternContent[++itemIndex];
+		else {
 			restart();
 			return null;
 		}
+	}
+
+	/**
+     * @return the previous item in the pattern, or null if the pattern reachs its beginning
+     */
+	public function getPreviousItem() : Null<Item> {
+
+		if (itemIndex > 0)
+			return patternContent[--itemIndex];
+		else
+			return null;
 	}
 
 	/**
@@ -91,7 +112,7 @@ class Pattern /* implements PartElement */ {
 	 **/
 	public inline function restart() : Void {
 
-		itemIndex = 0;
+		itemIndex = -1;
 	}
 
 	/**

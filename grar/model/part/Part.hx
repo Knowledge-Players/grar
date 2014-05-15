@@ -187,7 +187,7 @@ class Part{
 	private var nbSubPartLoaded : Int = 0;
 	private var nbSubPartTotal : Int = 0;
 	private var partIndex : Int = 0;
-	private var elemIndex : Int = 0;
+	private var elemIndex : Int = -1;
 	//private var soundLoopChannel : SoundChannel;
 	private var loaded : Bool = false;
 
@@ -305,7 +305,7 @@ class Part{
 	// Useless ?
 	public function startElement(elemId: String):Void
 	{
-		if (elemIndex == 0 || elemId != switch(elements[elemIndex-1]){ case Part(p): p.id; case Pattern(p): p.id; case Item(i): i.id; case GroupItem(g): g.id;}) {
+		if (elemIndex == 0 || elemId != switch(elements[elemIndex]){ case Part(p): p.id; case Pattern(p): p.id; case Item(i): i.id; case GroupItem(g): g.id;}) {
 
 			var tmpIndex = 0;
 
@@ -335,18 +335,23 @@ class Part{
     */
 	public function getNextElement(startIndex : Int = -1) : Null<PartElement> {
 
-		if (startIndex > -1) {
-
+		if (startIndex > -1)
 			elemIndex = startIndex;
-		}
-		if (elemIndex < elements.length) {
-
-			return elements[elemIndex++];
-
-		} else {
-
+		if (elemIndex < elements.length)
+			return elements[++elemIndex];
+		else
 			return null;
+	}
+
+	/**
+    * @return previous element in the part or null if at the beginning of the part
+    */
+	public function getPreviousElement() : Null<PartElement> {
+		if (elemIndex > 0){
+			return elements[--elemIndex];
 		}
+		else
+			return null;
 	}
 
 	/**
@@ -485,7 +490,7 @@ class Part{
 
 	public function restart() : Void {
 
-		elemIndex = 0;
+		elemIndex = -1;
 	}
 
 	/**

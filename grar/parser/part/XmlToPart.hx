@@ -226,6 +226,14 @@ class XmlToPart {
 				}
 		}
 
+		for(elem in pd.elements){
+			switch(elem){
+				case Item(i): if(i.button.isEmpty()) i.button = pd.buttons;
+				case GroupItem(g): for(i in g.elements) if(i.button.isEmpty()) i.button = pd.buttons;
+				default:
+			}
+		}
+
 		return pd;
 	}
 

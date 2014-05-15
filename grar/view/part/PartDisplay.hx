@@ -154,6 +154,20 @@ class PartDisplay extends BaseDisplay
 		}
 	}
 
+	public function setImage(imageRef:String,src:String):Void{
+
+		if(imageRef != null){
+			var img:Element =getChildById(imageRef);
+			var p: Bool = untyped __js__("img.src!= null");
+			if(p){
+				untyped __js__("img.src= src");
+			}
+
+			show(img);
+
+		}
+	}
+
 	public function setIntroText(fieldRef: String, content: String):Void
 	{
 		var field = getChildById(fieldRef);

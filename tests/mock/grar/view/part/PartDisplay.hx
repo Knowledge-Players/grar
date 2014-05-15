@@ -95,6 +95,10 @@ class PartDisplay extends BaseDisplay{
     {
 
     }
+	public function setImage(itemRef: String, src: String):Void
+    {
+
+    }
 
     public function setIntroText(fieldRef: String, content: String):Void
     {

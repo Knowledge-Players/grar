@@ -12,10 +12,15 @@ typedef ItemData = {
 	var button : Null<List<ButtonData>>;
 	var ref : Null<String>;
 	var tokens : GenericStack<String>;
-	var images : List<String>;
+	var images : List<ImageData>;
 	var endScreen : Bool;
 	var videoData: VideoData;
 	var soundData: SoundData;
+}
+
+typedef ImageData ={
+	var src:String;
+	var ref:String;
 }
 
 typedef VideoData = {
@@ -112,7 +117,7 @@ class Item{
 	/**
      * Graphicals items associated with this item
      **/
-	public var images (default, default) : List<String>;
+	public var images (default, default) : List<ImageData>;
 
 	/**
      * Character who says this text

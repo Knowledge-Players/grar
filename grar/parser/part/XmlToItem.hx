@@ -60,10 +60,11 @@ class XmlToItem {
 		var button : Null<List<ButtonData>> = null;
 		var ref : Null<String> = null;
 		var tokens : GenericStack<String> = new GenericStack<String>();
-		var images : List<String> = new List<String>();
+		var images : List<ImageData> = new List<ImageData>();
 		var endScreen : Bool = false;
 		var videoData: VideoData = null;
 		var soundData: SoundData = null;
+
 
 		if (f != null) {
 
@@ -97,9 +98,11 @@ class XmlToItem {
 
 				endScreen = f.att.endScreen == "true";
 			}
-			for (elem in f.elements) {
 
-				images.add(elem.att.ref);
+			for (elem in f.elements) {
+				var image:ImageData ={src:elem.att.src,ref:elem.att.ref};
+				images.add(image);
+
 			}
 
 			if(f.has.type && f.att.type == "video"){

@@ -168,15 +168,13 @@ class PartController
 	public function exitPart(part: Part, completed : Bool = true) : Void {
 
 		part.isDone = completed;
-		state.module.setPartFinished(part.id);
+		if(completed)
+			state.module.setPartFinished(part.id);
 
 		display.reset();
 
-		if (part.file != null) {
-
-			//Localiser.instance.popLocale();
+		if (part.file != null)
 			onRestoreLocaleRequest();
-		}
 
 		// Go to next Part
 		//nextElement();
@@ -218,6 +216,35 @@ class PartController
 
 			case Pattern(p):
 				startPattern(p);
+
+			case GroupItem(group):
+				for(it in group.elements){
+					setupItem(it);
+				}
+		}
+	}
+
+	public function previousElement():Void
+	{
+		display.reset();
+		currentElement = part.getPreviousElement();
+
+		if (currentElement == null) {
+			exitPart(part);
+			return;
+		}
+		switch (currentElement) {
+
+			case Part(p):
+				enterSubPart(p);
+
+			case Item(i):
+				setupItem(i);
+
+			case Pattern(p):
+				startPattern(p);
+				// Doesn't matter if it's too high, index setter take care of that
+				p.itemIndex = p.patternContent.length;
 
 			case GroupItem(group):
 				for(it in group.elements){
@@ -355,11 +382,11 @@ class PartController
 		} else {
 			setAuthor(item);
 			display.setText(item.ref, getLocalizedContent(item.content));
-		}
 
-		// Display Part
-		/*if (!introScreenOn)
-			displayPart();*/
+		}
+		for (image in item.images){
+			display.setImage(image.ref,image.src);
+		}
 
 		display.displayElements(createDisplayList(item));
 	}
@@ -396,7 +423,7 @@ class PartController
 	private function createDisplayList(item: Item): List<String> {
 
 		var list = new List<String>();
-		list = Lambda.concat(list, item.images);
+		//list = Lambda.concat(list, item.images);
 
 		var button : List<ButtonData> = null;
 		switch (currentElement) {
@@ -420,6 +447,7 @@ class PartController
 	private function initButtons(bd: ButtonData) : Void {
 		var action = switch(bd.action.toLowerCase()) {
 			case "next": function() nextElement();
+			case "prev": function() previousElement();
 			case "goto": function() {
 						var goToTarget : PartElement = part.buttonTargets.get(bd.ref);
 						if (goToTarget == null) {
