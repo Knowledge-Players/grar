@@ -2,8 +2,6 @@ package grar.view.guide;
 
 import grar.util.Point;
 
-import js.html.Element;
-
 
 /**
 * Utility to place items where you want
@@ -32,15 +30,6 @@ class Absolute extends Guide
 	**/
     override public function add(object:Element):Element
     {
-        if (objects.length < points.length) {
-            setCoordinates(object, points[objects.length].x, points[objects.length].y);
-        } else {
-            // if guide is full, put elements on top
-            trace("Warning : Guide is full");
-            setCoordinates(object, 0, (objects.length-points.length)*10);
-        }
-        root.appendChild(object);
-
         objects.push(object);
         return object;
     }

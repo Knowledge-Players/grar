@@ -5,6 +5,8 @@ import grar.view.style.TextDownParser;
 
 import js.html.Element;
 
+using Lambda;
+
 class BaseDisplay{
 
 	public var markupParser (default, default):TextDownParser;
@@ -19,21 +21,25 @@ class BaseDisplay{
 	{
 		var text: Element = getChildById(ref);
 		var html = "";
+
+		// Clone child note list
+		var children: Array<Node> = [];
+		for(node in text.childNodes) children.push(node);
+		// Clean text node in Textfield
+		for(node in children){
+			if(node.nodeType == Node.TEXT_NODE || (node.nodeType == Node.ELEMENT_NODE && node.nodeName.toLowerCase() != "div")){
+				text.removeChild(node);
+			}
+		}
+
 		// TODO Std.is inconsistency
 		//if(Std.is(text, ParagraphElement)){
 		var p: Bool = untyped __js__("text.align != null");
 		if(p != null){
 		///
-			// Clean text node in Textfield
-			for(node in text.childNodes)
-				if(node.nodeType == Node.TEXT_NODE){
-					text.removeChild(node);
-				}
-
 			for(elem in markupParser.parse(content))
-				html += elem.innerHTML;
+				html += elem.outerHTML;
 			text.innerHTML += html;
-
 		}
 		else
 			for(elem in markupParser.parse(content))

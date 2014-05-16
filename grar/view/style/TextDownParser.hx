@@ -1,7 +1,10 @@
 package grar.view.style;
 
+import js.html.Element;
 import js.Browser;
 import js.html.ParagraphElement;
+
+using StringTools;
 
 /**
  * Parser for the MarkUp language
@@ -19,9 +22,9 @@ class TextDownParser {
      * @param	text : text to parse
      * @return a sprite with well-formed text
      */
-	public function parse(text:String):List<ParagraphElement>
+	public function parse(text:String):List<Element>
 	{
-		var list = new List<ParagraphElement>();
+		var list = new List<Element>();
 		// Standardize line endings
 		var lineEnding:EReg = ~/(\r)(\n)?|(&#13;)|(&#10;)|(<br\/>)/g;
 		var uniformedText = lineEnding.replace(text, "\n");
@@ -30,6 +33,7 @@ class TextDownParser {
 
 			var formattedLine = parseLine(line);
 			list.add(formattedLine);
+			list.add(Browser.document.createBRElement());
 		}
 		return list;
 	}
@@ -39,12 +43,12 @@ class TextDownParser {
 	// INTERNALS
 	//
 
-	private function parseLine(line : String) : ParagraphElement {
+	private function parseLine(line : String) : Element {
 
 		var styleName = "";
 		var substring:String = line;
 		var level = 1;
-		var output = Browser.document.createParagraphElement();
+		var output: Element = null;
 
 		while (substring.charAt(0) == " ") {
 
@@ -99,6 +103,7 @@ class TextDownParser {
 			styleName += "ordered" + level;
 			var span = Browser.document.createSpanElement();
 			span.innerHTML = substring.substr(0);
+			output = Browser.document.createParagraphElement();
 			output.appendChild(span);
 			substring = substring.substr(2);
 		}
@@ -111,16 +116,24 @@ class TextDownParser {
 			var span = Browser.document.createSpanElement();
 			span.classList.add(style);
 			span.textContent = regexStyle.matched(3);
+			output = Browser.document.createParagraphElement();
 			output.appendChild(span);
 			substring = regexStyle.replace(substring, "$5");
 		}
 
 		substring = StringTools.ltrim(substring);
 
-		if (styleName != "") {
-
+		if(styleName.startsWith("title")){
+			output = Browser.document.createElement("h"+level);
+		}
+		else if (styleName != "") {
+			output = Browser.document.createParagraphElement();
 			output.classList.add(styleName);
 		}
+
+		if(output == null)
+			output = Browser.document.createParagraphElement();
+
 		output.appendChild(Browser.document.createTextNode(substring));
 
 		return output;

@@ -105,6 +105,9 @@ class PartDisplay extends BaseDisplay{
 
     }
 
+	public function switchElementToVisited (id:String):Void {
+	}
+
     public function setVideo(videoRef:String, uri: String, autoStart: Bool = false, loop: Bool = false, defaultVolume: Float = 1, capture: Float = 0, fullscreen : Bool = false, ?onVideoPlay: Void -> Void, ?onVideoEnd: Void -> Void):Void
     {
 
