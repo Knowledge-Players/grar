@@ -185,19 +185,21 @@ class GameService {
 			var f : haxe.xml.Fast = new haxe.xml.Fast(xml);
 
 			var numPart : Int = f.nodes.Part.length;
+			var partsOrder = new Map<String, Int>();
+			var i = 0;
 
 			for (partXml in f.nodes.Part) {
 
 				var pp : PartialPart = XmlToPart.parse(partXml.x);
+				// Preserve XML order
+				partsOrder[pp.pd.id] = i++;
 
 				fetchPartContent(partXml.x, pp, function(p : Part) {
-
-						parts.push(p);
+						parts.insert(partsOrder[p.id], p);
 
 						numPart--;
 
 						if (numPart == 0) {
-
 							onSuccess(parts);
 						}
 

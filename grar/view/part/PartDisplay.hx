@@ -47,7 +47,9 @@ class PartDisplay extends BaseDisplay
 
 		this.onActivateTokenRequest = function(tokenId : String){ callbacks.onActivateTokenRequest(tokenId); }
 
+		#if js
 		isMobile = ~/ipad|iphone|ipod|android|mobile/i.match(Browser.navigator.userAgent);
+		#end
 	}
 
 	public var introScreenOn (default, null) : Bool = false;

@@ -2,7 +2,10 @@ package grar;
 
 import grar.view.style.TextDownParser;
 import grar.view.contextual.MenuDisplay;
+
 import grar.service.KalturaService;
+import grar.service.GameService;
+
 import grar.model.contextual.MenuData;
 import grar.model.Config;
 import grar.model.State;
@@ -13,7 +16,6 @@ import grar.model.ContextualType;
 import grar.model.contextual.Notebook;
 import grar.model.part.Part;
 
-import grar.service.GameService;
 
 import grar.controller.TrackingController;
 import grar.controller.LocalizationController;
@@ -22,6 +24,8 @@ import grar.controller.PartController;
 import grar.view.Application;
 
 import haxe.ds.StringMap;
+
+using Lambda;
 
 /**
  * GRAR main controller
@@ -218,7 +222,18 @@ class Controller {
 			localizationCtrl.setInterfaceLocaleData();
 			menuData.levels = addPartsInfoToLevel(menuData.levels);
 			menuD.setTitle(state.module.getLocalizedContent(menuData.title));
-			menuD.initLevels(menuData.levels);
+			menuD.initLevels(menuData.levels.map(function(l: LevelData){
+				var data: grar.view.contextual.MenuDisplay.LevelData =  {id: null, partName: null, items: new Array<grar.view.contextual.MenuDisplay.LevelData>()};
+				data.id = l.id;
+				data.partName = l.partName;
+				for(item in l.items){
+					var i: grar.view.contextual.MenuDisplay.LevelData =   {id: null, partName: null, items: null};
+					i.id = item.id;
+					i.partName = item.partName;
+					data.items.push(i);
+				}
+				return data;
+			}).array());
 			localizationCtrl.restoreLocaleData();
 			// end locale
 		}
@@ -455,6 +470,7 @@ class Controller {
 				switch(item){
 					case Part(p):
 						startingPart = p.id;
+						break;
 				}
 			}
 		}

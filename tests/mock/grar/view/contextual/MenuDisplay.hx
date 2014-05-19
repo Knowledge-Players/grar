@@ -1,7 +1,12 @@
 package grar.view.contextual;
 
-import grar.model.contextual.MenuData;
 typedef Element = String;
+
+typedef LevelData = {
+	var id : String;
+	var items : Array<LevelData>;
+	var partName : String;
+}
 
 class MenuDisplay extends BaseDisplay{
 

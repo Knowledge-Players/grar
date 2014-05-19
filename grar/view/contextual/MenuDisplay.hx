@@ -1,10 +1,14 @@
 package grar.view.contextual;
 
-import js.html.NodeList;
-import Array;
-import grar.model.contextual.MenuData;
 import js.Browser;
 import js.html.Element;
+import js.html.NodeList;
+
+typedef LevelData = {
+	var id : String;
+	var items : Array<LevelData>;
+	var partName : String;
+}
 
 class MenuDisplay extends BaseDisplay {
 
@@ -79,7 +83,7 @@ class MenuDisplay extends BaseDisplay {
 
 					// Set subpart name
 					var name = "<a href='javascript:void(0)'>";
-					for(elem in markupParser.parse(l.partName))
+					for(elem in markupParser.parse(i.partName))
 						name += elem.innerHTML;
 					name += "</a>";
 					item.innerHTML = name;

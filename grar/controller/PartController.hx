@@ -105,10 +105,12 @@ class PartController
 		//startIndex = startPosition;
 		onLocaleDataPathRequest(part.file, function(){
 			display.onPartLoaded = function(){
+				// Activity Part
 				if(part.activityData != null){
 					display.onInputEvent = onInputEvent;
 					startActivity();
 				}
+				// Standard Part
 				else
 					nextElement();
 			}
@@ -146,6 +148,9 @@ class PartController
 			maxSelect = -1;
 		else if(rules.length > 1)
 			maxSelect = Std.parseInt(rules[1].value);
+
+		for(b in part.buttons)
+			initButtons(b);
 	}
 
     private function createInputs(group:Inputs) {
@@ -200,7 +205,6 @@ class PartController
 		currentElement = part.getNextElement(startIndex);
 
 		if (currentElement == null) {
-
 			exitPart(part);
 			return;
 		}
@@ -216,7 +220,6 @@ class PartController
 				enterSubPart(p);
 
 			case Item(i):
-
 				if (i.endScreen) {
 
 					part.isDone = true;
@@ -228,6 +231,7 @@ class PartController
 				startPattern(p);
 
 			case GroupItem(group):
+				currentSpeaker = null;
 				for(it in group.elements){
 					setupItem(it);
 				}
@@ -419,10 +423,8 @@ class PartController
 				}*/
 			}
 
-		} else if (currentSpeaker != null) {
+		} else if (currentSpeaker == null) {
 			display.hideSpeaker(currentSpeaker);
-
-			currentSpeaker = null;
 		}
 	}
 
