@@ -217,10 +217,10 @@ class PartDisplay extends BaseDisplay
 
 	public function reset():Void
 	{
-		for(child in root.childNodes)
+		/*for(child in root.childNodes)
 			if(child.nodeType == Node.ELEMENT_NODE)
 				hide(cast child);
-
+        */
 	}
 
 	public function setButtonAction(buttonId: String, action : Void -> Void) : Void {
