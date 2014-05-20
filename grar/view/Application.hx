@@ -1,8 +1,14 @@
 package grar.view;
 
+import js.Browser;
+import js.html.Element;
+import js.html.Node;
+
 import grar.model.contextual.MenuData;
 import grar.model.localization.LocaleData;
 
+import grar.view.style.TextDownParser;
+import grar.view.contextual.MenuDisplay;
 import grar.view.part.PartDisplay;
 
 import haxe.ds.GenericStack;
@@ -36,9 +42,32 @@ class Application {
 				onSoundToStop: function(){ stopSound(); },
 				onActivateTokenRequest: function(tid : String){ onActivateTokenRequest(tid); }
 			};
+
+		menus = new Map();
+		for(m in js.Browser.document.getElementsByClassName("menu")){
+			var menu: Element = null;
+			if(m.nodeType == Node.ELEMENT_NODE)
+				menu = cast m;
+			else
+				continue;
+
+			var display = new MenuDisplay();
+
+			display.onLevelClick = function(lId: String) {
+				onMenuClicked(lId);
+			}
+
+			// Parser
+			display.markupParser = new TextDownParser();
+
+			display.ref = menu.id;
+			menus[menu.id] = display;
+		}
 	}
 
 	public var menuData (default, set) : Null<MenuData>;
+
+	public var menus (default, null):Map<String, MenuDisplay>;
 
 	public var defaultStyleSheetName : Null<String> = null;
 
@@ -161,15 +190,44 @@ class Application {
 		// TODO show the selected div
 	}
 
-	public function startMenu() : Void {
+	public function initMenu(ref: String, levels: Array<grar.view.contextual.MenuDisplay.LevelData>) : Void {
+		/*var templates = new Map<String, Element>();
 
-		/*if (menu != null) {
+		var root = Browser.document.querySelector("#"+ref);
+		var list = Browser.document.createUListElement();
+		root.appendChild(list);
 
-			onInterfaceLocaleDataPathRequest();
+		var itemNum = 1;
+		for(l in levels){
+			//templates[l.name] = Browser.document.querySelector("#"+ref+"_");
+			var listItem = Browser.document.createLIElement();
+			list.appendChild(listItem);
+			// Set part name
+			var name = "";
+			for(elem in markupParser.parse(l.partName))
+				name += elem.innerHTML;
+			listItem.innerHTML = "<span class='decimal'>"+(itemNum < 10 ? '0'+ itemNum : Std.string(itemNum))+"</span>"+name;
 
-			menu.init(menuData);
+			// Sub list
+			if(l.items != null){
+				var sublist = Browser.document.createUListElement();
+				listItem.appendChild(sublist);
 
-			onRestoreLocaleRequest();
+				for(i in l.items){
+					var item = Browser.document.createLIElement();
+					sublist.appendChild(item);
+
+					// Set subpart name
+					var name = "<a href='javascript:void(0)'>";
+					for(elem in markupParser.parse(i.partName))
+						name += elem.innerHTML;
+					name += "</a>";
+					item.innerHTML = name;
+					item.id = i.id;
+					item.onclick = function(_) onLevelClick(i.id);
+				}
+			}
+			itemNum++;
 		}*/
 	}
 

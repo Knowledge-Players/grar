@@ -408,7 +408,6 @@ class PartDisplay extends BaseDisplay
 		getChildById(id).classList.add("complete");
 	}
 
-
 	///
 	// INTERNALS
 	//

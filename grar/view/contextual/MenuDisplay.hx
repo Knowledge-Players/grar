@@ -2,7 +2,6 @@ package grar.view.contextual;
 
 import js.Browser;
 import js.html.Element;
-import js.html.NodeList;
 
 typedef LevelData = {
 	var id : String;
@@ -10,11 +9,15 @@ typedef LevelData = {
 	var partName : String;
 }
 
+enum ItemStatus {
+	TODO;
+	STARTED;
+	DONE;
+}
+
 class MenuDisplay extends BaseDisplay {
 
 	public var ref (default, set):String;
-
-	var closeButtons: NodeList;
 
 	public function new()
 	{
@@ -27,6 +30,7 @@ class MenuDisplay extends BaseDisplay {
 
 	dynamic public function onLevelClick(levelId):Void {}
 	dynamic public function onCloseMenuRequest():Void {}
+	dynamic public function onOpenMenuRequest():Void {}
 
 	///
 	// Getter/Setter
@@ -35,12 +39,6 @@ class MenuDisplay extends BaseDisplay {
 	public function set_ref(ref: String):String
 	{
 		root = Browser.document.querySelector("#"+ref);
-
-		// Bind close button
-		closeButtons = root.getElementsByClassName("close");
-		for(b in closeButtons){
-			cast(b, Element).onclick = function(_) onCloseMenuRequest();
-		}
 
 		return this.ref = ref;
 	}
@@ -87,15 +85,32 @@ class MenuDisplay extends BaseDisplay {
 						name += elem.innerHTML;
 					name += "</a>";
 					item.innerHTML = name;
-					item.onclick = function(_) onLevelClick(l.id);
+					item.id = i.id;
+					item.onclick = function(_) onLevelClick(i.id);
 				}
 			}
 			itemNum++;
 		}
 	}
 
+	public function setItemStatus(itemId: String, status: ItemStatus):Void
+	{
+		var item: Element = getChildById(itemId);
+		// Remove previous state classes
+		for(state in Type.getEnumConstructs(ItemStatus))
+			item.classList.remove(state.toLowerCase());
+
+		// Add current state class
+		item.classList.add(Std.string(status).toLowerCase());
+	}
+
 	public function close():Void
 	{
 		root.classList.add("closed");
+	}
+
+	public function open():Void
+	{
+		root.classList.remove("closed");
 	}
 }

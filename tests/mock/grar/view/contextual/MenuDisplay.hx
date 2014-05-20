@@ -8,6 +8,12 @@ typedef LevelData = {
 	var partName : String;
 }
 
+enum ItemStatus {
+	TODO;
+	STARTED;
+	DONE;
+}
+
 class MenuDisplay extends BaseDisplay{
 
 	public var ref (default, set):String;
@@ -34,10 +40,17 @@ class MenuDisplay extends BaseDisplay{
 	}
 	public function close():Void
 	{}
+	public function open():Void
+	{}
+
+
+	public function setItemStatus(itemId: String, status: ItemStatus):Void
+	{}
 
 	dynamic public function onLevelClick(l):Void
 	{
 
 	}
 	dynamic public function onCloseMenuRequest():Void {}
+	dynamic public function onOpenMenuRequest():Void {}
 }

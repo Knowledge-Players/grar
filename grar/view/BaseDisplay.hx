@@ -17,9 +17,11 @@ class BaseDisplay{
 
 	}
 
-	private function doSetText(ref:String, content:String):Element
+	private function doSetText(ref:String, content:String):Null<Element>
 	{
 		var text: Element = getChildById(ref);
+		if(text == null)
+			return null;
 		var html = "";
 
 		// Clone child note list

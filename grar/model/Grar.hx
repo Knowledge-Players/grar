@@ -47,7 +47,7 @@ class Grar {
 		this.readyState = rs;
 		this.inventory = new StringMap();
 		this.scoreChart = new ScoreChart();
-		this.completion = new StringMap();
+		this.completion = new Map();
 		this.completionOrdered = new Array();
 		this.stashedLocaleData = new GenericStack<LocaleData>();
 	}
@@ -104,7 +104,7 @@ class Grar {
 
 	public var checksum (default, default) : Int;
 
-	public var completion : StringMap<Int>;
+	public var completion : Map<String, Int>;
 
 	public var completionOrdered : Array<String>;
 
@@ -365,26 +365,26 @@ class Grar {
 
     public function setPartStarted(pid : String) : Void {
 
-        completion.set(pid, 1);
+        completion[pid] =  1;
 
         // onPartStarted(getPartById(pid));
     }
 
 	public function setPartFinished(pid : String) : Void {
 
-		completion.set(pid, 2);
+		completion[pid] =  2;
 
 		onPartFinished(getPartById(pid));
 	}
 
     public function isPartStarted(pid : String) : Bool {
 
-        return completion.get(pid) == 1;
+        return completion[pid] == 1;
     }
 
 	public function isPartFinished(pid : String) : Bool {
 
-		return completion.get(pid) == 2;
+		return completion[pid] == 2;
 	}
 
 	/**

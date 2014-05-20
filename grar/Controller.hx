@@ -1,6 +1,6 @@
 package grar;
 
-import grar.view.style.TextDownParser;
+import grar.view.Application;
 import grar.view.contextual.MenuDisplay;
 
 import grar.service.KalturaService;
@@ -12,7 +12,6 @@ import grar.model.State;
 import grar.model.Grar;
 import grar.model.localization.Locale;
 import grar.model.InventoryToken;
-import grar.model.ContextualType;
 import grar.model.contextual.Notebook;
 import grar.model.part.Part;
 
@@ -21,8 +20,6 @@ import grar.controller.TrackingController;
 import grar.controller.LocalizationController;
 import grar.controller.PartController;
 
-import grar.view.Application;
-
 import haxe.ds.StringMap;
 
 using Lambda;
@@ -30,6 +27,7 @@ using Lambda;
 /**
  * GRAR main controller
  */
+@:expose
 class Controller {
 
 	public function new(c : Config) {
@@ -43,6 +41,7 @@ class Controller {
 		trackingCtrl = new TrackingController(this, state, config, application);
 		localizationCtrl = new LocalizationController(this, state, config, application, gameSrv);
 		partCtrl = new PartController(this, state, application);
+		menuDisplays = new Map();
 	}
 
 	var config : Config;
@@ -56,6 +55,7 @@ class Controller {
 
 	var application : Application;
 	var hasMenu: Bool = false;
+	var menuDisplays: Map<String, MenuDisplay>;
 
 	/**
 	 * Kaltura Session
@@ -101,7 +101,6 @@ class Controller {
 						state.module.readyState = LoadingGame(structureXml);
 
 					case LoadingGame(structureXml):
-						// TODO MenuController
 						var menuData : MenuData = null;
 
 						// game model & views (parts, contextuals)
@@ -131,6 +130,8 @@ class Controller {
 											if(state.module.readyState == Ready)
 												application.menuData = menuData;
 										}, onError);
+
+								default:
 							}
 						}
 
@@ -208,32 +209,25 @@ class Controller {
 
 		application.onMenuDataChanged = function(){
 			var menuData: MenuData = application.menuData;
-			var menuD = new MenuDisplay();
-			menuD.onLevelClick = function(lId: String) {
-				displayPartById(lId);
-			}
-			menuD.onCloseMenuRequest = function() menuD.close();
-
-			// Parser
-			menuD.markupParser = new TextDownParser();
-			menuD.ref = menuData.ref;
 
 			// Set texts in the right locale
 			localizationCtrl.setInterfaceLocaleData();
 			menuData.levels = addPartsInfoToLevel(menuData.levels);
-			menuD.setTitle(state.module.getLocalizedContent(menuData.title));
-			menuD.initLevels(menuData.levels.map(function(l: LevelData){
-				var data: grar.view.contextual.MenuDisplay.LevelData =  {id: null, partName: null, items: new Array<grar.view.contextual.MenuDisplay.LevelData>()};
-				data.id = l.id;
-				data.partName = l.partName;
-				for(item in l.items){
-					var i: grar.view.contextual.MenuDisplay.LevelData =   {id: null, partName: null, items: null};
-					i.id = item.id;
-					i.partName = item.partName;
-					data.items.push(i);
-				}
-				return data;
-			}).array());
+			for(menu in application.menus){
+				menu.setTitle(state.module.getLocalizedContent(menuData.title));
+				application.initMenu(menu.ref, menuData.levels.map(function(l: LevelData){
+					var data: grar.view.contextual.MenuDisplay.LevelData =  {id: null, partName: null, items: new Array<grar.view.contextual.MenuDisplay.LevelData>()};
+					data.id = l.id;
+					data.partName = l.partName;
+					for(item in l.items){
+						var i: grar.view.contextual.MenuDisplay.LevelData =   {id: null, partName: null, items: null};
+						i.id = item.id;
+						i.partName = item.partName;
+						data.items.push(i);
+					}
+					return data;
+				}).array());
+			}
 			localizationCtrl.restoreLocaleData();
 			// end locale
 		}
@@ -356,6 +350,14 @@ class Controller {
 		}, onError);
 	}
 
+	public function showMenu(ref: String){
+		application.menus[ref].open();
+	}
+
+	public function hideMenu(ref: String){
+		application.menus[ref].close();
+	}
+
 	///
 	// INTERNALS
 	//
@@ -412,24 +414,26 @@ class Controller {
         application.menuData = md;
 	}
 
-	/*function loadlayouts(uri : String, templates : StringMap<Xml>) : Void { // actually, code below also requires the templates to be fetch already (and styles too ?)
-
-        gameSrv.fetchLayouts(uri, templates, function(lm : StringMap<grar.view.layout.Layout.LayoutData>, lp : Null<String>){
-
-				if (lp != null) {
-
-					// lp is the id/path to the application wide localization file (used by the menu)
-					state.module.interfaceLocaleDataPath = lp;
+	function updateMenuCompletion(){
+		for(level in application.menuData.levels){
+			if(level.items != null){
+				for(item in level.items){
+					for(menu in application.menus){
+						var status: ItemStatus = switch(state.module.completion[item.id]){
+							case 0: ItemStatus.TODO;
+							case 1: ItemStatus.STARTED;
+							case 2: ItemStatus.DONE;
+							default: throw 'Unkonwn completion "'+state.module.completion[item.id]+'".';
+						}
+						menu.setItemStatus(item.id, status);
+					}
 				}
-				application.createLayouts(lm);
-
-				state.module.readyState = Ready; // FIXME reorganize init tasks and place in the safest place
-
-        	}, onError );
-	}*/
+			}
+		}
+	}
 
 	function displayPart(p : Part) : Bool {
-
+		updateMenuCompletion();
 #if !kpdebug
 		// Part doesn't meet the requirements to start
 		if (!state.module.canStart(p)) {
@@ -448,8 +452,6 @@ class Controller {
 	}
 
 	function launchGame() : Void {
-
-		application.startMenu();
 
 		application.changeLayout("default");
 
@@ -478,8 +480,6 @@ class Controller {
 	}
 
 	function onPartFinished(p : Part) {
-
-		//application.setFinishedPart(p.id);
 
 		if (p.next != null) {
 

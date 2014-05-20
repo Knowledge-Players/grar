@@ -3,6 +3,7 @@ package grar;
 import grar.model.Config;
 import grar.Controller;
 
+@:expose("grar")
 class App {
 
 	static public var controller : Null<Controller> = null;
@@ -40,5 +41,19 @@ class App {
 		#end
 		controller = new Controller(c);
 		controller.init();
+	}
+
+	///
+	// Public API
+	//
+
+	public static function openMenu(ref:String):Void
+	{
+		controller.showMenu(ref);
+	}
+
+	public static function closeMenu(ref: String):Void
+	{
+		controller.hideMenu(ref);
 	}
 }
