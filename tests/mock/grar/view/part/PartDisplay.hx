@@ -99,6 +99,14 @@ class PartDisplay extends BaseDisplay{
     {
 
     }
+    public function showPattern(ref:String):Void
+    {
+
+    }
+    public function hidePattern(ref:String):Void
+    {
+
+    }
 
     public function setIntroText(fieldRef: String, content: String):Void
     {
