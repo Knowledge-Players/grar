@@ -341,7 +341,11 @@ class PartController
 	private function startPattern(p : Pattern):Void
 	{
 
+
+
         currentPattern = p;
+
+        display.showPattern(currentPattern.ref);
 
         for(b in part.buttons)
             initButtons(b);
@@ -353,7 +357,7 @@ class PartController
         }
         else
         {
-
+            display.hidePattern(currentPattern.ref);
             currentPattern = null;
 
             nextElement();

@@ -171,6 +171,14 @@ class PartDisplay extends BaseDisplay
 
 		}
 	}
+    public function hidePattern(ref:String):Void{
+        var pat = getChildById(ref);
+        hide(pat);
+    }
+    public function showPattern(ref:String):Void{
+        var pat = getChildById(ref);
+        show(pat);
+    }
 
 	public function setIntroText(fieldRef: String, content: String):Void
 	{
@@ -209,10 +217,10 @@ class PartDisplay extends BaseDisplay
 
 	public function reset():Void
 	{
-		/*for(child in root.childNodes)
+		for(child in root.childNodes)
 			if(child.nodeType == Node.ELEMENT_NODE)
 				hide(cast child);
-        */
+
 	}
 
 	public function setButtonAction(buttonId: String, action : Void -> Void) : Void {
@@ -399,6 +407,7 @@ class PartDisplay extends BaseDisplay
 	{
 		getChildById(id).classList.add("complete");
 	}
+
 
 	///
 	// INTERNALS

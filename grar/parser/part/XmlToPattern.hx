@@ -51,12 +51,15 @@ class XmlToPattern {
 		var pd : PatternData = cast { };
 
 		pd.patternContent = [];
+
 		pd.buttons = new List<ButtonData>();
 		pd.tokens = new GenericStack<String>();
+        pd.ref = f.att.ref;
 		pd.id = f.att.id;
 		pd.nextPattern = f.att.next;
 		pd.endScreen = false;
 		pd.itemIndex = 0;
+
 
 		for (itemNode in f.nodes.Text) {
 
