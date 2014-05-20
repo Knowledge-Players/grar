@@ -94,8 +94,8 @@ class PartDisplay extends BaseDisplay
 
 	public function set_ref(ref:String):String
 	{
-		if(root != null)
-			hide(root);
+		//if(root != null)
+			//hide(root);
 		if(ref.indexOf("/") == -1)
 			root = Browser.document.getElementById(ref);
 		else{
@@ -201,12 +201,18 @@ class PartDisplay extends BaseDisplay
 		for(elem in elements)
 			show(getChildById(elem));
 	}
+    public function hideElements(elements:List<String>):Void
+	{
+		for(elem in elements)
+			hide(getChildById(elem));
+	}
 
 	public function reset():Void
 	{
-		for(child in root.childNodes)
+		/*for(child in root.childNodes)
 			if(child.nodeType == Node.ELEMENT_NODE)
 				hide(cast child);
+        */
 	}
 
 	public function setButtonAction(buttonId: String, action : Void -> Void) : Void {

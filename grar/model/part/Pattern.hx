@@ -70,7 +70,8 @@ class Pattern /* implements PartElement */ {
 
 	public function set_itemIndex(index: Int):Int
 	{
-		if(index < 0)
+
+        if(index < 0)
 			itemIndex = 0;
 		else if(index > patternContent.length)
 			itemIndex = patternContent.length -1;
@@ -88,12 +89,19 @@ class Pattern /* implements PartElement */ {
      */
 	public function getNextItem() : Null<Item> {
 
+
 		if (itemIndex < patternContent.length)
-			return patternContent[++itemIndex];
+        {
+            var i= itemIndex;
+            itemIndex++;
+            return patternContent[i];
+
+        }
 		else {
 			restart();
 			return null;
 		}
+
 	}
 
 	/**

@@ -50,6 +50,7 @@ class PartController
 	var currentElement : PartElement;
 	var currentSpeaker : String;
 	var previousBackground : String;
+    var currentPattern:Pattern;
 
 	// Activity vars
 	var isActivity: Bool = false;
@@ -201,46 +202,60 @@ class PartController
     **/
 	public function nextElement(?startIndex : Int = -1) : Void {
 
-		display.reset();
-		currentElement = part.getNextElement(startIndex);
 
-		if (currentElement == null) {
-			exitPart(part);
-			return;
-		}
-		switch (currentElement) {
+		//display.reset();
 
-			case Part(p):
 
-				if (p.endScreen) {
+        if(currentPattern !=null){
+            startPattern(currentPattern);
+        }
+        else
+        {
 
-					part.isDone = true;
-					parent.gameOver();
-				}
-				enterSubPart(p);
+            currentElement = part.getNextElement(startIndex);
 
-			case Item(i):
-				if (i.endScreen) {
 
-					part.isDone = true;
-					parent.gameOver();
-				}
-				setupItem(i);
 
-			case Pattern(p):
-				startPattern(p);
+            if (currentElement == null) {
+                exitPart(part);
+                return;
+            }
 
-			case GroupItem(group):
-				currentSpeaker = null;
-				for(it in group.elements){
-					setupItem(it);
-				}
-		}
+            switch (currentElement) {
+
+                case Part(p):
+
+                    if (p.endScreen) {
+
+                        part.isDone = true;
+                        parent.gameOver();
+                    }
+                    enterSubPart(p);
+
+                case Item(i):
+                    if (i.endScreen) {
+
+                        part.isDone = true;
+                        parent.gameOver();
+                    }
+                    setupItem(i);
+
+                case Pattern(p):
+
+                    startPattern(p);
+
+                case GroupItem(group):
+                    currentSpeaker = null;
+                    for(it in group.elements){
+                        setupItem(it);
+                    }
+            }
+        }
 	}
 
 	public function previousElement():Void
 	{
-		display.reset();
+		//display.reset();
 		currentElement = part.getPreviousElement();
 
 		if (currentElement == null) {
@@ -325,7 +340,27 @@ class PartController
 
 	private function startPattern(p : Pattern):Void
 	{
-		currentElement = Pattern(p);
+
+        currentPattern = p;
+
+        for(b in part.buttons)
+            initButtons(b);
+
+        var nextItem = p.getNextItem();
+        if(nextItem != null)
+        {
+            setupItem(nextItem);
+        }
+        else
+        {
+
+            currentPattern = null;
+
+            nextElement();
+        }
+
+
+
 	}
 
 	private function setupItem(item : Item) : Void {
@@ -457,6 +492,7 @@ class PartController
 	}
 
 	private function initButtons(bd: ButtonData) : Void {
+
 		var action = switch(bd.action.toLowerCase()) {
 			case "next": function() nextElement();
 			case "prev": function() previousElement();
