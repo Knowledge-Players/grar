@@ -26,7 +26,13 @@ class App {
 		var c = new Config();
 
 		// by default, grar starts with an asset-embedded structure.xml file
-		c.parseConfigParameter( "structureUri", "structure.xml" );
+        var st = untyped __js__('typeof STRUCTURE != "undefined" ? STRUCTURE : null;');
+        if(st != null)
+            c.parseConfigParameter( "structureUri", untyped __js__('STRUCTURE') );
+        else{
+            trace("No structure defined. Setting to default: content/structure.xml");
+            c.parseConfigParameter( "structureUri", "content/structure.xml" );
+        }
 
 		// TODO get as paramaters
 		// Bitrate

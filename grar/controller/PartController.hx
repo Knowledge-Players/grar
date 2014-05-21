@@ -130,7 +130,7 @@ class PartController
 	{
 		inputs = new List<Input>();
             var group: Inputs = part.getNextGroup();
-		if(group.groups != null){
+		if(group.groups != null && group.groups.length != 0){
 			for(g in group.groups){
                 createInputs(g);
 			}

@@ -97,12 +97,12 @@ class PartDisplay extends BaseDisplay
 	{
 		//if(root != null)
 			//hide(root);
-		if(ref.indexOf("/") == -1)
+		if(ref.indexOf("#") == -1)
 			root = Browser.document.getElementById(ref);
 		else{
 			// Insert HTML into the layout
 			// TODO GLOBAL: Utiliser des iframes et ici set src
-			var ids = ref.split("/");
+			var ids = ref.split("#");
 			root = Browser.document.getElementById(ids[1]);
 			var http = new Http(ids[0]);
 			http.onData = function(data){
@@ -272,17 +272,7 @@ class PartDisplay extends BaseDisplay
 			// Set attributes
 			newInput.id = r.id;
 			newInput.classList.add("inputs");
-			for(child in newInput.children){
-				// TODO
-				/* Waiting to resolve Std.is inconsistency on Safari https://github.com/HaxeFoundation/haxe/pull/2857
-				if(Std.is(child, Element)){
-					var elem = cast(child, Element);*/
-				var id: String = untyped __js__("child.id == undefined ? null : child.id");
-				if(id != null){
-					var elem = getChildById(id, newInput);
-					elem.setAttribute("id", r.id+"_"+id);
-				}
-			}
+            recursiveSetId(newInput, r.id);
 
 			// Add to DOM
 			if(guide != null)
@@ -337,6 +327,21 @@ class PartDisplay extends BaseDisplay
 
 		show(parent);
 	}
+
+    private function recursiveSetId(element:Element, ref:String):Void {
+        for(child in element.children){
+                // TODO
+                /* Waiting to resolve Std.is inconsistency on Safari https://github.com/HaxeFoundation/haxe/pull/2857
+				if(Std.is(child, Element)){
+					var elem = cast(child, Element);*/
+            var id: String = untyped __js__("child.id == undefined ? null : child.id");
+            if(id != null && id != ""){
+                var elem = getChildById(id, element);
+                elem.setAttribute("id", ref+"_"+id);
+            }
+            recursiveSetId(cast child,ref);
+        }
+    }
 
     public function switchElementToVisited (id:String):Void {
         var elem: Element = getChildById(id);
