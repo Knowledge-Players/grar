@@ -215,18 +215,7 @@ class Controller {
 			menuData.levels = addPartsInfoToLevel(menuData.levels);
 			for(menu in application.menus){
 				menu.setTitle(state.module.getLocalizedContent(menuData.title));
-				application.initMenu(menu.ref, menuData.levels.map(function(l: LevelData){
-					var data: grar.view.contextual.MenuDisplay.LevelData =  {id: null, partName: null, items: new Array<grar.view.contextual.MenuDisplay.LevelData>()};
-					data.id = l.id;
-					data.partName = l.partName;
-					for(item in l.items){
-						var i: grar.view.contextual.MenuDisplay.LevelData =   {id: null, partName: null, items: null};
-						i.id = item.id;
-						i.partName = item.partName;
-						data.items.push(i);
-					}
-					return data;
-				}).array());
+				application.initMenu(menu.ref, menuData.levels);
 			}
 			localizationCtrl.restoreLocaleData();
 			// end locale
@@ -335,6 +324,7 @@ class Controller {
 
 	public function gameOver():Void
 	{
+		updateMenuCompletion();
 		trace("GAME OVER");
 		trackingCtrl.exitModule(state.module, function() {
 			#if flash
@@ -405,7 +395,7 @@ class Controller {
 
 	function createDefaultMenu() : Void {
 
-    	var md : MenuData = { levels: [] , ref: "menu", title: "menu"};
+    	var md : MenuData = { levels: [], title: "menu"};
 
     	for (part in state.module.parts) {
 
@@ -415,10 +405,11 @@ class Controller {
 	}
 
 	function updateMenuCompletion(){
-		for(level in application.menuData.levels){
-			if(level.items != null){
-				for(item in level.items){
-					for(menu in application.menus){
+		for(menu in application.menus){
+			var currentId: String = null;
+			for(level in application.menuData.levels){
+				if(level.items != null){
+					for(item in level.items){
 						var status: ItemStatus = switch(state.module.completion[item.id]){
 							case 0: ItemStatus.TODO;
 							case 1: ItemStatus.STARTED;
@@ -426,9 +417,15 @@ class Controller {
 							default: throw 'Unkonwn completion "'+state.module.completion[item.id]+'".';
 						}
 						menu.setItemStatus(item.id, status);
+						if(currentId == null && status == ItemStatus.TODO)
+							currentId = item.id;
 					}
 				}
 			}
+			if(currentId != null)
+				menu.setCurrentItem(currentId);
+			else
+				menu.setGameOver();
 		}
 	}
 

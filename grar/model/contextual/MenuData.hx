@@ -11,6 +11,5 @@ typedef LevelData = {
 
 typedef MenuData = {
 	var levels : Array<LevelData>;
-	var ref: String;
 	var title: String;
 }

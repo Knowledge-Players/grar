@@ -9,6 +9,7 @@ using StringTools;
 /**
  * Parser for the MarkUp language
  */
+// TODO move to util
 class TextDownParser {
 
 	public function new(){ }

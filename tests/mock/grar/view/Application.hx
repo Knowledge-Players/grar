@@ -113,7 +113,7 @@ class Application{
 	public function changeLayout(l : String) : Void {
 	}
 
-	public function initMenu(ref: String, datas: Array<grar.view.contextual.MenuDisplay.LevelData>) : Void {
+	public function initMenu(ref: String, datas: Array<LevelData>) : Void {
 	}
 
 	public function changeVolume(nb : Float = 0) : Void {

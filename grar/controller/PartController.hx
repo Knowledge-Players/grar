@@ -46,6 +46,7 @@ class PartController
 	var application: Application;
 	var display: PartDisplay;
 	var part: Part;
+	// TODO remove
 	var parts: GenericStack<Part>;
 	var currentElement : PartElement;
 	var currentSpeaker : String;
@@ -528,6 +529,7 @@ class PartController
 		}
 		for(rule in rules){
 			switch(rule.value.toLowerCase()){
+			// TODO drag&drop dans la view
 				case "drag": display.startDrag(inputId, mousePoint);
 				case "drop":
 					var input: Input = inputs.filter(function(i: Input)return i.id == inputId).first();

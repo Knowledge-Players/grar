@@ -10,7 +10,7 @@ class XmlToMenu {
 
 		var f : Fast = new Fast(xml.firstElement());
 
-		var md : MenuData = { levels: [], ref: f.att.ref, title: f.att.title };
+		var md : MenuData = { levels: [], title: f.att.title };
 
 		for (elem in f.elements) {
 			md.levels.push(parseLevelData(elem));

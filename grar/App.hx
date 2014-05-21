@@ -3,6 +3,7 @@ package grar;
 import grar.model.Config;
 import grar.Controller;
 
+
 @:expose("grar")
 class App {
 
@@ -27,6 +28,7 @@ class App {
 		// by default, grar starts with an asset-embedded structure.xml file
 		c.parseConfigParameter( "structureUri", "structure.xml" );
 
+		// TODO get as paramaters
 		// Bitrate
 		#if js
 		var bt = untyped __js__('typeof BITRATE != "undefined" ? BITRATE : null;');
@@ -39,6 +41,9 @@ class App {
 		#else
 		c.parseConfigParameter( "bitrate", "350" );
 		#end
+
+		// TODO userAgent in Config
+
 		controller = new Controller(c);
 		controller.init();
 	}

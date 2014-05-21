@@ -1,6 +1,7 @@
 package grar.view;
 
 import js.Browser;
+import js.html.UListElement;
 import js.html.Element;
 import js.html.Node;
 
@@ -21,6 +22,9 @@ enum ContextualType {
 	NOTEBOOK;
 }
 
+/**
+* Main view
+**/
 class Application {
 
 	public function new() {
@@ -28,9 +32,6 @@ class Application {
 		// note: if we were to support multi instances with GRAR,
 		// we should pass here the targetted API's root element of
 		// the GRAR instance.
-
-		this.parts = new GenericStack<PartDisplay>();
-		//this.sounds = new StringMap();
 
 		this.callbacks = {
 
@@ -53,15 +54,20 @@ class Application {
 
 			var display = new MenuDisplay();
 
-			display.onLevelClick = function(lId: String) {
-				onMenuClicked(lId);
-			}
-
 			// Parser
 			display.markupParser = new TextDownParser();
 
 			display.ref = menu.id;
 			menus[menu.id] = display;
+		}
+		for(pb in Browser.document.getElementsByClassName("progressbar")){
+			var bar: Element = null;
+			if(pb.nodeType == Node.ELEMENT_NODE)
+				bar = cast pb;
+			else
+				continue;
+
+			bar.style.width = "0";
 		}
 	}
 
@@ -86,8 +92,6 @@ class Application {
 	var callbacks : grar.view.DisplayCallbacks;
 
 	public var previousLayout : String = null;
-
-	var parts : GenericStack<PartDisplay>;
 
 	var startIndex:Int;
 
@@ -190,45 +194,90 @@ class Application {
 		// TODO show the selected div
 	}
 
-	public function initMenu(ref: String, levels: Array<grar.view.contextual.MenuDisplay.LevelData>) : Void {
-		/*var templates = new Map<String, Element>();
+	public function initMenu(ref: String, levels: Array<LevelData>) : Void {
+		var templates = new Map<String, Element>();
 
 		var root = Browser.document.querySelector("#"+ref);
-		var list = Browser.document.createUListElement();
-		root.appendChild(list);
+
+
+		var hasProgress = false;
+		var offset = 0.0;
+		var previousLeft = 0.0;
+		if(root.hasAttribute("data-menu-type") && root.getAttribute("data-menu-type").toLowerCase() == "progressbar"){
+			hasProgress = true;
+			// Count all item number
+			var nbItem = 0;
+			for(l in levels){
+				if(l.items != null)
+					for(i in l.items)
+						nbItem++;
+			}
+			offset = 100/nbItem;
+			previousLeft = offset/2;
+		}
 
 		var itemNum = 1;
 		for(l in levels){
-			//templates[l.name] = Browser.document.querySelector("#"+ref+"_");
-			var listItem = Browser.document.createLIElement();
-			list.appendChild(listItem);
-			// Set part name
-			var name = "";
-			for(elem in markupParser.parse(l.partName))
-				name += elem.innerHTML;
-			listItem.innerHTML = "<span class='decimal'>"+(itemNum < 10 ? '0'+ itemNum : Std.string(itemNum))+"</span>"+name;
+			var t = Browser.document.querySelector("#"+ref+"_"+l.name);
+			var newLevel: Element = null;
+			if(t != null){
+				//root.appendChild(t.parentNode);
+				templates[l.name] = t;
+				newLevel = cast t.cloneNode(true);
+				t.parentNode.appendChild(newLevel);
+				// Set part name
+				var name = "";
+				for(elem in menus[ref].markupParser.parse(l.partName))
+					name += elem.innerHTML;
+				for(node in newLevel.querySelectorAll(".numbering"))
+					if(node.nodeType == Node.ELEMENT_NODE)
+						cast(node, Element).innerHTML = itemNum < 10 ? '0'+ itemNum : Std.string(itemNum);
+				newLevel.innerHTML += name;
+				newLevel.removeAttribute("id");
+			}
 
+			// TODO recursive function for unlimited sub levels
 			// Sub list
 			if(l.items != null){
-				var sublist = Browser.document.createUListElement();
-				listItem.appendChild(sublist);
+				var sublist: UListElement = null;
+				if(newLevel != null){
+					sublist = Browser.document.createUListElement();
+					newLevel.appendChild(sublist);
+				}
 
 				for(i in l.items){
-					var item = Browser.document.createLIElement();
-					sublist.appendChild(item);
+					var st = Browser.document.querySelector("#"+ref+"_"+i.name);
+					if(st != null){
+						templates[i.name] = st;
+						var newSubLevel: Element = cast st.cloneNode(true);
+						if(sublist != null)
+							sublist.appendChild(newSubLevel);
+						else if(st != null)
+							st.parentNode.appendChild(newSubLevel);
+						else
+							root.appendChild(newSubLevel);
 
-					// Set subpart name
-					var name = "<a href='javascript:void(0)'>";
-					for(elem in markupParser.parse(i.partName))
-						name += elem.innerHTML;
-					name += "</a>";
-					item.innerHTML = name;
-					item.id = i.id;
-					item.onclick = function(_) onLevelClick(i.id);
+						// Set subpart name
+						var name = "";
+						for(elem in menus[ref].markupParser.parse(i.partName))
+							name += elem.innerHTML;
+						name += "</a>";
+						newSubLevel.innerHTML = "<a href='#'>"+name+"</a>";
+						newSubLevel.id = i.id;
+						newSubLevel.classList.add(i.icon);
+						newSubLevel.onclick = function(_) onMenuClicked(i.id);
+						if(hasProgress){
+							newSubLevel.style.left = previousLeft+'%';
+							previousLeft += offset;
+						}
+					}
 				}
 			}
 			itemNum++;
-		}*/
+		}
+
+		for(t in templates)
+			t.parentNode.removeChild(t);
 	}
 
 	public function changeVolume(nb : Float = 0) : Void {

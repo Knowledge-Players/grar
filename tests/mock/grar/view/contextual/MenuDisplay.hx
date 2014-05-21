@@ -2,12 +2,6 @@ package grar.view.contextual;
 
 typedef Element = String;
 
-typedef LevelData = {
-	var id : String;
-	var items : Array<LevelData>;
-	var partName : String;
-}
-
 enum ItemStatus {
 	TODO;
 	STARTED;
@@ -34,10 +28,6 @@ class MenuDisplay extends BaseDisplay{
 
 	}
 
-	public function initLevels(l:Array<LevelData>):Void
-	{
-
-	}
 	public function close():Void
 	{}
 	public function open():Void
@@ -51,6 +41,16 @@ class MenuDisplay extends BaseDisplay{
 	{
 
 	}
+
+	public function setCurrentItem(id:String):Void
+	{
+
+	}
+
+	public function setGameOver():Void
+	{
+	}
+
 	dynamic public function onCloseMenuRequest():Void {}
 	dynamic public function onOpenMenuRequest():Void {}
 }

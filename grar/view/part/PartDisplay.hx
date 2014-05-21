@@ -47,6 +47,7 @@ class PartDisplay extends BaseDisplay
 
 		this.onActivateTokenRequest = function(tokenId : String){ callbacks.onActivateTokenRequest(tokenId); }
 
+		// TODO deplacer dans la Config
 		#if js
 		isMobile = ~/ipad|iphone|ipod|android|mobile/i.match(Browser.navigator.userAgent);
 		#end
@@ -100,6 +101,7 @@ class PartDisplay extends BaseDisplay
 			root = Browser.document.getElementById(ref);
 		else{
 			// Insert HTML into the layout
+			// TODO GLOBAL: Utiliser des iframes et ici set src
 			var ids = ref.split("/");
 			root = Browser.document.getElementById(ids[1]);
 			var http = new Http(ids[0]);
@@ -401,6 +403,8 @@ class PartDisplay extends BaseDisplay
 		else{
 			dragParent.appendChild(drag);
 		}
+
+		// TODO callback onValidationRequest()
 	}
 
 	public function setInputComplete(id:String):Void

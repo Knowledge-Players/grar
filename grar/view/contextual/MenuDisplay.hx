@@ -1,13 +1,8 @@
 package grar.view.contextual;
 
+import js.html.Node;
 import js.Browser;
 import js.html.Element;
-
-typedef LevelData = {
-	var id : String;
-	var items : Array<LevelData>;
-	var partName : String;
-}
 
 enum ItemStatus {
 	TODO;
@@ -52,50 +47,41 @@ class MenuDisplay extends BaseDisplay {
 		doSetText(ref, title);
 	}
 
-	public function initLevels(levels: Array<LevelData>):Void
+	public function setCurrentItem(id:String):Void
 	{
-		// TODO get template system
+		// Update progress bar
+		for(pb in root.querySelectorAll(".progressbar")){
+			var bar: Element = null;
+			if(pb.nodeType == Node.ELEMENT_NODE)
+				bar = cast pb;
+			else
+				continue;
 
-		// Create unordered list
-		var list = Browser.document.createUListElement();
-		root.appendChild(list);
+			var last = root.querySelector("#"+id);
+			if(last != null)
+				bar.style.width = last.style.left;
+		}
+	}
 
-		var itemNum = 1;
-		for(l in levels){
-			var listItem = Browser.document.createLIElement();
-			list.appendChild(listItem);
-			// Set part name
-			var name = "";
-			for(elem in markupParser.parse(l.partName))
-				name += elem.innerHTML;
-			listItem.innerHTML = "<span class='decimal'>"+(itemNum < 10 ? '0'+ itemNum : Std.string(itemNum))+"</span>"+name;
+	public function setGameOver():Void
+	{
+		for(pb in root.querySelectorAll(".progressbar")){
+			var bar: Element = null;
+			if(pb.nodeType == Node.ELEMENT_NODE)
+				bar = cast pb;
+			else
+				continue;
 
-			// Sub list
-			if(l.items != null){
-				var sublist = Browser.document.createUListElement();
-				listItem.appendChild(sublist);
-
-				for(i in l.items){
-					var item = Browser.document.createLIElement();
-					sublist.appendChild(item);
-
-					// Set subpart name
-					var name = "<a href='javascript:void(0)'>";
-					for(elem in markupParser.parse(i.partName))
-						name += elem.innerHTML;
-					name += "</a>";
-					item.innerHTML = name;
-					item.id = i.id;
-					item.onclick = function(_) onLevelClick(i.id);
-				}
-			}
-			itemNum++;
+			bar.style.width = "100%";
 		}
 	}
 
 	public function setItemStatus(itemId: String, status: ItemStatus):Void
 	{
 		var item: Element = getChildById(itemId);
+		if(item == null)
+			return;
+
 		// Remove previous state classes
 		for(state in Type.getEnumConstructs(ItemStatus))
 			item.classList.remove(state.toLowerCase());
