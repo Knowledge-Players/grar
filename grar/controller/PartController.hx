@@ -140,6 +140,7 @@ class PartController
 
         for (item in group.items) {
                display.setText(item.ref, getLocalizedContent(item.content));
+               setAuthor(item);
         }
 
 		// Selection limits
@@ -550,13 +551,15 @@ class PartController
 					}
 				case "showmore":
 					display.displayElements(Lambda.list([inputId+"_more"]));
-                case "toggle" :
+                case "setvisited" :
                     display.switchElementToVisited(inputId);
                 case "replacecontent" :
                     var input: Input = inputs.filter(function(i: Input)return i.id == inputId).first();
                     var output: Input = inputs.filter(function(i: Input)return i.id == input.values[0]).first();
                     var loc = getLocalizedContent(input.content[input.values[0]]);
                     display.setText(output.id,loc);
+                case "toggle" :
+                    display.toggleElement(inputId);
 			}
 		}
 

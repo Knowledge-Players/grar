@@ -1,5 +1,6 @@
 package grar.view.part;
 
+import js.html.InputElement;
 import grar.view.guide.Absolute;
 import grar.view.guide.Guide;
 import haxe.Http;
@@ -330,16 +331,17 @@ class PartDisplay extends BaseDisplay
 
     private function recursiveSetId(element:Element, ref:String):Void {
         for(child in element.children){
-                // TODO
-                /* Waiting to resolve Std.is inconsistency on Safari https://github.com/HaxeFoundation/haxe/pull/2857
-				if(Std.is(child, Element)){
-					var elem = cast(child, Element);*/
-            var id: String = untyped __js__("child.id == undefined ? null : child.id");
-            if(id != null && id != ""){
-                var elem = getChildById(id, element);
-                elem.setAttribute("id", ref+"_"+id);
+            if (child.nodeType == Node.ELEMENT_NODE) {
+                var element:Element = cast child;
+
+                if(element.id != ""){
+                    element.id = ref+"_"+ element.id ;
+                }
+                if(element.hasAttribute("for")){
+                    element.setAttribute("for", ref+"_"+ element.getAttribute("for"));
+                }
+                recursiveSetId(cast child,ref);
             }
-            recursiveSetId(cast child,ref);
         }
     }
 
@@ -348,6 +350,13 @@ class PartDisplay extends BaseDisplay
         var c = id.substr(0,id.length-1);
         elem.classList.remove(c);
         elem.classList.add(c+"Visited");
+    }
+
+    public function toggleElement (id:String):Void {
+        var elem:Element = cast getChildById(id);
+        for (e in elem.getElementsByTagName("input")) {
+            cast(e, InputElement).checked = !cast(e, InputElement).checked;
+        }
     }
 
 	public function startDrag(id:String, mousePoint: Point):Void
