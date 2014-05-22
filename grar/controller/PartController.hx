@@ -121,15 +121,23 @@ class PartController
 
 	public function startActivity():Void
 	{
+		display.onValidationRequest = function(inputId: String){
+			// TODO Validate
+			//
+			part.activityData.score += part.getInput(inputId).points;
+
+			var rules = part.getRulesByType("minScore");
+			if(part.activityData.score >= Std.parseInt(rules[0].value))
+				display.enableDisabledButtons();
+		}
 		inputs = new List<Input>();
             var group: Inputs = part.getNextGroup();
-		if(group.groups != null && group.groups.length != 0){
-			for(g in group.groups){
+
+		if(group.groups != null && group.groups.length != 0)
+			for(g in group.groups)
                 createInputs(g);
-			}
-		} else if (group != null) {
+		else if (group != null)
             createInputs(group);
-        }
 
         for (item in group.items) {
                display.setText(item.ref, getLocalizedContent(item.content));
@@ -152,11 +160,12 @@ class PartController
     private function createInputs(group:Inputs) {
         var inputList = Lambda.map(group.inputs, function(input: Input){
             var localizedContent = new Map<String, String>();
-            for(key in input.content.keys()){
+            for(key in input.content.keys())
                 localizedContent[key] = getLocalizedContent(input.content[key]);
-            }
+
             return {ref: input.ref, id: input.id, content: localizedContent, icon: input.icon}
         });
+
         var sort = part.getRulesByType("sort", group);
         if(sort.length == 1){
             switch(sort[0].value.toLowerCase()){
@@ -172,6 +181,7 @@ class PartController
                     inputList = randomList;
             }
         }
+
         display.createInputs(inputList, group.ref);
         inputs = inputs.concat(group.inputs);
     }
@@ -202,19 +212,17 @@ class PartController
     **/
 	public function nextElement(?startIndex : Int = -1) : Void {
 
+		// Check conditions
+		if(part.activityData != null){
+			var rules = part.getRulesByType("minScore");
+			if(part.activityData.score < Std.parseInt(rules[0].value))
+				return;
+		}
 
-		//display.reset();
-
-
-        if(currentPattern !=null){
+		if(currentPattern !=null)
             startPattern(currentPattern);
-        }
-        else
-        {
-
+        else {
             currentElement = part.getNextElement(startIndex);
-
-
 
             if (currentElement == null) {
                 exitPart(part);
@@ -254,7 +262,6 @@ class PartController
 
 	public function previousElement():Void
 	{
-		//display.reset();
 		currentElement = part.getPreviousElement();
 
 		if (currentElement == null) {
@@ -286,10 +293,10 @@ class PartController
     * @param    startPosition : Start at this position
     **/
 
-	public function startPart(?startPosition:Int = -1):Void
+	/*public function startPart(?startPosition:Int = -1):Void
 	{
 		nextElement(startPosition);
-	}
+	}*/
 
 	/**
 	* Go to a specific pattern
@@ -339,9 +346,7 @@ class PartController
 
 	private function startPattern(p : Pattern):Void
 	{
-
-
-
+		// TODO Stateless
         currentPattern = p;
 
         display.showPattern(currentPattern.ref);
@@ -361,19 +366,13 @@ class PartController
 
             nextElement();
         }
-
-
-
 	}
 
 	private function setupItem(item : Item) : Void {
 
-		if (item == null) {
-
-			return;
-		}
-
-		//currentItem = item;
+		// TODO useful ?
+		/*if (item == null)
+			return;*/
 
 		// Activate tokens in the part
  		for (token in item.tokens)
@@ -414,10 +413,7 @@ class PartController
 		else if (item.introScreen != null) {
 
 			introScreenOn = true;
-			//display.cleanDisplay();
-
 			setAuthor(item);
-
 			display.setText(item.ref, getLocalizedContent(item.content));
 
 			// TODO Sound
@@ -426,19 +422,19 @@ class PartController
 			// The intro screen automatically removes itself after its duration
 			var intro = item.introScreen;
 
-			for (field in intro.content.keys()) {
+			for (field in intro.content.keys())
 				display.setIntroText(field, getLocalizedContent(intro.content.get(field)));
-			}
+
 			display.onIntroEnd = function() displayPart(part);
 
-		} else {
+		}
+		else {
 			setAuthor(item);
 			display.setText(item.ref, getLocalizedContent(item.content));
+		}
 
-		}
-		for (image in item.images){
+		for (image in item.images)
 			display.setImage(image.ref,image.src);
-		}
 
 		display.displayElements(createDisplayList(item));
 	}
@@ -466,7 +462,6 @@ class PartController
 	private function createDisplayList(item: Item): List<String> {
 
 		var list = new List<String>();
-		//list = Lambda.concat(list, item.images);
 
 		var button : List<ButtonData> = null;
 		switch (currentElement) {
@@ -490,7 +485,15 @@ class PartController
 	private function initButtons(bd: ButtonData) : Void {
 
 		var action = switch(bd.action.toLowerCase()) {
-			case "next": function() nextElement();
+			case "next":
+				if(part.activityData != null){
+					var rules = part.getRulesByType("minScore");
+					if(rules.length > 0)
+						display.disableNextButton(bd.ref);
+//					if(part.activityData.score >= Std.parseInt(rules[0]))
+//						nextElement();
+				}
+				function() nextElement();
 			case "prev": function() previousElement();
 			case "goto": function() {
 						var goToTarget : PartElement = part.buttonTargets.get(bd.ref);
@@ -553,74 +556,7 @@ class PartController
 			}
 		}
 
-
 		if(maxSelect == part.activityData.numRightAnswers)
 			isEnabled = false;
-		/*var needValidation = false;
-		var input: Input = buttonsToInputs.get(target);
-		var clickRules = cast(part, ActivityPart).getRulesByType(eventType, input.group);
-		for(rule in clickRules){
-			switch(rule.value.toLowerCase()){
-				case "goto":
-					var target = part.getElementById(buttonsToInputs.get(target).values[0]);
-
-					switch (target) {
-
-						case Part(p):
-
-							onPartDisplayRequest(p);
-
-						default: throw "target not a part"; // remove this throw if it happens normally
-					}
-
-					needValidation = true;
-
-				case "toggle":
-					target.classList.add("checked");
-					var selected = buttonsToInputs.get(target).selected = e.target.toggleState == "active";
-					validatedInputs.set(e.target, selected);
-					needValidation = true;
-				case "drag":
-					e.target.startDrag();
-					e.target.parent.setChildIndex(e.target, e.target.parent.numChildren-1);
-					dragOrigin = {x: e.target.x, y: e.target.y};
-				case "drop":
-					e.target.stopDrag();
-					var drop: DisplayObject = cast(e.target.dropTarget, DisplayObject);
-					while(drop != null && !(drop.is(grar.view.component.container.DefaultButton) && (inputs.has(cast(drop, grar.view.component.container.DefaultButton)) || cast(drop, Widget).ref == dropRef)))
-						drop = drop.parent;
-					if(drop != null && validate(e.target, (buttonsToInputs.exists(cast(drop, grar.view.component.container.DefaultButton)) ? buttonsToInputs.get(cast(drop, grar.view.component.container.DefaultButton)).id : drop.name))){
-						copyCoordinates(e.target, drop);
-						if(buttonsToInputs.exists(cast(drop, grar.view.component.container.DefaultButton))){
-							var dropZone = new DefaultButton(callbacks, applicationTilesheet, transitions);
-							dropZone.enabled = false;
-							dropZone.initSprite(drop.width, drop.height, 0.001);
-							dropZone.ref = dropRef;
-							dropZone.name = buttonsToInputs.get(cast(drop, grar.view.component.container.DefaultButton)).id;
-							copyCoordinates(dropZone, drop);
-							drop.parent.addChild(dropZone);
-						}
-					}
-					else{
-						copyCoordinates(e.target, dragOrigin);
-					}
-			}
-		}
-		if(needValidation && autoCorrect)
-			onValidate(Std.string(e.target.toggleState == "active"));
-
-		// Selection limits
-		var validated = Lambda.count(validatedInputs, function(input){
-			return input;
-		});
-
-		// Activate validation button
-		if(validationButton != null)
-			validationButton.toggle(validated >= minSelect);
-		// Toggle inputs
-		if(validated == maxSelect)
-			disableInputs();
-		else
-			enableInputs();*/
 	}
 }

@@ -61,6 +61,8 @@ class PartDisplay extends BaseDisplay{
 
 	public dynamic function onHeaderStateChangeRequest(state: String) : Void { }
 
+	public dynamic function onValidationRequest(inputId: String): Void {}
+
 ///
 // GETTER / SETTER
 //
@@ -137,6 +139,13 @@ class PartDisplay extends BaseDisplay{
     {
 
     }
+
+
+	public function disableNextButton(buttonId: String):Void
+	{
+	}
+	public function enableDisabledButtons():Void
+	{}
 
     public function setButtonAction(buttonId: String, action : Void -> Void) : Void {
 

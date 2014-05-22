@@ -92,6 +92,8 @@ class PartDisplay extends BaseDisplay
 
 	public dynamic function onInputEvent(type: InputEvent, inputId: String, mousePoint: Point): Void {}
 
+	public dynamic function onValidationRequest(inputId: String): Void {}
+
 	///
 	// GETTER / SETTER
 	//
@@ -235,6 +237,17 @@ class PartDisplay extends BaseDisplay
         */
 	}
 
+	public function disableNextButton(buttonId: String):Void
+	{
+		getChildById(buttonId).classList.add("disabled");
+	}
+
+	public function enableDisabledButtons():Void
+	{
+		for(b in root.getElementsByClassName("disabled"))
+			Std.instance(b, Element).classList.remove("disabled");
+	}
+
 	public function setButtonAction(buttonId: String, action : Void -> Void) : Void {
 
 		getChildById(buttonId).onclick = function(_) action();
@@ -328,7 +341,10 @@ class PartDisplay extends BaseDisplay
 			else
 				newInput.onmousedown = onStart;
 
-			newInput.onclick = function(e: MouseEvent) onInputEvent(InputEvent.CLICK(CLICK), newInput.id, getMousePosition(e));
+			newInput.onclick = function(e: MouseEvent){
+				onInputEvent(InputEvent.CLICK(CLICK), newInput.id, getMousePosition(e));
+				onValidationRequest(newInput.id);
+			}
 
 			// Display
 			show(newInput);

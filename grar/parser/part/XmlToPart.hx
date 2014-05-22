@@ -274,14 +274,15 @@ class XmlToPart {
 		}
 
 		pd = parsePartContentData(pd, xml);
-		var activityData: ActivityData = {groups: groups, rules: rules, groupIndex: 0, numRightAnswers: 0};
+		var activityData: ActivityData = {groups: groups, rules: rules, groupIndex: 0, numRightAnswers: 0, score: 0};
 		return { pd: pd, ad: activityData };
 	}
 
-	static function createInput(f : Fast, ? group : Inputs) : Input {
+	static function createInput(f : Fast) : Input {
 
 		var values;
 		var icons;
+		var points;
 
 		if (f.has.values)
 			values = ParseUtils.parseListOfValues(f.att.values);
@@ -292,7 +293,13 @@ class XmlToPart {
 			icons = ParseUtils.parseHash(f.att.icon);
 		else
 			icons = new Map<String, String>();
-		return {id: f.att.id, ref: f.att.ref, content: ParseUtils.parseHash(f.att.content), values: values, selected: false, icon: icons,group: group};
+
+		if(f.has.points)
+			points = Std.parseInt(f.att.points);
+		else
+			points = 0;
+
+		return {id: f.att.id, ref: f.att.ref, content: ParseUtils.parseHash(f.att.content), values: values, selected: false, icon: icons, points: points};
 	}
 
 	static inline function createInputGroup(f : Fast) : Inputs {
@@ -318,7 +325,7 @@ class XmlToPart {
         for (input in f.elements) {
             switch (input.name.toLowerCase()) {
                 case "input" :
-                    inputs.push(createInput(input, group));
+                    inputs.push(createInput(input));
                 case "text" :
                     items.push(XmlToItem.parse(input.x));
                 case "inputs" :

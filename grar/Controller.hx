@@ -228,54 +228,6 @@ class Controller {
 			// end locale
 		}
 
-		application.onMenuUpdateDynamicFieldsRequest = function() {
-
-				/*for (field in application.menu.dynamicFields) {
-
-					if (field.content == "unlock_counter") {
-
-						var parent : Part = state.module.getPartById(field.field.ref);
-						var numUnlocked = 0;
-
-						if (parent != null) {
-
-							var children = parent.getAllParts();
-
-							if (children.length <= 1) {
-
-								var totalChildren = 0;
-								var allParts = state.module.getAllParts();
-
-								for (part in allParts) {
-
-									if (StringTools.startsWith(part.id, field.field.ref) && part.id != field.field.ref) {
-
-										totalChildren++;
-
-										if (state.module.canStart(part)) {
-
-											numUnlocked++;
-										}
-									}
-								}
-								application.menu.updateDynamicFields(numUnlocked, totalChildren);
-
-							} else {
-
-								for (child in children) {
-
-									if (state.module.canStart(child)) {
-
-										numUnlocked++;
-									}
-								}
-								application.menu.updateDynamicFields(numUnlocked, children.length);
-							}
-						}
-					}
-				}*/
-			}
-
 		application.onMenuButtonStateRequest = function(partName : String) : { l : Bool, d : Bool } {
 
 				for (part in state.module.getAllParts()) {
@@ -323,16 +275,7 @@ class Controller {
 		updateMenuCompletion();
 		trace("GAME OVER");
 		trackingCtrl.exitModule(state.module, function() {
-			#if flash
-						if (flash.external.ExternalInterface.available) {
-
-							flash.external.ExternalInterface.call("quitModule");
-
-						} else {
-
-							flash.system.System.exit(0);
-						}
-#end
+			//TODO ?
 		}, onError);
 	}
 

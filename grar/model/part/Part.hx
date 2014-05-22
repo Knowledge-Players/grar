@@ -74,7 +74,7 @@ typedef Input = {
 	var values : Array<String>;
 	var selected : Bool;
 	var icon: Map<String, String>;
-	@:optional var group : Inputs;
+	var points: Int;
 }
 
 typedef ActivityData = {
@@ -82,6 +82,7 @@ typedef ActivityData = {
 	var groups : Array<Inputs>;
 	var groupIndex : Int;
 	var numRightAnswers :Int;
+	var score: Int;
 }
 
 class Part{
@@ -504,8 +505,10 @@ class Part{
 	public function restart() : Void {
 
 		elemIndex = -1;
-		if(activityData != null)
+		if(activityData != null){
 			activityData.groupIndex = 0;
+			activityData.score = 0;
+		}
 	}
 
 	/**
@@ -559,6 +562,30 @@ class Part{
 			result = searchGroup(group, inputId);
 			i++;
 		}
+		return result;
+	}
+
+	public function getInput(inputId:String):Null<Input>
+	{
+		if(activityData == null)
+			throw 'This part is not an activity';
+
+		var result: Input = null;
+		var group: Inputs = null;
+		var i = 0;
+		while(i < activityData.groups.length && group == null){
+			group = searchGroup(activityData.groups[i], inputId);
+			i++;
+		}
+
+		if(group != null){
+			var j = 0;
+			while(j < elements.length && group.inputs[j].id != inputId)
+				j++;
+
+			result = group.inputs[j];
+		}
+
 		return result;
 	}
 
@@ -618,18 +645,16 @@ class Part{
 
 		if(activityData == null)
 			throw 'This part is not an activity';
+
 		var i = 0;
-
-		while (i < input.values.length && input.values[i] != value) {
-
+		while (i < input.values.length && input.values[i] != value)
 			i++;
-		}
+
 		var result = i != input.values.length;
 
-		if (result) {
-
+		if (result)
 			activityData.numRightAnswers++;
-		}
+
 		input.selected = value == "true";
 
 		return result;
