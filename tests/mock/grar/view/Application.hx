@@ -73,7 +73,7 @@ class Application{
 
 	public dynamic function onMenuButtonStateRequest(partName : String) : { l : Bool, d : Bool } { return null; }
 
-	public dynamic function onMenuClicked(partId : String) : Void { }
+	public dynamic function onMenuClicked(partId : String, menuId: String) : Void { }
 
 	public dynamic function onMenuAdded() : Void { }
 
@@ -99,8 +99,6 @@ class Application{
 
 	public dynamic function onRestoreLocaleRequest() : Void { }
 
-	public dynamic function onLocalizedContentRequest(k : String) : String { return null; }
-
 	public dynamic function onLocaleDataPathRequest(uri : String) : Void { }
 
 	public dynamic function onInterfaceLocaleDataPathRequest() : Void { }
@@ -110,7 +108,8 @@ class Application{
 	public dynamic function onGameOverRequest() : Void { }
 
 	public dynamic function onMenuUpdateDynamicFieldsRequest() : Void { }
-	public function changeLayout(l : String) : Void {
+
+	public function changeHeaderState(l : String) : Void {
 	}
 
 	public function initMenu(ref: String, datas: Array<LevelData>) : Void {
@@ -119,6 +118,11 @@ class Application{
 	public function changeVolume(nb : Float = 0) : Void {
 
 	}
+	public function updateModuleInfos(name:String, type:String):Void
+	{}
+
+	public function updateChapterInfos(chapterName:String, activityName:String):Void
+	{}
 
 	/**
 	* Pre load a sound. Then use playSound with the same url to play it

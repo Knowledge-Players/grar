@@ -78,6 +78,8 @@ class PartDisplay extends BaseDisplay
 
 	public dynamic function onPartLoaded() : Void { }
 
+	public dynamic function onHeaderStateChangeRequest(state: String) : Void { }
+
 	public dynamic function onGameOver() : Void { }
 
 	public dynamic function onActivateTokenRequest(token : String) : Void { }
@@ -108,6 +110,13 @@ class PartDisplay extends BaseDisplay
 			var http = new Http(ids[0]);
 			http.onData = function(data){
 				root.innerHTML = data;
+				for(child in root.children){
+					if(child.nodeType == Node.ELEMENT_NODE)
+						if(cast(child, Element).hasAttribute("data-layout-state")){
+							onHeaderStateChangeRequest(cast(child, Element).getAttribute("data-layout-state"));
+						}
+				}
+
 				onPartLoaded();
 			}
 

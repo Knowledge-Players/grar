@@ -75,6 +75,14 @@ class Controller {
 			localizationCtrl.restoreLocaleData();
 		}
 
+		partCtrl.onHeaderStateChangeRequest = function(state: String){
+			application.changeHeaderState(state);
+		}
+
+		partCtrl.onPartFinished = function(part: Part, next: Bool){
+			onPartFinished(part, next);
+		}
+
 		state.onReadyStateChanged = function() {
 
 				if (state.readyState && config.structureFileUri != null) {
@@ -186,20 +194,19 @@ class Controller {
 
 				onPartFinished(p);
 
-				for (part in state.module.getAllParts()) {
+				/*for (part in state.module.getAllParts()) {
 
 					if (!part.isDone && state.module.canStart(part)) {
 
 						//application.menu.unlockNextPart(part.id);
-						/* Before we had this also (from MenuDisplay)
+						// Before we had this also (from MenuDisplay)
 						if (!part.canStart()) {
 
 							buttons.get(part.id).toggleState = "lock";
 
 						}
-						*/
 					}
-				}
+				}*/
 			}
 
 		state.onInventoryTokenActivated = function(t : InventoryToken) {
@@ -281,11 +288,12 @@ class Controller {
 				return null;
 			}
 
-		application.onMenuClicked = function(partId : String) {
+		application.onMenuClicked = function(partId : String, menuId: String) {
 
+				partCtrl.exitPart(false, true);
 				if (displayPartById(partId)) {
 
-					//application.menu.setMenuExit();
+					hideMenu(menuId);
 				}
 			}
 
@@ -301,18 +309,6 @@ class Controller {
 				}
 				//application.menu.setCurrentPart(allParts[i]);
 			}
-
-		application.onLayoutsChanged = function() {
-
-				// last call before the user experience actually starts
-        		//application.initMenu();
-			}
-
-		/*application.onActivateTokenRequest = function(tokenId : String) {
-
-				state.module.activateInventoryToken(tokenId);
-
-			}*/
 
 		application.onQuitGameRequest = function() {
 
@@ -352,7 +348,6 @@ class Controller {
 	// INTERNALS
 	//
 
-	// TODO MenuController
 	function createMenuLevel(p : Part, ? l : Int = 1) : LevelData {
 
 		var name : String = "h" + l;
@@ -417,28 +412,27 @@ class Controller {
 							default: throw 'Unkonwn completion "'+state.module.completion[item.id]+'".';
 						}
 						menu.setItemStatus(item.id, status);
-						if(currentId == null && status == ItemStatus.TODO)
-							currentId = item.id;
 					}
 				}
 			}
-			if(currentId != null)
-				menu.setCurrentItem(currentId);
-			else
-				menu.setGameOver();
+			//menu.setGameOver();
 		}
 	}
 
 	function displayPart(p : Part) : Bool {
-		updateMenuCompletion();
-#if !kpdebug
+		#if !kpdebug
 		// Part doesn't meet the requirements to start
 		if (!state.module.canStart(p)) {
 
 			return false;
 		}
-#end
+		#end
 		partCtrl.displayPart(p);
+
+		updateMenuCompletion();
+
+		for(menu in application.menus)
+			menu.setCurrentItem(p.id);
 
 		return true;
 	}
@@ -450,9 +444,12 @@ class Controller {
 
 	function launchGame() : Void {
 
-		application.changeLayout("default");
-
 		var startingPart : String = null;
+
+		localizationCtrl.setInterfaceLocaleData();
+			application.updateModuleInfos(state.module.getLocalizedContent("moduleName"), state.module.getLocalizedContent("moduleType"));
+		localizationCtrl.restoreLocaleData();
+
 
 		if (state.module.bookmark > 0) {
 
@@ -476,9 +473,9 @@ class Controller {
 		displayPartById(startingPart);
 	}
 
-	function onPartFinished(p : Part) {
+	function onPartFinished(p : Part, ? next: Bool = true) {
 
-		if (p.next != null) {
+		if (next && p.next != null) {
 
 			var i = 0;
 
@@ -490,18 +487,24 @@ class Controller {
 
 					displayPart(nextPart);
 
-				} else {
-
-					application.displayContextual(Type.createEnum(ContextualType, next.toUpperCase()), (i == 0));
 				}
 				i++;
 			}
 
 		}
 		else{
-			var next = state.module.getNextPart(p);
-			if(next != null)
-				displayPart(next);
+			var futurePart: Part = null;
+			if(next)
+				futurePart = state.module.getNextPart(p);
+			else{
+				futurePart = state.module.getPreviousPart(p);
+				futurePart.elemIndex = futurePart.elements.length - 2;
+			}
+
+			if(futurePart != null){
+				state.module.start(futurePart.id);
+				displayPart(futurePart);
+			}
 			else
 				gameOver();
 		}

@@ -86,11 +86,6 @@ class LocalizationController {
 
 				setLocaleDataPath(path);
 			}
-
-		application.onLocalizedContentRequest = function(k : String) : String {
-
-				return state.module.getLocalizedContent(k);
-			}
 	}
 
 	function initLocaleData() : Void {

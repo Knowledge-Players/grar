@@ -14,7 +14,7 @@ import grar.service.AutoService;
 import grar.service.ScormService;
 
 class TrackingController {
-	
+
 	public function new(parent : Controller, state : State, config : Config, application : Application) {
 
 		this.parent = parent;
@@ -60,7 +60,7 @@ class TrackingController {
 					case Auto( lesson_location ):
 
 						autoSrv.setLocation(state.tracking.isActive, lesson_location);
-				}				
+				}
 			}
 
 		state.onTrackingStatusChanged = function() {
@@ -104,7 +104,7 @@ class TrackingController {
 						if (state.tracking.getScore() >= state.tracking.masteryScore) {
 
 							state.tracking.setSuccessStatus(true);
-						
+
 						} else {
 
 							state.tracking.setSuccessStatus(false);
@@ -113,9 +113,9 @@ class TrackingController {
 					case Aicc( u, i ):
 
 						if (state.tracking.getScore() >= state.tracking.masteryScore) {
-						
+
 							state.tracking.setStatus(true);
-						
+
 						} else {
 
 							state.tracking.setStatus(false);
@@ -126,9 +126,9 @@ class TrackingController {
 						autoSrv.setScore(state.tracking.isActive, state.tracking.getScore());
 
 						if (state.tracking.getScore() >= state.tracking.masteryScore) {
-						
+
 							state.tracking.setStatus(true);
-						
+
 						} else {
 
 							state.tracking.setStatus(false);
@@ -166,7 +166,7 @@ class TrackingController {
 
 								var stateStr : String = saveStateInfos();
 
-								if (!(state.module.currentLocale == null && state.module.bookmark == -1 && 
+								if (!(state.module.currentLocale == null && state.module.bookmark == -1 &&
 										state.module.completionOrdered.length == 0)) {
 
 									state.tracking.location = stateStr;
@@ -182,20 +182,18 @@ class TrackingController {
 
 				var stateStr : String = saveStateInfos();
 
-				if (!(state.module.currentLocale == null && state.module.bookmark == -1 && 
+				if (!(state.module.currentLocale == null && state.module.bookmark == -1 &&
 						state.module.completionOrdered.length == 0)) {
 
 					state.tracking.location = stateStr;
 				}
-
-				application.setGameOver();
 			}
 	}
 
 	public function initTracking(m : Grar, onSuccess : Void -> Void, onError : String -> Void) : Void {
 
 		var loadStateInfos = function(stateStr : String) : Void {
-				
+
 				var stateInfosArray : Array<String> = stateStr.split("@");
 
 				state.module.currentLocale = stateInfosArray[0];
@@ -223,7 +221,7 @@ class TrackingController {
 		            loadStateInfos(m.state.value);
 		        }
 			    var status = t.getStatus();
-			    
+
 			    if (status == null || status == "") {
 
 				    t.setStatus(false);
@@ -254,7 +252,7 @@ class TrackingController {
 		var allItem = state.module.getAllItems();
 
 		var stateInfosArray : Array<String> = state.trackingInitString.split("@");
-		
+
 		var trackable : Array<String> = stateInfosArray[2].split("-");
 
 		if (allItem.length > 0) {
@@ -322,7 +320,7 @@ class TrackingController {
         var a : Array<String> = new Array<String>();
 
         var allItem = state.module.getAllItems();
-        
+
         for (i in 0...allItem.length) {
 
             a.push("0");
@@ -333,7 +331,7 @@ class TrackingController {
 	private function saveStateInfos() : String {
 
 		var stringBuf : StringBuf = new StringBuf();
-		
+
 		stringBuf.add(state.module.currentLocale);
 		stringBuf.add("@");
 		stringBuf.add(state.module.bookmark);
@@ -352,7 +350,7 @@ class TrackingController {
 		for (i in 0...state.module.completionOrdered.length) {
 
 			buffer.add(state.module.completion.get(state.module.completionOrdered[i]));
-			
+
 			if (i != state.module.completionOrdered.length - 1) {
 
 				buffer.add("-");

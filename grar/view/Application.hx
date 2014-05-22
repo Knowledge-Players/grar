@@ -35,8 +35,6 @@ class Application {
 
 		this.callbacks = {
 
-				onContextualDisplayRequest: function(c : ContextualType, ? ho : Bool = true){ this.displayContextual(c, ho); },
-				onContextualHideRequest: function(c : ContextualType){ this.hideContextual(c); },
 				onQuitGameRequest: function(){ this.onQuitGameRequest(); },
 				onSoundToLoad: function(sndUri:String){ loadSound(sndUri); },
 				onSoundToPlay: function(sndUri:String){ playSound(sndUri); },
@@ -144,7 +142,7 @@ class Application {
 
 	public dynamic function onMenuButtonStateRequest(partName : String) : { l : Bool, d : Bool } { return null; }
 
-	public dynamic function onMenuClicked(partId : String) : Void { }
+	public dynamic function onMenuClicked(partId : String, menuId: String) : Void { }
 
 	public dynamic function onMenuAdded() : Void { }
 
@@ -170,8 +168,6 @@ class Application {
 
 	public dynamic function onRestoreLocaleRequest() : Void { }
 
-	public dynamic function onLocalizedContentRequest(k : String) : String { return null; }
-
 	public dynamic function onLocaleDataPathRequest(uri : String) : Void { }
 
 	public dynamic function onInterfaceLocaleDataPathRequest() : Void { }
@@ -189,9 +185,35 @@ class Application {
 	// API
 	//
 
-	public function changeLayout(l : String) : Void {
+	public function changeHeaderState(state : String) : Void {
+		for(h in Browser.document.getElementsByTagName("header"))
+			if(h.nodeType == Node.ELEMENT_NODE)
+				// Override previous state
+				cast(h, Element).className = state;
+	}
 
-		// TODO show the selected div
+	public function updateModuleInfos(name:String, type:String):Void
+	{
+		// Update module name
+		for(p in Browser.document.getElementsByClassName("moduleName"))
+			if(p.nodeType == Node.ELEMENT_NODE)
+				cast(p, Element).innerHTML = name;
+		// Update module type
+		for(p in Browser.document.getElementsByClassName("moduleType"))
+			if(p.nodeType == Node.ELEMENT_NODE)
+				cast(p, Element).innerHTML = type;
+	}
+
+	public function updateChapterInfos(chapterName:String, activityName:String):Void
+	{
+		// Update module name
+		for(p in Browser.document.getElementsByClassName("chapterName"))
+			if(p.nodeType == Node.ELEMENT_NODE)
+				cast(p, Element).innerHTML = chapterName;
+		// Update module type
+		for(p in Browser.document.getElementsByClassName("activityName"))
+			if(p.nodeType == Node.ELEMENT_NODE)
+				cast(p, Element).innerHTML = activityName;
 	}
 
 	public function initMenu(ref: String, levels: Array<LevelData>) : Void {
@@ -265,7 +287,7 @@ class Application {
 						newSubLevel.innerHTML = "<a href='#'>"+name+"</a>";
 						newSubLevel.id = i.id;
 						newSubLevel.classList.add(i.icon);
-						newSubLevel.onclick = function(_) onMenuClicked(i.id);
+						newSubLevel.onclick = function(_) onMenuClicked(i.id, ref);
 						if(hasProgress){
 							newSubLevel.style.left = previousLeft+'%';
 							previousLeft += offset;
@@ -338,43 +360,6 @@ class Application {
 		}*/
 	}
 
-	public function setGameOver() : Void {
-
-	}
-
-
-	// WIP
-
-	public function hideContextual(c : ContextualType) : Void {
-
-		// TODO select the contextual and hide it
-		/*var cd : Display = getContextual(c);
-
-		doHideContextual(cd);*/
-	}
-
-	public function displayContextual(c : ContextualType, ? hideOther : Bool = true) : Void {
-
-		// TODO select the contextual and show it
-		/*var cd : Display = getContextual(c);
-
-		doDisplayContextual(cd, cd.layout, hideOther);*/
-	}
-
-	/*public function setFinishedPart(partId : String) : Void {
-
-		var finishedPart = parts.pop();
-
-		if (finishedPart.part.id != partId) {
-
-			trace("WARNING "+finishedPart.part.id+" != "+partId);
-		}
-		if (menu != null) {
-
-			menu.setPartFinished(partId);
-		}
-	}*/
-
 	/**
     * Activate a token of the inventory
     * @param    tokenName : Name of the token to activate
@@ -392,126 +377,4 @@ class Application {
 		// TODO Notebook controller ?
 		//notebook.setActivateToken(t);
 	}
-
-
-	///
-	// INTERNALS
-	//
-
-	/*
-	function onPartDisplayLoaded(pd : PartDisplay) : Void {
-
-		onSetBookmarkRequest(pd.part.id);
-
-		pd.startPart(startIndex);
-
-		if (pd.visible && pd.layout != null) {
-
-			changeLayout(pd.layout);
-		}
-		//currentLayout.zones.get(mainLayoutRef).addChild(pd);
-
-		//currentLayout.updateDynamicFields();
-
-		onPartLoaded(pd.part);
-	}
-
-
-	public function displayNext(previous : Part) : Void {
-
-		if (!parts.isEmpty() && parts.first().part == previous.parent) {
-
-			parts.first().visible = true;
-			parts.first().nextElement();
-			// if this part is not finished too
-			if (parts.first() != null) {
-
-				changeLayout(parts.first().layout);
-			}
-
-		}
-	}
-
-	function onEnterSubPart(part : Part) : Void {
-
-		onPartDisplayRequest(part);
-	}
-
-	function createPartDisplay(part : Part) : Null<PartDisplay> {
-
-		if (part == null) {
-
-			return null;
-		}
-		part.restart();
-
-		var creation : PartDisplay = null;
-
-		if (part.isDialog()) {
-
-			creation = new DialogDisplay(callbacks, part);
-
-		} else if(part.isStrip()) {
-
-			creation = new StripDisplay(callbacks, part);
-
-		} else if(part.isActivity()) {
-
-			creation = new ActivityDisplay(callbacks, part);
-
-		} else {
-
-			creation = new PartDisplay(callbacks, part);
-		}
-
-		return creation;
-	}*/
-
-	// WIP
-
-	/*function getContextual(c : ContextualType) : Display {
-
-		switch (c) {
-
-			case MENU:
-
-				return menu;
-
-			case NOTEBOOK:
-
-				return notebook;
-		}
-		return null;
-	}*/
-
-	/*function doDisplayContextual(contextual : Display, ? layout : String, hideOther : Bool = true) : Void {
-
-		// Remove previous one
-		if ( hideOther && lastContextual != null
-			 && currentLayout.zones.get(mainLayoutRef).contains(lastContextual) && !parts.isEmpty() ) {
-
-			doHideContextual(lastContextual);
-		}
-
-		// Change to selected layout
-		if (layout != null) {
-
-			changeLayout(layout);
-		}
-		currentLayout.zones.get(mainLayoutRef).addChild(contextual);
-
-		lastContextual = contextual;
-
-		currentLayout.updateDynamicFields();
-	}
-
-	private function doHideContextual(contextual : Display) : Void {
-
-		if (currentLayout.name == contextual.layout) {
-
-			currentLayout.zones.get(mainLayoutRef).removeChild(contextual);
-
-			changeLayout(previousLayout);
-		}
-	}*/
 }
