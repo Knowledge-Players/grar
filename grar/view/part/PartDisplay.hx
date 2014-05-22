@@ -27,6 +27,7 @@ using StringTools;
 using Lambda;
 
 enum InputEvent{
+    MOUSE_OVER(name: String);
 	CLICK(name: String);
 	MOUSE_DOWN(name: String);
 	MOUSE_UP(name: String, targetId: String);
@@ -61,6 +62,7 @@ class PartDisplay extends BaseDisplay
 	static var CLICK = "click";
 	static var MOUSE_DOWN = "mouseDown";
 	static var MOUSE_UP = "mouseUp";
+	static var MOUSE_OVER = "mouseOver";
 
 	var videoPlayer: VideoPlayer;
 	var soundPlayer: SoundPlayer;
@@ -346,6 +348,7 @@ class PartDisplay extends BaseDisplay
 				onValidationRequest(newInput.id);
 			}
 
+            newInput.onmouseover = function(e:MouseEvent) onInputEvent(InputEvent.MOUSE_OVER(MOUSE_OVER), newInput.id, getMousePosition(e));
 			// Display
 			show(newInput);
 			i++;

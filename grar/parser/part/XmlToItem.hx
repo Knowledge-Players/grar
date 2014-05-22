@@ -1,5 +1,6 @@
 package grar.parser.part;
 
+import grar.model.part.Part.ImageData;
 import grar.model.part.ButtonData;
 import grar.model.part.item.Item;
 

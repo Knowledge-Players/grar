@@ -155,6 +155,9 @@ class PartController
 
 		for(b in part.buttons)
 			initButtons(b);
+
+        for(img in part.images)
+            display.setImage(img.ref,img.src);
 	}
 
     private function createInputs(group:Inputs) {
@@ -520,6 +523,8 @@ class PartController
 				part.getRulesByType(name, part.getInputGroup(inputId));
 
 			case CLICK(name): part.getRulesByType(name, part.getInputGroup(inputId));
+            case MOUSE_OVER(name): part.getRulesByType(name, part.getInputGroup(inputId));
+
 		}
 		for(rule in rules){
 			switch(rule.value.toLowerCase()){
@@ -544,6 +549,10 @@ class PartController
 					}
 				case "showmore":
 					display.displayElements(Lambda.list([inputId+"_more"]));
+                case "showelement":
+                    var input: Input = inputs.filter(function(i: Input)return i.id == inputId).first();
+                    for (s in input.values)
+                        display.switchElementToVisited(s);
                 case "setvisited" :
                     display.switchElementToVisited(inputId);
                 case "replacecontent" :

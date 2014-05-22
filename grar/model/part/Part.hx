@@ -21,6 +21,11 @@ typedef PartialPart = {
 	var type : PartType;
 }
 
+typedef ImageData ={
+    var src:String;
+    var ref:String;
+}
+
 typedef PartData = {
 
 	var name : String;
@@ -36,6 +41,7 @@ typedef PartData = {
 	var soundLoop : String;
 	var elements : Array<PartElement>;
 	var buttons : List<ButtonData>;
+    var images : List<ImageData>;
 	var perks : Map<String, Int>;
 	var score : Int;
 	var ref : String;
@@ -97,6 +103,7 @@ class Part{
 		this.soundLoop = pd.soundLoop;
 		this.elements = pd.elements;
 		this.buttons = pd.buttons;
+		this.images = pd.images;
 		this.score = pd.score;
 		this.ref = pd.ref;
 		this.requirements = pd.requirements;
@@ -157,6 +164,11 @@ class Part{
      * Button of the part
      **/
 	public var buttons (default, default) : List<ButtonData>;
+
+     /**
+     * Images of the part
+     **/
+    public var images (default, default) : List<ImageData>;
 
 	/**
 	 * Perks of this part
