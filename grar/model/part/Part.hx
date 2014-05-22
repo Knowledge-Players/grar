@@ -185,10 +185,11 @@ class Part{
 
 	public var activityData (default, set):ActivityData;
 
+	public var elemIndex (default, set): Int = -1;
+
 	private var nbSubPartLoaded : Int = 0;
 	private var nbSubPartTotal : Int = 0;
 	private var partIndex : Int = 0;
-	private var elemIndex : Int = -1;
 	//private var soundLoopChannel : SoundChannel;
 	private var loaded : Bool = false;
 
@@ -205,6 +206,17 @@ class Part{
 	///
 	// GETTER / SETTER
 	//
+
+	public function set_elemIndex(index:Int):Int
+	{
+		if(index < -1)
+			elemIndex = -1;
+		else if(index > elements.length)
+			elemIndex = elements.length -1;
+		else
+			elemIndex = index;
+		return elemIndex;
+	}
 
 	public function set_parent(pt : Null<Part>) : Null<Part> {
 
@@ -492,6 +504,8 @@ class Part{
 	public function restart() : Void {
 
 		elemIndex = -1;
+		if(activityData != null)
+			activityData.groupIndex = 0;
 	}
 
 	/**
@@ -526,7 +540,6 @@ class Part{
 	public function hasNextGroup() : Bool {
 		if(activityData == null)
 			throw 'This part is not an activity';
-		trace(activityData.groupIndex, activityData.groups.length);
 		return activityData.groupIndex < activityData.groups.length;
 	}
 

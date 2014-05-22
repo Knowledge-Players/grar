@@ -364,10 +364,9 @@ class Grar {
 
 
     public function setPartStarted(pid : String) : Void {
-
-        completion[pid] =  1;
-
-        // onPartStarted(getPartById(pid));
+		// Can't go from finished to started
+	    if(completion[pid] < 1)
+            completion[pid] =  1;
     }
 
 	public function setPartFinished(pid : String) : Void {
@@ -416,6 +415,19 @@ class Grar {
 	}
 
 	/**
+	* @param part: starting point
+	* @return the part before the starting point
+	**/
+	public function getPreviousPart(p:Part):Null<Part>
+	{
+		var i = 0;
+		while(i < parts.length && parts[i] != p)
+			i++;
+
+		return i < parts.length ? parts[i-1] : null;
+	}
+
+	/**
      * Start the game
      * @param	partId : the ID of the part to start.
      * @return 	the part with id partId or null if this part doesn't exist
@@ -460,6 +472,7 @@ class Grar {
 	            partIndex = k + 1;
 	        }
         }
+	    setPartStarted(nextPart.id);
         return nextPart;
     }
 

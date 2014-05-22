@@ -59,6 +59,8 @@ class PartDisplay extends BaseDisplay{
 
     public dynamic function onInputEvent(type: InputEvent, inputId: String, mousePoint: Point): Void {}
 
+	public dynamic function onHeaderStateChangeRequest(state: String) : Void { }
+
 ///
 // GETTER / SETTER
 //

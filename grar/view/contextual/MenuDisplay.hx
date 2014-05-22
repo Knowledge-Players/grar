@@ -49,23 +49,37 @@ class MenuDisplay extends BaseDisplay {
 
 	public function setCurrentItem(id:String):Void
 	{
+		var last = root.querySelector("#"+id);
 		// Update progress bar
-		for(pb in root.querySelectorAll(".progressbar")){
-			var bar: Element = null;
-			if(pb.nodeType == Node.ELEMENT_NODE)
-				bar = cast pb;
-			else
-				continue;
+		if(last != null){
+			for(pb in root.getElementsByClassName("progressbar")){
+				var bar: Element = null;
+				if(pb.nodeType == Node.ELEMENT_NODE)
+					bar = cast pb;
+				else
+					continue;
 
-			var last = root.querySelector("#"+id);
-			if(last != null)
 				bar.style.width = last.style.left;
+			}
+
+			for(marker in root.getElementsByClassName("done")){
+				var elem: Element = cast marker;
+				if(Std.parseFloat(elem.style.left) > Std.parseFloat(last.style.left)){
+					elem.classList.remove("done");
+				}
+			}
+			for(marker in root.getElementsByClassName("started")){
+				var elem: Element = cast marker;
+				if(Std.parseFloat(elem.style.left) > Std.parseFloat(last.style.left)){
+					elem.classList.remove("started");
+				}
+			}
 		}
 	}
 
 	public function setGameOver():Void
 	{
-		for(pb in root.querySelectorAll(".progressbar")){
+		for(pb in root.getElementsByClassName("progressbar")){
 			var bar: Element = null;
 			if(pb.nodeType == Node.ELEMENT_NODE)
 				bar = cast pb;

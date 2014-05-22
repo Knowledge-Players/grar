@@ -16,7 +16,7 @@ typedef PatternData = {
 	var itemIndex : Int;
 }
 
-class Pattern /* implements PartElement */ {
+class Pattern {
 
 	public function new(pd : PatternData) {
 
@@ -70,7 +70,6 @@ class Pattern /* implements PartElement */ {
 
 	public function set_itemIndex(index: Int):Int
 	{
-
         if(index < 0)
 			itemIndex = 0;
 		else if(index > patternContent.length)
@@ -91,12 +90,7 @@ class Pattern /* implements PartElement */ {
 
 
 		if (itemIndex < patternContent.length)
-        {
-            var i= itemIndex;
-            itemIndex++;
-            return patternContent[i];
-
-        }
+            return patternContent[itemIndex++];
 		else {
 			restart();
 			return null;

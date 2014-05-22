@@ -34,8 +34,6 @@ class PartController
 		this.state = state;
 		this.application = app;
 
-		parts = new GenericStack<Part>();
-
 		dropList = new Map<String, List<String>>();
 
 		init();
@@ -46,10 +44,7 @@ class PartController
 	var application: Application;
 	var display: PartDisplay;
 	var part: Part;
-	// TODO remove
-	var parts: GenericStack<Part>;
 	var currentElement : PartElement;
-	var currentSpeaker : String;
 	var previousBackground : String;
     var currentPattern:Pattern;
 
@@ -65,6 +60,11 @@ class PartController
 	///
 
 	public dynamic function onRestoreLocaleRequest() : Void {}
+
+	public dynamic function onHeaderStateChangeRequest(state: String) : Void {}
+
+	public dynamic function onPartFinished(part: Part, next:Bool):Void
+	{}
 
 	public dynamic function onLocaleDataPathRequest(uri: String, ?onSuccess: Void -> Void) : Void {}
 
@@ -87,25 +87,18 @@ class PartController
     * @param    interrupt : Stop current part to display the new one
     * @return true if the part can be displayed.
     */
-	public function displayPart(part : Part, interrupt : Bool = false, startPosition : Int = -1) : Bool {
+	public function displayPart(part : Part): Bool {
 		this.part = part;
-		if (interrupt) {
-
-			var oldPart = parts.pop();
-
-			if (oldPart != null) {
-				exitPart(oldPart);
-			}
-		}
-		/*if (!parts.isEmpty()) {
-
-			parts.first().onPartLoaded = function(){ trace("CHECK THIS !!!!"); }
-		}*/
-
-		parts.add(part);
 
 		//startIndex = startPosition;
+		display.onHeaderStateChangeRequest = function(state: String){
+			onHeaderStateChangeRequest(state);
+		}
 		onLocaleDataPathRequest(part.file, function(){
+
+
+			application.updateChapterInfos(state.module.getLocalizedContent("chapterName"), state.module.getLocalizedContent("activityName"));
+
 			display.onPartLoaded = function(){
 				// Activity Part
 				if(part.activityData != null){
@@ -182,19 +175,24 @@ class PartController
         inputs = inputs.concat(group.inputs);
     }
 
-	public function exitPart(part: Part, completed : Bool = true) : Void {
+	public function exitPart(?part: Part, ?completed : Bool = true, ?fromMenu: Bool = false) : Void {
+		var p: Part;
+		if(part == null)
+			p = this.part;
+		else
+			p = part;
 
-		part.isDone = completed;
+		p.isDone = completed;
 		if(completed)
-			state.module.setPartFinished(part.id);
+			state.module.setPartFinished(p.id);
+		else if(!fromMenu)
+			onPartFinished(part, false);
 
 		display.reset();
+		p.restart();
 
-		if (part.file != null)
+		if (p.file != null)
 			onRestoreLocaleRequest();
-
-		// Go to next Part
-		//nextElement();
 	}
 
 	/**
@@ -246,7 +244,6 @@ class PartController
                     startPattern(p);
 
                 case GroupItem(group):
-                    currentSpeaker = null;
                     for(it in group.elements){
                         setupItem(it);
                     }
@@ -260,7 +257,7 @@ class PartController
 		currentElement = part.getPreviousElement();
 
 		if (currentElement == null) {
-			exitPart(part);
+			exitPart(part, false);
 			return;
 		}
 		switch (currentElement) {
@@ -448,10 +445,7 @@ class PartController
 	private function setAuthor(item: Item):Void
 	{
 		if (item.author != null) {
-			if (item.author != currentSpeaker) {
-				display.hideSpeaker(currentSpeaker);
-				currentSpeaker = item.author;
-				display.showSpeaker(currentSpeaker);
+				display.showSpeaker(item.author);
 				// TODO Manage nameRef
 				/*if (char.nameRef != null) {
 
@@ -461,10 +455,6 @@ class PartController
 
 					throw "[PartDisplay] There is no TextArea with ref " + char.nameRef;
 				}*/
-			}
-
-		} else if (currentSpeaker == null) {
-			display.hideSpeaker(currentSpeaker);
 		}
 	}
 
