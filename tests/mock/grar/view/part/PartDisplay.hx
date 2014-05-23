@@ -177,6 +177,5 @@ class PartDisplay extends BaseDisplay{
     public function setInputComplete(id:String):Void
     {
     }
-	public function toggleElement (id:String):Void {}
 
 }
