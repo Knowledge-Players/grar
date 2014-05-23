@@ -245,7 +245,8 @@ class Application {
 			if(t != null){
 				//root.appendChild(t.parentNode);
 				templates[l.name] = t;
-				newLevel = cast t.cloneNode(true);
+                var node = t.cloneNode(true);
+				newLevel =  Std.instance(node,Element);
 				t.parentNode.appendChild(newLevel);
 				// Set part name
 				var name = "";
@@ -253,7 +254,7 @@ class Application {
 					name += elem.innerHTML;
 				for(node in newLevel.querySelectorAll(".numbering"))
 					if(node.nodeType == Node.ELEMENT_NODE)
-						cast(node, Element).innerHTML = itemNum < 10 ? '0'+ itemNum : Std.string(itemNum);
+						Std.instance(node, Element).innerHTML = itemNum < 10 ? '0'+ itemNum : Std.string(itemNum);
 				newLevel.innerHTML += name;
 				newLevel.removeAttribute("id");
 			}
