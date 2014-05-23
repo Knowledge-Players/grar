@@ -140,19 +140,23 @@ class PartDisplay extends BaseDisplay{
 
     }
 
+	public function hideElementsByClass(className: String):Void
+	{}
+
     public function reset():Void
     {
 
     }
 
-
-	public function disableNextButton(buttonId: String):Void
+	public function disableNextButtons():Void
 	{
 	}
-	public function enableDisabledButtons():Void
-	{}
 
-    public function setButtonAction(buttonId: String, action : Void -> Void) : Void {
+	public function enableNextButtons():Void
+	{
+	}
+
+    public function setButtonAction(buttonId: String, actionName: String, action : Void -> Void) : Void {
 
     }
 
@@ -173,5 +177,6 @@ class PartDisplay extends BaseDisplay{
     public function setInputComplete(id:String):Void
     {
     }
+	public function toggleElement (id:String):Void {}
 
 }

@@ -1,7 +1,7 @@
 package grar.view.contextual;
 
-import js.html.Node;
 import js.Browser;
+import js.html.Node;
 import js.html.Element;
 
 enum ItemStatus {
@@ -33,7 +33,7 @@ class MenuDisplay extends BaseDisplay {
 
 	public function set_ref(ref: String):String
 	{
-		root = Browser.document.querySelector("#"+ref);
+		root = Browser.document.getElementById(ref);
 
 		return this.ref = ref;
 	}
@@ -62,13 +62,20 @@ class MenuDisplay extends BaseDisplay {
 				bar.style.width = last.style.left;
 			}
 
-			for(marker in root.getElementsByClassName("done")){
+			var doneMarker = new Array<Element>();
+			for(node in root.getElementsByClassName("done"))
+				doneMarker.push(cast node);
+			for(marker in doneMarker){
 				var elem: Element = cast marker;
 				if(Std.parseFloat(elem.style.left) > Std.parseFloat(last.style.left)){
 					elem.classList.remove("done");
 				}
 			}
-			for(marker in root.getElementsByClassName("started")){
+
+			var startedMarker = new Array<Element>();
+			for(node in root.getElementsByClassName("started"))
+				startedMarker.push(cast node);
+			for(marker in startedMarker){
 				var elem: Element = cast marker;
 				if(Std.parseFloat(elem.style.left) > Std.parseFloat(last.style.left)){
 					elem.classList.remove("started");

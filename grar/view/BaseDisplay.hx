@@ -41,6 +41,7 @@ class BaseDisplay{
 		///
 			for(elem in markupParser.parse(content))
 				html += elem.outerHTML;
+			// TODO replace by textContent
 			text.innerHTML += html;
 		}
 		else

@@ -27,6 +27,7 @@ using StringTools;
 using Lambda;
 
 enum InputEvent{
+	//Remove name param
     MOUSE_OVER(name: String);
 	CLICK(name: String);
 	MOUSE_DOWN(name: String);
@@ -82,8 +83,6 @@ class PartDisplay extends BaseDisplay
 
 	public dynamic function onHeaderStateChangeRequest(state: String) : Void { }
 
-	public dynamic function onGameOver() : Void { }
-
 	public dynamic function onActivateTokenRequest(token : String) : Void { }
 
 	public dynamic function onNextRequest(?startIndex : Int = -1): Void { }
@@ -116,8 +115,8 @@ class PartDisplay extends BaseDisplay
 				root.innerHTML = data;
 				for(child in root.children){
 					if(child.nodeType == Node.ELEMENT_NODE)
-						if(cast(child, Element).hasAttribute("data-layout-state")){
-							onHeaderStateChangeRequest(cast(child, Element).getAttribute("data-layout-state"));
+						if(Std.instance(child, Element).hasAttribute("data-layout-state")){
+							onHeaderStateChangeRequest(Std.instance(child, Element).getAttribute("data-layout-state"));
 						}
 				}
 
@@ -177,11 +176,11 @@ class PartDisplay extends BaseDisplay
 	public function setImage(imageRef:String,src:String):Void{
 
 		if(imageRef != null){
-			var img:Element =getChildById(imageRef);
-			var p: Bool = untyped __js__("img.src!= null");
-			if(p){
-				untyped __js__("img.src= src");
-			}
+
+			var elem:Element =getChildById(imageRef);
+            //use of Std.instance
+            var img:ImageElement = Std.instance(elem,ImageElement);
+            img.src = src;
 
 			show(img);
 
@@ -225,10 +224,17 @@ class PartDisplay extends BaseDisplay
 		for(elem in elements)
 			show(getChildById(elem));
 	}
+
     public function hideElements(elements:List<String>):Void
 	{
 		for(elem in elements)
 			hide(getChildById(elem));
+	}
+
+	public function hideElementsByClass(className: String):Void
+	{
+		for(elem in root.getElementsByClassName(className))
+			hide(Std.instance(elem, Element));
 	}
 
 	public function reset():Void
@@ -239,20 +245,23 @@ class PartDisplay extends BaseDisplay
         */
 	}
 
-	public function disableNextButton(buttonId: String):Void
+	public function disableNextButtons():Void
 	{
-		getChildById(buttonId).classList.add("disabled");
+		for(b in root.getElementsByClassName("next"))
+			Std.instance(b, Element).classList.add("disabled");
 	}
 
-	public function enableDisabledButtons():Void
+	public function enableNextButtons():Void
 	{
-		for(b in root.getElementsByClassName("disabled"))
+		for(b in root.getElementsByClassName("next"))
 			Std.instance(b, Element).classList.remove("disabled");
 	}
 
-	public function setButtonAction(buttonId: String, action : Void -> Void) : Void {
+	public function setButtonAction(buttonId: String, actionName: String, action : Void -> Void) : Void {
 
-		getChildById(buttonId).onclick = function(_) action();
+		var b: Element = getChildById(buttonId);
+		b.onclick = function(_) action();
+		b.classList.add(actionName);
 	}
 
 	public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>}>, groupeRef: String):Void
@@ -321,7 +330,7 @@ class PartDisplay extends BaseDisplay
 				if(key != "_"){
 					var img = getChildById(r.id+"_"+key, newInput);
 					if(Std.is(img, ImageElement))
-						cast(img, ImageElement).src = r.icon[key];
+						Std.instance(img, ImageElement).src = r.icon[key];
 					else
 						img.style.backgroundImage = url;
 				}
@@ -383,7 +392,7 @@ class PartDisplay extends BaseDisplay
     public function toggleElement (id:String):Void {
         var elem:Element = cast getChildById(id);
         for (e in elem.getElementsByTagName("input")) {
-            cast(e, InputElement).checked = !cast(e, InputElement).checked;
+            Std.instance(e, InputElement).checked = !Std.instance(e, InputElement).checked;
         }
     }
 

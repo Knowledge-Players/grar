@@ -198,6 +198,7 @@ class Part{
 
 	public var activityData (default, set):ActivityData;
 
+	// TODO clear and proper numbering system
 	public var elemIndex (default, set): Int = -1;
 
 	private var nbSubPartLoaded : Int = 0;
@@ -331,7 +332,7 @@ class Part{
 	// Useless ?
 	public function startElement(elemId: String):Void
 	{
-		if (elemIndex == 0 || elemId != switch(elements[elemIndex]){ case Part(p): p.id; case Pattern(p): p.id; case Item(i): i.id; case GroupItem(g): g.id;}) {
+		/*if (elemIndex == 0 || elemId != switch(elements[elemIndex]){ case Part(p): p.id; case Pattern(p): p.id; case Item(i): i.id; case GroupItem(g): g.id;}) {
 
 			var tmpIndex = 0;
 
@@ -352,7 +353,7 @@ class Part{
 					}
 				default: // nothing
 			}
-		}
+		}*/
 	}
 
 	/**
@@ -363,8 +364,14 @@ class Part{
 
 		if (startIndex > -1)
 			elemIndex = startIndex;
-		if (elemIndex < elements.length)
-			return elements[++elemIndex];
+
+		if (elemIndex < elements.length-1){
+			// If current element is a pattern, explore pattern first
+			switch(elements[elemIndex+1]){
+				case Pattern(p) if(p.itemIndex < p.patternContent.length): return elements[elemIndex+1] ;
+				default: return elements[++elemIndex];
+			}
+		}
 		else
 			return null;
 	}
@@ -373,7 +380,12 @@ class Part{
     * @return previous element in the part or null if at the beginning of the part
     */
 	public function getPreviousElement() : Null<PartElement> {
-		if (elemIndex > 0){
+		if (elemIndex > -2){
+			// If current element is a pattern, explore pattern first
+			switch(elements[elemIndex+1]){
+				case Pattern(p): p.restart();
+				default:
+			}
 			return elements[--elemIndex];
 		}
 		else
@@ -388,11 +400,9 @@ class Part{
 	public function getElementIndex(element : PartElement) : Int {
 
 		var i = 0;
-
-		while (i < elements.length && !Type.enumEq( elements[i], element )) {
-
+		while (i < elements.length && !Type.enumEq( elements[i], element ))
 			i++;
-		}
+
 		return i == elements.length ? - 1 : i + 1;
 	}
 

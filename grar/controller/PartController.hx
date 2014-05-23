@@ -114,7 +114,6 @@ class PartController
 
 		display.onExit = function(){ exitPart(part); }
 		//display.onEnterSubPart = function(sp : Part) enterSubPart(sp);
-		display.onGameOver = function() parent.gameOver();
 
 		return true;
 	}
@@ -127,9 +126,10 @@ class PartController
 			part.activityData.score += part.getInput(inputId).points;
 
 			var rules = part.getRulesByType("minScore");
-			if(part.activityData.score >= Std.parseInt(rules[0].value))
-				display.enableDisabledButtons();
+			if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
+				display.enableNextButtons();
 		}
+
 		inputs = new List<Input>();
             var group: Inputs = part.getNextGroup();
 
@@ -156,8 +156,14 @@ class PartController
 		for(b in part.buttons)
 			initButtons(b);
 
-        for(img in part.images)
-            display.setImage(img.ref,img.src);
+		for(img in part.images)
+			display.setImage(img.ref,img.src);
+
+		if(part.activityData != null){
+			var rules = part.getRulesByType("minScore");
+			if(rules.length > 0)
+				display.disableNextButtons();
+		}
 	}
 
     private function createInputs(group:Inputs) {
@@ -189,6 +195,11 @@ class PartController
         inputs = inputs.concat(group.inputs);
     }
 
+	public function onGameOver():Void
+	{
+		display.hideElementsByClass("next");
+	}
+
 	public function exitPart(?part: Part, ?completed : Bool = true, ?fromMenu: Bool = false) : Void {
 		var p: Part;
 		if(part == null)
@@ -218,49 +229,44 @@ class PartController
 		// Check conditions
 		if(part.activityData != null){
 			var rules = part.getRulesByType("minScore");
-			if(part.activityData.score < Std.parseInt(rules[0].value))
+			if(rules.length > 0 && part.activityData.score < Std.parseInt(rules[0].value))
 				return;
 		}
+        currentElement = part.getNextElement(startIndex);
 
-		if(currentPattern !=null)
-            startPattern(currentPattern);
-        else {
-            currentElement = part.getNextElement(startIndex);
+		if (currentElement == null) {
+			exitPart(part);
+			return;
+		}
 
-            if (currentElement == null) {
-                exitPart(part);
-                return;
-            }
+		switch (currentElement) {
 
-            switch (currentElement) {
+			case Part(p):
 
-                case Part(p):
+				if (p.endScreen) {
 
-                    if (p.endScreen) {
+					part.isDone = true;
+					parent.gameOver();
+				}
+				enterSubPart(p);
 
-                        part.isDone = true;
-                        parent.gameOver();
-                    }
-                    enterSubPart(p);
+			case Item(i):
+				if (i.endScreen) {
 
-                case Item(i):
-                    if (i.endScreen) {
+					part.isDone = true;
+					parent.gameOver();
+				}
+				setupItem(i);
 
-                        part.isDone = true;
-                        parent.gameOver();
-                    }
-                    setupItem(i);
+			case Pattern(p):
 
-                case Pattern(p):
+				startPattern(p);
 
-                    startPattern(p);
-
-                case GroupItem(group):
-                    for(it in group.elements){
-                        setupItem(it);
-                    }
-            }
-        }
+			case GroupItem(group):
+				for(it in group.elements){
+					setupItem(it);
+				}
+		}
 	}
 
 	public function previousElement():Void
@@ -280,9 +286,9 @@ class PartController
 				setupItem(i);
 
 			case Pattern(p):
-				startPattern(p);
+				startPattern(p, false);
 				// Doesn't matter if it's too high, index setter take care of that
-				p.itemIndex = p.patternContent.length;
+				//p.itemIndex = p.patternContent.length;
 
 			case GroupItem(group):
 				for(it in group.elements){
@@ -292,20 +298,9 @@ class PartController
 	}
 
 	/**
-    * Start the part
-    * @param    startPosition : Start at this position
-    **/
-
-	/*public function startPart(?startPosition:Int = -1):Void
-	{
-		nextElement(startPosition);
-	}*/
-
-	/**
 	* Go to a specific pattern
 	* @param    target : Name of the pattern to go
 	**/
-
 	public function goToPattern(target : String) : Void {
 
 		var elem : Null<PartElement> = null;
@@ -347,26 +342,18 @@ class PartController
 		nextElement();
 	}
 
-	private function startPattern(p : Pattern):Void
+	private function startPattern(p : Pattern, ? next: Bool = true):Void
 	{
-		// TODO Stateless
-        currentPattern = p;
-
-        display.showPattern(currentPattern.ref);
+        display.showPattern(p.ref);
 
         for(b in part.buttons)
             initButtons(b);
 
-        var nextItem = p.getNextItem();
+        var nextItem = next ? p.getNextItem() : p.getPreviousItem();
         if(nextItem != null)
-        {
             setupItem(nextItem);
-        }
-        else
-        {
-            display.hidePattern(currentPattern.ref);
-            currentPattern = null;
-
+        else{
+            display.hidePattern(p.ref);
             nextElement();
         }
 	}
@@ -488,15 +475,7 @@ class PartController
 	private function initButtons(bd: ButtonData) : Void {
 
 		var action = switch(bd.action.toLowerCase()) {
-			case "next":
-				if(part.activityData != null){
-					var rules = part.getRulesByType("minScore");
-					if(rules.length > 0)
-						display.disableNextButton(bd.ref);
-//					if(part.activityData.score >= Std.parseInt(rules[0]))
-//						nextElement();
-				}
-				function() nextElement();
+			case "next": function() nextElement();
 			case "prev": function() previousElement();
 			case "goto": function() {
 						var goToTarget : PartElement = part.buttonTargets.get(bd.ref);
@@ -509,7 +488,7 @@ class PartController
 			case "exit": function() exitPart(part, false);
 			default: function() trace("Unsupported action "+bd.action);
 		}
-		display.setButtonAction(bd.ref, action);
+		display.setButtonAction(bd.ref, bd.action, action);
 	}
 
 	private function onInputEvent(eventType: InputEvent, inputId: String, mousePoint: Point):Void
