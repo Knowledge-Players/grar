@@ -374,10 +374,10 @@ class PartDisplay extends BaseDisplay
     }
 
     public function switchElementToVisited (id:String):Void {
-        var elem: Element = getChildById(id);
-        var c = id.substr(0,id.length-1);
-        elem.classList.remove(c);
-        elem.classList.add(c+"Visited");
+        var elem:Element = cast getChildById(id);
+        for (e in elem.getElementsByTagName("input")) {
+            cast(e, InputElement).checked = true;
+        }
     }
 
     public function toggleElement (id:String):Void {
