@@ -50,7 +50,6 @@ class TrackingController {
 				switch(state.tracking.type) {
 
 					case Scorm( is2004, ss, sd ):
-
 						scormSrv.setLocation(state.tracking.isActive, is2004, state.tracking.location);
 
 					case Aicc( u, i ):
@@ -180,14 +179,26 @@ class TrackingController {
 
 				state.tracking.setStatus(true);
 
-				var stateStr : String = saveStateInfos();
+				updateTracking();
+				/*var stateStr : String = saveStateInfos();
 
 				if (!(state.module.currentLocale == null && state.module.bookmark == -1 &&
 						state.module.completionOrdered.length == 0)) {
 
 					state.tracking.location = stateStr;
-				}
+				}*/
 			}
+	}
+
+	public function updateTracking():Void
+	{
+		var stateStr : String = saveStateInfos();
+
+		if (!(state.module.currentLocale == null && state.module.bookmark == -1 &&
+		state.module.completionOrdered.length == 0)) {
+
+			state.tracking.location = stateStr;
+		}
 	}
 
 	public function initTracking(m : Grar, onSuccess : Void -> Void, onError : String -> Void) : Void {
@@ -279,9 +290,7 @@ class TrackingController {
 
 		// parts completion
 		for (p in state.module.getAllParts()) {
-
 		    p.isDone = state.module.isPartFinished(p.id);
-
 		    p.isStarted = state.module.isPartStarted(p.id);
 		}
 	}
@@ -289,25 +298,17 @@ class TrackingController {
 	public function exitModule(m : Grar, onSuccess : Void -> Void, onError : String -> Void) : Void {
 
 		var ret : Bool = switch (m.mode) {
-
-			case AICC :
-
-				aiccSrv.exit();
-
-			case SCORM, SCORM2004:
-
-				scormSrv.exit();
-
+			case AICC : aiccSrv.exit();
+			case SCORM, SCORM2004: scormSrv.exit();
 			default: true; // nothing
 		}
-		if (ret) {
 
+		state.tracking.setStatus(true);
+
+		if (ret)
 			onSuccess();
-
-		} else {
-
+		else if(state.tracking.isActive)
 			onError("Exiting module with error from tracking system");
-		}
 	}
 
 

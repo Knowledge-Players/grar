@@ -1,10 +1,7 @@
 package grar.service;
 
+import pipwerks.Scorm;
 import grar.model.tracking.Tracking;
-
-#if flash
-import flash.external.ExternalInterface;
-#end
 
 /**
  * The Scorm service handles all SCORM 1.2 / SCORM 2004 related tasks.
@@ -12,7 +9,8 @@ import flash.external.ExternalInterface;
  */
 class ScormService {
 
-	public function new() { }
+	public function new() {
+	}
 
 	var activeConnection : Bool = false;
 
@@ -55,13 +53,13 @@ class ScormService {
 			var success : Bool = connect();
 
 			if (!success) {
-
+				// Warn user he's offline
+				trace("Can't connect to SCORM plateform! Going offline.");
 				init(isNote, "off", is2004, onSuccess, onError);
 				return;
 			}
 
 			if (is2004) {
-
 				lessonStatus = get("cmi.completion_status");
 				success_status = get("cmi.success_status");
 				score = get("cmi.score.raw");
@@ -69,64 +67,43 @@ class ScormService {
 				studentId = get("cmi.learner_id");
 				location = get("cmi.location");
 				suspend_data = get("cmi.suspend_data");
-
 			} else {
-
 				lessonStatus = get("cmi.core.lessonStatus");
-
 				score = get("cmi.core.score.raw");
 				studentName = get("cmi.core.studentName");
 				studentId = get("cmi.core.studentId");
 				location = get("cmi.core.lesson_location");
 				suspend_data = get("cmi.suspend_data");
 			}
-
-//				dispatchEvent(new Event(Event.INIT));
-
-//		} else {
-
-//			dispatchEvent(new Event(Event.INIT));
 		}
 
 		onSuccess( new Tracking(isActive, studentId, studentName, location, score, masteryScore, lessonStatus, isNote, Scorm(is2004, success_status, suspend_data)) );
 	}
 
 	public function setLocation(isActive : Bool, is2004 : Bool, location : String) : Void {
-
 		var success : Bool;
 
 		if (isActive) {
-
-			if (is2004) {
-
+			if (is2004)
 				success = set("cmi.location", location);
-
-			} else {
-
+			else
 				success = set("cmi.core.lesson_location", location);
-			}
 		}
 	}
 
 	public function setStatus(isActive : Bool, is2004 : Bool, status : String) : Void {
 
 		var success : Bool;
+		trace("Setting status to "+status);
 
 		if (isActive) {
-
 			if (is2004) {
-
 				success = set("cmi.completion_status", status);
-				
-				if (status == "completed") { // FIXME, should this be here ?
-
+				if (status == "completed") // FIXME, should this be here ?
 					setScore(isActive, is2004, 100);
-				}
-			
-			} else {
-
-				success = set("cmi.core.lesson_status", status);
 			}
+			else
+				success = set("cmi.core.lesson_status", status);
 		}
 	}
 
@@ -138,7 +115,6 @@ class ScormService {
 		var success : Bool;
 
 		if (isActive) {
-
 			success = set("cmi.success_status", status);
 		}
 	}
@@ -151,7 +127,7 @@ class ScormService {
 
 				set("cmi.score.scaled", Std.string(score / 100));
 				set('cmi.score.raw', Std.string(score));
-			
+
 			} else {
 
 				set("cmi.core.score.raw", Std.string(score));
@@ -164,11 +140,11 @@ class ScormService {
 		if (isActive) {
 
 			var success : Bool;
-			
+
 			if (is2004) {
 
 				success = set("cmi.suspend_data", sdata);
-			
+
 			} else {
 
 				success = set("cmi.suspend_data", sdata);
@@ -177,40 +153,7 @@ class ScormService {
 	}
 
 	public function exit() : Bool {
-
-		var result : Bool = false;
-
-#if flash
-		if (activeConnection) {
-
-			var eiCall : String = Std.string(ExternalInterface.call("pipwerks.SCORM.quit"));
-			
-			result = eiCall == "true";
-			
-			if (result) {
-
-				activeConnection = false;
-			
-			} else {
-
-				var errorCode : Int = getDebugCode();
-				var debugInfo : String = getDebugInfo(errorCode);
-				
-				displayDebugInfo("pipwerks.SCORM.quit() failed. \n"
-									+ "Error code: " + errorCode + "\n"
-									+ "Error info: " + debugInfo);
-			}
-		
-		} else {
-
-			displayDebugInfo("pipwerks.SCORM.quit aborted: connection already inactive.");
-		}
-#elseif js
-		var wrapper : Dynamic = untyped __js__('pipwerks.SCORM.quit()');
-		
-		result = wrapper == "true";
-#end
-		return result;
+		return pipwerks.Scorm.quit();
 	}
 
 
@@ -224,21 +167,7 @@ class ScormService {
 
 		if (!activeConnection) {
 
-#if flash
-
-			var eiCall : Null<String> = null;
-			if (ExternalInterface.available) {
-
-				eiCall = Std.string(ExternalInterface.call("pipwerks.SCORM.init"));
-			}
-			result = eiCall == "true";
-		
-#elseif js
-
-			var wrapper : Dynamic = untyped __js__('pipwerks.SCORM.init()');
-			result = wrapper == "true";
-
-#end
+			result = pipwerks.Scorm.init();
 
 			if (result) {
 
@@ -280,21 +209,7 @@ class ScormService {
 			return result;
 		}
 
-#if flash
-
-		if (ExternalInterface.available) {
-
-			var eiCall : String = ExternalInterface.call("pipwerks.SCORM.set", key, value);
-			result = eiCall == "true";
-		}
-
-#elseif js
-
-		var wrapper : Dynamic = untyped __js__('pipwerks.SCORM.set('+key+','+value+')');
-		result = wrapper == "true";
-
-#end
-
+		var result = pipwerks.Scorm.set(key,value);
 		if (!result) {
 
 			var errorCode : Int = getDebugCode();
@@ -316,19 +231,7 @@ class ScormService {
 			return returnedValue;
 		}
 
-#if flash
-
-		if (ExternalInterface.available) {
-
-			returnedValue = Std.string(ExternalInterface.call("pipwerks.SCORM.get", key));
-		}
-
-#elseif js
-
-		returnedValue = untyped __js__('pipwerks.SCORM.get('+key+')');
-
-#end
-
+		returnedValue = pipwerks.Scorm.get(key);
 		var errorCode : Int = getDebugCode();
 
 		//GetValue returns an empty string on errors
@@ -347,40 +250,14 @@ class ScormService {
 	private function getDebugCode() : Int {
 
 		var code : Int = -1;
-
-#if flash
-
-		if (ExternalInterface.available) {
-
-			code = cast (ExternalInterface.call("pipwerks.SCORM.debug.getCode"), Int);
-		}
-
-#elseif js
-
-		var wrapper : Dynamic = untyped __js__('pipwerks.SCORM.debug.getCode()');
-		code = Std.parseInt(wrapper);
-
-#end
-
-		return code;
+		var wrapper = pipwerks.Scorm.debug.getCode();
+		return wrapper;
 	}
 
 	private function getDebugInfo(errorCode : Int) : String {
 
 		var result : String = "";
-
-#if flash
-
-		if (ExternalInterface.available) {
-
-			result = Std.string(ExternalInterface.call("pipwerks.SCORM.debug.getInfo", errorCode));
-		}
-
-#elseif js
-
-		result = untyped __js__('pipwerks.SCORM.getInfo('+errorCode+')');
-
-#end
+		result = pipwerks.Scorm.debug.getInfo(errorCode);
 
 		return result;
 	}
@@ -389,35 +266,13 @@ class ScormService {
 
 		var result : String = "";
 
-#if flash
-
-		if(ExternalInterface.available) {
-
-			result = cast (ExternalInterface.call("pipwerks.SCORM.debug.getDiagnosticInfo", errorCode), String);
-		}
-
-#elseif js
-
-		result = untyped __js__('pipwerks.SCORM.getDiagnosticInfo('+errorCode+')');
-
-#end
+		result = pipwerks.Scorm.debug.getDiagnosticInfo(errorCode);
 
 		return result;
 	}
 
 	private function displayDebugInfo(msg : String) : Void {
 
-#if flash
-
-		if (ExternalInterface.available) {
-
-			ExternalInterface.call("pipwerks.UTILS.trace", msg);
-		}
-
-#elseif js
-
-		untyped __js__('pipwerks.UTILS.trace('+msg+')');
-
-#end
+		Utils.trace(msg);
 	}
 }

@@ -3,6 +3,7 @@
 -js bin/grar.js
 -cp src
 -lib kalturhaxe
+-lib scormextern
 # uncomment the following to disable traces
 #--no-traces
 
@@ -16,6 +17,7 @@
 -lib utest
 -lib compiletime
 -lib kalturhaxe
+-lib scormextern
 -cpp tests/results
 -resource tests/resources/goodStructure.xml@goodStructure
 -resource tests/resources/badStructure.xml@badStructure
@@ -33,4 +35,3 @@
 #-lib cocktail
 #-lib kalturhaxe
 #--remap js:cocktail
-#-cp srcrsync -r --exclude '*.svn' $(pwd)/bin/*.swf root@prod.knowledge-players.com:/home/knowledge-players/public_html/tests/gra

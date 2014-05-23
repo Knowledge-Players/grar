@@ -423,6 +423,9 @@ class Controller {
 
 	function onPartFinished(p : Part, ? next: Bool = true) {
 
+		// Tracking
+		trackingCtrl.updateTracking();
+
 		if (next && p.next != null) {
 
 			var i = 0;

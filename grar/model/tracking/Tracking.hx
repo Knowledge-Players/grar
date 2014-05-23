@@ -17,6 +17,7 @@ class Tracking {
 		this.isActive = ia;
 		this.studentId = si;
 		this.studentName = sn;
+		this.type = t;
 		if (l != null) {
 			this.location = l;
 		}
@@ -32,7 +33,6 @@ class Tracking {
 		if (isn != null) {
 			this.isNote = isn;
 		}
-		this.type = t;
 
 		if (isActive && Type.enumConstructor(t) != Type.enumConstructor(Auto(""))) {
 			#if (flash || flash8 || java || js)
