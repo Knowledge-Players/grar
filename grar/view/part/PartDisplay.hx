@@ -177,7 +177,9 @@ class PartDisplay extends BaseDisplay
 	public function setImage(imageRef:String,src:String):Void{
 
 		if(imageRef != null){
+
 			var elem:Element =getChildById(imageRef);
+            //use of Std.instance
             var img:ImageElement = Std.instance(elem,ImageElement);
             img.src = src;
 

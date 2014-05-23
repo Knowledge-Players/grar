@@ -245,6 +245,7 @@ class Application {
 			if(t != null){
 				//root.appendChild(t.parentNode);
 				templates[l.name] = t;
+                //use of Std.instance
                 var node = t.cloneNode(true);
 				newLevel =  Std.instance(node,Element);
 				t.parentNode.appendChild(newLevel);
