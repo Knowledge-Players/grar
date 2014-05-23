@@ -29,7 +29,7 @@ class BaseDisplay{
 		for(node in text.childNodes) children.push(node);
 		// Clean text node in Textfield
 		for(node in children){
-			if(node.nodeType == Node.TEXT_NODE || (node.nodeType == Node.ELEMENT_NODE && node.nodeName.toLowerCase() != "div")){
+			if(node.nodeType == Node.TEXT_NODE || (node.nodeType == Node.ELEMENT_NODE && node.nodeName.toLowerCase() != "div" && node.nodeName.toLowerCase() != "img"  && node.nodeName.toLowerCase() != "svg")){
 				text.removeChild(node);
 			}
 		}
