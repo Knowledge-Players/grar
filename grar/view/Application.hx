@@ -189,7 +189,7 @@ class Application {
 		for(h in Browser.document.getElementsByTagName("header"))
 			if(h.nodeType == Node.ELEMENT_NODE)
 				// Override previous state
-				cast(h, Element).className = state;
+				Std.instance(h, Element).className = state;
 	}
 
 	public function updateModuleInfos(name:String, type:String):Void
@@ -197,11 +197,11 @@ class Application {
 		// Update module name
 		for(p in Browser.document.getElementsByClassName("moduleName"))
 			if(p.nodeType == Node.ELEMENT_NODE)
-				cast(p, Element).innerHTML = name;
+				Std.instance(p, Element).innerHTML = name;
 		// Update module type
 		for(p in Browser.document.getElementsByClassName("moduleType"))
 			if(p.nodeType == Node.ELEMENT_NODE)
-				cast(p, Element).innerHTML = type;
+				Std.instance(p, Element).innerHTML = type;
 	}
 
 	public function updateChapterInfos(chapterName:String, activityName:String):Void
@@ -209,11 +209,11 @@ class Application {
 		// Update module name
 		for(p in Browser.document.getElementsByClassName("chapterName"))
 			if(p.nodeType == Node.ELEMENT_NODE)
-				cast(p, Element).innerHTML = chapterName;
+				Std.instance(p, Element).innerHTML = chapterName;
 		// Update module type
 		for(p in Browser.document.getElementsByClassName("activityName"))
 			if(p.nodeType == Node.ELEMENT_NODE)
-				cast(p, Element).innerHTML = activityName;
+				Std.instance(p, Element).innerHTML = activityName;
 	}
 
 	public function initMenu(ref: String, levels: Array<LevelData>) : Void {
@@ -240,7 +240,7 @@ class Application {
 
 		var itemNum = 1;
 		for(l in levels){
-			var t = Browser.document.querySelector("#"+ref+"_"+l.name);
+			var t = Browser.document.getElementById(ref+"_"+l.name);
 			var newLevel: Element = null;
 			if(t != null){
 				//root.appendChild(t.parentNode);
@@ -251,9 +251,9 @@ class Application {
 				var name = "";
 				for(elem in menus[ref].markupParser.parse(l.partName))
 					name += elem.innerHTML;
-				for(node in newLevel.querySelectorAll(".numbering"))
+				for(node in newLevel.getElementsByClassName("numbering"))
 					if(node.nodeType == Node.ELEMENT_NODE)
-						cast(node, Element).innerHTML = itemNum < 10 ? '0'+ itemNum : Std.string(itemNum);
+						Std.instance(node, Element).innerHTML = itemNum < 10 ? '0'+ itemNum : Std.string(itemNum);
 				newLevel.innerHTML += name;
 				newLevel.removeAttribute("id");
 			}
@@ -268,7 +268,7 @@ class Application {
 				}
 
 				for(i in l.items){
-					var st = Browser.document.querySelector("#"+ref+"_"+i.name);
+					var st = Browser.document.getElementById(ref+"_"+i.name);
 					if(st != null){
 						templates[i.name] = st;
 						var newSubLevel: Element = cast st.cloneNode(true);
@@ -287,7 +287,8 @@ class Application {
 						newSubLevel.innerHTML = "<a href='#'>"+name+"</a>";
 						newSubLevel.id = i.id;
 						newSubLevel.classList.add(i.icon);
-						newSubLevel.onclick = function(_) onMenuClicked(i.id, ref);
+						if(!hasProgress)
+							newSubLevel.onclick = function(_) onMenuClicked(i.id, ref);
 						if(hasProgress){
 							newSubLevel.style.left = previousLeft+'%';
 							previousLeft += offset;

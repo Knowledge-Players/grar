@@ -259,7 +259,6 @@ class Controller {
 
 					i++;
 				}
-				//application.menu.setCurrentPart(allParts[i]);
 			}
 
 		application.onQuitGameRequest = function() {
@@ -274,6 +273,12 @@ class Controller {
 	{
 		updateMenuCompletion();
 		trace("GAME OVER");
+		for(menu in application.menus){
+			menu.setGameOver();
+		}
+
+		partCtrl.onGameOver();
+
 		trackingCtrl.exitModule(state.module, function() {
 			//TODO ?
 		}, onError);

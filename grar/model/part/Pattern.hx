@@ -92,7 +92,7 @@ class Pattern {
 		if (itemIndex < patternContent.length)
             return patternContent[itemIndex++];
 		else {
-			restart();
+			//restart();
 			return null;
 		}
 
@@ -104,7 +104,7 @@ class Pattern {
 	public function getPreviousItem() : Null<Item> {
 
 		if (itemIndex > 0)
-			return patternContent[--itemIndex];
+			return patternContent[(--itemIndex)];
 		else
 			return null;
 	}
