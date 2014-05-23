@@ -153,6 +153,7 @@ class XmlToPart {
 						pd.tokens.add(image);
 					}
 
+
 				default: //nothing
 			}
 		}
@@ -218,6 +219,8 @@ class XmlToPart {
 			case "group":
 				pd.elements.push(GroupItem(XmlToGroup.parse(node.x)));
 
+            case "image":
+                pd.images.add({ref:node.att.ref,src:node.att.src});
 			default:
 
 				if (n != "group" && n != "rule" && n != "image" && n != "inputs") {
@@ -328,6 +331,8 @@ class XmlToPart {
                     inputs.push(createInput(input));
                 case "text" :
                     items.push(XmlToItem.parse(input.x));
+                case "image" :
+                //TODO ADD IMAGE
                 case "inputs" :
                     groups.push(createInputGroup(input));
             }
@@ -389,6 +394,7 @@ class XmlToPart {
 		pd.elements = new Array();
 		pd.tokens = new GenericStack<String>();
 		pd.buttons = new List();
+        pd.images = new List();
 		pd.buttonTargets = new StringMap();
 		pd.perks = new StringMap();
 		pd.requirements = new StringMap();

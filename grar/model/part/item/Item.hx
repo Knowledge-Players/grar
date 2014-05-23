@@ -1,5 +1,6 @@
 package grar.model.part.item;
 
+import grar.model.part.Part.ImageData;
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
 
@@ -16,11 +17,6 @@ typedef ItemData = {
 	var endScreen : Bool;
 	var videoData: VideoData;
 	var soundData: SoundData;
-}
-
-typedef ImageData ={
-	var src:String;
-	var ref:String;
 }
 
 typedef VideoData = {

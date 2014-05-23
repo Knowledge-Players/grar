@@ -14,6 +14,7 @@ enum InputEvent{
     CLICK(name: String);
     MOUSE_DOWN(name: String);
     MOUSE_UP(name: String, targetId: String);
+    MOUSE_OVER(name: String);
 }
 
 /**
@@ -36,6 +37,7 @@ class PartDisplay extends BaseDisplay{
     static var CLICK = "click";
     static var MOUSE_DOWN = "mouseDown";
     static var MOUSE_UP = "mouseUp";
+    static var MOUSE_OVER = "mouseOver";
 
 ///
 // CALLBACKS
@@ -119,6 +121,9 @@ class PartDisplay extends BaseDisplay{
 
 	public function switchElementToVisited (id:String):Void {
 	}
+
+    public function toggleElement (id:String):Void {
+    }
 
     public function setVideo(videoRef:String, uri: String, autoStart: Bool = false, loop: Bool = false, defaultVolume: Float = 1, capture: Float = 0, fullscreen : Bool = false, ?onVideoPlay: Void -> Void, ?onVideoEnd: Void -> Void):Void
     {

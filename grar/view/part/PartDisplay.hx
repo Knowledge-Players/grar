@@ -26,9 +26,9 @@ import js.html.UIEvent;
 using StringTools;
 using Lambda;
 
-
 enum InputEvent{
 	//Remove name param
+    MOUSE_OVER(name: String);
 	CLICK(name: String);
 	MOUSE_DOWN(name: String);
 	MOUSE_UP(name: String, targetId: String);
@@ -63,6 +63,7 @@ class PartDisplay extends BaseDisplay
 	static var CLICK = "click";
 	static var MOUSE_DOWN = "mouseDown";
 	static var MOUSE_UP = "mouseUp";
+	static var MOUSE_OVER = "mouseOver";
 
 	var videoPlayer: VideoPlayer;
 	var soundPlayer: SoundPlayer;
@@ -111,12 +112,6 @@ class PartDisplay extends BaseDisplay
 			root = Browser.document.getElementById(ids[1]);
 			var http = new Http(ids[0]);
 			http.onData = function(data){
-			////
-			/*var clone: Element = Std.instance(root.cloneNode(false), Element);
-				clone.style.float = "left";
-				root.parentNode.appendChild(clone);
-				clone.innerHTML = data;*/
-			/////
 				root.innerHTML = data;
 				for(child in root.children){
 					if(child.nodeType == Node.ELEMENT_NODE)
@@ -181,11 +176,11 @@ class PartDisplay extends BaseDisplay
 	public function setImage(imageRef:String,src:String):Void{
 
 		if(imageRef != null){
-			var img:Element =getChildById(imageRef);
-			var p: Bool = untyped __js__("img.src!= null");
-			if(p){
-				untyped __js__("img.src= src");
-			}
+
+			var elem:Element =getChildById(imageRef);
+            //use of Std.instance
+            var img:ImageElement = Std.instance(elem,ImageElement);
+            img.src = src;
 
 			show(img);
 
@@ -362,6 +357,7 @@ class PartDisplay extends BaseDisplay
 				onValidationRequest(newInput.id);
 			}
 
+            newInput.onmouseover = function(e:MouseEvent) onInputEvent(InputEvent.MOUSE_OVER(MOUSE_OVER), newInput.id, getMousePosition(e));
 			// Display
 			show(newInput);
 			i++;

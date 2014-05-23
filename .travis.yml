@@ -16,4 +16,4 @@ before_install:
 
 script:
   - haxe build.hxml
-  - tests/results/RunTest-debug
+  - tests/results/RunTest
