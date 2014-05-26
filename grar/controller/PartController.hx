@@ -544,7 +544,9 @@ class PartController
 			}
 		}
 
-		if(maxSelect == part.activityData.numRightAnswers)
+		if(maxSelect == part.activityData.numRightAnswers){
+            part.activityData.score = 1;
 			isEnabled = false;
+        }
 	}
 }
