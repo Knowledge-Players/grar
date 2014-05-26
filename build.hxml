@@ -18,6 +18,7 @@
 -lib utest
 -lib compiletime
 -lib kalturhaxe
+-lib scormExtern
 -cpp tests/results
 -resource tests/resources/goodStructure.xml@goodStructure
 -resource tests/resources/badStructure.xml@badStructure
