@@ -3,18 +3,9 @@
 -js bin/grar.js
 -cp src
 -lib kalturhaxe
--lib scormExtern
+-li scormExtern
 # uncomment the following to disable traces
 #--no-traces
-
-# compil in current project
-#--next
-#-main grar.App
-#-js ../../knowledgeplayers/saintgobain/EHS/dev/src/grar.js
-#-cp src
-##-lib kalturhaxe
-#-lib scormExtern
-
 
 # Execute Tests
 --next
@@ -26,7 +17,6 @@
 -lib utest
 -lib compiletime
 -lib kalturhaxe
--lib scormExtern
 -cpp tests/results
 -resource tests/resources/goodStructure.xml@goodStructure
 -resource tests/resources/badStructure.xml@badStructure
