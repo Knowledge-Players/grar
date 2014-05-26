@@ -3,8 +3,7 @@
 -js bin/grar.js
 -cp src
 -lib kalturhaxe
--lib scormExtern
-
+-lib scormextern
 # uncomment the following to disable traces
 #--no-traces
 
@@ -18,7 +17,7 @@
 -lib utest
 -lib compiletime
 -lib kalturhaxe
--lib scormExtern
+-lib scormextern
 -cpp tests/results
 -resource tests/resources/goodStructure.xml@goodStructure
 -resource tests/resources/badStructure.xml@badStructure
