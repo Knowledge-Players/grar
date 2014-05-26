@@ -13,7 +13,7 @@
 #-js ../../knowledgeplayers/saintgobain/EHS/dev/src/grar.js
 #-cp src
 ##-lib kalturhaxe
--lib scormExtern
+#-lib scormExtern
 
 
 # Execute Tests
