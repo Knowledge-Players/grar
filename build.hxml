@@ -3,7 +3,7 @@
 -js bin/grar.js
 -cp src
 -lib kalturhaxe
--li scormExtern
+-lib scormExtern
 # uncomment the following to disable traces
 #--no-traces
 
