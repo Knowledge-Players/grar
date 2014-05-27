@@ -18,13 +18,12 @@
 -lib compiletime
 -lib kalturhaxe
 -lib scormextern
--cpp tests/results
+-php tests/results
 -resource tests/resources/goodStructure.xml@goodStructure
 -resource tests/resources/badStructure.xml@badStructure
 -resource tests/resources/goodTransition.xml@goodTransition
 -resource tests/resources/goodXmlLocale.xml@goodXmlLocale
 -resource tests/resources/goodExcelLocale.xml@goodExcelLocale
--resource tests/resources/goodPart.xml@goodPart
 
 # Cocktail compilation
 
