@@ -367,7 +367,7 @@ class Controller {
 		}
 	}
 
-	function displayPart(p : Part) : Bool {
+	function displayPart(p : Part, ?next: Bool = true) : Bool {
 		#if !kpdebug
 		// Part doesn't meet the requirements to start
 		if (!state.module.canStart(p)) {
@@ -375,7 +375,7 @@ class Controller {
 			return false;
 		}
 		#end
-		partCtrl.displayPart(p);
+		partCtrl.displayPart(p, next);
 
 		updateMenuCompletion();
 
@@ -449,12 +449,12 @@ class Controller {
 				futurePart = state.module.getNextPart(p);
 			else{
 				futurePart = state.module.getPreviousPart(p);
-				futurePart.elemIndex = futurePart.elements.length - 2;
+				futurePart.setIndexToEnd();
 			}
 
 			if(futurePart != null){
 				state.module.start(futurePart.id);
-				displayPart(futurePart);
+				displayPart(futurePart, next);
 			}
 			else
 				gameOver();

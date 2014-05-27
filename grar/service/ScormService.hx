@@ -94,7 +94,6 @@ class ScormService {
 	public function setStatus(isActive : Bool, is2004 : Bool, status : String) : Void {
 
 		var success : Bool;
-		trace("Setting status to "+status);
 
 		if (isActive) {
 			if (is2004) {

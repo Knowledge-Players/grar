@@ -113,6 +113,9 @@ class Part{
 		this.isDone = pd.isDone;
 		this.isStarted = pd.isStarted;
 		//this.soundLoopChannel = pd.soundLoopChannel;
+
+		// Initialize indexes
+		restart();
 	}
 
 	/**
@@ -198,8 +201,7 @@ class Part{
 
 	public var activityData (default, set):ActivityData;
 
-	// TODO clear and proper numbering system
-	public var elemIndex (default, set): Int = -1;
+	public var elemIndex (default, set): Int;
 
 	private var nbSubPartLoaded : Int = 0;
 	private var nbSubPartTotal : Int = 0;
@@ -223,10 +225,10 @@ class Part{
 
 	public function set_elemIndex(index:Int):Int
 	{
-		if(index < -1)
-			elemIndex = -1;
+		if(index < 0)
+			elemIndex = 0;
 		else if(index > elements.length)
-			elemIndex = elements.length -1;
+			setIndexToEnd();
 		else
 			elemIndex = index;
 		return elemIndex;
@@ -314,6 +316,14 @@ class Part{
     //
 
 	/**
+	* Set the part index to the end of the part, so the call to getNextElement will return the last element of the part.
+	**/
+	public function setIndexToEnd():Void
+	{
+		elemIndex = elements.length - 1;
+	}
+
+	/**
      * Start the part if it hasn't been done
      * @param	forced : true to start the part even if it has already been done
      * @return this part, or null if it can't be start
@@ -328,34 +338,6 @@ class Part{
 		}
 	}
 
-
-	// Useless ?
-	public function startElement(elemId: String):Void
-	{
-		/*if (elemIndex == 0 || elemId != switch(elements[elemIndex]){ case Part(p): p.id; case Pattern(p): p.id; case Item(i): i.id; case GroupItem(g): g.id;}) {
-
-			var tmpIndex = 0;
-
-			while (tmpIndex < elements.length && elemId != switch(elements[tmpIndex]){ case Part(p): p.id; case Pattern(p): p.id; case Item(i): i.id; case GroupItem(g): g.id;}) {
-
-				tmpIndex++;
-			}
-			if (tmpIndex < elements.length) {
-
-				elemIndex = tmpIndex;
-			}
-			switch (elements[elemIndex]) {
-
-				case Part(p):
-					if (p.next == null) {
-
-						elemIndex++;
-					}
-				default: // nothing
-			}
-		}*/
-	}
-
 	/**
 	* @param    startIndex : Next element after this position
     * @return the next element in the part or null if the part is over
@@ -365,11 +347,11 @@ class Part{
 		if (startIndex > -1)
 			elemIndex = startIndex;
 
-		if (elemIndex < elements.length-1){
+		if (elemIndex < elements.length){
 			// If current element is a pattern, explore pattern first
-			switch(elements[elemIndex+1]){
-				case Pattern(p) if(p.itemIndex < p.patternContent.length): return elements[elemIndex+1] ;
-				default: return elements[++elemIndex];
+			switch(elements[elemIndex]){
+				case Pattern(p) if(p.itemIndex < p.patternContent.length): return elements[elemIndex] ;
+				default: return elements[elemIndex++];
 			}
 		}
 		else
@@ -380,13 +362,15 @@ class Part{
     * @return previous element in the part or null if at the beginning of the part
     */
 	public function getPreviousElement() : Null<PartElement> {
-		if (elemIndex > -2){
+		if (elemIndex > 2){
 			// If current element is a pattern, explore pattern first
-			switch(elements[elemIndex+1]){
+			/*switch(elements[elemIndex+1]){
 				case Pattern(p): p.restart();
 				default:
-			}
-			return elements[--elemIndex];
+			}*/
+			// Need to step 2 back, because elemIndex is already pointing for next element
+			elemIndex--;
+			return elements[elemIndex-1];
 		}
 		else
 			return null;
@@ -526,7 +510,7 @@ class Part{
 
 	public function restart() : Void {
 
-		elemIndex = -1;
+		elemIndex = 0;
 		if(activityData != null){
 			activityData.groupIndex = 0;
 			activityData.score = 0;
@@ -771,8 +755,6 @@ class Part{
 
 	private function enterPart():Void
 	{
-		if(parent != null)
-			parent.startElement(id);
 		// TODO SoundLoop
 		//if(soundLoop != null)
 		//soundLoopChannel = soundLoop.play();

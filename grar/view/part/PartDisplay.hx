@@ -58,7 +58,6 @@ class PartDisplay extends BaseDisplay
 
 	public var introScreenOn (default, null) : Bool = false;
 
-	public var ref (default, set):String;
 
 	static var CLICK = "click";
 	static var MOUSE_DOWN = "mouseDown";
@@ -99,12 +98,13 @@ class PartDisplay extends BaseDisplay
 	// GETTER / SETTER
 	//
 
-	public function set_ref(ref:String):String
+	public function init(ref:String, ?next: Bool = true):Void
 	{
-		//if(root != null)
-			//hide(root);
-		if(ref.indexOf("#") == -1)
+		// Check if a HTML template is needed
+		if(ref.indexOf("#") == -1){
 			root = Browser.document.getElementById(ref);
+			onPartLoaded();
+		}
 		else{
 			// Insert HTML into the layout
 			// TODO GLOBAL: Utiliser des iframes et ici set src
@@ -112,15 +112,74 @@ class PartDisplay extends BaseDisplay
 			root = Browser.document.getElementById(ids[1]);
 			var http = new Http(ids[0]);
 			http.onData = function(data){
-				root.innerHTML = data;
-				for(child in root.children){
-					if(child.nodeType == Node.ELEMENT_NODE)
-						if(Std.instance(child, Element).hasAttribute("data-layout-state")){
-							onHeaderStateChangeRequest(Std.instance(child, Element).getAttribute("data-layout-state"));
-						}
+				var hasChild = root.hasChildNodes();
+				if(next)
+				root.innerHTML += data;
+				else{
+					root.innerHTML = (data + root.innerHTML);
+					root.style.left = "-980px";
 				}
 
-				onPartLoaded();
+
+				// If layout state need to be updated
+				for(child in root.children){
+					if(child.nodeType == Node.ELEMENT_NODE)
+					if(Std.instance(child, Element).hasAttribute("data-layout-state")){
+						onHeaderStateChangeRequest(Std.instance(child, Element).getAttribute("data-layout-state"));
+					}
+				}
+
+				// If a part is already displayed
+				if(hasChild){
+					var listener = null;
+					listener = function(_){
+						root.removeEventListener('transitionend', listener);
+						if(next){
+							root.style.transition = "none";
+							// Remove all non-div elements
+							while(root.children[0].nodeName.toLowerCase() != "div")
+								root.removeChild(root.children[0]);
+							// Remove the first div (= previous part display)
+							root.removeChild(root.children[0]);
+							root.classList.remove("nextTransition");
+						}
+						else{
+							var i = 0;
+							while(root.children[i].nodeName.toLowerCase() == "div")
+								i++;
+							while(i < root.children.length)
+								root.removeChild(root.children[i]);
+							root.style.left = "";
+							root.classList.remove("previousTransition");
+						}
+
+						onPartLoaded();
+					}
+					root.addEventListener("transitionend",listener);
+
+					if(!next){
+						// Need to wait for next frame to see the animation
+						var firstFrame = true;
+						var update = null;
+						update = function(_){
+							if(firstFrame){
+								firstFrame = false;
+								Browser.window.requestAnimationFrame(update);
+							}
+							else{
+								root.style.transition = "";
+								root.classList.add("previousTransition");
+							}
+							return true;
+						};
+						Browser.window.requestAnimationFrame(update);
+					}
+					else
+						root.classList.add("nextTransition");
+				}
+				else
+					onPartLoaded();
+
 			}
 
 			http.onError = function(msg){
@@ -130,8 +189,6 @@ class PartDisplay extends BaseDisplay
 		}
 
 		show(root);
-
-		return this.ref = ref;
 	}
 
 

@@ -2,11 +2,6 @@ package grar.view.part;
 
 import grar.util.Point;
 
-import grar.view.style.TextDownParser;
-import grar.view.component.SoundPlayer;
-import grar.view.component.VideoPlayer;
-
-
 using StringTools;
 using Lambda;
 
@@ -31,8 +26,6 @@ class PartDisplay extends BaseDisplay{
     }
 
     public var introScreenOn (default, null) : Bool = false;
-
-    public var ref (default, set):String;
 
     static var CLICK = "click";
     static var MOUSE_DOWN = "mouseDown";
@@ -69,10 +62,8 @@ class PartDisplay extends BaseDisplay{
 // GETTER / SETTER
 //
 
-    public function set_ref(ref:String):String
+    public function init(ref:String, ?next: Bool = true):Void
     {
-
-        return ref;
     }
 
 

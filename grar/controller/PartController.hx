@@ -87,7 +87,7 @@ class PartController
     * @param    interrupt : Stop current part to display the new one
     * @return true if the part can be displayed.
     */
-	public function displayPart(part : Part): Bool {
+	public function displayPart(part : Part, ?next: Bool = true): Bool {
 		this.part = part;
 
 		//startIndex = startPosition;
@@ -109,7 +109,7 @@ class PartController
 				else
 					nextElement();
 			}
-			display.ref = part.ref;
+			display.init(part.ref, next);
 		});
 
 		display.onExit = function(){ exitPart(part); }
@@ -314,7 +314,6 @@ class PartController
 					if (p.id == target) {
 
 						elem = e;
-						part.startElement(p.id);
 						nextElement(part.getElementIndex(elem)-1);
 						break;
 					}
