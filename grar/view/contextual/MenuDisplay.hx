@@ -62,6 +62,7 @@ class MenuDisplay extends BaseDisplay {
 				bar.style.width = last.style.left;
 			}
 
+			// Refresh done part
 			var doneMarker = new Array<Element>();
 			for(node in root.getElementsByClassName("done"))
 				doneMarker.push(cast node);
@@ -72,6 +73,7 @@ class MenuDisplay extends BaseDisplay {
 				}
 			}
 
+			// Refresh started part
 			var startedMarker = new Array<Element>();
 			for(node in root.getElementsByClassName("started"))
 				startedMarker.push(cast node);
@@ -79,6 +81,18 @@ class MenuDisplay extends BaseDisplay {
 				var elem: Element = cast marker;
 				if(Std.parseFloat(elem.style.left) > Std.parseFloat(last.style.left)){
 					elem.classList.remove("started");
+				}
+			}
+
+			// Refresh todo part
+			var todoMarker = new Array<Element>();
+			for(node in root.getElementsByClassName("todo"))
+				todoMarker.push(cast node);
+			for(marker in todoMarker){
+				var elem: Element = cast marker;
+				if(Std.parseFloat(elem.style.left) < Std.parseFloat(last.style.left)){
+					elem.classList.remove("todo");
+					elem.classList.add("done");
 				}
 			}
 		}
