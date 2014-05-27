@@ -134,6 +134,7 @@ class PartDisplay extends BaseDisplay
 					var listener = null;
 					listener = function(_){
 						root.removeEventListener('transitionend', listener);
+						root.removeEventListener('webkitTransitionEnd', listener);
 						if(next){
 							root.style.transition = "none";
 							// Remove all non-div elements
@@ -156,6 +157,7 @@ class PartDisplay extends BaseDisplay
 						onPartLoaded();
 					}
 					root.addEventListener("transitionend",listener);
+					root.addEventListener("webkitTransitionEnd",listener);
 
 					if(!next){
 						// Need to wait for next frame to see the animation
