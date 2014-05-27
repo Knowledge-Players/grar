@@ -174,8 +174,10 @@ class PartDisplay extends BaseDisplay
 						};
 						Browser.window.requestAnimationFrame(update);
 					}
-					else
+					else{
+						root.style.transition = "";
 						root.classList.add("nextTransition");
+					}
 				}
 				else
 					onPartLoaded();
@@ -501,15 +503,17 @@ class PartDisplay extends BaseDisplay
 		drag.style.top = "0px";
 		drag.style.left = "0px";
 		drag.style.position = "static";
-		root.onmousemove = root.ontouchmove = null;
+        root.onmouseup = root.onmousemove = root.ontouchmove = null;
 		if(isValid){
 			getChildById(dropId).appendChild(drag);
-			drag.draggable = false;
-			drag.style.margin = "0px";
+            getChildById(dropId).draggable = false;
+            drag.onmousedown = null;
+            drag.onmouseup = null;
 			drag.classList.add("true");
 		}
 		else{
 			dragParent.appendChild(drag);
+
 		}
 
 		// TODO callback onValidationRequest()
