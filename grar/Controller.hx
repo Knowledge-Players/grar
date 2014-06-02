@@ -169,9 +169,11 @@ class Controller {
 					        var srv = new KalturaService();
 						    srv.createSession(state.module.kSettings.partnerId, state.module.kSettings.secret, state.module.kSettings.serviceUrl, function(result){
 							    ks = result;
+							    launchGame();
 						    });
 					    }
-				    	launchGame();
+				        else
+				    	    launchGame();
 				}
 			}
 
