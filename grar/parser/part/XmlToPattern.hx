@@ -4,7 +4,6 @@ import grar.model.part.ButtonData;
 import grar.model.part.Pattern;
 import grar.model.part.dialog.ChoicePattern;
 import grar.model.part.video.VideoPattern;
-import grar.model.part.strip.BoxPattern;
 
 import grar.util.ParseUtils;
 
@@ -25,10 +24,6 @@ class XmlToPattern {
 			case "link":
 
 				p = parsePattern(f);
-
-			case "box":
-
-				p = parseBoxPattern(f, f.has.background ? f.att.background: null);
 
 			case "choice":
 
@@ -85,11 +80,6 @@ class XmlToPattern {
 	static function parsePattern( f : Fast ) : Pattern {
 
 		return new Pattern( parsePatternData(f) );
-	}
-
-	static function parseBoxPattern( f : Fast, b : Null<String> ) : BoxPattern {
-
-		return new BoxPattern( parsePatternData(f), b );
 	}
 
 	static function parseChoicePattern( f : Fast ) : ChoicePattern {

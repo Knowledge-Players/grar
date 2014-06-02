@@ -17,4 +17,4 @@ before_install:
 
 script:
   - haxe build.hxml
-  - tests/results/RunTest
+  - php tests/results/index.php

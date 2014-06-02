@@ -352,6 +352,7 @@ class PartController
         if(nextItem != null)
             setupItem(nextItem);
         else{
+           // p.restart();
             display.hidePattern(p.ref);
             nextElement();
         }

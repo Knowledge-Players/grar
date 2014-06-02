@@ -11,8 +11,6 @@ enum PartType {
 
 	Part;
 	Activity;
-	Dialog;
-	Strip;
 }
 
 typedef PartialPart = {
@@ -354,26 +352,32 @@ class Part{
 				default: return elements[elemIndex++];
 			}
 		}
-		else
+		else{
+			restart();
 			return null;
+		}
 	}
 
 	/**
     * @return previous element in the part or null if at the beginning of the part
     */
 	public function getPreviousElement() : Null<PartElement> {
+
+		// If current element is a pattern, restart it
+		switch((elements[elemIndex])){
+			case Pattern(p): p.restart();
+			default:
+		}
+
 		if (elemIndex > 2){
-			// If current element is a pattern, explore pattern first
-			/*switch(elements[elemIndex+1]){
-				case Pattern(p): p.restart();
-				default:
-			}*/
-			// Need to step 2 back, because elemIndex is already pointing for next element
 			elemIndex--;
+			// Need to step 2 back, because elemIndex is already pointing for next element
 			return elements[elemIndex-1];
 		}
-		else
+		else{
+			restart();
 			return null;
+		}
 	}
 
 	/**

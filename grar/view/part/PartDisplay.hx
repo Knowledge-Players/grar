@@ -127,9 +127,6 @@ class PartDisplay extends BaseDisplay
 					root.style.left = "-100%";
 				}
 
-
-
-
 				// If a part is already displayed
 				if(hasChild){
 					var listener = null;
@@ -195,7 +192,6 @@ class PartDisplay extends BaseDisplay
 				else
 					onPartLoaded();
 
-
 			}
 
 			http.onError = function(msg){
@@ -242,14 +238,18 @@ class PartDisplay extends BaseDisplay
 	public function setText(itemRef: String, content: String):Void
 	{
 		if(itemRef != null) {
-            var t:Element = doSetText(itemRef, content)
+            var t:Element = doSetText(itemRef, content);
 			show(t);
+			// Show children too
             for (child in t.children) {
                 if (child.nodeType == Node.ELEMENT_NODE) {
                     var element:Element = cast child;
                     show(element);
                 }
             }
+
+			// Verify parent is also visible
+			show(t.parentElement);
 		}
 	}
 
@@ -267,7 +267,9 @@ class PartDisplay extends BaseDisplay
 		}
 	}
     public function hidePattern(ref:String):Void{
-        var pat = getChildById(ref);
+        var pat: Element = getChildById(ref);
+	    for(child in pat.children)
+		    hide(cast child);
         hide(pat);
     }
     public function showPattern(ref:String):Void{
@@ -436,13 +438,10 @@ class PartDisplay extends BaseDisplay
 			else
 				newInput.onmousedown = onStart;
 
-
 			newInput.onclick = function(e: MouseEvent){
 				onInputEvent(InputEvent.CLICK(CLICK), newInput.id, getMousePosition(e));
 				onValidationRequest(newInput.id);
 			}
-
-
 
             newInput.onmouseover = function(e:MouseEvent) onInputEvent(InputEvent.MOUSE_OVER(MOUSE_OVER), newInput.id, getMousePosition(e));
 			// Display

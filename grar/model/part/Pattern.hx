@@ -62,7 +62,7 @@ class Pattern {
 	/**
      * Current item index
 	 **/
-	public var itemIndex (default, set): Int = -1;
+	public var itemIndex (default, set): Int = 0;
 
 	///
 	// GETTER/SETTER
@@ -92,7 +92,7 @@ class Pattern {
 		if (itemIndex < patternContent.length)
             return patternContent[itemIndex++];
 		else {
-			//restart();
+			restart();
 			return null;
 		}
 
@@ -103,10 +103,14 @@ class Pattern {
      */
 	public function getPreviousItem() : Null<Item> {
 
-		if (itemIndex > 0)
-			return patternContent[(--itemIndex)];
-		else
+		if (itemIndex > 2){
+			itemIndex--;
+			return patternContent[itemIndex-1];
+		}
+		else{
+			restart();
 			return null;
+		}
 	}
 
 	/**
@@ -114,7 +118,7 @@ class Pattern {
 	 **/
 	public inline function restart() : Void {
 
-		itemIndex = -1;
+		itemIndex = 0;
 	}
 
 	/**

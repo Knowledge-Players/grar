@@ -3,8 +3,6 @@ package grar.parser.part;
 import grar.model.part.GroupItem;
 import grar.model.part.Part;
 import grar.model.part.PartElement;
-import grar.model.part.dialog.DialogPart;
-import grar.model.part.strip.StripPart;
 import grar.model.part.Pattern;
 import grar.model.part.item.Item;
 
@@ -38,17 +36,6 @@ class XmlToPart {
 		var t : String = f.has.type ? f.att.type.toLowerCase() : "";
 
 		switch (t) {
-
-			case "dialog":
-
-				pp.type = Dialog;
-				pp.pd = parsePartData(f);
-
-			case "strip" :
-
-				pp.type = Strip;
-				pp.pd = parsePartData(f);
-
 			case "activity":
 				pp.type = Activity;
 				pp.pd = parsePartData(f);
@@ -73,18 +60,6 @@ class XmlToPart {
 		var p : Part;
 		var pps : Array<PartialPart>;
 		switch (pp.type) {
-
-			case Dialog:
-
-				var pd : PartData = parsePartContentData(pp.pd, xml);
-				pps = pd.partialSubParts;
-				p = new DialogPart(pd);
-
-			case Strip:
-
-				var pd : PartData = parsePartContentData(pp.pd, xml);
-				pps = pd.partialSubParts;
-				p = new StripPart(pd);
 
 			case Activity:
 				var apd = parseActivityPartContent(pp.pd, xml);
