@@ -91,9 +91,7 @@ class XmlToLocale {
 							if (data.nodeName == "Data") {
 
 								if (key != "") {
-
 									value = StringTools.htmlUnescape(data.firstChild().toString());
-
 								} else {
 
 									key = data.firstChild().toString();

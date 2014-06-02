@@ -47,7 +47,7 @@ class XmlToPart {
 
 			default:
 
-				throw "unexpected type attribute value $t";
+				throw 'Unexpected type attribute "$t"';
 		}
 
 		return pp;

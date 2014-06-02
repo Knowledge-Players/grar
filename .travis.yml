@@ -1,4 +1,4 @@
-language: c++
+language: php
 
 before_install:
   - sudo apt-get install python-software-properties -y # for the next command

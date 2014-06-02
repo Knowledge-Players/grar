@@ -26,6 +26,6 @@ class XmlToLocaleTest{
 		Assert.equals("fr", localeData.name);
 		Assert.equals("Conclusion", localeData.getItem("conclusion"));
 		Assert.equals("Merci", localeData.getItem("thanks"));
-		Assert.equals("Titre de l'épisode", localeData.getItem("episode_title"));
+		Assert.equals("Titre de l episode", localeData.getItem("episode_title"));
 	}
 }

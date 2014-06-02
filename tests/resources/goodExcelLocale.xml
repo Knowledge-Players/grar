@@ -114,7 +114,7 @@
             <Cell ss:StyleID="s65"><Data ss:Type="String" x:Ticked="1">Merci</Data></Cell>
         </Row><Row ss:AutoFitHeight="0" ss:Height="26">
             <Cell><Data ss:Type="String">episode_title</Data></Cell>
-            <Cell ss:StyleID="s65"><Data ss:Type="String" x:Ticked="1">Titre de l'épisode</Data></Cell>
+            <Cell ss:StyleID="s65"><Data ss:Type="String" x:Ticked="1">Titre de l episode</Data></Cell>
         </Row>
         </Table>
         <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
