@@ -49,9 +49,9 @@ class PartController
     var currentPattern:Pattern;
 
 	// Activity vars
-	var isActivity: Bool = false;
-	var inputs: List<Input>;
+	// TODO let view manage it
 	var dropList: Map<String, List<String>>;
+	// TODO set in model
 	var isEnabled: Bool = true;
 	var maxSelect: Int;
 
@@ -77,7 +77,7 @@ class PartController
 	{
 		display = application.partDisplay;
 
-		// Offer to change parser?
+		// TODO Offer to change parser? (App params)
 		display.markupParser = new TextDownParser();
 	}
 
@@ -90,29 +90,35 @@ class PartController
 	public function displayPart(part : Part, ?next: Bool = true): Bool {
 		this.part = part;
 
+		// Reset activity state
+		state.activityState = ActivityState.NONE;
+
 		//startIndex = startPosition;
 		display.onHeaderStateChangeRequest = function(state: String){
 			onHeaderStateChangeRequest(state);
 		}
-		onLocaleDataPathRequest(part.file, function(){
 
-
+		var onLocale = null;
+		onLocale = function(){
 			application.updateChapterInfos(state.module.getLocalizedContent("chapterName"), state.module.getLocalizedContent("activityName"));
 
 			display.onPartLoaded = function(){
 				// Activity Part
 				if(part.activityData != null){
+					state.activityState = ActivityState.QUESTION;
 					display.onInputEvent = onInputEvent;
 					startActivity();
 				}
-				// Standard Part
+					// Standard Part
 				else
 					nextElement();
 			}
 			display.init(part.ref, next);
-		});
+			onLocaleDataPathRequest(part.file, null);
+		}
+		onLocaleDataPathRequest(part.file, onLocale);
 
-		display.onExit = function(){ exitPart(part); }
+		display.onExit = function() exitPart();
 		//display.onEnterSubPart = function(sp : Part) enterSubPart(sp);
 
 		return true;
@@ -121,23 +127,38 @@ class PartController
 	public function startActivity():Void
 	{
 		display.onValidationRequest = function(inputId: String){
-			// TODO Validate
-			//
-			part.activityData.score += part.getInput(inputId).points;
-
-			var rules = part.getRulesByType("minScore");
-			if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
-				display.enableNextButtons();
+			validateActivity(inputId);
 		}
 
-		inputs = new List<Input>();
-            var group: Inputs = part.getNextGroup();
+		// Clean previous inputs
+		if(part.activityData.groupIndex > 0){
+			var group = part.activityData.groups[part.activityData.groupIndex-1];
+			if(group.ref != "")
+				display.hideElements(Lambda.list([group.ref]));
+			for (item in group.items) {
+				unsetAuthor(item);
+			}
+			for(input in group.inputs)
+				display.removeElement(input.id);
+		}
+
+        var group: Inputs = part.getNextGroup();
+
+		// End of the activity
+		if(group == null){
+			state.activityState = ActivityState.NONE;
+			exitPart();
+			return;
+		}
+
+		// Print round number. Ex: 1/4
+		display.setRoundNumber(part.activityData.groupIndex, part.activityData.groups.length);
 
 		if(group.groups != null && group.groups.length != 0)
 			for(g in group.groups)
-                createInputs(g);
+				createInputs(g);
 		else if (group != null)
-            createInputs(group);
+			createInputs(group);
 
         for (item in group.items) {
                display.setText(item.ref, getLocalizedContent(item.content));
@@ -153,6 +174,7 @@ class PartController
 		else if(rules.length > 1)
 			maxSelect = Std.parseInt(rules[1].value);
 
+		// Init part buttons
 		for(b in part.buttons)
 			initButtons(b);
 
@@ -175,6 +197,7 @@ class PartController
             return {ref: input.ref, id: input.id, content: localizedContent, icon: input.icon}
         });
 
+	    // Set sorting rule
         var sort = part.getRulesByType("sort", group);
         if(sort.length == 1){
             switch(sort[0].value.toLowerCase()){
@@ -191,8 +214,13 @@ class PartController
             }
         }
 
-        display.createInputs(inputList, group.ref);
-        inputs = inputs.concat(group.inputs);
+	    // Set validation rule
+	    var validationRules = part.getRulesByType("validation", group);
+	    if(validationRules.length > 1)
+		    throw "Multiple validation rules for group '"+group+"'. Please choose only one.";
+	    var autoValidation: Bool = validationRules.length > 0 ? validationRules[0].value == "auto" : true;
+
+        display.createInputs(inputList, group.ref, autoValidation);
     }
 
 	public function onGameOver():Void
@@ -200,23 +228,18 @@ class PartController
 		display.hideElementsByClass("next");
 	}
 
-	public function exitPart(?part: Part, ?completed : Bool = true, ?fromMenu: Bool = false) : Void {
-		var p: Part;
-		if(part == null)
-			p = this.part;
-		else
-			p = part;
+	public function exitPart(?completed : Bool = true, ?fromMenu: Bool = false) : Void {
 
-		p.isDone = completed;
+		part.isDone = completed;
 		if(completed)
-			state.module.setPartFinished(p.id);
+			state.module.setPartFinished(part.id);
 		else if(!fromMenu)
 			onPartFinished(part, false);
 
 		display.reset();
-		p.restart();
+		part.restart();
 
-		if (p.file != null)
+		if (part.file != null)
 			onRestoreLocaleRequest();
 	}
 
@@ -235,7 +258,7 @@ class PartController
         currentElement = part.getNextElement(startIndex);
 
 		if (currentElement == null) {
-			exitPart(part);
+			exitPart();
 			return;
 		}
 
@@ -274,7 +297,7 @@ class PartController
 		currentElement = part.getPreviousElement();
 
 		if (currentElement == null) {
-			exitPart(part, false);
+			exitPart(false);
 			return;
 		}
 		switch (currentElement) {
@@ -345,24 +368,20 @@ class PartController
 	{
         display.showPattern(p.ref);
 
-        for(b in part.buttons)
-            initButtons(b);
-
         var nextItem = next ? p.getNextItem() : p.getPreviousItem();
-        if(nextItem != null)
-            setupItem(nextItem);
+        if(nextItem != null){
+	        setupItem(nextItem);
+        }
         else{
-           // p.restart();
             display.hidePattern(p.ref);
             nextElement();
         }
+
+		for(b in part.buttons)
+			initButtons(b);
 	}
 
 	private function setupItem(item : Item) : Void {
-
-		// TODO useful ?
-		/*if (item == null)
-			return;*/
 
 		// Activate tokens in the part
  		for (token in item.tokens)
@@ -445,6 +464,12 @@ class PartController
 		}
 	}
 
+	private function unsetAuthor(item: Item):Void
+	{
+		if(item.author != null)
+			display.hideSpeaker(item.author);
+	}
+
 	private function getLocalizedContent(key: String):String {
 		return state.module.getLocalizedContent(key);
 	}
@@ -475,20 +500,64 @@ class PartController
 	private function initButtons(bd: ButtonData) : Void {
 
 		var action = switch(bd.action.toLowerCase()) {
-			case "next": function() nextElement();
+			case "next": function(){
+				if(state.activityState == null || state.activityState == ActivityState.NONE)
+					nextElement();
+				else
+					startActivity();
+			};
 			case "prev": function() previousElement();
 			case "goto": function() {
 						var goToTarget : PartElement = part.buttonTargets.get(bd.ref);
 						if (goToTarget == null) {
-							exitPart(part);
+							exitPart();
 						} else {
 							nextElement(part.getElementIndex(goToTarget) - 1);
 						}
 					};
-			case "exit": function() exitPart(part, false);
+			case "exit": function() exitPart(false);
+			case "validate": function() {
+				var group = part.activityData.groups[part.activityData.groupIndex-1];
+				var debriefRules = part.getRulesByType("debrief", group);
+				if(state.activityState == ActivityState.QUESTION){
+					for(input in group.inputs)
+					validateActivity(input.id);
+
+					// Debrief
+					for(rule in debriefRules){
+						display.setDebrief(rule.id, state.module.getLocalizedContent(group.id+"_"+rule.value));
+					}
+					state.activityState = ActivityState.DEBRIEF;
+				}
+				else{
+					for(rule in debriefRules){
+						display.unsetDebrief(rule.id);
+					}
+					state.activityState = ActivityState.QUESTION;
+					startActivity();
+				}
+			};
 			default: function() trace("Unsupported action "+bd.action);
 		}
 		display.setButtonAction(bd.ref, bd.action, action);
+
+		for(key in bd.content.keys()){
+			if(key != "_")
+				display.setText(key, state.module.getLocalizedContent(bd.content[key]));
+			else
+				display.setText(bd.ref, state.module.getLocalizedContent(bd.content[key]));
+		}
+	}
+
+	private function validateActivity(inputId: String, ? value: String):Void
+	{
+		var result = part.validate(inputId, value);
+		display.setInputState(inputId, result ? "true" : "false");
+		part.activityData.score += part.getInput(inputId).points;
+		trace("Score is now: "+part.activityData.score);
+		var rules = part.getRulesByType("minScore");
+		if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
+			display.enableNextButtons();
 	}
 
 	private function onInputEvent(eventType: InputEvent, inputId: String, mousePoint: Point):Void
@@ -496,22 +565,24 @@ class PartController
 		if(!isEnabled)
 			return ;
 		var targetId = null;
+		var inputGroup = part.getInputGroup(inputId);
 		var rules = switch(eventType){
-			case MOUSE_DOWN(name): part.getRulesByType(name, part.getInputGroup(inputId));
-			case MOUSE_UP(name, target): targetId = target;
-				part.getRulesByType(name, part.getInputGroup(inputId));
+			case MOUSE_DOWN: part.getRulesByType(PartDisplay.MOUSE_DOWN, inputGroup);
+			case MOUSE_UP(target): targetId = target;
+				part.getRulesByType(PartDisplay.MOUSE_UP, inputGroup);
 
-			case CLICK(name): part.getRulesByType(name, part.getInputGroup(inputId));
-            case MOUSE_OVER(name): part.getRulesByType(name, part.getInputGroup(inputId));
+			case CLICK: part.getRulesByType(PartDisplay.CLICK, inputGroup);
+
+            case MOUSE_OVER: part.getRulesByType(PartDisplay.MOUSE_OVER, inputGroup);
 
 		}
+		var input: Input = inputGroup.inputs.filter(function(i: Input)return i.id == inputId)[0];
 		for(rule in rules){
 			switch(rule.value.toLowerCase()){
-			// TODO drag&drop dans la view
+				// TODO drag&drop dans la view
 				case "drag": display.startDrag(inputId, mousePoint);
 				case "drop":
-					var input: Input = inputs.filter(function(i: Input)return i.id == inputId).first();
-					var drop: Input = inputs.filter(function(i: Input)return i.id == targetId).first();
+					var drop: Input = part.getInput(targetId);
 					var isValid = drop != null && (input.values.has(targetId) || drop.values.has(inputId));
 					display.stopDrag(inputId, targetId, isValid, mousePoint);
 					if(isValid){
@@ -529,20 +600,22 @@ class PartController
 				case "showmore":
 					display.displayElements(Lambda.list([inputId+"_more"]));
                 case "showelement":
-                    var input: Input = inputs.filter(function(i: Input)return i.id == inputId).first();
                     for (s in input.values)
                         display.switchElementToVisited(s);
                 case "setvisited" :
                     display.switchElementToVisited(inputId);
                 case "replacecontent" :
-                    var input: Input = inputs.filter(function(i: Input)return i.id == inputId).first();
-                    var output: Input = inputs.filter(function(i: Input)return i.id == input.values[0]).first();
+                    var output: Input = part.getInput(input.values[0]);
                     var loc = getLocalizedContent(input.content[input.values[0]]);
                     display.setText(output.id,loc);
                 case "toggle" :
                     display.toggleElement(inputId);
 			}
 		}
+
+		// Update input model state
+		if(eventType == InputEvent.CLICK)
+			input.selected = !input.selected;
 
 		if(maxSelect == part.activityData.numRightAnswers){
             part.activityData.score = 1;

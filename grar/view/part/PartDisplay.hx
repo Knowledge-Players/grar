@@ -1,5 +1,6 @@
 package grar.view.part;
 
+import grar.util.ParseUtils;
 import js.html.InputElement;
 import grar.view.guide.Absolute;
 import grar.view.guide.Guide;
@@ -27,11 +28,10 @@ using StringTools;
 using Lambda;
 
 enum InputEvent{
-	//Remove name param
-    MOUSE_OVER(name: String);
-	CLICK(name: String);
-	MOUSE_DOWN(name: String);
-	MOUSE_UP(name: String, targetId: String);
+    MOUSE_OVER;
+	CLICK;
+	MOUSE_DOWN;
+	MOUSE_UP(targetId: String);
 }
 
 /**
@@ -59,15 +59,16 @@ class PartDisplay extends BaseDisplay
 	public var introScreenOn (default, null) : Bool = false;
 
 
-	static var CLICK = "click";
-	static var MOUSE_DOWN = "mouseDown";
-	static var MOUSE_UP = "mouseUp";
-	static var MOUSE_OVER = "mouseOver";
+	public static var CLICK = "click";
+	public static var MOUSE_DOWN = "mouseDown";
+	public static var MOUSE_UP = "mouseUp";
+	public static var MOUSE_OVER = "mouseOver";
 
 	var videoPlayer: VideoPlayer;
 	var soundPlayer: SoundPlayer;
 	var dragParent:Element;
 	var isMobile: Bool;
+	var templates: Map<String, Element>;
 
 
 	///
@@ -200,6 +201,9 @@ class PartDisplay extends BaseDisplay
 			http.request();
 		}
 
+		// Init templates
+		templates = new Map();
+
 		show(root);
 	}
 
@@ -235,7 +239,7 @@ class PartDisplay extends BaseDisplay
 		}
 	}
 
-	public function setText(itemRef: String, content: String):Void
+	public function setText(itemRef: String, content: String):Null<Element>
 	{
 		if(itemRef != null) {
             var t:Element = doSetText(itemRef, content);
@@ -249,8 +253,12 @@ class PartDisplay extends BaseDisplay
             }
 
 			// Verify parent is also visible
-			show(t.parentElement);
+			if(!t.parentElement.classList.contains("hidden"))
+				show(t.parentElement);
+
+			return t;
 		}
+		return null;
 	}
 
 	public function setImage(imageRef:String,src:String):Void{
@@ -275,6 +283,17 @@ class PartDisplay extends BaseDisplay
     public function showPattern(ref:String):Void{
         var pat:Element = getChildById(ref);
         show(pat);
+
+	    // Show the first non-visible child. Usefull for box in strip
+	    for(child in pat.children){
+	        var elem: Element = getElement(child);
+	        if(!elem.classList.contains("visible")){
+		        elem.classList.add("visible");
+		        if(elem.classList.contains("hidden"))
+			        elem.classList.remove("hidden");
+		        break;
+	        }
+	    }
     }
 
 	public function setIntroText(fieldRef: String, content: String):Void
@@ -299,6 +318,20 @@ class PartDisplay extends BaseDisplay
 			soundPlayer = new SoundPlayer();
 		soundPlayer.init(cast getChildById(soundRef));
 		soundPlayer.setSound(uri, autoStart, loop, defaultVolume);
+	}
+
+	public function setDebrief(debriefRef:String, content:String):Void
+	{
+		setText(debriefRef, content);
+		for(elem in root.getElementsByClassName("debriefable"))
+			getElement(elem).classList.add("debrief");
+	}
+
+	public function unsetDebrief(debriefRef:String):Void
+	{
+		hide(setText(debriefRef, ""));
+		for(elem in root.getElementsByClassName("debriefable"))
+			getElement(elem).classList.remove("debrief");
 	}
 
 	public function displayElements(elements:List<String>):Void
@@ -346,7 +379,7 @@ class PartDisplay extends BaseDisplay
 		b.classList.add(actionName);
 	}
 
-	public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>}>, groupeRef: String):Void
+	public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>}>, groupeRef: String, ?autoValidation: Bool = true):Void
 	{
 		var parent = getChildById(groupeRef);
 		var guide: Guide = null;
@@ -368,7 +401,7 @@ class PartDisplay extends BaseDisplay
         }
 
 		var i = 0;
-		var templates = new Map<String, Element>();
+
 		for(r in refs){
 			// Get template and store it if necessary
 			var t: Element;
@@ -378,7 +411,6 @@ class PartDisplay extends BaseDisplay
 				t = getChildById(r.ref);
 				templates[r.ref] = t;
 				// Remove template
-				// t.remove() not compatible with IE and Safari
 				t.parentElement.removeChild(t);
 			}
 
@@ -395,6 +427,11 @@ class PartDisplay extends BaseDisplay
 				guide.add(newInput);
 			else
 				parent.appendChild(newInput);
+
+			// Adding numbering system if any
+			for(num in newInput.getElementsByClassName("numbering")){
+				setNumbering(num, i);
+			}
 
 			// Setting input text
 			for(key in r.content.keys()){
@@ -425,10 +462,11 @@ class PartDisplay extends BaseDisplay
 				if(isMobile || e.button == 0){
 					e.preventDefault();
 					if(!Std.is(e.target, AnchorElement))
-						onInputEvent(InputEvent.MOUSE_DOWN(MOUSE_DOWN), newInput.id, getMousePosition(e));
+						onInputEvent(InputEvent.MOUSE_DOWN, newInput.id, getMousePosition(e));
                     newInput.ontouchend = function(e: MouseEvent){
-                        onInputEvent(InputEvent.CLICK(CLICK), newInput.id, new Point(0,0));
-                        onValidationRequest(newInput.id);
+                        onInputEvent(InputEvent.CLICK, newInput.id, new Point(0,0));
+	                    if(autoValidation)
+                            onValidationRequest(newInput.id);
                     }
 				}
 
@@ -439,48 +477,51 @@ class PartDisplay extends BaseDisplay
 				newInput.onmousedown = onStart;
 
 			newInput.onclick = function(e: MouseEvent){
-				onInputEvent(InputEvent.CLICK(CLICK), newInput.id, getMousePosition(e));
-				onValidationRequest(newInput.id);
+				onInputEvent(InputEvent.CLICK, newInput.id, getMousePosition(e));
+				if(autoValidation)
+					onValidationRequest(newInput.id);
 			}
 
-            newInput.onmouseover = function(e:MouseEvent) onInputEvent(InputEvent.MOUSE_OVER(MOUSE_OVER), newInput.id, getMousePosition(e));
+            newInput.onmouseover = function(e:MouseEvent) onInputEvent(InputEvent.MOUSE_OVER, newInput.id, getMousePosition(e));
 			// Display
 			show(newInput);
 			i++;
 		}
 
-		show(parent);
+		// Set visible all the way to input
+		var ancestor: Element = parent;
+		while(ancestor != null && !ancestor.classList.contains("visible")){
+			show(ancestor);
+			ancestor = ancestor.parentElement;
+		}
 	}
 
-    private function recursiveSetId(element:Element, ref:String):Void {
-        for(child in element.children){
-            if (child.nodeType == Node.ELEMENT_NODE) {
-                var element:Element = cast child;
-
-                if(element.id != ""){
-                    element.id = ref+"_"+ element.id ;
-                }
-                if(element.hasAttribute("for")){
-                    element.setAttribute("for", ref+"_"+ element.getAttribute("for"));
-                }
-                recursiveSetId(cast child,ref);
-            }
-        }
-    }
+	public function setRoundNumber(roundNumber:Int, totalRound:Int, ?groupRef: String):Void
+	{
+		var parent: Element = groupRef != null ? getChildById(groupRef) : root;
+		for(num in parent.getElementsByClassName("roundNumbering"))
+			setNumbering(num, roundNumber, "/"+totalRound);
+	}
 
     public function switchElementToVisited (id:String):Void {
-        var elem:Element = cast getChildById(id);
+        var elem:Element = getChildById(id);
         for (e in elem.getElementsByTagName("input")) {
             Std.instance(e, InputElement).checked = true;
         }
     }
 
-    public function toggleElement (id:String):Void {
-        var elem:Element = cast getChildById(id);
+    public function toggleElement(id:String):Void {
+        var elem:Element = getChildById(id);
         for (e in elem.getElementsByTagName("input")) {
             Std.instance(e, InputElement).checked = !Std.instance(e, InputElement).checked;
         }
     }
+
+	public function removeElement(elemId:String):Void
+	{
+		var elem: Element = getChildById(elemId);
+		elem.parentElement.removeChild(elem);
+	}
 
 	public function startDrag(id:String, mousePoint: Point):Void
 	{
@@ -502,7 +543,7 @@ class PartDisplay extends BaseDisplay
 		}
 		var onEnd = function(e: Event) {
 			var drop = getDroppedElement(mousePoint, elem.id);
-			onInputEvent(InputEvent.MOUSE_UP(MOUSE_UP, drop != null ? drop.id : ""), elem.id, mousePoint);
+			onInputEvent(InputEvent.MOUSE_UP(drop != null ? drop.id : ""), elem.id, mousePoint);
 		};
 		if(isMobile){
 			root.ontouchend = onEnd;
@@ -548,12 +589,50 @@ class PartDisplay extends BaseDisplay
 
 	public function setInputComplete(id:String):Void
 	{
-		getChildById(id).classList.add("complete");
+		setInputState(id, "complete");
+	}
+
+	public function setInputState(inputId:String, state: String): Void
+	{
+		getChildById(inputId).classList.add(state);
 	}
 
 	///
 	// INTERNALS
 	//
+
+	private function setNumbering(node:Node, order: Int, ? suffix: String):Void
+	{
+		var elem: Element = getElement(node);
+		if(elem != null){
+			if(elem.hasAttribute("data-numbering")){
+				var numbers = ParseUtils.parseListOfValues(elem.getAttribute("data-numbering"));
+				if(order < numbers.length)
+					elem.textContent = numbers[order];
+			}
+			else
+				elem.textContent = Std.string(order);
+
+			if(suffix != null)
+				elem.textContent += suffix;
+		}
+	}
+
+	private function recursiveSetId(element:Element, ref:String):Void {
+		for(child in element.children){
+			if (child.nodeType == Node.ELEMENT_NODE) {
+				var element:Element = cast child;
+
+				if(element.id != ""){
+					element.id = ref+"_"+ element.id ;
+				}
+				if(element.hasAttribute("for")){
+					element.setAttribute("for", ref+"_"+ element.getAttribute("for"));
+				}
+				recursiveSetId(cast child,ref);
+			}
+		}
+	}
 
 	private inline function getMousePosition(e: UIEvent):Point
 	{
@@ -607,4 +686,10 @@ class PartDisplay extends BaseDisplay
 		soundPlayer.pause();
 	}
 
+	private inline function getElement(node:Node):Null<Element>
+	{
+		if(node.nodeType == Node.ELEMENT_NODE)
+			return Std.instance(node, Element);
+		return null;
+	}
 }

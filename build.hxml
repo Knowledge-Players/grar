@@ -24,6 +24,7 @@
 -resource tests/resources/goodTransition.xml@goodTransition
 -resource tests/resources/goodXmlLocale.xml@goodXmlLocale
 -resource tests/resources/goodExcelLocale.xml@goodExcelLocale
+-resource tests/resources/goodPart.xml@goodPart
 
 # Cocktail compilation
 

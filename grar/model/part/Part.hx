@@ -590,7 +590,7 @@ class Part{
 
 		if(group != null){
 			var j = 0;
-			while(j < elements.length && group.inputs[j].id != inputId)
+			while(j < group.inputs.length && group.inputs[j].id != inputId)
 				j++;
 
 			result = group.inputs[j];
@@ -651,13 +651,14 @@ class Part{
 		return selectedRules;
 	}
 
-	public function validate(input : Input, value : String) : Bool {
+	public function validate(inputId : String, ?value: String) : Bool {
 
+		var input: Input = getInput(inputId);
 		if(activityData == null)
 			throw 'This part is not an activity';
 
 		var i = 0;
-		while (i < input.values.length && input.values[i] != value)
+		while (i < input.values.length && input.values[i] != (value != null ? value : Std.string(input.selected)))
 			i++;
 
 		var result = i != input.values.length;
@@ -665,7 +666,7 @@ class Part{
 		if (result)
 			activityData.numRightAnswers++;
 
-		input.selected = value == "true";
+		//input.selected = value == "true";
 
 		return result;
 	}

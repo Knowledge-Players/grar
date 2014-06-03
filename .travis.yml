@@ -10,7 +10,6 @@ before_install:
   - haxelib setup ~/haxelib
   - haxelib install utest
   - haxelib install compiletime
-  - haxelib install hxcpp
   - haxelib git kalturhaxe https://github.com/Knowledge-Players/KalturHaxe.git
   - haxelib git scormextern https://github.com/Knowledge-Players/ScormExtern.git
   - mkdir bin
