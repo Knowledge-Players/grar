@@ -6,11 +6,13 @@ using StringTools;
 using Lambda;
 
 enum InputEvent{
-    CLICK(name: String);
-    MOUSE_DOWN(name: String);
-    MOUSE_UP(name: String, targetId: String);
-    MOUSE_OVER(name: String);
+    CLICK;
+    MOUSE_DOWN;
+    MOUSE_UP(targetId: String);
+    MOUSE_OVER;
 }
+
+typedef Element = String;
 
 /**
  * Display of a part
@@ -27,10 +29,10 @@ class PartDisplay extends BaseDisplay{
 
     public var introScreenOn (default, null) : Bool = false;
 
-    static var CLICK = "click";
-    static var MOUSE_DOWN = "mouseDown";
-    static var MOUSE_UP = "mouseUp";
-    static var MOUSE_OVER = "mouseOver";
+    public static var CLICK = "click";
+    public static var MOUSE_DOWN = "mouseDown";
+    public static var MOUSE_UP = "mouseUp";
+    public static var MOUSE_OVER = "mouseOver";
 
 ///
 // CALLBACKS
@@ -88,9 +90,9 @@ class PartDisplay extends BaseDisplay{
 
     }
 
-    public function setText(itemRef: String, content: String):Void
+    public function setText(itemRef: String, content: String):Null<Element>
     {
-
+		return null;
     }
 	public function setImage(itemRef: String, src: String):Void
     {
@@ -131,7 +133,22 @@ class PartDisplay extends BaseDisplay{
 
     }
 
+	public function setDebrief(ref:String, content:String):Void
+	{
+
+	}
+
+	public function unsetDebrief(debriefRef:String):Void {}
+
+    public function hideElements(elements:List<String>):Void
+    {
+
+    }
+
 	public function hideElementsByClass(className: String):Void
+	{}
+
+	public function removeElement(elemId:String):Void
 	{}
 
     public function reset():Void
@@ -151,10 +168,11 @@ class PartDisplay extends BaseDisplay{
 
     }
 
-    public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>}>, groupeRef: String):Void
+    public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>}>, groupeRef: String, ?autoValidation: Bool = true):Void
     {
 
     }
+	public function setRoundNumber(roundNumber:Int, totalRound:Int, ?groupRef: String):Void {}
 
     public function startDrag(id:String, mousePoint: Point):Void
     {
@@ -166,6 +184,10 @@ class PartDisplay extends BaseDisplay{
     }
 
     public function setInputComplete(id:String):Void
+    {
+    }
+
+    public function setInputState(id:String, state: String):Void
     {
     }
 

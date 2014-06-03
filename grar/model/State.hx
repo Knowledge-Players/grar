@@ -3,6 +3,12 @@ package grar.model;
 import grar.model.Grar;
 import grar.model.tracking.Tracking;
 
+enum ActivityState {
+	QUESTION;
+	DEBRIEF;
+	NONE;
+}
+
 
 /**
  * Stores the current GRAR module state.
@@ -18,6 +24,8 @@ class State {
 	public var tracking (default,set) : Null<Tracking> = null;
 
 	public var trackingInitString (default,default) : Null<String> = null;
+
+	public var activityState (default, default):ActivityState;
 
 	///
 	// GETTER / SETTER
