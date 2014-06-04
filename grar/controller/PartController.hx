@@ -44,7 +44,6 @@ class PartController
 	var application: Application;
 	var display: PartDisplay;
 	var part: Part;
-	var currentElement : PartElement;
 	var previousBackground : String;
     var currentPattern:Pattern;
 
@@ -98,8 +97,7 @@ class PartController
 			onHeaderStateChangeRequest(state);
 		}
 
-		var onLocale = null;
-		onLocale = function(){
+		onLocaleDataPathRequest(part.file, function(){
 			application.updateChapterInfos(state.module.getLocalizedContent("chapterName"), state.module.getLocalizedContent("activityName"));
 
 			display.onPartLoaded = function(){
@@ -114,9 +112,7 @@ class PartController
 					nextElement();
 			}
 			display.init(part.ref, next);
-			onLocaleDataPathRequest(part.file, null);
-		}
-		onLocaleDataPathRequest(part.file, onLocale);
+		});
 
 		display.onExit = function() exitPart();
 		//display.onEnterSubPart = function(sp : Part) enterSubPart(sp);
@@ -142,7 +138,7 @@ class PartController
 				display.removeElement(input.id);
 		}
 
-        var group: Inputs = part.getNextGroup();
+		var group: Inputs = part.getNextGroup();
 
 		// End of the activity
 		if(group == null){
@@ -150,6 +146,11 @@ class PartController
 			exitPart();
 			return;
 		}
+
+		// Show debrief zone (maybe?)
+		var debriefRules = part.getRulesByType("debrief", group);
+		for(zone in debriefRules)
+			display.showDebriefZone(zone.id);
 
 		// Print round number. Ex: 1/4
 		display.setRoundNumber(part.activityData.groupIndex, part.activityData.groups.length);
@@ -255,7 +256,7 @@ class PartController
 			if(rules.length > 0 && part.activityData.score < Std.parseInt(rules[0].value))
 				return;
 		}
-        currentElement = part.getNextElement(startIndex);
+        var currentElement = part.getNextElement(startIndex);
 
 		if (currentElement == null) {
 			exitPart();
@@ -271,7 +272,8 @@ class PartController
 					part.isDone = true;
 					parent.gameOver();
 				}
-				enterSubPart(p);
+				//enterSubPart(p);
+				displayPart(p);
 
 			case Item(i):
 				if (i.endScreen) {
@@ -294,7 +296,7 @@ class PartController
 
 	public function previousElement():Void
 	{
-		currentElement = part.getPreviousElement();
+		var currentElement = part.getPreviousElement();
 
 		if (currentElement == null) {
 			exitPart(false);
@@ -478,19 +480,13 @@ class PartController
 
 		var list = new List<String>();
 
-		var button : List<ButtonData> = null;
-		switch (currentElement) {
-			case Item(i):
-				button = i.button;
-			case Pattern(p):
-				button = p.buttons;
-			default:
-		}
-		if(button != null){
-			for(b in button){
-				list.add(b.ref);
-				for(key in b.content.keys())
-					display.setText(key, b.content.get(key));
+		for(b in item.button){
+			list.add(b.ref);
+			for(key in b.content.keys()){
+				if(key == "_")
+					display.setText(b.ref, b.content[key]);
+				else
+					display.setText(key, b.content[key]);
 			}
 		}
 
@@ -554,7 +550,7 @@ class PartController
 		var result = part.validate(inputId, value);
 		display.setInputState(inputId, result ? "true" : "false");
 		part.activityData.score += part.getInput(inputId).points;
-		trace("Score is now: "+part.activityData.score);
+
 		var rules = part.getRulesByType("minScore");
 		if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
 			display.enableNextButtons();
@@ -566,6 +562,10 @@ class PartController
 			return ;
 		var targetId = null;
 		var inputGroup = part.getInputGroup(inputId);
+		// Input is not in this part. Discard event
+		if(inputGroup == null)
+			return;
+
 		var rules = switch(eventType){
 			case MOUSE_DOWN: part.getRulesByType(PartDisplay.MOUSE_DOWN, inputGroup);
 			case MOUSE_UP(target): targetId = target;
@@ -610,6 +610,8 @@ class PartController
                     display.setText(output.id,loc);
                 case "toggle" :
                     display.toggleElement(inputId);
+				case "goto":
+					displayPart(state.module.getPartById(rule.id));
 			}
 		}
 

@@ -151,26 +151,20 @@ class TrackingController {
 
 				var i : Int = 0;
 
-				for (ti in state.module.getAllItems()) {
-
+				for (p in state.module.getAllParts()) {
 					i++;
 
-					switch(ti) {
+					if (partId == p.id) {
 
-						case Part(p):
+						state.module.bookmark = i;
 
-							if (partId == p.id) {
+						var stateStr : String = saveStateInfos();
 
-								state.module.bookmark = i;
+						if (!(state.module.currentLocale == null && state.module.bookmark == -1 &&
+								state.module.completionOrdered.length == 0)) {
 
-								var stateStr : String = saveStateInfos();
-
-								if (!(state.module.currentLocale == null && state.module.bookmark == -1 &&
-										state.module.completionOrdered.length == 0)) {
-
-									state.tracking.location = stateStr;
-								}
-							}
+							state.tracking.location = stateStr;
+						}
 					}
 				}
 			}
@@ -259,37 +253,29 @@ class TrackingController {
 
 	public function updatePartsCompletion() : Void {
 
-		// "trackable items" completion
-		var allItem = state.module.getAllItems();
+		var allParts = state.module.getAllParts();
 
 		var stateInfosArray : Array<String> = state.trackingInitString.split("@");
 
 		var trackable : Array<String> = stateInfosArray[2].split("-");
 
-		if (allItem.length > 0) {
+		if (allParts.length > 0) {
 
-            if (allItem.length != trackable.length) {
+            if (allParts.length != trackable.length) {
 
                 trackable = initTrackable();
             }
 			for (i in 0...trackable.length) {
 
-				if (i < allItem.length) {
-
-					switch(allItem[i]) {
-
-						case Part(p):
-
-							state.module.completion.set(p.id, Std.parseInt(trackable[i]));
-
-							state.module.completionOrdered.push(p.id);
-					}
+				if (i < allParts.length) {
+					state.module.completion.set(allParts[i].id, Std.parseInt(trackable[i]));
+					state.module.completionOrdered.push(allParts[i].id);
 				}
 			}
 		}
 
 		// parts completion
-		for (p in state.module.getAllParts()) {
+		for (p in allParts) {
 		    p.isDone = state.module.isPartFinished(p.id);
 		    p.isStarted = state.module.isPartStarted(p.id);
 		}
@@ -320,7 +306,7 @@ class TrackingController {
 
         var a : Array<String> = new Array<String>();
 
-        var allItem = state.module.getAllItems();
+        var allItem = state.module.getAllParts();
 
         for (i in 0...allItem.length) {
 

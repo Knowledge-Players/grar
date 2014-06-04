@@ -1,7 +1,5 @@
 package grar.util;
 
-import grar.view.Color;
-
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
 
@@ -103,14 +101,6 @@ class ParseUtils {
 				array.push(array[1]);
 		}
 		return array;
-	}
-
-	public static function parseColor(value: String): Color
-	{
-		if(value.length == 10)
-			return {color: Std.parseInt("0x"+value.substr(4)), alpha: Std.parseInt(value.substr(2, 2))/10};
-		else
-			return {color: Std.parseInt(value), alpha: 1};
 	}
 
 	// Private

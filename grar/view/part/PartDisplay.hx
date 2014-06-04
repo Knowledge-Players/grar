@@ -101,14 +101,20 @@ class PartDisplay extends BaseDisplay
 
 	public function init(ref:String, ?next: Bool = true):Void
 	{
+		// Init templates
+		templates = new Map();
+
 		// Check if a HTML template is needed
 		if(ref.indexOf("#") == -1){
 			root = Browser.document.getElementById(ref);
+			for(child in root.children)
+				recursiveHide(getElement(child));
 			onPartLoaded();
 		}
 		else{
 			// Insert HTML into the layout
 			// TODO GLOBAL: Utiliser des iframes et ici set src
+			// TODO add stylesheets in the Browser.document.headElement
 			var ids = ref.split("#");
 			root = Browser.document.getElementById(ids[1]);
             for(child in root.children){
@@ -200,10 +206,6 @@ class PartDisplay extends BaseDisplay
 			}
 			http.request();
 		}
-
-		// Init templates
-		templates = new Map();
-
 		show(root);
 	}
 
@@ -225,9 +227,10 @@ class PartDisplay extends BaseDisplay
 
 	public function showSpeaker(speaker : String) : Void {
 		if(speaker != null){
-			var char = getChildById("speaker");
+			var char: Element = getChildById("speaker");
 			char.classList.add(speaker);
 			show(char);
+			show(char.parentElement);
 		}
 	}
 
@@ -320,6 +323,14 @@ class PartDisplay extends BaseDisplay
 		soundPlayer.setSound(uri, autoStart, loop, defaultVolume);
 	}
 
+	public function showDebriefZone(debriefRef:String):Void
+	{
+		var debrief: Element = getChildById(debriefRef);
+		for(child in debrief.children)
+			recursiveShow(getElement(child));
+		show(debrief);
+	}
+
 	public function setDebrief(debriefRef:String, content:String):Void
 	{
 		setText(debriefRef, content);
@@ -381,7 +392,8 @@ class PartDisplay extends BaseDisplay
 
 	public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>}>, groupeRef: String, ?autoValidation: Bool = true):Void
 	{
-		var parent = getChildById(groupeRef);
+		var parent: Element = getChildById(groupeRef);
+
 		var guide: Guide = null;
 		if(parent.hasAttribute("data-grid")){
 			var data = parent.getAttribute("data-grid").split(",");
@@ -691,5 +703,23 @@ class PartDisplay extends BaseDisplay
 		if(node.nodeType == Node.ELEMENT_NODE)
 			return Std.instance(node, Element);
 		return null;
+	}
+
+	private function recursiveHide(elem:Element):Void
+	{
+		for(child in elem.children)
+			if(child.nodeName.toLowerCase() == "div")
+				recursiveHide(getElement(child));
+
+		hide(elem);
+	}
+
+	private function recursiveShow(elem:Element):Void
+	{
+		for(child in elem.children)
+			if(child.nodeName.toLowerCase() == "div")
+				recursiveHide(getElement(child));
+
+		elem.classList.remove("hidden");
 	}
 }

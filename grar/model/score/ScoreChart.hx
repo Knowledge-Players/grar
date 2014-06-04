@@ -1,7 +1,6 @@
 package grar.model.score;
 
-import grar.model.tracking.Trackable;
-
+import grar.model.part.Part;
 import haxe.ds.StringMap;
 
 /**
@@ -24,7 +23,7 @@ class ScoreChart {
 	 * @param	perkName : Name of the perk
 	 * @param	activity : Activity to link
 	 */
-	public function subscribe(perkName : String, activity : Trackable) {
+	public function subscribe(perkName : String, activity : Part) {
 
 		var perk : Perk;
 
@@ -32,7 +31,7 @@ class ScoreChart {
 
 			perk = new Perk(perkName);
 			perks.set(perkName, perk);
-		
+
 		} else {
 
 			perk = perks.get(perkName);

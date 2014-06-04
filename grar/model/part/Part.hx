@@ -2,7 +2,6 @@ package grar.model.part;
 
 import grar.model.part.item.Item;
 import grar.model.part.Pattern;
-import grar.model.tracking.Trackable;
 
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
@@ -435,36 +434,6 @@ class Part{
 			}
 		}
 		return a;
-	}
-
-	/**
-     * @return all the trackable items of this part
-     **/
-	public function getAllItems() : Array<Trackable> {
-
-		var items : Array<Trackable> = [];
-
-		for (elem in elements) {
-
-			switch (elem) {
-
-				case Part(p):
-
-					if (!p.hasParts()) {
-
-						items.push(Part(p));
-
-					} else {
-
-						items = items.concat( p.getAllItems() );
-					}
-
-				default: // nothing
-			}
-		}
-		items.push(Part(this));
-
-		return items;
 	}
 
 	public function getElementById(id : String) : PartElement {

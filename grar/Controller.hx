@@ -402,23 +402,10 @@ class Controller {
 
 
 		if (state.module.bookmark > 0) {
-
-			switch (state.module.getAllItems()[state.module.bookmark]) {
-
-				case Part(p):
-					trace("part: "+p);
-					startingPart = p.id;
-				default: trace("default");
-			}
+			startingPart = state.module.getAllParts()[state.module.bookmark].id;
 		}
 		else{
-			for(item in state.module.getAllItems()){
-				switch(item){
-					case Part(p):
-						startingPart = p.id;
-						break;
-				}
-			}
+			startingPart = state.module.getAllParts()[0].id;
 		}
 		displayPartById(startingPart);
 	}

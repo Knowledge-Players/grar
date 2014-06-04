@@ -242,12 +242,10 @@ class XmlToPart {
 		// If no rules has been set on a group, all applies
 		for (group in groups) {
 
-			if (group.rules != null) {
-
-				for (rule in rules) {
-
+			if (group.rules == null) {
+				group.rules = new Array();
+				for (rule in rules)
 					group.rules.push(rule.id);
-				}
 			}
 		}
 

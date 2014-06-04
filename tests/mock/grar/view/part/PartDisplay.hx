@@ -140,6 +140,9 @@ class PartDisplay extends BaseDisplay{
 
 	public function unsetDebrief(debriefRef:String):Void {}
 
+	public function showDebriefZone(debriefRef:String):Void
+	{}
+
     public function hideElements(elements:List<String>):Void
     {
 

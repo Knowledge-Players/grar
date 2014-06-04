@@ -8,7 +8,6 @@ import grar.model.score.ScoreChart;
 import grar.model.score.Perk;
 import grar.model.part.Part;
 import grar.model.tracking.TrackingMode;
-import grar.model.tracking.Trackable;
 import grar.model.localization.Locale;
 import grar.model.localization.LocaleData;
 
@@ -93,7 +92,7 @@ class Grar {
 
 	private var stashedLocaleData : GenericStack<LocaleData>;
 
-	private var sameLocale : Bool;
+	private var changeLocale : Bool;
 
 
 	// WIP
@@ -184,13 +183,13 @@ class Grar {
 
 				currentLocaleDataPath = v;
 
-				sameLocale = false;
+				changeLocale = true;
 
 				onCurrentLocalePathChanged();
 
 			} else {
 
-				sameLocale = true;
+				changeLocale = false;
 			}
 
 		} else {
@@ -255,17 +254,6 @@ class Grar {
 		return readyState;
 	}
 
-	/*public function set_ref(v : String) : String {
-
-		if (ref == v) {
-			return ref;
-		}
-		ref = v;
-		onRefChanged();
-
-		return ref;
-	}*/
-
 	public function set_notebook(v : Notebook) : Notebook {
 
 		if (notebook == v) {
@@ -303,25 +291,19 @@ class Grar {
 	}
 
 	/**
-    * @return all trackable items of the game
-    **/
-    public function getAllItems() : Array<Trackable> {
-
-        var trackable : Array<Trackable> = [];
-
-        for (part in parts) {
-
-            trackable = trackable.concat(part.getAllItems());
-        }
-        return trackable;
-    }
+	* @return true if the last currentLocaleDataPath set was the same as the one already in place
+	**/
+	public function hasLocaleChanged():Bool
+	{
+		return changeLocale;
+	}
 
 	/**
     * Restore the previously stored locale
     **/
 	public function restoreLocale() : Void {
 
-		if (!sameLocale && !stashedLocaleData.isEmpty()) {
+		if (changeLocale && !stashedLocaleData.isEmpty()) {
 
 			localeData = stashedLocaleData.pop();
 

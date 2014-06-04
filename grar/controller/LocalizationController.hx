@@ -41,7 +41,10 @@ class LocalizationController {
 	public function setLocaleDataPath(path:String, ?onSuccess: Void -> Void):Void
 	{
 		state.module.currentLocaleDataPath = path;
-		localeChangeCallback = onSuccess;
+		if(state.module.hasLocaleChanged())
+			localeChangeCallback = onSuccess;
+		else
+			onSuccess();
 	}
 
 	function init() : Void {

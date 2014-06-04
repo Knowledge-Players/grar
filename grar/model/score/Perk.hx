@@ -1,7 +1,6 @@
 package grar.model.score;
 
-import grar.model.tracking.Trackable;
-
+import grar.model.part.Part;
 import haxe.ds.GenericStack;
 
 /**
@@ -17,7 +16,7 @@ class Perk {
 	/**
      * Activities who subscribes to this perk
      */
-	public var subscribed (default, null) : GenericStack<Trackable>;
+	public var subscribed (default, null) : GenericStack<Part>;
 
 	private var score : Int = 0;
 
@@ -28,7 +27,7 @@ class Perk {
 	public function new(name : String) {
 
 		this.name = name;
-		this.subscribed = new GenericStack<Trackable>();
+		this.subscribed = new GenericStack<Part>();
 	}
 
 	/**
@@ -36,7 +35,7 @@ class Perk {
      * added to the perk score
      * @param	activity
      */
-	public function susbscribe(activity : Trackable) : Void {
+	public function susbscribe(activity : Part) : Void {
 
 		subscribed.add(activity);
 	}
@@ -47,16 +46,10 @@ class Perk {
 	public function getScore() : Int {
 
 		var tmpScore : Int = score;
-		
-		for (activity in subscribed) {
 
-			switch(activity) {
+		for (activity in subscribed)
+			tmpScore += activity.score;
 
-				case Part(p):
-
-					tmpScore += p.score;
-			}
-		}
 		return tmpScore;
 	}
 
