@@ -547,8 +547,23 @@ class PartController
 
 	private function validateActivity(inputId: String, ? value: String):Void
 	{
-		var result = part.validate(inputId, value);
-		display.setInputState(inputId, result ? "true" : "false");
+        var valid = part.getRulesByType("validation");
+        if(valid.length > 1){
+            throw "too many validation rules";
+
+        }
+
+        switch(valid[0].value.toLowerCase()){
+            case "showanswers":
+                display.setInputState(inputId,part.getInput(inputId).values[0]);
+
+            default:
+                var result = part.validate(inputId, value);
+                display.setInputState(inputId, result ? "true" : "false");
+        }
+
+
+
 		part.activityData.score += part.getInput(inputId).points;
 
 		var rules = part.getRulesByType("minScore");
