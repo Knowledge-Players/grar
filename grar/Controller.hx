@@ -407,6 +407,7 @@ class Controller {
 		else{
 			startingPart = state.module.getAllParts()[0].id;
 		}
+
 		displayPartById(startingPart);
 	}
 

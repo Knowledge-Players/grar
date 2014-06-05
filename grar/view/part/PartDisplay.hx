@@ -386,7 +386,7 @@ class PartDisplay extends BaseDisplay
 	public function setButtonAction(buttonId: String, actionName: String, action : Void -> Void) : Void {
 
 		var b: Element = getChildById(buttonId);
-		b.onclick = function(_) action();
+		b.onclick = function(_) !b.classList.contains("disabled") ? action() : null;
 		b.classList.add(actionName);
 	}
 
@@ -607,6 +607,12 @@ class PartDisplay extends BaseDisplay
 	public function setInputState(inputId:String, state: String): Void
 	{
 		getChildById(inputId).classList.add(state);
+	}
+
+	public function toggleValidationButtons(?force: Bool):Void
+	{
+		for(b in root.getElementsByClassName("validate"))
+			getElement(b).classList.toggle("disabled", force);
 	}
 
 	///

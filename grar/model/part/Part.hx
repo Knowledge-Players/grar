@@ -86,6 +86,7 @@ typedef ActivityData = {
 	var groupIndex : Int;
 	var numRightAnswers :Int;
 	var score: Int;
+	var inputsEnabled: Bool;
 }
 
 class Part{

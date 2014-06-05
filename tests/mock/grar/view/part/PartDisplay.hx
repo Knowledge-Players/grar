@@ -194,4 +194,7 @@ class PartDisplay extends BaseDisplay{
     {
     }
 
+	public function toggleValidationButtons(?force: Bool):Void
+	{}
+
 }

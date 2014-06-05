@@ -50,9 +50,6 @@ class PartController
 	// Activity vars
 	// TODO let view manage it
 	var dropList: Map<String, List<String>>;
-	// TODO set in model
-	var isEnabled: Bool = true;
-	var maxSelect: Int;
 
 	///
 	// CALLBACKS
@@ -162,22 +159,15 @@ class PartController
 			createInputs(group);
 
         for (item in group.items) {
-               display.setText(item.ref, getLocalizedContent(item.content));
-               setAuthor(item);
+           setupItem(item);
         }
-
-		// Selection limits
-		var rules = part.getRulesByType("selectionLimits");
-		if(rules.length == 1)
-			maxSelect = Std.parseInt(rules[0].value);
-		else if(rules.length > 1 && rules[1].value == "*")
-			maxSelect = -1;
-		else if(rules.length > 1)
-			maxSelect = Std.parseInt(rules[1].value);
 
 		// Init part buttons
 		for(b in part.buttons)
 			initButtons(b);
+
+		// Init validation buttons state
+		verifySelectionLimits(group);
 
 		for(img in part.images)
 			display.setImage(img.ref,img.src);
@@ -573,8 +563,9 @@ class PartController
 
 	private function onInputEvent(eventType: InputEvent, inputId: String, mousePoint: Point):Void
 	{
-		if(!isEnabled)
+		if(!part.activityData.inputsEnabled)
 			return ;
+
 		var targetId = null;
 		var inputGroup = part.getInputGroup(inputId);
 		// Input is not in this part. Discard event
@@ -610,6 +601,16 @@ class PartController
 						if(isFull)
 							display.setInputComplete(targetId);
 						part.activityData.numRightAnswers++;
+
+
+						// Selection limits
+						var maxSelect = -1;
+						var rules = part.getRulesByType("selectionLimits", inputGroup);
+						if(rules.length == 1)
+							maxSelect = Std.parseInt(rules[0].value);
+						else if(rules.length > 1 && rules[1].value != "*")
+							maxSelect = Std.parseInt(rules[1].value);
+
 						display.setText(drop.id+"_completion", part.activityData.numRightAnswers+"/"+maxSelect);
 					}
 				case "showmore":
@@ -619,24 +620,51 @@ class PartController
                         display.switchElementToVisited(s);
                 case "setvisited" :
                     display.switchElementToVisited(inputId);
+	                input.selected = true;
                 case "replacecontent" :
                     var output: Input = part.getInput(input.values[0]);
                     var loc = getLocalizedContent(input.content[input.values[0]]);
                     display.setText(output.id,loc);
                 case "toggle" :
                     display.toggleElement(inputId);
+	                input.selected = !input.selected;
 				case "goto":
 					displayPart(state.module.getPartById(rule.id));
 			}
 		}
 
-		// Update input model state
-		if(eventType == InputEvent.CLICK)
-			input.selected = !input.selected;
+		verifySelectionLimits(inputGroup);
+	}
 
-		if(maxSelect == part.activityData.numRightAnswers){
-            part.activityData.score = 1;
-			isEnabled = false;
-        }
+	private function verifySelectionLimits(group: Inputs):Void
+	{
+		// Selection limits
+		var maxSelect = -1;
+		var minSelect = -1;
+
+		var selectionRules = part.getRulesByType("selectionLimits", group);
+		if(selectionRules.length > 1)
+			throw 'Too many selection rules. Please choose one';
+
+		var rules = selectionRules[0].value.split(" ");
+		if(rules.length == 1){
+			minSelect = Std.parseInt(rules[0]);
+			maxSelect = Std.parseInt(rules[0]);
+		}
+		else if(rules.length > 1 && rules[1] != "*"){
+			minSelect = Std.parseInt(rules[0]);
+			maxSelect = Std.parseInt(rules[1]);
+		}
+
+		var numSelected = group.inputs.count(function(input: Input) return input.selected);
+
+		if(maxSelect == numSelected){
+			part.activityData.score = 1;
+			part.activityData.inputsEnabled = false;
+		}
+
+		// Disable/Enable validation with minSelect
+		display.toggleValidationButtons(minSelect > numSelected);
+
 	}
 }

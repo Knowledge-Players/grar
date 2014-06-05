@@ -250,7 +250,7 @@ class XmlToPart {
 		}
 
 		pd = parsePartContentData(pd, xml);
-		var activityData: ActivityData = {groups: groups, rules: rules, groupIndex: 0, numRightAnswers: 0, score: 0};
+		var activityData: ActivityData = {groups: groups, rules: rules, groupIndex: 0, numRightAnswers: 0, score: 0, inputsEnabled: true};
 		return { pd: pd, ad: activityData };
 	}
 
