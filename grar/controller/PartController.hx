@@ -546,7 +546,7 @@ class PartController
         switch(valid[0].value.toLowerCase()){
             case "showanswers":
                 display.setInputState(inputId,part.getInput(inputId).values[0]);
-
+                display.uncheckElement(inputId);
             default:
                 var result = part.validate(inputId, value);
                 display.setInputState(inputId, result ? "true" : "false");

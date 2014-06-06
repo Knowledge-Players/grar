@@ -528,6 +528,12 @@ class PartDisplay extends BaseDisplay
             Std.instance(e, InputElement).checked = !Std.instance(e, InputElement).checked;
         }
     }
+    public function uncheckElement(id:String):Void {
+        var elem:Element = getChildById(id);
+        for (e in elem.getElementsByTagName("input")) {
+            Std.instance(e, InputElement).checked = false;
+        }
+    }
 
 	public function removeElement(elemId:String):Void
 	{
