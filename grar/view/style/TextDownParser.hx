@@ -30,11 +30,13 @@ class TextDownParser {
 		var lineEnding:EReg = ~/(\r)(\n)?|(&#13;)|(&#10;)|(<br\/>)/g;
 		var uniformedText = lineEnding.replace(text, "\n");
 
-		for (line in uniformedText.split("\n")) {
-
-			var formattedLine = parseLine(line);
+		var tokens = uniformedText.split("\n");
+		var it = tokens.iterator();
+		while(it.hasNext()){
+			var formattedLine = parseLine(it.next());
 			list.add(formattedLine);
-			list.add(Browser.document.createBRElement());
+			if(it.hasNext())
+				list.add(Browser.document.createBRElement());
 		}
 		return list;
 	}

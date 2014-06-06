@@ -1,9 +1,11 @@
 package grar.view;
 
+import js.html.AnchorElement;
 import js.html.Node;
-import grar.view.style.TextDownParser;
-
 import js.html.Element;
+import js.html.ParagraphElement;
+
+import grar.view.style.TextDownParser;
 
 using Lambda;
 
@@ -34,15 +36,10 @@ class BaseDisplay{
 			}
 		}
 
-		// TODO Std.is inconsistency
-		//if(Std.is(text, ParagraphElement)){
-		var p: Bool = untyped __js__("text.align != null");
-		if(p != null){
-		///
+		if(Std.instance(text, ParagraphElement) != null || Std.instance(text, AnchorElement) != null){
 			for(elem in markupParser.parse(content))
-				html += elem.outerHTML;
-			// TODO replace by textContent
-			text.innerHTML += html;
+				html += elem.textContent;
+			text.textContent += html;
 		}
 		else
 			for(elem in markupParser.parse(content))

@@ -249,10 +249,7 @@ class PartDisplay extends BaseDisplay
 			show(t);
 			// Show children too
             for (child in t.children) {
-                if (child.nodeType == Node.ELEMENT_NODE) {
-                    var element:Element = cast child;
-                    show(element);
-                }
+                show(getElement(child));
             }
 
 			// Verify parent is also visible
@@ -629,7 +626,7 @@ class PartDisplay extends BaseDisplay
 					elem.textContent = numbers[order];
 			}
 			else
-				elem.textContent = Std.string(order);
+				elem.textContent = Std.string(order+1);
 
 			if(suffix != null)
 				elem.textContent += suffix;

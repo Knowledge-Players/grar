@@ -629,7 +629,18 @@ class PartController
                     display.toggleElement(inputId);
 	                input.selected = !input.selected;
 				case "goto":
-					displayPart(state.module.getPartById(rule.id));
+					var id: String;
+					// Detect dynamic values
+					var tokens: Array<String> = rule.id.split("$");
+					if(tokens.length == 1)
+						id = rule.id;
+					else if(tokens[1].toLowerCase() == "id"){
+						id = tokens[0]+inputId;
+					}
+					else
+						throw "Unsupported dynamic value '"+tokens[1]+"'.";
+
+					displayPart(state.module.getPartById(id));
 			}
 		}
 
@@ -645,6 +656,8 @@ class PartController
 		var selectionRules = part.getRulesByType("selectionLimits", group);
 		if(selectionRules.length > 1)
 			throw 'Too many selection rules. Please choose one';
+		else if(selectionRules.length == 0)
+			return;
 
 		var rules = selectionRules[0].value.split(" ");
 		if(rules.length == 1){
