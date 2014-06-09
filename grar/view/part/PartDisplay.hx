@@ -333,6 +333,8 @@ class PartDisplay extends BaseDisplay
 		setText(debriefRef, content);
 		for(elem in root.getElementsByClassName("debriefable"))
 			getElement(elem).classList.add("debrief");
+		if(root.classList.contains("debriefable"))
+			root.classList.add("debrief");
 	}
 
 	public function unsetDebrief(debriefRef:String):Void
@@ -340,6 +342,8 @@ class PartDisplay extends BaseDisplay
 		hide(setText(debriefRef, ""));
 		for(elem in root.getElementsByClassName("debriefable"))
 			getElement(elem).classList.remove("debrief");
+		if(root.classList.contains("debriefable"))
+			root.classList.remove("debrief");
 	}
 
 	public function displayElements(elements:List<String>):Void

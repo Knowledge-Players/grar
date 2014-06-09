@@ -101,43 +101,47 @@ class TextDownParser {
 			// Default Style
 			default: substring = line;
 		}
-		if (styleName == "" && substring.charAt(1) == ".") {
 
+		// Remove all spaces before content
+		substring = StringTools.ltrim(substring);
+
+		// HTML output
+		var html: String;
+
+		// Ordered list
+		var regexOrder = ~/^(.)\./;
+
+		if (styleName == "" && regexOrder.match(substring)) {
 			styleName += "ordered" + level;
-			var span = Browser.document.createSpanElement();
-			span.innerHTML = substring.substr(0);
-			output = Browser.document.createParagraphElement();
-			output.appendChild(span);
+			html = regexOrder.replace(substring, "<span class='numbering'>$1</span>");
 			substring = substring.substr(2);
 		}
+		else
+			html = substring;
+
+		// Bold
+		// infos: ? after a selector reduces the greediness making it match the less character possible
+		var regexBold = ~/\*(.*?)\*/g;
+		html = regexBold.replace(html, "<b>$1</b>");
+
+		// Italic
+		var regexIta = ~/_(.*?)_/g;
+		html = regexIta.replace(html, "<i>$1</i>");
 
 		// Custom Style on the whole line.
-		var regexStyle:EReg = ~/(\[([^\]]+)\]([^\[]+)\[\/([^\]]+)\])([^[]*)/;
-
-		if (regexStyle.match(substring)) {
-			var style = regexStyle.matched(2);
-			var span = Browser.document.createSpanElement();
-			span.classList.add(style);
-			span.textContent = regexStyle.matched(3);
-			output = Browser.document.createParagraphElement();
-			output.appendChild(span);
-			substring = regexStyle.replace(substring, "$5");
-		}
-
-		substring = StringTools.ltrim(substring);
+		var regexStyle:EReg = ~/\[(.*?)\](.*?)\[\/.*?\]/g;
+		html = regexStyle.replace(html, "<span class='$1'>$2</span>");
 
 		if(styleName.startsWith("title")){
 			output = Browser.document.createElement("h"+level);
 		}
-		else if (styleName != "") {
+		else
 			output = Browser.document.createParagraphElement();
+
+		if(styleName != "")
 			output.classList.add(styleName);
-		}
 
-		if(output == null)
-			output = Browser.document.createParagraphElement();
-
-		output.appendChild(Browser.document.createTextNode(substring));
+		output.innerHTML = html;
 
 		return output;
 	}
