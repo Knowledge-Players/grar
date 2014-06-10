@@ -104,117 +104,117 @@ class PartDisplay extends BaseDisplay
 		// Init templates
 		templates = new Map();
 
-		if(noReload){
-			root = getChildById(ref);
+		// Check if a HTML template is needed
+		if(ref.indexOf("#") == -1){
+			root = Browser.document.getElementById(ref);
+			if(!noReload)
+				for(child in root.children)
+					recursiveHide(getElement(child));
 			show(root);
 			onPartLoaded();
 		}
 		else{
-			// Check if a HTML template is needed
-			if(ref.indexOf("#") == -1){
-				root = Browser.document.getElementById(ref);
-				for(child in root.children)
-					recursiveHide(getElement(child));
+			// Insert HTML into the layout
+			// TODO GLOBAL: Utiliser des iframes et ici set src
+			// TODO add stylesheets in the Browser.document.headElement
+			var ids = ref.split("#");
+			root = Browser.document.getElementById(ids[1]);
+
+			if(noReload){
 				show(root);
-				onPartLoaded();
+				return;
 			}
-			else{
-				// Insert HTML into the layout
-				// TODO GLOBAL: Utiliser des iframes et ici set src
-				// TODO add stylesheets in the Browser.document.headElement
-				var ids = ref.split("#");
-				root = Browser.document.getElementById(ids[1]);
-	            for(child in root.children){
-	                if(child.nodeType == Node.ELEMENT_NODE)
-	                if(Std.instance(child, Element).hasAttribute("data-layout-state")){
-	                    onHeaderStateChangeRequest(Std.instance(child, Element).getAttribute("data-layout-state")+"Remove");
-	                }
-	            }
-				var http = new Http(ids[0]);
-				http.onData = function(data){
-					var hasChild = root.hasChildNodes();
-					if(next)
-					    root.innerHTML += data;
 
-					else{
-						root.innerHTML = (data + root.innerHTML);
-						root.style.left = "-100%";
-					}
+            for(child in root.children){
+                if(child.nodeType == Node.ELEMENT_NODE)
+                if(Std.instance(child, Element).hasAttribute("data-layout-state")){
+                    onHeaderStateChangeRequest(Std.instance(child, Element).getAttribute("data-layout-state")+"Remove");
+                }
+            }
+			var http = new Http(ids[0]);
+			http.onData = function(data){
+				var hasChild = root.hasChildNodes();
+				if(next)
+				    root.innerHTML += data;
 
-					// If a part is already displayed
-					if(hasChild){
-						var listener = null;
-						listener = function(_){
-							root.removeEventListener('transitionend', listener);
-							root.removeEventListener('webkitTransitionEnd', listener);
-							if(next){
-								root.style.transition = "none";
-								// Remove all non-div elements
-								while(root.children[0].nodeName.toLowerCase() != "div")
-									root.removeChild(root.children[0]);
-								// Remove the first div (= previous part display)
+				else{
+					root.innerHTML = (data + root.innerHTML);
+					root.style.left = "-100%";
+				}
+
+				// If a part is already displayed
+				if(hasChild){
+					var listener = null;
+					listener = function(_){
+						root.removeEventListener('transitionend', listener);
+						root.removeEventListener('webkitTransitionEnd', listener);
+						if(next){
+							root.style.transition = "none";
+							// Remove all non-div elements
+							while(root.children[0].nodeName.toLowerCase() != "div")
 								root.removeChild(root.children[0]);
-								root.classList.remove("nextTransition");
-							}
-							else{
-	                            root.removeChild(root.children[root.children.length-1]);
-
-								var i = root.children.length-1;
-								while(root.children[i].nodeName.toLowerCase() != "div") {
-	                                root.removeChild(root.children[i]);
-	                                i--;
-	                            }
-								root.style.left = "";
-								root.classList.remove("previousTransition");
-							}
-
-	                        // If layout state need to be updated
-	                        for(child in root.children){
-	                            if(child.nodeType == Node.ELEMENT_NODE)
-	                            if(Std.instance(child, Element).hasAttribute("data-layout-state")){
-	                                onHeaderStateChangeRequest(Std.instance(child, Element).getAttribute("data-layout-state"));
-	                            }
-	                        }
-
-							show(root);
-							onPartLoaded();
-						}
-						root.addEventListener("transitionend",listener);
-						root.addEventListener("webkitTransitionEnd",listener);
-
-						if(!next){
-							// Need to wait for next frame to see the animation
-							var firstFrame = true;
-							var update = null;
-							update = function(_){
-								if(firstFrame){
-									firstFrame = false;
-									Browser.window.requestAnimationFrame(update);
-								}
-								else{
-									root.style.transition = "";
-									root.classList.add("previousTransition");
-								}
-								return true;
-							};
-							Browser.window.requestAnimationFrame(update);
+							// Remove the first div (= previous part display)
+							root.removeChild(root.children[0]);
+							root.classList.remove("nextTransition");
 						}
 						else{
-							root.style.transition = "";
-							root.classList.add("nextTransition");
+                            root.removeChild(root.children[root.children.length-1]);
+
+							var i = root.children.length-1;
+							while(root.children[i].nodeName.toLowerCase() != "div") {
+                                root.removeChild(root.children[i]);
+                                i--;
+                            }
+							root.style.left = "";
+							root.classList.remove("previousTransition");
 						}
-					}
-					else
+
+                        // If layout state need to be updated
+                        for(child in root.children){
+                            if(child.nodeType == Node.ELEMENT_NODE)
+                            if(Std.instance(child, Element).hasAttribute("data-layout-state")){
+                                onHeaderStateChangeRequest(Std.instance(child, Element).getAttribute("data-layout-state"));
+                            }
+                        }
+
 						show(root);
 						onPartLoaded();
+					}
+					root.addEventListener("transitionend",listener);
+					root.addEventListener("webkitTransitionEnd",listener);
 
+					if(!next){
+						// Need to wait for next frame to see the animation
+						var firstFrame = true;
+						var update = null;
+						update = function(_){
+							if(firstFrame){
+								firstFrame = false;
+								Browser.window.requestAnimationFrame(update);
+							}
+							else{
+								root.style.transition = "";
+								root.classList.add("previousTransition");
+							}
+							return true;
+						};
+						Browser.window.requestAnimationFrame(update);
+					}
+					else{
+						root.style.transition = "";
+						root.classList.add("nextTransition");
+					}
 				}
+				else
+					show(root);
+					onPartLoaded();
 
-				http.onError = function(msg){
-					throw "Can't load '"+ids[0]+"'.";
-				}
-				http.request();
 			}
+
+			http.onError = function(msg){
+				throw "Can't load '"+ids[0]+"'.";
+			}
+			http.request();
 		}
 	}
 
@@ -509,9 +509,9 @@ class PartDisplay extends BaseDisplay
 					if(!Std.is(e.target, AnchorElement))
 						onInputEvent(InputEvent.MOUSE_DOWN, newInput.id, getMousePosition(e));
                     newInput.ontouchend = function(e: MouseEvent){
-                        onInputEvent(InputEvent.CLICK, newInput.id, new Point(0,0));
 	                    if(autoValidation)
-                            onValidationRequest(newInput.id);
+		                    onValidationRequest(newInput.id);
+                        onInputEvent(InputEvent.CLICK, newInput.id, new Point(0,0));
                     }
 				}
 
@@ -522,9 +522,9 @@ class PartDisplay extends BaseDisplay
 				newInput.onmousedown = onStart;
 
 			newInput.onclick = function(e: MouseEvent){
-				onInputEvent(InputEvent.CLICK, newInput.id, getMousePosition(e));
 				if(autoValidation)
 					onValidationRequest(newInput.id);
+				onInputEvent(InputEvent.CLICK, newInput.id, getMousePosition(e));
 			}
 
             newInput.onmouseover = function(e:MouseEvent) onInputEvent(InputEvent.MOUSE_OVER, newInput.id, getMousePosition(e));
@@ -614,7 +614,7 @@ class PartDisplay extends BaseDisplay
 		var drag = getChildById(id);
 		drag.style.top = "0px";
 		drag.style.left = "0px";
-		drag.style.position = "static";
+		drag.style.position = "";
         root.onmouseup = root.onmousemove = root.ontouchmove = null;
 		if(isValid){
 			getChildById(dropId).appendChild(drag);

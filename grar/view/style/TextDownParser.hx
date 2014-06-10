@@ -110,7 +110,6 @@ class TextDownParser {
 		if (styleName == "" && regexOrder.match(substring)) {
 			styleName += "ordered" + level;
 			html = regexOrder.replace(substring, "<span class='numbering'>$1</span>");
-			substring = substring.substr(2);
 		}
 		else
 			html = substring;
@@ -131,6 +130,8 @@ class TextDownParser {
 		if(styleName.startsWith("title")){
 			output = Browser.document.createElement("h"+level);
 		}
+		else if(styleName.startsWith("list") || styleName.startsWith("ordered"))
+			output = Browser.document.createLIElement();
 		else
 			output = Browser.document.createParagraphElement();
 

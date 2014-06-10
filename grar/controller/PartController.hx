@@ -151,6 +151,7 @@ class PartController
 		// End of the activity
 		if(group == null){
 			state.activityState = ActivityState.NONE;
+			part.restart();
 			exitPart();
 			return;
 		}
@@ -233,13 +234,15 @@ class PartController
 	public function exitPart(?completed : Bool = true, ?fromMenu: Bool = false) : Void {
 
 		part.isDone = completed;
+
+		display.reset();
+		part.restart();
+
 		if(completed)
 			state.module.setPartFinished(part.id);
 		else if(!fromMenu)
 			onPartFinished(part, false);
 
-		display.reset();
-		part.restart();
 
 		if (part.file != null)
 			onRestoreLocaleRequest();
