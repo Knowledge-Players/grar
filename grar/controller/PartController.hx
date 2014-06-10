@@ -83,7 +83,7 @@ class PartController
     * @param    interrupt : Stop current part to display the new one
     * @return true if the part can be displayed.
     */
-	public function displayPart(part : Part, ?next: Bool = true): Bool {
+	public function displayPart(part : Part, ?next: Bool = true, ?noReload = false): Bool {
 		this.part = part;
 
 		// Reset activity state
@@ -102,13 +102,13 @@ class PartController
 				if(part.activityData != null){
 					state.activityState = ActivityState.QUESTION;
 					display.onInputEvent = onInputEvent;
-					startActivity();
+					startActivity(noReload);
 				}
 					// Standard Part
 				else
 					nextElement();
 			}
-			display.init(part.ref, next);
+			display.init(part.ref, next, noReload);
 		});
 
 		display.onExit = function() exitPart();
@@ -117,11 +117,20 @@ class PartController
 		return true;
 	}
 
-	public function startActivity():Void
+	public function unloadPart(partRef:String):Void
+	{
+		display.unloadPart(partRef);
+	}
+
+	public function startActivity(?resume: Bool = false):Void
 	{
 		display.onValidationRequest = function(inputId: String){
 			validateActivity(inputId);
 		}
+
+		// If resuming activity, don't do anything
+		if(resume)
+			return;
 
 		// Clean previous inputs
 		if(part.activityData.groupIndex > 0){
@@ -133,6 +142,8 @@ class PartController
 			}
 			for(input in group.inputs)
 				display.removeElement(input.id);
+			for(debrief in part.getRulesByType("debrief", group))
+				display.unsetDebrief(debrief.id);
 		}
 
 		var group: Inputs = part.getNextGroup();
@@ -507,12 +518,12 @@ class PartController
 				var debriefRules = part.getRulesByType("debrief", group);
 				if(state.activityState == ActivityState.QUESTION){
 					for(input in group.inputs)
-					validateActivity(input.id);
+						validateActivity(input.id);
 
 					// Debrief
-					for(rule in debriefRules){
+					for(rule in debriefRules)
 						display.setDebrief(rule.id, state.module.getLocalizedContent(group.id+"_"+rule.value));
-					}
+
 					state.activityState = ActivityState.DEBRIEF;
 				}
 				else{
@@ -539,25 +550,18 @@ class PartController
 	{
         var valid = part.getRulesByType("validation");
 
-            if(valid.length > 1){
-                throw "too many validation rules";
-
-            }
+        if(valid.length > 1)
+            throw "too many validation rules";
         if(valid.length == 1){
-
-                switch(valid[0].value.toLowerCase()){
-                    case "showanswers":
-                        display.setInputState(inputId,part.getInput(inputId).values[0]);
-                        display.uncheckElement(inputId);
-                    default:
-                        var result = part.validate(inputId, value);
-                        display.setInputState(inputId, result ? "true" : "false");
-                }
-
+	        switch(valid[0].value.toLowerCase()){
+	            case "showanswers":
+	                display.setInputState(inputId,part.getInput(inputId).values[0]);
+	                display.uncheckElement(inputId);
+	            default:
+	                var result = part.validate(inputId, value);
+	                display.setInputState(inputId, result ? "true" : "false");
+	        }
         }
-
-
-
 
 		part.activityData.score += part.getInput(inputId).points;
 
@@ -619,17 +623,18 @@ class PartController
 						display.setText(drop.id+"_completion", part.activityData.numRightAnswers+"/"+maxSelect);
 					}
 				case "showmore":
-					display.displayElements(Lambda.list([inputId+"_more"]));
+					display.displayElements(inputId+"_more");
                 case "showelement":
                     for (s in input.values)
-                        display.switchElementToVisited(s);
+                       display.toggleElement(s, true);
                 case "setvisited" :
-                    display.switchElementToVisited(inputId);
+                    display.toggleElement(inputId, true);
 	                input.selected = true;
                 case "replacecontent" :
                     var output: Input = part.getInput(input.values[0]);
                     var loc = getLocalizedContent(input.content[input.values[0]]);
                     display.setText(output.id,loc);
+					display.setInputState(output.id, "more");
                 case "toggle" :
                     display.toggleElement(inputId);
 	                input.selected = !input.selected;

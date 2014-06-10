@@ -64,7 +64,7 @@ class PartDisplay extends BaseDisplay{
 // GETTER / SETTER
 //
 
-    public function init(ref:String, ?next: Bool = true):Void
+    public function init(ref:String, ?next: Bool = true, ?noReload = false):Void
     {
     }
 
@@ -72,6 +72,8 @@ class PartDisplay extends BaseDisplay{
 ///
 // API
 //
+
+	public function unloadPart(partRef:String):Void {}
 
     public function showBackground(background : String) : Void {
 
@@ -115,7 +117,7 @@ class PartDisplay extends BaseDisplay{
 	public function switchElementToVisited (id:String):Void {
 	}
 
-    public function toggleElement (id:String):Void {
+    public function toggleElement (id:String, ?force: Bool):Void {
     }
 
     public function setVideo(videoRef:String, uri: String, autoStart: Bool = false, loop: Bool = false, defaultVolume: Float = 1, capture: Float = 0, fullscreen : Bool = false, ?onVideoPlay: Void -> Void, ?onVideoEnd: Void -> Void):Void
@@ -128,7 +130,7 @@ class PartDisplay extends BaseDisplay{
 
     }
 
-    public function displayElements(elements:List<String>):Void
+    public function displayElements(?elements:List<String>, ?elem: String):Void
     {
 
     }
@@ -143,7 +145,7 @@ class PartDisplay extends BaseDisplay{
 	public function showDebriefZone(debriefRef:String):Void
 	{}
 
-    public function hideElements(elements:List<String>):Void
+    public function hideElements(?elements:List<String>, ?elem: String):Void
     {
 
     }

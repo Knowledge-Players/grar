@@ -99,120 +99,136 @@ class PartDisplay extends BaseDisplay
 	// GETTER / SETTER
 	//
 
-	public function init(ref:String, ?next: Bool = true):Void
+	public function init(ref:String, ?next: Bool = true, ?noReload = false):Void
 	{
 		// Init templates
 		templates = new Map();
 
-		// Check if a HTML template is needed
-		if(ref.indexOf("#") == -1){
-			root = Browser.document.getElementById(ref);
-			for(child in root.children)
-				recursiveHide(getElement(child));
+		if(noReload){
+			root = getChildById(ref);
+			show(root);
 			onPartLoaded();
 		}
 		else{
-			// Insert HTML into the layout
-			// TODO GLOBAL: Utiliser des iframes et ici set src
-			// TODO add stylesheets in the Browser.document.headElement
-			var ids = ref.split("#");
-			root = Browser.document.getElementById(ids[1]);
-            for(child in root.children){
-                if(child.nodeType == Node.ELEMENT_NODE)
-                if(Std.instance(child, Element).hasAttribute("data-layout-state")){
-                    onHeaderStateChangeRequest(Std.instance(child, Element).getAttribute("data-layout-state")+"Remove");
-                }
-            }
-			var http = new Http(ids[0]);
-			http.onData = function(data){
-				var hasChild = root.hasChildNodes();
-				if(next)
-				    root.innerHTML += data;
+			// Check if a HTML template is needed
+			if(ref.indexOf("#") == -1){
+				root = Browser.document.getElementById(ref);
+				for(child in root.children)
+					recursiveHide(getElement(child));
+				show(root);
+				onPartLoaded();
+			}
+			else{
+				// Insert HTML into the layout
+				// TODO GLOBAL: Utiliser des iframes et ici set src
+				// TODO add stylesheets in the Browser.document.headElement
+				var ids = ref.split("#");
+				root = Browser.document.getElementById(ids[1]);
+	            for(child in root.children){
+	                if(child.nodeType == Node.ELEMENT_NODE)
+	                if(Std.instance(child, Element).hasAttribute("data-layout-state")){
+	                    onHeaderStateChangeRequest(Std.instance(child, Element).getAttribute("data-layout-state")+"Remove");
+	                }
+	            }
+				var http = new Http(ids[0]);
+				http.onData = function(data){
+					var hasChild = root.hasChildNodes();
+					if(next)
+					    root.innerHTML += data;
 
-				else{
-					root.innerHTML = (data + root.innerHTML);
-					root.style.left = "-100%";
-				}
-
-				// If a part is already displayed
-				if(hasChild){
-					var listener = null;
-					listener = function(_){
-						root.removeEventListener('transitionend', listener);
-						root.removeEventListener('webkitTransitionEnd', listener);
-						if(next){
-							root.style.transition = "none";
-							// Remove all non-div elements
-							while(root.children[0].nodeName.toLowerCase() != "div")
-								root.removeChild(root.children[0]);
-							// Remove the first div (= previous part display)
-							root.removeChild(root.children[0]);
-							root.classList.remove("nextTransition");
-						}
-						else{
-                            root.removeChild(root.children[root.children.length-1]);
-
-							var i = root.children.length-1;
-							while(root.children[i].nodeName.toLowerCase() != "div") {
-                                root.removeChild(root.children[i]);
-                                i--;
-                            }
-							root.style.left = "";
-							root.classList.remove("previousTransition");
-						}
-
-                        // If layout state need to be updated
-                        for(child in root.children){
-                            if(child.nodeType == Node.ELEMENT_NODE)
-                            if(Std.instance(child, Element).hasAttribute("data-layout-state")){
-                                onHeaderStateChangeRequest(Std.instance(child, Element).getAttribute("data-layout-state"));
-                            }
-                        }
-
-						onPartLoaded();
+					else{
+						root.innerHTML = (data + root.innerHTML);
+						root.style.left = "-100%";
 					}
-					root.addEventListener("transitionend",listener);
-					root.addEventListener("webkitTransitionEnd",listener);
 
-					if(!next){
-						// Need to wait for next frame to see the animation
-						var firstFrame = true;
-						var update = null;
-						update = function(_){
-							if(firstFrame){
-								firstFrame = false;
-								Browser.window.requestAnimationFrame(update);
+					// If a part is already displayed
+					if(hasChild){
+						var listener = null;
+						listener = function(_){
+							root.removeEventListener('transitionend', listener);
+							root.removeEventListener('webkitTransitionEnd', listener);
+							if(next){
+								root.style.transition = "none";
+								// Remove all non-div elements
+								while(root.children[0].nodeName.toLowerCase() != "div")
+									root.removeChild(root.children[0]);
+								// Remove the first div (= previous part display)
+								root.removeChild(root.children[0]);
+								root.classList.remove("nextTransition");
 							}
 							else{
-								root.style.transition = "";
-								root.classList.add("previousTransition");
+	                            root.removeChild(root.children[root.children.length-1]);
+
+								var i = root.children.length-1;
+								while(root.children[i].nodeName.toLowerCase() != "div") {
+	                                root.removeChild(root.children[i]);
+	                                i--;
+	                            }
+								root.style.left = "";
+								root.classList.remove("previousTransition");
 							}
-							return true;
-						};
-						Browser.window.requestAnimationFrame(update);
+
+	                        // If layout state need to be updated
+	                        for(child in root.children){
+	                            if(child.nodeType == Node.ELEMENT_NODE)
+	                            if(Std.instance(child, Element).hasAttribute("data-layout-state")){
+	                                onHeaderStateChangeRequest(Std.instance(child, Element).getAttribute("data-layout-state"));
+	                            }
+	                        }
+
+							show(root);
+							onPartLoaded();
+						}
+						root.addEventListener("transitionend",listener);
+						root.addEventListener("webkitTransitionEnd",listener);
+
+						if(!next){
+							// Need to wait for next frame to see the animation
+							var firstFrame = true;
+							var update = null;
+							update = function(_){
+								if(firstFrame){
+									firstFrame = false;
+									Browser.window.requestAnimationFrame(update);
+								}
+								else{
+									root.style.transition = "";
+									root.classList.add("previousTransition");
+								}
+								return true;
+							};
+							Browser.window.requestAnimationFrame(update);
+						}
+						else{
+							root.style.transition = "";
+							root.classList.add("nextTransition");
+						}
 					}
-					else{
-						root.style.transition = "";
-						root.classList.add("nextTransition");
-					}
+					else
+						show(root);
+						onPartLoaded();
+
 				}
-				else
-					onPartLoaded();
 
+				http.onError = function(msg){
+					throw "Can't load '"+ids[0]+"'.";
+				}
+				http.request();
 			}
-
-			http.onError = function(msg){
-				throw "Can't load '"+ids[0]+"'.";
-			}
-			http.request();
 		}
-		show(root);
 	}
 
 
 	///
 	// API
 	//
+
+	public function unloadPart(partRef:String):Void
+	{
+		hideElements(partRef);
+		for(t in templates)
+			root.appendChild(t);
+	}
 
 	public function showBackground(background : String) : Void {
 		if(background != null)
@@ -346,16 +362,32 @@ class PartDisplay extends BaseDisplay
 			root.classList.remove("debrief");
 	}
 
-	public function displayElements(elements:List<String>):Void
+	/**
+	* Show elements with their ID
+	* @param elements: List of ID to show
+	* @param elem: unique ID to show. Usefull if you want to show only one element
+	**/
+	public function displayElements(?elements:List<String>, ?elem: String):Void
 	{
-		for(elem in elements)
+		if(elem != null)
 			show(getChildById(elem));
+		else if(elements != null)
+			for(element in elements)
+				show(getChildById(element));
 	}
 
-    public function hideElements(elements:List<String>):Void
+	/**
+	* Hide elements with their ID
+	* @param elements: List of ID to hide
+	* @param elem: unique ID to hide. Usefull if you want to hide only one element
+	**/
+    public function hideElements(?elements:List<String>, ?elem: String):Void
 	{
-		for(elem in elements)
+		if(elem != null)
 			hide(getChildById(elem));
+		else if(elements != null)
+			for(element in elements)
+				hide(getChildById(element));
 	}
 
 	public function hideElementsByClass(className: String):Void
@@ -516,17 +548,10 @@ class PartDisplay extends BaseDisplay
 			setNumbering(num, roundNumber, "/"+totalRound);
 	}
 
-    public function switchElementToVisited (id:String):Void {
+    public function toggleElement(id:String, ?force: Bool):Void {
         var elem:Element = getChildById(id);
         for (e in elem.getElementsByTagName("input")) {
-            Std.instance(e, InputElement).checked = true;
-        }
-    }
-
-    public function toggleElement(id:String):Void {
-        var elem:Element = getChildById(id);
-        for (e in elem.getElementsByTagName("input")) {
-            Std.instance(e, InputElement).checked = !Std.instance(e, InputElement).checked;
+            Std.instance(e, InputElement).checked = force != null ? force : !Std.instance(e, InputElement).checked;
         }
     }
     public function uncheckElement(id:String):Void {

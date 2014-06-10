@@ -1,5 +1,6 @@
 package grar.view;
 
+import js.Browser;
 import js.html.AnchorElement;
 import js.html.Node;
 import js.html.Element;
@@ -31,7 +32,7 @@ class BaseDisplay{
 		for(node in text.childNodes) children.push(node);
 		// Clean text node in Textfield
 		for(node in children){
-			if(node.nodeType == Node.TEXT_NODE || (node.nodeType == Node.ELEMENT_NODE && node.nodeName.toLowerCase() != "div" && node.nodeName.toLowerCase() != "img"  && node.nodeName.toLowerCase() != "svg")){
+			if(node.nodeType == Node.TEXT_NODE || (node.nodeType == Node.ELEMENT_NODE && node.nodeName.toLowerCase() == "p")){
 				text.removeChild(node);
 			}
 		}
@@ -59,10 +60,11 @@ class BaseDisplay{
 
 	private function getChildById(id:String, ?parent: Element):Null<Element>
 	{
-		var p: Element = parent == null ? root: parent;
+		/*var p: Element = parent == null ? root: parent;
 		var child = p.querySelector('#'+id);
 		if(child == null)
 			trace("Unable to find a child of "+p.id+" with id '"+id+"'.");
-		return child;
+		return child;*/
+		return Browser.document.getElementById(id);
 	}
 }

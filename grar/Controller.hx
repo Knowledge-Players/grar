@@ -417,21 +417,17 @@ class Controller {
 		trackingCtrl.updateTracking();
 
 		if (next && p.next != null) {
-
 			var i = 0;
-
 			for (next in p.next) {
-
 				var nextPart = state.module.start(next);
-
-				if (nextPart != null) {
-
+				if (nextPart != null)
 					displayPart(nextPart);
-
-				}
 				i++;
 			}
-
+		}
+		else if(p.parent != null){
+			partCtrl.unloadPart(p.ref);
+			partCtrl.displayPart(state.module.start(p.parent.id), true, true);
 		}
 		else{
 			var futurePart: Part = null;
