@@ -221,7 +221,6 @@ class XmlToPart {
 
 		var groups : Array<Inputs> = new Array();
 		var rules : StringMap<Rule> = new StringMap();
-		var groupIndex : Int = -1;
 		var numRightAnswers : Int = 0;
 
 		for (child in f.elements) {

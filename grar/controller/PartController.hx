@@ -43,6 +43,8 @@ class PartController
 	var state: State;
 	var application: Application;
 	var display: PartDisplay;
+
+	// TODO put in state
 	var part: Part;
 	var previousBackground : String;
     var currentPattern:Pattern;
@@ -236,7 +238,6 @@ class PartController
 		part.isDone = completed;
 
 		display.reset();
-		part.restart();
 
 		if(completed)
 			state.module.setPartFinished(part.id);

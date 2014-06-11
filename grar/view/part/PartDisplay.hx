@@ -205,10 +205,10 @@ class PartDisplay extends BaseDisplay
 						root.classList.add("nextTransition");
 					}
 				}
-				else
+				else{
 					show(root);
 					onPartLoaded();
-
+				}
 			}
 
 			http.onError = function(msg){
@@ -611,14 +611,19 @@ class PartDisplay extends BaseDisplay
 
 	public function stopDrag(id:String, dropId: String, isValid: Bool, mousePoint:Point):Void
 	{
-		var drag = getChildById(id);
-		drag.style.top = "0px";
-		drag.style.left = "0px";
-		drag.style.position = "";
+		var drag: Element = getChildById(id);
+		drag.style.removeProperty("top");
+		drag.style.removeProperty("left");
+		drag.style.removeProperty("position");
         root.onmouseup = root.onmousemove = root.ontouchmove = null;
 		if(isValid){
-			getChildById(dropId).appendChild(drag);
-            getChildById(dropId).draggable = false;
+			var drop: Element = getChildById(dropId);
+			var dropZone = drop.getElementsByClassName("dropZone");
+			if(dropZone.length > 0)
+				dropZone[0].appendChild(drag);
+			else
+				drop.appendChild(drag);
+
             drag.onmousedown = null;
             drag.onmouseup = null;
 			drag.classList.add("true");
@@ -715,6 +720,7 @@ class PartDisplay extends BaseDisplay
 
 	private function getDroppedElement(mousePoint:Point, dragId: String):Null<Element>
 	{
+	// TODO use scroll to get right drop
 		for(input in Browser.document.getElementsByClassName("inputs")){
 			var drop: Element = cast input;
 			if(drop.id != dragId){
