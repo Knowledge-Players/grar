@@ -32,8 +32,6 @@ typedef PartData = {
 	var isDone : Bool;
 	var isStarted : Bool;
 	var tokens : GenericStack<String>;
-	// TODO SoundLoop
-	//var soundLoop : Sound;
 	//var soundLoopSrc : String;
 	var soundLoop : String;
 	var elements : Array<PartElement>;
@@ -46,7 +44,6 @@ typedef PartData = {
 	var next : Null<Array<String>>;
 	var buttonTargets : Map<String, PartElement>;
 	var nbSubPartTotal : Int;
-	//var soundLoopChannel : SoundChannel;
 	// partial data
 	var partialSubParts : Array<PartialPart>;
 	var xml : Xml;
@@ -111,7 +108,6 @@ class Part{
 		this.nbSubPartTotal = pd.nbSubPartTotal;
 		this.isDone = pd.isDone;
 		this.isStarted = pd.isStarted;
-		//this.soundLoopChannel = pd.soundLoopChannel;
 
 		// Initialize indexes
 		restart();
@@ -205,7 +201,6 @@ class Part{
 	private var nbSubPartLoaded : Int = 0;
 	private var nbSubPartTotal : Int = 0;
 	private var partIndex : Int = 0;
-	//private var soundLoopChannel : SoundChannel;
 	private var loaded : Bool = false;
 
 
@@ -253,7 +248,7 @@ class Part{
     public function set_isDone(completed : Bool = true) : Bool {
 
         isDone = completed;
-// Add bounty to the right perks
+		// Add bounty to the right perks
         if (isDone) {
             for (perk in perks.keys()) {
 
@@ -261,12 +256,6 @@ class Part{
                 onScoreToAdd(perk, perks.get(perk));
             }
         }
-
-// Stop sound loop
-       /* if (soundLoopChannel != null) {
-
-            soundLoopChannel.stop();
-        }*/
         return completed;
     }
 
@@ -422,55 +411,30 @@ class Part{
 	public function getAllParts() : Array<Part> {
 
 		var a : Array<Part> = [];
-
 		a.push(this);
 
 		for (e in elements) {
-
 			switch (e) {
-
-				case Part(p):
-
-					a = a.concat(p.getAllParts());
-
+				case Part(p): a = a.concat(p.getAllParts());
 				default: // nothing
 			}
 		}
+
 		return a;
 	}
 
 	public function getElementById(id : String) : PartElement {
 
 		for (e in elements) {
-
 			switch (e) {
-
 				case Part(p):
-
-					if (p.id == id) {
-
-						return e;
-					}
-
+					if (p.id == id) return e;
 				case Pattern(p):
-
-					if (p.id == id) {
-
-						return e;
-					}
-
+					if (p.id == id) return e;
 				case Item(i):
-
-					if (i.id == id) {
-
-						return e;
-					}
-
+					if (i.id == id) return e;
 				case GroupItem(g):
-					if (g.id == id) {
-
-						return e;
-					}
+					if (g.id == id) return e;
 			}
 		}
 		throw "[StructurePart] There is no Element with the id '"+id+"'.";
@@ -499,21 +463,13 @@ class Part{
      **/
 	public function getItemName(id : String) : Null<String> {
 
-		if (this.id == id) {
-
+		if (this.id == id)
 			return this.name;
-		}
+
 		for (e in elements) {
-
 			switch(e) {
-
-				case Part(p):
-
-					if (p.getItemName(id) != null) {
-
+				case Part(p) if (p.getItemName(id) != null):
 						return p.getItemName(id);
-					}
-
 				default: // nothing
 			}
 		}

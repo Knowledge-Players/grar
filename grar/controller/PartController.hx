@@ -408,12 +408,12 @@ class PartController
 						trace("Cannot retrieve video: "+url);
 					else{
 						var decodeUrl = StringTools.replace(url, "\\/", "/");
-						display.setVideo(item.ref, decodeUrl, item.videoData.autoStart, item.videoData.loop, item.videoData.defaultVolume, item.videoData.capture,item.videoData.fullscreen, function(){trace("playing");}, function() onVideoComplete());
+						display.setVideo(item.ref, decodeUrl, item.videoData, function(){trace("playing");}, function() onVideoComplete(), state.module.currentLocale);
 					}
 				});
 			}
 			else
-				display.setVideo(item.ref, item.content, item.videoData.autoStart, item.videoData.loop, item.videoData.defaultVolume, item.videoData.capture,item.videoData.fullscreen, function(){}, function() onVideoComplete());
+				display.setVideo(item.ref, item.content, item.videoData, function(){}, function() onVideoComplete(), state.module.currentLocale);
 
 
 		}

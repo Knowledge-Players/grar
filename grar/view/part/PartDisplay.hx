@@ -1,5 +1,6 @@
 package grar.view.part;
 
+import grar.model.part.item.Item.VideoData;
 import grar.util.ParseUtils;
 import js.html.InputElement;
 import grar.view.guide.Absolute;
@@ -319,13 +320,13 @@ class PartDisplay extends BaseDisplay
 			field.appendChild(elem);
 	}
 
-	public function setVideo(videoRef:String, uri: String, autoStart: Bool = false, loop: Bool = false, defaultVolume: Float = 1, capture: Float = 0, fullscreen : Bool = false, ?onVideoPlay: Void -> Void, ?onVideoEnd: Void -> Void):Void
+	public function setVideo(videoRef:String, uri: String, videoData: VideoData, ?onVideoPlay: Void -> Void, ?onVideoEnd: Void -> Void, ?locale: String):Void
 	{
 		if(videoPlayer == null)
 			videoPlayer = new VideoPlayer();
 		videoPlayer.init(cast getChildById(videoRef));
 		show(videoPlayer.root);
-		videoPlayer.setVideo(uri, autoStart, loop, defaultVolume, capture, fullscreen, onVideoPlay, onVideoEnd);
+		videoPlayer.setVideo(uri, videoData, onVideoPlay, onVideoEnd, locale);
 	}
 
 	public function setSound(soundRef:String, uri:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1):Void

@@ -19,6 +19,11 @@ typedef ItemData = {
 	var soundData: SoundData;
 }
 
+typedef SubtitleData ={
+	var src:String;
+	var lang:String;
+}
+
 typedef VideoData = {
 	/**
 	 * Autostart the video
@@ -44,6 +49,11 @@ typedef VideoData = {
 	 * Time to capture an image for the thumbnail
 	 **/
 	var capture: Float;
+
+	/**
+	* Map of subtitles by language
+	**/
+	var subtitles: Map<String, SubtitleData>;
 }
 
 typedef SoundData = {

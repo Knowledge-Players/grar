@@ -1,33 +1,10 @@
 package grar.view.component;
 
+import js.Browser;
+import grar.model.part.item.Item.VideoData;
 import js.html.VideoElement;
 
-/*typedef SliderData = {
-
-	var x : Float;
-	var y : Float;
-	var bar : { tile : TileImageData, x : Float, y : Float };
-	var cursor : { tile : TileImageData, ref : String, x : Float, y : Float, vol : Float };
-}
-
-typedef ProgressBarData = {
-
-	var x : Float;
-	var y : Float;
-	var mask : TileImageData;
-	var bar : { color : Int, alpha : Float, x : Float, y : Float };
-	var cursor : { tile : TileImageData, ref : String, x : Float };
-}
-
-typedef VideoBackgroundData = {
-
-	var color : Int;
-	var alpha : Float;
-	var x : Float;
-	var y : Float;
-	var w : Float;
-	var h : Float;
-}*/
+using Lambda;
 
 class VideoPlayer{
 
@@ -44,12 +21,25 @@ class VideoPlayer{
 		this.root = root;
 	}
 
-	public function setVideo(url: String, autoStart: Bool = false, loop: Bool = false, defaultVolume : Float = 1, capture: Float = 0, fullscreen : Bool = false, onVideoPlay: Void -> Void, onVideoEnd: Void -> Void) : Void {
+	public function setVideo(url: String, videoData: VideoData, onVideoPlay: Void -> Void, onVideoEnd: Void -> Void, ?locale: String) : Void {
 		root.src = url;
-		root.autoplay = autoStart;
-		root.loop = loop;
-		root.volume = defaultVolume;
-		if(fullscreen)
+		root.autoplay = videoData.autoStart;
+		root.loop = videoData.loop;
+		root.volume = videoData.defaultVolume;
+		if(!videoData.subtitles.empty()){
+			var track = Browser.document.createElement("track");
+			track.setAttribute("kind", "subtitles");
+			var subLocale = locale == null ? videoData.subtitles.keys().next() : locale;
+			if(!videoData.subtitles.exists(subLocale))
+				throw "No subtitles for locale: '"+subLocale+"'.";
+			track.setAttribute("src", videoData.subtitles[subLocale].src);
+			track.setAttribute("srclang", subLocale);
+			track.setAttribute("default", "");
+			track.setAttribute("label", "Subtitles");
+
+			root.appendChild(track);
+		}
+		if(videoData.fullscreen)
 			root.enterFullScreen();
 		root.addEventListener("play", function(_){
 			onVideoPlay();

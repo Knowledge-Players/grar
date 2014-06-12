@@ -1,5 +1,6 @@
 package grar.view.part;
 
+import grar.model.part.item.Item.VideoData;
 import grar.util.Point;
 
 using StringTools;
@@ -120,7 +121,7 @@ class PartDisplay extends BaseDisplay{
     public function toggleElement (id:String, ?force: Bool):Void {
     }
 
-    public function setVideo(videoRef:String, uri: String, autoStart: Bool = false, loop: Bool = false, defaultVolume: Float = 1, capture: Float = 0, fullscreen : Bool = false, ?onVideoPlay: Void -> Void, ?onVideoEnd: Void -> Void):Void
+    public function setVideo(videoRef:String, uri: String, videoData: VideoData, ?onVideoPlay: Void -> Void, ?onVideoEnd: Void -> Void, ?locale: String):Void
     {
 
     }
