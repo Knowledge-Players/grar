@@ -604,12 +604,12 @@ class PartController
 			case CLICK: part.getRulesByType(PartDisplay.CLICK, inputGroup);
 
             case MOUSE_OVER: part.getRulesByType(PartDisplay.MOUSE_OVER, inputGroup);
+			case MOUSE_OUT: part.getRulesByType(PartDisplay.MOUSE_OUT, inputGroup);
 
 		}
 		var input: Input = inputGroup.inputs.filter(function(i: Input)return i.id == inputId)[0];
 		for(rule in rules){
 			switch(rule.value.toLowerCase()){
-				// TODO drag&drop dans la view
 				case "drag": display.startDrag(inputId, mousePoint);
 				case "drop":
 					var drop: Input = part.getInput(targetId);
@@ -626,7 +626,6 @@ class PartController
 						if(isFull)
 							display.setInputComplete(targetId);
 						part.activityData.numRightAnswers++;
-
 
 						// Selection limits
 						var maxSelect = -1;
@@ -651,6 +650,10 @@ class PartController
                     var loc = getLocalizedContent(input.content[input.values[0]]);
                     display.setText(output.id,loc);
 					display.setInputState(output.id, "more");
+				case "removecontent":
+					var output: Input = part.getInput(input.values[0]);
+					display.setText(output.id,null);
+					display.removeInputState(output.id, "more");
                 case "toggle" :
                     display.toggleElement(inputId);
 	                input.selected = !input.selected;

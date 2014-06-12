@@ -11,6 +11,7 @@ enum InputEvent{
     MOUSE_DOWN;
     MOUSE_UP(targetId: String);
     MOUSE_OVER;
+    MOUSE_OUT;
 }
 
 typedef Element = String;
@@ -34,6 +35,7 @@ class PartDisplay extends BaseDisplay{
     public static var MOUSE_DOWN = "mouseDown";
     public static var MOUSE_UP = "mouseUp";
     public static var MOUSE_OVER = "mouseOver";
+    public static var MOUSE_OUT = "mouseOut";
 
 ///
 // CALLBACKS
@@ -196,6 +198,9 @@ class PartDisplay extends BaseDisplay{
     public function setInputState(id:String, state: String):Void
     {
     }
+
+	public function removeInputState(inputId:String, state: String): Void
+	{}
 
 	public function toggleValidationButtons(?force: Bool):Void
 	{}

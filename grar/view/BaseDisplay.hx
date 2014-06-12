@@ -37,14 +37,16 @@ class BaseDisplay{
 			}
 		}
 
-		if(Std.instance(text, ParagraphElement) != null || Std.instance(text, AnchorElement) != null){
-			for(elem in markupParser.parse(content))
-				html += elem.textContent;
-			text.textContent += html;
+		if(content != null){
+			if(Std.instance(text, ParagraphElement) != null || Std.instance(text, AnchorElement) != null){
+				for(elem in markupParser.parse(content))
+					html += elem.outerHTML;
+				text.innerHTML += html;
+			}
+			else
+				for(elem in markupParser.parse(content))
+					text.appendChild(elem);
 		}
-		else
-			for(elem in markupParser.parse(content))
-				text.appendChild(elem);
 		return text;
 	}
 

@@ -30,6 +30,7 @@ using Lambda;
 
 enum InputEvent{
     MOUSE_OVER;
+	MOUSE_OUT;
 	CLICK;
 	MOUSE_DOWN;
 	MOUSE_UP(targetId: String);
@@ -64,6 +65,7 @@ class PartDisplay extends BaseDisplay
 	public static var MOUSE_DOWN = "mouseDown";
 	public static var MOUSE_UP = "mouseUp";
 	public static var MOUSE_OVER = "mouseOver";
+	public static var MOUSE_OUT = "mouseOut";
 
 	var videoPlayer: VideoPlayer;
 	var soundPlayer: SoundPlayer;
@@ -506,6 +508,7 @@ class PartDisplay extends BaseDisplay
 			// Update state
 			if(r.selected)
 				newInput.classList.add("selected");
+
 			// Event Binding
 			var onStart = function(e: MouseEvent){
 				if(isMobile || e.button == 0){
@@ -532,6 +535,7 @@ class PartDisplay extends BaseDisplay
 			}
 
             newInput.onmouseover = function(e:MouseEvent) onInputEvent(InputEvent.MOUSE_OVER, newInput.id, getMousePosition(e));
+            newInput.onmouseout = function(e:MouseEvent) onInputEvent(InputEvent.MOUSE_OUT, newInput.id, getMousePosition(e));
 			// Display
 			show(newInput);
 			i++;
@@ -639,6 +643,10 @@ class PartDisplay extends BaseDisplay
 		// TODO callback onValidationRequest()
 	}
 
+	/**
+	* Shortcut for setInputState(id, "complete")
+	* @param id: ID of the input
+	**/
 	public function setInputComplete(id:String):Void
 	{
 		setInputState(id, "complete");
@@ -647,6 +655,11 @@ class PartDisplay extends BaseDisplay
 	public function setInputState(inputId:String, state: String): Void
 	{
 		getChildById(inputId).classList.add(state);
+	}
+
+	public function removeInputState(inputId:String, state: String): Void
+	{
+		getChildById(inputId).classList.remove(state);
 	}
 
 	public function toggleValidationButtons(?force: Bool):Void

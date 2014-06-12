@@ -1,5 +1,7 @@
 package grar.view.style;
 
+import js.html.UListElement;
+import js.html.LIElement;
 import js.html.Element;
 import js.Browser;
 import js.html.ParagraphElement;
@@ -13,6 +15,8 @@ using StringTools;
 class TextDownParser {
 
 	public function new(){ }
+
+	var listType: String;
 
 	///
 	// API
@@ -30,10 +34,28 @@ class TextDownParser {
 		var lineEnding:EReg = ~/(\r)(\n)?|(&#13;)|(&#10;)|(<br\/>)/g;
 		var uniformedText = lineEnding.replace(text, "\n");
 
+		var listElement: Element = null;
 		for(line in uniformedText.split("\n")){
 			var formattedLine = parseLine(line);
-			list.add(formattedLine);
+			if(listType != null){
+				if(listElement == null){
+					if(listType == "ul")
+						listElement = Browser.document.createUListElement();
+					else
+						listElement = Browser.document.createOListElement();
+				}
+				listElement.appendChild(formattedLine);
+			}
+			else if(listElement != null){
+				list.add(listElement);
+				listElement = null;
+				list.add(formattedLine);
+			}
+			else
+				list.add(formattedLine);
 		}
+		if(listElement != null)
+			list.add(listElement);
 		return list;
 	}
 
@@ -47,7 +69,6 @@ class TextDownParser {
 		var styleName = "";
 		var substring:String = line;
 		var level = 1;
-		var output: Element = null;
 
 		while (substring.charAt(0) == " ") {
 
@@ -127,13 +148,20 @@ class TextDownParser {
 		var regexStyle:EReg = ~/\[(.*?)\](.*?)\[\/.*?\]/g;
 		html = regexStyle.replace(html, "<span class='$1'>$2</span>");
 
+		// Creating output
+		var output: Element = null;
 		if(styleName.startsWith("title")){
 			output = Browser.document.createElement("h"+level);
+			listType = null;
 		}
-		else if(styleName.startsWith("list") || styleName.startsWith("ordered"))
+		else if(styleName.startsWith("list") || styleName.startsWith("ordered")){
 			output = Browser.document.createLIElement();
-		else
+			listType = styleName.startsWith("list") ? "ul" : "ol";
+		}
+		else{
 			output = Browser.document.createParagraphElement();
+			listType = null;
+		}
 
 		if(styleName != "")
 			output.classList.add(styleName);
