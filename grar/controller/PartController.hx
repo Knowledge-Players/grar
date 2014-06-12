@@ -34,8 +34,6 @@ class PartController
 		this.state = state;
 		this.application = app;
 
-		dropList = new Map<String, List<String>>();
-
 		init();
 	}
 
@@ -48,10 +46,6 @@ class PartController
 	var part: Part;
 	var previousBackground : String;
     var currentPattern:Pattern;
-
-	// Activity vars
-	// TODO let view manage it
-	var dropList: Map<String, List<String>>;
 
 	///
 	// CALLBACKS
@@ -127,7 +121,7 @@ class PartController
 	public function startActivity(?resume: Bool = false):Void
 	{
 		display.onValidationRequest = function(inputId: String){
-			validateActivity(inputId);
+			validateInput(inputId);
 		}
 
 		// If resuming activity, don't do anything
@@ -199,7 +193,7 @@ class PartController
             for(key in input.content.keys())
                 localizedContent[key] = getLocalizedContent(input.content[key]);
 
-            return {ref: input.ref, id: input.id, content: localizedContent, icon: input.icon}
+            return {ref: input.ref, id: input.id, content: localizedContent, icon: input.icon, selected: input.selected}
         });
 
 	    // Set sorting rule
@@ -207,7 +201,7 @@ class PartController
         if(sort.length == 1){
             switch(sort[0].value.toLowerCase()){
                 case "random":
-                    var randomList = new List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>}>();
+                    var randomList = new List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>, selected: Bool}>();
                     for(i in inputList){
                         var rand = Math.random();
                         if(rand < 0.5)
@@ -518,25 +512,7 @@ class PartController
 					};
 			case "exit": function() exitPart(false);
 			case "validate": function() {
-				var group = part.activityData.groups[part.activityData.groupIndex-1];
-				var debriefRules = part.getRulesByType("debrief", group);
-				if(state.activityState == ActivityState.QUESTION){
-					for(input in group.inputs)
-						validateActivity(input.id);
-
-					// Debrief
-					for(rule in debriefRules)
-						display.setDebrief(rule.id, state.module.getLocalizedContent(group.id+"_"+rule.value));
-
-					state.activityState = ActivityState.DEBRIEF;
-				}
-				else{
-					for(rule in debriefRules){
-						display.unsetDebrief(rule.id);
-					}
-					state.activityState = ActivityState.QUESTION;
-					startActivity();
-				}
+				validateActivity();
 			};
 			default: function() trace("Unsupported action "+bd.action);
 		}
@@ -550,28 +526,63 @@ class PartController
 		}
 	}
 
-	private function validateActivity(inputId: String, ? value: String):Void
+	private function validateActivity():Void
 	{
-        var valid = part.getRulesByType("validation");
+		var valid = part.getRulesByType("validation");
+		var validationRule: Rule = null;
+		if(valid.length > 1)
+			throw "too many validation rules";
+		if(valid.length == 1)
+			validationRule = valid[0];
 
-        if(valid.length > 1)
-            throw "too many validation rules";
-        if(valid.length == 1){
-	        switch(valid[0].value.toLowerCase()){
-	            case "showanswers":
-	                display.setInputState(inputId,part.getInput(inputId).values[0]);
-	                display.uncheckElement(inputId);
-	            default:
-	                var result = part.validate(inputId, value);
-	                display.setInputState(inputId, result ? "true" : "false");
-	        }
-        }
+		var group = part.activityData.groups[part.activityData.groupIndex-1];
+		var debriefRules = part.getRulesByType("debrief", group);
+		if(state.activityState == ActivityState.QUESTION){
+			for(input in group.inputs)
+				validateInput(input.id, validationRule);
 
+			// Enabling or not progression
+			var rules = part.getRulesByType("minScore");
+			if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
+				display.enableNextButtons();
+
+			// Debrief
+			for(rule in debriefRules)
+				display.setDebrief(rule.id, state.module.getLocalizedContent(group.id+"_"+rule.value));
+
+			// Disabling further input
+			part.activityData.inputsEnabled = false;
+
+			state.activityState = ActivityState.DEBRIEF;
+		}
+		else{
+			for(rule in debriefRules){
+				display.unsetDebrief(rule.id);
+			}
+			state.activityState = ActivityState.QUESTION;
+			startActivity();
+		}
+	}
+
+	private function validateInput(inputId: String, ?validation: Rule, ?value: String):Void
+	{
+		// Correction
+		if(validation == null){
+			var result = part.validate(inputId, value);
+			display.setInputState(inputId, result ? "true" : "false");
+		}
+		else
+			switch(validation.value.toLowerCase()){
+				case "showanswers":
+					display.setInputState(inputId,part.getInput(inputId).values[0]);
+					display.uncheckElement(inputId);
+				default:
+					var result = part.validate(inputId, value);
+					display.setInputState(inputId, result ? "true" : "false");
+			}
+
+		// Scoring
 		part.activityData.score += part.getInput(inputId).points;
-
-		var rules = part.getRulesByType("minScore");
-		if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
-			display.enableNextButtons();
 	}
 
 	private function onInputEvent(eventType: InputEvent, inputId: String, mousePoint: Point):Void
@@ -602,14 +613,15 @@ class PartController
 				case "drag": display.startDrag(inputId, mousePoint);
 				case "drop":
 					var drop: Input = part.getInput(targetId);
+					// TODO validate with model
 					var isValid = drop != null && (input.values.has(targetId) || drop.values.has(inputId));
 					display.stopDrag(inputId, targetId, isValid, mousePoint);
 					if(isValid){
-						if(!dropList.exists(targetId))
-							dropList[targetId] = new List();
-						dropList[targetId].add(inputId);
+						if(drop.additionalValues == null)
+							drop.additionalValues = new Array();
+						drop.additionalValues.push(inputId);
 						var isFull = drop.values.foreach(function(id: String){
-							return dropList[targetId].has(id);
+							return drop.additionalValues.has(id);
 						});
 						if(isFull)
 							display.setInputComplete(targetId);

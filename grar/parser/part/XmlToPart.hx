@@ -257,7 +257,8 @@ class XmlToPart {
 
 		var values;
 		var icons;
-		var points;
+		var points = 0;
+		var selected = false;
 
 		if (f.has.values)
 			values = ParseUtils.parseListOfValues(f.att.values);
@@ -271,10 +272,11 @@ class XmlToPart {
 
 		if(f.has.points)
 			points = Std.parseInt(f.att.points);
-		else
-			points = 0;
 
-		return {id: f.att.id, ref: f.att.ref, content: ParseUtils.parseHash(f.att.content), values: values, selected: false, icon: icons, points: points};
+		if(f.has.selected)
+			selected = f.att.selected == "true";
+
+		return {id: f.att.id, ref: f.att.ref, content: ParseUtils.parseHash(f.att.content), values: values, selected: selected, icon: icons, points: points};
 	}
 
 	static inline function createInputGroup(f : Fast) : Inputs {

@@ -173,7 +173,7 @@ class PartDisplay extends BaseDisplay{
 
     }
 
-    public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>}>, groupeRef: String, ?autoValidation: Bool = true):Void
+    public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>, selected: Bool}>, groupeRef: String, ?autoValidation: Bool = true):Void
     {
 
     }

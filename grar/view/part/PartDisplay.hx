@@ -423,7 +423,7 @@ class PartDisplay extends BaseDisplay
 		b.classList.add(actionName);
 	}
 
-	public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>}>, groupeRef: String, ?autoValidation: Bool = true):Void
+	public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>, selected: Bool}>, groupeRef: String, ?autoValidation: Bool = true):Void
 	{
 		var parent: Element = getChildById(groupeRef);
 
@@ -502,6 +502,9 @@ class PartDisplay extends BaseDisplay
 					newInput.style.backgroundImage = url;
 				}
 			}
+			// Update state
+			if(r.selected)
+				newInput.classList.add("selected");
 			// Event Binding
 			var onStart = function(e: MouseEvent){
 				if(isMobile || e.button == 0){
@@ -630,7 +633,6 @@ class PartDisplay extends BaseDisplay
 		}
 		else{
 			dragParent.appendChild(drag);
-
 		}
 
 		// TODO callback onValidationRequest()

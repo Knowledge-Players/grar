@@ -78,6 +78,7 @@ typedef Input = {
 	var selected : Bool;
 	var icon: Map<String, String>;
 	var points: Int;
+	@:optional var additionalValues: Array<String>;
 }
 
 typedef ActivityData = {
