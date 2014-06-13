@@ -263,21 +263,21 @@ class PartDisplay extends BaseDisplay
 
 	public function setText(itemRef: String, content: String):Null<Element>
 	{
-		if(itemRef != null) {
-            var t:Element = doSetText(itemRef, content);
-			show(t);
-			// Show children too
-            for (child in t.children) {
-                show(getElement(child));
-            }
+        var t:Element = doSetText(itemRef, content);
+		if(t == null)
+			return null;
 
-			// Verify parent is also visible
-			if(!t.parentElement.classList.contains("hidden"))
-				show(t.parentElement);
+		show(t);
+		// Show children too
+        for (child in t.children) {
+            show(getElement(child));
+        }
 
-			return t;
-		}
-		return null;
+		// Verify parent is also visible
+		if(!t.parentElement.classList.contains("hidden"))
+			show(t.parentElement);
+
+		return t;
 	}
 
 	public function setImage(imageRef:String,src:String):Void{
@@ -342,9 +342,11 @@ class PartDisplay extends BaseDisplay
 	public function showDebriefZone(debriefRef:String):Void
 	{
 		var debrief: Element = getChildById(debriefRef);
-		for(child in debrief.children)
-			recursiveShow(getElement(child));
-		show(debrief);
+		if(debrief != null){
+			for(child in debrief.children)
+				recursiveShow(getElement(child));
+			show(debrief);
+		}
 	}
 
 	public function setDebrief(debriefRef:String, content:String):Void
@@ -358,7 +360,9 @@ class PartDisplay extends BaseDisplay
 
 	public function unsetDebrief(debriefRef:String):Void
 	{
-		hide(setText(debriefRef, ""));
+		var debrief = setText(debriefRef, "");
+		if(debrief != null)
+			hide(debrief);
 		for(elem in root.getElementsByClassName("debriefable"))
 			getElement(elem).classList.remove("debrief");
 		if(root.classList.contains("debriefable"))
@@ -424,6 +428,7 @@ class PartDisplay extends BaseDisplay
 		var b: Element = getChildById(buttonId);
 		b.onclick = function(_) !b.classList.contains("disabled") ? action() : null;
 		b.classList.add(actionName);
+		b.classList.remove("disabled");
 	}
 
 	public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>, selected: Bool}>, groupeRef: String, ?autoValidation: Bool = true):Void
@@ -778,7 +783,7 @@ class PartDisplay extends BaseDisplay
 	{
 		for(child in elem.children)
 			if(child.nodeName.toLowerCase() == "div")
-				recursiveHide(getElement(child));
+				recursiveShow(getElement(child));
 
 		elem.classList.remove("hidden");
 	}

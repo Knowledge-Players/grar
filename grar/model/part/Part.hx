@@ -198,10 +198,8 @@ class Part{
 
 	public var elemIndex (default, set): Int;
 
-	private var nbSubPartLoaded : Int = 0;
+	// TODO remove
 	private var nbSubPartTotal : Int = 0;
-	private var partIndex : Int = 0;
-	private var loaded : Bool = false;
 
 
 	///
@@ -239,8 +237,6 @@ class Part{
 		this.onActivateTokenRequest = function(itId : String){ parent.onActivateTokenRequest(itId); }
 
 		this.onScoreToAdd = function(perk : String, score : Int){ parent.onScoreToAdd(perk, score); }
-
-		//onParentChanged();
 
 		return parent;
 	}
@@ -306,24 +302,14 @@ class Part{
 	/**
 	* Set the part index to the end of the part, so the call to getNextElement will return the last element of the part.
 	**/
-	public function setIndexToEnd():Void
+	public inline function setIndexToEnd():Void
 	{
 		elemIndex = elements.length - 1;
 	}
 
-	/**
-     * Start the part if it hasn't been done
-     * @param	forced : true to start the part even if it has already been done
-     * @return this part, or null if it can't be start
-     */
-	public function start(forced:Bool = false):Null<Part>
+	public inline function hasNextElement():Bool
 	{
-		if(elemIndex == elements.length && !forced)
-			return null;
-		else{
-			enterPart();
-			return this;
-		}
+		return elemIndex < elements.length;
 	}
 
 	/**
@@ -335,11 +321,11 @@ class Part{
 		if (startIndex > -1)
 			elemIndex = startIndex;
 
-		if (elemIndex < elements.length){
+		if (hasNextElement()){
 			// If current element is a pattern, explore pattern first
 			switch(elements[elemIndex]){
 				case Pattern(p) if(p.itemIndex < p.patternContent.length): return elements[elemIndex] ;
-				case Part(p) if(activityData != null): return null;
+				//case Part(p) if(activityData != null): return null;
 				default: return elements[elemIndex++];
 			}
 		}
@@ -605,6 +591,7 @@ class Part{
 	 * End an activity
 	 * @return the id of the next Part if there is a threshold. If there is none, return null
 	 **/
+	// TODO use it or trash it!
 	public function endActivity() : String {
 
 		if(activityData == null)
@@ -681,17 +668,5 @@ class Part{
 			idNext = thresholds[i].id;
 		}
 		return idNext;
-	}
-
-
-	///
-	// INTERNALS
-	//
-
-	private function enterPart():Void
-	{
-		// TODO SoundLoop
-		//if(soundLoop != null)
-		//soundLoopChannel = soundLoop.play();
 	}
 }

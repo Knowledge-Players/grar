@@ -76,7 +76,8 @@ class PartController
 	/**
     * Display a graphic representation of the given part
     * @param    part : The part to display
-    * @param    interrupt : Stop current part to display the new one
+    * @param    next : Whether the part are progressing forward or backward. Default is true
+    * @param    noReload: Don't reload the display on init. Default is false
     * @return true if the part can be displayed.
     */
 	public function displayPart(part : Part, ?next: Bool = true, ?noReload = false): Bool {
@@ -85,7 +86,6 @@ class PartController
 		// Reset activity state
 		state.activityState = ActivityState.NONE;
 
-		//startIndex = startPosition;
 		display.onHeaderStateChangeRequest = function(state: String){
 			onHeaderStateChangeRequest(state);
 		}
@@ -100,7 +100,7 @@ class PartController
 					display.onInputEvent = onInputEvent;
 					startActivity(noReload);
 				}
-					// Standard Part
+				// Standard Part
 				else
 					nextElement();
 			}
@@ -108,7 +108,6 @@ class PartController
 		});
 
 		display.onExit = function() exitPart();
-		//display.onEnterSubPart = function(sp : Part) enterSubPart(sp);
 
 		return true;
 	}
@@ -147,8 +146,7 @@ class PartController
 		// End of the activity
 		if(group == null){
 			state.activityState = ActivityState.NONE;
-			part.restart();
-			exitPart();
+			nextElement();
 			return;
 		}
 
@@ -271,7 +269,6 @@ class PartController
 					part.isDone = true;
 					parent.gameOver();
 				}
-				//enterSubPart(p);
 				displayPart(p);
 
 			case Item(i):
@@ -304,7 +301,7 @@ class PartController
 		switch (currentElement) {
 
 			case Part(p):
-				enterSubPart(p);
+				displayPart(p);
 
 			case Item(i):
 				setupItem(i);
@@ -354,11 +351,6 @@ class PartController
 	///
 	// INTERNALS
 	//
-
-	private function enterSubPart(part:Part):Void
-	{
-
-	}
 
 	private function onVideoComplete():Void
 	{

@@ -425,7 +425,7 @@ class Controller {
 				i++;
 			}
 		}
-		else if(p.parent != null){
+		else if(p.parent != null && p.parent.hasNextElement()){
 			partCtrl.unloadPart(p.ref);
 			partCtrl.displayPart(state.module.start(p.parent.id), true, true);
 		}

@@ -143,59 +143,44 @@ class Grar {
 
 	public function set_currentLocale( v : String ) : String {
 
-		if (v == currentLocale) {
+		if (v == currentLocale)
 			return v;
-		}
 		currentLocale = v;
-
 		onCurrentLocaleChanged();
 
 		return currentLocale;
 	}
 
-	public function set_locales( v : Null<StringMap<Locale>> ) : Null<StringMap<Locale>> {
+	public function set_locales( v : Null<StringMap<Locale>> ) : Null<StringMap<Locale>>
+	{
 
 		locales = v;
-
 		onLocaleListChanged();
-
 		return locales;
 	}
 
-	public function set_interfaceLocaleDataPath(v : Null<String>) : Null<String> {
+	public function set_interfaceLocaleDataPath(v : Null<String>) : Null<String>
+	{
 
-		if (interfaceLocaleDataPath == v) {
-
+		if (interfaceLocaleDataPath == v)
 			return interfaceLocaleDataPath;
-		}
 		currentLocaleDataPath = interfaceLocaleDataPath = v;
-//		onCurrentLocalePathChanged();
 
 		return interfaceLocaleDataPath;
 	}
 
-	public function set_currentLocaleDataPath(v : Null<String>) : Null<String> {
+	public function set_currentLocaleDataPath(v : Null<String>) : Null<String>
+	{
 		if (v != null) {
-
 			if (currentLocaleDataPath != v) {
-
 				stashedLocaleData.add(localeData);
-
 				currentLocaleDataPath = v;
-
 				changeLocale = true;
-
 				onCurrentLocalePathChanged();
-
-			} else {
-
+			} else
 				changeLocale = false;
-			}
-
 		} else {
-
 			currentLocaleDataPath = v;
-
 			onCurrentLocalePathChanged();
 		}
 
@@ -204,16 +189,12 @@ class Grar {
 
 	public function set_parts(v : Null<Array<Part>>) : Null<Array<Part>> {
 
-		if (parts == v) {
-
+		if (parts == v)
 			return parts;
-		}
 		parts = v;
 
 		for (p in parts) {
-
 			p.onActivateTokenRequest = function(tid : String){ activateInventoryToken(tid); };
-
 			p.onScoreToAdd = function(perk : String, score : Int){ scoreChart.addScoreToPerk(perk, score); }
 		}
 		onPartsChanged();
@@ -301,32 +282,24 @@ class Grar {
 	/**
     * Restore the previously stored locale
     **/
-	public function restoreLocale() : Void {
-
+	public function restoreLocale() : Void
+	{
 		if (changeLocale && !stashedLocaleData.isEmpty()) {
-
 			localeData = stashedLocaleData.pop();
-
-			currentLocaleDataPath = null; // shouldn't we restore it too ???
+			currentLocaleDataPath = null;
 		}
 	}
 
 	public function getLocalizedContent(key : String) : Null<String> {
 
 		if (localeData != null) {
-
 			var content = localeData.getItem(key);
-
-			if (content == null) {
-				content = "Unknown localized content key '" + key+"'.";
-			}
+			if (content == null)
+				content = "Unknown localized content key '"+key+"'.";
 
 			return content;
-
 		} else {
-
 			trace("No locale data set. Returning null for key '"+key+"'.");
-
 			return null;
 		}
 	}
@@ -390,10 +363,11 @@ class Grar {
 	public function getNextPart(p:Part):Null<Part>
 	{
 		var i = 0;
-		while(i < parts.length && parts[i] != p)
+		var allParts = getAllParts();
+		while(i < allParts.length && allParts[i] != p)
 			i++;
 
-		return i < parts.length ? parts[i+1] : null;
+		return i < allParts.length ? allParts[i+1] : null;
 	}
 
 	/**
@@ -403,10 +377,11 @@ class Grar {
 	public function getPreviousPart(p:Part):Null<Part>
 	{
 		var i = 0;
-		while(i < parts.length && parts[i] != p)
+		var allParts = getAllParts();
+		while(i < allParts.length && allParts[i] != p)
 			i++;
 
-		return i < parts.length ? parts[i-1] : null;
+		return i < allParts.length ? allParts[i-1] : null;
 	}
 
 	/**
@@ -422,7 +397,7 @@ class Grar {
 
             do {
 
-                nextPart = parts[partIndex].start();
+                nextPart = parts[partIndex];
                 partIndex++;
 
             } while (nextPart == null && partIndex < parts.length);
@@ -439,7 +414,7 @@ class Grar {
             }
 	        if (i != allParts.length) {
 
-                nextPart = allParts[i].start(true);
+                nextPart = allParts[i];
 	            var j = 0;
 	            var k = 0;
 
