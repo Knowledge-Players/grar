@@ -541,11 +541,6 @@ class PartController
 			for(input in group.inputs)
 				validateInput(input.id, validationRule);
 
-			// Enabling or not progression
-			var rules = part.getRulesByType("minScore");
-			if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
-				display.enableNextButtons();
-
 			// Debrief
 			for(rule in debriefRules)
 				display.setDebrief(rule.id, state.module.getLocalizedContent(group.id+"_"+rule.value));
@@ -581,9 +576,26 @@ class PartController
 					display.setInputState(inputId, result ? "true" : "false");
 			}
 
-		// Scoring
-		part.activityData.score += part.getInput(inputId).points;
 	}
+
+    private function setInputSelected(input: Input,selected:Bool):Void{
+
+        if(input.selected ==selected) return;
+
+        display.toggleElement(input.id,selected);
+
+        input.selected=selected;
+
+        if(input.selected)
+            part.activityData.score += input.points;
+        else
+            part.activityData.score -= input.points;
+
+        var rules = part.getRulesByType("minScore");
+        if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
+            display.enableNextButtons();
+
+    }
 
 	private function onInputEvent(eventType: InputEvent, inputId: String, mousePoint: Point):Void
 	{
@@ -643,8 +655,7 @@ class PartController
                     for (s in input.values)
                        display.toggleElement(s, true);
                 case "setvisited" :
-                    display.toggleElement(inputId, true);
-	                input.selected = true;
+                    setInputSelected(input,true);
                 case "replacecontent" :
                     var output: Input = part.getInput(input.values[0]);
                     var loc = getLocalizedContent(input.content[input.values[0]]);
@@ -655,8 +666,7 @@ class PartController
 					display.setText(output.id,null);
 					display.removeInputState(output.id, "more");
                 case "toggle" :
-                    display.toggleElement(inputId);
-	                input.selected = !input.selected;
+                    setInputSelected(input,!input.selected);
 				case "goto":
 					var id: String;
 					// Detect dynamic values
