@@ -354,10 +354,12 @@ class Part{
     */
 	public function getPreviousElement() : Null<PartElement> {
 
-		// If current element is a pattern, restart it
-		switch((elements[elemIndex])){
-			case Pattern(p): p.restart();
-			default:
+		if(elemIndex < elements.length){
+			// If current element is a pattern, restart it
+			switch((elements[elemIndex])){
+				case Pattern(p): p.restart();
+				default:
+			}
 		}
 
 		if (elemIndex > 2){

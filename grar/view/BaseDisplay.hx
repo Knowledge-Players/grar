@@ -9,6 +9,7 @@ import js.html.ParagraphElement;
 import grar.view.style.TextDownParser;
 
 using Lambda;
+using StringTools;
 
 class BaseDisplay{
 
@@ -32,7 +33,7 @@ class BaseDisplay{
 		for(node in text.childNodes) children.push(node);
 		// Clean text node in Textfield
 		for(node in children){
-			if(node.nodeType == Node.TEXT_NODE || (node.nodeType == Node.ELEMENT_NODE && node.nodeName.toLowerCase() == "p")){
+			if(node.nodeType == Node.TEXT_NODE || node.nodeName.toLowerCase() == "p" || node.nodeName.toLowerCase().startsWith("h")){
 				text.removeChild(node);
 			}
 		}
