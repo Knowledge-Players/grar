@@ -400,7 +400,7 @@ class PartController
 						trace("Cannot retrieve video: "+url);
 					else{
 						var decodeUrl = StringTools.replace(url, "\\/", "/");
-						display.setVideo(item.ref, decodeUrl, item.videoData, function(){trace("playing");}, function() onVideoComplete(), state.module.currentLocale);
+						display.setVideo(item.ref, decodeUrl, item.videoData, function(){}, function() onVideoComplete(), state.module.currentLocale);
 					}
 				});
 			}
@@ -534,8 +534,22 @@ class PartController
 				validateInput(input.id, validationRule);
 
 			// Debrief
-			for(rule in debriefRules)
-				display.setDebrief(rule.id, state.module.getLocalizedContent(group.id+"_"+rule.value));
+			var lastId = null;
+			var lastValue = null;
+			var isTrue = false;
+			for(rule in debriefRules){
+				var intValue = Std.parseInt(rule.value);
+				if(intValue == null){
+					lastValue = rule.value;
+					lastId = rule.id;
+				}
+				else if(part.getScore() >= intValue){
+					lastValue = rule.id;
+					isTrue = true;
+				}
+			}
+			display.setDebrief(lastId, state.module.getLocalizedContent(group.id+"_"+lastValue));
+			display.setInputState(lastId, Std.string(isTrue));
 
 			// Disabling further input
 			part.activityData.inputsEnabled = false;
@@ -572,12 +586,13 @@ class PartController
 
     private function setInputSelected(input: Input,selected:Bool):Void{
 
-        if(input.selected ==selected) return;
+        if(input.selected == selected) return;
 
         display.toggleElement(input.id,selected);
 
-        input.selected=selected;
+        input.selected = selected;
 
+	    // TODO Don't use score variable
         if(input.selected)
             part.activityData.score += input.points;
         else
@@ -691,14 +706,11 @@ class PartController
 			return;
 
 		var rules = selectionRules[0].value.split(" ");
-		if(rules.length == 1){
-			minSelect = Std.parseInt(rules[0]);
-			maxSelect = Std.parseInt(rules[0]);
-		}
-		else if(rules.length > 1 && rules[1] != "*"){
-			minSelect = Std.parseInt(rules[0]);
+		minSelect = Std.parseInt(rules[0]);
+		if(rules.length == 1)
+			maxSelect = minSelect;
+		else if(rules.length > 1 && rules[1] != "*")
 			maxSelect = Std.parseInt(rules[1]);
-		}
 
 		var numSelected = group.inputs.count(function(input: Input) return input.selected);
 

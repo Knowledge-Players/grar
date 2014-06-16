@@ -588,11 +588,26 @@ class Part{
 	}
 
 	/**
+	* @return score of the activity from 0 to 100
+	**/
+	public function getScore():Int
+	{
+		if(activityData == null)
+			throw 'This part is not an activity';
+
+		var numGroup = 0;
+		for(group in activityData.groups)
+			numGroup += group.inputs.length;
+
+		return score = Std.int(activityData.numRightAnswers * 100 / numGroup);
+	}
+
+	/**
 	 * End an activity
 	 * @return the id of the next Part if there is a threshold. If there is none, return null
 	 **/
 	// TODO use it or trash it!
-	public function endActivity() : String {
+	/*public function endActivity() : String {
 
 		if(activityData == null)
 			throw 'This part is not an activity';
@@ -668,5 +683,5 @@ class Part{
 			idNext = thresholds[i].id;
 		}
 		return idNext;
-	}
+	}*/
 }

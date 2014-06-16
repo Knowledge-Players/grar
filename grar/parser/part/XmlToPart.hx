@@ -234,7 +234,7 @@ class XmlToPart {
 
 				case "rule" :
 
-					var rule : Rule = { id: child.att.id, type: child.att.type.toLowerCase(), value: child.att.value.toLowerCase() };
+					var rule : Rule = { id: child.att.id, type: child.att.type.toLowerCase(), value: child.att.value};
 					rules.set(rule.id, rule);
 			}
 		}
