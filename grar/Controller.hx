@@ -268,6 +268,10 @@ class Controller {
 				gameOver();
 			}
 
+		application.onMasterVolumeChanged = function(){
+				partCtrl.onMasterVolumeChanged();
+			}
+
 		state.readyState = true;
 	}
 
@@ -292,6 +296,16 @@ class Controller {
 
 	public function hideMenu(ref: String){
 		application.menus[ref].close();
+	}
+
+	public function setMasterVolume(volume:Float):Void
+	{
+		application.masterVolume = volume;
+	}
+
+	public function getMasterVolume():Float
+	{
+		return application.masterVolume;
 	}
 
 	///

@@ -67,4 +67,14 @@ class App {
 	{
 		controller.hideMenu(ref);
 	}
+
+	public static function setMasterVolume(volume:Float):Void
+	{
+		controller.setMasterVolume(volume);
+	}
+
+	public static function getMasterVolume(): Float
+	{
+		return controller.getMasterVolume();
+	}
 }

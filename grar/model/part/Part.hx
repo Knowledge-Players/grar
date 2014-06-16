@@ -32,7 +32,6 @@ typedef PartData = {
 	var isDone : Bool;
 	var isStarted : Bool;
 	var tokens : GenericStack<String>;
-	//var soundLoopSrc : String;
 	var soundLoop : String;
 	var elements : Array<PartElement>;
 	var buttons : List<ButtonData>;

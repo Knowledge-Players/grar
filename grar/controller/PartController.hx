@@ -348,6 +348,11 @@ class PartController
 		}
 	}
 
+	public function onMasterVolumeChanged():Void
+	{
+		display.onMasterVolumeChanged(application.masterVolume);
+	}
+
 	///
 	// INTERNALS
 	//
@@ -433,6 +438,29 @@ class PartController
 		else {
 			setAuthor(item);
 			display.setText(item.ref, getLocalizedContent(item.content));
+		}
+
+		// Voice over
+		if(item.voiceOverUrl != null){
+			var fullPath: Array<String> = item.voiceOverUrl.split("/");
+
+			var path: String = null;
+			if(fullPath.length == 1)
+				path = state.module.currentLocale + "/" + fullPath[0];
+			else{
+				var localePath : StringBuf = new StringBuf();
+
+				localePath.add(fullPath[0] + "/");
+				localePath.add(state.module.currentLocale + "/");
+
+				for (i in 1...fullPath.length-1) {
+
+					localePath.add(fullPath[i] + "/");
+				}
+				localePath.add(fullPath[fullPath.length-1]);
+				path = localePath.toString();
+			}
+			display.setVoiceOver(path, application.masterVolume);
 		}
 
 		for (image in item.images)

@@ -36,9 +36,6 @@ class Application {
 		this.callbacks = {
 
 				onQuitGameRequest: function(){ this.onQuitGameRequest(); },
-				onSoundToLoad: function(sndUri:String){ loadSound(sndUri); },
-				onSoundToPlay: function(sndUri:String){ playSound(sndUri); },
-				onSoundToStop: function(){ stopSound(); },
 				onActivateTokenRequest: function(tid : String){ onActivateTokenRequest(tid); }
 			};
 
@@ -95,7 +92,7 @@ class Application {
 
 	public var mainLayoutRef (default, default) : Null<String> = null;
 
-	private var nbVolume : Float = 1;
+	public var masterVolume (default, set): Float = 1;
 
 
 	///
@@ -133,6 +130,13 @@ class Application {
 		if(partDisplay == null)
 			partDisplay = new PartDisplay(callbacks);
 		return partDisplay;
+	}
+
+	public function set_masterVolume(vol:Float):Float
+	{
+		masterVolume = vol;
+		onMasterVolumeChanged();
+		return masterVolume;
 	}
 
 
@@ -178,7 +182,7 @@ class Application {
 
 	public dynamic function onMenuUpdateDynamicFieldsRequest() : Void { }
 
-	//public dynamic function onPartDisplayRequest(p : Part) : Void { }
+	public dynamic function onMasterVolumeChanged(): Void {}
 
 
 	///
@@ -303,64 +307,6 @@ class Application {
 
 		for(t in templates)
 			t.parentNode.removeChild(t);
-	}
-
-	public function changeVolume(nb : Float = 0) : Void {
-
-		nbVolume = nb;
-
-		// TODO use sound
-		/*if (itemSoundChannel != null) {
-
-			var soundControl = itemSoundChannel.soundTransform;
-			soundControl.volume = nbVolume;
-			itemSoundChannel.soundTransform = soundControl;
-		}*/
-	}
-
-	/**
-	* Pre load a sound. Then use playSound with the same url to play it
-	* @param soundUrl : Path to the sound file
-	**/
-	public function loadSound(soundUrl : String) : Void {
-
-		// TODO use sound
-		/*if (soundUrl != null && soundUrl != "") {
-
-			var sound = new Sound(new flash.net.URLRequest(soundUrl));
-
-			sounds.set(soundUrl, sound);
-		}*/
-	}
-
-	/**
-    * Play a sound. May cause error if the sound is not preloaded with loadSound()
-    * @param soundUrl : Path to the sound file
-    **/
-	public function playSound(soundUrl : String) : Void {
-
-		// TODO use sound
-		/*if (soundUrl != null) {
-
-			stopSound();
-
-			if (!sounds.exists(soundUrl)) {
-
-				loadSound(soundUrl);
-			}
-			itemSoundChannel = sounds.get(soundUrl).play();
-		}*/
-	}
-
-	/**
-	* Stop currently playing sound
-	**/
-	public function stopSound() : Void {
-		// TODO use sound
-		/*if (itemSoundChannel != null) {
-
-			itemSoundChannel.stop();
-		}*/
 	}
 
 	/**

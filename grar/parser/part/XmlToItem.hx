@@ -32,7 +32,7 @@ class XmlToItem {
 		var endScreen : Bool = false;
 		var videoData: VideoData = null;
 		var soundData: SoundData = null;
-
+		var soundUrl: String = null;
 
 		if (f != null) {
 
@@ -63,6 +63,9 @@ class XmlToItem {
 				images.add(image);
 			}
 
+			if(f.hasNode.Sound)
+				soundUrl = f.node.Sound.att.src;
+
 			if(f.has.type && f.att.type == "video"){
 				var autoStart : Bool = false;
 				var autoFullscreen : Bool = false;
@@ -90,6 +93,6 @@ class XmlToItem {
 		}
 		id = content;
 
-		return new Item({ id: id, content: content, author: author, background: background, button: button, ref: ref, tokens: tokens, images: images, endScreen: endScreen, videoData: videoData, soundData: soundData});
+		return new Item({ id: id, content: content, author: author, background: background, button: button, ref: ref, tokens: tokens, images: images, endScreen: endScreen, videoData: videoData, soundData: soundData, voiceOverUrl: soundUrl});
 	}
 }

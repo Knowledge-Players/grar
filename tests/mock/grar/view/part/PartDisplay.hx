@@ -133,6 +133,10 @@ class PartDisplay extends BaseDisplay{
 
     }
 
+	public function setVoiceOver(voiceOverUrl:String, volume: Float):Void{}
+	public function onMasterVolumeChanged(volume: Float):Void
+	{}
+
     public function displayElements(?elements:List<String>, ?elem: String):Void
     {
 

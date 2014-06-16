@@ -1,20 +1,22 @@
 package grar.view.part;
 
-import grar.model.part.item.Item.VideoData;
-import grar.util.ParseUtils;
-import js.html.InputElement;
-import grar.view.guide.Absolute;
-import grar.view.guide.Guide;
 import haxe.Http;
 
+import grar.util.ParseUtils;
 import grar.util.Point;
+
 import grar.view.style.TextDownParser;
 import grar.view.part.PartDisplay.InputEvent;
-import grar.view.guide.Grid;
 import grar.view.component.SoundPlayer;
 import grar.view.component.VideoPlayer;
+import grar.view.guide.Absolute;
+import grar.view.guide.Grid;
+import grar.view.guide.Guide;
+
+import grar.model.part.item.Item.VideoData;
 
 import js.Browser;
+import js.html.InputElement;
 import js.html.Element;
 import js.html.Event;
 import js.html.MouseEvent;
@@ -24,6 +26,8 @@ import js.html.ImageElement;
 import js.html.ClientRect;
 import js.html.TouchEvent;
 import js.html.UIEvent;
+import js.html.Audio;
+import js.html.AudioElement;
 
 using StringTools;
 using Lambda;
@@ -72,6 +76,7 @@ class PartDisplay extends BaseDisplay
 	var dragParent:Element;
 	var isMobile: Bool;
 	var templates: Map<String, Element>;
+	var playingSounds: Array<AudioElement>;
 
 
 	///
@@ -106,6 +111,10 @@ class PartDisplay extends BaseDisplay
 	{
 		// Init templates
 		templates = new Map();
+		// Init sounds
+		if(playingSounds != null)
+			playingSounds.iter(function(elem: AudioElement) elem.pause());
+		playingSounds = new Array();
 
 		// Check if a HTML template is needed
 		if(ref.indexOf("#") == -1){
@@ -336,7 +345,23 @@ class PartDisplay extends BaseDisplay
 		if(soundPlayer == null)
 			soundPlayer = new SoundPlayer();
 		soundPlayer.init(cast getChildById(soundRef));
+		playingSounds.push(soundPlayer.root);
 		soundPlayer.setSound(uri, autoStart, loop, defaultVolume);
+	}
+
+	public function setVoiceOver(voiceOverUrl:String, volume: Float):Void
+	{
+		var audio = new Audio();
+		audio.autoplay = true;
+		audio.volume = volume;
+		playingSounds.push(audio);
+		audio.src = voiceOverUrl;
+		audio.play();
+	}
+
+	public function onMasterVolumeChanged(volume: Float):Void
+	{
+		playingSounds.iter(function(elem: AudioElement) elem.volume = volume);
 	}
 
 	public function showDebriefZone(debriefRef:String):Void

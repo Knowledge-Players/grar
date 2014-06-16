@@ -47,7 +47,7 @@ class Application{
 
 	public var mainLayoutRef (default, default) : Null<String> = null;
 
-	private var nbVolume : Float = 1;
+	public var masterVolume(default, set) : Float = 1;
 
 
 	public function set_menuData(v : Null<MenuData>) : Null<MenuData> {
@@ -64,6 +64,11 @@ class Application{
 	public function get_partDisplay():PartDisplay
 	{
 		return partDisplay;
+	}
+
+	public function set_masterVolume(vol:Float):Float
+	{
+		return masterVolume = vol;
 	}
 
 
@@ -109,6 +114,8 @@ class Application{
 
 	public dynamic function onMenuUpdateDynamicFieldsRequest() : Void { }
 
+	public dynamic function onMasterVolumeChanged(): Void {}
+
 	public function changeHeaderState(l : String) : Void {
 	}
 
@@ -124,28 +131,6 @@ class Application{
 	public function updateChapterInfos(chapterName:String, activityName:String):Void
 	{}
 
-	/**
-	* Pre load a sound. Then use playSound with the same url to play it
-	* @param soundUrl : Path to the sound file
-	**/
-	public function loadSound(soundUrl : String) : Void {
-
-	}
-
-	/**
-    * Play a sound. May cause error if the sound is not preloaded with loadSound()
-    * @param soundUrl : Path to the sound file
-    **/
-	public function playSound(soundUrl : String) : Void {
-
-	}
-
-	/**
-	* Stop currently playing sound
-	**/
-	public function stopSound() : Void {
-
-	}
 
 	public function setGameOver() : Void {
 

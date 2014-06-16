@@ -17,6 +17,7 @@ typedef ItemData = {
 	var endScreen : Bool;
 	var videoData: VideoData;
 	var soundData: SoundData;
+	var voiceOverUrl: String;
 }
 
 typedef SubtitleData ={
@@ -88,6 +89,7 @@ class Item{
 		this.endScreen = o.endScreen;
 		this.videoData = o.videoData;
 		this.soundData = o.soundData;
+		this.voiceOverUrl = o.voiceOverUrl;
 	}
 
 	/**
@@ -145,4 +147,6 @@ class Item{
 	public var videoData (default, default):VideoData;
 
 	public var soundData (default, default):SoundData;
+
+	public var voiceOverUrl (default, default):String;
 }

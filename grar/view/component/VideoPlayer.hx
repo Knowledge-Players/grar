@@ -45,6 +45,7 @@ class VideoPlayer{
 			onVideoPlay();
 		});
 		root.addEventListener("ended", function(_){
+			root.exitFullScreen();
 			onVideoEnd();
 		});
 	}
