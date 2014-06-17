@@ -10,6 +10,8 @@ class VideoPlayer{
 
 	public var root (default, null): VideoElement;
 
+	var apiPrefix: String;
+
 	public function new(){
 
 	}
@@ -19,6 +21,12 @@ class VideoPlayer{
 	public function init(root:VideoElement):Void
 	{
 		this.root = root;
+		untyped __js__("if (this.root.mozRequestFullScreen)
+				this.apiPrefix = 'moz';
+			else if (this.root.webkitRequestFullscreen)
+				this.apiPrefix = 'webkit';
+			else if (this.root.msRequestFullscreen)
+				this.apiPrefix = 'ms';");
 	}
 
 	public function setVideo(url: String, videoData: VideoData, onVideoPlay: Void -> Void, onVideoEnd: Void -> Void, ?locale: String) : Void {
@@ -39,13 +47,26 @@ class VideoPlayer{
 
 			root.appendChild(track);
 		}
-		if(videoData.fullscreen)
-			root.enterFullScreen();
+		if(videoData.fullscreen){
+			if(apiPrefix == null)
+				untyped __js__("this.root.requestFullscreen();");
+			else
+				Reflect.callMethod(root, apiPrefix+"RequestFullScreen()", null);
+			//root.enterFullScreen();
+		}
 		root.addEventListener("play", function(_){
 			onVideoPlay();
 		});
 		root.addEventListener("ended", function(_){
-			root.exitFullScreen();
+			if(apiPrefix == null)
+				untyped __js__("this.exitFullscreen();");
+			else if(apiPrefix == "webkit")
+				untyped __js__("this.webkitExitFullScreen();");
+			else if(apiPrefix == "moz")
+				untyped __js__("this.mozCancelFullScreen();");
+			else
+				untyped __js__("this.msExitFullScreen();");
+			//root.exitFullScreen();
 			onVideoEnd();
 		});
 	}
