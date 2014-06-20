@@ -1,11 +1,9 @@
 package grar.view.part;
 
-import haxe.Http;
-
 import grar.util.ParseUtils;
 import grar.util.Point;
+import grar.util.TextDownParser;
 
-import grar.view.style.TextDownParser;
 import grar.view.part.PartDisplay.InputEvent;
 import grar.view.component.SoundPlayer;
 import grar.view.component.VideoPlayer;
@@ -15,7 +13,8 @@ import grar.view.guide.Guide;
 
 import grar.model.part.item.Item.VideoData;
 
-import js.Browser;
+import js.html.IFrameElement;
+import js.html.Document;
 import js.html.InputElement;
 import js.html.Element;
 import js.html.Event;
@@ -43,26 +42,22 @@ enum InputEvent{
 /**
  * Display of a part
  */
-class PartDisplay extends BaseDisplay
+class PartDisplay
 {
 
 	/**
      * Constructor
      * @param	part : Part to display
      */
-	public function new(callbacks : grar.view.DisplayCallbacks) {
-
-		super();
-
-		this.onActivateTokenRequest = function(tokenId : String){ callbacks.onActivateTokenRequest(tokenId); }
-
-		// TODO deplacer dans la Config
-		#if js
-		isMobile = ~/ipad|iphone|ipod|android|mobile/i.match(Browser.navigator.userAgent);
-		#end
+	public function new(parent: Application, mobile: Bool) {
+		application = parent;
+		isMobile = mobile;
+		this.onActivateTokenRequest = function(tokenId : String){}
 	}
 
 	public var introScreenOn (default, null) : Bool = false;
+
+	public var markupParser (default, default):TextDownParser;
 
 
 	public static var CLICK = "click";
@@ -77,25 +72,18 @@ class PartDisplay extends BaseDisplay
 	var isMobile: Bool;
 	var templates: Map<String, Element>;
 	var playingSounds: Array<AudioElement>;
+	var rootDocument: Document;
+	var application: Application;
+	var root: Element;
 
 
 	///
 	// CALLBACKS
 	//
 
-	public dynamic function onExit() : Void { }
-
-	//public dynamic function onEnterSubPart(sp : Part) : Void { }
-
-	public dynamic function onPartLoaded() : Void { }
-
 	public dynamic function onHeaderStateChangeRequest(state: String) : Void { }
 
 	public dynamic function onActivateTokenRequest(token : String) : Void { }
-
-	public dynamic function onNextRequest(?startIndex : Int = -1): Void { }
-
-	public dynamic function onExitPart(?completed : Bool = true): Void { }
 
 	public dynamic function onIntroEnd():Void { }
 
@@ -107,7 +95,11 @@ class PartDisplay extends BaseDisplay
 	// GETTER / SETTER
 	//
 
-	public function init(ref:String, ?next: Bool = true, ?noReload = false):Void
+	/**
+	* Initialize a part view
+	* @param root: Root HTML element for this view. If null, previous root is kept (like child part keep parent part's root)
+	**/
+	public function init(?root:Element):Void
 	{
 		// Init templates
 		templates = new Map();
@@ -116,117 +108,16 @@ class PartDisplay extends BaseDisplay
 			playingSounds.iter(function(elem: AudioElement) elem.pause());
 		playingSounds = new Array();
 
-		// Check if a HTML template is needed
-		if(ref.indexOf("#") == -1){
-			root = Browser.document.getElementById(ref);
-			if(!noReload)
-				for(child in root.children)
-					recursiveHide(getElement(child));
-			show(root);
-			onPartLoaded();
-		}
-		else{
-			// Insert HTML into the layout
-			// TODO GLOBAL: Utiliser des iframes et ici set src
-			// TODO add stylesheets in the Browser.document.headElement
-			var ids = ref.split("#");
-			root = Browser.document.getElementById(ids[1]);
-
-			if(noReload){
-				show(root);
-				return;
+		if(root != null){
+			if(root.nodeName.toLowerCase() == "iframe"){
+				var iframe: IFrameElement = cast root;
+				this.root = iframe.contentDocument.body;
+				rootDocument = iframe.contentDocument;
 			}
-
-            for(child in root.children){
-                if(child.nodeType == Node.ELEMENT_NODE)
-                if(Std.instance(child, Element).hasAttribute("data-layout-state")){
-                    onHeaderStateChangeRequest(Std.instance(child, Element).getAttribute("data-layout-state")+"Remove");
-                }
-            }
-			var http = new Http(ids[0]);
-			http.onData = function(data){
-				var hasChild = root.hasChildNodes();
-				if(next)
-				    root.innerHTML += data;
-
-				else{
-					root.innerHTML = (data + root.innerHTML);
-					root.style.left = "-100%";
-				}
-
-				// If a part is already displayed
-				if(hasChild){
-					var listener = null;
-					listener = function(_){
-						root.removeEventListener('transitionend', listener);
-						root.removeEventListener('webkitTransitionEnd', listener);
-						if(next){
-							root.style.transition = "none";
-							// Remove all non-div elements
-							while(root.children[0].nodeName.toLowerCase() != "div")
-								root.removeChild(root.children[0]);
-							// Remove the first div (= previous part display)
-							root.removeChild(root.children[0]);
-							root.classList.remove("nextTransition");
-						}
-						else{
-                            root.removeChild(root.children[root.children.length-1]);
-
-							var i = root.children.length-1;
-							while(root.children[i].nodeName.toLowerCase() != "div") {
-                                root.removeChild(root.children[i]);
-                                i--;
-                            }
-							root.style.left = "";
-							root.classList.remove("previousTransition");
-						}
-
-                        // If layout state need to be updated
-                        for(child in root.children){
-                            if(child.nodeType == Node.ELEMENT_NODE)
-                            if(Std.instance(child, Element).hasAttribute("data-layout-state")){
-                                onHeaderStateChangeRequest(Std.instance(child, Element).getAttribute("data-layout-state"));
-                            }
-                        }
-
-						show(root);
-						onPartLoaded();
-					}
-					root.addEventListener("transitionend",listener);
-					root.addEventListener("webkitTransitionEnd",listener);
-
-					if(!next){
-						// Need to wait for next frame to see the animation
-						var firstFrame = true;
-						var update = null;
-						update = function(_){
-							if(firstFrame){
-								firstFrame = false;
-								Browser.window.requestAnimationFrame(update);
-							}
-							else{
-								root.style.transition = "";
-								root.classList.add("previousTransition");
-							}
-							return true;
-						};
-						Browser.window.requestAnimationFrame(update);
-					}
-					else{
-						root.style.transition = "";
-						root.classList.add("nextTransition");
-					}
-				}
-				else{
-					show(root);
-					onPartLoaded();
-				}
+			else{
+				this.root = root;
+				rootDocument = application.document;
 			}
-
-			http.onError = function(msg){
-				throw "Can't load '"+ids[0]+"'.";
-			}
-			http.request();
 		}
 	}
 
@@ -255,7 +146,7 @@ class PartDisplay extends BaseDisplay
 
 	public function showSpeaker(speaker : String) : Void {
 		if(speaker != null){
-			var char: Element = getChildById("speaker");
+			var char: Element = rootDocument.getElementById("speaker");
 			char.classList.add(speaker);
 			show(char);
 			show(char.parentElement);
@@ -264,9 +155,16 @@ class PartDisplay extends BaseDisplay
 
 	public function hideSpeaker(speaker : String) : Void {
 		if(speaker != null){
-			var char = getChildById("speaker");
+			var char = rootDocument.getElementById("speaker");
 			char.classList.remove(speaker);
 			hide(char);
+		}
+	}
+
+	public function setSpeakerLabel(speakerName:String):Void
+	{
+		for(label in root.getElementsByClassName("speakerLabel")){
+			setText(getElement(label).id, speakerName);
 		}
 	}
 
@@ -293,9 +191,8 @@ class PartDisplay extends BaseDisplay
 
 		if(imageRef != null){
 
-			var elem:Element =getChildById(imageRef);
-            //use of Std.instance
-            var img:ImageElement = Std.instance(elem,ImageElement);
+			var elem:Element = rootDocument.getElementById(imageRef);
+            var img:ImageElement = cast elem;
             img.src = src;
 
 			show(img);
@@ -303,13 +200,13 @@ class PartDisplay extends BaseDisplay
 		}
 	}
     public function hidePattern(ref:String):Void{
-        var pat: Element = getChildById(ref);
+        var pat: Element = rootDocument.getElementById(ref);
 	    for(child in pat.children)
 		    hide(cast child);
         hide(pat);
     }
     public function showPattern(ref:String):Void{
-        var pat:Element = getChildById(ref);
+        var pat:Element = rootDocument.getElementById(ref);
         show(pat);
 
 	    // Show the first non-visible child. Usefull for box in strip
@@ -326,7 +223,7 @@ class PartDisplay extends BaseDisplay
 
 	public function setIntroText(fieldRef: String, content: String):Void
 	{
-		var field = getChildById(fieldRef);
+		var field = rootDocument.getElementById(fieldRef);
 		for(elem in markupParser.parse(content))
 			field.appendChild(elem);
 	}
@@ -335,7 +232,7 @@ class PartDisplay extends BaseDisplay
 	{
 		if(videoPlayer == null)
 			videoPlayer = new VideoPlayer();
-		videoPlayer.init(cast getChildById(videoRef));
+		videoPlayer.init(cast rootDocument.getElementById(videoRef));
 		show(videoPlayer.root);
 		videoPlayer.setVideo(uri, videoData, onVideoPlay, onVideoEnd, locale);
 	}
@@ -344,7 +241,7 @@ class PartDisplay extends BaseDisplay
 	{
 		if(soundPlayer == null)
 			soundPlayer = new SoundPlayer();
-		soundPlayer.init(cast getChildById(soundRef));
+		soundPlayer.init(cast rootDocument.getElementById(soundRef));
 		playingSounds.push(soundPlayer.root);
 		soundPlayer.setSound(uri, autoStart, loop, defaultVolume);
 	}
@@ -366,7 +263,7 @@ class PartDisplay extends BaseDisplay
 
 	public function showDebriefZone(debriefRef:String):Void
 	{
-		var debrief: Element = getChildById(debriefRef);
+		var debrief: Element = rootDocument.getElementById(debriefRef);
 		if(debrief != null){
 			for(child in debrief.children)
 				recursiveShow(getElement(child));
@@ -402,10 +299,10 @@ class PartDisplay extends BaseDisplay
 	public function displayElements(?elements:List<String>, ?elem: String):Void
 	{
 		if(elem != null)
-			show(getChildById(elem));
+			show(rootDocument.getElementById(elem));
 		else if(elements != null)
 			for(element in elements)
-				show(getChildById(element));
+				show(rootDocument.getElementById(element));
 	}
 
 	/**
@@ -416,10 +313,10 @@ class PartDisplay extends BaseDisplay
     public function hideElements(?elements:List<String>, ?elem: String):Void
 	{
 		if(elem != null)
-			hide(getChildById(elem));
+			hide(rootDocument.getElementById(elem));
 		else if(elements != null)
 			for(element in elements)
-				hide(getChildById(element));
+				hide(rootDocument.getElementById(element));
 	}
 
 	public function hideElementsByClass(className: String):Void
@@ -428,29 +325,21 @@ class PartDisplay extends BaseDisplay
 			hide(Std.instance(elem, Element));
 	}
 
-	public function reset():Void
-	{
-		/*for(child in root.childNodes)
-			if(child.nodeType == Node.ELEMENT_NODE)
-				hide(cast child);
-        */
-	}
-
 	public function disableNextButtons():Void
 	{
 		for(b in root.getElementsByClassName("next"))
-			Std.instance(b, Element).classList.add("disabled");
+			getElement(b).classList.add("disabled");
 	}
 
 	public function enableNextButtons():Void
 	{
 		for(b in root.getElementsByClassName("next"))
-			Std.instance(b, Element).classList.remove("disabled");
+			getElement(b).classList.remove("disabled");
 	}
 
 	public function setButtonAction(buttonId: String, actionName: String, action : Void -> Void) : Void {
 
-		var b: Element = getChildById(buttonId);
+		var b: Element = rootDocument.getElementById(buttonId);
 		b.onclick = function(_) !b.classList.contains("disabled") ? action() : null;
 		b.classList.add(actionName);
 		b.classList.remove("disabled");
@@ -458,7 +347,7 @@ class PartDisplay extends BaseDisplay
 
 	public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>, selected: Bool}>, groupeRef: String, ?autoValidation: Bool = true):Void
 	{
-		var parent: Element = getChildById(groupeRef);
+		var parent: Element = rootDocument.getElementById(groupeRef);
 
 		var guide: Guide = null;
 		if(parent.hasAttribute("data-grid")){
@@ -486,7 +375,7 @@ class PartDisplay extends BaseDisplay
 			if(templates.exists(r.ref))
 				t = templates[r.ref];
 			else{
-				t = getChildById(r.ref);
+				t = this.rootDocument.getElementById(r.ref);
 				templates[r.ref] = t;
 				// Remove template
 				t.parentElement.removeChild(t);
@@ -525,7 +414,7 @@ class PartDisplay extends BaseDisplay
 			for(key in r.icon.keys()){
 				var url = 'url('+r.icon[key]+')';
 				if(key != "_"){
-					var img = getChildById(r.id+"_"+key, newInput);
+					var img = rootDocument.getElementById(r.id+"_"+key);
 					if(Std.is(img, ImageElement))
 						Std.instance(img, ImageElement).src = r.icon[key];
 					else
@@ -545,17 +434,21 @@ class PartDisplay extends BaseDisplay
 					e.preventDefault();
 					if(!Std.is(e.target, AnchorElement))
 						onInputEvent(InputEvent.MOUSE_DOWN, newInput.id, getMousePosition(e));
+					#if !cocktail
                     newInput.ontouchend = function(e: MouseEvent){
 	                    if(autoValidation)
 		                    onValidationRequest(newInput.id);
                         onInputEvent(InputEvent.CLICK, newInput.id, new Point(0,0));
                     }
+					#end
 				}
 
 			};
+			#if !cocktail
 			if(isMobile)
 				newInput.ontouchstart = onStart;
 			else
+			#end
 				newInput.onmousedown = onStart;
 
 			newInput.onclick = function(e: MouseEvent){
@@ -581,34 +474,36 @@ class PartDisplay extends BaseDisplay
 
 	public function setRoundNumber(roundNumber:Int, totalRound:Int, ?groupRef: String):Void
 	{
-		var parent: Element = groupRef != null ? getChildById(groupRef) : root;
+		var parent: Element = groupRef != null ? rootDocument.getElementById(groupRef) : root;
 		for(num in parent.getElementsByClassName("roundNumbering"))
 			setNumbering(num, roundNumber, "/"+totalRound);
 	}
 
     public function toggleElement(id:String, ?force: Bool):Void {
-        var elem:Element = getChildById(id);
+        var elem:Element = rootDocument.getElementById(id);
         for (e in elem.getElementsByTagName("input")) {
-            Std.instance(e, InputElement).checked = force != null ? force : !Std.instance(e, InputElement).checked;
+            var input: InputElement = cast e;
+	        input.checked = force != null ? force : !Std.instance(e, InputElement).checked;
         }
     }
     public function uncheckElement(id:String):Void {
-        var elem:Element = getChildById(id);
+        var elem:Element = rootDocument.getElementById(id);
         for (e in elem.getElementsByTagName("input")) {
-            Std.instance(e, InputElement).checked = false;
+	        var input: InputElement = cast e;
+	        input.checked = false;
         }
     }
 
 	public function removeElement(elemId:String):Void
 	{
-		var elem: Element = getChildById(elemId);
+		var elem: Element = rootDocument.getElementById(elemId);
 		elem.parentElement.removeChild(elem);
 	}
 
 	public function startDrag(id:String, mousePoint: Point):Void
 	{
 		// See if e.dataTransfer.setDragImage() can be use instead
-		var elem: Element = getChildById(id);
+		var elem: Element = rootDocument.getElementById(id);
 		dragParent = elem.parentElement;
 		elem.draggable = true;
 
@@ -619,20 +514,16 @@ class PartDisplay extends BaseDisplay
 		elem.style.left = (mousePoint.x-bound.width/2)+"px";
 		elem.style.top = (mousePoint.y-bound.height/2)+"px";
 
-		// Release mouse
-		for(input in Browser.document.getElementsByClassName("inputs")){
-
-		}
 		var onEnd = function(e: Event) {
 			var drop = getDroppedElement(mousePoint, elem.id);
 			onInputEvent(InputEvent.MOUSE_UP(drop != null ? drop.id : ""), elem.id, mousePoint);
 		};
-		if(isMobile){
+		#if !cocktail
+		if(isMobile)
 			root.ontouchend = onEnd;
-		}
-		else{
+		else
+		#end
 			root.onmouseup = onEnd;
-		}
 
 		// Detect mouse movements
 		var onMove = function(e: UIEvent){
@@ -641,21 +532,31 @@ class PartDisplay extends BaseDisplay
 			elem.style.left = (mousePoint.x-bound.width/2)+"px";
 			elem.style.top = (mousePoint.y-bound.height/2)+"px";
 		}
+		#if !cocktail
 		if(isMobile)
 			root.ontouchmove = onMove;
 		else
+		#end
 			root.onmousemove = onMove;
 	}
 
 	public function stopDrag(id:String, dropId: String, isValid: Bool, mousePoint:Point):Void
 	{
-		var drag: Element = getChildById(id);
+		var drag: Element = rootDocument.getElementById(id);
+		#if cocktail
+		drag.style.top = "";
+		drag.style.left = "";
+		drag.style.position = "";
+		#else
 		drag.style.removeProperty("top");
 		drag.style.removeProperty("left");
 		drag.style.removeProperty("position");
-        root.onmouseup = root.onmousemove = root.ontouchmove = null;
+		root.ontouchmove = null;
+		#end
+        root.onmouseup = root.onmousemove = null;
+
 		if(isValid){
-			var drop: Element = getChildById(dropId);
+			var drop: Element = rootDocument.getElementById(dropId);
 			var dropZone = drop.getElementsByClassName("dropZone");
 			if(dropZone.length > 0)
 				dropZone[0].appendChild(drag);
@@ -684,12 +585,12 @@ class PartDisplay extends BaseDisplay
 
 	public function setInputState(inputId:String, state: String): Void
 	{
-		getChildById(inputId).classList.add(state);
+		rootDocument.getElementById(inputId).classList.add(state);
 	}
 
 	public function removeInputState(inputId:String, state: String): Void
 	{
-		getChildById(inputId).classList.remove(state);
+		rootDocument.getElementById(inputId).classList.remove(state);
 	}
 
 	public function toggleValidationButtons(?force: Bool):Void
@@ -721,9 +622,8 @@ class PartDisplay extends BaseDisplay
 
 	private function recursiveSetId(element:Element, ref:String):Void {
 		for(child in element.children){
-			if (child.nodeType == Node.ELEMENT_NODE) {
-				var element:Element = cast child;
-
+			var element: Element = getElement(child);
+			if (element != null) {
 				if(element.id != ""){
 					element.id = ref+"_"+ element.id ;
 				}
@@ -737,11 +637,10 @@ class PartDisplay extends BaseDisplay
 
 	private inline function getMousePosition(e: UIEvent):Point
 	{
-		var x = (Browser.document.documentElement.scrollLeft != null ? Browser.document.documentElement.scrollLeft : Browser.document.body.scrollLeft);
-		var y = (Browser.document.documentElement.scrollTop != null ? Browser.document.documentElement.scrollTop : Browser.document.body.scrollTop);
-		// TODO get correct scroll
-		//trace(x,y);
+		var x = (rootDocument.documentElement.scrollLeft != null ? rootDocument.documentElement.scrollLeft : rootDocument.body.scrollLeft);
+		var y = (rootDocument.documentElement.scrollTop != null ? rootDocument.documentElement.scrollTop : rootDocument.body.scrollTop);
 
+		// TODO get correct scroll
 		if(isMobile){
 			var event: TouchEvent = cast e;
 			var touch = event.touches.item(0);
@@ -767,7 +666,7 @@ class PartDisplay extends BaseDisplay
 	private function getDroppedElement(mousePoint:Point, dragId: String):Null<Element>
 	{
 	// TODO use scroll to get right drop
-		for(input in Browser.document.getElementsByClassName("inputs")){
+		for(input in root.getElementsByClassName("inputs")){
 			var drop: Element = cast input;
 			if(drop.id != dragId){
 				var bounds: ClientRect = drop.getBoundingClientRect();
@@ -779,9 +678,10 @@ class PartDisplay extends BaseDisplay
 		return null;
 	}
 
-	override private function hide(elem:Element)
+	private function hide(elem:Element)
 	{
-		super.hide(elem);
+		elem.classList.remove("visible");
+		elem.classList.add("hidden");
 		if(videoPlayer != null && elem == videoPlayer.root)
 		videoPlayer.stop();
 		else if(soundPlayer != null && elem == soundPlayer.root)
@@ -791,7 +691,7 @@ class PartDisplay extends BaseDisplay
 	private inline function getElement(node:Node):Null<Element>
 	{
 		if(node.nodeType == Node.ELEMENT_NODE)
-			return Std.instance(node, Element);
+			return cast node;
 		return null;
 	}
 
@@ -811,5 +711,40 @@ class PartDisplay extends BaseDisplay
 				recursiveShow(getElement(child));
 
 		elem.classList.remove("hidden");
+	}
+
+	private function show(elem: Element) {
+		elem.classList.remove("hidden");
+		elem.classList.add("visible");
+	}
+
+	private function doSetText(ref:String, content:String):Null<Element>
+	{
+		var text: Element = rootDocument.getElementById(ref);
+		if(text == null)
+			return null;
+		var html = "";
+
+		// Clone child note list
+		var children: Array<Node> = [];
+		for(node in text.childNodes) children.push(node);
+		// Clean text node in Textfield
+		for(node in children){
+			if(node.nodeType == Node.TEXT_NODE || node.nodeName.toLowerCase() == "p" || node.nodeName.toLowerCase().startsWith("h")){
+				text.removeChild(node);
+			}
+		}
+
+		if(content != null){
+			if(text.nodeName.toLowerCase() == "p" || text.nodeName.toLowerCase() == "a"){
+				for(elem in markupParser.parse(content))
+					html += elem.outerHTML;
+				text.innerHTML += html;
+			}
+			else
+				for(elem in markupParser.parse(content))
+					text.appendChild(elem);
+		}
+		return text;
 	}
 }

@@ -1,8 +1,12 @@
 package grar;
 
+#if (js || cocktail)
+import js.html.IFrameElement;
+import js.Browser;
+#end
+
 import grar.model.Config;
 import grar.Controller;
-
 
 @:expose("grar")
 class App {
@@ -14,49 +18,50 @@ class App {
 		if (controller == null) {
 			#if (!js && cocktail)
 			cocktail.api.Cocktail.boot();
-			js.Browser.window.onload = function(_) init();
-			#else
-			init();
+			Browser.window.onload = function(_) init();
 			#end
 		}
-	}
-
-	static function init() : Void {
-
-		var c = new Config();
-
-
-		// TODO get as paramaters
-		// Bitrate
-		#if js
-		// by default, grar starts with an asset-embedded structure.xml file
-		var st = untyped __js__('typeof STRUCTURE != "undefined" ? STRUCTURE : null;');
-		if(st != null)
-			c.parseConfigParameter( "structureUri", untyped __js__('STRUCTURE') );
-		else{
-			trace("No structure defined. Setting to default: content/structure.xml");
-			c.parseConfigParameter( "structureUri", "content/structure.xml" );
-		}
-		var bt = untyped __js__('typeof BITRATE != "undefined" ? BITRATE : null;');
-		if(bt != null)
-			c.parseConfigParameter( "bitrate", untyped __js__('BITRATE') );
-		else{
-			trace("No bitrate defined. Setting to default: 350");
-			c.parseConfigParameter( "bitrate", "350" );
-		}
-		#else
-		c.parseConfigParameter( "bitrate", "350" );
-		#end
-
-		// TODO userAgent in Config
-
-		controller = new Controller(c);
-		controller.init();
 	}
 
 	///
 	// Public API
 	//
+
+	public static function init(?rootId: Null<String>) : Void {
+
+		var c = new Config();
+
+		#if js
+		var isMobile = ~/ipad|iphone|ipod|android|mobile/i.match(Browser.navigator.userAgent);
+		c.parseConfigParameter("isMobile", Std.string(isMobile));
+		#end
+
+		#if (js || cocktail)
+		// Getting root element
+		var root : IFrameElement = cast rootId != null ? Browser.document.getElementById(rootId) : null;
+		if(root == null){
+			root = Browser.document.createIFrameElement();
+			Browser.document.body.appendChild(root);
+		}
+		else{
+			for(att in root.attributes){
+				if(att.nodeName.indexOf("data-grar-") == 0){
+					switch(att.nodeName.substr(10).toLowerCase()){
+						// WARNING: nodeValue is obsolete
+						case "structure": c.parseConfigParameter( "structureUri", att.nodeValue );
+						case "bitrate": c.parseConfigParameter( "bitrate", att.nodeValue );
+					}
+				}
+			}
+			root.style.display = "block";
+		}
+		controller = new Controller(c, root);
+		#else
+		controller = new Controller(c, null);
+		#end
+
+		controller.init();
+	}
 
 	public static function openMenu(ref:String):Void
 	{

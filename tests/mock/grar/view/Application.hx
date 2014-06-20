@@ -1,12 +1,14 @@
 package grar.view;
 
 import grar.view.contextual.MenuDisplay;
-import grar.view.Application.ContextualType;
 import grar.view.part.PartDisplay;
 import grar.model.localization.LocaleData;
 import grar.model.contextual.MenuData;
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
+
+typedef Element = String;
+typedef Document = String;
 
 enum ContextualType {
 
@@ -15,7 +17,7 @@ enum ContextualType {
 }
 class Application{
 
-	public function new(){
+	public function new(root, ?mobile: Bool = false){
 
 	}
 
@@ -35,10 +37,6 @@ class Application{
 
 	public var partDisplay (get, null):PartDisplay;
 
-	// WIP
-
-	var callbacks : grar.view.DisplayCallbacks;
-
 	public var previousLayout : String = null;
 
 	var parts : GenericStack<PartDisplay>;
@@ -48,6 +46,8 @@ class Application{
 	public var mainLayoutRef (default, default) : Null<String> = null;
 
 	public var masterVolume(default, set) : Float = 1;
+
+	public var document (default, null): Document;
 
 
 	public function set_menuData(v : Null<MenuData>) : Null<MenuData> {
@@ -76,76 +76,14 @@ class Application{
 	// CALLBACKS
 	//
 
-	public dynamic function onMenuButtonStateRequest(partName : String) : { l : Bool, d : Bool } { return null; }
-
 	public dynamic function onMenuClicked(partId : String, menuId: String) : Void { }
-
-	public dynamic function onMenuAdded() : Void { }
-
-	public dynamic function onExitPart(partId : String) : Void { }
-
-	public dynamic function onTokenNotificationChanged() : Void { }
-
-	public dynamic function onNotebookChanged() : Void { }
-
-	public dynamic function onMenuChanged() : Void { }
 
 	public dynamic function onMenuDataChanged() : Void { }
 
-	public dynamic function onLayoutsChanged() : Void { }
-
-	public dynamic function onTokensImagesChanged() : Void { }
-
-	public dynamic function onStylesChanged() : Void { }
-
-	public dynamic function onQuitGameRequest() : Void { }
-
-	public dynamic function onActivateTokenRequest(tokenName : String) : Void { }
-
-	public dynamic function onRestoreLocaleRequest() : Void { }
-
-	public dynamic function onLocaleDataPathRequest(uri : String) : Void { }
-
-	public dynamic function onInterfaceLocaleDataPathRequest() : Void { }
-
-	public dynamic function onSetBookmarkRequest(partId : String) : Void { }
-
-	public dynamic function onGameOverRequest() : Void { }
-
-	public dynamic function onMenuUpdateDynamicFieldsRequest() : Void { }
-
 	public dynamic function onMasterVolumeChanged(): Void {}
 
-	public function changeHeaderState(l : String) : Void {
-	}
+	public dynamic function onPartLoaded() : Void { }
 
-	public function initMenu(ref: String, datas: Array<LevelData>) : Void {
-	}
-
-	public function changeVolume(nb : Float = 0) : Void {
-
-	}
-	public function updateModuleInfos(name:String, type:String):Void
-	{}
-
-	public function updateChapterInfos(chapterName:String, activityName:String):Void
-	{}
-
-
-	public function setGameOver() : Void {
-
-	}
-
-
-	// WIP
-
-	public function hideContextual(c : ContextualType) : Void {
-
-	}
-
-	public function displayContextual(c : ContextualType, ? hideOther : Bool = true) : Void {
-
-	}
 	/**
     * Activate a token of the inventory
     * @param    tokenName : Name of the token to activate
@@ -153,4 +91,16 @@ class Application{
 	public function setActivateToken(t : grar.model.InventoryToken) : Void {
 
 	}
+	public function updateChapterInfos(chapterName:String, activityName:String):Void
+	{}
+	public function changeHeaderState(state : String) : Void {}
+
+	public function updateModuleInfos(name:String, type:String):Void
+	{}
+
+	public function initMenu(ref: String, levels: Array<LevelData>) : Void {}
+	public function initPart(ref:String, ?templateUri: String, ?forward: Bool = true, ?noReload: Bool = false):Void
+	{}
+	public function getElementById(id:String):Element
+	{ return null;}
 }

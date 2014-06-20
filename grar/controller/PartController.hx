@@ -1,10 +1,8 @@
 package grar.controller;
 
-import StringTools;
-
 import grar.util.Point;
+import grar.util.TextDownParser;
 
-import grar.view.style.TextDownParser;
 import grar.view.part.PartDisplay.InputEvent;
 import grar.view.part.PartDisplay;
 import grar.view.Application;
@@ -24,6 +22,7 @@ import haxe.ds.GenericStack;
 import grar.Controller;
 
 using Lambda;
+using StringTools;
 
 class PartController
 {
@@ -42,18 +41,13 @@ class PartController
 	var application: Application;
 	var display: PartDisplay;
 
-	// TODO put in state
 	var part: Part;
-	var previousBackground : String;
-    var currentPattern:Pattern;
 
 	///
 	// CALLBACKS
 	///
 
 	public dynamic function onRestoreLocaleRequest() : Void {}
-
-	public dynamic function onHeaderStateChangeRequest(state: String) : Void {}
 
 	public dynamic function onPartFinished(part: Part, next:Bool):Void
 	{}
@@ -76,24 +70,20 @@ class PartController
 	/**
     * Display a graphic representation of the given part
     * @param    part : The part to display
-    * @param    next : Whether the part are progressing forward or backward. Default is true
+    * @param    forward : Whether the part are progressing forward or backward. Default is true
     * @param    noReload: Don't reload the display on init. Default is false
     * @return true if the part can be displayed.
     */
-	public function displayPart(part : Part, ?next: Bool = true, ?noReload = false): Bool {
+	public function displayPart(part : Part, ?forward: Bool = true, ?noReload = false): Bool {
 		this.part = part;
 
 		// Reset activity state
 		state.activityState = ActivityState.NONE;
 
-		display.onHeaderStateChangeRequest = function(state: String){
-			onHeaderStateChangeRequest(state);
-		}
-
 		onLocaleDataPathRequest(part.file, function(){
 			application.updateChapterInfos(state.module.getLocalizedContent("chapterName"), state.module.getLocalizedContent("activityName"));
 
-			display.onPartLoaded = function(){
+			application.onPartLoaded = function(){
 				// Activity Part
 				if(part.activityData != null){
 					state.activityState = ActivityState.QUESTION;
@@ -104,10 +94,15 @@ class PartController
 				else
 					nextElement();
 			}
-			display.init(part.ref, next, noReload);
-		});
 
-		display.onExit = function() exitPart();
+			// Check if a HTML template is needed
+			if(part.ref.indexOf("#") != -1){
+				var ids = part.ref.split("#");
+				application.initPart(ids[1], ids[0], forward);
+			}
+			else
+				application.initPart(part.ref, forward);
+		});
 
 		return true;
 	}
@@ -228,8 +223,6 @@ class PartController
 	public function exitPart(?completed : Bool = true, ?fromMenu: Bool = false) : Void {
 
 		part.isDone = completed;
-
-		display.reset();
 
 		if(completed)
 			state.module.setPartFinished(part.id);
@@ -386,10 +379,8 @@ class PartController
 		    state.module.activateInventoryToken(token);
 
 		// Set part background
-		if (item.background != null && previousBackground != item.background)
+		if (item.background != null)
 			display.showBackground(item.background);
-		else if(item.background == null)
-			display.hideBackground(previousBackground);
 
 		for(b in item.button)
 			initButtons(b);
@@ -404,7 +395,7 @@ class PartController
 					if(errCode.match(url))
 						trace("Cannot retrieve video: "+url);
 					else{
-						var decodeUrl = StringTools.replace(url, "\\/", "/");
+						var decodeUrl = url.replace("\\/", "/");
 						display.setVideo(item.ref, decodeUrl, item.videoData, function(){}, function() onVideoComplete(), state.module.currentLocale);
 					}
 				});
@@ -422,9 +413,6 @@ class PartController
 			introScreenOn = true;
 			setAuthor(item);
 			display.setText(item.ref, getLocalizedContent(item.content));
-
-			// TODO Sound
-			//onSoundToLoad(item.sound);
 
 			// The intro screen automatically removes itself after its duration
 			var intro = item.introScreen;
@@ -472,16 +460,8 @@ class PartController
 	private function setAuthor(item: Item):Void
 	{
 		if (item.author != null) {
-				display.showSpeaker(item.author);
-				// TODO Manage nameRef
-				/*if (char.nameRef != null) {
-
-					cast(displaysRefs.get(char.nameRef), grar.view.component.container.ScrollPanel).setContent(currentSpeaker.getName());
-
-				} else if (char.nameRef != null) {
-
-					throw "[PartDisplay] There is no TextArea with ref " + char.nameRef;
-				}*/
+			display.showSpeaker(item.author);
+			display.setSpeakerLabel(state.module.getLocalizedContent(item.author));
 		}
 	}
 
@@ -634,7 +614,7 @@ class PartController
 
 	private function onInputEvent(eventType: InputEvent, inputId: String, mousePoint: Point):Void
 	{
-		if(!part.activityData.inputsEnabled)
+		if(part.activityData == null || !part.activityData.inputsEnabled)
 			return ;
 
 		var targetId = null;

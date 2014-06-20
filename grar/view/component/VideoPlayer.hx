@@ -59,13 +59,13 @@ class VideoPlayer{
 		});
 		root.addEventListener("ended", function(_){
 			if(apiPrefix == null)
-				untyped __js__("this.exitFullscreen();");
+				untyped __js__("document.exitFullscreen();");
 			else if(apiPrefix == "webkit")
-				untyped __js__("this.webkitExitFullScreen();");
+				untyped __js__("document.webkitExitFullscreen();");
 			else if(apiPrefix == "moz")
-				untyped __js__("this.mozCancelFullScreen();");
+				untyped __js__("document.mozCancelFullscreen();");
 			else
-				untyped __js__("this.msExitFullScreen();");
+				untyped __js__("document.msExitFullscreen();");
 			//root.exitFullScreen();
 			onVideoEnd();
 		});

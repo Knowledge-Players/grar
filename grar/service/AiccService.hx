@@ -8,8 +8,6 @@ import grar.model.tracking.Tracking;
 import flash.external.ExternalInterface;
 #end
 
-using grar.util.TimeTools;
-
 class AiccService {
 
 	public function new() { }
@@ -35,7 +33,7 @@ class AiccService {
 		if(ExternalInterface.available) {
 
 			isAiccAvailable = cast ExternalInterface.call("aicc.isAvailable");
-		
+
 			if (isAiccAvailable) {
 
 				_aicc_sid = Std.string(ExternalInterface.call("aicc.aicc_sid"));
@@ -62,7 +60,7 @@ class AiccService {
 				score = "0";
 				masteryScore = 80;
 				lessonStatus = "n,a";
-			
+
 			case "on" :
 				isActive = true;
 		}
@@ -74,7 +72,7 @@ class AiccService {
 				var http : Http = new Http( _aicc_url );
 
 				http.onData = function(d:String){
-						
+
 						if (d == "undefined") {
 
 							init(isNote, "off", onSuccess, onError);
@@ -104,19 +102,19 @@ class AiccService {
 
 								case "LESSON_LOCATION" :
 									location = da[z].split("=")[1];
-								
+
 								case "LESSON_STATUS" :
 									lessonStatus = da[z].split("=")[1];
-								
+
 								case "SCORE" :
 									score = da[z].split("=")[1];
-								
+
 								case "MASTERY_SCORE" :
 									masteryScore = Std.parseInt(da[z].split("=")[1]);
-								
+
 								case "STUDENT_ID" :
 									studentId = da[z].split("=")[1];
-								
+
 								case "STUDENT_NAME" :
 									studentName = da[z].split("=")[1];
 							}
@@ -131,7 +129,7 @@ class AiccService {
 
 				http.request(true);
 // dispatchEvent(new Event(Event.INIT));
-			
+
 			} else {
 
 				init(isNote, "off", onSuccess, onError);
@@ -171,7 +169,7 @@ class AiccService {
 		aicc_data += "\r\ncredit=no-credit";
 		aicc_data += "\r\nlessonStatus=" + t.lessonStatus;
 		aicc_data += "\r\nscore=" + t.score;
-		aicc_data += "\r\ntime=" + Std.int(t.currentTime / 1000).getFormatTime();
+		aicc_data += "\r\ntime=" + getFormatTime(Std.int(t.currentTime / 1000));
 		aicc_data += "\r\n[core_lesson]";
 
 		var http : Http = new Http(_aicc_url);
@@ -196,5 +194,38 @@ class AiccService {
 		untyped __js__('exitAU()');
 #end
 		return true;
+	}
+
+	///
+	// Internals
+	//
+
+	private function getFormatTime(time : Int) : String {
+
+		var output : StringBuf = new StringBuf();
+		//var time:Int = timer.currentCount - startTime;
+		var hours : Int = Math.floor(time / 3600);
+		var minutes : Int = Math.floor((time - (hours * 3600)) / 60);
+		var seconds : Int = (time - (hours * 3600)) - (minutes * 60);
+
+		if (hours < 10) {
+
+			output.add("0");
+		}
+		output.add(hours + ":");
+
+		if (minutes < 10) {
+
+			output.add("0");
+		}
+		output.add(minutes + ":");
+
+		if (seconds < 10) {
+
+			output.add("0");
+		}
+		output.add(seconds);
+
+		return output.toString();
 	}
 }

@@ -1,5 +1,11 @@
-package grar.view.style;
+package grar.util;
 
+#if !(js || cocktail)
+class TextDownParser{
+	public function new(){}
+	public function parse(text){}
+}
+#else
 import js.html.UListElement;
 import js.html.LIElement;
 import js.html.Element;
@@ -11,7 +17,6 @@ using StringTools;
 /**
  * Parser for the MarkUp language
  */
-// TODO move to util
 class TextDownParser {
 
 	public function new(){ }
@@ -171,3 +176,4 @@ class TextDownParser {
 		return output;
 	}
 }
+#end

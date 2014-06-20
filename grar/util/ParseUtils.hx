@@ -1,6 +1,5 @@
 package grar.util;
 
-import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
 
 using StringTools;
@@ -26,13 +25,6 @@ class ParseUtils {
 			content.set("_", s);
 		}
 		return content;
-	}
-
-	public static inline function selectByAttribute(attr: String, value: String, xml: Xml): GenericStack<Xml>
-	{
-		var results = new GenericStack<Xml>();
-		recursiveSelect(attr, value, xml, results);
-		return results;
 	}
 
 	public static inline function parseListOfValues(list: String, separator: String = ","):Array<String>
@@ -62,57 +54,5 @@ class ParseUtils {
 			result.push(Std.parseFloat(elem));
 		}
 		return result;
-	}
-
-	public inline static function updateAttribute(attr:String, value:String, xmls:GenericStack<Xml>):Void
-	{
-		for(elem in xmls){
-			if(value != null)
-				elem.set(attr, value);
-		}
-	}
-
-	public static function updateIconsXml(value:String, xmls:GenericStack<Xml>):Void
-	{
-		for(elem in xmls){
-			if (value != null){
-				if(value.indexOf(".") < 0){
-					elem.set("tile", value);
-					if(elem.exists("src"))
-						elem.remove("src");
-				}
-				else{
-					elem.set("src", value);
-					if(elem.exists("tile"))
-						elem.remove("tile");
-				}
-			}
-		}
-	}
-
-	public static inline function formatToFour<A>(array:Array<A>):Array<A>
-	{
-		switch(array.length){
-			case 1:
-				while(array.length < 4)
-					array.push(array[0]);
-			case 2:
-				array.push(array[0]);
-				array.push(array[1]);
-		}
-		return array;
-	}
-
-	// Private
-
-	private static inline function recursiveSelect(attr: String, value: String, xml: Xml, res: GenericStack<Xml>):Void
-	{
-		if(xml.get(attr) == value)
-			res.add(xml);
-		else{
-			for(elem in xml.elements()){
-				recursiveSelect(attr, value, elem, res);
-			}
-		}
 	}
 }

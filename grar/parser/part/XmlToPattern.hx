@@ -3,7 +3,6 @@ package grar.parser.part;
 import grar.model.part.ButtonData;
 import grar.model.part.Pattern;
 import grar.model.part.dialog.ChoicePattern;
-import grar.model.part.video.VideoPattern;
 
 import grar.util.ParseUtils;
 
@@ -28,10 +27,6 @@ class XmlToPattern {
 			case "choice":
 
 				p = parseChoicePattern(f);
-
-			case "video":
-
-				p = parseVideoPattern(f);
 
 			default:
 
@@ -115,12 +110,5 @@ class XmlToPattern {
 			choices.set(choiceNode.att.ref, choice);
 		}
 		return new ChoicePattern(pd, tooltipRef, choices, numChoices, minimumChoice, tooltipTransition);
-	}
-
-	static function parseVideoPattern( f : Fast ) : VideoPattern {
-
-		var pd : PatternData = parsePatternData(f);
-
-		return new VideoPattern(pd);
 	}
 }

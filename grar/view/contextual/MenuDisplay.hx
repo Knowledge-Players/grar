@@ -1,8 +1,13 @@
 package grar.view.contextual;
 
-import js.Browser;
+import grar.util.TextDownParser;
+
+import js.html.ParagraphElement;
+import js.html.AnchorElement;
 import js.html.Node;
 import js.html.Element;
+
+using StringTools;
 
 enum ItemStatus {
 	TODO;
@@ -10,22 +15,21 @@ enum ItemStatus {
 	DONE;
 }
 
-class MenuDisplay extends BaseDisplay {
+class MenuDisplay{
 
 	public var ref (default, set):String;
 
-	public function new()
+	public var markupParser (default, default):TextDownParser;
+
+
+
+	var root: Element;
+	var application: Application;
+
+	public function new(parent: Application)
 	{
-		super();
+		application = parent;
 	}
-
-	///
-	// Callbacks
-	//
-
-	dynamic public function onLevelClick(levelId):Void {}
-	dynamic public function onCloseMenuRequest():Void {}
-	dynamic public function onOpenMenuRequest():Void {}
 
 	///
 	// Getter/Setter
@@ -33,7 +37,7 @@ class MenuDisplay extends BaseDisplay {
 
 	public function set_ref(ref: String):String
 	{
-		root = Browser.document.getElementById(ref);
+		root = application.getElementById(ref);
 
 		return this.ref = ref;
 	}
@@ -44,12 +48,36 @@ class MenuDisplay extends BaseDisplay {
 
 	public function setTitle(title:String, ?ref: String = "title"):Void
 	{
-		doSetText(ref, title);
+		var text: Element = application.getElementById(ref);
+		if(text == null)
+			return null;
+		var html = "";
+
+		// Clone child note list
+		var children: Array<Node> = [];
+		for(node in text.childNodes) children.push(node);
+		// Clean text node in Textfield
+		for(node in children){
+			if(node.nodeType == Node.TEXT_NODE || node.nodeName.toLowerCase() == "p" || node.nodeName.toLowerCase().startsWith("h")){
+				text.removeChild(node);
+			}
+		}
+
+		if(title != null){
+			if(Std.instance(text, ParagraphElement) != null || Std.instance(text, AnchorElement) != null){
+				for(elem in markupParser.parse(title))
+					html += elem.outerHTML;
+				text.innerHTML += html;
+			}
+			else
+				for(elem in markupParser.parse(title))
+					text.appendChild(elem);
+		}
 	}
 
 	public function setCurrentItem(id:String):Void
 	{
-		var last = root.querySelector("#"+id);
+		var last: Element = application.getElementById(ref+"_"+id);
 		// Update progress bar
 		if(last != null){
 			for(pb in root.getElementsByClassName("progressbar")){
@@ -84,7 +112,7 @@ class MenuDisplay extends BaseDisplay {
 				}
 			}
 
-			// Refresh todo part
+			// Refresh 'to do' part
 			var todoMarker = new Array<Element>();
 			for(node in root.getElementsByClassName("todo"))
 				todoMarker.push(cast node);
@@ -113,7 +141,7 @@ class MenuDisplay extends BaseDisplay {
 
 	public function setItemStatus(itemId: String, status: ItemStatus):Void
 	{
-		var item: Element = getChildById(itemId);
+		var item: Element = application.getElementById(ref+"_"+itemId);
 		if(item == null)
 			return;
 

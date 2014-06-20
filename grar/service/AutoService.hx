@@ -49,7 +49,7 @@ class AutoService {
 			try {
 #if flash
 				mySo = SharedObject.getLocal("saveFile");
-			
+
 				lessonStatus = mySo.data.lessonStatus;
 				score = mySo.data.score;
 				studentName = mySo.data.studentName;
@@ -58,11 +58,8 @@ class AutoService {
 #end
 			} catch(e : String) {
 
-				onError(e);		
+				onError(e);
 			}
-// dispatchEvent(new Event(Event.INIT));
-//		} else {
-// dispatchEvent(new Event(Event.INIT));
 		}
 		onSuccess( new Tracking(isActive, studentId, studentName, null, score, masteryScore, lessonStatus, isNote, Auto(lesson_location)) );
 	}

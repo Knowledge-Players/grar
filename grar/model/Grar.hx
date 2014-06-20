@@ -61,8 +61,6 @@ class Grar {
 
 	public var kSettings (default, default):KalturaSettings;
 
-	//public var ref (default, set) : String; // ref for the layout (?)
-
 	public var notebook (default, set) : Notebook;
 
 	public var inventory (null, default) : StringMap<InventoryToken>;
@@ -87,8 +85,6 @@ class Grar {
 	public var interfaceLocaleDataPath (default, set) : Null<String> = null;
 
 	public var localeData : Null<LocaleData> = null;
-
-	//public var interfaceLocale (default, default): Null<String> = null;
 
 	private var stashedLocaleData : GenericStack<LocaleData>;
 
