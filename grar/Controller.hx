@@ -30,13 +30,13 @@ using Lambda;
 @:expose
 class Controller {
 
-	public function new(c : Config) {
+	public function new(c : Config, #if (js || cocktail) ?root: js.html.IFrameElement #else ?root: String #end) {
 		config = c;
 		state = new State();
 
 		gameSrv = new GameService();
 
-		application = new Application();
+		application = new Application(root, c.isMobile);
 
 		trackingCtrl = new TrackingController(this, state, config, application);
 		localizationCtrl = new LocalizationController(this, state, config, application, gameSrv);
@@ -73,10 +73,6 @@ class Controller {
 
 		partCtrl.onRestoreLocaleRequest = function(){
 			localizationCtrl.restoreLocaleData();
-		}
-
-		partCtrl.onHeaderStateChangeRequest = function(state: String){
-			application.changeHeaderState(state);
 		}
 
 		partCtrl.onPartFinished = function(part: Part, next: Bool){
@@ -230,7 +226,7 @@ class Controller {
 			// end locale
 		}
 
-		application.onMenuButtonStateRequest = function(partName : String) : { l : Bool, d : Bool } {
+		/*application.onMenuButtonStateRequest = function(partName : String) : { l : Bool, d : Bool } {
 
 				for (part in state.module.getAllParts()) {
 
@@ -240,7 +236,7 @@ class Controller {
 					}
 				}
 				return null;
-			}
+			}*/
 
 		application.onMenuClicked = function(partId : String, menuId: String) {
 
@@ -251,7 +247,7 @@ class Controller {
 				}
 			}
 
-		application.onMenuAdded = function() {
+		/*application.onMenuAdded = function() {
 
 				var i = 0;
 
@@ -266,7 +262,7 @@ class Controller {
 		application.onQuitGameRequest = function() {
 
 				gameOver();
-			}
+			}*/
 
 		application.onMasterVolumeChanged = function(){
 				partCtrl.onMasterVolumeChanged();

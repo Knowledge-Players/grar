@@ -53,30 +53,6 @@ class GameService {
 			}, onError);
 	}
 
-	/*public function fetchTemplates( path : String, onSuccess : StringMap<Xml> -> Void, onError : String -> Void ) : Void {
-
-	    var tmpls : StringMap<Xml> = new StringMap();
-
-		try {
-
-			// at the moment, grar fetches its data from embedded assets only
-	    	var templates = AssetsStorage.getFolderContent(path, "xml");
-
-		    for (temp in templates) {
-
-		    	var tXml : Xml = cast(temp, TextAsset).getXml().firstElement();
-
-		    	tmpls.set( tXml.get("ref"), tXml );
-		    }
-
-		} catch (e:String) {
-
-			onError(e);
-			return;
-		}
-		onSuccess(tmpls);
-	}*/
-
 	public function fetchNotebook(uri : String, onSuccess : Notebook -> StringMap<InventoryToken> -> Void, onError : String -> Void) : Void {
 
 		var m : { n: Notebook, i: StringMap<InventoryToken> };
@@ -117,64 +93,6 @@ class GameService {
 				onSuccess(b);
 			}, onError);
 	}
-
-	/*public function fetchStyles(localizedPathes : Array<{ p : String, e : String }>, onSuccess : Array<StyleSheetData> -> Void, onError : String -> Void) : Void {
-
-		var s : Array<StyleSheetData> = [];
-
-		try {
-
-			for (l in localizedPathes) {
-
-				var ssd : StyleSheetData;
-
-				// at the moment, grar fetches its data from embedded assets only
-				switch(l.e.toLowerCase()) {
-
-					case "json":
-
-						ssd = JsonToStyleSheet.parse(AssetsStorage.getText(l.p));
-
-					case "xml":
-
-						ssd = XmlToStyleSheet.parse(AssetsStorage.getXml(l.p));
-
-					default:
-
-						throw "unsupported style format " + l.e;
-				}
-#if (flash || openfl)
-				for (st in ssd.styles) {
-
-					if (st.values.get("font") != null) {
-
-						st.font =  Assets.getFont(st.values.get("font"));
-					}
-					if (st.iconSrc != null && st.iconSrc.indexOf(".") > 0) {
-
-						st.icon = AssetsStorage.getBitmapData(st.iconSrc);
-					}
-					if (st.backgroundSrc != null) {
-
-						if (Std.parseInt(st.backgroundSrc) == null) {
-
-							st.background = AssetsStorage.getBitmapData(st.backgroundSrc);
-						}
-					}
-				}
-#end
-				s.push(ssd);
-			}
-
-
-		} catch (e:String) {
-
-			onError(e);
-			return;
-		}
-
-		onSuccess(s);
-	}*/
 
 	public function fetchParts(xml : Xml, onSuccess : Array<Part> -> Void, onError : String -> Void) : Void {
 
@@ -221,12 +139,6 @@ class GameService {
 	private function fetchPartContent(innerXml : Xml, pp : PartialPart, onInnerSuccess : Part -> Void, onInnerError : String -> Void) {
 
 		var ret : { p : Part, pps : Array<PartialPart> } = null;
-
-		// TODO SoundLoop
-		/*if (pp.pd.soundLoopSrc != null) {
-
-			pp.pd.soundLoop = AssetsStorage.getSound(pp.pd.soundLoopSrc);
-		}*/
 
 		if (pp.pd.file != null) {
 			loadXml(pp.pd.file, function(xml: Xml){

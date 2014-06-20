@@ -65,30 +65,6 @@ class LocalizationController {
 					initLocaleData();
 				}
 			}
-
-
-		state.onLocaleListChanged = function() {
-
-				// doesn't seem to be used ?
-				// for each lang, flags.set(value, flagIconPath);
-
-				// implement a loadCurrentLocale(); ?
-			}
-
-		application.onRestoreLocaleRequest = function() {
-
-				restoreLocaleData();
-			}
-
-		application.onInterfaceLocaleDataPathRequest = function() {
-
-				setInterfaceLocaleData();
-			}
-
-		application.onLocaleDataPathRequest = function(path : String) {
-
-				setLocaleDataPath(path);
-			}
 	}
 
 	function initLocaleData() : Void {

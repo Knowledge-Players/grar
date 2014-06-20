@@ -8,14 +8,13 @@ enum ItemStatus {
 	DONE;
 }
 
-class MenuDisplay extends BaseDisplay{
+class MenuDisplay{
 
 	public var ref (default, set):String;
 
 	private var root:Element;
 
 	public function new(){
-		super();
 	}
 
 	public function set_ref(ref: String):String

@@ -147,7 +147,7 @@ class TrackingController {
 				}
 			}
 
-		application.onSetBookmarkRequest = function(partId : String) {
+		/*application.onSetBookmarkRequest = function(partId : String) {
 
 				var i : Int = 0;
 
@@ -174,14 +174,14 @@ class TrackingController {
 				state.tracking.setStatus(true);
 
 				updateTracking();
-				/*var stateStr : String = saveStateInfos();
+				var stateStr : String = saveStateInfos();
 
 				if (!(state.module.currentLocale == null && state.module.bookmark == -1 &&
 						state.module.completionOrdered.length == 0)) {
 
 					state.tracking.location = stateStr;
-				}*/
-			}
+				}
+			}*/
 	}
 
 	public function updateTracking():Void

@@ -32,7 +32,6 @@ typedef PartData = {
 	var isDone : Bool;
 	var isStarted : Bool;
 	var tokens : GenericStack<String>;
-	var soundLoop : String;
 	var elements : Array<PartElement>;
 	var buttons : List<ButtonData>;
     var images : List<ImageData>;
@@ -42,7 +41,6 @@ typedef PartData = {
 	var requirements : Map<String, Int>;
 	var next : Null<Array<String>>;
 	var buttonTargets : Map<String, PartElement>;
-	var nbSubPartTotal : Int;
 	// partial data
 	var partialSubParts : Array<PartialPart>;
 	var xml : Xml;
@@ -95,7 +93,6 @@ class Part{
 		this.parent = pd.parent;
 		this.perks = pd.perks;
 		this.tokens = pd.tokens;
-		this.soundLoop = pd.soundLoop;
 		this.elements = pd.elements;
 		this.buttons = pd.buttons;
 		this.images = pd.images;
@@ -104,7 +101,6 @@ class Part{
 		this.requirements = pd.requirements;
 		this.next = pd.next;
 		this.buttonTargets = pd.buttonTargets;
-		this.nbSubPartTotal = pd.nbSubPartTotal;
 		this.isDone = pd.isDone;
 		this.isStarted = pd.isStarted;
 
@@ -146,11 +142,6 @@ class Part{
      * Tokens in this part
      */
 	public var tokens (default, default) : GenericStack<String>;
-
-	/**
-     * Sound playing during the part
-     */
-	public var soundLoop (default, default) : String;
 
 	/**
      * Elements of the part
@@ -196,9 +187,6 @@ class Part{
 	public var activityData (default, set):ActivityData;
 
 	public var elemIndex (default, set): Int;
-
-	// TODO remove
-	private var nbSubPartTotal : Int = 0;
 
 
 	///
@@ -420,8 +408,7 @@ class Part{
 					if (p.id == id) return e;
 				case Item(i):
 					if (i.id == id) return e;
-				case GroupItem(g):
-					if (g.id == id) return e;
+				default: // nothing
 			}
 		}
 		throw "[StructurePart] There is no Element with the id '"+id+"'.";
@@ -464,12 +451,6 @@ class Part{
 	}
 
 	// Activity API
-
-	public function hasNextGroup() : Bool {
-		if(activityData == null)
-			throw 'This part is not an activity';
-		return activityData.groupIndex < activityData.groups.length;
-	}
 
 	public function getNextGroup() : Null<Inputs> {
 
@@ -600,87 +581,4 @@ class Part{
 
 		return score = Std.int(activityData.numRightAnswers * 100 / numGroup);
 	}
-
-	/**
-	 * End an activity
-	 * @return the id of the next Part if there is a threshold. If there is none, return null
-	 **/
-	// TODO use it or trash it!
-	/*public function endActivity() : String {
-
-		if(activityData == null)
-			throw 'This part is not an activity';
-		score = Math.round(activityData.numRightAnswers * 100 / activityData.groups[activityData.groupIndex].inputs.length);
-		var contextuals = getRulesByType("contextual");
-
-		for (rule in contextuals) {
-
-			if (rule.value == "addtonotebook") {
-
-				var currentGroup = activityData.groups[activityData.groupIndex];
-				var inputs = currentGroup.inputs;
-
-				if (currentGroup.groups != null) {
-
-					for (group in currentGroup.groups) {
-
-						inputs.concat(group.inputs);
-					}
-				}
-				for (input in inputs) {
-
-					if (input.selected) {
-
-						// GameManager.instance.activateToken(input.id);
-						onActivateTokenRequest(input.id);
-					}
-				}
-			}
-		}
-
-		// Reset inputs
-		for (group in activityData.groups) {
-
-			for (input in group.inputs) {
-
-				input.selected = false;
-			}
-		}
-
-		var idNext : String = null;
-		var thresholds = getRulesByType("threshold");
-
-		if (thresholds.length == 0) {
-
-			isDone = true;
-			getNextElement();
-
-		} else {
-
-			thresholds.sort(function(t1: Rule, t2: Rule){
-
-				if (Std.parseInt(t1.value) > Std.parseInt(t2.value)) {
-
-					return -1;
-
-				} else {
-
-					return 1;
-				}
-			});
-
-			var i = 0;
-			// Search the highest threshold inferior or equal the score
-			while (i < thresholds.length && score < Std.parseInt(thresholds[i].value)) {
-
-				i++;
-			}
-			if (i == thresholds.length) {
-
-				throw "[ActivityPart] You must have a threshold set to 0.";
-			}
-			idNext = thresholds[i].id;
-		}
-		return idNext;
-	}*/
 }

@@ -148,12 +148,7 @@ class XmlToPart {
 
 			case "part":
 
-				pd.nbSubPartTotal++;
-
 				pd.partialSubParts.push( parse(node.x) );
-
-			case "sound":
-				pd.soundLoop = node.att.content;
 
 			case "button":
 
@@ -364,7 +359,6 @@ class XmlToPart {
 		var pd : PartData = cast {};
 
 		pd.id = f.att.id;
-		pd.nbSubPartTotal = 0;
 		pd.elements = new Array();
 		pd.tokens = new GenericStack<String>();
 		pd.buttons = new List();

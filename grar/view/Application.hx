@@ -1,19 +1,17 @@
 package grar.view;
 
-import js.Browser;
+import js.html.Document;
+import js.html.IFrameElement;
 import js.html.UListElement;
 import js.html.Element;
 import js.html.Node;
 
 import grar.model.contextual.MenuData;
-import grar.model.localization.LocaleData;
 
-import grar.view.style.TextDownParser;
+import grar.util.TextDownParser;
+
 import grar.view.contextual.MenuDisplay;
 import grar.view.part.PartDisplay;
-
-import haxe.ds.GenericStack;
-import haxe.ds.StringMap;
 
 // See if really need it
 enum ContextualType {
@@ -27,27 +25,21 @@ enum ContextualType {
 **/
 class Application {
 
-	public function new() {
-
-		// note: if we were to support multi instances with GRAR,
-		// we should pass here the targetted API's root element of
-		// the GRAR instance.
-
-		this.callbacks = {
-
-				onQuitGameRequest: function(){ this.onQuitGameRequest(); },
-				onActivateTokenRequest: function(tid : String){ onActivateTokenRequest(tid); }
-			};
+	public function new(root: IFrameElement, ?mobile: Bool = false)
+	{
+		this.root = root;
+		document = root.contentDocument;
+		isMobile = mobile;
 
 		menus = new Map();
-		for(m in js.Browser.document.getElementsByClassName("menu")){
+		for(m in document.getElementsByClassName("menu")){
 			var menu: Element = null;
 			if(m.nodeType == Node.ELEMENT_NODE)
 				menu = cast m;
 			else
 				continue;
 
-			var display = new MenuDisplay();
+			var display = new MenuDisplay(this);
 
 			// Parser
 			display.markupParser = new TextDownParser();
@@ -55,7 +47,7 @@ class Application {
 			display.ref = menu.id;
 			menus[menu.id] = display;
 		}
-		for(pb in Browser.document.getElementsByClassName("progressbar")){
+		for(pb in document.getElementsByClassName("progressbar")){
 			var bar: Element = null;
 			if(pb.nodeType == Node.ELEMENT_NODE)
 				bar = cast pb;
@@ -68,38 +60,39 @@ class Application {
 
 	public var menuData (default, set) : Null<MenuData>;
 
-	public var menus (default, null):Map<String, MenuDisplay>;
-
-	public var defaultStyleSheetName : Null<String> = null;
-
-	public var localeData : LocaleData;
-
-	private var stashedLocale : GenericStack<LocaleData>;
-
-	public var tokensImages (default, set) : Null<StringMap<{ small : String, large : String }>>;
+	public var tokensImages (default, set) : Null<Map<String, { small : String, large : String }>>;
 
 	public var tokenNotification (default, default) : Null<String>;
 
-	public var partDisplay (get, null):PartDisplay;
-
-	// WIP
-
-	var callbacks : grar.view.DisplayCallbacks;
-
-	public var previousLayout : String = null;
-
-	var startIndex:Int;
-
-	public var mainLayoutRef (default, default) : Null<String> = null;
-
+	/**
+	* General volume of this application
+	**/
 	public var masterVolume (default, set): Float = 1;
 
+	/**
+	* Map of the menu views
+	**/
+	public var menus (default, null):Map<String, MenuDisplay>;
+
+	/**
+	* Current view of part
+	**/
+	public var partDisplay (get, null):PartDisplay;
+
+	/**
+	* Root document element of this application. Generally the document of the iFrame
+	**/
+	public var document(default, null): Document;
+
+	var startIndex:Int;
+	var isMobile: Bool;
+	var root: IFrameElement;
 
 	///
 	// GETTER / SETTER
 	//
 
-	public function set_menuData(v : Null<MenuData>) : Null<MenuData> {
+	private function set_menuData(v : Null<MenuData>) : Null<MenuData> {
 
 		if (v == menuData) {
 
@@ -112,7 +105,7 @@ class Application {
 		return menuData;
 	}
 
-	public function set_tokensImages(v : Null<StringMap<{small:String,large:String}>>) : Null<StringMap<{small:String,large:String}>> {
+	private function set_tokensImages(v : Null<Map<String, {small:String,large:String}>>) : Null<Map<String, {small:String,large:String}>> {
 
 		if (v == tokensImages) {
 
@@ -120,19 +113,17 @@ class Application {
 		}
 		tokensImages = v;
 
-		onTokensImagesChanged();
-
 		return tokensImages;
 	}
 
-	public function get_partDisplay():PartDisplay
+	private function get_partDisplay():PartDisplay
 	{
 		if(partDisplay == null)
-			partDisplay = new PartDisplay(callbacks);
+			partDisplay = new PartDisplay(this, isMobile);
 		return partDisplay;
 	}
 
-	public function set_masterVolume(vol:Float):Float
+	private function set_masterVolume(vol:Float):Float
 	{
 		masterVolume = vol;
 		onMasterVolumeChanged();
@@ -144,87 +135,140 @@ class Application {
 	// CALLBACKS
 	//
 
-	public dynamic function onMenuButtonStateRequest(partName : String) : { l : Bool, d : Bool } { return null; }
-
 	public dynamic function onMenuClicked(partId : String, menuId: String) : Void { }
-
-	public dynamic function onMenuAdded() : Void { }
-
-	public dynamic function onExitPart(partId : String) : Void { }
-
-	public dynamic function onTokenNotificationChanged() : Void { }
-
-	public dynamic function onNotebookChanged() : Void { }
-
-	public dynamic function onMenuChanged() : Void { }
 
 	public dynamic function onMenuDataChanged() : Void { }
 
-	public dynamic function onLayoutsChanged() : Void { }
-
-	public dynamic function onTokensImagesChanged() : Void { }
-
-	public dynamic function onStylesChanged() : Void { }
-
-	public dynamic function onQuitGameRequest() : Void { }
-
-	public dynamic function onActivateTokenRequest(tokenName : String) : Void { }
-
-	public dynamic function onRestoreLocaleRequest() : Void { }
-
-	public dynamic function onLocaleDataPathRequest(uri : String) : Void { }
-
-	public dynamic function onInterfaceLocaleDataPathRequest() : Void { }
-
-	public dynamic function onSetBookmarkRequest(partId : String) : Void { }
-
-	public dynamic function onGameOverRequest() : Void { }
-
-	public dynamic function onMenuUpdateDynamicFieldsRequest() : Void { }
-
 	public dynamic function onMasterVolumeChanged(): Void {}
+
+	public dynamic function onPartLoaded() : Void { }
 
 
 	///
 	// API
 	//
 
-	public function changeHeaderState(state : String) : Void {
-		for(h in Browser.document.getElementsByTagName("header"))
-			if(h.nodeType == Node.ELEMENT_NODE)
-				// Override previous state
-				Std.instance(h, Element).className = state;
-	}
-
 	public function updateModuleInfos(name:String, type:String):Void
 	{
 		// Update module name
-		for(p in Browser.document.getElementsByClassName("moduleName"))
-			if(p.nodeType == Node.ELEMENT_NODE)
-				Std.instance(p, Element).innerHTML = name;
+		for(p in document.getElementsByClassName("moduleName"))
+			getElement(p).innerHTML = name;
 		// Update module type
-		for(p in Browser.document.getElementsByClassName("moduleType"))
-			if(p.nodeType == Node.ELEMENT_NODE)
-				Std.instance(p, Element).innerHTML = type;
+		for(p in document.getElementsByClassName("moduleType"))
+			getElement(p).innerHTML = type;
 	}
 
 	public function updateChapterInfos(chapterName:String, activityName:String):Void
 	{
 		// Update module name
-		for(p in Browser.document.getElementsByClassName("chapterName"))
-			if(p.nodeType == Node.ELEMENT_NODE)
-				Std.instance(p, Element).innerHTML = chapterName;
+		for(p in document.getElementsByClassName("chapterName"))
+			getElement(p).innerHTML = chapterName;
 		// Update module type
-		for(p in Browser.document.getElementsByClassName("activityName"))
-			if(p.nodeType == Node.ELEMENT_NODE)
-				Std.instance(p, Element).innerHTML = activityName;
+		for(p in document.getElementsByClassName("activityName"))
+			getElement(p).innerHTML = activityName;
 	}
 
-	public function initMenu(ref: String, levels: Array<LevelData>) : Void {
+	/**
+	* Initialize a part view
+	* @param    ref: Reference to the HTML root of the view
+	* @param    templateUri: HTML template to load in an iframe. If null, old template is kept
+	* @param    forward: True if you're progressing forward in the module. Default is true.
+	**/
+	public function initPart(ref:String, ?templateUri: String, ?forward: Bool = true):Void
+	{
+		var container = document.getElementById(ref);
+		if(templateUri != null){
+			var partRoot = document.createIFrameElement();
+			partRoot.setAttribute("seamless", "true");
+			partRoot.src = templateUri;
+
+			// Wait for template to load
+			partRoot.onload = function(_){
+				partDisplay.init(partRoot);
+				// Setup transition between parts
+				if(container.childNodes.length > 1){
+					var listener = null;
+					listener = function(_){
+						container.removeEventListener('transitionend', listener);
+						container.removeEventListener('webkitTransitionEnd', listener);
+						if(forward){
+							container.style.transition = "none";
+							// Remove old iframe (= previous part display)
+							container.removeChild(container.firstChild);
+							container.classList.remove("nextTransition");
+						}
+						else{
+							// Remove old iframe (= previous part display)
+							container.removeChild(container.lastChild);
+
+							container.style.left = "";
+							container.classList.remove("previousTransition");
+						}
+
+						onPartLoaded();
+					}
+					container.addEventListener("transitionend",listener);
+					container.addEventListener("webkitTransitionEnd",listener);
+
+					if(forward){
+						container.style.transition = "";
+						container.classList.add("nextTransition");
+					}
+					else{
+						// Need to wait for next frame to see the animation
+						var firstFrame = true;
+						var update = null;
+						update = function(_){
+							if(firstFrame){
+								firstFrame = false;
+								root.contentWindow.requestAnimationFrame(update);
+							}
+							else{
+								container.style.transition = "";
+								container.classList.add("previousTransition");
+							}
+							return true;
+						};
+						root.contentWindow.requestAnimationFrame(update);
+					}
+				}
+				else
+					onPartLoaded();
+
+				// If header state need to be updated
+				for(child in partRoot.contentDocument.body.children){
+					var childElement = getElement(child);
+					if(childElement.hasAttribute("data-header-state")){
+						var headers = document.getElementsByTagName("header");
+						var newHeader = headers[0].cloneNode(true);
+						getElement(newHeader).classList.remove("hidden");
+						partRoot.contentDocument.body.insertBefore(newHeader, partRoot.contentDocument.body.childNodes[0]);
+
+						// Update header
+						for(h in partRoot.contentDocument.getElementsByTagName("header"))
+							getElement(h).classList.add(childElement.getAttribute("data-header-state"));
+
+						break;
+					}
+				}
+			}
+			if(forward || !container.hasChildNodes())
+				container.appendChild(partRoot);
+			else{
+				container.insertBefore(partRoot, container.childNodes[0]);
+				container.style.left = "-100%";
+			}
+		}
+		else{
+			partDisplay.init();
+			onPartLoaded();
+		}
+	}
+
+	public function initMenu(ref: String, levels: Array<LevelData>) : Void
+	{
 		var templates = new Map<String, Element>();
-
-		var root = Browser.document.querySelector("#"+ref);
-
+		var root = document.getElementById(ref);
 
 		var hasProgress = false;
 		var offset = 0.0;
@@ -244,22 +288,21 @@ class Application {
 
 		var itemNum = 1;
 		for(l in levels){
-			var t = Browser.document.getElementById(ref+"_"+l.name);
+			var t = document.getElementById(ref+"_"+l.name);
 			var newLevel: Element = null;
 			if(t != null){
 				//root.appendChild(t.parentNode);
 				templates[l.name] = t;
                 //use of Std.instance
                 var node = t.cloneNode(true);
-				newLevel =  Std.instance(node,Element);
+				newLevel = cast node;
 				t.parentNode.appendChild(newLevel);
 				// Set part name
 				var name = "";
 				for(elem in menus[ref].markupParser.parse(l.partName))
 					name += elem.innerHTML;
 				for(node in newLevel.getElementsByClassName("numbering"))
-					if(node.nodeType == Node.ELEMENT_NODE)
-						Std.instance(node, Element).innerHTML = itemNum < 10 ? '0'+ itemNum : Std.string(itemNum);
+					getElement(node).innerHTML = itemNum < 10 ? '0'+ itemNum : Std.string(itemNum);
 				newLevel.innerHTML += name;
 				newLevel.removeAttribute("id");
 			}
@@ -269,12 +312,12 @@ class Application {
 			if(l.items != null){
 				var sublist: UListElement = null;
 				if(newLevel != null){
-					sublist = Browser.document.createUListElement();
+					sublist = document.createUListElement();
 					newLevel.appendChild(sublist);
 				}
 
 				for(i in l.items){
-					var st = Browser.document.getElementById(ref+"_"+i.name);
+					var st = document.getElementById(ref+"_"+i.name);
 					if(st != null){
 						templates[i.name] = st;
 						var newSubLevel: Element = cast st.cloneNode(true);
@@ -291,7 +334,7 @@ class Application {
 							name += elem.innerHTML;
 						name += "</a>";
 						newSubLevel.innerHTML = "<a href='#'>"+name+"</a>";
-						newSubLevel.id = i.id;
+						newSubLevel.id = ref+"_"+i.id;
 						newSubLevel.classList.add(i.icon);
 						if(!hasProgress)
 							newSubLevel.onclick = function(_) onMenuClicked(i.id, ref);
@@ -325,5 +368,21 @@ class Application {
 		}
 		// TODO Notebook controller ?
 		//notebook.setActivateToken(t);
+	}
+
+	public function getElementById(id:String):Element
+	{
+		return document.getElementById(id);
+	}
+
+	///
+	// Internals
+	//
+
+	private inline function getElement(node:Node):Element
+	{
+		if(node.nodeType == Node.ELEMENT_NODE)
+			return cast node;
+		return null;
 	}
 }

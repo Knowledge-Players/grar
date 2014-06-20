@@ -1,5 +1,6 @@
 package grar.view.part;
 
+import grar.util.TextDownParser;
 import grar.model.part.item.Item.VideoData;
 import grar.util.Point;
 
@@ -19,17 +20,18 @@ typedef Element = String;
 /**
  * Display of a part
  */
-class PartDisplay extends BaseDisplay{
+class PartDisplay{
 
 /**
      * Constructor
      * @param	part : Part to display
      */
-    public function new(callbacks : grar.view.DisplayCallbacks) {
-		super();
+    public function new() {
     }
 
     public var introScreenOn (default, null) : Bool = false;
+
+	public var markupParser (default, default):TextDownParser;
 
     public static var CLICK = "click";
     public static var MOUSE_DOWN = "mouseDown";
@@ -94,6 +96,8 @@ class PartDisplay extends BaseDisplay{
     public function hideSpeaker(speaker : String) : Void {
 
     }
+	public function setSpeakerLabel(speakerName:String):Void
+	{}
 
     public function setText(itemRef: String, content: String):Null<Element>
     {
