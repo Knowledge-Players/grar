@@ -9,7 +9,14 @@ import js.html.Element;
  */
 class Grid extends Guide {
 
-	public function new(root: Element, numRow: Int, ?numCol: Int = -1) {
+	/**
+	* Create a grid to place element
+	* @param    root: Parent of the elements, where the grid will be
+	* @param    numRow: Number of rows in the grid
+	* @param    numCol: Number of columns in the grid
+	* @param    referenceElement: If not null, the grid will be inserted after this element
+	**/
+	public function new(root: Element, numRow: Int, ?numCol: Int = -1, ?referenceElement: Element) {
 
         super();
 
@@ -19,10 +26,20 @@ class Grid extends Guide {
 		// Initialize nextCell to (0;0)
 		nextCell = new Point();
 
+		var lastRow: Element = null;
 		for(i in 0...numRow){
 			var row = js.Browser.document.createDivElement();
 			row.classList.add("row");
-			root.appendChild(row);
+			if(referenceElement != null){
+				if(i == 0){
+					root.insertBefore(row, referenceElement.nextSibling);
+					lastRow = row;
+				}
+				else
+					root.insertBefore(row, lastRow.nextSibling);
+			}
+			else
+				root.appendChild(row);
 			rows.push(row);
 		}
 

@@ -70,6 +70,7 @@ class PartDisplay
 	var dragParent:Element;
 	var isMobile: Bool;
 	var templates: Map<String, Element>;
+	var templatesPosition: Map<Element, {refElement: Node, parent: Node}>;
 	var playingSounds: Array<AudioElement>;
 	var rootDocument: Document;
 	var application: Application;
@@ -102,6 +103,7 @@ class PartDisplay
 	{
 		// Init templates
 		templates = new Map();
+		templatesPosition = new Map();
 		// Init sounds
 		if(playingSounds != null)
 			playingSounds.iter(function(elem: AudioElement) elem.pause());
@@ -131,8 +133,12 @@ class PartDisplay
 	{
 		hideElements(partRef);
 		for(t in templates){
+			var pos = templatesPosition[t];
 			hide(t);
-			root.appendChild(t);
+			if(pos.refElement != null)
+				pos.parent.insertBefore(t, pos.refElement);
+			else
+				pos.parent.appendChild(t);
 		}
 	}
 
@@ -386,36 +392,39 @@ class PartDisplay
 	{
 		var parent: Element = rootDocument.getElementById(groupeRef);
 
-		var guide: Guide = null;
-		if(parent.hasAttribute("data-grid")){
-			var data = parent.getAttribute("data-grid").split(",");
-			if(data.length > 1)
-                guide = new Grid(parent, Std.parseInt(data[0]), Std.parseInt(data[1]));
-			else
-                guide = new Grid(parent, Std.parseInt(data[0]));
-		} else if (parent.hasAttribute("data-absolute")) {
-            var data = parent.getAttribute("data-absolute").split(",");
-
-            var points = new Array<Point>();
-            for (s in data) {
-               var p:Point = new Point(Std.parseFloat(s.split(";")[0]),Std.parseFloat(s.split(";")[1]));
-               points.push(p);
-            }
-            guide = new Absolute(parent, points);
-        }
-
 		var i = 0;
-
+		var lastInput: Element = null;
+		var guide: Guide = null;
 		for(r in refs){
 			// Get template and store it if necessary
 			var t: Element;
-			if(templates.exists(r.ref))
+			if(templates.exists(r.ref)){
 				t = templates[r.ref];
+			}
 			else{
-				t = this.rootDocument.getElementById(r.ref);
+				t = rootDocument.getElementById(r.ref);
 				templates[r.ref] = t;
-				// Remove template
-				t.parentElement.removeChild(t);
+				templatesPosition.set(t, {refElement: t.nextSibling, parent: t.parentNode});
+
+				// Guide creation for this template
+				if(parent.hasAttribute("data-grid")){
+					var data = parent.getAttribute("data-grid").split(",");
+					if(data.length > 1)
+						guide = new Grid(parent, Std.parseInt(data[0]), Std.parseInt(data[1]), t);
+					else
+						guide = new Grid(parent, Std.parseInt(data[0]), t);
+				} else if (parent.hasAttribute("data-absolute")) {
+					var data = parent.getAttribute("data-absolute").split(",");
+
+					var points = new Array<Point>();
+					for (s in data) {
+						var p:Point = new Point(Std.parseFloat(s.split(";")[0]),Std.parseFloat(s.split(";")[1]));
+						points.push(p);
+					}
+					guide = new Absolute(parent, points);
+				}
+				else
+					guide = null;
 			}
 
 			// Clone
@@ -424,13 +433,23 @@ class PartDisplay
 			// Set attributes
 			newInput.id = r.id;
 			newInput.classList.add("inputs");
-            recursiveSetId(newInput, r.id);
+			recursiveSetId(newInput, r.id);
 
-			// Add to DOM
-			if(guide != null)
+			// Add it to the guide
+			if(guide != null){
 				guide.add(newInput);
+				if(i == 0)
+					parent.removeChild(t);
+			}
+			// Replace template by new node if it's the first
+			else if(i == 0)
+				parent.replaceChild(newInput, t);
+			// Insert after the last created input
 			else
-				parent.appendChild(newInput);
+				parent.insertBefore(newInput, lastInput.nextSibling);
+
+			lastInput = newInput;
+
 
 			// Adding numbering system if any
 			for(num in newInput.getElementsByClassName("numbering")){
