@@ -34,7 +34,7 @@ class Controller {
 		config = c;
 		state = new State();
 
-		gameSrv = new GameService();
+		gameSrv = new GameService(c.rootUri);
 
 		application = new Application(root, c.isMobile);
 
@@ -90,9 +90,6 @@ class Controller {
 				switch(state.module.readyState) {
 
 					case Loading(langsUri, structureXml):
-
-						// layout ref for the view
-						//application.mainLayoutRef = state.module.ref;
 
 						// tracking
 						trackingCtrl.initTracking(state.module, function(){}, onError);

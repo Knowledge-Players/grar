@@ -362,6 +362,9 @@ class Grar {
 		var allParts = getAllParts();
 		while(i < allParts.length && allParts[i] != p)
 			i++;
+		// Can't return a child of p. Children are return by p.getNextElement()
+		while(i < allParts.length && allParts[i+1].parent == p)
+			i++;
 
 		return i < allParts.length ? allParts[i+1] : null;
 	}

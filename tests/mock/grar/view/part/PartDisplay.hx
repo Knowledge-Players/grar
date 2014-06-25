@@ -137,7 +137,9 @@ class PartDisplay{
 
     }
 
-	public function setVoiceOver(voiceOverUrl:String, volume: Float):Void{}
+	public function setVoiceOver(voiceOverUrl:String, volume: Float, ?textRef: String):Void{}
+	public function stopVoiceOver():Void
+	{}
 	public function onMasterVolumeChanged(volume: Float):Void
 	{}
 

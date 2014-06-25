@@ -20,7 +20,6 @@ import js.html.Element;
 import js.html.Event;
 import js.html.MouseEvent;
 import js.html.Node;
-import js.html.AnchorElement;
 import js.html.ImageElement;
 import js.html.ClientRect;
 import js.html.TouchEvent;
@@ -119,6 +118,8 @@ class PartDisplay
 				rootDocument = application.document;
 			}
 		}
+
+		application.initSounds(rootDocument.body);
 	}
 
 
@@ -129,8 +130,10 @@ class PartDisplay
 	public function unloadPart(partRef:String):Void
 	{
 		hideElements(partRef);
-		for(t in templates)
+		for(t in templates){
+			hide(t);
 			root.appendChild(t);
+		}
 	}
 
 	public function showBackground(background : String) : Void {
@@ -246,14 +249,48 @@ class PartDisplay
 		soundPlayer.setSound(uri, autoStart, loop, defaultVolume);
 	}
 
-	public function setVoiceOver(voiceOverUrl:String, volume: Float):Void
+	public function setVoiceOver(voiceOverUrl:String, volume: Float, ?textRef: String):Void
 	{
 		var audio = new Audio();
-		audio.autoplay = true;
 		audio.volume = volume;
 		playingSounds.push(audio);
 		audio.src = voiceOverUrl;
-		audio.play();
+
+
+		if(application.isMobile){
+			var button = rootDocument.createAnchorElement();
+			button.innerHTML = "&#9654;";
+			button.href = 'javascript:void(0);';
+			button.classList.add("voiceOver");
+			var play = null;
+			var pause = function(_){
+				audio.pause();
+				button.innerHTML = "&#9654;";
+				button.onclick = play;
+			}
+			play = function(_){
+				audio.play();
+				button.innerHTML = "&#9616;&#9616;";
+				button.onclick = pause;
+			}
+			button.onclick = play;
+			if(textRef == null)
+				root.appendChild(button);
+			else{
+				rootDocument.getElementById(textRef).appendChild(button);
+			}
+		}
+		else
+			audio.play();
+	}
+
+	/**
+	* Stop currently playing voice over
+	**/
+	public function stopVoiceOver():Void
+	{
+		for(sound in playingSounds)
+			sound.pause();
 	}
 
 	public function onMasterVolumeChanged(volume: Float):Void
@@ -322,7 +359,7 @@ class PartDisplay
 	public function hideElementsByClass(className: String):Void
 	{
 		for(elem in root.getElementsByClassName(className))
-			hide(Std.instance(elem, Element));
+			hide(getElement(elem));
 	}
 
 	public function disableNextButtons():Void
@@ -415,8 +452,10 @@ class PartDisplay
 				var url = 'url('+r.icon[key]+')';
 				if(key != "_"){
 					var img = rootDocument.getElementById(r.id+"_"+key);
-					if(Std.is(img, ImageElement))
-						Std.instance(img, ImageElement).src = r.icon[key];
+					if(img.nodeName.toLowerCase() == "img"){
+						var imgElement: ImageElement = cast img;
+						imgElement.src = r.icon[key];
+					}
 					else
 						img.style.backgroundImage = url;
 				}
@@ -432,7 +471,8 @@ class PartDisplay
 			var onStart = function(e: MouseEvent){
 				if(isMobile || e.button == 0){
 					e.preventDefault();
-					if(!Std.is(e.target, AnchorElement))
+					var target: Node = cast e.target;
+					if(target.nodeName.toLowerCase() != "a")
 						onInputEvent(InputEvent.MOUSE_DOWN, newInput.id, getMousePosition(e));
 					#if !cocktail
                     newInput.ontouchend = function(e: MouseEvent){
@@ -483,7 +523,7 @@ class PartDisplay
         var elem:Element = rootDocument.getElementById(id);
         for (e in elem.getElementsByTagName("input")) {
             var input: InputElement = cast e;
-	        input.checked = force != null ? force : !Std.instance(e, InputElement).checked;
+	        input.checked = force != null ? force : !input.checked;
         }
     }
     public function uncheckElement(id:String):Void {
@@ -738,7 +778,7 @@ class PartDisplay
 		if(content != null){
 			if(text.nodeName.toLowerCase() == "p" || text.nodeName.toLowerCase() == "a"){
 				for(elem in markupParser.parse(content))
-					html += elem.outerHTML;
+					html += elem.innerHTML;
 				text.innerHTML += html;
 			}
 			else

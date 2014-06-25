@@ -1,5 +1,6 @@
 package grar.view;
 
+import js.html.Audio;
 import js.html.Document;
 import js.html.IFrameElement;
 import js.html.UListElement;
@@ -12,6 +13,8 @@ import grar.util.TextDownParser;
 
 import grar.view.contextual.MenuDisplay;
 import grar.view.part.PartDisplay;
+
+using StringTools;
 
 // See if really need it
 enum ContextualType {
@@ -56,6 +59,8 @@ class Application {
 
 			bar.style.width = "0";
 		}
+
+		initSounds(document.body);
 	}
 
 	public var menuData (default, set) : Null<MenuData>;
@@ -84,8 +89,12 @@ class Application {
 	**/
 	public var document(default, null): Document;
 
+	/**
+	* Is the module on a mobile?
+	**/
+	public var isMobile (default, null): Bool;
+
 	var startIndex:Int;
-	var isMobile: Bool;
 	var root: IFrameElement;
 
 	///
@@ -173,11 +182,12 @@ class Application {
 	* @param    ref: Reference to the HTML root of the view
 	* @param    templateUri: HTML template to load in an iframe. If null, old template is kept
 	* @param    forward: True if you're progressing forward in the module. Default is true.
+	* @param    noReload: Prevent reloading a new view. Default is false.
 	**/
-	public function initPart(ref:String, ?templateUri: String, ?forward: Bool = true):Void
+	public function initPart(ref:String, ?templateUri: String, ?forward: Bool = true, ?noReload: Bool = false):Void
 	{
 		var container = document.getElementById(ref);
-		if(templateUri != null){
+		if(!noReload && templateUri != null){
 			var partRoot = document.createIFrameElement();
 			partRoot.setAttribute("seamless", "true");
 			partRoot.src = templateUri;
@@ -204,7 +214,6 @@ class Application {
 							container.style.left = "";
 							container.classList.remove("previousTransition");
 						}
-
 						onPartLoaded();
 					}
 					container.addEventListener("transitionend",listener);
@@ -373,6 +382,40 @@ class Application {
 	public function getElementById(id:String):Element
 	{
 		return document.getElementById(id);
+	}
+
+	/**
+	* Initialize UI sounds in the given element
+	* @param    rootElement: Parent element whom children will be initialized
+	**/
+	public function initSounds(rootElement: Element):Void
+	{
+		// Calculate relative url
+		var appURI = root.baseURI.substr(0, root.baseURI.lastIndexOf("/"));
+		var prefix: String = null;
+		var base = rootElement.baseURI.replace(appURI, "");
+		prefix = base.substr(1, base.lastIndexOf("/"));
+
+		var play = function(soundUrl: String){
+			var audio = new Audio();
+			audio.src = prefix+soundUrl;
+			audio.volume = masterVolume;
+			audio.play();
+		};
+
+		// Hover SFX
+		var hovers = rootElement.querySelectorAll("[data-sound-hover]");
+		for(h in hovers){
+			var elem = getElement(h);
+			elem.onmouseover = function(_) play(elem.getAttribute("data-sound-hover"));
+		}
+
+		// Click SFX
+		var clicks = rootElement.querySelectorAll("[data-sound-click]");
+		for(c in clicks){
+			var elem = getElement(c);
+			elem.onclick = function(_) play(elem.getAttribute("data-sound-click"));
+		}
 	}
 
 	///

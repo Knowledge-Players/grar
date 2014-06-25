@@ -66,7 +66,7 @@ class MenuDisplay{
 		if(title != null){
 			if(Std.instance(text, ParagraphElement) != null || Std.instance(text, AnchorElement) != null){
 				for(elem in markupParser.parse(title))
-					html += elem.outerHTML;
+					html += elem.innerHTML;
 				text.innerHTML += html;
 			}
 			else

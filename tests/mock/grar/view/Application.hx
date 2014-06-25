@@ -49,6 +49,8 @@ class Application{
 
 	public var document (default, null): Document;
 
+	public var isMobile (default, default):Bool;
+
 
 	public function set_menuData(v : Null<MenuData>) : Null<MenuData> {
 
@@ -103,4 +105,6 @@ class Application{
 	{}
 	public function getElementById(id:String):Element
 	{ return null;}
+	public function initSounds(rootElement: Element):Void
+	{}
 }

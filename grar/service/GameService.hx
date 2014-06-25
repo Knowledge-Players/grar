@@ -24,7 +24,11 @@ import haxe.ds.StringMap;
 
 class GameService {
 
-	public function new() { }
+	private var prefix:String;
+
+	public function new(prefix: String) {
+		this.prefix = prefix;
+	}
 
 	public function fetchLocaleData(locale : String, path : String, onSuccess : LocaleData -> Void, onError : String -> Void) : Void {
 
@@ -187,7 +191,7 @@ class GameService {
 	private function loadXml(uri:String, onSuccess: Xml -> Void, onError: String -> Void):Void
 	{
 		if(uri != null && uri != ""){
-			var http = new Http(uri);
+			var http = new Http(prefix != "" ? prefix+"/"+uri : uri);
 			http.onData = function(data){
 				onSuccess(Xml.parse(data));
 			}

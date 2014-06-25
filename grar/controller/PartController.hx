@@ -98,10 +98,10 @@ class PartController
 			// Check if a HTML template is needed
 			if(part.ref.indexOf("#") != -1){
 				var ids = part.ref.split("#");
-				application.initPart(ids[1], ids[0], forward);
+				application.initPart(ids[1], ids[0], forward, noReload);
 			}
 			else
-				application.initPart(part.ref, forward);
+				application.initPart(part.ref, forward, noReload);
 		});
 
 		return true;
@@ -179,41 +179,6 @@ class PartController
 				display.disableNextButtons();
 		}
 	}
-
-    private function createInputs(group:Inputs) {
-        var inputList = Lambda.map(group.inputs, function(input: Input){
-            var localizedContent = new Map<String, String>();
-            for(key in input.content.keys())
-                localizedContent[key] = getLocalizedContent(input.content[key]);
-
-            return {ref: input.ref, id: input.id, content: localizedContent, icon: input.icon, selected: input.selected}
-        });
-
-	    // Set sorting rule
-        var sort = part.getRulesByType("sort", group);
-        if(sort.length == 1){
-            switch(sort[0].value.toLowerCase()){
-                case "random":
-                    var randomList = new List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>, selected: Bool}>();
-                    for(i in inputList){
-                        var rand = Math.random();
-                        if(rand < 0.5)
-                            randomList.add(i);
-                        else
-                            randomList.push(i);
-                    }
-                    inputList = randomList;
-            }
-        }
-
-	    // Set validation rule
-	    var validationRules = part.getRulesByType("validation", group);
-	    if(validationRules.length > 1)
-		    throw "Multiple validation rules for group '"+group+"'. Please choose only one.";
-	    var autoValidation: Bool = validationRules.length > 0 ? validationRules[0].value == "auto" : true;
-
-        display.createInputs(inputList, group.ref, autoValidation);
-    }
 
 	public function onGameOver():Void
 	{
@@ -448,7 +413,7 @@ class PartController
 				localePath.add(fullPath[fullPath.length-1]);
 				path = localePath.toString();
 			}
-			display.setVoiceOver(path, application.masterVolume);
+			display.setVoiceOver(path, application.masterVolume, item.ref);
 		}
 
 		for (image in item.images)
@@ -496,12 +461,16 @@ class PartController
 
 		var action = switch(bd.action.toLowerCase()) {
 			case "next": function(){
+				display.stopVoiceOver();
 				if(state.activityState == null || state.activityState == ActivityState.NONE)
 					nextElement();
 				else
 					startActivity();
 			};
-			case "prev": function() previousElement();
+			case "prev": function(){
+				display.stopVoiceOver();
+				previousElement();
+			};
 			case "goto": function() {
 						var goToTarget : PartElement = part.buttonTargets.get(bd.ref);
 						if (goToTarget == null) {
@@ -528,6 +497,10 @@ class PartController
 
 	private function validateActivity():Void
 	{
+		// No activity, ignore call
+		if(state.activityState == ActivityState.NONE)
+			return;
+
 		var valid = part.getRulesByType("validation");
 		var validationRule: Rule = null;
 		if(valid.length > 1)
@@ -556,8 +529,10 @@ class PartController
 					isTrue = true;
 				}
 			}
+
 			display.setDebrief(lastId, state.module.getLocalizedContent(group.id+"_"+lastValue));
-			display.setInputState(lastId, Std.string(isTrue));
+			if(lastId != null)
+				display.setInputState(lastId, Std.string(isTrue));
 
 			// Disabling further input
 			part.activityData.inputsEnabled = false;
@@ -575,6 +550,10 @@ class PartController
 
 	private function validateInput(inputId: String, ?validation: Rule, ?value: String):Void
 	{
+		// No activity, ignore call
+		if(state.activityState == ActivityState.NONE)
+			return;
+
 		// Correction
 		if(validation == null){
 			var result = part.validate(inputId, value);
@@ -650,8 +629,10 @@ class PartController
 						var isFull = drop.values.foreach(function(id: String){
 							return drop.additionalValues.has(id);
 						});
-						if(isFull)
+						if(isFull){
+							validateActivity();
 							display.setInputComplete(targetId);
+						}
 						part.activityData.numRightAnswers++;
 
 						// Selection limits
@@ -730,5 +711,40 @@ class PartController
 		// Disable/Enable validation with minSelect
 		display.toggleValidationButtons(minSelect > numSelected);
 
+	}
+
+	private function createInputs(group:Inputs) {
+		var inputList = Lambda.map(group.inputs, function(input: Input){
+			var localizedContent = new Map<String, String>();
+			for(key in input.content.keys())
+				localizedContent[key] = getLocalizedContent(input.content[key]);
+
+			return {ref: input.ref, id: input.id, content: localizedContent, icon: input.icon, selected: input.selected}
+		});
+
+		// Set sorting rule
+		var sort = part.getRulesByType("sort", group);
+		if(sort.length == 1){
+			switch(sort[0].value.toLowerCase()){
+				case "random":
+					var randomList = new List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>, selected: Bool}>();
+					for(i in inputList){
+						var rand = Math.random();
+						if(rand < 0.5)
+							randomList.add(i);
+						else
+							randomList.push(i);
+					}
+					inputList = randomList;
+			}
+		}
+
+		// Set validation rule
+		var validationRules = part.getRulesByType("validation", group);
+		if(validationRules.length > 1)
+			throw "Multiple validation rules for group '"+group+"'. Please choose only one.";
+		var autoValidation: Bool = validationRules.length > 0 ? validationRules[0].value == "auto" : true;
+
+		display.createInputs(inputList, group.ref, autoValidation);
 	}
 }

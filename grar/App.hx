@@ -27,9 +27,10 @@ class App {
 	// Public API
 	//
 
-	public static function init(?rootId: Null<String>) : Void {
+	public static function init(?rootId: Null<String>, ?rootUri: Null<String> = "") : Void {
 
 		var c = new Config();
+		c.parseConfigParameter("rootUri", rootUri);
 
 		#if js
 		var isMobile = ~/ipad|iphone|ipod|android|mobile/i.match(Browser.navigator.userAgent);

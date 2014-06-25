@@ -312,7 +312,9 @@ class Part{
 			// If current element is a pattern, explore pattern first
 			switch(elements[elemIndex]){
 				case Pattern(p) if(p.itemIndex < p.patternContent.length): return elements[elemIndex] ;
-				//case Part(p) if(activityData != null): return null;
+				case Part(p) if(p.isDone):
+					elemIndex++;
+					return getNextElement();
 				default: return elements[elemIndex++];
 			}
 		}
