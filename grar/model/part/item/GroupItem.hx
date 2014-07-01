@@ -1,4 +1,4 @@
-package grar.model.part;
+package grar.model.part.item;
 
 import grar.model.part.item.Item;
 

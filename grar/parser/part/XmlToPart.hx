@@ -1,9 +1,9 @@
 package grar.parser.part;
 
-import grar.model.part.GroupItem;
+import grar.model.part.item.GroupItem;
+import grar.model.part.item.Pattern;
 import grar.model.part.Part;
 import grar.model.part.PartElement;
-import grar.model.part.Pattern;
 import grar.model.part.item.Item;
 
 import grar.parser.part.XmlToPattern;
@@ -182,7 +182,7 @@ class XmlToPart {
 					}
 				}
 
-			case "pattern": // should happen only for DialogParts and StripParts
+			case "pattern":
 
 				pd.elements.push(Pattern(XmlToPattern.parse(node.x)));
 

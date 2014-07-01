@@ -17,7 +17,7 @@ class KalturaService{
 		});
 	}
 
-	public function getUrl(entryId:String, bitrate:Int, ks:String, onSuccess:String -> Void):Void
+	public function getUrl(entryId:String, bitrate:Float, ks:String, onSuccess:String -> Void):Void
 	{
 		var k = new KalturaHaxe(null, null, ks);
 		k.getBitrateWiseAsset(entryId, bitrate, function(success, result){

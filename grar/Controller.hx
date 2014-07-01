@@ -27,7 +27,6 @@ using Lambda;
 /**
  * GRAR main controller
  */
-@:expose
 class Controller {
 
 	public function new(c : Config, #if (js || cocktail) ?root: js.html.IFrameElement #else ?root: String #end) {
@@ -40,7 +39,7 @@ class Controller {
 
 		trackingCtrl = new TrackingController(this, state, config, application);
 		localizationCtrl = new LocalizationController(this, state, config, application, gameSrv);
-		partCtrl = new PartController(this, state, application);
+		partCtrl = new PartController(this, state, config, application);
 		menuDisplays = new Map();
 	}
 

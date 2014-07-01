@@ -1,16 +1,20 @@
 package grar.view.component;
 
 import grar.model.part.item.Item.VideoData;
-typedef VideoElement=String;
+typedef Element=String;
 
 class VideoPlayer{
-    public var root (default, null): VideoElement;
+    public var root (default, null): Element;
 
     public function new(){
 
     }
 
-    public function init(root:VideoElement):Void
+	public dynamic function onFullscreenRequest(?button: Element): Void {}
+	public dynamic function onExitFullscreenRequest(?button: Element): Void {}
+	public dynamic function onToggleFullscreenRequest(?button: Element): Void {}
+
+    public function init(root:Element):Void
     {
 
     }

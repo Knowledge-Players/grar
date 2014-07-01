@@ -1,5 +1,6 @@
 package grar.controller;
 
+import grar.model.Config;
 import grar.util.Point;
 import grar.util.TextDownParser;
 
@@ -11,10 +12,10 @@ import grar.service.KalturaService;
 
 import grar.model.part.Part;
 import grar.model.part.PartElement;
-import grar.model.part.Pattern;
-import grar.model.part.item.Item;
 import grar.model.part.PartElement;
 import grar.model.part.ButtonData;
+import grar.model.part.item.Item;
+import grar.model.part.item.Pattern;
 import grar.model.State;
 
 import haxe.ds.GenericStack;
@@ -27,10 +28,11 @@ using StringTools;
 class PartController
 {
 
-	public function new(parent: Controller, state: State, app: Application)
+	public function new(parent: Controller, state: State, config: Config, app: Application)
 	{
 		this.parent = parent;
 		this.state = state;
+		this.config = config;
 		this.application = app;
 
 		init();
@@ -40,6 +42,7 @@ class PartController
 	var state: State;
 	var application: Application;
 	var display: PartDisplay;
+	var config: Config;
 
 	var part: Part;
 
@@ -335,6 +338,19 @@ class PartController
 
 		for(b in part.buttons)
 			initButtons(b);
+
+		// Choices
+		if(p.choicesData != null){
+			var choicesList = Lambda.map(p.choicesData.choices, function(choice: Choice){
+				var localizedContent = new Map<String, String>();
+				for(key in choice.content.keys())
+					localizedContent[key] = getLocalizedContent(choice.content[key]);
+
+				return {ref: choice.ref, content: localizedContent, id: choice.id, icon: choice.icon, selected: choice.viewed, goto: choice.goTo};
+			});
+			display.createChoices(choicesList, p.choicesData.ref);
+			display.onChangePatternRequest = function(patternId: String) goToPattern(patternId);
+		}
 	}
 
 	private function setupItem(item : Item) : Void {
@@ -355,7 +371,7 @@ class PartController
 		if(item.videoData != null) {
 			if(parent.ks != null){
 				var srv = new KalturaService();
-				srv.getUrl(item.content, 400, parent.ks, function(url){
+				srv.getUrl(item.content, config.bitrate, parent.ks, function(url){
 					var errCode = ~/code/;
 					if(errCode.match(url))
 						trace("Cannot retrieve video: "+url);
@@ -390,7 +406,11 @@ class PartController
 		}
 		else {
 			setAuthor(item);
-			display.setText(item.ref, getLocalizedContent(item.content));
+			if(item.content != "")
+				display.setText(item.ref, getLocalizedContent(item.content));
+			else
+				display.setText(item.ref, " ");
+			display.hideVideoPlayer();
 		}
 
 		// Voice over

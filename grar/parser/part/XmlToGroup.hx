@@ -1,7 +1,7 @@
 package grar.parser.part;
 
 import haxe.xml.Fast;
-import grar.model.part.GroupItem;
+import grar.model.part.item.GroupItem;
 
 class XmlToGroup{
 

@@ -1,7 +1,7 @@
 package grar.model.part;
 
 import grar.model.part.item.Item;
-import grar.model.part.Pattern;
+import grar.model.part.item.Pattern;
 
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;

@@ -29,6 +29,7 @@ import js.html.AudioElement;
 
 using StringTools;
 using Lambda;
+using grar.util.HTMLTools;
 
 enum InputEvent{
     MOUSE_OVER;
@@ -81,8 +82,6 @@ class PartDisplay
 	// CALLBACKS
 	//
 
-	public dynamic function onHeaderStateChangeRequest(state: String) : Void { }
-
 	public dynamic function onActivateTokenRequest(token : String) : Void { }
 
 	public dynamic function onIntroEnd():Void { }
@@ -90,6 +89,8 @@ class PartDisplay
 	public dynamic function onInputEvent(type: InputEvent, inputId: String, mousePoint: Point): Void {}
 
 	public dynamic function onValidationRequest(inputId: String): Void {}
+
+	public dynamic function onChangePatternRequest(patternId: String): Void {}
 
 	///
 	// GETTER / SETTER
@@ -173,7 +174,7 @@ class PartDisplay
 	public function setSpeakerLabel(speakerName:String):Void
 	{
 		for(label in root.getElementsByClassName("speakerLabel")){
-			setText(getElement(label).id, speakerName);
+			setText(label.getElement().id, speakerName);
 		}
 	}
 
@@ -186,7 +187,7 @@ class PartDisplay
 		show(t);
 		// Show children too
         for (child in t.children) {
-            show(getElement(child));
+            show(child.getElement());
         }
 
 		// Verify parent is also visible
@@ -220,7 +221,7 @@ class PartDisplay
 
 	    // Show the first non-visible child. Usefull for box in strip
 	    for(child in pat.children){
-	        var elem: Element = getElement(child);
+	        var elem: Element = child.getElement();
 	        if(!elem.classList.contains("visible")){
 		        elem.classList.add("visible");
 		        if(elem.classList.contains("hidden"))
@@ -239,11 +240,29 @@ class PartDisplay
 
 	public function setVideo(videoRef:String, uri: String, videoData: VideoData, ?onVideoPlay: Void -> Void, ?onVideoEnd: Void -> Void, ?locale: String):Void
 	{
-		if(videoPlayer == null)
+		if(videoPlayer == null){
 			videoPlayer = new VideoPlayer();
-		videoPlayer.init(cast rootDocument.getElementById(videoRef));
+			videoPlayer.onFullscreenRequest = function(?button){
+				videoPlayer.root.classList.add("fullscreenOn");
+				onFullscreenRequest(button);
+			};
+			videoPlayer.onExitFullscreenRequest = function(?button){
+				videoPlayer.root.classList.remove("fullscreenOn");
+				onExitFullscreenRequest(button);
+			};
+			videoPlayer.onToggleFullscreenRequest = function(?button){
+				videoPlayer.root.classList.toggle("fullscreenOn", onToggleFullscreenRequest(button));
+			};
+		}
+		videoPlayer.init(rootDocument.getElementById(videoRef));
 		show(videoPlayer.root);
 		videoPlayer.setVideo(uri, videoData, onVideoPlay, onVideoEnd, locale);
+	}
+
+	public function hideVideoPlayer():Void
+	{
+		if(videoPlayer != null)
+			hide(videoPlayer.root);
 	}
 
 	public function setSound(soundRef:String, uri:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1):Void
@@ -309,7 +328,7 @@ class PartDisplay
 		var debrief: Element = rootDocument.getElementById(debriefRef);
 		if(debrief != null){
 			for(child in debrief.children)
-				recursiveShow(getElement(child));
+				recursiveShow(child.getElement());
 			show(debrief);
 		}
 	}
@@ -318,7 +337,7 @@ class PartDisplay
 	{
 		setText(debriefRef, content);
 		for(elem in root.getElementsByClassName("debriefable"))
-			getElement(elem).classList.add("debrief");
+			elem.getElement().classList.add("debrief");
 		if(root.classList.contains("debriefable"))
 			root.classList.add("debrief");
 	}
@@ -329,7 +348,7 @@ class PartDisplay
 		if(debrief != null)
 			hide(debrief);
 		for(elem in root.getElementsByClassName("debriefable"))
-			getElement(elem).classList.remove("debrief");
+			elem.getElement().classList.remove("debrief");
 		if(root.classList.contains("debriefable"))
 			root.classList.remove("debrief");
 	}
@@ -365,19 +384,19 @@ class PartDisplay
 	public function hideElementsByClass(className: String):Void
 	{
 		for(elem in root.getElementsByClassName(className))
-			hide(getElement(elem));
+			hide(elem.getElement());
 	}
 
 	public function disableNextButtons():Void
 	{
 		for(b in root.getElementsByClassName("next"))
-			getElement(b).classList.add("disabled");
+			b.getElement().classList.add("disabled");
 	}
 
 	public function enableNextButtons():Void
 	{
 		for(b in root.getElementsByClassName("next"))
-			getElement(b).classList.remove("disabled");
+			b.getElement().classList.remove("disabled");
 	}
 
 	public function setButtonAction(buttonId: String, actionName: String, action : Void -> Void) : Void {
@@ -386,6 +405,121 @@ class PartDisplay
 		b.onclick = function(_) !b.classList.contains("disabled") ? action() : null;
 		b.classList.add(actionName);
 		b.classList.remove("disabled");
+	}
+
+	// TODO Merge with createInputs
+	public function createChoices(refs: List<{ref: String, id: String, icon: Map<String, String>, content: Map<String, String>, goto: String, selected: Bool}>, groupeRef: String):Void
+	{
+		var parent: Element = rootDocument.getElementById(groupeRef);
+
+		var i = 0;
+		var lastInput: Element = null;
+		var guide: Guide = null;
+		for(r in refs){
+			// Get template and store it if necessary
+			var t: Element;
+			if(templates.exists(r.ref)){
+				t = templates[r.ref];
+			}
+			else{
+				t = rootDocument.getElementById(r.ref);
+				templates[r.ref] = t;
+				templatesPosition.set(t, {refElement: t.nextSibling, parent: t.parentNode});
+
+				// Guide creation for this template
+				if(parent.hasAttribute("data-grid")){
+					var data = parent.getAttribute("data-grid").split(",");
+					if(data.length > 1)
+						guide = new Grid(parent, Std.parseInt(data[0]), Std.parseInt(data[1]), t);
+					else
+						guide = new Grid(parent, Std.parseInt(data[0]), t);
+				} else if (parent.hasAttribute("data-absolute")) {
+					var data = parent.getAttribute("data-absolute").split(",");
+
+					var points = new Array<Point>();
+					for (s in data) {
+						var p:Point = new Point(Std.parseFloat(s.split(";")[0]),Std.parseFloat(s.split(";")[1]));
+						points.push(p);
+					}
+					guide = new Absolute(parent, points);
+				}
+				else
+					guide = null;
+			}
+
+			// Clone
+			var newInput: Element = cast t.cloneNode(true);
+
+			// Set attributes
+			newInput.id = r.id;
+			newInput.classList.add("inputs");
+			recursiveSetId(newInput, r.id);
+
+			// Add it to the guide
+			if(guide != null){
+				guide.add(newInput);
+				if(i == 0)
+					parent.removeChild(t);
+			}
+				// Replace template by new node if it's the first
+			else if(i == 0)
+				parent.replaceChild(newInput, t);
+				// Insert after the last created input
+			else
+				parent.insertBefore(newInput, lastInput.nextSibling);
+
+			lastInput = newInput;
+
+
+			// Adding numbering system if any
+			for(num in newInput.getElementsByClassName("numbering")){
+				setNumbering(num, i);
+			}
+
+			// Setting input text
+			for(key in r.content.keys()){
+				if(key != "_")
+					doSetText(r.id+"_"+key, r.content[key]);
+				else
+					doSetText(r.id, r.content[key]);
+			}
+			// Setting icons
+			for(key in r.icon.keys()){
+				var url = 'url('+r.icon[key]+')';
+				if(key != "_"){
+					var img = rootDocument.getElementById(r.id+"_"+key);
+					if(img.nodeName.toLowerCase() == "img"){
+						var imgElement: ImageElement = cast img;
+						imgElement.src = r.icon[key];
+					}
+					else
+						img.style.backgroundImage = url;
+				}
+				else{
+					newInput.style.backgroundImage = url;
+				}
+			}
+			// Update state
+			if(r.selected)
+				newInput.classList.add("selected");
+
+			// Binding
+			newInput.onclick = function(_){
+				hideElements(groupeRef);
+				onChangePatternRequest(r.goto);
+			}
+
+			// Display
+			show(newInput);
+			i++;
+		}
+
+		// Set visible all the way to input
+		var ancestor: Element = parent;
+		while(ancestor != null && !ancestor.classList.contains("visible")){
+			show(ancestor);
+			ancestor = ancestor.parentElement;
+		}
 	}
 
 	public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>, selected: Bool}>, groupeRef: String, ?autoValidation: Bool = true):Void
@@ -655,7 +789,13 @@ class PartDisplay
 	public function toggleValidationButtons(?force: Bool):Void
 	{
 		for(b in root.getElementsByClassName("validate"))
-			getElement(b).classList.toggle("disabled", force);
+			b.getElement().classList.toggle("disabled", force);
+	}
+
+	public function removeFullscreenState():Void
+	{
+		for(b in root.getElementsByClassName("fullscreenOn"))
+			b.getElement().classList.remove("fullscreenOn");
 	}
 
 	///
@@ -664,7 +804,7 @@ class PartDisplay
 
 	private function setNumbering(node:Node, order: Int, ? suffix: String):Void
 	{
-		var elem: Element = getElement(node);
+		var elem: Element = node.getElement();
 		if(elem != null){
 			if(elem.hasAttribute("data-numbering")){
 				var numbers = ParseUtils.parseListOfValues(elem.getAttribute("data-numbering"));
@@ -681,7 +821,7 @@ class PartDisplay
 
 	private function recursiveSetId(element:Element, ref:String):Void {
 		for(child in element.children){
-			var element: Element = getElement(child);
+			var element: Element = child.getElement();
 			if (element != null) {
 				if(element.id != ""){
 					element.id = ref+"_"+ element.id ;
@@ -742,23 +882,16 @@ class PartDisplay
 		elem.classList.remove("visible");
 		elem.classList.add("hidden");
 		if(videoPlayer != null && elem == videoPlayer.root)
-		videoPlayer.stop();
+			videoPlayer.stop();
 		else if(soundPlayer != null && elem == soundPlayer.root)
-		soundPlayer.pause();
-	}
-
-	private inline function getElement(node:Node):Null<Element>
-	{
-		if(node.nodeType == Node.ELEMENT_NODE)
-			return cast node;
-		return null;
+			soundPlayer.pause();
 	}
 
 	private function recursiveHide(elem:Element):Void
 	{
 		for(child in elem.children)
 			if(child.nodeName.toLowerCase() == "div")
-				recursiveHide(getElement(child));
+				recursiveHide(child.getElement());
 
 		hide(elem);
 	}
@@ -767,7 +900,7 @@ class PartDisplay
 	{
 		for(child in elem.children)
 			if(child.nodeName.toLowerCase() == "div")
-				recursiveShow(getElement(child));
+				recursiveShow(child.getElement());
 
 		elem.classList.remove("hidden");
 	}
@@ -789,7 +922,7 @@ class PartDisplay
 		for(node in text.childNodes) children.push(node);
 		// Clean text node in Textfield
 		for(node in children){
-			if(node.nodeType == Node.TEXT_NODE || node.nodeName.toLowerCase() == "p" || node.nodeName.toLowerCase().startsWith("h")){
+			if(node.nodeType == Node.TEXT_NODE || node.nodeName.toLowerCase() == "p" || node.nodeName.toLowerCase() == "a" || node.nodeName.toLowerCase().startsWith("h")){
 				text.removeChild(node);
 			}
 		}
@@ -805,5 +938,31 @@ class PartDisplay
 					text.appendChild(elem);
 		}
 		return text;
+	}
+
+	private function onFullscreenRequest(?button:Element):Void
+	{
+		application.requestFullscreen();
+		if(button != null)
+			button.classList.add("fullscreenOn");
+	}
+
+	private function onExitFullscreenRequest(?button:Element):Void
+	{
+		application.exitFullscreen();
+		if(button != null)
+			button.classList.remove("fullscreenOn");
+	}
+
+	private function onToggleFullscreenRequest(?button:Element):Bool
+	{
+		if (!application.isFullscreen){
+			onFullscreenRequest(button);
+			return true;
+		}
+		else{
+			onExitFullscreenRequest(button);
+			return false;
+		}
 	}
 }

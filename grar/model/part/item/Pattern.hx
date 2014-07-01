@@ -1,8 +1,50 @@
-package grar.model.part;
+package grar.model.part.item;
 
+import grar.model.part.ButtonData;
 import grar.model.part.item.Item;
 
 import haxe.ds.GenericStack;
+
+typedef Choice = {
+
+	var ref : String;
+	var toolTip : String;
+	var goTo : String;
+	var viewed : Bool;
+	var content: Map<String, String>;
+	var id: String;
+	var icon: Map<String, String>;
+}
+
+/**
+* Junction pattern with multiple choices for multiple direction
+**/
+typedef ChoicesData = {
+	/**
+     * Minimum choices that needs to be explored before leaving the pattern
+     **/
+	var minimumChoice: Int;
+
+	/**
+     * Number of choices currently explored
+     **/
+	var numChoices: Int;
+
+	/**
+     * All the choices for this pattern
+     **/
+	var choices: Map<String, Choice>;
+
+	/**
+     * Reference to the tooltip area
+     **/
+	var tooltipRef: String;
+
+	/**
+	* Reference to the container of the choices
+	**/
+	var ref: String;
+}
 
 typedef PatternData = {
 
@@ -14,6 +56,7 @@ typedef PatternData = {
 	var tokens : GenericStack<String>;
 	var endScreen : Bool;
 	var itemIndex : Int;
+	var choicesData: ChoicesData;
 }
 
 class Pattern {
@@ -28,6 +71,7 @@ class Pattern {
 		this.tokens = pd.tokens;
 		this.endScreen = pd.endScreen;
 		this.itemIndex = pd.itemIndex;
+		this.choicesData = pd.choicesData;
 	}
 
 	/**
@@ -58,6 +102,11 @@ class Pattern {
 	public var tokens (default, null) : GenericStack<String>;
 
 	public var endScreen (default, null) : Bool = false;
+
+	/**
+	* Naviguation choices
+	**/
+	public var choicesData (default, default):ChoicesData;
 
 	/**
      * Current item index

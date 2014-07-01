@@ -43,27 +43,16 @@ class PartDisplay{
 // CALLBACKS
 //
 
-    public dynamic function onExit() : Void { }
+	public dynamic function onActivateTokenRequest(token : String) : Void { }
 
-//public dynamic function onEnterSubPart(sp : Part) : Void { }
+	public dynamic function onIntroEnd():Void { }
 
-    public dynamic function onPartLoaded() : Void { }
-
-    public dynamic function onGameOver() : Void { }
-
-    public dynamic function onActivateTokenRequest(token : String) : Void { }
-
-    public dynamic function onNextRequest(?startIndex : Int = -1): Void { }
-
-    public dynamic function onExitPart(?completed : Bool = true): Void { }
-
-    public dynamic function onIntroEnd():Void { }
-
-    public dynamic function onInputEvent(type: InputEvent, inputId: String, mousePoint: Point): Void {}
-
-	public dynamic function onHeaderStateChangeRequest(state: String) : Void { }
+	public dynamic function onInputEvent(type: InputEvent, inputId: String, mousePoint: Point): Void {}
 
 	public dynamic function onValidationRequest(inputId: String): Void {}
+
+	public dynamic function onChangePatternRequest(patternId: String): Void {}
+
 
 ///
 // GETTER / SETTER
@@ -132,6 +121,9 @@ class PartDisplay{
 
     }
 
+	public function hideVideoPlayer():Void
+	{}
+
     public function setSound(soundRef:String, uri:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1):Void
     {
 
@@ -149,6 +141,10 @@ class PartDisplay{
     }
 
 	public function setDebrief(ref:String, content:String):Void
+	{
+	}
+
+	public function createChoices(refs: List<{ref: String, id: String, icon: Map<String, String>, content: Map<String, String>, selected: Bool, goto: String}>, groupeRef: String):Void
 	{
 
 	}

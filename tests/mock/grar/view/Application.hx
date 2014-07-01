@@ -107,4 +107,8 @@ class Application{
 	{ return null;}
 	public function initSounds(rootElement: Element):Void
 	{}
+	public function requestFullscreen():Void
+	{}
+	public function exitFullscreen():Void
+	{}
 }

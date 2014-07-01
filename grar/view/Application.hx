@@ -15,12 +15,24 @@ import grar.view.contextual.MenuDisplay;
 import grar.view.part.PartDisplay;
 
 using StringTools;
+using grar.util.HTMLTools;
 
 // See if really need it
 enum ContextualType {
 
 	MENU;
 	NOTEBOOK;
+}
+
+/**
+* Wrapper for crossbrowser fullscreen API
+**/
+typedef FullscreenAPI = {
+	dynamic function requestFullscreen(): Void;
+	dynamic function onFullscreenError(): Void;
+	dynamic function exitFullscreen(): Void;
+	dynamic function onFullscreenChange(): Void;
+	var fullscreenElement: Element;
 }
 
 /**
@@ -60,6 +72,50 @@ class Application {
 			bar.style.width = "0";
 		}
 
+		// Wrap different fullscreen APIs
+		fullscreenApi = {requestFullscreen: null, onFullscreenError: null, fullscreenElement: null, exitFullscreen: null, onFullscreenChange: null};
+
+		fullscreenApi.onFullscreenError = function(){
+			trace("Unable to go fullscreen");
+		}
+
+		fullscreenApi.onFullscreenChange = function(){
+			trace("Going fullscreen! Or not...");
+			isFullscreen = !isFullscreen;
+			document.body.classList.toggle("fullscreenOn", isFullscreen);
+			if(!isFullscreen)
+				partDisplay.removeFullscreenState();
+		}
+
+		untyped __js__("if (this.root.mozRequestFullScreen){
+				this.fullscreenApi.requestFullscreen = function() {root.mozRequestFullScreen();};
+				this.fullscreenApi.exitFullscreen = function() {document.mozCancelFullScreen();};
+				this.fullscreenApi.fullscreenElement = document.mozFullScreenElement;
+				root.onmozfullscreenerror = this.fullscreenApi.onFullscreenError;
+				document.onmozfullscreenchange = this.fullscreenApi.onFullscreenChange;
+			}
+			else if (this.root.webkitRequestFullscreen){
+				this.fullscreenApi.requestFullscreen = function() {root.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);};
+				this.fullscreenApi.exitFullscreen = function() {document.webkitExitFullscreen();};
+				this.fullscreenApi.fullscreenElement = document.webkitFullscreenElement;
+				document.onwebkitfullscreenchange = this.fullscreenApi.onFullscreenChange;
+				root.onwebkitfullscreenerror = this.fullscreenApi.onFullscreenError;
+			}
+			else if (this.root.msRequestFullscreen){
+				this.fullscreenApi.requestFullscreen = function() {root.msRequestFullscreen();};
+				this.fullscreenApi.exitFullscreen = function() {document.msExitFullscreen();};
+				this.fullscreenApi.fullscreenElement = document.msFullscreenElement;
+				document.onmsfullscreenchange = this.fullscreenApi.onFullscreenChange;
+				root.onmsfullscreenerror = this.fullscreenApi.onFullscreenError;
+			}
+			else{
+				this.fullscreenApi.requestFullscreen = function() {root.requestFullscreen();};
+				this.fullscreenApi.exitFullscreen = function() {document.exitFullscreen();};
+				this.fullscreenApi.fullscreenElement = document.fullscreenElement;
+				document.onfullscreenchange = this.fullscreenApi.onFullscreenChange;
+				root.onfullscreenerror = this.fullscreenApi.onFullscreenError;
+			}");
+
 		initSounds(document.body);
 	}
 
@@ -94,8 +150,10 @@ class Application {
 	**/
 	public var isMobile (default, null): Bool;
 
-	var startIndex:Int;
+	public var isFullscreen (get, null):Bool = false;
+
 	var root: IFrameElement;
+	var fullscreenApi: FullscreenAPI;
 
 	///
 	// GETTER / SETTER
@@ -103,12 +161,10 @@ class Application {
 
 	private function set_menuData(v : Null<MenuData>) : Null<MenuData> {
 
-		if (v == menuData) {
-
+		if (v == menuData)
 			return menuData;
-		}
-		menuData = v;
 
+		menuData = v;
 		onMenuDataChanged();
 
 		return menuData;
@@ -139,6 +195,10 @@ class Application {
 		return masterVolume;
 	}
 
+	private function get_isFullscreen():Bool
+	{
+		return isFullscreen;
+	}
 
 	///
 	// CALLBACKS
@@ -161,20 +221,20 @@ class Application {
 	{
 		// Update module name
 		for(p in document.getElementsByClassName("moduleName"))
-			getElement(p).innerHTML = name;
+			p.getElement().innerHTML = name;
 		// Update module type
 		for(p in document.getElementsByClassName("moduleType"))
-			getElement(p).innerHTML = type;
+			p.getElement().innerHTML = type;
 	}
 
 	public function updateChapterInfos(chapterName:String, activityName:String):Void
 	{
 		// Update module name
 		for(p in document.getElementsByClassName("chapterName"))
-			getElement(p).innerHTML = chapterName;
+			p.getElement().innerHTML = chapterName;
 		// Update module type
 		for(p in document.getElementsByClassName("activityName"))
-			getElement(p).innerHTML = activityName;
+			p.getElement().innerHTML = activityName;
 	}
 
 	/**
@@ -187,9 +247,16 @@ class Application {
 	public function initPart(ref:String, ?templateUri: String, ?forward: Bool = true, ?noReload: Bool = false):Void
 	{
 		var container = document.getElementById(ref);
+		if(container == null){
+			trace("Unable to find part container '"+ref+"'.");
+			return;
+		}
 		if(!noReload && templateUri != null){
 			var partRoot = document.createIFrameElement();
 			partRoot.setAttribute("seamless", "true");
+			partRoot.setAttribute("allowfullscreen", "true");
+			// Attribute for Safari
+			partRoot.setAttribute("webkitallowfullscreen", "true");
 			partRoot.src = templateUri;
 
 			// Wait for template to load
@@ -246,16 +313,16 @@ class Application {
 
 				// If header state need to be updated
 				for(child in partRoot.contentDocument.body.children){
-					var childElement = getElement(child);
+					var childElement = child.getElement();
 					if(childElement.hasAttribute("data-header-state")){
 						var headers = document.getElementsByTagName("header");
 						var newHeader = headers[0].cloneNode(true);
-						getElement(newHeader).classList.remove("hidden");
+						newHeader.getElement().classList.remove("hidden");
 						partRoot.contentDocument.body.insertBefore(newHeader, partRoot.contentDocument.body.childNodes[0]);
 
 						// Update header
 						for(h in partRoot.contentDocument.getElementsByTagName("header"))
-							getElement(h).classList.add(childElement.getAttribute("data-header-state"));
+							h.getElement().classList.add(childElement.getAttribute("data-header-state"));
 
 						break;
 					}
@@ -272,6 +339,17 @@ class Application {
 			partDisplay.init();
 			onPartLoaded();
 		}
+	}
+
+	public function requestFullscreen():Void
+	{
+		document.body.classList.add("fullscreenOn");
+		fullscreenApi.requestFullscreen();
+	}
+
+	public function exitFullscreen():Void
+	{
+		fullscreenApi.exitFullscreen();
 	}
 
 	public function initMenu(ref: String, levels: Array<LevelData>) : Void
@@ -311,7 +389,7 @@ class Application {
 				for(elem in menus[ref].markupParser.parse(l.partName))
 					name += elem.innerHTML;
 				for(node in newLevel.getElementsByClassName("numbering"))
-					getElement(node).innerHTML = itemNum < 10 ? '0'+ itemNum : Std.string(itemNum);
+					node.getElement().innerHTML = itemNum < 10 ? '0'+ itemNum : Std.string(itemNum);
 				newLevel.innerHTML += name;
 				newLevel.removeAttribute("id");
 			}
@@ -406,26 +484,15 @@ class Application {
 		// Hover SFX
 		var hovers = rootElement.querySelectorAll("[data-sound-hover]");
 		for(h in hovers){
-			var elem = getElement(h);
+			var elem = h.getElement();
 			elem.onmouseover = function(_) play(elem.getAttribute("data-sound-hover"));
 		}
 
 		// Click SFX
 		var clicks = rootElement.querySelectorAll("[data-sound-click]");
 		for(c in clicks){
-			var elem = getElement(c);
+			var elem = c.getElement();
 			elem.onclick = function(_) play(elem.getAttribute("data-sound-click"));
 		}
-	}
-
-	///
-	// Internals
-	//
-
-	private inline function getElement(node:Node):Element
-	{
-		if(node.nodeType == Node.ELEMENT_NODE)
-			return cast node;
-		return null;
 	}
 }

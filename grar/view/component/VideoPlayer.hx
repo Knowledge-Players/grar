@@ -3,37 +3,58 @@ package grar.view.component;
 import js.Browser;
 import grar.model.part.item.Item.VideoData;
 import js.html.VideoElement;
+import js.html.Element;
 
 using Lambda;
+using grar.util.HTMLTools;
 
+/**
+* View of a video player
+**/
 class VideoPlayer{
 
-	public var root (default, null): VideoElement;
+	public var root (default, null): Element;
 
-	var apiPrefix: String;
+	private var videoElement:VideoElement;
+
+	public dynamic function onFullscreenRequest(?button: Element): Void {}
+	public dynamic function onExitFullscreenRequest(?button: Element): Void {}
+	public dynamic function onToggleFullscreenRequest(?button: Element): Void {}
 
 	public function new(){
 
 	}
 
-	dynamic private function onVideoPlay(){};
+	dynamic private function onVideoPlay(){}
 
-	public function init(root:VideoElement):Void
+	public function init(root:Element):Void
 	{
 		this.root = root;
-		untyped __js__("if (this.root.mozRequestFullScreen)
-				this.apiPrefix = 'moz';
-			else if (this.root.webkitRequestFullscreen)
-				this.apiPrefix = 'webkit';
-			else if (this.root.msRequestFullscreen)
-				this.apiPrefix = 'ms';");
+		if(root.nodeName.toLowerCase() == "video")
+			videoElement = cast root;
+		else{
+			videoElement = cast root.getElementsByTagName("video")[0];
+			videoElement.controls = false;
+
+			// Init play buttons
+			for(play in root.getElementsByClassName("play")){
+				var playElement: Element = play.getElement();
+				playElement.onclick = function(_) playOrPause(playElement);
+			}
+
+			// Init fullscreen buttons
+			for(fullscreen in root.getElementsByClassName("fullscreen")){
+				var fsElement: Element = fullscreen.getElement();
+				fsElement.onclick = function(_) onToggleFullscreenRequest(fsElement);
+			}
+		}
 	}
 
 	public function setVideo(url: String, videoData: VideoData, onVideoPlay: Void -> Void, onVideoEnd: Void -> Void, ?locale: String) : Void {
-		root.src = url;
-		root.autoplay = videoData.autoStart;
-		root.loop = videoData.loop;
-		root.volume = videoData.defaultVolume;
+		videoElement.src = url;
+		videoElement.autoplay = videoData.autoStart;
+		videoElement.loop = videoData.loop;
+		videoElement.volume = videoData.defaultVolume;
 		if(!videoData.subtitles.empty()){
 			var track = Browser.document.createElement("track");
 			track.setAttribute("kind", "subtitles");
@@ -45,53 +66,49 @@ class VideoPlayer{
 			track.setAttribute("default", "");
 			track.setAttribute("label", "Subtitles");
 
-			root.appendChild(track);
+			videoElement.appendChild(track);
 		}
-		if(videoData.fullscreen){
-			if(apiPrefix == null)
-				untyped __js__("this.root.requestFullscreen();");
-			else
-				Reflect.callMethod(root, apiPrefix+"RequestFullScreen()", null);
-			//root.enterFullScreen();
-		}
-		root.addEventListener("play", function(_){
+		if(videoData.fullscreen)
+			onFullscreenRequest();
+
+		videoElement.addEventListener("play", function(_){
 			onVideoPlay();
 		});
-		root.addEventListener("ended", function(_){
-			if(apiPrefix == null)
-				untyped __js__("document.exitFullscreen();");
-			else if(apiPrefix == "webkit")
-				untyped __js__("document.webkitExitFullscreen();");
-			else if(apiPrefix == "moz")
-				untyped __js__("document.mozCancelFullscreen();");
-			else
-				untyped __js__("document.msExitFullscreen();");
-			//root.exitFullScreen();
+		videoElement.addEventListener("ended", function(_){
+			//root.classList.remove("fullscreenOn");
 			onVideoEnd();
 		});
 	}
 
-	public function play():Void
+	public inline function play(?button: Element):Void
 	{
-		root.play();
+		videoElement.play();
+		if(button != null)
+			button.classList.add("playing");
 	}
 
-	public function pause():Void
+	public inline function pause(?button: Element):Void
 	{
-		root.pause();
+		videoElement.pause();
+		if(button != null)
+			button.classList.remove("playing");
 	}
 
-	public function stop():Void
+	public inline function stop():Void
 	{
-		//root.currentTime = 0;
-		root.pause();
+		videoElement.pause();
+		videoElement.currentTime = 0;
 	}
 
-	private function playOrPause()
+	///
+	// Internals
+	//
+
+	private inline function playOrPause(button: Element)
 	{
-		if(root.paused)
-			play();
+		if(videoElement.paused)
+			play(button);
 		else
-			pause();
+			pause(button);
 	}
 }

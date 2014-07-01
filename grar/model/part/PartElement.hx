@@ -1,9 +1,9 @@
 package grar.model.part;
 
-import grar.model.part.GroupItem;
 import grar.model.part.Part;
-import grar.model.part.Pattern;
+import grar.model.part.item.Pattern;
 import grar.model.part.item.Item;
+import grar.model.part.item.GroupItem;
 
 enum PartElement {
 
