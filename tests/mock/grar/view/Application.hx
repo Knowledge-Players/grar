@@ -97,7 +97,7 @@ class Application{
 	{}
 	public function changeHeaderState(state : String) : Void {}
 
-	public function updateModuleInfos(name:String, type:String):Void
+	public function updateModuleInfos(name:String, type:String, theme:String):Void
 	{}
 
 	public function initMenu(ref: String, levels: Array<LevelData>) : Void {}

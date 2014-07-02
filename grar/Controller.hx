@@ -403,7 +403,7 @@ class Controller {
 		var startingPart : String = null;
 
 		localizationCtrl.setInterfaceLocaleData();
-			application.updateModuleInfos(state.module.getLocalizedContent("moduleName"), state.module.getLocalizedContent("moduleType"));
+			application.updateModuleInfos(state.module.getLocalizedContent("moduleName"), state.module.getLocalizedContent("moduleType"), state.module.getLocalizedContent("moduleTheme"));
 		localizationCtrl.restoreLocaleData();
 
 

@@ -217,7 +217,7 @@ class Application {
 	// API
 	//
 
-	public function updateModuleInfos(name:String, type:String):Void
+	public function updateModuleInfos(name:String, type:String, theme:String):Void
 	{
 		// Update module name
 		for(p in document.getElementsByClassName("moduleName"))
@@ -225,6 +225,9 @@ class Application {
 		// Update module type
 		for(p in document.getElementsByClassName("moduleType"))
 			p.getElement().innerHTML = type;
+			// Update module theme
+		for(p in document.getElementsByClassName("moduleTheme"))
+			p.getElement().innerHTML = theme;
 	}
 
 	public function updateChapterInfos(chapterName:String, activityName:String):Void
