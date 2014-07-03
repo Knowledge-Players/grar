@@ -92,10 +92,20 @@ class PartDisplay{
     {
 		return null;
     }
+
+	public function hideText(itemRef: String):Void
+	{
+
+	}
 	public function setImage(itemRef: String, src: String):Void
     {
 
     }
+
+	public function unsetImage(imageRef:String):Void
+	{
+
+	}
     public function showPattern(ref:String):Void
     {
 

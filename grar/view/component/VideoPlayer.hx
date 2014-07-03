@@ -1,9 +1,12 @@
 package grar.view.component;
 
 import js.Browser;
+
 import grar.model.part.item.Item.VideoData;
-import js.html.VideoElement;
+
 import js.html.Element;
+import js.html.VideoElement;
+import js.html.MediaElement;
 
 using Lambda;
 using grar.util.HTMLTools;
@@ -39,7 +42,7 @@ class VideoPlayer{
 			// Init play buttons
 			for(play in root.getElementsByClassName("play")){
 				var playElement: Element = play.getElement();
-				playElement.onclick = function(_) playOrPause(playElement);
+				playElement.onclick = function(_) playOrPause();
 			}
 
 			// Init fullscreen buttons
@@ -47,6 +50,9 @@ class VideoPlayer{
 				var fsElement: Element = fullscreen.getElement();
 				fsElement.onclick = function(_) onToggleFullscreenRequest(fsElement);
 			}
+
+			// Toggle play on video click
+			videoElement.onclick = function(_) playOrPause();
 		}
 	}
 
@@ -74,41 +80,46 @@ class VideoPlayer{
 		videoElement.addEventListener("play", function(_){
 			onVideoPlay();
 		});
-		videoElement.addEventListener("ended", function(_){
-			//root.classList.remove("fullscreenOn");
+		var endListener = null;
+		endListener = function(_){
 			onVideoEnd();
-		});
+			videoElement.removeEventListener("ended", endListener);
+		}
+		videoElement.addEventListener("ended", endListener);
 	}
 
-	public inline function play(?button: Element):Void
+	public inline function play():Void
 	{
 		videoElement.play();
-		if(button != null)
-			button.classList.add("playing");
+		for(button in root.getElementsByClassName("play"))
+			button.getElement().classList.add("playing");
+		root.classList.add("playing");
 	}
 
-	public inline function pause(?button: Element):Void
+	public inline function pause():Void
 	{
 		videoElement.pause();
-		if(button != null)
-			button.classList.remove("playing");
+		for(button in root.getElementsByClassName("play"))
+			button.getElement().classList.remove("playing");
+		root.classList.remove("playing");
 	}
 
 	public inline function stop():Void
 	{
 		videoElement.pause();
-		videoElement.currentTime = 0;
+		if(videoElement.readyState != MediaElement.HAVE_NOTHING)
+			videoElement.currentTime = 0;
 	}
 
 	///
 	// Internals
 	//
 
-	private inline function playOrPause(button: Element)
+	private inline function playOrPause()
 	{
 		if(videoElement.paused)
-			play(button);
+			play();
 		else
-			pause(button);
+			pause();
 	}
 }

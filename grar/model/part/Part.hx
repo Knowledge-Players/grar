@@ -186,7 +186,9 @@ class Part{
 
 	public var activityData (default, set):ActivityData;
 
-	public var elemIndex (default, set): Int;
+	public var currentElement (get, null):PartElement;
+
+	private var elemIndex (default, set): Int;
 
 
 	///
@@ -281,6 +283,10 @@ class Part{
 		return activityData;
 	}
 
+	public function get_currentElement():PartElement
+	{
+		return elements[elemIndex];
+	}
 
     ///
     // API
@@ -311,7 +317,7 @@ class Part{
 		if (hasNextElement()){
 			// If current element is a pattern, explore pattern first
 			switch(elements[elemIndex]){
-				case Pattern(p) if(p.itemIndex < p.patternContent.length): return elements[elemIndex] ;
+				case Pattern(p) if(p.hasNextItem() || p.nextPattern != null): return elements[elemIndex] ;
 				case Part(p) if(p.isDone):
 					elemIndex++;
 					return getNextElement();

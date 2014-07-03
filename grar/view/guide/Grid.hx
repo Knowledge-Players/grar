@@ -14,21 +14,29 @@ class Grid extends Guide {
 	* @param    root: Parent of the elements, where the grid will be
 	* @param    numRow: Number of rows in the grid
 	* @param    numCol: Number of columns in the grid
-	* @param    referenceElement: If not null, the grid will be inserted after this element
 	**/
-	public function new(root: Element, numRow: Int, ?numCol: Int = -1, ?referenceElement: Element) {
+	public function new(root: Element, numRow: Int, ?numCol: Int = -1) {
 
         super();
 
 		this.numRow = numRow;
 		this.numCol = numCol;
-		rows = new Array<Element>();
+		this.root = root;
+	}
+
+	/**
+	* Initialize the grid
+	* @param    referenceElement: If not null, the grid will be inserted after this element
+	**/
+	override public function init(?referenceElement:Element):Void
+	{
 		// Initialize nextCell to (0;0)
 		nextCell = new Point();
+		rows = new Array<Element>();
 
 		var lastRow: Element = null;
 		for(i in 0...numRow){
-			var row = js.Browser.document.createDivElement();
+			var row = referenceElement.ownerDocument.createDivElement();
 			row.classList.add("row");
 			if(referenceElement != null){
 				if(i == 0){
@@ -42,8 +50,6 @@ class Grid extends Guide {
 				root.appendChild(row);
 			rows.push(row);
 		}
-
-
 	}
 
 	/**
@@ -57,6 +63,7 @@ class Grid extends Guide {
 
 	private var nextCell:Point;
 	private var rows:Array<Element>;
+	private var root:Element;
 
 	///
 	// API

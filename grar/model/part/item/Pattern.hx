@@ -92,7 +92,7 @@ class Pattern {
 	/**
      * Id of the next pattern
 	 **/
-	public var nextPattern (default, default) : String;
+	public var nextPattern (default, default) : Null<String>;
 
 	/**
      * Buttons for this pattern
@@ -104,6 +104,11 @@ class Pattern {
 	public var endScreen (default, null) : Bool = false;
 
 	/**
+	* Current active item in the pattern
+	**/
+	public var currentItem (get, null):Item;
+
+	/**
 	* Naviguation choices
 	**/
 	public var choicesData (default, default):ChoicesData;
@@ -111,13 +116,13 @@ class Pattern {
 	/**
      * Current item index
 	 **/
-	public var itemIndex (default, set): Int = 0;
+	private var itemIndex (default, set): Int = 0;
 
 	///
 	// GETTER/SETTER
 	//
 
-	public function set_itemIndex(index: Int):Int
+	private function set_itemIndex(index: Int):Int
 	{
         if(index < 0)
 			itemIndex = 0;
@@ -126,6 +131,11 @@ class Pattern {
 		else
 			itemIndex = index;
 		return itemIndex;
+	}
+
+	private function get_currentItem():Item
+	{
+		return patternContent[itemIndex-1];
 	}
 
 	///
@@ -141,7 +151,7 @@ class Pattern {
 		if (itemIndex < patternContent.length)
             return patternContent[itemIndex++];
 		else {
-			restart();
+			//restart();
 			return null;
 		}
 
@@ -157,9 +167,14 @@ class Pattern {
 			return patternContent[itemIndex-1];
 		}
 		else{
-			restart();
+			//restart();
 			return null;
 		}
+	}
+
+	public inline function hasNextItem():Bool
+	{
+		return itemIndex < patternContent.length;
 	}
 
 	/**
@@ -168,13 +183,5 @@ class Pattern {
 	public inline function restart() : Void {
 
 		itemIndex = 0;
-	}
-
-	/**
-     * @return whether this pattern has choice or not
-	 **/
-	public function hasChoices() : Bool {
-
-		return false;
 	}
 }

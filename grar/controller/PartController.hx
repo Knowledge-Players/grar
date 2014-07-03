@@ -84,7 +84,7 @@ class PartController
 		state.activityState = ActivityState.NONE;
 
 		onLocaleDataPathRequest(part.file, function(){
-			application.updateChapterInfos(state.module.getLocalizedContent("chapterName"), state.module.getLocalizedContent("activityName"));
+			application.updateChapterInfos(getLocalizedContent("chapterName"), getLocalizedContent("activityName"));
 
 			application.onPartLoaded = function(){
 				// Activity Part
@@ -129,9 +129,9 @@ class PartController
 		if(part.activityData.groupIndex > 0){
 			var group = part.activityData.groups[part.activityData.groupIndex-1];
 			if(group.ref != "")
-				display.hideElements(Lambda.list([group.ref]));
+				display.hideElements(group.ref);
 			for (item in group.items) {
-				unsetAuthor(item);
+				unsetAuthor(item.author);
 			}
 			for(input in group.inputs)
 				display.removeElement(input.id);
@@ -285,28 +285,33 @@ class PartController
 	**/
 	public function goToPattern(target : String) : Void {
 
+		// Tear down current element
+		switch (part.currentElement) {
+			case Part(p):// TODO
+			case Item(i):
+				teardownItem(i);
+			case Pattern(p):
+				endPattern(p);
+
+			case GroupItem(group):
+				for(it in group.elements)
+					teardownItem(it);
+		}
+
 		var elem : Null<PartElement> = null;
-
 		for (e in part.elements) {
-
 			switch (e) {
-
 				case Pattern(p):
-
 					if (p.id == target) {
-
 						elem = e;
 						nextElement(part.getElementIndex(elem)-1);
 						break;
 					}
-
-				default: // original code doesn't filter on PartElement type (apply this to all PartElements)
+				default: //nothing
 			}
 		}
-		if (elem == null) {
-
+		if (elem == null)
 			throw "[PartDisplay] There is no pattern with ref \""+target+"\"";
-		}
 	}
 
 	public function onMasterVolumeChanged():Void
@@ -332,8 +337,12 @@ class PartController
 	        setupItem(nextItem);
         }
         else{
-            display.hidePattern(p.ref);
-            nextElement();
+	        if(p.nextPattern != null)
+	            goToPattern(p.nextPattern);
+	        else{
+		        endPattern(p);
+		        nextElement();
+	        }
         }
 
 		for(b in part.buttons)
@@ -351,6 +360,16 @@ class PartController
 			display.createChoices(choicesList, p.choicesData.ref);
 			display.onChangePatternRequest = function(patternId: String) goToPattern(patternId);
 		}
+	}
+
+	private function endPattern(pattern:Pattern):Void
+	{
+		if(pattern.choicesData != null)
+			for(choice in pattern.choicesData.choices)
+				display.removeElement(choice.id);
+		teardownItem(pattern.currentItem);
+		display.hidePattern(pattern.ref);
+		pattern.restart();
 	}
 
 	private function setupItem(item : Item) : Void {
@@ -392,7 +411,7 @@ class PartController
 		else if (item.introScreen != null) {
 
 			introScreenOn = true;
-			setAuthor(item);
+			setAuthor(item.author);
 			display.setText(item.ref, getLocalizedContent(item.content));
 
 			// The intro screen automatically removes itself after its duration
@@ -405,7 +424,7 @@ class PartController
 
 		}
 		else {
-			setAuthor(item);
+			setAuthor(item.author);
 			if(item.content != "")
 				display.setText(item.ref, getLocalizedContent(item.content));
 			else
@@ -442,21 +461,48 @@ class PartController
 		display.displayElements(createDisplayList(item));
 	}
 
-	private function setAuthor(item: Item):Void
+	private function teardownItem(item : Item):Void
 	{
-		if (item.author != null) {
-			display.showSpeaker(item.author);
-			display.setSpeakerLabel(state.module.getLocalizedContent(item.author));
+		// Unset part background
+		if (item.background != null)
+			display.hideBackground(item.background);
+
+		if(item.videoData != null)
+			display.hideVideoPlayer();
+		else if(item.soundData != null){
+			// TODO Stop sound
+		}
+		else {
+			unsetAuthor(item.author);
+			display.hideText(item.ref);
+			display.hideVideoPlayer();
+		}
+
+		// Voice over
+		if(item.voiceOverUrl != null)
+			display.stopVoiceOver();
+
+		for (image in item.images)
+			display.unsetImage(image.ref);
+
+		display.hideElements(createDisplayList(item));
+	}
+
+	private function setAuthor(author: String):Void
+	{
+		if (author != null) {
+			display.showSpeaker(author);
+			display.setSpeakerLabel(getLocalizedContent(author));
 		}
 	}
 
-	private function unsetAuthor(item: Item):Void
+	private function unsetAuthor(author: String):Void
 	{
-		if(item.author != null)
-			display.hideSpeaker(item.author);
+		if(author != null)
+			display.hideSpeaker(author);
 	}
 
-	private function getLocalizedContent(key: String):String {
+	private inline function getLocalizedContent(key: String):String {
 		return state.module.getLocalizedContent(key);
 	}
 
@@ -481,7 +527,16 @@ class PartController
 
 		var action = switch(bd.action.toLowerCase()) {
 			case "next": function(){
-				display.stopVoiceOver();
+				// Tear down current element
+				switch (part.currentElement) {
+					case Part(p):// TODO
+					case Item(i):
+						teardownItem(i);
+					case Pattern(p): // nothing. Tear down handled by endPattern()
+					case GroupItem(group):
+						for(it in group.elements)
+							teardownItem(it);
+				}
 				if(state.activityState == null || state.activityState == ActivityState.NONE)
 					nextElement();
 				else
@@ -509,9 +564,9 @@ class PartController
 
 		for(key in bd.content.keys()){
 			if(key != "_")
-				display.setText(key, state.module.getLocalizedContent(bd.content[key]));
+				display.setText(key, getLocalizedContent(bd.content[key]));
 			else
-				display.setText(bd.ref, state.module.getLocalizedContent(bd.content[key]));
+				display.setText(bd.ref, getLocalizedContent(bd.content[key]));
 		}
 	}
 
@@ -550,7 +605,7 @@ class PartController
 				}
 			}
 
-			display.setDebrief(lastId, state.module.getLocalizedContent(group.id+"_"+lastValue));
+			display.setDebrief(lastId, getLocalizedContent(group.id+"_"+lastValue));
 			if(lastId != null)
 				display.setInputState(lastId, Std.string(isTrue));
 

@@ -49,6 +49,9 @@ class Guide {
 	 **/
 	public function add(object : Element) : Element { return null; }
 
+	public function init(?referenceElement:Element):Void
+	{}
+
 	///
 	// Internals
 	//

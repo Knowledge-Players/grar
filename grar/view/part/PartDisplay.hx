@@ -39,6 +39,11 @@ enum InputEvent{
 	MOUSE_UP(targetId: String);
 }
 
+typedef InputTemplate = {
+	var element: Element;
+	@:optional var guide: Guide;
+}
+
 /**
  * Display of a part
  */
@@ -70,7 +75,7 @@ class PartDisplay
 	var soundPlayer: SoundPlayer;
 	var dragParent:Element;
 	var isMobile: Bool;
-	var templates: Map<String, Element>;
+	var templates: Map<String, InputTemplate>;
 	var templatesPosition: Map<Element, {refElement: Node, parent: Node}>;
 	var playingSounds: Array<AudioElement>;
 	var rootDocument: Document;
@@ -133,14 +138,7 @@ class PartDisplay
 	public function unloadPart(partRef:String):Void
 	{
 		hideElements(partRef);
-		for(t in templates){
-			var pos = templatesPosition[t];
-			hide(t);
-			if(pos.refElement != null)
-				pos.parent.insertBefore(t, pos.refElement);
-			else
-				pos.parent.appendChild(t);
-		}
+		resetTemplates();
 	}
 
 	public function showBackground(background : String) : Void {
@@ -197,24 +195,46 @@ class PartDisplay
 		return t;
 	}
 
-	public function setImage(imageRef:String,src:String):Void{
+	public function hideText(itemRef:String):Void
+	{
+		var t:Element = doSetText(itemRef, "");
+		if(t == null)
+			return null;
 
+		hide(t);
+	}
+
+	public function setImage(imageRef:String,src:String):Void
+	{
 		if(imageRef != null){
-
 			var elem:Element = rootDocument.getElementById(imageRef);
             var img:ImageElement = cast elem;
             img.src = src;
 
 			show(img);
-
 		}
 	}
+
+	public function unsetImage(imageRef:String):Void
+	{
+		if(imageRef != null){
+			var elem:Element = rootDocument.getElementById(imageRef);
+			var img:ImageElement = cast elem;
+			img.src = "";
+
+			hide(img);
+		}
+	}
+
+
     public function hidePattern(ref:String):Void{
         var pat: Element = rootDocument.getElementById(ref);
 	    for(child in pat.children)
-		    hide(cast child);
+		    hide(child.getElement());
         hide(pat);
+	    resetTemplates();
     }
+
     public function showPattern(ref:String):Void{
         var pat:Element = rootDocument.getElementById(ref);
         show(pat);
@@ -261,8 +281,10 @@ class PartDisplay
 
 	public function hideVideoPlayer():Void
 	{
-		if(videoPlayer != null)
+		if(videoPlayer != null){
+			videoPlayer.stop();
 			hide(videoPlayer.root);
+		}
 	}
 
 	public function setSound(soundRef:String, uri:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1):Void
@@ -415,24 +437,29 @@ class PartDisplay
 		var i = 0;
 		var lastInput: Element = null;
 		var guide: Guide = null;
+		var firstUse: Bool = true;
+
 		for(r in refs){
 			// Get template and store it if necessary
 			var t: Element;
 			if(templates.exists(r.ref)){
-				t = templates[r.ref];
+				t = templates[r.ref].element;
+				if(firstUse){
+					templates[r.ref].guide.init(t);
+					firstUse = false;
+				}
 			}
 			else{
 				t = rootDocument.getElementById(r.ref);
-				templates[r.ref] = t;
 				templatesPosition.set(t, {refElement: t.nextSibling, parent: t.parentNode});
 
-				// Guide creation for this template
+				// Guide creation for this group
 				if(parent.hasAttribute("data-grid")){
 					var data = parent.getAttribute("data-grid").split(",");
 					if(data.length > 1)
-						guide = new Grid(parent, Std.parseInt(data[0]), Std.parseInt(data[1]), t);
+						guide = new Grid(parent, Std.parseInt(data[0]), Std.parseInt(data[1]));
 					else
-						guide = new Grid(parent, Std.parseInt(data[0]), t);
+						guide = new Grid(parent, Std.parseInt(data[0]));
 				} else if (parent.hasAttribute("data-absolute")) {
 					var data = parent.getAttribute("data-absolute").split(",");
 
@@ -445,6 +472,12 @@ class PartDisplay
 				}
 				else
 					guide = null;
+				if(firstUse){
+					guide.init(t);
+					firstUse = false;
+				}
+
+				templates[r.ref] = {element: t, guide: guide};
 			}
 
 			// Clone
@@ -456,15 +489,15 @@ class PartDisplay
 			recursiveSetId(newInput, r.id);
 
 			// Add it to the guide
-			if(guide != null){
-				guide.add(newInput);
+			if(templates[r.ref].guide != null){
+				templates[r.ref].guide.add(newInput);
 				if(i == 0)
 					parent.removeChild(t);
 			}
-				// Replace template by new node if it's the first
+			// Replace template by new node if it's the first
 			else if(i == 0)
 				parent.replaceChild(newInput, t);
-				// Insert after the last created input
+			// Insert after the last created input
 			else
 				parent.insertBefore(newInput, lastInput.nextSibling);
 
@@ -533,20 +566,20 @@ class PartDisplay
 			// Get template and store it if necessary
 			var t: Element;
 			if(templates.exists(r.ref)){
-				t = templates[r.ref];
+				t = templates[r.ref].element;
+				templates[r.ref].guide.init(t);
 			}
 			else{
 				t = rootDocument.getElementById(r.ref);
-				templates[r.ref] = t;
 				templatesPosition.set(t, {refElement: t.nextSibling, parent: t.parentNode});
 
 				// Guide creation for this template
 				if(parent.hasAttribute("data-grid")){
 					var data = parent.getAttribute("data-grid").split(",");
 					if(data.length > 1)
-						guide = new Grid(parent, Std.parseInt(data[0]), Std.parseInt(data[1]), t);
+						guide = new Grid(parent, Std.parseInt(data[0]), Std.parseInt(data[1]));
 					else
-						guide = new Grid(parent, Std.parseInt(data[0]), t);
+						guide = new Grid(parent, Std.parseInt(data[0]));
 				} else if (parent.hasAttribute("data-absolute")) {
 					var data = parent.getAttribute("data-absolute").split(",");
 
@@ -559,6 +592,9 @@ class PartDisplay
 				}
 				else
 					guide = null;
+				guide.init(t);
+
+				templates[r.ref] = {element: t, guide: guide};
 			}
 
 			// Clone
@@ -570,8 +606,8 @@ class PartDisplay
 			recursiveSetId(newInput, r.id);
 
 			// Add it to the guide
-			if(guide != null){
-				guide.add(newInput);
+			if(templates[r.ref].guide != null){
+				templates[r.ref].guide.add(newInput);
 				if(i == 0)
 					parent.removeChild(t);
 			}
@@ -881,10 +917,6 @@ class PartDisplay
 	{
 		elem.classList.remove("visible");
 		elem.classList.add("hidden");
-		if(videoPlayer != null && elem == videoPlayer.root)
-			videoPlayer.stop();
-		else if(soundPlayer != null && elem == soundPlayer.root)
-			soundPlayer.pause();
 	}
 
 	private function recursiveHide(elem:Element):Void
@@ -964,5 +996,21 @@ class PartDisplay
 			onExitFullscreenRequest(button);
 			return false;
 		}
+	}
+
+	private function resetTemplates():Void
+	{
+		for(t in templates){
+			var pos = templatesPosition[t.element];
+			hide(t.element);
+			if(pos.refElement != null)
+				pos.parent.insertBefore(t.element, pos.refElement);
+			else
+				pos.parent.appendChild(t.element);
+		}
+
+		// Remove Guide if any
+		for(row in root.getElementsByClassName("row"))
+			row.parentNode.removeChild(row);
 	}
 }
