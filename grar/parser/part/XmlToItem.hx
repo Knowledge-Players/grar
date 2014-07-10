@@ -6,9 +6,6 @@ import grar.model.part.item.Item;
 
 import grar.util.ParseUtils;
 
-import haxe.ds.GenericStack;
-import haxe.ds.StringMap;
-
 import haxe.xml.Fast;
 
 class XmlToItem {
@@ -21,13 +18,12 @@ class XmlToItem {
 
 		var f : Fast = new Fast(xml);
 
-		var id : String = "";
 		var content : String = "";
 		var background : Null<String> = null;
 		var author: Null<String> = null;
 		var button : Null<List<ButtonData>> = null;
 		var ref : Null<String> = null;
-		var tokens : GenericStack<String> = new GenericStack<String>();
+		var tokens : Array<String> = new Array<String>();
 		var images : List<ImageData> = new List<ImageData>();
 		var endScreen : Bool = false;
 		var videoData: VideoData = null;
@@ -35,8 +31,18 @@ class XmlToItem {
 		var soundUrl: String = null;
 
 		if (f != null) {
-
-			if (f.has.content)
+			// Video Item
+			if(f.name.toLowerCase() == "video"){
+				videoData = parseVideoData(f);
+				content = f.att.src;
+			}
+			// Sound Item
+			else if(f.name.toLowerCase() == "sound"){
+				soundData = parseSoundData(f);
+				content = f.att.src;
+			}
+			// Text Item
+			else if (f.has.content)
 				content = f.att.content;
 
 			if (f.has.ref)
@@ -46,7 +52,7 @@ class XmlToItem {
 				background = f.att.background;
 
 			for (node in f.nodes.Token)
-				tokens.add(node.att.ref);
+				tokens.push(node.att.ref);
 
 			button = new List();
 			for (elem in f.nodes.Button)
@@ -65,15 +71,9 @@ class XmlToItem {
 
 			if(f.hasNode.Sound)
 				soundUrl = f.node.Sound.att.src;
-
-			if(f.has.type && f.att.type == "video"){
-				videoData = parseVideoData(f);
-			}
-			// TODO SoundData
 		}
-		id = content;
 
-		return new Item({ id: id, content: content, author: author, background: background, button: button, ref: ref, tokens: tokens, images: images, endScreen: endScreen, videoData: videoData, soundData: soundData, voiceOverUrl: soundUrl});
+		return new Item({content: content, author: author, background: background, button: button, ref: ref, tokens: tokens, images: images, endScreen: endScreen, videoData: videoData, soundData: soundData, voiceOverUrl: soundUrl});
 	}
 
 	///
@@ -103,5 +103,11 @@ class XmlToItem {
 		}
 
 		return {autoStart: autoStart, fullscreen: autoFullscreen, loop: loop, defaultVolume: defaultVolume, capture: capture, subtitles: subtitles};
+	}
+
+	public static function parseSoundData(f:Fast):SoundData
+	{
+		// TODO
+		return null;
 	}
 }

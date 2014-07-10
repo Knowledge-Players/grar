@@ -23,9 +23,11 @@ class XmlToPattern {
 		pd.tokens = new GenericStack<String>();
 		pd.ref = f.att.ref;
 		pd.id = f.att.id;
-		pd.nextPattern = f.has.next ? f.att.next : null;
+		pd.nextPattern = (f.has.next && f.att.next != "") ? f.att.next : null;
 		pd.endScreen = false;
 		pd.itemIndex = 0;
+		if(f.has.counterRef)
+			pd.counterRef = f.att.counterRef;
 
 		for (child in f.elements) {
 			switch(child.name.toLowerCase()){

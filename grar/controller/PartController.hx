@@ -18,8 +18,6 @@ import grar.model.part.item.Item;
 import grar.model.part.item.Pattern;
 import grar.model.State;
 
-import haxe.ds.GenericStack;
-
 import grar.Controller;
 
 using Lambda;
@@ -121,9 +119,11 @@ class PartController
 			validateInput(inputId);
 		}
 
-		// If resuming activity, don't do anything
-		if(resume)
+		// If resuming activity, just show inputs
+		if(resume){
+			display.displayElements(Lambda.map(part.activityData.groups, function(group: Inputs) return group.ref));
 			return;
+		}
 
 		// Clean previous inputs
 		if(part.activityData.groupIndex > 0){
@@ -325,7 +325,8 @@ class PartController
 
 	private function onVideoComplete():Void
 	{
-		nextElement();
+		if(part.hasNextElement())
+			nextElement();
 	}
 
 	private function startPattern(p : Pattern, ? next: Bool = true):Void
@@ -359,6 +360,11 @@ class PartController
 			});
 			display.createChoices(choicesList, p.choicesData.ref);
 			display.onChangePatternRequest = function(patternId: String) goToPattern(patternId);
+		}
+
+		// Update counter if any
+		if(p.counterRef != null){
+			display.setText(p.counterRef, (p.patternContent.indexOf(p.currentItem)+1)+"/"+p.patternContent.length);
 		}
 	}
 
@@ -434,25 +440,7 @@ class PartController
 
 		// Voice over
 		if(item.voiceOverUrl != null){
-			var fullPath: Array<String> = item.voiceOverUrl.split("/");
-
-			var path: String = null;
-			if(fullPath.length == 1)
-				path = state.module.currentLocale + "/" + fullPath[0];
-			else{
-				var localePath : StringBuf = new StringBuf();
-
-				localePath.add(fullPath[0] + "/");
-				localePath.add(state.module.currentLocale + "/");
-
-				for (i in 1...fullPath.length-1) {
-
-					localePath.add(fullPath[i] + "/");
-				}
-				localePath.add(fullPath[fullPath.length-1]);
-				path = localePath.toString();
-			}
-			display.setVoiceOver(path, application.masterVolume, item.ref);
+			setVoiceOver(item.voiceOverUrl, item.ref);
 		}
 
 		for (image in item.images)
@@ -527,20 +515,21 @@ class PartController
 
 		var action = switch(bd.action.toLowerCase()) {
 			case "next": function(){
-				// Tear down current element
-				switch (part.currentElement) {
-					case Part(p):// TODO
-					case Item(i):
-						teardownItem(i);
-					case Pattern(p): // nothing. Tear down handled by endPattern()
-					case GroupItem(group):
-						for(it in group.elements)
-							teardownItem(it);
-				}
-				if(state.activityState == null || state.activityState == ActivityState.NONE)
-					nextElement();
-				else
+				if(state.activityState != null && state.activityState != ActivityState.NONE)
 					startActivity();
+				else{
+					// Tear down current element
+					switch (part.currentElement) {
+						case Part(p):// TODO
+						case Item(i):
+							teardownItem(i);
+						case Pattern(p): display.stopVoiceOver();// Just stop voice over. Tear down handled by endPattern()
+						case GroupItem(group):
+							for(it in group.elements)
+								teardownItem(it);
+					}
+					nextElement();
+				}
 			};
 			case "prev": function(){
 				display.stopVoiceOver();
@@ -655,6 +644,7 @@ class PartController
         input.selected = selected;
 
 	    // TODO Don't use score variable
+	    // TODO Cards can be selected and deselected, but the score shouldn't be decreased
         if(input.selected)
             part.activityData.score += input.points;
         else
@@ -689,6 +679,7 @@ class PartController
 
 		}
 		var input: Input = inputGroup.inputs.filter(function(i: Input)return i.id == inputId)[0];
+		var partChanged = false;
 		for(rule in rules){
 			switch(rule.value.toLowerCase()){
 				case "drag": display.startDrag(inputId, mousePoint);
@@ -709,6 +700,7 @@ class PartController
 							display.setInputComplete(targetId);
 						}
 						part.activityData.numRightAnswers++;
+						part.activityData.score++;
 
 						// Selection limits
 						var maxSelect = -1;
@@ -719,6 +711,10 @@ class PartController
 							maxSelect = Std.parseInt(rules[1].value);
 
 						display.setText(drop.id+"_completion", part.activityData.numRightAnswers+"/"+maxSelect);
+
+						var rules = part.getRulesByType("minScore");
+						if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
+							display.enableNextButtons();
 					}
 				case "showmore":
 					display.displayElements(inputId+"_more");
@@ -729,9 +725,12 @@ class PartController
                     setInputSelected(input,true);
                 case "replacecontent" :
                     var output: Input = part.getInput(input.values[0]);
-                    var loc = getLocalizedContent(input.content[input.values[0]]);
+                    var item: Item = input.items[input.values[0]];
+                    var loc = getLocalizedContent(item.content);
                     display.setText(output.id,loc);
 					display.setInputState(output.id, "more");
+					if(item.voiceOverUrl != null)
+						setVoiceOver(item.voiceOverUrl, output.id);
 				case "removecontent":
 					var output: Input = part.getInput(input.values[0]);
 					display.setText(output.id,null);
@@ -749,12 +748,14 @@ class PartController
 					}
 					else
 						throw "Unsupported dynamic value '"+tokens[1]+"'.";
-
+					display.hideElements(Lambda.map(part.activityData.groups, function(group: Inputs) return group.ref));
 					displayPart(state.module.getPartById(id));
+					partChanged = true;
 			}
 		}
 
-		verifySelectionLimits(inputGroup);
+		if(!partChanged)
+			verifySelectionLimits(inputGroup);
 	}
 
 	private function verifySelectionLimits(group: Inputs):Void
@@ -791,10 +792,10 @@ class PartController
 	private function createInputs(group:Inputs) {
 		var inputList = Lambda.map(group.inputs, function(input: Input){
 			var localizedContent = new Map<String, String>();
-			for(key in input.content.keys())
-				localizedContent[key] = getLocalizedContent(input.content[key]);
+			for(key in input.items.keys())
+				localizedContent[key] = getLocalizedContent(input.items[key].content);
 
-			return {ref: input.ref, id: input.id, content: localizedContent, icon: input.icon, selected: input.selected}
+			return {ref: input.ref, id: input.id, content: localizedContent, icon: input.images, selected: input.selected};
 		});
 
 		// Set sorting rule
@@ -820,6 +821,30 @@ class PartController
 			throw "Multiple validation rules for group '"+group+"'. Please choose only one.";
 		var autoValidation: Bool = validationRules.length > 0 ? validationRules[0].value == "auto" : true;
 
-		display.createInputs(inputList, group.ref, autoValidation);
+		display.createInputs(inputList, group.ref, autoValidation, group.position);
+	}
+
+	private function setVoiceOver(voiceOverUrl: String, ?itemRef: String):Void
+	{
+		display.stopVoiceOver();
+		var fullPath: Array<String> = voiceOverUrl.split("/");
+
+		var path: String = null;
+		if(fullPath.length == 1)
+			path = state.module.currentLocale + "/" + fullPath[0];
+		else{
+			var localePath : StringBuf = new StringBuf();
+
+			localePath.add(fullPath[0] + "/");
+			localePath.add(state.module.currentLocale + "/");
+
+			for (i in 1...fullPath.length-1) {
+
+				localePath.add(fullPath[i] + "/");
+			}
+			localePath.add(fullPath[fullPath.length-1]);
+			path = localePath.toString();
+		}
+		display.setVoiceOver(path, application.masterVolume, itemRef);
 	}
 }

@@ -104,28 +104,29 @@ class GameService {
 
 			var parts : Array<Part> = [];
 
-			var f : haxe.xml.Fast = new haxe.xml.Fast(xml);
+			var f = new haxe.xml.Fast(xml);
 
-			var numPart : Int = f.nodes.Part.length;
+			var numPart : Int = f.nodes.Part.length + f.nodes.Activity.length;
 			var partsOrder = new Map<String, Int>();
 			var i = 0;
 
-			for (partXml in f.nodes.Part) {
+			for (partXml in f.elements) {
+				if(partXml.name.toLowerCase() == "part" || partXml.name.toLowerCase() == "activity"){
+					var pp : PartialPart = XmlToPart.parse(partXml.x);
+					// Preserve XML order
+					partsOrder[pp.pd.id] = i++;
 
-				var pp : PartialPart = XmlToPart.parse(partXml.x);
-				// Preserve XML order
-				partsOrder[pp.pd.id] = i++;
+					fetchPartContent(partXml.x, pp, function(p : Part) {
+							parts.insert(partsOrder[p.id], p);
 
-				fetchPartContent(partXml.x, pp, function(p : Part) {
-						parts.insert(partsOrder[p.id], p);
+							numPart--;
 
-						numPart--;
+							if (numPart == 0) {
+								onSuccess(parts);
+							}
 
-						if (numPart == 0) {
-							onSuccess(parts);
-						}
-
-					}, onError );
+						}, onError );
+				}
 			}
 
 		} catch (e:String) {

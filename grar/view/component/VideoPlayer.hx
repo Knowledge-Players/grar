@@ -61,14 +61,13 @@ class VideoPlayer{
 		videoElement.autoplay = videoData.autoStart;
 		videoElement.loop = videoData.loop;
 		videoElement.volume = videoData.defaultVolume;
-		if(!videoData.subtitles.empty()){
+		if(!videoData.subtitles.empty() && locale != null){
 			var track = Browser.document.createElement("track");
 			track.setAttribute("kind", "subtitles");
-			var subLocale = locale == null ? videoData.subtitles.keys().next() : locale;
-			if(!videoData.subtitles.exists(subLocale))
-				throw "No subtitles for locale: '"+subLocale+"'.";
-			track.setAttribute("src", videoData.subtitles[subLocale].src);
-			track.setAttribute("srclang", subLocale);
+			if(!videoData.subtitles.exists(locale))
+				throw "No subtitles for locale: '"+locale+"'.";
+			track.setAttribute("src", videoData.subtitles[locale].src);
+			track.setAttribute("srclang", locale);
 			track.setAttribute("default", "");
 			track.setAttribute("label", "Subtitles");
 

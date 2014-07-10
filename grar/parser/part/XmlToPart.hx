@@ -1,5 +1,6 @@
 package grar.parser.part;
 
+import grar.util.Point;
 import grar.model.part.item.GroupItem;
 import grar.model.part.item.Pattern;
 import grar.model.part.Part;
@@ -32,48 +33,35 @@ class XmlToPart {
 		var f : Fast = new Fast(xml.nodeType == Xml.Document ? xml.firstElement() : xml);
 
 		var pp : PartialPart = cast { };
+		pp.pd = parsePartData(f);
 
-		var t : String = f.has.type ? f.att.type.toLowerCase() : "";
-
-		switch (t) {
-			case "activity":
-				pp.type = Activity;
-				pp.pd = parsePartData(f);
-
-			case "" :
-
-				pp.type = Part;
-				pp.pd = parsePartData(f);
-
-			default:
-
-				throw 'Unexpected type attribute "$t"';
-		}
+		if(f.name.toLowerCase() == "activity")
+			pp.type = Activity;
+		else
+			pp.type = Part;
 
 		return pp;
 	}
 
+	/**
+	* Create parts from parts data. If sub-parts are present, their data will be returned
+	* @param    pp: Partial part with the part data
+	* @param    xml: Xml datas
+	* @return the new part and an array of its sub-parts as PartialPart
+	**/
 	static public function parseContent(pp : PartialPart, xml : Xml) : { p : Part, pps : Array<PartialPart> } {
 
-		var f : Fast = new Fast(xml);
+		var f : Fast = new Fast(xml.nodeType == Xml.Document ? xml.firstElement() : xml);
 
 		var p : Part;
 		var pps : Array<PartialPart>;
-		switch (pp.type) {
+		var pd : PartData = parsePartContentData(pp.pd, xml);
 
-			case Activity:
-				var apd = parseActivityPartContent(pp.pd, xml);
-				pps = apd.pd.partialSubParts;
-				p = new Part(apd.pd);
-				p.activityData = apd.ad;
-				//p = new ActivityPart(apd.pd, apd.g, apd.r, apd.gi, apd.nra);
+		pps = pd.partialSubParts;
+		p = new Part(pd);
 
-			case Part:
-
-				var pd : PartData = parsePartContentData(pp.pd, xml);
-				pps = pd.partialSubParts;
-				p = new Part(pd);
-		}
+		if(pp.type == Activity)
+			p.activityData = parseActivityPartContent(f);
 
 		return { p: p, pps: pps };
 	}
@@ -83,15 +71,21 @@ class XmlToPart {
 	// INTERNALS
 	//
 
-	static function parsePartContentData(pd : PartData, xml : Xml) : PartData {
+	static function parsePartContentData(pd : PartData, xml : Xml) : PartData
+	{
+		var f : Fast = null;
 
-		var f : Fast = (xml.nodeType == Xml.Element && xml.nodeName == "Part") ? new Fast(xml) : new Fast(xml).node.Part;
+		// No Document node
+		if(xml.nodeType == Xml.Element)
+			f = new Fast(xml);
+		else
+			f = new Fast(xml.firstElement());
 
-		pd = parsePartHeader(pd, f); // not sure we need it here too...
+		pd = parsePartHeader(pd, f);
 
-		for (child in f.elements) {
+		for (child in f.elements)
 			pd = parsePartElement(pd, child);
-		}
+
 		for (elem in pd.elements) {
 
 			switch (elem) {
@@ -142,16 +136,11 @@ class XmlToPart {
 
 		switch (n) {
 
-			case "text":
-
+			case "text" | "sound" | "video":
 				pd.elements.push( Item(XmlToItem.parse(node.x)) );
-
-			case "part":
-
+			case "part" | "activity":
 				pd.partialSubParts.push( parse(node.x) );
-
 			case "button":
-
 				var content = null;
 
 				if (node.has.content)
@@ -183,20 +172,14 @@ class XmlToPart {
 				}
 
 			case "pattern":
-
 				pd.elements.push(Pattern(XmlToPattern.parse(node.x)));
-
 			case "group":
 				pd.elements.push(GroupItem(XmlToGroup.parse(node.x)));
-
             case "image":
                 pd.images.add({ref:node.att.ref,src:node.att.src});
 			default:
-
-				if (n != "group" && n != "rule" && n != "image" && n != "inputs") {
-
+				if (n != "group" && n != "rule" && n != "image" && n != "inputs")
 					throw "unexpected "+node.name;
-				}
 		}
 
 		for(elem in pd.elements){
@@ -210,9 +193,7 @@ class XmlToPart {
 		return pd;
 	}
 
-	static function parseActivityPartContent(pd : PartData, xml : Xml) : { pd : PartData, ad: ActivityData} {
-
-		var f : Fast = (xml.nodeType == Xml.Element && xml.nodeName == "Part") ? new Fast(xml) : new Fast(xml).node.Part;
+	static function parseActivityPartContent(f : Fast) : ActivityData {
 
 		var groups : Array<Inputs> = new Array();
 		var rules : StringMap<Rule> = new StringMap();
@@ -243,27 +224,34 @@ class XmlToPart {
 			}
 		}
 
-		pd = parsePartContentData(pd, xml);
-		var activityData: ActivityData = {groups: groups, rules: rules, groupIndex: 0, numRightAnswers: 0, score: 0, inputsEnabled: true};
-		return { pd: pd, ad: activityData };
+		return {groups: groups, rules: rules, groupIndex: 0, numRightAnswers: 0, score: 0, inputsEnabled: true};
 	}
 
 	static function createInput(f : Fast) : Input {
 
 		var values;
-		var icons;
+		var images;
 		var points = 0;
 		var selected = false;
+		var content = new Map<String, Item>();
+
+		if(f.has.content){
+			var c = ParseUtils.parseHash(f.att.content);
+			for(key in c.keys()){
+				var data: ItemData = {content: c[key], ref: key, author: null, background: null, button: null, tokens: null, images: null, endScreen: false, videoData: null, soundData: null, voiceOverUrl: null};
+				content[key] = new Item(data);
+			}
+		}
 
 		if (f.has.values)
 			values = ParseUtils.parseListOfValues(f.att.values);
 		else
 			values = new Array<String>();
 
-		if(f.has.icon)
-			icons = ParseUtils.parseHash(f.att.icon);
+		if(f.has.img)
+			images = ParseUtils.parseHash(f.att.img);
 		else
-			icons = new Map<String, String>();
+			images = new Map<String, String>();
 
 		if(f.has.points)
 			points = Std.parseInt(f.att.points);
@@ -271,28 +259,34 @@ class XmlToPart {
 		if(f.has.selected)
 			selected = f.att.selected == "true";
 
-		return {id: f.att.id, ref: f.att.ref, content: ParseUtils.parseHash(f.att.content), values: values, selected: selected, icon: icons, points: points};
+		for(child in f.elements){
+			switch(child.name.toLowerCase()){
+				case "text" | "sound" | "video": content[child.att.ref] = XmlToItem.parse(child.x);
+				case "image": images[child.att.ref] = child.att.src;
+			}
+		}
+
+		return {id: f.att.id, ref: f.att.ref, items: content, values: values, selected: selected, images: images, points: points};
 	}
 
-	static inline function createInputGroup(f : Fast) : Inputs {
+	static function createInputGroup(f : Fast) : Inputs {
 
 		var rules : Array<String> = null;
 
-		if (f.has.rules) {
-
+		if(f.has.rules)
 			rules = ParseUtils.parseListOfValues(f.att.rules);
-		}
-
-
 
         var inputs : Array<Input> = [];
         var items : Array<Item> = [];
         var groups : Array<Inputs> = [];
 
         var group: Inputs = {id: f.att.id, ref: f.att.ref, rules: rules, inputs: inputs, items: items, groups: groups};
-
-
-
+		if(f.has.position){
+			group.position = ParseUtils.parseListOfValues(f.att.position).map(function(val: String){
+				var coord = val.split(";");
+				return new Point(Std.parseFloat(coord[0]), Std.parseFloat(coord[1]));
+			});
+		}
 
         for (input in f.elements) {
             switch (input.name.toLowerCase()) {

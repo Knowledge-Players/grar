@@ -1,14 +1,12 @@
 package grar.util;
 
-import haxe.ds.StringMap;
-
 using StringTools;
 
 class ParseUtils {
 
-	public static inline function parseHash(s : String) : StringMap<String> {
+	public static inline function parseHash(s : String) : Map<String, String> {
 
-		var content : StringMap<String> = new StringMap();
+		var content= new Map<String, String>();
 
 		if (s.indexOf("{") == 0) {
 

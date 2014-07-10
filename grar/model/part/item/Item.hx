@@ -1,18 +1,16 @@
 package grar.model.part.item;
 
 import grar.model.part.Part.ImageData;
-import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
 
 typedef ItemData = {
 
-	var id : String;
 	var content : String;
+	var ref : String;
 	var author: Null<String>;
 	var background : Null<String>;
 	var button : Null<List<ButtonData>>;
-	var ref : Null<String>;
-	var tokens : GenericStack<String>;
+	var tokens : Array<String>;
 	var images : List<ImageData>;
 	var endScreen : Bool;
 	var videoData: VideoData;
@@ -78,7 +76,6 @@ class Item{
 
 	public function new(o : ItemData) {
 
-		this.id = o.id;
 		this.content = o.content;
 		this.author = o.author;
 		this.background = o.background;
@@ -91,11 +88,6 @@ class Item{
 		this.soundData = o.soundData;
 		this.voiceOverUrl = o.voiceOverUrl;
 	}
-
-	/**
-	 * @inherits
-	 **/
-	public var id (default, null) : String;
 
 	/**
      * Content of the item
@@ -120,7 +112,7 @@ class Item{
 	/**
      * Reference to the tokens in this item
      **/
-	public var tokens (default, null) : GenericStack<String>;
+	public var tokens (default, null) : Array<String>;
 
 	/**
      * Graphicals items associated with this item

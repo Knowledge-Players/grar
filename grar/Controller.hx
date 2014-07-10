@@ -222,18 +222,6 @@ class Controller {
 			// end locale
 		}
 
-		/*application.onMenuButtonStateRequest = function(partName : String) : { l : Bool, d : Bool } {
-
-				for (part in state.module.getAllParts()) {
-
-					if (part.name == partName) {
-
-						return { l: !state.module.canStart(part), d: part.isDone };
-					}
-				}
-				return null;
-			}*/
-
 		application.onMenuClicked = function(partId : String, menuId: String) {
 
 				partCtrl.exitPart(false, true);
@@ -242,23 +230,6 @@ class Controller {
 					hideMenu(menuId);
 				}
 			}
-
-		/*application.onMenuAdded = function() {
-
-				var i = 0;
-
-				var allParts : Array<Part> = state.module.getAllParts();
-
-				while (i < allParts.length && allParts[i].isDone) {
-
-					i++;
-				}
-			}
-
-		application.onQuitGameRequest = function() {
-
-				gameOver();
-			}*/
 
 		application.onMasterVolumeChanged = function(){
 				partCtrl.onMasterVolumeChanged();
@@ -403,7 +374,8 @@ class Controller {
 		var startingPart : String = null;
 
 		localizationCtrl.setInterfaceLocaleData();
-			application.updateModuleInfos(state.module.getLocalizedContent("moduleName"), state.module.getLocalizedContent("moduleType"), state.module.getLocalizedContent("moduleTheme"));
+		application.updateModuleInfos(state.module.getLocalizedContent("moduleName"), state.module.getLocalizedContent("moduleType"), state.module.getLocalizedContent("moduleTheme"));
+		application.theme = state.module.theme;
 		localizationCtrl.restoreLocaleData();
 
 

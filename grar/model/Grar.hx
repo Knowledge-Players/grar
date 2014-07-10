@@ -73,6 +73,8 @@ class Grar {
 
 	public var scoreChart (default, null) : ScoreChart;
 
+	public var theme (default, default):Null<String>;
+
 
 	// Module localization related properties
 

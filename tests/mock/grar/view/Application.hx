@@ -25,8 +25,6 @@ class Application{
 
 	public var menus (default, null): Map<String, MenuDisplay>;
 
-	public var defaultStyleSheetName : Null<String> = null;
-
 	public var localeData : LocaleData;
 
 	private var stashedLocale : GenericStack<LocaleData>;
@@ -37,13 +35,11 @@ class Application{
 
 	public var partDisplay (get, null):PartDisplay;
 
-	public var previousLayout : String = null;
+	public var theme (default, set):Null<String>;
 
 	var parts : GenericStack<PartDisplay>;
 
 	var startIndex:Int;
-
-	public var mainLayoutRef (default, default) : Null<String> = null;
 
 	public var masterVolume(default, set) : Float = 1;
 
@@ -111,4 +107,10 @@ class Application{
 	{}
 	public function exitFullscreen():Void
 	{}
+
+	private function set_theme(theme:String):String
+	{
+		return this.theme = theme;
+	}
+
 }

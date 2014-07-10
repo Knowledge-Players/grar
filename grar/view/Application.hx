@@ -1,5 +1,6 @@
 package grar.view;
 
+import haxe.Timer;
 import js.html.Audio;
 import js.html.Document;
 import js.html.IFrameElement;
@@ -150,6 +151,11 @@ class Application {
 	**/
 	public var isMobile (default, null): Bool;
 
+	/**
+	* Theme of the module
+	**/
+	public var theme (default, set):Null<String>;
+
 	public var isFullscreen (get, null):Bool = false;
 
 	var root: IFrameElement;
@@ -198,6 +204,11 @@ class Application {
 	private function get_isFullscreen():Bool
 	{
 		return isFullscreen;
+	}
+
+	private function set_theme(theme:String):String
+	{
+		return this.theme = theme;
 	}
 
 	///
@@ -250,11 +261,11 @@ class Application {
 	public function initPart(ref:String, ?templateUri: String, ?forward: Bool = true, ?noReload: Bool = false):Void
 	{
 		var container = document.getElementById(ref);
-		if(container == null){
-			trace("Unable to find part container '"+ref+"'.");
-			return;
-		}
 		if(!noReload && templateUri != null){
+			if(container == null){
+				throw "Unable to find part container '"+ref+"'.";
+				return;
+			}
 			var partRoot = document.createIFrameElement();
 			partRoot.setAttribute("seamless", "true");
 			partRoot.setAttribute("allowfullscreen", "true");
@@ -265,24 +276,44 @@ class Application {
 			// Wait for template to load
 			partRoot.onload = function(_){
 				partDisplay.init(partRoot);
+				var customTransition = partRoot.contentDocument.body.hasAttribute("data-transition") ? partRoot.contentDocument.body.getAttribute("data-transition") : null;
 				// Setup transition between parts
 				if(container.childNodes.length > 1){
+					// 10s timeout
+					var maxTime = 10000;
+					#if (js || flash || flash8 || java)
+					var timeOut = new Timer(maxTime);
+					timeOut.run = function(){
+						timeOut.stop();
+						throw "Time Out! Nothing happened for "+(maxTime/1000)+"s. Verify your CSS transition.";
+					}
+					#end
+
 					var listener = null;
 					listener = function(_){
+						#if (js || flash || flash8 || java)
+						timeOut.stop();
+						#end
 						container.removeEventListener('transitionend', listener);
 						container.removeEventListener('webkitTransitionEnd', listener);
 						if(forward){
 							container.style.transition = "none";
 							// Remove old iframe (= previous part display)
 							container.removeChild(container.firstChild);
-							container.classList.remove("nextTransition");
+							if(customTransition != null)
+								container.classList.remove("next"+customTransition);
+							else
+								container.classList.remove("nextTransition");
 						}
 						else{
 							// Remove old iframe (= previous part display)
 							container.removeChild(container.lastChild);
 
 							container.style.left = "";
-							container.classList.remove("previousTransition");
+							if(customTransition != null)
+								container.classList.remove("previous"+customTransition);
+							else
+								container.classList.remove("previousTransition");
 						}
 						onPartLoaded();
 					}
@@ -291,7 +322,10 @@ class Application {
 
 					if(forward){
 						container.style.transition = "";
-						container.classList.add("nextTransition");
+						if(customTransition != null)
+							container.classList.add("next"+customTransition);
+						else
+							container.classList.add("nextTransition");
 					}
 					else{
 						// Need to wait for next frame to see the animation
@@ -304,6 +338,9 @@ class Application {
 							}
 							else{
 								container.style.transition = "";
+								if(customTransition != null)
+									container.classList.add("previous"+customTransition);
+								else
 								container.classList.add("previousTransition");
 							}
 							return true;
@@ -329,6 +366,12 @@ class Application {
 
 						break;
 					}
+				}
+
+				// Update theme if any
+				if(theme != null){
+					partRoot.contentDocument.body.classList.add(theme);
+					root.contentDocument.body.classList.add(theme);
 				}
 			}
 			if(forward || !container.hasChildNodes())

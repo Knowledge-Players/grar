@@ -4,8 +4,6 @@ import grar.Controller;
 
 import grar.model.State;
 import grar.model.Config;
-import grar.model.Grar;
-import grar.model.localization.Locale;
 import grar.model.localization.LocaleData;
 
 import grar.view.Application;

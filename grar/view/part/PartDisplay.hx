@@ -1,5 +1,6 @@
 package grar.view.part;
 
+import Array;
 import grar.util.ParseUtils;
 import grar.util.Point;
 import grar.util.TextDownParser;
@@ -138,7 +139,7 @@ class PartDisplay
 	public function unloadPart(partRef:String):Void
 	{
 		hideElements(partRef);
-		resetTemplates();
+		resetTemplates(partRef);
 	}
 
 	public function showBackground(background : String) : Void {
@@ -232,7 +233,7 @@ class PartDisplay
 	    for(child in pat.children)
 		    hide(child.getElement());
         hide(pat);
-	    resetTemplates();
+	    resetTemplates(pat);
     }
 
     public function showPattern(ref:String):Void{
@@ -396,11 +397,21 @@ class PartDisplay
 	**/
     public function hideElements(?elements:List<String>, ?elem: String):Void
 	{
-		if(elem != null)
-			hide(rootDocument.getElementById(elem));
+		if(elem != null){
+			var target = rootDocument.getElementById(elem);
+			if(target != null)
+				hide(target);
+			else
+				throw 'Unable to find element $elem. If it can\'t be found, it can\'t be hidden!';
+		}
 		else if(elements != null)
-			for(element in elements)
-				hide(rootDocument.getElementById(element));
+			for(element in elements){
+				var target = rootDocument.getElementById(element);
+				if(target != null)
+					hide(target);
+				else
+					throw 'Unable to find element $element. If it can\'t be found, it can\'t be hidden!';
+			}
 	}
 
 	public function hideElementsByClass(className: String):Void
@@ -445,7 +456,8 @@ class PartDisplay
 			if(templates.exists(r.ref)){
 				t = templates[r.ref].element;
 				if(firstUse){
-					templates[r.ref].guide.init(t);
+					if(templates[r.ref].guide != null)
+						templates[r.ref].guide.init(t);
 					firstUse = false;
 				}
 			}
@@ -472,7 +484,8 @@ class PartDisplay
 				}
 				else
 					guide = null;
-				if(firstUse){
+
+				if(firstUse && guide != null){
 					guide.init(t);
 					firstUse = false;
 				}
@@ -555,19 +568,25 @@ class PartDisplay
 		}
 	}
 
-	public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>, selected: Bool}>, groupeRef: String, ?autoValidation: Bool = true):Void
+	public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>, selected: Bool}>, groupeRef: String, ?autoValidation: Bool = true, ?position: Array<Point>):Void
 	{
 		var parent: Element = rootDocument.getElementById(groupeRef);
 
 		var i = 0;
 		var lastInput: Element = null;
 		var guide: Guide = null;
+		var firstUse: Bool = true;
+
 		for(r in refs){
 			// Get template and store it if necessary
 			var t: Element;
 			if(templates.exists(r.ref)){
 				t = templates[r.ref].element;
-				templates[r.ref].guide.init(t);
+				if(firstUse){
+					if(templates[r.ref].guide != null)
+						templates[r.ref].guide.init(t);
+					firstUse = false;
+				}
 			}
 			else{
 				t = rootDocument.getElementById(r.ref);
@@ -590,9 +609,16 @@ class PartDisplay
 					}
 					guide = new Absolute(parent, points);
 				}
+				else if(position != null){
+					guide = new Absolute(parent, position);
+				}
 				else
 					guide = null;
-				guide.init(t);
+
+				if(firstUse && guide != null){
+					guide.init(t);
+					firstUse = false;
+				}
 
 				templates[r.ref] = {element: t, guide: guide};
 			}
@@ -653,8 +679,13 @@ class PartDisplay
 				}
 			}
 			// Update state
-			if(r.selected)
+			if(r.selected){
 				newInput.classList.add("selected");
+				for(node in newInput.getElementsByTagName("input")){
+					var input: InputElement = cast node;
+					input.checked = true;
+				}
+			}
 
 			// Event Binding
 			var onStart = function(e: MouseEvent){
@@ -998,8 +1029,14 @@ class PartDisplay
 		}
 	}
 
-	private function resetTemplates():Void
+	private function resetTemplates(?rootRef: String, ?rootElement: Element):Void
 	{
+		var parent;
+		if(rootElement != null)
+			parent = rootElement;
+		else
+			parent = rootDocument.getElementById(rootRef);
+
 		for(t in templates){
 			var pos = templatesPosition[t.element];
 			hide(t.element);
@@ -1010,7 +1047,10 @@ class PartDisplay
 		}
 
 		// Remove Guide if any
-		for(row in root.getElementsByClassName("row"))
+		var rows = new Array<Node>();
+		for(node in parent.getElementsByClassName("row"))
+			rows.push(node);
+		for(row in rows)
 			row.parentNode.removeChild(row);
 	}
 }

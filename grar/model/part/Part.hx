@@ -1,5 +1,7 @@
 package grar.model.part;
 
+import grar.util.Point;
+
 import grar.model.part.item.Item;
 import grar.model.part.item.Pattern;
 
@@ -54,6 +56,7 @@ typedef Inputs = {
 	@:optional var groups : Array<Inputs>;
 	@:optional var inputs : Array<Input>;
     @:optional var items : Array<Item>;
+	@:optional var position: Array<Point>;
 }
 
 typedef Rule = {
@@ -67,10 +70,10 @@ typedef Input = {
 
 	var id : String;
 	var ref : String;
-	var content : Map<String, String>;
+	var items : Map<String, Item>;
 	var values : Array<String>;
 	var selected : Bool;
-	var icon: Map<String, String>;
+	var images: Map<String, String>;
 	var points: Int;
 	@:optional var additionalValues: Array<String>;
 }
@@ -241,6 +244,11 @@ class Part{
                 onScoreToAdd(perk, perks.get(perk));
             }
         }
+
+	    // Reset inputs
+	    if(activityData != null)
+		    activityData.inputsEnabled = true;
+
         return completed;
     }
 
@@ -285,7 +293,13 @@ class Part{
 
 	public function get_currentElement():PartElement
 	{
-		return elements[elemIndex];
+		if(elemIndex == elements.length)
+			return elements[elemIndex-1];
+		else
+			return switch(elements[elemIndex]){
+				case Pattern(p): elements[elemIndex];
+				default: elements[elemIndex-1];
+			}
 	}
 
     ///
@@ -415,7 +429,7 @@ class Part{
 				case Pattern(p):
 					if (p.id == id) return e;
 				case Item(i):
-					if (i.id == id) return e;
+					if (i.content == id) return e;
 				default: // nothing
 			}
 		}

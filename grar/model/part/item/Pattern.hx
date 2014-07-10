@@ -57,6 +57,7 @@ typedef PatternData = {
 	var endScreen : Bool;
 	var itemIndex : Int;
 	var choicesData: ChoicesData;
+	@:optionnal var counterRef: String;
 }
 
 class Pattern {
@@ -72,6 +73,8 @@ class Pattern {
 		this.endScreen = pd.endScreen;
 		this.itemIndex = pd.itemIndex;
 		this.choicesData = pd.choicesData;
+		if(pd.counterRef != null)
+			this.counterRef = pd.counterRef;
 	}
 
 	/**
@@ -102,6 +105,11 @@ class Pattern {
 	public var tokens (default, null) : GenericStack<String>;
 
 	public var endScreen (default, null) : Bool = false;
+
+	/**
+	* Reference to a counter of pattern avancement
+	**/
+	public var counterRef (default, null):Null<String>;
 
 	/**
 	* Current active item in the pattern

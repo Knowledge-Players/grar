@@ -39,6 +39,7 @@ class XmlToGrar {
         var structureNode : Fast = sFast.node.Grar.node.Structure;
 
 	    var g = new Grar(m, id, kalturaParams, s, Loading(langs, structureNode));
+	    g.theme = structureNode.has.theme ? structureNode.att.theme : null;
 	    if(parametersNode.hasNode.InterfaceLocale)
 	        g.interfaceLocaleDataPath = parametersNode.node.InterfaceLocale.att.file;
         return g;
