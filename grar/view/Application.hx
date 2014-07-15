@@ -528,9 +528,21 @@ class Application {
 	public function initSounds(rootElement: Element):Void
 	{
 		// Calculate relative url
-		var appURI = root.baseURI.substr(0, root.baseURI.lastIndexOf("/"));
+		var baseURI: String;
+		var iframeURI: String;
+		if(root.baseURI != null){
+			baseURI = root.baseURI;
+			iframeURI = rootElement.baseURI;
+		}
+		// IE fix
+		else{
+			baseURI = document.referrer;
+			iframeURI = untyped __js__("this.document.URL");
+		}
+
+		var appURI = baseURI.substr(0, baseURI.lastIndexOf("/"));
 		var prefix: String = null;
-		var base = rootElement.baseURI.replace(appURI, "");
+		var base = iframeURI.replace(appURI, "");
 		prefix = base.substr(1, base.lastIndexOf("/"));
 
 		var play = function(soundUrl: String){

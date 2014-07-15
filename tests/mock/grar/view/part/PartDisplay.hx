@@ -223,4 +223,11 @@ class PartDisplay{
     public function uncheckElement (id:String):Void {
     }
 
+
+
+	public function isVideoFullscreen():Bool
+	{
+		return false;
+	}
+
 }
