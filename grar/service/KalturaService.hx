@@ -6,7 +6,7 @@ class KalturaService{
 
 	public function new(){ }
 
-	public function createSession(pId: Int, secret: String, ?url: String = "http://www.kaltura.com/", onSuccess: String -> Void):Void
+	public function createSession(pId: Int, secret: String, ?url: String = "//www.kaltura.com/", onSuccess: String -> Void):Void
 	{
 		var k = new KalturaHaxe(pId, url);
 		k.createConnection(secret, function(success, result){

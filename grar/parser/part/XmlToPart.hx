@@ -266,7 +266,7 @@ class XmlToPart {
 			}
 		}
 
-		return {id: f.att.id, ref: f.att.ref, items: content, values: values, selected: selected, images: images, points: points};
+		return {id: f.att.id, ref: f.att.ref, items: content, values: values, selected: selected, images: images, points: points, visited: false};
 	}
 
 	static function createInputGroup(f : Fast) : Inputs {

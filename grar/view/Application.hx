@@ -156,7 +156,15 @@ class Application {
 	**/
 	public var theme (default, set):Null<String>;
 
+	/**
+	* Is the application on fullscreen. Default is false
+	**/
 	public var isFullscreen (get, null):Bool = false;
+
+	/**
+	* The element currently in fullscreen
+	**/
+	public var fullscreenElement (get, null):Element;
 
 	var root: IFrameElement;
 	var fullscreenApi: FullscreenAPI;
@@ -209,6 +217,11 @@ class Application {
 	private function set_theme(theme:String):String
 	{
 		return this.theme = theme;
+	}
+
+	private function get_fullscreenElement():Element
+	{
+		return fullscreenApi.fullscreenElement;
 	}
 
 	///

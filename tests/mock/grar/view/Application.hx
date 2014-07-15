@@ -47,6 +47,16 @@ class Application{
 
 	public var isMobile (default, default):Bool;
 
+	/**
+	* The element currently in fullscreen
+	**/
+	public var fullscreenElement (get, null):Element;
+
+	/**
+	* Is the application on fullscreen. Default is false
+	**/
+	public var isFullscreen (get, null):Bool = false;
+
 
 	public function set_menuData(v : Null<MenuData>) : Null<MenuData> {
 
@@ -67,6 +77,17 @@ class Application{
 	public function set_masterVolume(vol:Float):Float
 	{
 		return masterVolume = vol;
+	}
+
+
+	private function get_fullscreenElement():Element
+	{
+		return null;
+	}
+
+	private function get_isFullscreen():Bool
+	{
+		return isFullscreen;
 	}
 
 

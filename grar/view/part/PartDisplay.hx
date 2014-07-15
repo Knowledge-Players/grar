@@ -288,6 +288,11 @@ class PartDisplay
 		}
 	}
 
+	public function isVideoFullscreen():Bool
+	{
+		return application.fullscreenElement == videoPlayer.root;
+	}
+
 	public function setSound(soundRef:String, uri:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1):Void
 	{
 		if(soundPlayer == null)

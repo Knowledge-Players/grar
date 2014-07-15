@@ -283,13 +283,14 @@ class TrackingController {
 
 	public function exitModule(m : Grar, onSuccess : Void -> Void, onError : String -> Void) : Void {
 
-		var ret : Bool = switch (m.mode) {
+		state.tracking.setStatus(true);
+
+		// TODO verify this isn't closing the window
+		var ret = true; /*: Bool = switch (m.mode) {
 			case AICC : aiccSrv.exit();
 			case SCORM, SCORM2004: scormSrv.exit();
 			default: true; // nothing
-		}
-
-		state.tracking.setStatus(true);
+		}*/
 
 		if (ret)
 			onSuccess();

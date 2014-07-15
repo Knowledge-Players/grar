@@ -240,7 +240,7 @@ class Controller {
 
 	public function gameOver():Void
 	{
-		updateMenuCompletion();
+		//updateMenuCompletion();
 		trace("GAME OVER");
 		for(menu in application.menus){
 			menu.setGameOver();
@@ -249,7 +249,7 @@ class Controller {
 		partCtrl.onGameOver();
 
 		trackingCtrl.exitModule(state.module, function() {
-			//TODO ?
+			trace("Successfully exited from the tracker");
 		}, onError);
 	}
 
@@ -342,7 +342,6 @@ class Controller {
 					}
 				}
 			}
-			//menu.setGameOver();
 		}
 	}
 

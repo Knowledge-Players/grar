@@ -180,6 +180,11 @@ class PartController
 			var rules = part.getRulesByType("minScore");
 			if(rules.length > 0)
 				display.disableNextButtons();
+			else{
+				var rules = part.getRulesByType("minVisited");
+				if(rules.length > 0)
+					display.disableNextButtons();
+			}
 		}
 	}
 
@@ -233,12 +238,11 @@ class PartController
 				displayPart(p);
 
 			case Item(i):
+				setupItem(i);
 				if (i.endScreen) {
-
 					part.isDone = true;
 					parent.gameOver();
 				}
-				setupItem(i);
 
 			case Pattern(p):
 
@@ -325,6 +329,8 @@ class PartController
 
 	private function onVideoComplete():Void
 	{
+		if(application.isFullscreen)
+			application.exitFullscreen();
 		if(part.hasNextElement())
 			nextElement();
 	}
@@ -641,10 +647,17 @@ class PartController
 
         display.toggleElement(input.id,selected);
 
+	    if(!input.selected)
+		    input.visited = true;
+
         input.selected = selected;
 
-	    // TODO Don't use score variable
-	    // TODO Cards can be selected and deselected, but the score shouldn't be decreased
+	    var rules = part.getRulesByType("minVisited");
+	    var inputs = part.getInputGroup(input.id).inputs;
+	    if(rules.length > 0 && inputs.count(function(input: Input) return input.visited) >= Std.parseInt(rules[0].value))
+		    display.enableNextButtons();
+
+	    // TODO Don't use score variable; replace by numVisited?
         if(input.selected)
             part.activityData.score += input.points;
         else
@@ -653,7 +666,6 @@ class PartController
         var rules = part.getRulesByType("minScore");
         if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
             display.enableNextButtons();
-
     }
 
 	private function onInputEvent(eventType: InputEvent, inputId: String, mousePoint: Point):Void

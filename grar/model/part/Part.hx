@@ -73,17 +73,36 @@ typedef Input = {
 	var items : Map<String, Item>;
 	var values : Array<String>;
 	var selected : Bool;
+	var visited: Bool;
 	var images: Map<String, String>;
 	var points: Int;
 	@:optional var additionalValues: Array<String>;
 }
 
 typedef ActivityData = {
+	/**
+	* Rules for this activity
+	**/
 	var rules: Map<String, Rule>;
-	var groups : Array<Inputs>;
-	var groupIndex : Int;
-	var numRightAnswers :Int;
+	/**
+	* Groups of group of inputs
+	**/
+	var groups: Array<Inputs>;
+	/**
+	* Progression index
+	**/
+	var groupIndex: Int;
+	/**
+	* Number of right answer when auto correcting
+	**/
+	var numRightAnswers: Int;
+	/**
+	* Score for this activity
+	**/
 	var score: Int;
+	/**
+	* Enable inputs (i.e. clicks are active)
+	**/
 	var inputsEnabled: Bool;
 }
 
