@@ -1,11 +1,11 @@
 package grar.view.part;
 
+import grar.controller.PartController.InputCallback;
 import Array;
 import grar.util.ParseUtils;
 import grar.util.Point;
 import grar.util.TextDownParser;
 
-import grar.view.part.PartDisplay.InputEvent;
 import grar.view.component.SoundPlayer;
 import grar.view.component.VideoPlayer;
 import grar.view.guide.Absolute;
@@ -32,12 +32,12 @@ using StringTools;
 using Lambda;
 using grar.util.HTMLTools;
 
-enum InputEvent{
-    MOUSE_OVER;
-	MOUSE_OUT;
-	CLICK;
-	MOUSE_DOWN;
-	MOUSE_UP(targetId: String);
+typedef InputData = {
+	ref: String,
+	id: String,
+	content: Map<String, String>,
+	icon: Map<String, String>,
+	selected: Bool
 }
 
 typedef InputTemplate = {
@@ -65,13 +65,6 @@ class PartDisplay
 
 	public var markupParser (default, default):TextDownParser;
 
-
-	public static var CLICK = "click";
-	public static var MOUSE_DOWN = "mouseDown";
-	public static var MOUSE_UP = "mouseUp";
-	public static var MOUSE_OVER = "mouseOver";
-	public static var MOUSE_OUT = "mouseOut";
-
 	var videoPlayer: VideoPlayer;
 	var soundPlayer: SoundPlayer;
 	var dragParent:Element;
@@ -82,6 +75,7 @@ class PartDisplay
 	var rootDocument: Document;
 	var application: Application;
 	var root: Element;
+	var mousePosition: Point;
 
 
 	///
@@ -92,9 +86,9 @@ class PartDisplay
 
 	public dynamic function onIntroEnd():Void { }
 
-	public dynamic function onInputEvent(type: InputEvent, inputId: String, mousePoint: Point): Void {}
+	//public dynamic function onInputEvent(type: InputEvent, inputId: String, mousePoint: Point): Void {}
 
-	public dynamic function onValidationRequest(inputId: String): Void {}
+	public dynamic function onValidationRequest(inputId: String, ?value: String, ?dragging: Bool = false): Void {}
 
 	public dynamic function onChangePatternRequest(patternId: String): Void {}
 
@@ -573,7 +567,7 @@ class PartDisplay
 		}
 	}
 
-	public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>, selected: Bool}>, groupeRef: String, ?autoValidation: Bool = true, ?position: Array<Point>):Void
+	public function createInputs(refs: List<InputData>, groupeRef: String, callbacks: InputCallback, ?autoValidation: Bool = true, ?position: Array<Point>):Void
 	{
 		var parent: Element = rootDocument.getElementById(groupeRef);
 
@@ -693,37 +687,45 @@ class PartDisplay
 			}
 
 			// Event Binding
-			var onStart = function(e: MouseEvent){
-				if(isMobile || e.button == 0){
-					e.preventDefault();
-					var target: Node = cast e.target;
-					if(target.nodeName.toLowerCase() != "a")
-						onInputEvent(InputEvent.MOUSE_DOWN, newInput.id, getMousePosition(e));
-					#if !cocktail
-                    newInput.ontouchend = function(e: MouseEvent){
-	                    if(autoValidation)
-		                    onValidationRequest(newInput.id);
-                        onInputEvent(InputEvent.CLICK, newInput.id, new Point(0,0));
-                    }
-					#end
+			if(callbacks.click != null){
+				newInput.onclick = function(e: MouseEvent){
+					if(autoValidation)
+						onValidationRequest(newInput.id);
+					callbacks.click(newInput.id);
 				}
-
-			};
-			#if !cocktail
-			if(isMobile)
-				newInput.ontouchstart = onStart;
-			else
-			#end
-				newInput.onmousedown = onStart;
-
-			newInput.onclick = function(e: MouseEvent){
-				if(autoValidation)
-					onValidationRequest(newInput.id);
-				onInputEvent(InputEvent.CLICK, newInput.id, getMousePosition(e));
 			}
+			if(callbacks.mouseDown != null){
+				var onStart = function(e: MouseEvent){
+					if(isMobile || e.button == 0){
+						e.preventDefault();
+						mousePosition = getMousePosition(e);
+						var target: Node = cast e.target;
+						if(target.nodeName.toLowerCase() != "a")
+							callbacks.mouseDown(newInput.id);
+						#if !cocktail
+						if(isMobile)
+		                    newInput.ontouchend = function(e: MouseEvent){
+								if(autoValidation)
+									onValidationRequest(newInput.id);
+								callbacks.click(newInput.id);
+							}
+						#end
+					}
+				};
+				#if !cocktail
+				if(isMobile)
+					newInput.ontouchstart = onStart;
+				else
+				#end
+					newInput.onmousedown = onStart;
+			}
+			if(callbacks.mouseUp != null)
+				newInput.onmouseup = function(_) callbacks.mouseUp(newInput.id);
+			if(callbacks.mouseOver != null)
+				newInput.onmouseover = function(_) callbacks.mouseOver(newInput.id);
+			if(callbacks.mouseOut != null)
+				newInput.onmouseout = function(_) callbacks.mouseOut(newInput.id);
 
-            newInput.onmouseover = function(e:MouseEvent) onInputEvent(InputEvent.MOUSE_OVER, newInput.id, getMousePosition(e));
-            newInput.onmouseout = function(e:MouseEvent) onInputEvent(InputEvent.MOUSE_OUT, newInput.id, getMousePosition(e));
 			// Display
 			show(newInput);
 			i++;
@@ -766,7 +768,7 @@ class PartDisplay
 		elem.parentElement.removeChild(elem);
 	}
 
-	public function startDrag(id:String, mousePoint: Point):Void
+	public function startDrag(id:String):Void
 	{
 		// See if e.dataTransfer.setDragImage() can be use instead
 		var elem: Element = rootDocument.getElementById(id);
@@ -777,12 +779,15 @@ class PartDisplay
 		root.appendChild(elem);
 		var bound = elem.getBoundingClientRect();
 		elem.style.position = "absolute";
-		elem.style.left = (mousePoint.x-bound.width/2)+"px";
-		elem.style.top = (mousePoint.y-bound.height/2)+"px";
+		elem.style.left = (mousePosition.x-bound.width/2)+"px";
+		elem.style.top = (mousePosition.y-bound.height/2)+"px";
 
 		var onEnd = function(e: Event) {
-			var drop = getDroppedElement(mousePoint, elem.id);
-			onInputEvent(InputEvent.MOUSE_UP(drop != null ? drop.id : ""), elem.id, mousePoint);
+			var drop = getDroppedElement(mousePosition, elem.id);
+			if(drop == null)
+				stopDrag(id, null, false);
+			else
+				onValidationRequest(elem.id, drop.id, true);
 		};
 		#if !cocktail
 		if(isMobile)
@@ -794,9 +799,9 @@ class PartDisplay
 		// Detect mouse movements
 		var onMove = function(e: UIEvent){
 			e.preventDefault();
-			mousePoint = getMousePosition(e);
-			elem.style.left = (mousePoint.x-bound.width/2)+"px";
-			elem.style.top = (mousePoint.y-bound.height/2)+"px";
+			mousePosition = getMousePosition(e);
+			elem.style.left = (mousePosition.x-bound.width/2)+"px";
+			elem.style.top = (mousePosition.y-bound.height/2)+"px";
 		}
 		#if !cocktail
 		if(isMobile)
@@ -806,7 +811,7 @@ class PartDisplay
 			root.onmousemove = onMove;
 	}
 
-	public function stopDrag(id:String, dropId: String, isValid: Bool, mousePoint:Point):Void
+	public function stopDrag(id:String, dropId: String, isValid: Bool):Void
 	{
 		var drag: Element = rootDocument.getElementById(id);
 		#if cocktail
@@ -836,8 +841,6 @@ class PartDisplay
 		else{
 			dragParent.appendChild(drag);
 		}
-
-		// TODO callback onValidationRequest()
 	}
 
 	/**

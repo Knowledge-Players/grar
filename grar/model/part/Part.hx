@@ -106,6 +106,7 @@ typedef ActivityData = {
 	var inputsEnabled: Bool;
 }
 
+
 class Part{
 
 	public function new(pd : PartData) {
@@ -500,7 +501,7 @@ class Part{
 		return activityData.groups[activityData.groupIndex++];
 	}
 
-	public function getInputGroup(inputId: String):Inputs
+	public function getInputGroup(inputId: String):Null<Inputs>
 	{
 		var i = 0;
 		var result: Inputs = null;
@@ -590,9 +591,10 @@ class Part{
 
 	public function validate(inputId : String, ?value: String) : Bool {
 
-		var input: Input = getInput(inputId);
 		if(activityData == null)
 			throw 'This part is not an activity';
+
+		var input: Input = getInput(inputId);
 
 		var i = 0;
 		while (i < input.values.length && input.values[i] != (value != null ? value : Std.string(input.selected)))

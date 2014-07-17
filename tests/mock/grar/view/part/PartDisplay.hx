@@ -1,5 +1,6 @@
 package grar.view.part;
 
+import grar.controller.PartController.InputCallback;
 import grar.util.TextDownParser;
 import grar.model.part.item.Item.VideoData;
 import grar.util.Point;
@@ -7,12 +8,12 @@ import grar.util.Point;
 using StringTools;
 using Lambda;
 
-enum InputEvent{
-    CLICK;
-    MOUSE_DOWN;
-    MOUSE_UP(targetId: String);
-    MOUSE_OVER;
-    MOUSE_OUT;
+typedef InputData = {
+	ref: String,
+	id: String,
+	content: Map<String, String>,
+	icon: Map<String, String>,
+	selected: Bool
 }
 
 typedef Element = String;
@@ -47,9 +48,7 @@ class PartDisplay{
 
 	public dynamic function onIntroEnd():Void { }
 
-	public dynamic function onInputEvent(type: InputEvent, inputId: String, mousePoint: Point): Void {}
-
-	public dynamic function onValidationRequest(inputId: String): Void {}
+	public dynamic function onValidationRequest(inputId: String, ?value: String, ?dragging: Bool = false): Void {}
 
 	public dynamic function onChangePatternRequest(patternId: String): Void {}
 
@@ -192,18 +191,18 @@ class PartDisplay{
 
     }
 
-    public function createInputs(refs: List<{ref: String, id: String, content: Map<String, String>, icon: Map<String, String>, selected: Bool}>, groupeRef: String, ?autoValidation: Bool = true, ?position: Array<Point>):Void
+    public function createInputs(refs: List<InputData>, groupeRef: String, callbacks: InputCallback, ?autoValidation: Bool = true, ?position: Array<Point>):Void
     {
 
     }
 	public function setRoundNumber(roundNumber:Int, totalRound:Int, ?groupRef: String):Void {}
 
-    public function startDrag(id:String, mousePoint: Point):Void
+    public function startDrag(id:String):Void
     {
 
     }
 
-    public function stopDrag(id:String, dropId: String, isValid: Bool, mousePoint:Point):Void
+    public function stopDrag(id:String, dropId: String, isValid: Bool):Void
     {
     }
 

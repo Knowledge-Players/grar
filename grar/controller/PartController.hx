@@ -1,10 +1,8 @@
 package grar.controller;
 
 import grar.model.Config;
-import grar.util.Point;
 import grar.util.TextDownParser;
 
-import grar.view.part.PartDisplay.InputEvent;
 import grar.view.part.PartDisplay;
 import grar.view.Application;
 
@@ -22,6 +20,14 @@ import grar.Controller;
 
 using Lambda;
 using StringTools;
+
+typedef InputCallback = {
+	@:optional var click: String -> Void;
+	@:optional var mouseDown: String -> Void;
+	@:optional var mouseUp: String -> Void;
+	@:optional var mouseOver: String -> Void;
+	@:optional var mouseOut: String -> Void;
+}
 
 class PartController
 {
@@ -88,7 +94,6 @@ class PartController
 				// Activity Part
 				if(part.activityData != null){
 					state.activityState = ActivityState.QUESTION;
-					display.onInputEvent = onInputEvent;
 					startActivity(noReload);
 				}
 				// Standard Part
@@ -115,8 +120,48 @@ class PartController
 
 	public function startActivity(?resume: Bool = false):Void
 	{
-		display.onValidationRequest = function(inputId: String){
-			validateInput(inputId);
+		display.onValidationRequest = function(inputId: String, ?value: String, ?dragging: Bool = false){
+			if(value != null){
+				var inputs: Inputs = part.getInputGroup(value);
+				if(inputs == part.getInputGroup(inputId) && dragging){
+					display.stopDrag(inputId, value, false);
+					return;
+				}
+			}
+
+			var isValid = validateInput(inputId, value);
+			if(dragging){
+				if(isValid){
+					var drop: Input = part.getInput(value);
+					if(drop.additionalValues == null)
+						drop.additionalValues = new Array();
+					drop.additionalValues.push(inputId);
+					var isFull = drop.values.foreach(function(id: String){
+						return drop.additionalValues.has(id);
+					});
+					if(isFull){
+						validateActivity();
+						display.setInputComplete(value);
+					}
+					part.activityData.numRightAnswers++;
+					part.activityData.score++;
+
+					// Selection limits
+					var maxSelect = -1;
+					var rules = part.getRulesByType("selectionLimits", part.getInputGroup(inputId));
+					if(rules.length == 1)
+						maxSelect = Std.parseInt(rules[0].value);
+					else if(rules.length > 1 && rules[1].value != "*")
+						maxSelect = Std.parseInt(rules[1].value);
+
+					display.setText(drop.id+"_completion", part.activityData.numRightAnswers+"/"+maxSelect);
+
+					var rules = part.getRulesByType("minScore");
+					if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
+						display.enableNextButtons();
+				}
+				display.stopDrag(inputId, value, isValid);
+			}
 		}
 
 		// If resuming activity, just show inputs
@@ -618,15 +663,16 @@ class PartController
 		}
 	}
 
-	private function validateInput(inputId: String, ?validation: Rule, ?value: String):Void
+	private function validateInput(inputId: String, ?validation: Rule, ?value: String):Bool
 	{
 		// No activity, ignore call
 		if(state.activityState == ActivityState.NONE)
-			return;
+			return false;
 
 		// Correction
+		var result = true;
 		if(validation == null){
-			var result = part.validate(inputId, value);
+			result = part.validate(inputId, value);
 			display.setInputState(inputId, result ? "true" : "false");
 		}
 		else
@@ -635,10 +681,11 @@ class PartController
 					display.setInputState(inputId,part.getInput(inputId).values[0]);
 					display.uncheckElement(inputId);
 				default:
-					var result = part.validate(inputId, value);
+					result = part.validate(inputId, value);
 					display.setInputState(inputId, result ? "true" : "false");
 			}
 
+		return result;
 	}
 
     private function setInputSelected(input: Input,selected:Bool):Void{
@@ -666,112 +713,10 @@ class PartController
         var rules = part.getRulesByType("minScore");
         if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
             display.enableNextButtons();
+
+	    verifySelectionLimits(part.getInputGroup(input.id));
     }
 
-	private function onInputEvent(eventType: InputEvent, inputId: String, mousePoint: Point):Void
-	{
-		if(part.activityData == null || !part.activityData.inputsEnabled)
-			return ;
-
-		var targetId = null;
-		var inputGroup = part.getInputGroup(inputId);
-		// Input is not in this part. Discard event
-		if(inputGroup == null)
-			return;
-
-		var rules = switch(eventType){
-			case MOUSE_DOWN: part.getRulesByType(PartDisplay.MOUSE_DOWN, inputGroup);
-			case MOUSE_UP(target): targetId = target;
-				part.getRulesByType(PartDisplay.MOUSE_UP, inputGroup);
-
-			case CLICK: part.getRulesByType(PartDisplay.CLICK, inputGroup);
-
-            case MOUSE_OVER: part.getRulesByType(PartDisplay.MOUSE_OVER, inputGroup);
-			case MOUSE_OUT: part.getRulesByType(PartDisplay.MOUSE_OUT, inputGroup);
-
-		}
-		var input: Input = inputGroup.inputs.filter(function(i: Input)return i.id == inputId)[0];
-		var partChanged = false;
-		for(rule in rules){
-			switch(rule.value.toLowerCase()){
-				case "drag": display.startDrag(inputId, mousePoint);
-				case "drop":
-					var drop: Input = part.getInput(targetId);
-					// TODO validate with model
-					var isValid = drop != null && (input.values.has(targetId) || drop.values.has(inputId));
-					display.stopDrag(inputId, targetId, isValid, mousePoint);
-					if(isValid){
-						if(drop.additionalValues == null)
-							drop.additionalValues = new Array();
-						drop.additionalValues.push(inputId);
-						var isFull = drop.values.foreach(function(id: String){
-							return drop.additionalValues.has(id);
-						});
-						if(isFull){
-							validateActivity();
-							display.setInputComplete(targetId);
-						}
-						part.activityData.numRightAnswers++;
-						part.activityData.score++;
-
-						// Selection limits
-						var maxSelect = -1;
-						var rules = part.getRulesByType("selectionLimits", inputGroup);
-						if(rules.length == 1)
-							maxSelect = Std.parseInt(rules[0].value);
-						else if(rules.length > 1 && rules[1].value != "*")
-							maxSelect = Std.parseInt(rules[1].value);
-
-						display.setText(drop.id+"_completion", part.activityData.numRightAnswers+"/"+maxSelect);
-
-						var rules = part.getRulesByType("minScore");
-						if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
-							display.enableNextButtons();
-					}
-				case "showmore":
-					display.displayElements(inputId+"_more");
-                case "showelement":
-                    for (s in input.values)
-                       display.toggleElement(s, true);
-                case "setvisited" :
-                    setInputSelected(input,true);
-                case "replacecontent" :
-                    var output: Input = part.getInput(input.values[0]);
-                    var item: Item = input.items[input.values[0]];
-                    var loc = getLocalizedContent(item.content);
-                    display.setText(output.id,loc);
-					display.setInputState(output.id, "more");
-					if(item.voiceOverUrl != null)
-						setVoiceOver(item.voiceOverUrl, output.id);
-				case "removecontent":
-					var output: Input = part.getInput(input.values[0]);
-					display.setText(output.id,null);
-					display.removeInputState(output.id, "more");
-                case "toggle" :
-                    setInputSelected(input,!input.selected);
-                case "toggleother" :
-                    var output: Input = part.getInput(input.values[0]);
-                    setInputSelected(output,!output.selected);
-				case "goto":
-					var id: String;
-					// Detect dynamic values
-					var tokens: Array<String> = rule.id.split("$");
-					if(tokens.length == 1)
-						id = rule.id;
-					else if(tokens[1].toLowerCase() == "id"){
-						id = tokens[0]+inputId;
-					}
-					else
-						throw "Unsupported dynamic value '"+tokens[1]+"'.";
-					display.hideElements(Lambda.map(part.activityData.groups, function(group: Inputs) return group.ref));
-					displayPart(state.module.getPartById(id));
-					partChanged = true;
-			}
-		}
-
-		if(!partChanged)
-			verifySelectionLimits(inputGroup);
-	}
 
 	private function verifySelectionLimits(group: Inputs):Void
 	{
@@ -836,7 +781,101 @@ class PartController
 			throw "Multiple validation rules for group '"+group+"'. Please choose only one.";
 		var autoValidation: Bool = validationRules.length > 0 ? validationRules[0].value == "auto" : true;
 
-		display.createInputs(inputList, group.ref, autoValidation, group.position);
+		// Bind inputs
+		var callbacks: InputCallback = {click: null, mouseDown: null, mouseUp: null, mouseOver: null, mouseOut: null};
+
+		for(action in Reflect.fields(callbacks)){
+			var actions = new Array<String -> Void>();
+			var rules = part.getRulesByType(action, group);
+			for(rule in rules)
+				actions.push(getInputAction(rule));
+
+			Reflect.setField(callbacks, action, function(inputId: String){
+				for(a in actions)
+					a(inputId);
+			});
+		}
+
+		display.createInputs(inputList, group.ref, callbacks, autoValidation, group.position);
+	}
+
+	private function getInputAction(rule:Rule):String -> Void
+	{
+		return switch(rule.value.toLowerCase()){
+			case "drag":
+				function(inputId: String) display.startDrag(inputId);
+			case "showmore":
+				function(inputId: String) display.displayElements(inputId+"_more");
+			case "showelement":
+				function(inputId: String){
+					var input: Input = part.getInput(inputId);
+					if(input == null)
+						throw "Can't find input with id '"+inputId+"'.";
+					for (s in input.values)
+						setInputSelected(part.getInput(s), true);
+					//display.toggleElement(s, true);
+				}
+			case "setvisited" :
+				function(inputId: String){
+					var input: Input = part.getInput(inputId);
+					if(input == null)
+						throw "Can't find input with id '"+inputId+"'.";
+					setInputSelected(input,true);
+				}
+			case "replacecontent" :
+				function(inputId: String){
+					var input: Input = part.getInput(inputId);
+					if(input == null)
+						throw "Can't find input with id '"+inputId+"'.";
+					var output: Input = part.getInput(input.values[0]);
+					var item: Item = input.items[input.values[0]];
+					var loc = getLocalizedContent(item.content);
+					display.setText(output.id,loc);
+					display.setInputState(output.id, "more");
+					if(item.voiceOverUrl != null)
+						setVoiceOver(item.voiceOverUrl, output.id);
+				}
+			case "removecontent":
+				function(inputId: String){
+					var input: Input = part.getInput(inputId);
+					if(input == null)
+						throw "Can't find input with id '"+inputId+"'.";
+					var output: Input = part.getInput(input.values[0]);
+					display.setText(output.id,null);
+					display.removeInputState(output.id, "more");
+				}
+			case "toggle" :
+				function(inputId: String){
+					var input: Input = part.getInput(inputId);
+					if(input == null)
+						throw "Can't find input with id '"+inputId+"'.";
+					setInputSelected(input,!input.selected);
+				}
+			case "toggleother" :
+				function(inputId: String){
+					var input: Input = part.getInput(inputId);
+					if(input == null)
+						throw "Can't find input with id '"+inputId+"'.";
+					var output: Input = part.getInput(input.values[0]);
+					setInputSelected(output,!output.selected);
+				}
+			case "goto":
+				function(inputId: String){
+					var id: String;
+					// Detect dynamic values
+					var tokens: Array<String> = rule.id.split("$");
+					if(tokens.length == 1)
+						id = rule.id;
+					else if(tokens[1].toLowerCase() == "id"){
+						id = tokens[0]+inputId;
+					}
+					else
+						throw "Unsupported dynamic value '"+tokens[1]+"'.";
+					display.hideElements(Lambda.map(part.activityData.groups, function(group: Inputs) return group.ref));
+					displayPart(state.module.getPartById(id));
+				}
+			default: throw "Unknown rule '"+rule.value+"'.";
+		}
 	}
 
 	private function setVoiceOver(voiceOverUrl: String, ?itemRef: String):Void
