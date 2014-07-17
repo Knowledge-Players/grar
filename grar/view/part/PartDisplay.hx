@@ -746,6 +746,7 @@ class PartDisplay
 
     public function toggleElement(id:String, ?force: Bool):Void {
         var elem:Element = rootDocument.getElementById(id);
+        elem.classList.toggle("selected");
         for (e in elem.getElementsByTagName("input")) {
             var input: InputElement = cast e;
 	        input.checked = force != null ? force : !input.checked;

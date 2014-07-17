@@ -749,6 +749,9 @@ class PartController
 					display.removeInputState(output.id, "more");
                 case "toggle" :
                     setInputSelected(input,!input.selected);
+                case "toggleother" :
+                    var output: Input = part.getInput(input.values[0]);
+                    setInputSelected(output,!output.selected);
 				case "goto":
 					var id: String;
 					// Detect dynamic values
