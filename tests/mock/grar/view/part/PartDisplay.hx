@@ -202,7 +202,7 @@ class PartDisplay{
 
     }
 
-    public function stopDrag(id:String, dropId: String, isValid: Bool):Void
+    public function stopDrag(id:String, dropId: String, isValid: Bool, isCorrect: Bool):Void
     {
     }
 

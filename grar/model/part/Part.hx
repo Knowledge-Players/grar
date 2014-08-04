@@ -1,5 +1,6 @@
 package grar.model.part;
 
+import Array;
 import grar.util.Point;
 
 import grar.model.part.item.Item;
@@ -7,6 +8,8 @@ import grar.model.part.item.Pattern;
 
 import haxe.ds.GenericStack;
 import haxe.ds.StringMap;
+
+using Lambda;
 
 enum PartType {
 
@@ -76,6 +79,7 @@ typedef Input = {
 	var visited: Bool;
 	var images: Map<String, String>;
 	var points: Int;
+	var correct: Bool;
 	@:optional var additionalValues: Array<String>;
 }
 
@@ -105,6 +109,7 @@ typedef ActivityData = {
 	**/
 	var inputsEnabled: Bool;
 }
+
 
 
 class Part{
@@ -240,10 +245,12 @@ class Part{
 
 	public function set_parent(pt : Null<Part>) : Null<Part> {
 
-		if (pt == parent) {
+		// undefined == null for JS target, so parent is not initialized to null
+		/*if (pt == parent) {
 
 			return parent;
-		}
+		}*/
+
 		parent = pt;
 
 		this.onActivateTokenRequest = function(itId : String){ parent.onActivateTokenRequest(itId); }
@@ -513,6 +520,17 @@ class Part{
 		return result;
 	}
 
+	/**
+	* Get the number of visited inputs in a group
+	* @param group: Group where to count
+	*
+	* @return the number of visited inputs
+	**/
+	public inline function getNumInputsVisited(group:Inputs):Int
+	{
+		return group.inputs.count(function(input: Input) return input.visited);
+	}
+
 	public function getInput(inputId:String):Null<Input>
 	{
 		if(activityData == null)
@@ -601,6 +619,7 @@ class Part{
 			i++;
 
 		var result = i != input.values.length;
+		input.correct = result;
 
 		if (result)
 			activityData.numRightAnswers++;

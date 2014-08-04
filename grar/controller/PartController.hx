@@ -124,14 +124,14 @@ class PartController
 			if(value != null){
 				var inputs: Inputs = part.getInputGroup(value);
 				if(inputs == part.getInputGroup(inputId) && dragging){
-					display.stopDrag(inputId, value, false);
+					display.stopDrag(inputId, value, false, false);
 					return;
 				}
 			}
 
-			var isValid = validateInput(inputId, value);
+			var isCorrect = validateInput(inputId, value);
 			if(dragging){
-				if(isValid){
+				if(isCorrect){
 					var drop: Input = part.getInput(value);
 					if(drop.additionalValues == null)
 						drop.additionalValues = new Array();
@@ -143,7 +143,7 @@ class PartController
 						validateActivity();
 						display.setInputComplete(value);
 					}
-					part.activityData.numRightAnswers++;
+
 					part.activityData.score++;
 
 					// Selection limits
@@ -160,13 +160,29 @@ class PartController
 					if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
 						display.enableNextButtons();
 				}
-				display.stopDrag(inputId, value, isValid);
+				display.stopDrag(inputId, value, true, isCorrect);
 			}
 		}
 
 		// If resuming activity, just show inputs
 		if(resume){
 			display.displayElements(Lambda.map(part.activityData.groups, function(group: Inputs) return group.ref));
+			for(group in part.activityData.groups){
+				if(group.groups != null && group.groups.length > 0)
+					for(subgroup in group.groups){
+						if(subgroup.inputs.foreach(function(input: Input) return input.selected)){
+							state.activityState = ActivityState.NONE;
+							nextElement();
+							return;
+						}
+					}
+				else if(group.inputs.foreach(function(input: Input) return input.selected)){
+					state.activityState = ActivityState.NONE;
+					nextElement();
+					return;
+				}
+			}
+			part.activityData.inputsEnabled = true;
 			return;
 		}
 
@@ -223,12 +239,21 @@ class PartController
 
 		if(part.activityData != null){
 			var rules = part.getRulesByType("minScore");
-			if(rules.length > 0)
+			if(rules.length > 0 && part.activityData.score < Std.parseInt(rules[0].value))
 				display.disableNextButtons();
 			else{
 				var rules = part.getRulesByType("minVisited");
-				if(rules.length > 0)
-					display.disableNextButtons();
+				if(rules.length > 0){
+					if(group.inputs.length > 0 && part.getNumInputsVisited(group) < Std.parseInt(rules[0].value))
+						display.disableNextButtons();
+					else{
+						var i = 0;
+						while(i < group.groups.length && part.getNumInputsVisited(group.groups[i]) < Std.parseInt(rules[0].value))
+							i++;
+						if(i == group.groups.length)
+							display.disableNextButtons();
+					}
+				}
 			}
 		}
 	}
@@ -690,7 +715,8 @@ class PartController
 
     private function setInputSelected(input: Input,selected:Bool):Void{
 
-        if(input.selected == selected) return;
+        // Optim ?
+        //if(input.selected == selected) return;
 
         display.toggleElement(input.id,selected);
 
@@ -700,8 +726,9 @@ class PartController
         input.selected = selected;
 
 	    var rules = part.getRulesByType("minVisited");
-	    var inputs = part.getInputGroup(input.id).inputs;
-	    if(rules.length > 0 && inputs.count(function(input: Input) return input.visited) >= Std.parseInt(rules[0].value))
+	    var group = part.getInputGroup(input.id);
+	    var inputs = group.inputs;
+	    if(rules.length > 0 && part.getNumInputsVisited(group) >= Std.parseInt(rules[0].value))
 		    display.enableNextButtons();
 
 	    // TODO Don't use score variable; replace by numVisited?
@@ -797,6 +824,12 @@ class PartController
 		}
 
 		display.createInputs(inputList, group.ref, callbacks, autoValidation, group.position);
+
+		// Update state
+		for(input in group.inputs){
+			if(input.selected)
+				setInputSelected(input, true);
+		}
 	}
 
 	private function getInputAction(rule:Rule):String -> Void
@@ -808,25 +841,17 @@ class PartController
 				function(inputId: String) display.displayElements(inputId+"_more");
 			case "showelement":
 				function(inputId: String){
-					var input: Input = part.getInput(inputId);
-					if(input == null)
-						throw "Can't find input with id '"+inputId+"'.";
-					for (s in input.values)
+					for (s in part.getInput(inputId).values)
 						setInputSelected(part.getInput(s), true);
 					//display.toggleElement(s, true);
 				}
 			case "setvisited" :
 				function(inputId: String){
-					var input: Input = part.getInput(inputId);
-					if(input == null)
-						throw "Can't find input with id '"+inputId+"'.";
-					setInputSelected(input,true);
+					setInputSelected(part.getInput(inputId),true);
 				}
 			case "replacecontent" :
 				function(inputId: String){
 					var input: Input = part.getInput(inputId);
-					if(input == null)
-						throw "Can't find input with id '"+inputId+"'.";
 					var output: Input = part.getInput(input.values[0]);
 					var item: Item = input.items[input.values[0]];
 					var loc = getLocalizedContent(item.content);
@@ -837,30 +862,27 @@ class PartController
 				}
 			case "removecontent":
 				function(inputId: String){
-					var input: Input = part.getInput(inputId);
-					if(input == null)
-						throw "Can't find input with id '"+inputId+"'.";
-					var output: Input = part.getInput(input.values[0]);
+					var output: Input = part.getInput(part.getInput(inputId).values[0]);
 					display.setText(output.id,null);
 					display.removeInputState(output.id, "more");
 				}
 			case "toggle" :
 				function(inputId: String){
 					var input: Input = part.getInput(inputId);
-					if(input == null)
-						throw "Can't find input with id '"+inputId+"'.";
 					setInputSelected(input,!input.selected);
 				}
 			case "toggleother" :
 				function(inputId: String){
-					var input: Input = part.getInput(inputId);
-					if(input == null)
-						throw "Can't find input with id '"+inputId+"'.";
-					var output: Input = part.getInput(input.values[0]);
+					var output: Input = part.getInput(part.getInput(inputId).values[0]);
 					setInputSelected(output,!output.selected);
 				}
 			case "goto":
 				function(inputId: String){
+					var input = part.getInput(inputId);
+					// Don't go anywhere if already selected
+					if(input.selected)
+						return;
+
 					var id: String;
 					// Detect dynamic values
 					var tokens: Array<String> = rule.id.split("$");
@@ -872,6 +894,8 @@ class PartController
 					else
 						throw "Unsupported dynamic value '"+tokens[1]+"'.";
 					display.hideElements(Lambda.map(part.activityData.groups, function(group: Inputs) return group.ref));
+					setInputSelected(input, true);
+					part.activityData.inputsEnabled = false;
 					displayPart(state.module.getPartById(id));
 				}
 			default: throw "Unknown rule '"+rule.value+"'.";

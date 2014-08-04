@@ -3,6 +3,7 @@ package grar.model.part.item;
 import grar.model.part.Part.ImageData;
 import haxe.ds.StringMap;
 
+// TODO Transform class Item into typedef
 typedef ItemData = {
 
 	var content : String;

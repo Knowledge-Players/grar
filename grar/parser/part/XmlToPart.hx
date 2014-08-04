@@ -1,5 +1,6 @@
 package grar.parser.part;
 
+//import grar.parser.part.RuleParser.InjunctionData;
 import grar.util.Point;
 import grar.model.part.item.GroupItem;
 import grar.model.part.item.Pattern;
@@ -198,7 +199,7 @@ class XmlToPart {
 		var groups : Array<Inputs> = new Array();
 		var rules : StringMap<Rule> = new StringMap();
 		var numRightAnswers : Int = 0;
-
+		var ruleParser = new RuleParser();
 		for (child in f.elements) {
 
 			switch (child.name.toLowerCase()) {
@@ -209,7 +210,12 @@ class XmlToPart {
 					groups.push(group);
 
 				case "rule" :
-
+					/*var rule: Rule = { id: child.att.id, trigger: child.att.on.toLowerCase(), injunctions: new Array()};
+					for(inj in child.innerData.split("\n")){
+						var injData: InjunctionData = cast {keywords: new Array(), variables: new Array()};
+						ruleParser.parseRule(inj, injData);
+						rule.injunctions.push(parseInjunction(injData));
+					}*/
 					var rule : Rule = { id: child.att.id, type: child.att.type.toLowerCase(), value: child.att.value};
 					rules.set(rule.id, rule);
 			}
@@ -226,6 +232,39 @@ class XmlToPart {
 
 		return {groups: groups, rules: rules, groupIndex: 0, numRightAnswers: 0, score: 0, inputsEnabled: true};
 	}
+
+	/*private static function parseInjunction(injData:InjunctionData):InjunctionType
+	{
+		var varIndex = 0;
+		var type: InjunctionType;
+		for(keyword in injData.keywords){
+			switch(keyword){
+				case "SET":
+					type = SETTER(getVariable(injData, varIndex++), getVariable(injData, varIndex++));
+				case "GET":
+					type = GETTER(getVariable(injData, varIndex++), getVariable(injData, varIndex++));
+				case "PUT":
+					type = PUTTER(getVariable(injData, varIndex++), getVariable(injData, varIndex++));
+				case "VALIDATE":
+					type = VALIDATOR;
+			}
+		}
+
+		return type;
+	}
+
+	static function getVariable(injData:InjunctionData, index:Int):Dynamic
+	{
+		var obj: Dynamic;
+		if(injData.variables[index].startsWith("$sub")){
+			var subIndex = Std.parseInt(injData.variables[index].substr(4));
+			obj = parseInjunction(injData.subInjunction[subIndex]);
+		}
+		else
+			obj = injData.variables[index];
+
+		return obj;
+	}*/
 
 	static function createInput(f : Fast) : Input {
 
@@ -266,7 +305,7 @@ class XmlToPart {
 			}
 		}
 
-		return {id: f.att.id, ref: f.att.ref, items: content, values: values, selected: selected, images: images, points: points, visited: false};
+		return {id: f.att.id, ref: f.att.ref, items: content, values: values, selected: selected, images: images, points: points, visited: false, correct: false};
 	}
 
 	static function createInputGroup(f : Fast) : Inputs {
@@ -361,6 +400,7 @@ class XmlToPart {
 		pd.perks = new StringMap();
 		pd.requirements = new StringMap();
 		pd.partialSubParts = [];
+		pd.parent = null;
 
 		pd = parsePartHeader(pd, f);
 		pd.xml = f.x;

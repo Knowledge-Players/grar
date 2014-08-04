@@ -217,6 +217,8 @@ class ScormService {
 							+ "Error code: " + errorCode + "\n"
 							+ "Error info: " + debugInfo);
 		}
+		else
+			pipwerks.Scorm.save();
 		return result;
 	}
 

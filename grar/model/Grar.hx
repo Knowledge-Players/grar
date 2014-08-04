@@ -377,10 +377,13 @@ class Grar {
 	**/
 	public function getPreviousPart(p:Part):Null<Part>
 	{
-		var i = 0;
 		var allParts = getAllParts();
-		while(i < allParts.length && allParts[i] != p)
-			i++;
+		var i = allParts.length;
+		while(i >= 0 && allParts[i] != p)
+			i--;
+		// Doesn't return subparts. For now?
+		while(i >= 0 && allParts[i-1].parent != null)
+			i--;
 
 		return i < allParts.length ? allParts[i-1] : null;
 	}

@@ -22,7 +22,7 @@ class KalturaService{
 		var k = new KalturaHaxe(null, null, ks);
 		k.getBitrateWiseAsset(entryId, bitrate, function(success, result){
 			if(!success)
-				throw "Unable to retrive video "+entryId+": "+result;
+				throw "Unable to retrieve video "+entryId+": "+result;
 
 			onSuccess(result.substr(1, result.length-2));
 		});

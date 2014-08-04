@@ -55,6 +55,8 @@ class AutoService {
 				studentName = mySo.data.studentName;
 				studentId = mySo.data.studentId;
 				lesson_location = mySo.data.lesson_location;
+#elseif js
+// TODO Cookies !
 #end
 			} catch(e : String) {
 

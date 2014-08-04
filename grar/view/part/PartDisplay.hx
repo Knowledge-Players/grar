@@ -109,6 +109,10 @@ class PartDisplay
 		if(playingSounds != null)
 			playingSounds.iter(function(elem: AudioElement) elem.pause());
 		playingSounds = new Array();
+		soundPlayer = null;
+
+		// Init video
+		videoPlayer = null;
 
 		if(root != null){
 			if(root.nodeName.toLowerCase() == "iframe"){
@@ -305,6 +309,10 @@ class PartDisplay
 
 
 		if(application.isMobile){
+			// Clean previous voice over icon
+			for(node in rootDocument.getElementsByClassName("voiceOver"))
+				node.parentNode.removeChild(node);
+
 			var button = rootDocument.createAnchorElement();
 			button.innerHTML = "&#9654;";
 			button.href = 'javascript:void(0);';
@@ -677,14 +685,6 @@ class PartDisplay
 					newInput.style.backgroundImage = url;
 				}
 			}
-			// Update state
-			if(r.selected){
-				newInput.classList.add("selected");
-				for(node in newInput.getElementsByTagName("input")){
-					var input: InputElement = cast node;
-					input.checked = true;
-				}
-			}
 
 			// Event Binding
 			if(callbacks.click != null){
@@ -697,11 +697,13 @@ class PartDisplay
 			if(callbacks.mouseDown != null){
 				var onStart = function(e: MouseEvent){
 					if(isMobile || e.button == 0){
-						e.preventDefault();
 						mousePosition = getMousePosition(e);
 						var target: Node = cast e.target;
-						if(target.nodeName.toLowerCase() != "a")
+						if(target.nodeName.toLowerCase() != "a"){
 							callbacks.mouseDown(newInput.id);
+							e.preventDefault();
+						}
+
 						#if !cocktail
 						if(isMobile)
 		                    newInput.ontouchend = function(e: MouseEvent){
@@ -785,7 +787,7 @@ class PartDisplay
 		var onEnd = function(e: Event) {
 			var drop = getDroppedElement(mousePosition, elem.id);
 			if(drop == null)
-				stopDrag(id, null, false);
+				stopDrag(id, null, false, false);
 			else
 				onValidationRequest(elem.id, drop.id, true);
 		};
@@ -811,7 +813,7 @@ class PartDisplay
 			root.onmousemove = onMove;
 	}
 
-	public function stopDrag(id:String, dropId: String, isValid: Bool):Void
+	public function stopDrag(id:String, dropId: String, isValid: Bool, isCorrect: Bool):Void
 	{
 		var drag: Element = rootDocument.getElementById(id);
 		#if cocktail
@@ -826,21 +828,40 @@ class PartDisplay
 		#end
         root.onmouseup = root.onmousemove = null;
 
-		if(isValid){
+		if(isValid ){
+			// Validation feedback on drop
 			var drop: Element = rootDocument.getElementById(dropId);
-			var dropZone = drop.getElementsByClassName("dropZone");
-			if(dropZone.length > 0)
-				dropZone[0].appendChild(drag);
-			else
-				drop.appendChild(drag);
+			var listener = null;
+			listener = function(_){
+				drop.removeEventListener("transitionend",listener);
+				drop.removeEventListener("webkitTransitionEnd",listener);
+				drop.removeEventListener("animationend",listener);
 
-            drag.onmousedown = null;
-            drag.onmouseup = null;
-			drag.classList.add("true");
+				drop.classList.remove(Std.string(isCorrect));
+			};
+			drop.addEventListener("transitionend",listener);
+			drop.addEventListener("webkitTransitionEnd",listener);
+			drop.addEventListener("animationend",listener);
+			drop.addEventListener("webkitAnimationEnd",listener);
+			drop.classList.add(Std.string(isCorrect));
+
+			if(isCorrect){
+				var drop: Element = rootDocument.getElementById(dropId);
+				var dropZone = drop.getElementsByClassName("dropZone");
+				if(dropZone.length > 0)
+					dropZone[0].appendChild(drag);
+				else
+					drop.appendChild(drag);
+
+				drag.onmousedown = null;
+				drag.onmouseup = null;
+				drag.classList.add("true");
+			}
+			else
+				dragParent.appendChild(drag);
 		}
-		else{
+		else
 			dragParent.appendChild(drag);
-		}
 	}
 
 	/**
@@ -865,7 +886,13 @@ class PartDisplay
 	public function toggleValidationButtons(?force: Bool):Void
 	{
 		for(b in root.getElementsByClassName("validate"))
-			b.getElement().classList.toggle("disabled", force);
+			// IE doesn't understand toggle' second parameter
+			if(force == null)
+				b.getElement().classList.toggle("disabled", force);
+			else if(force)
+				b.getElement().classList.add("disabled");
+			else
+				b.getElement().classList.remove("disabled");
 	}
 
 	public function removeFullscreenState():Void
@@ -896,6 +923,9 @@ class PartDisplay
 	}
 
 	private function recursiveSetId(element:Element, ref:String):Void {
+		// Safari/IE fix for undefined children for SVG element
+		if(! untyped __js__("element.children"))
+			return;
 		for(child in element.children){
 			var element: Element = child.getElement();
 			if (element != null) {
@@ -978,6 +1008,10 @@ class PartDisplay
 	}
 
 	private function show(elem: Element) {
+		// Fix bug IE10 for SVG element
+		if(! untyped __js__("elem.classList"))
+			return;
+
 		elem.classList.remove("hidden");
 		elem.classList.add("visible");
 	}
@@ -994,7 +1028,7 @@ class PartDisplay
 		for(node in text.childNodes) children.push(node);
 		// Clean text node in Textfield
 		for(node in children){
-			if(node.nodeType == Node.TEXT_NODE || node.nodeName.toLowerCase() == "p" || node.nodeName.toLowerCase() == "a" || node.nodeName.toLowerCase().startsWith("h")){
+			if(mustRemoveNode(node)){
 				text.removeChild(node);
 			}
 		}
@@ -1061,5 +1095,20 @@ class PartDisplay
 			rows.push(node);
 		for(row in rows)
 			row.parentNode.removeChild(row);
+	}
+
+	private function mustRemoveNode(node:Node):Bool
+	{
+		var remove = false;
+		if(node.nodeType == Node.TEXT_NODE)
+			remove = true;
+		else{
+			var elem: Element = node.getElement();
+			if(elem != null && node.nodeName.toLowerCase() == "a")
+				remove = elem.classList.contains("voiceOver");
+			else
+				remove = node.nodeName.toLowerCase() == "p" || node.nodeName.toLowerCase().startsWith("h");
+		}
+		return remove;
 	}
 }
