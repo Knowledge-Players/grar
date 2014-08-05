@@ -36,13 +36,13 @@ class ManualTrackingService{
 
 	public function setLocation(isActive : Bool, location : String, moduleId: String) : Void {
 		if(isActive)
-			untyped __js__("setMarquePage(moduleId, location)");
+			untyped __js__("setBookmark(moduleId, location)");
 	}
 
 	public function getLocation(isActive: Bool, moduleId: String):String
 	{
 		if(isActive)
-			return untyped __js__("getMarquePage(moduleId)");
+			return untyped __js__("getBookmark(moduleId)");
 		else
 			return null;
 	}
@@ -59,17 +59,49 @@ class ManualTrackingService{
 		else
 			return null;
 	}
-	public function setTime(isActive: Bool, time: String, moduleId: String):Void
+	public function setTime(isActive: Bool, time: Int, moduleId: String):Void
 	{
-		if(isActive)
-			untyped __js__("setTemps(moduleId, time)");
+		if(isActive){
+			var formattedTime = getFormatTime(time/1000);
+			untyped __js__("setTime(moduleId, formattedTime)");
+		}
 	}
 
 	public function getTime(isActive: Bool, moduleId: String):Int
 	{
 		if(isActive)
-			return untyped __js__("getTemps(moduleId)");
+			return untyped __js__("getTime(moduleId)");
 		else
 			return null;
+	}
+
+	// TODO TimeUtils
+	private function getFormatTime(time : Int) : String {
+
+		var output : StringBuf = new StringBuf();
+		//var time:Int = timer.currentCount - startTime;
+		var hours : Int = Math.floor(time / 3600);
+		var minutes : Int = Math.floor((time - (hours * 3600)) / 60);
+		var seconds : Int = (time - (hours * 3600)) - (minutes * 60);
+
+		if (hours < 10) {
+
+			output.add("0");
+		}
+		output.add(hours + ":");
+
+		if (minutes < 10) {
+
+			output.add("0");
+		}
+		output.add(minutes + ":");
+
+		if (seconds < 10) {
+
+			output.add("0");
+		}
+		output.add(seconds);
+
+		return output.toString();
 	}
 }

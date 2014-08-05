@@ -95,8 +95,6 @@ class Grar {
 
 	public var bookmark (default, set) : Int = -1;
 
-	public var checksum (default, default) : Int;
-
 	public var completion : Map<String, Int>;
 
 	public var completionOrdered : Array<String>;

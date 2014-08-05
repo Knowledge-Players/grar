@@ -63,6 +63,7 @@ class TrackingController {
 
 					case Manual:
 						manualSrv.setLocation(state.tracking.isActive, state.tracking.location, state.module.id);
+						manualSrv.setTime(state.tracking.isActive, state.tracking.currentTime, state.module.id);
 				}
 			}
 
@@ -81,6 +82,7 @@ class TrackingController {
 
 					case Manual:
 						manualSrv.setStatus(state.tracking.isActive, state.tracking.getStatus(), state.module.id);
+						manualSrv.setTime(state.tracking.isActive, state.tracking.currentTime, state.module.id);
 				}
 			}
 
@@ -173,7 +175,6 @@ class TrackingController {
 
 				state.module.currentLocale = stateInfosArray[0];
 				state.module.bookmark = Std.parseInt(stateInfosArray[1]);
-				state.module.checksum = Std.parseInt(stateInfosArray[3]);
 
 				state.trackingInitString = stateStr;
 
@@ -298,8 +299,6 @@ class TrackingController {
 		stringBuf.add(state.module.bookmark);
 		stringBuf.add("@");
 		stringBuf.add(completionString());
-		stringBuf.add("@");
-		stringBuf.add(state.module.checksum);
 
 		return stringBuf.toString();
 	}
