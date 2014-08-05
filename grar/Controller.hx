@@ -78,6 +78,8 @@ class Controller {
 			onPartFinished(part, next);
 		}
 
+		partCtrl.onTrackingUpdateRequest = function() trackingCtrl.updateTracking();
+
 		state.onReadyStateChanged = function() {
 
 				if (state.readyState && config.structureFileUri != null) {

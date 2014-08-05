@@ -1,5 +1,6 @@
 package grar.controller;
 
+import grar.service.ManualTrackingService;
 import grar.view.Application;
 
 import grar.Controller;
@@ -27,6 +28,7 @@ class TrackingController {
 		this.aiccSrv = new AiccService();
 		this.autoSrv = new AutoService();
 		this.scormSrv = new ScormService();
+		this.manualSrv = new ManualTrackingService();
 
 		init();
 	}
@@ -39,6 +41,7 @@ class TrackingController {
 	var aiccSrv : AiccService;
 	var autoSrv : AutoService;
 	var scormSrv : ScormService;
+	var manualSrv: ManualTrackingService;
 
 	var application : Application;
 
@@ -53,12 +56,13 @@ class TrackingController {
 						scormSrv.setLocation(state.tracking.isActive, is2004, state.tracking.location);
 
 					case Aicc( u, i ):
-
 						aiccSrv.putParams(state.tracking, function(t:Tracking){ /* nothing */ }, function(e:String) { /* TODO ? */ });
 
-					case Auto( lesson_location ):
+					case Auto( lessonLocation ):
+						autoSrv.setLocation(state.tracking.isActive, lessonLocation);
 
-						autoSrv.setLocation(state.tracking.isActive, lesson_location);
+					case Manual:
+						manualSrv.setLocation(state.tracking.isActive, state.tracking.location, state.module.id);
 				}
 			}
 
@@ -67,16 +71,16 @@ class TrackingController {
 				switch(state.tracking.type) {
 
 					case Scorm(is2004, ss, sd):
-
 						scormSrv.setStatus(state.tracking.isActive, is2004, state.tracking.getStatus());
 
 					case Aicc(u, i):
-
 						aiccSrv.putParams(state.tracking, function(t:Tracking){ /* nothing */ }, function(e:String) { /* TODO ? */ });
 
 					case Auto(l):
-
 						autoSrv.setStatus(state.tracking.isActive, state.tracking.getStatus());
+
+					case Manual:
+						manualSrv.setStatus(state.tracking.isActive, state.tracking.getStatus(), state.module.id);
 				}
 			}
 
@@ -132,6 +136,8 @@ class TrackingController {
 
 							state.tracking.setStatus(false);
 						}
+
+					default: // doesn't care
 				}
 			}
 
@@ -146,42 +152,6 @@ class TrackingController {
 					default: // can't happen
 				}
 			}
-
-		/*application.onSetBookmarkRequest = function(partId : String) {
-
-				var i : Int = 0;
-
-				for (p in state.module.getAllParts()) {
-					i++;
-
-					if (partId == p.id) {
-
-						state.module.bookmark = i;
-
-						var stateStr : String = saveStateInfos();
-
-						if (!(state.module.currentLocale == null && state.module.bookmark == -1 &&
-								state.module.completionOrdered.length == 0)) {
-
-							state.tracking.location = stateStr;
-						}
-					}
-				}
-			}
-
-		application.onGameOverRequest = function() {
-
-				state.tracking.setStatus(true);
-
-				updateTracking();
-				var stateStr : String = saveStateInfos();
-
-				if (!(state.module.currentLocale == null && state.module.bookmark == -1 &&
-						state.module.completionOrdered.length == 0)) {
-
-					state.tracking.location = stateStr;
-				}
-			}*/
 	}
 
 	public function updateTracking():Void
@@ -233,7 +203,6 @@ class TrackingController {
 			    }
 			}
 
-        //connection.initConnection(this.mode,false,activationTracking);
         switch (m.mode) {
 
 			case AICC :
@@ -247,8 +216,10 @@ class TrackingController {
 
 			case AUTO:
 				autoSrv.init( false, m.state.tracking, onTrackingObject, onError );
+
+	        case MANUAL:
+	            manualSrv.init(false, m.state.tracking, m.id, onTrackingObject, onError);
 		}
-		//tracking.init(isNote, activation);
 	}
 
 	public function updatePartsCompletion() : Void {
@@ -276,8 +247,10 @@ class TrackingController {
 
 		// parts completion
 		for (p in allParts) {
-		    p.isDone = state.module.isPartFinished(p.id);
-		    p.isStarted = state.module.isPartStarted(p.id);
+		    if(state.module.isPartFinished(p.id))
+			    p.state = FINISHED;
+			else if(state.module.isPartStarted(p.id))
+			    p.state = STARTED;
 		}
 	}
 

@@ -5,4 +5,5 @@ enum TrackingMode {
 	SCORM;
 	SCORM2004;
 	AUTO;
+	MANUAL;
 }

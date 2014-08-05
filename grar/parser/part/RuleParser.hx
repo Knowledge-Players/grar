@@ -153,12 +153,12 @@ class RuleParser{
 
 	private inline function isDigit(code: Int): Bool
 	{
-	    return code > '0'.code && code < '9'.code;
+		return code > '0'.code && code < '9'.code;
 	}
 
 	private inline function isOperator(code: Int):Bool
 	{
-	    return code == '='.code || code == '<'.code || code == '>'.code || code == '!'.code;
+		return code == '='.code || code == '<'.code || code == '>'.code || code == '!'.code;
 	}
 
 	private inline function setKeyword(rule: String, injunction: InjunctionData, start: Int, position: Int):Bool

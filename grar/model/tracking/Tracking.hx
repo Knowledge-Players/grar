@@ -6,6 +6,7 @@ enum TrackingType {
 	Aicc( url : String, is : String );
 	Auto( lessonLocation : String );
 	Scorm( is2004 : Bool, successStatus : String, suspendData : String );
+	Manual;
 }
 
 class Tracking {
@@ -242,13 +243,13 @@ class Tracking {
 
 		switch(type) {
 
-			case Scorm(_), Aicc(_):
+			case Scorm(_), Aicc(_), Manual:
 
 				return location;
 
-			case Auto(lesson_location):
+			case Auto(lessonLocation):
 
-				return lesson_location;
+				return lessonLocation;
 		}
 	}
 

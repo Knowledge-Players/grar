@@ -56,10 +56,11 @@ class PartController
 
 	public dynamic function onRestoreLocaleRequest() : Void {}
 
-	public dynamic function onPartFinished(part: Part, next:Bool):Void
-	{}
+	public dynamic function onPartFinished(part: Part, next:Bool):Void{}
 
 	public dynamic function onLocaleDataPathRequest(uri: String, ?onSuccess: Void -> Void) : Void {}
+
+	public dynamic function onTrackingUpdateRequest(): Void {}
 
 
 	///
@@ -87,9 +88,12 @@ class PartController
 		// Reset activity state
 		state.activityState = ActivityState.NONE;
 
+		// Bind
+		this.part.onStateChanged = function(state: PartState) onPartStateChanged(state);
+		this.part.state = STARTED;
+
 		onLocaleDataPathRequest(part.file, function(){
 			application.updateChapterInfos(getLocalizedContent("chapterName"), getLocalizedContent("activityName"));
-
 			application.onPartLoaded = function(){
 				// Activity Part
 				if(part.activityData != null){
@@ -265,10 +269,8 @@ class PartController
 
 	public function exitPart(?completed : Bool = true, ?fromMenu: Bool = false) : Void {
 
-		part.isDone = completed;
-
 		if(completed)
-			state.module.setPartFinished(part.id);
+			part.state = FINISHED
 		else if(!fromMenu)
 			onPartFinished(part, false);
 
@@ -299,23 +301,12 @@ class PartController
 		switch (currentElement) {
 
 			case Part(p):
-
-				if (p.endScreen) {
-
-					part.isDone = true;
-					parent.gameOver();
-				}
 				displayPart(p);
 
 			case Item(i):
 				setupItem(i);
-				if (i.endScreen) {
-					part.isDone = true;
-					parent.gameOver();
-				}
 
 			case Pattern(p):
-
 				startPattern(p);
 
 			case GroupItem(group):
@@ -323,6 +314,8 @@ class PartController
 					setupItem(it);
 				}
 		}
+
+		checkGameOver();
 	}
 
 	public function previousElement():Void
@@ -452,6 +445,7 @@ class PartController
 		teardownItem(pattern.currentItem);
 		display.hidePattern(pattern.ref);
 		pattern.restart();
+		checkGameOver();
 	}
 
 	private function setupItem(item : Item) : Void {
@@ -821,6 +815,18 @@ class PartController
 				for(a in actions)
 					a(inputId);
 			});
+			/*
+			if(actions.length > 0)
+				Reflect.setField(callbacks, action, function(inputId: String){
+
+					bindRule(inputId);
+					if(part.activityData.inputsEnabled && part.getInput(inputId) != null)
+						for(a in actions)
+							a(inputId);
+					else if(part.activityData.inputsEnabled)
+						trace("Unable to find an input with id: "+inputId);
+				});
+			 */
 		}
 
 		display.createInputs(inputList, group.ref, callbacks, autoValidation, group.position);
@@ -831,6 +837,72 @@ class PartController
 				setInputSelected(input, true);
 		}
 	}
+
+	/*
+	private function bindRule(inputId: String, rule: Rule):Void
+	{
+		var input: Input = part.getInput(inputId);
+		for(injunction in rule.injunctions){
+			switch(injunction){
+				case SETTER(obj, value):
+					setVariableValue(obj, value);
+				case GETTER(src, target):
+				case PUTTER(obj, target):
+					case VALIDATOR:
+			}
+		}
+	}
+
+	// No parameters: GET
+	// 1 parameter : SET
+	private function variableValue():Void
+	{
+
+	}
+
+	private function getVariableValue(input:Input, variable:String, ?value: Dynamic):Dynamic
+	{
+		var result;
+		if(variable.startsWith("this")){
+			switch(variable.substr(5)){
+				case "selected":
+					if(value != null)
+						input.selected = value;
+					else
+						result = input.selected;
+
+				case "dragged": // TODO
+				case "enabled": // TODO
+				case "content":
+					var content = new Map<String, String>();
+					for(item in input.items)
+					content[item.ref] = item.content;
+					content;
+				case "position": // TODO
+				case "origin": // TODO
+				case "states": // TODO
+				case "isCorrect":
+					if(value != null)
+						input.correct = value;
+					else
+						result = input.correct;
+			}
+		}
+		else{
+			switch(variable){
+				case "next": // TODO
+				case "numVisited":
+					if(value != null)
+						throw("[GScript] numVisited property is read-only");
+					else
+						part.getNumInputsVisited(part.getInputGroup(input.id));
+				case "minSelected":
+			}
+		}
+
+		return value;
+	}
+	 */
 
 	private function getInputAction(rule:Rule):String -> Void
 	{
@@ -924,5 +996,24 @@ class PartController
 			path = localePath.toString();
 		}
 		display.setVoiceOver(path, application.masterVolume, itemRef);
+	}
+
+	private function checkGameOver():Void
+	{
+		if(!part.hasNextElement() && !state.module.hasNextPart(part)){
+			part.state = FINISHED;
+			//parent.gameOver();
+		}
+	}
+
+	private function onPartStateChanged(partState:PartState):Void
+	{
+		switch(partState){
+			case STARTED:
+				this.state.module.setPartStarted(part.id);
+			case FINISHED:
+				this.state.module.setPartFinished(part.id);
+		}
+		onTrackingUpdateRequest();
 	}
 }

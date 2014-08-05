@@ -34,8 +34,6 @@ typedef PartData = {
 	var id : String;
 	var file : String;
 	var parent : Null<Part>;
-	var isDone : Bool;
-	var isStarted : Bool;
 	var tokens : GenericStack<String>;
 	var elements : Array<PartElement>;
 	var buttons : List<ButtonData>;
@@ -67,6 +65,11 @@ typedef Rule = {
 	var id : String;
 	var type : String;
 	var value : String;
+/*
+
+	var trigger : String;
+	var injunctions : Array<InjunctionType>;
+ */
 }
 
 typedef Input = {
@@ -110,7 +113,20 @@ typedef ActivityData = {
 	var inputsEnabled: Bool;
 }
 
+enum PartState{
+	STARTED;
+	FINISHED;
+}
 
+/*
+enum InjunctionType {
+	SETTER(obj: Dynamic, value: Dynamic);
+	GETTER(src: String, target: Map<String, String>);
+	PUTTER(obj: String, target: Iterable<String>);
+	VALIDATOR;
+}
+
+ */
 
 class Part{
 
@@ -129,8 +145,6 @@ class Part{
 		this.requirements = pd.requirements;
 		this.next = pd.next;
 		this.buttonTargets = pd.buttonTargets;
-		this.isDone = pd.isDone;
-		this.isStarted = pd.isStarted;
 
 		// Initialize indexes
 		restart();
@@ -157,14 +171,9 @@ class Part{
 	public var parent (default, set) : Null<Part>;
 
 	/**
-     * True if the part is done
-     */
-	public var isDone (default, set) : Bool;
-
-    /**
-     * True if the part is started
-     */
-    public var isStarted (default, set) : Bool;
+	* Completion state of this part
+	**/
+	public var state (default, set):PartState;
 
 	/**
      * Tokens in this part
@@ -227,6 +236,9 @@ class Part{
 
 	public dynamic function onScoreToAdd(perk : String, score : Int) : Void { }
 
+	public dynamic function onStateChanged(state: PartState): Void {}
+
+
 
 	///
 	// GETTER / SETTER
@@ -260,7 +272,25 @@ class Part{
 		return parent;
 	}
 
-    public function set_isDone(completed : Bool = true) : Bool {
+	private function set_state(state:PartState):PartState
+	{
+		switch(state){
+			case FINISHED:
+				for (perk in perks.keys()) {
+					//ScoreChart.instance.addScoreToPerk(perk, perks.get(perk));
+					onScoreToAdd(perk, perks.get(perk));
+				}
+				// Reset inputs
+				if(activityData != null)
+					activityData.inputsEnabled = true;
+			case STARTED: // nothing
+		}
+
+		onStateChanged(state);
+		return this.state = state;
+	}
+
+    /*public function set_isDone(completed : Bool = true) : Bool {
 
         isDone = completed;
 		// Add bounty to the right perks
@@ -284,7 +314,7 @@ class Part{
         isStarted = completed;
 
         return completed;
-    }
+    }*/
 
 	public function set_activityData(ad:ActivityData):ActivityData
 	{
@@ -359,7 +389,7 @@ class Part{
 			// If current element is a pattern, explore pattern first
 			switch(elements[elemIndex]){
 				case Pattern(p) if(p.hasNextItem() || p.nextPattern != null): return elements[elemIndex] ;
-				case Part(p) if(p.isDone):
+				case Part(p) if(p.state == FINISHED):
 					elemIndex++;
 					return getNextElement();
 				default: return elements[elemIndex++];
@@ -600,7 +630,7 @@ class Part{
 		for (rule in rulesSet) {
 
 			if (rule.type == type.toLowerCase()) {
-
+			//if (rule.trigger == type.toLowerCase()) {
 				selectedRules.push(rule);
 			}
 		}

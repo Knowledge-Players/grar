@@ -11,7 +11,6 @@ import grar.model.tracking.TrackingMode;
 import grar.model.localization.Locale;
 import grar.model.localization.LocaleData;
 
-import haxe.ds.StringMap;
 import haxe.ds.GenericStack;
 
 typedef InitState = {
@@ -44,7 +43,7 @@ class Grar {
 		this.state = s;
 		this.kSettings = ks;
 		this.readyState = rs;
-		this.inventory = new StringMap();
+		this.inventory = new Map();
 		this.scoreChart = new ScoreChart();
 		this.completion = new Map();
 		this.completionOrdered = new Array();
@@ -63,7 +62,7 @@ class Grar {
 
 	public var notebook (default, set) : Notebook;
 
-	public var inventory (null, default) : StringMap<InventoryToken>;
+	public var inventory (null, default) : Map<String, InventoryToken>;
 
 	public var glossary (default, set) : Null<Glossary> = null;
 
@@ -78,7 +77,7 @@ class Grar {
 
 	// Module localization related properties
 
-	public var locales (default, set) : Null<StringMap<Locale>> = null;
+	public var locales (default, set) : Null<Map<String, Locale>> = null;
 
 	public var currentLocale (default, set) : String;
 
@@ -92,12 +91,9 @@ class Grar {
 
 	private var changeLocale : Bool;
 
-
-	// WIP
-
 	// From StateInfos
 
-	public var bookmark (default, default) : Int = -1;
+	public var bookmark (default, set) : Int = -1;
 
 	public var checksum (default, default) : Int;
 
@@ -113,8 +109,6 @@ class Grar {
 	//
 
 	public dynamic function onReadyStateChanged() { }
-
-	public dynamic function onRefChanged() { }
 
 	public dynamic function onNotebookChanged() { }
 
@@ -134,12 +128,14 @@ class Grar {
 
 	public dynamic function onLocaleListChanged() { }
 
+	public dynamic function onBookmarkChanged(): Void {}
+
 
 	///
 	// GETTERS / SETTERS
 	//
 
-	public function set_currentLocale( v : String ) : String {
+	private function set_currentLocale( v : String ) : String {
 
 		if (v == currentLocale)
 			return v;
@@ -149,7 +145,7 @@ class Grar {
 		return currentLocale;
 	}
 
-	public function set_locales( v : Null<StringMap<Locale>> ) : Null<StringMap<Locale>>
+	private function set_locales( v : Null<Map<String, Locale>> ) : Null<Map<String, Locale>>
 	{
 
 		locales = v;
@@ -157,7 +153,7 @@ class Grar {
 		return locales;
 	}
 
-	public function set_interfaceLocaleDataPath(v : Null<String>) : Null<String>
+	private function set_interfaceLocaleDataPath(v : Null<String>) : Null<String>
 	{
 
 		if (interfaceLocaleDataPath == v)
@@ -167,7 +163,7 @@ class Grar {
 		return interfaceLocaleDataPath;
 	}
 
-	public function set_currentLocaleDataPath(v : Null<String>) : Null<String>
+	private function set_currentLocaleDataPath(v : Null<String>) : Null<String>
 	{
 		if (v != null) {
 			if (currentLocaleDataPath != v) {
@@ -185,7 +181,7 @@ class Grar {
 		return currentLocaleDataPath;
 	}
 
-	public function set_parts(v : Null<Array<Part>>) : Null<Array<Part>> {
+	private function set_parts(v : Null<Array<Part>>) : Null<Array<Part>> {
 
 		if (parts == v)
 			return parts;
@@ -200,7 +196,7 @@ class Grar {
 		return parts;
 	}
 
-	public function set_bibliography(v : Null<Bibliography>) : Null<Bibliography> {
+	private function set_bibliography(v : Null<Bibliography>) : Null<Bibliography> {
 
 		if (bibliography == v) {
 			return bibliography;
@@ -211,7 +207,7 @@ class Grar {
 		return bibliography;
 	}
 
-	public function set_glossary(v : Null<Glossary>) : Null<Glossary> {
+	private function set_glossary(v : Null<Glossary>) : Null<Glossary> {
 
 		if (glossary == v) {
 			return glossary;
@@ -222,7 +218,7 @@ class Grar {
 		return glossary;
 	}
 
-	public function set_readyState(v : ReadyState) : ReadyState {
+	private function set_readyState(v : ReadyState) : ReadyState {
 
 		if (readyState == v) {
 			return readyState;
@@ -233,7 +229,7 @@ class Grar {
 		return readyState;
 	}
 
-	public function set_notebook(v : Notebook) : Notebook {
+	private function set_notebook(v : Notebook) : Notebook {
 
 		if (notebook == v) {
 			return notebook;
@@ -242,6 +238,13 @@ class Grar {
 		onNotebookChanged();
 
 		return notebook;
+	}
+
+	private function set_bookmark(bookmark:Int):Int
+	{
+		this.bookmark = bookmark;
+		onBookmarkChanged();
+		return this.bookmark;
 	}
 
 
@@ -306,7 +309,7 @@ class Grar {
 
 		if (!inventory.exists(tid)) {
 
-			throw 'unknown token "$tid". '+Lambda.array({ iterator: inventory.keys });
+			throw 'Unknown token "$tid". ';
 		}
 		var it : InventoryToken = inventory.get(tid);
 
@@ -320,6 +323,7 @@ class Grar {
 		// Can't go from finished to started
 	    if(completion[pid] < 1)
             completion[pid] =  1;
+	    bookmark = getAllParts().indexOf(getPartById(pid));
     }
 
 	public function setPartFinished(pid : String) : Void {
@@ -365,10 +369,19 @@ class Grar {
 		while(i < allParts.length && allParts[i] != p)
 			i++;
 		// Can't return a child of p. Children are return by p.getNextElement()
-		while(i < allParts.length && allParts[i+1].parent == p)
+		while(i < allParts.length-1 && allParts[i+1].parent == p)
 			i++;
 
-		return i < allParts.length ? allParts[i+1] : null;
+		return i < allParts.length-1 ? allParts[i+1] : null;
+	}
+
+	/**
+	* @param part: Starting point
+	* @return wheter the part has a following part
+	**/
+	public function hasNextPart(p:Part):Bool
+	{
+		return getNextPart(p) != null;
 	}
 
 	/**
@@ -433,7 +446,7 @@ class Grar {
 	            partIndex = k + 1;
 	        }
         }
-	    setPartStarted(nextPart.id);
+	    //setPartStarted(nextPart.id);
         return nextPart;
     }
 
