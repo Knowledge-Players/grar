@@ -62,7 +62,7 @@ class ManualTrackingService{
 	public function setTime(isActive: Bool, time: Int, moduleId: String):Void
 	{
 		if(isActive){
-			var formattedTime = getFormatTime(time/1000);
+			var formattedTime = getFormatTime(Std.int(time/1000));
 			untyped __js__("setTime(moduleId, formattedTime)");
 		}
 	}
