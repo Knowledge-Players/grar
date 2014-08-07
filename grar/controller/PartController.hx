@@ -171,7 +171,7 @@ class PartController
 		// If resuming activity, just show inputs
 		if(resume){
 			display.displayElements(Lambda.map(part.activityData.groups, function(group: Inputs) return group.ref));
-			for(group in part.activityData.groups){
+			/*for(group in part.activityData.groups){
 				if(group.groups != null && group.groups.length > 0)
 					for(subgroup in group.groups){
 						if(subgroup.inputs.foreach(function(input: Input) return input.selected)){
@@ -185,7 +185,7 @@ class PartController
 					nextElement();
 					return;
 				}
-			}
+			}*/
 			part.activityData.inputsEnabled = true;
 			return;
 		}
@@ -945,15 +945,18 @@ class PartController
 				}
 			case "toggleother" :
 				function(inputId: String){
-					var output: Input = part.getInput(part.getInput(inputId).values[0]);
-					setInputSelected(output,!output.selected);
+					var input: Input = part.getInput(inputId);
+					if(input != null){
+						var output: Input = part.getInput(input.values[0]);
+						setInputSelected(output,!output.selected);
+					}
 				}
 			case "goto":
 				function(inputId: String){
 					var input = part.getInput(inputId);
 					// Don't go anywhere if already selected
-					if(input.selected)
-						return;
+					//if(input.selected)
+					//	return;
 
 					var id: String;
 					// Detect dynamic values
