@@ -1,5 +1,6 @@
 package grar.controller;
 
+import grar.util.ParseUtils;
 import grar.model.Config;
 import grar.util.TextDownParser;
 
@@ -645,28 +646,80 @@ class PartController
 		var group = part.activityData.groups[part.activityData.groupIndex-1];
 		var debriefRules = part.getRulesByType("debrief", group);
 		if(state.activityState == ActivityState.QUESTION){
-			for(input in group.inputs)
-				validateInput(input.id, validationRule);
+
+            var resultsArray = new Array<Bool>();
+
+			for(input in group.inputs){
+                validateInput(input.id, validationRule);
+                resultsArray.push(input.selected);
+            }
+
+
+
 
 			// Debrief
 			var lastId = null;
 			var lastValue = null;
 			var isTrue = false;
+            var arrayDebriefs = new Array<{id:String,values:Array<String>}>();
+
 			for(rule in debriefRules){
-				var intValue = Std.parseInt(rule.value);
-				if(intValue == null){
-					lastValue = rule.value;
-					lastId = rule.id;
-				}
-				else if(part.getScore() >= intValue){
-					lastValue = rule.id;
-					isTrue = true;
-				}
+
+                 if(rule.value.indexOf('[')==0){
+                     var ruleValue =rule.value.substring(1,rule.value.length-1);
+
+                     var valueArray =ruleValue.split(',');
+
+                    var debriefObject={id:rule.id,values:valueArray};
+
+                    arrayDebriefs.push(debriefObject);
+
+
+                }else{
+
+                    var intValue = Std.parseInt(rule.value);
+
+                    if(intValue == null){
+                        lastValue = rule.value;
+                        lastId = rule.id;
+                    }
+                    else if(part.getScore() >= intValue){
+                        lastValue = rule.id;
+                        isTrue = true;
+                    }
+
+                }
+
 			}
 
-			display.setDebrief(lastId, getLocalizedContent(group.id+"_"+lastValue));
-			if(lastId != null)
-				display.setInputState(lastId, Std.string(isTrue));
+            if(arrayDebriefs.length>0){
+                var combiQuestion = "";
+
+                for ( i in 0...resultsArray.length){
+                    if(resultsArray[i]){
+                        combiQuestion +=i+1;//123
+                    }
+                }
+
+                for(debrief in arrayDebriefs){
+
+                    for(combi in debrief.values){
+
+                        if(combi == combiQuestion ){
+                            var idTextDebrief = debrief.id.split('_')[0];
+                            display.setDebrief(idTextDebrief, getLocalizedContent(group.id+"_"+debrief.id));
+                        }
+                    }
+                }
+            }else
+            {
+                display.setDebrief(lastId, getLocalizedContent(group.id+"_"+lastValue));
+
+                if(lastId != null)
+                    display.setInputState(lastId, Std.string(isTrue));
+            }
+
+
 
 			// Disabling further input
 			part.activityData.inputsEnabled = false;
