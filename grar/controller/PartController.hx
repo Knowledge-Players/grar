@@ -1,6 +1,5 @@
 package grar.controller;
 
-import grar.util.ParseUtils;
 import grar.model.Config;
 import grar.util.TextDownParser;
 
@@ -812,11 +811,15 @@ class PartController
 			maxSelect = Std.parseInt(rules[1]);
 
 		var numSelected = group.inputs.count(function(input: Input) return input.selected);
-
+        trace(numSelected);
+        trace(maxSelect);
 		if(maxSelect == numSelected){
 			part.activityData.score = 1;
 			part.activityData.inputsEnabled = false;
-		}
+
+		}else{
+            part.activityData.inputsEnabled = true;
+        }
 
 		// Disable/Enable validation with minSelect
 		display.toggleValidationButtons(minSelect > numSelected);
@@ -994,7 +997,15 @@ class PartController
 			case "toggle" :
 				function(inputId: String){
 					var input: Input = part.getInput(inputId);
-					setInputSelected(input,!input.selected);
+                    //TODO déplacer dans setInputSelected
+                    if(!input.selected){
+                        if(part.activityData.inputsEnabled )
+                        {
+                            setInputSelected(input,!input.selected);
+                        }
+                    }else{
+                        setInputSelected(input,!input.selected);
+                    }
 				}
 			case "toggleother" :
 				function(inputId: String){
