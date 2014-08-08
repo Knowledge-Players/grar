@@ -811,8 +811,6 @@ class PartController
 			maxSelect = Std.parseInt(rules[1]);
 
 		var numSelected = group.inputs.count(function(input: Input) return input.selected);
-        trace(numSelected);
-        trace(maxSelect);
 		if(maxSelect == numSelected){
 			part.activityData.score = 1;
 			part.activityData.inputsEnabled = false;
