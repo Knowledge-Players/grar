@@ -13,6 +13,8 @@ class VideoPlayer{
 	public dynamic function onFullscreenRequest(?button: Element): Void {}
 	public dynamic function onExitFullscreenRequest(?button: Element): Void {}
 	public dynamic function onToggleFullscreenRequest(?button: Element): Void {}
+	public dynamic function onAnimationFrameRequest(callback: Void -> Void): Void {}
+	public dynamic function onSubtitleRequest(path: String, callback: String -> Void): Void {}
 
     public function init(root:Element):Void
     {

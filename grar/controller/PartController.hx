@@ -1,5 +1,6 @@
 package grar.controller;
 
+import grar.service.SubtitleService;
 import grar.model.Config;
 import grar.util.TextDownParser;
 
@@ -39,6 +40,8 @@ class PartController
 		this.config = config;
 		this.application = app;
 
+		subtitleSrv = new SubtitleService(config.rootUri);
+
 		init();
 	}
 
@@ -47,6 +50,7 @@ class PartController
 	var application: Application;
 	var display: PartDisplay;
 	var config: Config;
+	var subtitleSrv: SubtitleService;
 
 	var part: Part;
 
@@ -91,6 +95,9 @@ class PartController
 		// Bind
 		this.part.onStateChanged = function(state: PartState) onPartStateChanged(state);
 		this.part.state = STARTED;
+		display.onSubtitleRequest = function(uri, callback){
+			subtitleSrv.fetchSubtitle(uri, callback, parent.onError);
+		}
 
 		onLocaleDataPathRequest(part.file, function(){
 			application.updateChapterInfos(getLocalizedContent("chapterName"), getLocalizedContent("activityName"));

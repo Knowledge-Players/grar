@@ -12,7 +12,7 @@ import grar.view.guide.Absolute;
 import grar.view.guide.Grid;
 import grar.view.guide.Guide;
 
-import grar.model.part.item.Item.VideoData;
+import grar.model.part.item.Item;
 
 import js.html.IFrameElement;
 import js.html.Document;
@@ -76,21 +76,17 @@ class PartDisplay
 	var application: Application;
 	var root: Element;
 	var mousePosition: Point;
-
+	var onFrameStack: Array<Float -> Bool>;
 
 	///
 	// CALLBACKS
 	//
 
 	public dynamic function onActivateTokenRequest(token : String) : Void { }
-
 	public dynamic function onIntroEnd():Void { }
-
-	//public dynamic function onInputEvent(type: InputEvent, inputId: String, mousePoint: Point): Void {}
-
 	public dynamic function onValidationRequest(inputId: String, ?value: String, ?dragging: Bool = false): Void {}
-
 	public dynamic function onChangePatternRequest(patternId: String): Void {}
+	public dynamic function onSubtitleRequest(uri: String, callback: SubtitleData -> Void): Void {}
 
 	///
 	// GETTER / SETTER
@@ -102,6 +98,7 @@ class PartDisplay
 	**/
 	public function init(?root:Element):Void
 	{
+
 		// Init templates
 		templates = new Map();
 		templatesPosition = new Map();
@@ -124,9 +121,20 @@ class PartDisplay
 				this.root = root;
 				rootDocument = application.document;
 			}
+			application.initSounds(rootDocument.body);
 		}
 
-		application.initSounds(rootDocument.body);
+		// Init callback stack on frame rate
+		onFrameStack = new Array();
+		var onframe = null;
+		onframe = function(timestamp){
+			for(fn in onFrameStack)
+				fn(timestamp);
+			this.root.ownerDocument.defaultView.requestAnimationFrame(onframe);
+			return true;
+		};
+		this.root.ownerDocument.defaultView.requestAnimationFrame(onframe);
+
 	}
 
 
@@ -272,6 +280,12 @@ class PartDisplay
 			videoPlayer.onToggleFullscreenRequest = function(?button){
 				videoPlayer.root.classList.toggle("fullscreenOn", onToggleFullscreenRequest(button));
 			};
+			videoPlayer.onAnimationFrameRequest = function(callback){
+				onFrameStack.push(callback);
+			}
+			videoPlayer.onSubtitleRequest = function(path: String, callback){
+				onSubtitleRequest(path, callback);
+			}
 		}
 		videoPlayer.init(rootDocument.getElementById(videoRef));
 		show(videoPlayer.root);

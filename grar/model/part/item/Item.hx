@@ -19,9 +19,17 @@ typedef ItemData = {
 	var voiceOverUrl: String;
 }
 
-typedef SubtitleData ={
+typedef SubtitleData = {
 	var src:String;
 	var lang:String;
+	@:optional var content: Array<Subtitle>;
+}
+
+typedef Subtitle = {
+	var id: String;
+	var start: Float;
+	var end: Float;
+	var text: String;
 }
 
 typedef VideoData = {

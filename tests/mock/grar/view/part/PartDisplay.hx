@@ -2,7 +2,7 @@ package grar.view.part;
 
 import grar.controller.PartController.InputCallback;
 import grar.util.TextDownParser;
-import grar.model.part.item.Item.VideoData;
+import grar.model.part.item.Item;
 import grar.util.Point;
 
 using StringTools;
@@ -45,12 +45,10 @@ class PartDisplay{
 //
 
 	public dynamic function onActivateTokenRequest(token : String) : Void { }
-
 	public dynamic function onIntroEnd():Void { }
-
 	public dynamic function onValidationRequest(inputId: String, ?value: String, ?dragging: Bool = false): Void {}
-
 	public dynamic function onChangePatternRequest(patternId: String): Void {}
+	public dynamic function onSubtitleRequest(uri: String, callback: SubtitleData -> Void): Void {}
 
 
 ///
