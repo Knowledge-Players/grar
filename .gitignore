@@ -1,6 +1,5 @@
 .DS_Store
 bin/*
-tests/*
 
 # IntelliJ IDEA files
 *.iml
