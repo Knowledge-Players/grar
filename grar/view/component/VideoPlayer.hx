@@ -1,8 +1,9 @@
 package grar.view.component;
 
-import grar.model.part.item.Item;
+import grar.view.component.VideoPlayer.VideoPlayerState;
 
-import js.Browser;
+import grar.model.InventoryToken.TokenTrigger;
+import grar.model.part.item.Item;
 
 import js.html.Element;
 import js.html.VideoElement;
@@ -24,6 +25,7 @@ class VideoPlayer{
 	private var previousVolume:Float;
 	private var isNativePlayer:Bool;
 	private var subs:SubtitleData;
+	private var triggers:Array<TokenTrigger>;
 	// Optim
 	private var elapsedTimeElements:Array<Element>;
 	private var bufferElements:Array<Element>;
@@ -38,6 +40,7 @@ class VideoPlayer{
 	public dynamic function onToggleFullscreenRequest(?button: Element): Void {}
 	public dynamic function onAnimationFrameRequest(callback: Float -> Bool): Void {}
 	public dynamic function onSubtitleRequest(path: String, callback: SubtitleData -> Void): Void {}
+	public dynamic function onTokenActivation(tokenId: String): Void {}
 
 	public function new(){
 
@@ -154,28 +157,47 @@ class VideoPlayer{
 		}
 	}
 
-	public function setVideo(url: String, videoData: VideoData, onVideoPlay: Void -> Void, onVideoEnd: Void -> Void, ?locale: String) : Void {
-		// Buffering events
-		videoElement.addEventListener("loadedmetadata", function(_){
-			for(total in root.getElementsByClassName("totalTime")){
-				var totalElement: Element = total.getElement();
-				totalElement.innerText = formatTime(videoElement.duration);
-			}
+	public function setVideo(url: String, videoData: VideoData, ?tokens: Array<TokenTrigger>, onVideoPlay: Void -> Void, onVideoEnd: Void -> Void, ?locale: String) : Void {
+		if(!isNativePlayer){
+			// Buffering events
+			videoElement.addEventListener("loadedmetadata", function(_){
+				for(total in root.getElementsByClassName("totalTime")){
+					var totalElement: Element = total.getElement();
+					totalElement.innerText = formatTime(videoElement.duration);
+				}
+			});
+			videoElement.addEventListener("progress", function(_){
+				if(videoElement.buffered.length > 0)
+					for(buff in bufferElements)
+						buff.style.width = videoElement.buffered.end(0)*100/videoElement.duration+"%";
+			});
+		}
+
+		videoElement.addEventListener("play", function(_){
+			onVideoPlay();
+			setPlayingState(PLAYING);
 		});
-		videoElement.addEventListener("progress", function(_){
-			if(videoElement.buffered.length > 0)
-				for(buff in bufferElements)
-					buff.style.width = videoElement.buffered.end(0)*100/videoElement.duration+"%";
+		videoElement.addEventListener("ended", function(_){
+			onVideoEnd();
+			setPlayingState(FINISHED);
 		});
 
 		videoElement.src = url;
 		videoElement.autoplay = videoData.autoStart;
 		videoElement.loop = videoData.loop;
 		videoElement.volume = videoData.defaultVolume;
+
+		// TODO Use native cue track ? ref http://www.html5rocks.com/en/tutorials/track/basics/
+		if(tokens != null)
+			// Copy the array so we can remove them when they're triggered
+			triggers = tokens.copy();
+		else
+			triggers = [];
+
 		if(!videoData.subtitles.empty() && locale != null){
 			// Native player
 			if(isNativePlayer){
-				var track = Browser.document.createElement("track");
+				var track = root.ownerDocument.createElement("track");
 				track.setAttribute("kind", "subtitles");
 				if(!videoData.subtitles.exists(locale))
 					throw "No subtitles for locale: '"+locale+"'.";
@@ -194,37 +216,23 @@ class VideoPlayer{
 		}
 		if(videoData.fullscreen)
 			onFullscreenRequest();
-
-		videoElement.addEventListener("play", function(_){
-			onVideoPlay();
-		});
-		var endListener = null;
-		endListener = function(_){
-			onVideoEnd();
-			videoElement.removeEventListener("ended", endListener);
-		}
-		videoElement.addEventListener("ended", endListener);
 	}
 
 	public inline function play():Void
 	{
 		videoElement.play();
-		for(button in root.getElementsByClassName("play"))
-			button.getElement().classList.add("playing");
-		root.classList.add("playing");
 	}
 
 	public inline function pause():Void
 	{
 		videoElement.pause();
-		for(button in root.getElementsByClassName("play"))
-			button.getElement().classList.remove("playing");
-		root.classList.remove("playing");
+		setPlayingState(PAUSED);
 	}
 
 	public inline function stop():Void
 	{
 		pause();
+		root.classList.remove(VideoPlayerState.FINISHED);
 		if(videoElement.readyState != MediaElement.HAVE_NOTHING)
 			videoElement.currentTime = 0;
 	}
@@ -279,19 +287,26 @@ class VideoPlayer{
 	**/
 	private function formatTime(time: Float):String
 	{
-		var tempNum = time;
-		var minutes = Math.floor(tempNum / 60);
-		var hours: Float = 0;
-		var currentTimeConverted: String;
-		if (minutes/60 >= 1) {
-			hours = Math.floor(minutes / 60);
-			currentTimeConverted = hours+":";
+		var buffer = new StringBuf();
+		var seconds = time;
+		var hours = Math.floor(seconds/3600);
+		if(hours > 0){
+			buffer.add(hours);
+			buffer.add(":");
+			seconds = seconds % 3600;
 		}
-		else
-			currentTimeConverted = "";
-		var seconds = Math.round(tempNum - (minutes * 60));
-		return currentTimeConverted + (minutes < 10 ? "0":"")+ minutes + ":" +(seconds < 10 ? "0":"")+seconds;
+		var minutes = Math.floor(seconds/60);
+		if(minutes > 0)
+			seconds = seconds % 60;
+		if(minutes < 10)
+			buffer.add("0");
+		buffer.add(minutes);
+		buffer.add(":");
+		if(seconds < 10)
+			buffer.add("0");
+		buffer.add(Math.floor(seconds));
 
+		return buffer.toString();
 	}
 
 	/**
@@ -316,6 +331,13 @@ class VideoPlayer{
 					displaySubtitles(subs.content[i].text);
 			}
 		}
+		for(t in triggers){
+			if(t.timecode == Std.int(videoElement.currentTime)){
+				onTokenActivation(t.id);
+				// Remove it from trigger
+				triggers.shift();
+			}
+		}
 		return true;
 	}
 
@@ -327,4 +349,38 @@ class VideoPlayer{
 			p.innerHTML = sub;
 		}
 	}
+
+	private function setPlayingState(state: VideoPlayerState):Void
+	{
+		switch(state){
+			case PLAYING:
+				root.classList.remove(VideoPlayerState.FINISHED);
+				root.classList.remove(VideoPlayerState.PAUSED);
+				root.classList.add(VideoPlayerState.PLAYING);
+				for(button in root.getElementsByClassName("play"))
+					button.getElement().classList.add(VideoPlayerState.PLAYING);
+
+			case PAUSED:
+				root.classList.remove(VideoPlayerState.PLAYING);
+				root.classList.add(VideoPlayerState.PAUSED);
+				for(button in root.getElementsByClassName("play"))
+					button.getElement().classList.remove(VideoPlayerState.PLAYING);
+
+			case FINISHED:
+				root.classList.remove(VideoPlayerState.PLAYING);
+				root.classList.add(VideoPlayerState.FINISHED);
+				for(button in root.getElementsByClassName("play"))
+					button.getElement().classList.remove(VideoPlayerState.PLAYING);
+
+			default: // nothing
+		}
+	}
+}
+
+@:enum
+abstract VideoPlayerState(String) from String to String {
+	var PLAYING = "playing";
+	var PAUSED = "paused";
+	var FULLSCREEN_ON = "fullscreenOn";
+	var FINISHED = "finished";
 }

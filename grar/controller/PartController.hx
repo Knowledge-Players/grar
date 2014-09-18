@@ -1,5 +1,6 @@
 package grar.controller;
 
+import grar.model.InventoryToken;
 import grar.service.SubtitleService;
 import grar.model.Config;
 import grar.util.TextDownParser;
@@ -99,6 +100,10 @@ class PartController
 			subtitleSrv.fetchSubtitle(uri, callback, parent.onError);
 		}
 
+		display.onTokenActivation = function(tokenId: String){
+			state.module.activateInventoryToken(tokenId);
+		}
+
 		onLocaleDataPathRequest(part.file, function(){
 			application.updateChapterInfos(getLocalizedContent("chapterName"), getLocalizedContent("activityName"));
 			application.onPartLoaded = function(){
@@ -140,37 +145,8 @@ class PartController
 				}
 			}
 
-			var isCorrect = validateInput(inputId, value);
+			var isCorrect = validateInput(inputId, value, dragging);
 			if(dragging){
-				if(isCorrect){
-					var drop: Input = part.getInput(value);
-					if(drop.additionalValues == null)
-						drop.additionalValues = new Array();
-					drop.additionalValues.push(inputId);
-					var isFull = drop.values.foreach(function(id: String){
-						return drop.additionalValues.has(id);
-					});
-					if(isFull){
-						validateActivity();
-						display.setInputComplete(value);
-					}
-
-					part.activityData.score++;
-
-					// Selection limits
-					var maxSelect = -1;
-					var rules = part.getRulesByType("selectionLimits", part.getInputGroup(inputId));
-					if(rules.length == 1)
-						maxSelect = Std.parseInt(rules[0].value);
-					else if(rules.length > 1 && rules[1].value != "*")
-						maxSelect = Std.parseInt(rules[1].value);
-
-					display.setText(drop.id+"_completion", part.activityData.numRightAnswers+"/"+maxSelect);
-
-					var rules = part.getRulesByType("minScore");
-					if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
-						display.enableNextButtons();
-				}
 				display.stopDrag(inputId, value, true, isCorrect);
 			}
 		}
@@ -178,6 +154,7 @@ class PartController
 		// If resuming activity, just show inputs
 		if(resume){
 			display.displayElements(Lambda.map(part.activityData.groups, function(group: Inputs) return group.ref));
+			////
 			/*for(group in part.activityData.groups){
 				if(group.groups != null && group.groups.length > 0)
 					for(subgroup in group.groups){
@@ -193,6 +170,7 @@ class PartController
 					return;
 				}
 			}*/
+			////
 			part.activityData.inputsEnabled = true;
 			return;
 		}
@@ -267,6 +245,8 @@ class PartController
 				}
 			}
 		}
+
+		application.sendReadyHook();
 	}
 
 	public function onGameOver():Void
@@ -323,6 +303,8 @@ class PartController
 		}
 
 		checkGameOver();
+
+		application.sendReadyHook();
 	}
 
 	public function previousElement():Void
@@ -401,7 +383,7 @@ class PartController
 	{
 		if(application.isFullscreen)
 			application.exitFullscreen();
-		if(part.hasNextElement())
+		//if(part.hasNextElement())
 			nextElement();
 	}
 
@@ -428,6 +410,14 @@ class PartController
 		// Choices
 		if(p.choicesData != null){
 			var choicesList = Lambda.map(p.choicesData.choices, function(choice: Choice){
+				var unlocked = true;
+				for(req in choice.requierdTokens.keys()){
+					var token: InventoryToken = state.module.getInventoryToken(req);
+					if(token != null)
+						unlocked = token.isActivated == choice.requierdTokens[req];
+					else
+						trace("Unknown required token '"+req+"' for choice '"+choice.id+"'.");
+				}
 				var localizedContent = new Map<String, String>();
 				for(key in choice.content.keys())
 					localizedContent[key] = getLocalizedContent(choice.content[key]);
@@ -457,10 +447,6 @@ class PartController
 
 	private function setupItem(item : Item) : Void {
 
-		// Activate tokens in the part
- 		for (token in item.tokens)
-		    state.module.activateInventoryToken(token);
-
 		// Set part background
 		if (item.background != null)
 			display.showBackground(item.background);
@@ -471,7 +457,7 @@ class PartController
 		var introScreenOn = false;
 
 		if(item.videoData != null) {
-			if(parent.ks != null){
+			if(parent.ks != null && item.content.indexOf(".") == -1){
 				var srv = new KalturaService();
 				srv.getUrl(item.content, config.bitrate, parent.ks, function(url){
 					var errCode = ~/code/;
@@ -479,17 +465,21 @@ class PartController
 						trace("Cannot retrieve video: "+url);
 					else{
 						var decodeUrl = url.replace("\\/", "/");
-						display.setVideo(item.ref, decodeUrl, item.videoData, function(){}, function() onVideoComplete(), state.module.currentLocale);
+						display.setVideo(item.ref, decodeUrl, item.videoData, item.tokens, function(){}, function() {
+							onVideoComplete();
+						}, state.module.currentLocale);
 					}
 				});
 			}
 			else
-				display.setVideo(item.ref, item.content, item.videoData, function(){}, function() onVideoComplete(), state.module.currentLocale);
+				display.setVideo(item.ref, item.content, item.videoData, item.tokens, function(){}, function() {
+					onVideoComplete();
+				}, state.module.currentLocale);
 
 
 		}
 		else if(item.soundData != null){
-			display.setSound(item.ref, item.content, item.soundData.autoStart, item.soundData.loop, item.soundData.defaultVolume);
+			display.setSound(item.ref, item.content, item.soundData.autoStart, item.soundData.loop, item.soundData.defaultVolume, function() {});//activateToken());
 		}
 		else if (item.introScreen != null) {
 
@@ -513,6 +503,8 @@ class PartController
 			else
 				display.setText(item.ref, " ");
 			display.hideVideoPlayer();
+
+			//state.module.activateInventoryToken(tokenId);
 		}
 
 		// Voice over
@@ -577,12 +569,12 @@ class PartController
 
 		for(b in item.button){
 			list.add(b.ref);
-			for(key in b.content.keys()){
+			/*for(key in b.content.keys()){
 				if(key == "_")
 					display.setText(b.ref, b.content[key]);
 				else
 					display.setText(key, b.content[key]);
-			}
+			}*/
 		}
 
 		return list;
@@ -660,9 +652,6 @@ class PartController
                 resultsArray.push(input.selected);
             }
 
-
-
-
 			// Debrief
 			var lastId = null;
 			var lastValue = null;
@@ -670,62 +659,48 @@ class PartController
             var arrayDebriefs = new Array<{id:String,values:Array<String>}>();
 
 			for(rule in debriefRules){
+				if(rule.value.indexOf('[')==0){
+					var ruleValue =rule.value.substring(1,rule.value.length-1);
+					var valueArray =ruleValue.split(',');
+					var debriefObject={id:rule.id,values:valueArray};
 
-                 if(rule.value.indexOf('[')==0){
-                     var ruleValue =rule.value.substring(1,rule.value.length-1);
-
-                     var valueArray =ruleValue.split(',');
-
-                    var debriefObject={id:rule.id,values:valueArray};
-
-                    arrayDebriefs.push(debriefObject);
-
-
-                }else{
-
-                    var intValue = Std.parseInt(rule.value);
-
-                    if(intValue == null){
-                        lastValue = rule.value;
-                        lastId = rule.id;
-                    }
-                    else if(part.getScore() >= intValue){
-                        lastValue = rule.id;
-                        isTrue = true;
-                    }
-
-                }
-
+					arrayDebriefs.push(debriefObject);
+				}
+				else{
+					var intValue = Std.parseInt(rule.value);
+					if(intValue == null){
+						lastValue = rule.value;
+						lastId = rule.id;
+					}
+					else if(part.getScore() >= intValue){
+						lastValue = rule.id;
+						isTrue = true;
+					}
+				}
 			}
 
             if(arrayDebriefs.length>0){
                 var combiQuestion = "";
 
-                for ( i in 0...resultsArray.length){
-                    if(resultsArray[i]){
-                        combiQuestion +=i+1;//123
-                    }
-                }
+                for ( i in 0...resultsArray.length)
+                    if(resultsArray[i])
+                        combiQuestion += (i+1);//123
 
                 for(debrief in arrayDebriefs){
-
                     for(combi in debrief.values){
-
                         if(combi == combiQuestion ){
                             var idTextDebrief = debrief.id.split('_')[0];
                             display.setDebrief(idTextDebrief, getLocalizedContent(group.id+"_"+debrief.id));
                         }
                     }
                 }
-            }else
-            {
+            }
+            else{
                 display.setDebrief(lastId, getLocalizedContent(group.id+"_"+lastValue));
 
                 if(lastId != null)
                     display.setInputState(lastId, Std.string(isTrue));
             }
-
-
 
 			// Disabling further input
 			part.activityData.inputsEnabled = false;
@@ -741,7 +716,7 @@ class PartController
 		}
 	}
 
-	private function validateInput(inputId: String, ?validation: Rule, ?value: String):Bool
+	public function validateInput(inputId: String, ?validation: Rule, ?value: String, ?dragging: Bool = false):Bool
 	{
 		// No activity, ignore call
 		if(state.activityState == ActivityState.NONE)
@@ -762,6 +737,37 @@ class PartController
 					result = part.validate(inputId, value);
 					display.setInputState(inputId, result ? "true" : "false");
 			}
+
+
+		// Selection limits
+		var maxSelect = -1;
+		var rules = part.getRulesByType("selectionLimits", part.getInputGroup(inputId));
+		if(rules.length == 1)
+			maxSelect = Std.parseInt(rules[0].value);
+		else if(rules.length > 1 && rules[1].value != "*")
+			maxSelect = Std.parseInt(rules[1].value);
+
+		var rules = part.getRulesByType("minScore");
+		if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
+			display.enableNextButtons();
+
+		display.setText(value+"_completion", part.activityData.numRightAnswers+"/"+maxSelect);
+
+		if(result && dragging){
+			var drop: Input = part.getInput(value);
+			if(drop.additionalValues == null)
+				drop.additionalValues = new Array();
+			drop.additionalValues.push(inputId);
+			var isFull = drop.values.foreach(function(id: String){
+				return drop.additionalValues.has(id);
+			});
+			if(isFull){
+				validateActivity();
+				display.setInputComplete(value);
+			}
+
+			part.activityData.score++;
+		}
 
 		return result;
 	}
@@ -872,10 +878,11 @@ class PartController
 			for(rule in rules)
 				actions.push(getInputAction(rule));
 
-			Reflect.setField(callbacks, action, function(inputId: String){
-				for(a in actions)
-					a(inputId);
-			});
+			if(actions.length != 0)
+				Reflect.setField(callbacks, action, function(inputId: String){
+					for(a in actions)
+						a(inputId);
+				});
 			/*
 			if(actions.length > 0)
 				Reflect.setField(callbacks, action, function(inputId: String){
@@ -1020,6 +1027,10 @@ class PartController
 						setInputSelected(output,!output.selected);
 					}
 				}
+			case "validate":
+				function(inputId: String){
+					var input: Input = part.getInput(inputId);
+				}
 			case "goto":
 				function(inputId: String){
 					var input = part.getInput(inputId);
@@ -1070,12 +1081,10 @@ class PartController
 		display.setVoiceOver(path, application.masterVolume, itemRef);
 	}
 
-	private function checkGameOver():Void
+	private inline function checkGameOver():Void
 	{
-		if(!part.hasNextElement() && !state.module.hasNextPart(part)){
+		if(!part.hasNextElement() && !state.module.hasNextPart(part))
 			part.state = FINISHED;
-			//parent.gameOver();
-		}
 	}
 
 	private function onPartStateChanged(partState:PartState):Void

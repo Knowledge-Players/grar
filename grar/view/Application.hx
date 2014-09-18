@@ -1,6 +1,5 @@
 package grar.view;
 
-import haxe.Timer;
 import js.html.Audio;
 import js.html.Document;
 import js.html.IFrameElement;
@@ -23,6 +22,7 @@ enum ContextualType {
 
 	MENU;
 	NOTEBOOK;
+	INVENTORY;
 }
 
 /**
@@ -88,7 +88,8 @@ class Application {
 				partDisplay.removeFullscreenState();
 		}
 
-		untyped __js__("if (this.root.mozRequestFullScreen){
+		untyped __js__("
+			if (this.root.mozRequestFullScreen){
 				this.fullscreenApi.requestFullscreen = function() {root.mozRequestFullScreen();};
 				this.fullscreenApi.exitFullscreen = function() {document.mozCancelFullScreen();};
 				this.fullscreenApi.fullscreenElement = document.mozFullScreenElement;
@@ -109,12 +110,19 @@ class Application {
 				document.onmsfullscreenchange = this.fullscreenApi.onFullscreenChange;
 				root.onmsfullscreenerror = this.fullscreenApi.onFullscreenError;
 			}
-			else{
+			else if(this.root.requestFullscreen){
 				this.fullscreenApi.requestFullscreen = function() {root.requestFullscreen();};
 				this.fullscreenApi.exitFullscreen = function() {document.exitFullscreen();};
 				this.fullscreenApi.fullscreenElement = document.fullscreenElement;
 				document.onfullscreenchange = this.fullscreenApi.onFullscreenChange;
 				root.onfullscreenerror = this.fullscreenApi.onFullscreenError;
+			}
+			else{
+				this.fullscreenApi.requestFullscreen = function() {console.log('No support for FullscreenAPI.')};
+				this.fullscreenApi.exitFullscreen = function() {console.log('No support for FullscreenAPI.')};
+				this.fullscreenApi.fullscreenElement = null;
+				document.onfullscreenchange = function() {console.log('No support for FullscreenAPI.')};
+				root.onfullscreenerror = function() {console.log('No support for FullscreenAPI.')};
 			}");
 
 		initSounds(document.body);
@@ -295,7 +303,7 @@ class Application {
 					// 10s timeout
 					var maxTime = 10000;
 					#if (js || flash || flash8 || java)
-					var timeOut = new Timer(maxTime);
+					var timeOut = new haxe.Timer(maxTime);
 					timeOut.run = function(){
 						timeOut.stop();
 						throw "Time Out! Nothing happened for "+(maxTime/1000)+"s. Verify your CSS transition.";
@@ -313,27 +321,27 @@ class Application {
 							container.style.transition = "none";
 							// Remove old iframe (= previous part display)
 							container.removeChild(container.firstChild);
-							if(customTransition != null)
+							/*if(customTransition != null)
 								container.classList.remove("next"+customTransition);
 							else
-								container.classList.remove("nextTransition");
+								container.classList.remove("nextTransition");*/
 						}
 						else{
 							// Remove old iframe (= previous part display)
 							container.removeChild(container.lastChild);
 
 							container.style.left = "";
-							if(customTransition != null)
+							/*if(customTransition != null)
 								container.classList.remove("previous"+customTransition);
 							else
-								container.classList.remove("previousTransition");
+								container.classList.remove("previousTransition");*/
 						}
 						onPartLoaded();
 					}
 					container.addEventListener("transitionend",listener);
 					container.addEventListener("webkitTransitionEnd",listener);
 
-					if(forward){
+					/*if(forward){
 						container.style.transition = "";
 						if(customTransition != null)
 							container.classList.add("next"+customTransition);
@@ -359,7 +367,8 @@ class Application {
 							return true;
 						};
 						root.contentWindow.requestAnimationFrame(update);
-					}
+					}*/
+					sendNewPartHook();
 				}
 				else
 					onPartLoaded();
@@ -395,7 +404,7 @@ class Application {
 			}
 		}
 		else{
-			partDisplay.init();
+			partDisplay.init(ref);
 			onPartLoaded();
 		}
 	}
@@ -565,5 +574,15 @@ class Application {
 			var elem = c.getElement();
 			elem.onclick = function(_) play(elem.getAttribute("data-sound-click"));
 		}
+	}
+
+	// HOOKS
+
+	public dynamic function sendReadyHook():Void
+	{
+	}
+
+	public dynamic function sendNewPartHook():Void
+	{
 	}
 }

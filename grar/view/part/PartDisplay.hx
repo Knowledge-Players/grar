@@ -1,11 +1,13 @@
 package grar.view.part;
 
+import grar.model.InventoryToken.TokenTrigger;
 import grar.controller.PartController.InputCallback;
 import Array;
 import grar.util.ParseUtils;
 import grar.util.Point;
 import grar.util.TextDownParser;
 
+import grar.view.TemplateElement;
 import grar.view.component.SoundPlayer;
 import grar.view.component.VideoPlayer;
 import grar.view.guide.Absolute;
@@ -40,11 +42,6 @@ typedef InputData = {
 	selected: Bool
 }
 
-typedef InputTemplate = {
-	var element: Element;
-	@:optional var guide: Guide;
-}
-
 /**
  * Display of a part
  */
@@ -59,6 +56,7 @@ class PartDisplay
 		application = parent;
 		isMobile = mobile;
 		this.onActivateTokenRequest = function(tokenId : String){}
+		rootDocument = null;
 	}
 
 	public var introScreenOn (default, null) : Bool = false;
@@ -69,7 +67,7 @@ class PartDisplay
 	var soundPlayer: SoundPlayer;
 	var dragParent:Element;
 	var isMobile: Bool;
-	var templates: Map<String, InputTemplate>;
+	var templates: Map<String, TemplateElement>;
 	var templatesPosition: Map<Element, {refElement: Node, parent: Node}>;
 	var playingSounds: Array<AudioElement>;
 	var rootDocument: Document;
@@ -87,6 +85,7 @@ class PartDisplay
 	public dynamic function onValidationRequest(inputId: String, ?value: String, ?dragging: Bool = false): Void {}
 	public dynamic function onChangePatternRequest(patternId: String): Void {}
 	public dynamic function onSubtitleRequest(uri: String, callback: SubtitleData -> Void): Void {}
+	public dynamic function onTokenActivation(tokenId: String): Void {}
 
 	///
 	// GETTER / SETTER
@@ -95,8 +94,9 @@ class PartDisplay
 	/**
 	* Initialize a part view
 	* @param root: Root HTML element for this view. If null, previous root is kept (like child part keep parent part's root)
+	* @param ref: ID of the HTML container for the part
 	**/
-	public function init(?root:Element):Void
+	public function init(?root:Element, ?ref: String):Void
 	{
 
 		// Init templates
@@ -123,6 +123,11 @@ class PartDisplay
 			}
 			application.initSounds(rootDocument.body);
 		}
+		else if(ref != null && rootDocument != null){
+			var elem = rootDocument.getElementById(ref);
+			if(elem != null)
+				show(elem);
+		}
 
 		// Init callback stack on frame rate
 		onFrameStack = new Array();
@@ -133,8 +138,8 @@ class PartDisplay
 			this.root.ownerDocument.defaultView.requestAnimationFrame(onframe);
 			return true;
 		};
-		this.root.ownerDocument.defaultView.requestAnimationFrame(onframe);
 
+		this.root.ownerDocument.defaultView.requestAnimationFrame(onframe);
 	}
 
 
@@ -265,7 +270,7 @@ class PartDisplay
 			field.appendChild(elem);
 	}
 
-	public function setVideo(videoRef:String, uri: String, videoData: VideoData, ?onVideoPlay: Void -> Void, ?onVideoEnd: Void -> Void, ?locale: String):Void
+	public function setVideo(videoRef:String, uri: String, videoData: VideoData, ?tokens: Array<TokenTrigger>, ?onVideoPlay: Void -> Void, ?onVideoEnd: Void -> Void, ?locale: String):Void
 	{
 		if(videoPlayer == null){
 			videoPlayer = new VideoPlayer();
@@ -286,10 +291,13 @@ class PartDisplay
 			videoPlayer.onSubtitleRequest = function(path: String, callback){
 				onSubtitleRequest(path, callback);
 			}
+			videoPlayer.onTokenActivation = function(tokenId: String){
+				onTokenActivation(tokenId);
+			}
 		}
 		videoPlayer.init(rootDocument.getElementById(videoRef));
 		show(videoPlayer.root);
-		videoPlayer.setVideo(uri, videoData, onVideoPlay, onVideoEnd, locale);
+		videoPlayer.setVideo(uri, videoData, tokens, onVideoPlay, onVideoEnd, locale);
 	}
 
 	public function hideVideoPlayer():Void
@@ -305,13 +313,13 @@ class PartDisplay
 		return application.fullscreenElement == videoPlayer.root;
 	}
 
-	public function setSound(soundRef:String, uri:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1):Void
+	public function setSound(soundRef:String, uri:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1, ?onSoundEnd: Void -> Void):Void
 	{
 		if(soundPlayer == null)
 			soundPlayer = new SoundPlayer();
 		soundPlayer.init(cast rootDocument.getElementById(soundRef));
 		playingSounds.push(soundPlayer.root);
-		soundPlayer.setSound(uri, autoStart, loop, defaultVolume);
+		soundPlayer.setSound(uri, autoStart, loop, defaultVolume, onSoundEnd);
 	}
 
 	public function setVoiceOver(voiceOverUrl:String, volume: Float, ?textRef: String):Void
@@ -374,6 +382,10 @@ class PartDisplay
 			for(child in debrief.children)
 				recursiveShow(child.getElement());
 			show(debrief);
+		}
+		else if(debriefRef != "debrief"){
+			trace("No debrief zone with id '"+debriefRef+"'. Trying default #debrief");
+			showDebriefZone("debrief");
 		}
 	}
 
@@ -591,6 +603,7 @@ class PartDisplay
 
 	public function createInputs(refs: List<InputData>, groupeRef: String, callbacks: InputCallback, ?autoValidation: Bool = true, ?position: Array<Point>):Void
 	{
+		resetTemplates(groupeRef);
 		var parent: Element = rootDocument.getElementById(groupeRef);
 
 		var i = 0;
@@ -929,7 +942,7 @@ class PartDisplay
 					elem.textContent = numbers[order];
 			}
 			else
-				elem.textContent = Std.string(order+1);
+				elem.textContent = Std.string(order);
 
 			if(suffix != null)
 				elem.textContent += suffix;
@@ -1048,7 +1061,7 @@ class PartDisplay
 		}
 
 		if(content != null){
-			if(text.nodeName.toLowerCase() == "p" || text.nodeName.toLowerCase() == "a"){
+			if(text.nodeName.toLowerCase() == "p" || text.nodeName.toLowerCase() == "a" || text.nodeName.toLowerCase().charAt(0) == "h" || text.hasAttribute("forced")){
 				for(elem in markupParser.parse(content))
 					html += elem.innerHTML;
 				text.innerHTML += html;
@@ -1096,11 +1109,13 @@ class PartDisplay
 
 		for(t in templates){
 			var pos = templatesPosition[t.element];
-			hide(t.element);
-			if(pos.refElement != null)
-				pos.parent.insertBefore(t.element, pos.refElement);
-			else
-				pos.parent.appendChild(t.element);
+			if(pos.parent == parent || parent.contains(pos.parent)){
+				hide(t.element);
+				if(pos.refElement != null)
+					pos.parent.insertBefore(t.element, pos.refElement);
+				else
+					pos.parent.appendChild(t.element);
+			}
 		}
 
 		// Remove Guide if any

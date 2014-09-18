@@ -13,9 +13,6 @@ import grar.parser.part.XmlToItem;
 
 import grar.util.ParseUtils;
 
-import haxe.ds.GenericStack;
-import haxe.ds.StringMap;
-
 import haxe.xml.Fast;
 
 using StringTools;
@@ -88,41 +85,28 @@ class XmlToPart {
 			pd = parsePartElement(pd, child);
 
 		for (elem in pd.elements) {
-
 			switch (elem) {
-
 				case Item(i):
-
-					if (i.button == null || Lambda.empty(i.button)) {
-
+					if (i.button == null || Lambda.empty(i.button))
 						i.button = pd.buttons;
-					}
-					for (image in i.tokens) {
-
-						pd.tokens.add(image);
-					}
+					for (token in i.tokens)
+						pd.tokens.push({id: token.id});
 
 				case Pattern(p):
-
-					for (item in p.patternContent) {
-
-						for (image in item.tokens) {
-
-							pd.tokens.add(image);
-						}
-					}
-					for (image in p.tokens) {
-
-						pd.tokens.add(image);
-					}
+					/*for (item in p.patternContent)
+						for (token in p.tokens)
+							pd.tokens[token.id] = token;
+					for (token in p.tokens)
+						pd.tokens[token.id] = token;*/
 
 				case Part(p):
+					/*for (token in p.tokens)
+						pd.tokens[token.id] = token;*/
 
-					for (image in p.tokens) {
-
-						pd.tokens.add(image);
-					}
-
+				case GroupItem(g):
+					for(item in g.elements)
+						for(token in item.tokens)
+							pd.tokens.push({id: token.id});
 
 				default: //nothing
 			}
@@ -147,7 +131,7 @@ class XmlToPart {
 				if (node.has.content)
 					content = ParseUtils.parseHash(node.att.content);
 				else
-					content = new StringMap();
+					content = new Map();
 				pd.buttons.add({ref: node.att.ref, content: content, action: node.att.action});
 
 				if (node.has.goTo) {
@@ -197,7 +181,7 @@ class XmlToPart {
 	static function parseActivityPartContent(f : Fast) : ActivityData {
 
 		var groups : Array<Inputs> = new Array();
-		var rules : StringMap<Rule> = new StringMap();
+		var rules : Map<String, Rule> = new Map();
 		var numRightAnswers : Int = 0;
 		var ruleParser = new RuleParser();
 		for (child in f.elements) {
@@ -344,7 +328,7 @@ class XmlToPart {
 
 	}
 
-	static function parsePartPerks(pd : PartData, perks : String, ? hash : Null<StringMap<Int>> = null) : PartData {
+	static function parsePartPerks(pd : PartData, perks : String, ? hash : Null<Map<String, Int>> = null) : PartData {
 
 		var map = ParseUtils.parseHash(perks);
 
@@ -393,12 +377,12 @@ class XmlToPart {
 
 		pd.id = f.att.id;
 		pd.elements = new Array();
-		pd.tokens = new GenericStack<String>();
+		pd.tokens = new Array();
 		pd.buttons = new List();
         pd.images = new List();
-		pd.buttonTargets = new StringMap();
-		pd.perks = new StringMap();
-		pd.requirements = new StringMap();
+		pd.buttonTargets = new Map();
+		pd.perks = new Map();
+		pd.requirements = new Map();
 		pd.partialSubParts = [];
 		pd.parent = null;
 

@@ -1,16 +1,20 @@
 package grar.model;
 
-typedef TokenData = {
+import grar.model.part.Part.ImageData;
+import grar.model.part.item.Item;
 
+typedef TokenData = {
+	var ref: String;
 	var id : String;
-	var ref : String;
-	var type : Null<String>;
 	var isActivated : Bool;
-	var name : Null<String>;
-	var content : String;
-	var icon : String;
-	var image : String;
-	var fullScreenContent : Null<String>;
+	var content : Map<String, Item>;
+	var images : Map<String, ImageData>;
+	@:optional var timecode: Float;
+}
+
+typedef TokenTrigger = {
+	var id: String;
+	@:optional var timecode: Float;
 }
 
 /**
@@ -18,69 +22,44 @@ typedef TokenData = {
  **/
 class InventoryToken {
 
-	public function new(? td : Null<TokenData>) : Void {
-
-		if (td != null) {
-
-			this.id = td.id;
-			this.ref = td.ref;
-			this.type = td.type;
-			this.isActivated = td.isActivated;
-			this.name = td.name;
-			this.content = td.content;
-			this.icon = td.icon;
-			this.image = td.image;
-			this.fullScreenContent = td.fullScreenContent;
-		
-		} else {
-
-			this.ref = "undefined";
-			this.isActivated = false;
-		}
+	public function new(td : TokenData) : Void
+	{
+		this.id = td.id;
+		this.isActivated = td.isActivated;
+		this.content = td.content;
+		this.images = td.images;
+		this.ref = td.ref;
+		this.timecode = td.timecode;
 	}
 
 	/**
      * Unique identifier
      **/
-	public var id (default, null) : Null<String> = null;
+	public var id (default, null) : String;
 
 	/**
-     * Reference to the display
-     **/
-	public var ref (default, null) : String;
-
-	/**
-     * Type of the token
-     **/
-	public var type (default, null) : Null<String> = null;
+	* Reference to the view template
+	**/
+	public var ref (default, default):String;
 
 	/**
      * State of activation
      **/
-	public var isActivated (default, default) : Bool = false;
-
-	/**
-     * Key to the name of this token
-     **/
-	public var name (default, default) : Null<String> = null;
+	public var isActivated (default, default) : Bool;
 
 	/**
      * Content of this token
      **/
-	public var content (default, default) : Null<String> = null;
-
-	/**
-     * Content of this token when it's fullscreen
-     **/
-	public var fullScreenContent (default, default) : Null<String> = null;
-
-	/**
-     * icon of this token
-     **/
-	public var icon (default, default) : Null<String> = null;
+	public var content (default, default) : Map<String, Item>;
 
 	/**
      * Image to display when it's fullscreen
      **/
-	public var image (default, default) : Null<String> = null;
+	public var images (default, default) : Map<String, ImageData>;
+
+	/**
+	* For non-text item only.
+	* Time-code when to activate the token
+	**/
+	public var timecode (default, default):Float;
 }

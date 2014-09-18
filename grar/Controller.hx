@@ -1,5 +1,6 @@
 package grar;
 
+import grar.parser.XmlToInventory;
 import grar.view.Application;
 import grar.view.contextual.MenuDisplay;
 
@@ -115,7 +116,7 @@ class Controller {
 
 								case NOTEBOOK:
 
-									gameSrv.fetchNotebook(contextual.att.file, function(m:Notebook,i:StringMap<grar.model.InventoryToken>){
+									gameSrv.fetchNotebook(contextual.att.file, function(m:Notebook, i:StringMap<grar.model.InventoryToken>){
 
 											//application.createNotebook();
 											state.module.inventory = i;
@@ -133,6 +134,15 @@ class Controller {
 												application.menuData = menuData;
 										}, onError);
 
+								case INVENTORY:
+									if(contextual.elements.hasNext()){
+										state.module.inventory = XmlToInventory.parse(contextual.x);
+									}
+									else{
+										gameSrv.fetchInventory(contextual.att.file, function(i:StringMap<grar.model.InventoryToken>){
+											state.module.inventory = i;
+										}, onError);
+									}
 								default:
 							}
 						}
@@ -237,6 +247,13 @@ class Controller {
 				partCtrl.onMasterVolumeChanged();
 			}
 
+		application.sendReadyHook = function(){
+			sendReadyHook();
+		}
+		application.sendNewPartHook = function(){
+			sendNewPartHook();
+		}
+
 		state.readyState = true;
 	}
 
@@ -271,6 +288,11 @@ class Controller {
 	public function getMasterVolume():Float
 	{
 		return application.masterVolume;
+	}
+
+	public function validateInput(inputId: String, ?value: String, ?dragging: Bool = true):Bool
+	{
+		return partCtrl.validateInput(inputId, value, dragging);
 	}
 
 	///
@@ -309,7 +331,7 @@ class Controller {
 		for (l in la) {
 			l.partName = state.module.getItemName(l.id);
 			if (l.partName == null)
-				throw "can't find a name for '"+l.id+"'.";
+				trace("Can't find a name for '"+l.id+"'.");
 
 			if (l.items != null)
 				l.items = addPartsInfoToLevel(l.items);
@@ -381,7 +403,11 @@ class Controller {
 
 
 		if (state.module.bookmark > 0) {
-			startingPart = state.module.getAllParts()[state.module.bookmark].id;
+			var part: Part = state.module.getAllParts()[state.module.bookmark];
+			if(part.parent != null)
+				startingPart = part.parent.id;
+			else
+				startingPart = part.id;
 		}
 		else{
 			startingPart = state.module.getAllParts()[0].id;
@@ -434,5 +460,15 @@ class Controller {
 		trace("ERROR", e);
 		trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
 		throw "exit "+e;
+	}
+
+	// HOOKS
+
+	public dynamic function sendReadyHook():Void
+	{
+	}
+
+	public dynamic function sendNewPartHook():Void
+	{
 	}
 }

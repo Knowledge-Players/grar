@@ -39,12 +39,11 @@ class Grid extends Guide {
 			var row = referenceElement.ownerDocument.createDivElement();
 			row.classList.add("row");
 			if(referenceElement != null){
-				if(i == 0){
+				if(i == 0)
 					root.insertBefore(row, referenceElement.nextSibling);
-					lastRow = row;
-				}
 				else
 					root.insertBefore(row, lastRow.nextSibling);
+				lastRow = row;
 			}
 			else
 				root.appendChild(row);

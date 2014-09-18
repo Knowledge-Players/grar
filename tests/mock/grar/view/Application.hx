@@ -14,6 +14,7 @@ enum ContextualType {
 
 	MENU;
 	NOTEBOOK;
+	INVENTORY;
 }
 class Application{
 
@@ -103,6 +104,8 @@ class Application{
 
 	public dynamic function onPartLoaded() : Void { }
 
+	public dynamic function onTokenActivation(tokenId: String): Void {}
+
 	/**
     * Activate a token of the inventory
     * @param    tokenName : Name of the token to activate
@@ -132,6 +135,16 @@ class Application{
 	private function set_theme(theme:String):String
 	{
 		return this.theme = theme;
+	}
+
+	// HOOKS
+
+	public dynamic function sendReadyHook():Void
+	{
+	}
+
+	public dynamic function sendNewPartHook():Void
+	{
 	}
 
 }

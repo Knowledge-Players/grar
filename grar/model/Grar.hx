@@ -316,6 +316,11 @@ class Grar {
 		onInventoryTokenActivated(it);
 	}
 
+	public function getInventoryToken(tid: String):Null<InventoryToken>
+	{
+		return inventory[tid];
+	}
+
 
     public function setPartStarted(pid : String) : Void {
 		// Can't go from finished to started

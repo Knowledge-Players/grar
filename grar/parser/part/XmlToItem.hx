@@ -1,5 +1,6 @@
 package grar.parser.part;
 
+import grar.model.InventoryToken;
 import grar.model.part.Part.ImageData;
 import grar.model.part.ButtonData;
 import grar.model.part.item.Item;
@@ -23,7 +24,7 @@ class XmlToItem {
 		var author: Null<String> = null;
 		var button : Null<List<ButtonData>> = null;
 		var ref : Null<String> = null;
-		var tokens : Array<String> = new Array<String>();
+		var tokens : Array<TokenTrigger> = new Array();
 		var images : List<ImageData> = new List<ImageData>();
 		var endScreen : Bool = false;
 		var videoData: VideoData = null;
@@ -51,8 +52,12 @@ class XmlToItem {
 			if (f.has.background)
 				background = f.att.background;
 
-			for (node in f.nodes.Token)
-				tokens.push(node.att.ref);
+			for (node in f.nodes.Token){
+				var trigger: TokenTrigger = {id: node.att.id};
+				if(node.has.timecode)
+					trigger.timecode = parseTC(node.att.timecode);
+				tokens.push(trigger);
+			}
 
 			button = new List();
 			for (elem in f.nodes.Button)
@@ -109,5 +114,18 @@ class XmlToItem {
 	{
 		// TODO
 		return null;
+	}
+
+	/**
+	* Return number of second from the start of the media
+	**/
+	public static function parseTC(tc:String):Float
+	{
+		var sec = 0;
+		var split = tc.split(":");
+		for(i in 0...split.length){
+			sec += Std.parseInt(split[i]) * Std.int(3600/Math.pow(60,i));
+		}
+		return sec;
 	}
 }

@@ -14,8 +14,6 @@ class Note extends InventoryToken {
 	public function new(? td : Null<TokenData>, ? v : Null<String>) {
 
 		super(td);
-
-		this.type = TOKEN_TYPE_NOTE;
 		this.video = v;
 	}
 }

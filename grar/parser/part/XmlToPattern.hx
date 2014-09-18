@@ -1,6 +1,5 @@
 package grar.parser.part;
 
-import grar.util.ParseUtils;
 import grar.model.part.ButtonData;
 import grar.model.part.item.Pattern;
 
@@ -9,6 +8,8 @@ import grar.util.ParseUtils;
 import haxe.ds.GenericStack;
 
 import haxe.xml.Fast;
+
+using StringTools;
 
 class XmlToPattern {
 
@@ -63,13 +64,23 @@ class XmlToPattern {
 
 		for (choiceNode in f.nodes.Choice) {
 			var tooltip = null;
+			var requierdTokens = new Map<String, Bool>();
 			if (choiceNode.has.toolTip && choiceNode.att.toolTip != "")
 				tooltip = choiceNode.att.toolTip;
 			if(choiceNode.has.content)
 				content = ParseUtils.parseHash(choiceNode.att.content);
 			else
 				content = new Map();
-			var choice: Choice = { ref: choiceNode.att.ref, toolTip: tooltip, goTo: choiceNode.att.goTo, viewed: false, content: content, id: choiceNode.att.id, icon: icon};
+			if(choiceNode.x.exists("if")){
+				var values = choiceNode.x.get("if").split(" ");
+				for(val in values){
+					if(val.startsWith("!"))
+						requierdTokens[val.substr(1)] = false;
+					else
+						requierdTokens[val] = true;
+				}
+			}
+			var choice: Choice = { ref: choiceNode.att.ref, toolTip: tooltip, goTo: choiceNode.att.goTo, viewed: false, content: content, id: choiceNode.att.id, icon: icon, requierdTokens: requierdTokens};
 
 			choices.set(choiceNode.att.id, choice);
 		}

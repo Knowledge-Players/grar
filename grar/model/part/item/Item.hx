@@ -1,6 +1,8 @@
 package grar.model.part.item;
 
+import grar.model.InventoryToken.TokenTrigger;
 import grar.model.part.Part.ImageData;
+
 import haxe.ds.StringMap;
 
 // TODO Transform class Item into typedef
@@ -11,7 +13,7 @@ typedef ItemData = {
 	var author: Null<String>;
 	var background : Null<String>;
 	var button : Null<List<ButtonData>>;
-	var tokens : Array<String>;
+	var tokens : Array<TokenTrigger>;
 	var images : List<ImageData>;
 	var endScreen : Bool;
 	var videoData: VideoData;
@@ -121,7 +123,7 @@ class Item{
 	/**
      * Reference to the tokens in this item
      **/
-	public var tokens (default, null) : Array<String>;
+	public var tokens (default, null) : Array<TokenTrigger>;
 
 	/**
      * Graphicals items associated with this item

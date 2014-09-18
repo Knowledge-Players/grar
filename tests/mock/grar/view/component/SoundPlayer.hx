@@ -13,7 +13,7 @@ class SoundPlayer{
     {
 
     }
-    public function setSound(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1){
+    public function setSound(url:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1, onSoundEnd: Void -> Void){
 
     }
 

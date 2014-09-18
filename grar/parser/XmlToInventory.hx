@@ -1,55 +1,31 @@
 package grar.parser;
 
+import grar.parser.part.XmlToItem;
+import grar.model.part.Part.ImageData;
+import grar.model.part.item.Item;
 import grar.model.InventoryToken;
 import grar.model.contextual.Note;
-
-import haxe.ds.StringMap;
 
 import haxe.xml.Fast;
 
 class XmlToInventory {
 
-	static public function parse(xml : Xml) : { m : StringMap<InventoryToken>, d : String } {
+	static public function parse(xml : Xml): Map<String, InventoryToken> {
 
-		var tf : Fast = new Fast(xml.firstElement());
-		var i : StringMap<InventoryToken> = new StringMap();
+		var f : Fast = null;
 
-		var d : String = tf.att.display;
+		// No Document node
+		if(xml.nodeType == Xml.Element)
+			f = new Fast(xml);
+		else
+			f = new Fast(xml.firstElement());
 
-		for (token in tf.nodes.Token) {
+		var i : Map<String, InventoryToken> = new Map();
 
+		for (token in f.nodes.Token)
 			i.set(token.att.id, parseInventoryToken(token));
-		}
 
-		return { m: i, d: d };
-	}
-
-	static function parseTokenData(f : Fast) : Null<TokenData> {
-
-		if (f != null) {
-
-			var id : String = f.has.id ? f.att.id : f.att.name;
-			var ref : String = f.att.ref;
-			var type : Null<String> = f.has.type ? f.att.type : null;
-			var isActivated : Bool = f.has.unlocked ? f.att.unlocked == "true" : false;
-			var name : Null<String> = f.has.name ? f.att.name : null;
-			var content : String = f.att.content;
-			var icon : String = f.has.icon ? f.att.icon : null;
-			var image : String = f.has.src ? f.att.src : null;
-			var fullScreenContent : Null<String> = f.has.fullScreenContent ? f.att.fullScreenContent : null;
-
-			return { id: id, ref: ref, type: type, isActivated: isActivated, name: name, content: content,
-						icon: icon, image: image, fullScreenContent: fullScreenContent };
-		}
-
-		return null;
-	}
-
-	static function parseInventoryToken(f : Fast) : InventoryToken {
-
-		var td : Null<TokenData> = parseTokenData(f);
-
-		return new InventoryToken(td);
+		return i;
 	}
 
 	static public function parseNoteToken(xml : Xml) : Note {
@@ -65,5 +41,37 @@ class XmlToInventory {
 			video = f.has.video ? f.att.video : null;
 		}
 		return new Note(td, video);
+	}
+
+	static public function parseInventoryToken(f : Fast) : InventoryToken {
+
+		var td : Null<TokenData> = parseTokenData(f);
+
+		return new InventoryToken(td);
+	}
+
+	static function parseTokenData(f : Fast) : Null<TokenData> {
+
+		if (f != null) {
+
+			var isActivated : Bool = f.has.unlocked ? f.att.unlocked == "true" : false;
+			var content: Map<String, Item> = new Map();
+			var images: Map<String, ImageData> = new Map();
+			var tc: Float = null;
+			for(node in f.elements){
+				switch(node.name.toLowerCase()){
+					case "text":
+						content[node.att.ref] = XmlToItem.parse(node.x);
+					case "image":
+						images[node.att.ref] = {src: node.att.src, ref: node.att.ref};
+				}
+			}
+			if(f.has.timecode)
+				tc = Std.parseFloat(f.att.timecode);
+
+			return {id: f.att.id, ref: f.att.ref, isActivated: isActivated, content: content, images: images, timecode: tc};
+		}
+
+		return null;
 	}
 }

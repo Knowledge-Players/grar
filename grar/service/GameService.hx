@@ -1,5 +1,6 @@
 package grar.service;
 
+import grar.parser.XmlToInventory;
 import haxe.Http;
 
 import grar.model.contextual.MenuData;
@@ -19,8 +20,6 @@ import grar.parser.contextual.XmlToNotebook;
 import grar.parser.contextual.XmlToMenu;
 import grar.parser.part.XmlToPart;
 import grar.parser.localization.XmlToLocale;
-
-import haxe.ds.StringMap;
 
 class GameService {
 
@@ -48,21 +47,28 @@ class GameService {
 			}, onError);
 	}
 
-	public function fetchLangs(uri : String, onSuccess : StringMap<Locale> -> Void, onError : String -> Void) : Void {
+	public function fetchLangs(uri : String, onSuccess : Map<String, Locale> -> Void, onError : String -> Void) : Void {
 
-		var l : StringMap<Locale>;
+		var l : Map<String, Locale>;
 		loadXml(uri, function(xml: Xml){
 				l = XmlToLocale.parseLangList(xml);
 				onSuccess(l);
 			}, onError);
 	}
 
-	public function fetchNotebook(uri : String, onSuccess : Notebook -> StringMap<InventoryToken> -> Void, onError : String -> Void) : Void {
+	public function fetchNotebook(uri : String, onSuccess : Notebook -> Map<String, InventoryToken> -> Void, onError : String -> Void) : Void {
 
-		var m : { n: Notebook, i: StringMap<InventoryToken> };
+		var m : { n: Notebook, i: Map<String, InventoryToken> };
 		loadXml(uri, function(xml: Xml){
 				m = XmlToNotebook.parseModel(uri, xml);
 				onSuccess(m.n, m.i);
+			}, onError);
+	}
+
+	public function fetchInventory(uri : String, onSuccess : Map<String, InventoryToken> -> Void, onError : String -> Void) : Void {
+
+		loadXml(uri, function(xml: Xml){
+				onSuccess(XmlToInventory.parse(xml));
 			}, onError);
 	}
 

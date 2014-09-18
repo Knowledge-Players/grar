@@ -7,14 +7,13 @@ import grar.model.part.item.Item;
 
 import grar.parser.part.XmlToItem;
 
-import haxe.ds.StringMap;
 import haxe.ds.GenericStack;
 
 import haxe.xml.Fast;
 
 class XmlToNotebook {
 
-	static public function parseModel(file : String, xml : Xml) : { n: Notebook, i: StringMap<InventoryToken> } {
+	static public function parseModel(file : String, xml : Xml) : { n: Notebook, i: Map<String, InventoryToken> } {
 
 		var f : Fast = new Fast(xml).node.Notebook;
 
@@ -24,7 +23,7 @@ class XmlToNotebook {
 		var pages : Array<Page> = new Array();
 		var closeButton : { ref : String, content : String };
 
-		var inventory : StringMap<InventoryToken> = new StringMap();
+		var inventory : Map<String, InventoryToken> = new Map();
 
 		for (item in f.nodes.Image) {
 
@@ -60,7 +59,7 @@ class XmlToNotebook {
 
 					chap.notes.push(note);
 
-					inventory.set(note.name, note);
+					inventory.set(note.id, note);
 				}
 				newPage.chapters.push(chap);
 			}

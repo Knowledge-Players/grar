@@ -14,6 +14,11 @@ typedef Choice = {
 	var content: Map<String, String>;
 	var id: String;
 	var icon: Map<String, String>;
+
+	/**
+	* Hash of tokens that must or musn't be collected to activate the choice
+	**/
+	var requierdTokens: Map<String, Bool>;
 }
 
 /**

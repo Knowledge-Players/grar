@@ -1,5 +1,6 @@
 package grar.view.part;
 
+import grar.model.InventoryToken.TokenTrigger;
 import grar.controller.PartController.InputCallback;
 import grar.util.TextDownParser;
 import grar.model.part.item.Item;
@@ -49,6 +50,7 @@ class PartDisplay{
 	public dynamic function onValidationRequest(inputId: String, ?value: String, ?dragging: Bool = false): Void {}
 	public dynamic function onChangePatternRequest(patternId: String): Void {}
 	public dynamic function onSubtitleRequest(uri: String, callback: SubtitleData -> Void): Void {}
+	public dynamic function onTokenActivation(tokenId: String): Void {}
 
 
 ///
@@ -123,7 +125,7 @@ class PartDisplay{
     public function toggleElement (id:String, ?force: Bool):Void {
     }
 
-    public function setVideo(videoRef:String, uri: String, videoData: VideoData, ?onVideoPlay: Void -> Void, ?onVideoEnd: Void -> Void, ?locale: String):Void
+    public function setVideo(videoRef:String, uri: String, videoData: VideoData, ?tokens: Array<TokenTrigger>, ?onVideoPlay: Void -> Void, ?onVideoEnd: Void -> Void, ?locale: String):Void
     {
 
     }
@@ -131,7 +133,7 @@ class PartDisplay{
 	public function hideVideoPlayer():Void
 	{}
 
-    public function setSound(soundRef:String, uri:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1):Void
+	public function setSound(soundRef:String, uri:String, autoStart:Bool = false, loop:Bool = false, defaultVolume:Float = 1, ?onSoundEnd: Void -> Void):Void
     {
 
     }

@@ -1,13 +1,10 @@
 package grar.model.part;
 
-import Array;
 import grar.util.Point;
 
+import grar.model.InventoryToken.TokenTrigger;
 import grar.model.part.item.Item;
 import grar.model.part.item.Pattern;
-
-import haxe.ds.GenericStack;
-import haxe.ds.StringMap;
 
 using Lambda;
 
@@ -34,7 +31,7 @@ typedef PartData = {
 	var id : String;
 	var file : String;
 	var parent : Null<Part>;
-	var tokens : GenericStack<String>;
+	var tokens : Array<TokenTrigger>;
 	var elements : Array<PartElement>;
 	var buttons : List<ButtonData>;
     var images : List<ImageData>;
@@ -178,7 +175,7 @@ class Part{
 	/**
      * Tokens in this part
      */
-	public var tokens (default, default) : GenericStack<String>;
+	public var tokens (default, default) : Array<TokenTrigger>;
 
 	/**
      * Elements of the part
@@ -285,9 +282,9 @@ class Part{
 					activityData.inputsEnabled = true;
 			case STARTED: // nothing
 		}
-
+		this.state = state;
 		onStateChanged(state);
-		return this.state = state;
+		return this.state;
 	}
 
     /*public function set_isDone(completed : Bool = true) : Bool {
@@ -611,7 +608,7 @@ class Part{
 		if(activityData == null)
 			throw 'This part is not an activity';
 		var selectedRules : Array<Rule> = new Array();
-		var rulesSet : StringMap<Rule> = new StringMap();
+		var rulesSet : Map<String, Rule> = new Map();
 
 		if (group != null && group.rules != null) {
 

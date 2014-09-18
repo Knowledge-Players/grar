@@ -3,15 +3,19 @@ package grar;
 #if (js || cocktail)
 import js.html.IFrameElement;
 import js.Browser;
+import js.html.Event;
+import js.html.EventTarget;
+import js.html.Element;
 #end
 
 import grar.model.Config;
 import grar.Controller;
 
 @:expose("grar")
-class App {
+class App{
 
-	static private var controller : Null<Controller> = null;
+	private static var controller : Null<Controller> = null;
+	private static var registeredHook: Map<String, Array<Void->Void>> = null;
 
 	static public function main() : Void {
 
@@ -73,7 +77,12 @@ class App {
 		#else
 		controller = new Controller(c, null);
 		#end
-
+		controller.sendReadyHook = function(){
+			sendReadyHook();
+		}
+		controller.sendNewPartHook = function(){
+			sendNewPartHook();
+		}
 		controller.init();
 	}
 
@@ -95,5 +104,62 @@ class App {
 	public static function getMasterVolume(): Float
 	{
 		return controller.getMasterVolume();
+	}
+
+	public static function validateInput(inputId:String, ?value:String, ?dragging: Bool = true):Bool
+	{
+		return controller.validateInput(inputId, value, dragging);
+	}
+
+	///
+	// Hooks
+	//
+
+	public static function register(hookType: String, callback: Void -> Void):Void
+	{
+		if(registeredHook == null)
+			registeredHook = new Map();
+		if(!registeredHook.exists(hookType))
+			registeredHook[hookType] = new Array();
+
+		registeredHook[hookType].push(callback);
+	}
+
+	private static function raiseHook(hookType:String):Void
+	{
+		if(registeredHook != null && registeredHook.exists(hookType))
+			for(cb in registeredHook[hookType])
+				cb();
+	}
+
+	private static function removeHook(hookType:String, ?cb: Void -> Void):Void
+	{
+		if(registeredHook != null && registeredHook.exists(hookType)){
+			if(cb != null){
+				var i: Iterator<Void -> Void> = registeredHook[hookType].iterator();
+				var val = null;
+				while(i.hasNext() && val != cb)
+					val = i.next();
+				if(val == cb)
+					registeredHook[hookType].remove(cb);
+			}
+			else
+				registeredHook.remove(hookType);
+		}
+	}
+
+	private static function removeAllHooks():Void
+	{
+		registeredHook = null;
+	}
+
+	private static function sendReadyHook(): Void
+	{
+		raiseHook("ready");
+	}
+
+	private static function sendNewPartHook(): Void
+	{
+		raiseHook("new_part");
 	}
 }
