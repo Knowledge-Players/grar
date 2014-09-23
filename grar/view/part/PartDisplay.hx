@@ -924,6 +924,7 @@ class PartDisplay
 
 	public function removeFullscreenState():Void
 	{
+        root.classList.remove("fullscreenOn");
 		for(b in root.getElementsByClassName("fullscreenOn"))
 			b.getElement().classList.remove("fullscreenOn");
 	}
@@ -1076,6 +1077,7 @@ class PartDisplay
 	private function onFullscreenRequest(?button:Element):Void
 	{
 		application.requestFullscreen();
+        root.classList.add("fullscreenOn");
 		if(button != null)
 			button.classList.add("fullscreenOn");
 	}
@@ -1083,6 +1085,7 @@ class PartDisplay
 	private function onExitFullscreenRequest(?button:Element):Void
 	{
 		application.exitFullscreen();
+        root.classList.remove("fullscreenOn");
 		if(button != null)
 			button.classList.remove("fullscreenOn");
 	}
