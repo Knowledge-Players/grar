@@ -178,15 +178,19 @@ class PartController
 		// Clean previous inputs
 		if(part.activityData.groupIndex > 0){
 			var group = part.activityData.groups[part.activityData.groupIndex-1];
-			if(group.ref != "")
-				display.hideElements(group.ref);
-			for (item in group.items) {
-				unsetAuthor(item.author);
+			if(group == null)
+				part.restart();
+			else{
+				if(group.ref != "")
+					display.hideElements(group.ref);
+				for (item in group.items) {
+					unsetAuthor(item.author);
+				}
+				for(input in group.inputs)
+					display.removeElement(input.id);
+				for(debrief in part.getRulesByType("debrief", group))
+					display.unsetDebrief(debrief.id);
 			}
-			for(input in group.inputs)
-				display.removeElement(input.id);
-			for(debrief in part.getRulesByType("debrief", group))
-				display.unsetDebrief(debrief.id);
 		}
 
 		var group: Inputs = part.getNextGroup();
@@ -739,20 +743,6 @@ class PartController
 			}
 
 
-		// Selection limits
-		var maxSelect = -1;
-		var rules = part.getRulesByType("selectionLimits", part.getInputGroup(inputId));
-		if(rules.length == 1)
-			maxSelect = Std.parseInt(rules[0].value);
-		else if(rules.length > 1 && rules[1].value != "*")
-			maxSelect = Std.parseInt(rules[1].value);
-
-		var rules = part.getRulesByType("minScore");
-		if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
-			display.enableNextButtons();
-
-		display.setText(value+"_completion", part.activityData.numRightAnswers+"/"+maxSelect);
-
 		if(result && dragging){
 			var drop: Input = part.getInput(value);
 			if(drop.additionalValues == null)
@@ -767,7 +757,23 @@ class PartController
 			}
 
 			part.activityData.score++;
+
 		}
+
+		// Selection limits
+		var maxSelect = -1;
+		var rules = part.getRulesByType("selectionLimits", part.getInputGroup(inputId));
+		if(rules.length == 1)
+			maxSelect = Std.parseInt(rules[0].value);
+		else if(rules.length > 1 && rules[1].value != "*")
+			maxSelect = Std.parseInt(rules[1].value);
+
+		var rules = part.getRulesByType("minScore");
+		if(rules.length > 0 && part.activityData.score >= Std.parseInt(rules[0].value))
+			display.enableNextButtons();
+
+		if(result)
+			display.setText(value+"_completion", part.activityData.numRightAnswers+"/"+maxSelect);
 
 		return result;
 	}

@@ -1063,8 +1063,15 @@ class PartDisplay
 
 		if(content != null){
 			if(text.nodeName.toLowerCase() == "p" || text.nodeName.toLowerCase() == "a" || text.nodeName.toLowerCase().charAt(0) == "h" || text.hasAttribute("forced")){
-				for(elem in markupParser.parse(content))
+				var it: Iterator<Element> = markupParser.parse(content).iterator();
+				while(it.hasNext()){
+					var elem: Element = it.next();
 					html += elem.innerHTML;
+					if(it.hasNext())
+						html+= "<br/>";
+					for(c in elem.classList)
+						text.classList.add(c);
+				}
 				text.innerHTML += html;
 			}
 			else

@@ -295,6 +295,11 @@ class Controller {
 		return partCtrl.validateInput(inputId, value, dragging);
 	}
 
+	public function getModuleId():String
+	{
+		return state.module.id;
+	}
+
 	///
 	// INTERNALS
 	//

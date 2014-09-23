@@ -111,6 +111,11 @@ class App{
 		return controller.validateInput(inputId, value, dragging);
 	}
 
+	public static function getModuleId():String
+	{
+		return controller.getModuleId();
+	}
+
 	///
 	// Hooks
 	//

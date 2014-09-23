@@ -34,6 +34,7 @@ typedef FullscreenAPI = {
 	dynamic function exitFullscreen(): Void;
 	dynamic function onFullscreenChange(): Void;
 	var fullscreenElement: Element;
+	var available: Bool;
 }
 
 /**
@@ -48,6 +49,8 @@ class Application {
 		isMobile = mobile;
 
 		menus = new Map();
+		parser = new TextDownParser();
+
 		for(m in document.getElementsByClassName("menu")){
 			var menu: Element = null;
 			if(m.nodeType == Node.ELEMENT_NODE)
@@ -58,7 +61,7 @@ class Application {
 			var display = new MenuDisplay(this);
 
 			// Parser
-			display.markupParser = new TextDownParser();
+			display.markupParser = parser;
 
 			display.ref = menu.id;
 			menus[menu.id] = display;
@@ -74,7 +77,7 @@ class Application {
 		}
 
 		// Wrap different fullscreen APIs
-		fullscreenApi = {requestFullscreen: null, onFullscreenError: null, fullscreenElement: null, exitFullscreen: null, onFullscreenChange: null};
+		fullscreenApi = {requestFullscreen: null, onFullscreenError: null, fullscreenElement: null, exitFullscreen: null, onFullscreenChange: null, available: true};
 
 		fullscreenApi.onFullscreenError = function(){
 			trace("Unable to go fullscreen");
@@ -123,6 +126,7 @@ class Application {
 				this.fullscreenApi.fullscreenElement = null;
 				document.onfullscreenchange = function() {console.log('No support for FullscreenAPI.')};
 				root.onfullscreenerror = function() {console.log('No support for FullscreenAPI.')};
+				this.fullscreenApi.available = false;
 			}");
 
 		initSounds(document.body);
@@ -176,6 +180,7 @@ class Application {
 
 	var root: IFrameElement;
 	var fullscreenApi: FullscreenAPI;
+	var parser: TextDownParser;
 
 	///
 	// GETTER / SETTER
@@ -264,12 +269,19 @@ class Application {
 
 	public function updateChapterInfos(chapterName:String, activityName:String):Void
 	{
+		var html: String = "";
 		// Update module name
+		for(elem in parser.parse(chapterName))
+			html += elem.innerHTML;
 		for(p in document.getElementsByClassName("chapterName"))
-			p.getElement().innerHTML = chapterName;
+			p.getElement().innerHTML = html;
 		// Update module type
-		for(p in document.getElementsByClassName("activityName"))
-			p.getElement().innerHTML = activityName;
+		html = "";
+		for(elem in parser.parse(activityName))
+			html += elem.innerHTML;
+		for(p in document.getElementsByClassName("activityName")){
+			p.getElement().innerHTML = html;
+		}
 	}
 
 	/**
@@ -412,12 +424,18 @@ class Application {
 	public function requestFullscreen():Void
 	{
 		document.body.classList.add("fullscreenOn");
-		fullscreenApi.requestFullscreen();
+		if(fullscreenApi.available)
+			fullscreenApi.requestFullscreen();
+		else
+			isFullscreen = !isFullscreen;
 	}
 
 	public function exitFullscreen():Void
 	{
-		fullscreenApi.exitFullscreen();
+		if(fullscreenApi.available)
+			fullscreenApi.exitFullscreen();
+		else
+			isFullscreen = !isFullscreen;
 	}
 
 	public function initMenu(ref: String, levels: Array<LevelData>) : Void
