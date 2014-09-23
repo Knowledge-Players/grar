@@ -84,11 +84,7 @@ class Application {
 		}
 
 		fullscreenApi.onFullscreenChange = function(){
-			trace("Going fullscreen! Or not...");
-			isFullscreen = !isFullscreen;
-			document.body.classList.toggle("fullscreenOn", isFullscreen);
-			if(!isFullscreen)
-				partDisplay.removeFullscreenState();
+			toggleFullscreen();
 		}
 
 		untyped __js__("
@@ -427,7 +423,7 @@ class Application {
 		if(fullscreenApi.available)
 			fullscreenApi.requestFullscreen();
 		else
-			isFullscreen = !isFullscreen;
+			toggleFullscreen();
 	}
 
 	public function exitFullscreen():Void
@@ -435,7 +431,7 @@ class Application {
 		if(fullscreenApi.available)
 			fullscreenApi.exitFullscreen();
 		else
-			isFullscreen = !isFullscreen;
+			toggleFullscreen();
 	}
 
 	public function initMenu(ref: String, levels: Array<LevelData>) : Void
@@ -602,5 +598,21 @@ class Application {
 
 	public dynamic function sendNewPartHook():Void
 	{
+	}
+
+	public dynamic function sendFullscreenHook(): Void {}
+
+	///
+	// Internals
+	//
+
+	private function toggleFullscreen():Void
+	{
+		trace("Going fullscreen! Or not...");
+		isFullscreen = !isFullscreen;
+		document.body.classList.toggle("fullscreenOn", isFullscreen);
+		if(!isFullscreen)
+			partDisplay.removeFullscreenState();
+		sendFullscreenHook();
 	}
 }

@@ -253,6 +253,9 @@ class Controller {
 		application.sendNewPartHook = function(){
 			sendNewPartHook();
 		}
+		application.sendFullscreenHook = function(){
+			sendFullscreenHook();
+		}
 
 		state.readyState = true;
 	}
@@ -476,4 +479,6 @@ class Controller {
 	public dynamic function sendNewPartHook():Void
 	{
 	}
+
+	public dynamic function sendFullscreenHook(): Void {}
 }

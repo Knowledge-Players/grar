@@ -83,6 +83,9 @@ class App{
 		controller.sendNewPartHook = function(){
 			sendNewPartHook();
 		}
+		controller.sendFullscreenHook = function(){
+			sendFullscreenHook();
+		}
 		controller.init();
 	}
 
@@ -166,5 +169,10 @@ class App{
 	private static function sendNewPartHook(): Void
 	{
 		raiseHook("new_part");
+	}
+
+	private static function sendFullscreenHook(): Void
+	{
+		raiseHook("fullscreen");
 	}
 }

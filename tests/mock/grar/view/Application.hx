@@ -146,5 +146,6 @@ class Application{
 	public dynamic function sendNewPartHook():Void
 	{
 	}
+	public dynamic function sendFullscreenHook(): Void {}
 
 }
