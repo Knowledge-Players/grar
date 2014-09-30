@@ -127,11 +127,12 @@ class ActivityDisplay extends PartDisplay {
 		var needDisplay = true;
 
 		// Reset group and inputs
-		if(debriefZone != null && currentGroup.buttons.exists(function(button: Button){return button.ref == debriefZone.ref;}))
+		if(debriefZone != null && currentGroup!=null && currentGroup.buttons.exists(function(button: Button){return button.ref == debriefZone.ref;}))
 			debriefZone.toggle();
 		validatedInputs = new Map<DefaultButton, Bool>();
 
 		currentGroup = activity.getNextGroup();
+
 		nextTimeline = currentGroup.timelineIn;
 		inputs = new List<DefaultButton>();
 		// Create inputs, place & display them
@@ -355,10 +356,10 @@ class ActivityDisplay extends PartDisplay {
 				setButtonText(key, part.buttons.get(key));
 				return true;
 			}
-			else if(currentGroup.buttons.exists(function(button: Button){return button.ref == key;})){
+			/*else if(currentGroup.buttons.exists(function(button: Button){return button.ref == key;})){
 				setButtonText(key, Lambda.filter(currentGroup.buttons, function(button: Button){return button.ref == key;}).first().content);
 				return true;
-			}
+			}*/
 			else
 				return false;
 		}
