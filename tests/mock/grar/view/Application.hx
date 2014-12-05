@@ -1,5 +1,6 @@
 package grar.view;
 
+import grar.model.Config;
 import grar.view.contextual.MenuDisplay;
 import grar.view.part.PartDisplay;
 import grar.model.localization.LocaleData;
@@ -18,7 +19,7 @@ enum ContextualType {
 }
 class Application{
 
-	public function new(root, ?mobile: Bool = false){
+	public function new(root, config: Config){
 
 	}
 
@@ -120,7 +121,7 @@ class Application{
 	public function updateModuleInfos(name:String, type:String, theme:String):Void
 	{}
 
-	public function initMenu(ref: String, levels: Array<LevelData>) : Void {}
+	public function initMenu(display: MenuDisplay, levels: Array<LevelData>) : Void {}
 	public function initPart(ref:String, ?templateUri: String, ?forward: Bool = true, ?noReload: Bool = false):Void
 	{}
 	public function getElementById(id:String):Element

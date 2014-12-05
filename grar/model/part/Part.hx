@@ -23,6 +23,7 @@ typedef PartialPart = {
 typedef ImageData ={
     var src:String;
     var ref:String;
+	@:optional var crop: String;
 }
 
 typedef PartData = {
@@ -113,6 +114,12 @@ typedef ActivityData = {
 enum PartState{
 	STARTED;
 	FINISHED;
+}
+
+typedef PartInfos = {
+	var id: String;
+	var state: String;
+	var name: String;
 }
 
 /*

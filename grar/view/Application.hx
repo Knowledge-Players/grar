@@ -1,5 +1,6 @@
 package grar.view;
 
+import grar.model.Config;
 import js.html.Audio;
 import js.html.Document;
 import js.html.IFrameElement;
@@ -42,30 +43,18 @@ typedef FullscreenAPI = {
 **/
 class Application {
 
-	public function new(root: IFrameElement, ?mobile: Bool = false)
+	public function new(root: IFrameElement, config: Config)
 	{
 		this.root = root;
 		document = root.contentDocument;
-		isMobile = mobile;
+		this.config = config;
+		isMobile = config.isMobile;
 
 		menus = new Map();
 		parser = new TextDownParser();
 
-		for(m in document.getElementsByClassName("menu")){
-			var menu: Element = null;
-			if(m.nodeType == Node.ELEMENT_NODE)
-				menu = cast m;
-			else
-				continue;
+		findMenus(document);
 
-			var display = new MenuDisplay(this);
-
-			// Parser
-			display.markupParser = parser;
-
-			display.ref = menu.id;
-			menus[menu.id] = display;
-		}
 		for(pb in document.getElementsByClassName("progressbar")){
 			var bar: Element = null;
 			if(pb.nodeType == Node.ELEMENT_NODE)
@@ -177,6 +166,7 @@ class Application {
 	var root: IFrameElement;
 	var fullscreenApi: FullscreenAPI;
 	var parser: TextDownParser;
+	var config: Config;
 
 	///
 	// GETTER / SETTER
@@ -275,9 +265,13 @@ class Application {
 		html = "";
 		for(elem in parser.parse(activityName))
 			html += elem.innerHTML;
-		for(p in document.getElementsByClassName("activityName")){
+		for(p in document.getElementsByClassName("activityName"))
 			p.getElement().innerHTML = html;
-		}
+
+		var frames = document.getElementsByTagName("iframe");
+		var iframe: IFrameElement = cast frames[frames.length-1];
+		for(p in iframe.contentDocument.getElementsByClassName("activityName"))
+			p.getElement().innerHTML = html;
 	}
 
 	/**
@@ -304,7 +298,18 @@ class Application {
 
 			// Wait for template to load
 			partRoot.onload = function(_){
+				if(config.userAgentName == Navigator.IE)
+					partRoot.contentDocument.body.classList.add("ie");
+
 				partDisplay.init(partRoot);
+
+				setHeadersState(partRoot.contentDocument.body);
+				for(md in findMenus(partRoot.contentDocument)){
+					initMenu(md, menuData.levels);
+					md.setTitle(menuData.title);
+				}
+
+				// Transition
 				var customTransition = partRoot.contentDocument.body.hasAttribute("data-transition") ? partRoot.contentDocument.body.getAttribute("data-transition") : null;
 				// Setup transition between parts
 				if(container.childNodes.length > 1){
@@ -328,7 +333,7 @@ class Application {
 						if(forward){
 							container.style.transition = "none";
 							// Remove old iframe (= previous part display)
-							container.removeChild(container.firstChild);
+							//container.removeChild(container.firstChild);
 							/*if(customTransition != null)
 								container.classList.remove("next"+customTransition);
 							else
@@ -380,29 +385,6 @@ class Application {
 				}
 				else
 					onPartLoaded();
-
-				// If header state need to be updated
-				for(child in partRoot.contentDocument.body.children){
-					var childElement = child.getElement();
-					if(childElement.hasAttribute("data-header-state")){
-						var headers = document.getElementsByTagName("header");
-						var newHeader = headers[0].cloneNode(true);
-						newHeader.getElement().classList.remove("hidden");
-						partRoot.contentDocument.body.insertBefore(newHeader, partRoot.contentDocument.body.childNodes[0]);
-
-						// Update header
-						for(h in partRoot.contentDocument.getElementsByTagName("header"))
-							h.getElement().classList.add(childElement.getAttribute("data-header-state"));
-
-						break;
-					}
-				}
-
-				// Update theme if any
-				if(theme != null){
-					partRoot.contentDocument.body.classList.add(theme);
-					root.contentDocument.body.classList.add(theme);
-				}
 			}
 			if(forward || !container.hasChildNodes())
 				container.appendChild(partRoot);
@@ -413,6 +395,12 @@ class Application {
 		}
 		else{
 			partDisplay.init(ref);
+			if(container == null){
+				var iframe: IFrameElement = cast document.getElementsByTagName("iframe")[0];
+				setHeadersState(iframe.contentDocument.getElementById(ref));
+			}
+			else
+				setHeadersState(container);
 			onPartLoaded();
 		}
 	}
@@ -434,10 +422,10 @@ class Application {
 			toggleFullscreen();
 	}
 
-	public function initMenu(ref: String, levels: Array<LevelData>) : Void
+	public function initMenu(display: MenuDisplay, levels: Array<LevelData>) : Void
 	{
 		var templates = new Map<String, Element>();
-		var root = document.getElementById(ref);
+		var root = display.root;
 
 		var hasProgress = false;
 		var offset = 0.0;
@@ -457,7 +445,7 @@ class Application {
 
 		var itemNum = 1;
 		for(l in levels){
-			var t = document.getElementById(ref+"_"+l.name);
+			var t = display.document.getElementById(display.ref+"_"+l.name);
 			var newLevel: Element = null;
 			if(t != null){
 				//root.appendChild(t.parentNode);
@@ -468,7 +456,7 @@ class Application {
 				t.parentNode.appendChild(newLevel);
 				// Set part name
 				var name = "";
-				for(elem in menus[ref].markupParser.parse(l.partName))
+				for(elem in display.markupParser.parse(l.partName))
 					name += elem.innerHTML;
 				for(node in newLevel.getElementsByClassName("numbering"))
 					node.getElement().innerHTML = itemNum < 10 ? '0'+ itemNum : Std.string(itemNum);
@@ -481,12 +469,12 @@ class Application {
 			if(l.items != null){
 				var sublist: UListElement = null;
 				if(newLevel != null){
-					sublist = document.createUListElement();
+					sublist = display.document.createUListElement();
 					newLevel.appendChild(sublist);
 				}
 
 				for(i in l.items){
-					var st = document.getElementById(ref+"_"+i.name);
+					var st = display.document.getElementById(display.ref+"_"+i.name);
 					if(st != null){
 						templates[i.name] = st;
 						var newSubLevel: Element = cast st.cloneNode(true);
@@ -499,14 +487,14 @@ class Application {
 
 						// Set subpart name
 						var name = "";
-						for(elem in menus[ref].markupParser.parse(i.partName))
+						for(elem in display.markupParser.parse(i.partName))
 							name += elem.innerHTML;
 						name += "</a>";
-						newSubLevel.innerHTML = "<a href='#'>"+name+"</a>";
-						newSubLevel.id = ref+"_"+i.id;
+						newSubLevel.innerHTML += "<a>"+name+"</a>";
+						newSubLevel.id = display.ref+"_"+i.id;
 						newSubLevel.classList.add(i.icon);
 						if(!hasProgress)
-							newSubLevel.onclick = function(_) onMenuClicked(i.id, ref);
+							newSubLevel.onclick = function(_) onMenuClicked(i.id, display.ref);
 						if(hasProgress){
 							newSubLevel.style.left = previousLeft+'%';
 							previousLeft += offset;
@@ -608,11 +596,75 @@ class Application {
 
 	private function toggleFullscreen():Void
 	{
-		trace("Going fullscreen! Or not...");
 		isFullscreen = !isFullscreen;
 		document.body.classList.toggle("fullscreenOn", isFullscreen);
 		if(!isFullscreen)
 			partDisplay.removeFullscreenState();
 		sendFullscreenHook();
+	}
+
+	private function setHeadersState(partRoot: Element):Void
+	{
+		if(partRoot == null)
+			return;
+
+		// If header state need to be updated
+		if(doUpdateHeadersIN(partRoot) == null){
+			var newHeader = null;
+			var i = 0;
+			while(i < partRoot.children.length && newHeader == null){
+				var childElement = partRoot.children[i].getElement();
+				newHeader = doUpdateHeadersIN(childElement);
+				i++;
+			}
+		}
+
+
+		// Update theme if any
+		if(theme != null){
+			partRoot.classList.add(theme);
+			root.contentDocument.body.classList.add(theme);
+		}
+	}
+
+	private function doUpdateHeadersIN(elem:Element):Element
+	{
+		var newHeader: Element = null;
+		if(elem.hasAttribute("data-header-state")){
+			var headers = document.getElementsByTagName("header");
+			newHeader = headers[0].cloneNode(true).getElement();
+			newHeader.classList.remove("hidden");
+
+			// Update header
+			for(h in elem.ownerDocument.getElementsByTagName("header"))
+				h.parentNode.removeChild(h);
+
+			newHeader.classList.add(elem.getAttribute("data-header-state"));
+			elem.parentElement.insertBefore(newHeader, elem.parentElement.childNodes[0]);
+		}
+
+		return newHeader;
+	}
+
+	private function findMenus(doc:Document):Array<MenuDisplay>
+	{
+		var a = [];
+		for(m in doc.getElementsByClassName("menu")){
+			var menu: Element = null;
+			if(m.nodeType == Node.ELEMENT_NODE)
+				menu = cast m;
+			else
+				continue;
+
+			var display = new MenuDisplay(this, doc);
+
+			// Parser
+			display.markupParser = parser;
+
+			display.ref = menu.id;
+			menus[menu.id] = display;
+			a.push(display);
+		}
+		return a;
 	}
 }

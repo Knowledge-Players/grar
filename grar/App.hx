@@ -8,6 +8,7 @@ import js.html.EventTarget;
 import js.html.Element;
 #end
 
+import grar.model.part.Part.PartInfos;
 import grar.model.Config;
 import grar.Controller;
 
@@ -40,6 +41,22 @@ class App{
 		var userAgent = Browser.navigator.userAgent;
 		trace(userAgent);
 		var isMobile = ~/ipad|iphone|ipod|android|mobile/i.match(userAgent);
+		var navigator;
+		var er = ~/(chrome|version|firefox|trident)\/(.+?)(\s.*)?$/i;
+		if(er.match(userAgent)){
+			var nav = er.matched(1).toLowerCase();
+			if(nav == "version")
+				navigator = Navigator.SAFARI;
+			else if(nav == "trident")
+				navigator = Navigator.IE;
+			else if(nav == "chrome" || nav == "firefox")
+				navigator = er.matched(1);
+			else
+				navigator = Navigator.OTHER;
+			c.parseConfigParameter("userAgentName", navigator);
+			c.parseConfigParameter("userAgentVersion", er.matched(2));
+		}
+
 		c.parseConfigParameter("isMobile", Std.string(isMobile));
 		#end
 
@@ -119,6 +136,26 @@ class App{
 		return controller.getModuleId();
 	}
 
+	public static function getNumParts():Int
+	{
+		return controller.getNumParts();
+	}
+
+	public static function getCurrentPartIndex():Int
+	{
+		return controller.getCurrentPartIndex();
+	}
+
+	public static function getCurrentPartInfos():PartInfos
+	{
+		return controller.getCurrentPartInfos();
+	}
+
+	public static function nextPart():Void
+	{
+		return controller.nextPart();
+	}
+
 	///
 	// Hooks
 	//
@@ -135,9 +172,12 @@ class App{
 
 	private static function raiseHook(hookType:String):Void
 	{
-		if(registeredHook != null && registeredHook.exists(hookType))
-			for(cb in registeredHook[hookType])
-				cb();
+		if(registeredHook != null && registeredHook.exists(hookType)){
+			var copy: Array<Void->Void> = registeredHook[hookType].copy();
+			while(copy.length > 0){
+				copy.shift()();
+			}
+		}
 	}
 
 	private static function removeHook(hookType:String, ?cb: Void -> Void):Void

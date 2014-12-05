@@ -32,6 +32,11 @@ class LocaleData{
 		return tradHash.get(key);
 	}
 
+	public function exists(key:String):Bool
+	{
+		return tradHash.exists(key);
+	}
+
 	public function toString() : String {
 
 		return name + " " + tradHash.toString();

@@ -71,6 +71,8 @@ class XmlToItem {
 
 			for (img in f.nodes.Image) {
 				var image:ImageData ={src:img.att.src,ref:img.att.ref};
+				if(img.has.crop)
+					image.crop = img.att.crop;
 				images.add(image);
 			}
 
@@ -94,7 +96,7 @@ class XmlToItem {
 		var capture : Float = 0;
 		var thumbnail : Null<String> = null;
 
-		autoStart = f.has.autoStart ? f.att.autoStart == "true" : false;
+		autoStart = f.has.autoplay ? f.att.autoplay == "true" : false;
 		autoFullscreen = f.has.autoFullscreen ? f.att.autoFullscreen == "true" : false;
 		loop = f.has.loop ? f.att.loop == "true" : false;
 		defaultVolume = f.has.volume ? Std.parseFloat(f.att.volume) : 1;

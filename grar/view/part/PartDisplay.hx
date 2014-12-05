@@ -149,7 +149,7 @@ class PartDisplay
 
 	public function unloadPart(partRef:String):Void
 	{
-		hideElements(partRef);
+		//hideElements(partRef);
 		resetTemplates(partRef);
 	}
 
@@ -216,12 +216,20 @@ class PartDisplay
 		hide(t);
 	}
 
-	public function setImage(imageRef:String,src:String):Void
+	public function setImage(imageRef:String,src:String, ?crop: String):Void
 	{
 		if(imageRef != null){
 			var elem:Element = rootDocument.getElementById(imageRef);
             var img:ImageElement = cast elem;
             img.src = src;
+			if(crop != null){
+				img.style.clip = "rect("+crop+")";
+				img.style.position = "absolute";
+				img.style.width = "auto";
+				var coord = crop.split(",");
+				img.style.top = "-"+coord[0].trim();
+				img.style.left = "-"+coord[3].trim();
+			}
 
 			show(img);
 		}
@@ -294,8 +302,8 @@ class PartDisplay
 			videoPlayer.onTokenActivation = function(tokenId: String){
 				onTokenActivation(tokenId);
 			}
+			videoPlayer.init(rootDocument.getElementById(videoRef));
 		}
-		videoPlayer.init(rootDocument.getElementById(videoRef));
 		show(videoPlayer.root);
 		videoPlayer.setVideo(uri, videoData, tokens, onVideoPlay, onVideoEnd, locale);
 	}
@@ -713,6 +721,9 @@ class PartDisplay
 				}
 			}
 
+			// Update input state
+			toggleElement(newInput.id, r.selected);
+
 			// Event Binding
 			if(callbacks.click != null){
 				newInput.onclick = function(e: MouseEvent){
@@ -777,7 +788,14 @@ class PartDisplay
 
     public function toggleElement(id:String, ?force: Bool):Void {
         var elem:Element = rootDocument.getElementById(id);
-        elem.classList.toggle("selected");
+        //elem.classList.toggle("selected");
+	    // IE9 fix
+	    if(force == null)
+		    force = !elem.classList.contains("selected");
+	    if(force)
+		    elem.classList.add("selected");
+	    else
+	        elem.classList.remove("selected");
         for (e in elem.getElementsByTagName("input")) {
             var input: InputElement = cast e;
 	        input.checked = force != null ? force : !input.checked;
@@ -794,7 +812,8 @@ class PartDisplay
 	public function removeElement(elemId:String):Void
 	{
 		var elem: Element = rootDocument.getElementById(elemId);
-		elem.parentElement.removeChild(elem);
+		if(elem != null)
+			elem.parentElement.removeChild(elem);
 	}
 
 	public function startDrag(id:String):Void
@@ -1062,7 +1081,7 @@ class PartDisplay
 		}
 
 		if(content != null){
-			if(text.nodeName.toLowerCase() == "p" || text.nodeName.toLowerCase() == "a" || text.nodeName.toLowerCase().charAt(0) == "h" || text.hasAttribute("forced")){
+			if(text.nodeName.toLowerCase() == "p" || text.nodeName.toLowerCase() == "span" || text.nodeName.toLowerCase() == "a" || text.nodeName.toLowerCase().charAt(0) == "h" || text.hasAttribute("forced")){
 				var it: Iterator<Element> = markupParser.parse(content).iterator();
 				while(it.hasNext()){
 					var elem: Element = it.next();
@@ -1117,6 +1136,9 @@ class PartDisplay
 		else
 			parent = rootDocument.getElementById(rootRef);
 
+		if(parent == null)
+			return;
+
 		for(t in templates){
 			var pos = templatesPosition[t.element];
 			if(pos.parent == parent || parent.contains(pos.parent)){
@@ -1146,7 +1168,7 @@ class PartDisplay
 			if(elem != null && node.nodeName.toLowerCase() == "a")
 				remove = elem.classList.contains("voiceOver");
 			else
-				remove = node.nodeName.toLowerCase() == "p" || node.nodeName.toLowerCase().startsWith("h");
+				remove = node.nodeName.toLowerCase() == "p" || node.nodeName.toLowerCase().startsWith("h") || node.nodeName.toLowerCase() == "ul";
 		}
 		return remove;
 	}

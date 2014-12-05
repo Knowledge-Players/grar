@@ -37,7 +37,7 @@ class XmlToPattern {
 						pd.buttons.add({ref: child.att.ref, content: ParseUtils.parseHash(child.att.content), action: child.att.action});
 					else
 						pd.buttons.add({ref: child.att.ref, content: new Map(), action: child.att.action});
-				case "text": pd.patternContent.push(XmlToItem.parse(child.x));
+				case "text" | "video": pd.patternContent.push(XmlToItem.parse(child.x));
 				case "choices": pd.choicesData = parseChoices(child);
 			}
 		}

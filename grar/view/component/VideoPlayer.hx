@@ -1,5 +1,8 @@
 package grar.view.component;
 
+import js.html.Event;
+import haxe.Timer;
+
 import grar.view.component.VideoPlayer.VideoPlayerState;
 
 import grar.model.InventoryToken.TokenTrigger;
@@ -41,6 +44,8 @@ class VideoPlayer{
 	public dynamic function onAnimationFrameRequest(callback: Float -> Bool): Void {}
 	public dynamic function onSubtitleRequest(path: String, callback: SubtitleData -> Void): Void {}
 	public dynamic function onTokenActivation(tokenId: String): Void {}
+	public dynamic function onVideoPlay(): Void {}
+	public dynamic function onVideoEnd(): Void {}
 
 	public function new(){
 
@@ -154,6 +159,31 @@ class VideoPlayer{
 
 			// Toggle play on video click
 			videoElement.onclick = function(_) playOrPause();
+
+			// Show controls on hover
+			root.onmouseover = function(e: Event){
+				for(c in root.getElementsByClassName("controls")){
+					c.getElement().style.bottom = "0";
+				}
+			}
+			root.onmouseout = function(e: MouseEvent){
+				if(!root.hasChild(cast e.relatedTarget)){
+					Timer.delay(function(){
+						for(c in root.getElementsByClassName("controls")){
+							c.getElement().style.bottom = "-"+c.getElement().offsetHeight+"px";
+						}
+					}, 1000);
+				}
+			}
+
+			videoElement.addEventListener("play", function(_){
+				onVideoPlay();
+				setPlayingState(PLAYING);
+			});
+			videoElement.addEventListener("ended", function(_){
+				onVideoEnd();
+				setPlayingState(FINISHED);
+			});
 		}
 	}
 
@@ -173,14 +203,8 @@ class VideoPlayer{
 			});
 		}
 
-		videoElement.addEventListener("play", function(_){
-			onVideoPlay();
-			setPlayingState(PLAYING);
-		});
-		videoElement.addEventListener("ended", function(_){
-			onVideoEnd();
-			setPlayingState(FINISHED);
-		});
+		this.onVideoPlay = onVideoPlay;
+		this.onVideoEnd = onVideoEnd;
 
 		videoElement.src = url;
 		videoElement.autoplay = videoData.autoStart;

@@ -68,7 +68,7 @@ class Grar {
 
 	public var bibliography (default, set) : Null<Bibliography> = null;
 
-	public var parts (default, set) : Null<Array<Part>> = null;
+	public var parts (default, set) : Array<Part> = null;
 
 	public var scoreChart (default, null) : ScoreChart;
 
@@ -99,7 +99,7 @@ class Grar {
 
 	public var completionOrdered : Array<String>;
 
-	var partIndex : Int = 0;
+	public var partIndex(default, null) : Int = 0;
 
 
 	///
@@ -303,6 +303,11 @@ class Grar {
 		}
 	}
 
+	public function isInLocale(key:String):Bool
+	{
+		return localeData.exists(key);
+	}
+
 	public function activateInventoryToken(tid : String) : Void {
 
 		if (!inventory.exists(tid)) {
@@ -409,11 +414,11 @@ class Grar {
      * @param	partId : the ID of the part to start.
      * @return 	the part with id partId or null if this part doesn't exist
      */
-    public function start(? partId : Null<String>) : Null<Part> {
+    public function start(? partId : Null<String>, ?part: Null<Part>) : Null<Part> {
 
         var nextPart : Null<Part> = null;
 
-        if (partId == null) {
+        if (partId == null && part == null) {
 
             do {
 
@@ -424,30 +429,27 @@ class Grar {
 
         } else if (partId != null) {
 
-            var i : Int = 0;
-
-            var allParts : Array<Part> = getAllParts();
-
-            while (i < allParts.length && allParts[i].id != partId) {
-
-                i++;
+            var i = 0;
+            while(i < parts.length && nextPart == null){
+                if(parts[i].id == partId)
+	                nextPart = parts[i];
+	            else{
+	                var j = 0;
+		            var subpart = parts[i].getAllParts();
+		            while(j < subpart.length && nextPart == null){
+		                if(subpart[j].id == partId)
+			                nextPart = subpart[j];
+			            j++;
+		            }
+	                i++;
+                }
             }
-	        if (i != allParts.length) {
-
-                nextPart = allParts[i];
-	            var j = 0;
-	            var k = 0;
-
-	            while (j <= i) {
-
-	                if (allParts[j] == parts[k] && j > 0) {
-
-	                    k++;
-	                }
-	                j++;
-	            }
-	            partIndex = k + 1;
-	        }
+	        if(nextPart != null)
+		        partIndex = i;
+        }
+	    else{
+            nextPart = part;
+            partIndex = parts.indexOf(part);
         }
 	    //setPartStarted(nextPart.id);
         return nextPart;

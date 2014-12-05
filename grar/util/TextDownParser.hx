@@ -131,7 +131,7 @@ class TextDownParser {
 		var html: String;
 
 		// Ordered list
-		var regexOrder = ~/^(.)\./;
+		var regexOrder = ~/^(.)\.\s/;
 
 		if (styleName == "" && regexOrder.match(substring)) {
 			styleName += "ordered" + level;

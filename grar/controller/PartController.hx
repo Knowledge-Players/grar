@@ -105,8 +105,9 @@ class PartController
 		}
 
 		onLocaleDataPathRequest(part.file, function(){
-			application.updateChapterInfos(getLocalizedContent("chapterName"), getLocalizedContent("activityName"));
 			application.onPartLoaded = function(){
+				var key = state.module.isInLocale("activityName_"+part.id) ? "activityName_"+part.id : "activityName";
+				application.updateChapterInfos(getLocalizedContent("chapterName"), getLocalizedContent(key));
 				// Activity Part
 				if(part.activityData != null){
 					state.activityState = ActivityState.QUESTION;
@@ -132,6 +133,11 @@ class PartController
 	public function unloadPart(partRef:String):Void
 	{
 		display.unloadPart(partRef);
+	}
+
+	public function getCurrentPartInfos():PartInfos
+	{
+		return {id: part.id, state: Std.string(part.state), name: getLocalizedContent(part.name)};
 	}
 
 	public function startActivity(?resume: Bool = false):Void
@@ -181,8 +187,8 @@ class PartController
 			if(group == null)
 				part.restart();
 			else{
-				if(group.ref != "")
-					display.hideElements(group.ref);
+//				if(group.ref != "")
+//					display.hideElements(group.ref);
 				for (item in group.items) {
 					unsetAuthor(item.author);
 				}
@@ -260,14 +266,16 @@ class PartController
 
 	public function exitPart(?completed : Bool = true, ?fromMenu: Bool = false) : Void {
 
-		if(completed)
-			part.state = FINISHED
-		else if(!fromMenu)
-			onPartFinished(part, false);
+		//unloadPart(part.ref);
 
+		if(completed)
+		part.state = FINISHED
+		else if(!fromMenu)
+		onPartFinished(part, false);
 
 		if (part.file != null)
-			onRestoreLocaleRequest();
+		onRestoreLocaleRequest();
+
 	}
 
 	/**
@@ -344,7 +352,7 @@ class PartController
 	* @param    target : Name of the pattern to go
 	**/
 	public function goToPattern(target : String) : Void {
-
+		trace("Going to "+target);
 		// Tear down current element
 		switch (part.currentElement) {
 			case Part(p):// TODO
@@ -361,12 +369,10 @@ class PartController
 		var elem : Null<PartElement> = null;
 		for (e in part.elements) {
 			switch (e) {
-				case Pattern(p):
-					if (p.id == target) {
-						elem = e;
-						nextElement(part.getElementIndex(elem)-1);
-						break;
-					}
+				case Pattern(p) if (p.id == target):
+					elem = e;
+					nextElement(part.getElementIndex(elem)-1);
+					break;
 				default: //nothing
 			}
 		}
@@ -393,6 +399,7 @@ class PartController
 
 	private function startPattern(p : Pattern, ? next: Bool = true):Void
 	{
+		trace("Arriving to "+p.id);
         display.showPattern(p.ref);
 
         var nextItem = next ? p.getNextItem() : p.getPreviousItem();
@@ -404,7 +411,7 @@ class PartController
 	            goToPattern(p.nextPattern);
 	        else{
 		        endPattern(p);
-		        nextElement();
+		        nextElement(part.getElementIndex(Pattern(p)));
 	        }
         }
 
@@ -477,6 +484,8 @@ class PartController
 			}
 			else
 				display.setVideo(item.ref, item.content, item.videoData, item.tokens, function(){}, function() {
+
+					trace("Video complete: "+item.content);
 					onVideoComplete();
 				}, state.module.currentLocale);
 
@@ -506,7 +515,7 @@ class PartController
 				display.setText(item.ref, getLocalizedContent(item.content));
 			else
 				display.setText(item.ref, " ");
-			display.hideVideoPlayer();
+			//display.hideVideoPlayer();
 
 			//state.module.activateInventoryToken(tokenId);
 		}
@@ -517,7 +526,7 @@ class PartController
 		}
 
 		for (image in item.images)
-			display.setImage(image.ref,image.src);
+			display.setImage(image.ref,image.src, image.crop);
 
 		display.displayElements(createDisplayList(item));
 	}
@@ -535,7 +544,7 @@ class PartController
 		}
 		else {
 			unsetAuthor(item.author);
-			display.hideText(item.ref);
+			//display.hideText(item.ref);
 			display.hideVideoPlayer();
 		}
 
@@ -543,10 +552,10 @@ class PartController
 		if(item.voiceOverUrl != null)
 			display.stopVoiceOver();
 
-		for (image in item.images)
-			display.unsetImage(image.ref);
-
-		display.hideElements(createDisplayList(item));
+//		for (image in item.images)
+//			display.unsetImage(image.ref);
+//
+//		display.hideElements(createDisplayList(item));
 	}
 
 	private function setAuthor(author: String):Void
@@ -783,6 +792,32 @@ class PartController
         // Optim ?
         //if(input.selected == selected) return;
 
+	    /////
+	    var group: Inputs = part.getInputGroup(input.id);
+	    var selectionRules = part.getRulesByType("selectionLimits", group);
+	    if(selectionRules.length > 1)
+		    throw 'Too many selection rules. Please choose one';
+	    else if(selectionRules.length == 0)
+		    return;
+
+	    var maxSelect = -1;
+	    var minSelect = -1;
+	    var rules = selectionRules[0].value.split(" ");
+	    minSelect = Std.parseInt(rules[0]);
+	    if(rules.length == 1)
+		    maxSelect = minSelect;
+	    else if(rules.length > 1 && rules[1] != "*")
+		    maxSelect = Std.parseInt(rules[1]);
+
+	    if(maxSelect == 1){
+		    group.inputs.iter(function(i: Input){
+		        if(i.selected){
+			        i.selected = false;
+			        display.toggleElement(i.id, false);
+		        }
+		    });
+	    }
+		////
         display.toggleElement(input.id,selected);
 
 	    if(!input.selected)
@@ -791,7 +826,7 @@ class PartController
         input.selected = selected;
 
 	    var rules = part.getRulesByType("minVisited");
-	    var group = part.getInputGroup(input.id);
+	    //var group = part.getInputGroup(input.id);
 	    var inputs = group.inputs;
 	    if(rules.length > 0 && part.getNumInputsVisited(group) >= Std.parseInt(rules[0].value))
 		    display.enableNextButtons();
@@ -832,9 +867,10 @@ class PartController
 		var numSelected = group.inputs.count(function(input: Input) return input.selected);
 		if(maxSelect == numSelected){
 			part.activityData.score = 1;
-			part.activityData.inputsEnabled = false;
-
-		}else{
+			if(maxSelect > 1)
+				part.activityData.inputsEnabled = false;
+		}
+		else{
             part.activityData.inputsEnabled = true;
         }
 
@@ -1018,10 +1054,9 @@ class PartController
                     //TODO déplacer dans setInputSelected
                     if(!input.selected){
                         if(part.activityData.inputsEnabled )
-                        {
                             setInputSelected(input,!input.selected);
-                        }
-                    }else{
+                    }
+                    else{
                         setInputSelected(input,!input.selected);
                     }
 				}

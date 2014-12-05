@@ -12,7 +12,8 @@ class MenuDisplay{
 
 	public var ref (default, set):String;
 
-	private var root:Element;
+	public var root:Element;
+	public var document (default, default):String;
 
 	public function new(){
 	}

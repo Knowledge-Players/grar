@@ -36,7 +36,7 @@ class Controller {
 
 		gameSrv = new GameService(c.rootUri);
 
-		application = new Application(root, c.isMobile);
+		application = new Application(root, c);
 
 		trackingCtrl = new TrackingController(this, state, config, application);
 		localizationCtrl = new LocalizationController(this, state, config, application, gameSrv);
@@ -226,9 +226,10 @@ class Controller {
 			// Set texts in the right locale
 			localizationCtrl.setInterfaceLocaleData();
 			menuData.levels = addPartsInfoToLevel(menuData.levels);
+			menuData.title = state.module.getLocalizedContent(menuData.title);
 			for(menu in application.menus){
-				menu.setTitle(state.module.getLocalizedContent(menuData.title));
-				application.initMenu(menu.ref, menuData.levels);
+				menu.setTitle(menuData.title);
+				application.initMenu(menu, menuData.levels);
 			}
 			localizationCtrl.restoreLocaleData();
 			// end locale
@@ -275,6 +276,10 @@ class Controller {
 		}, onError);
 	}
 
+	///
+	// API
+	//
+
 	public function showMenu(ref: String){
 		application.menus[ref].open();
 	}
@@ -303,6 +308,25 @@ class Controller {
 		return state.module.id;
 	}
 
+	public function getNumParts():Int
+	{
+		return state.module.parts.length;
+	}
+
+	public function getCurrentPartIndex():Int
+	{
+		return state.module.partIndex;
+	}
+
+	public function getCurrentPartInfos():PartInfos
+	{
+		return partCtrl.getCurrentPartInfos();
+	}
+
+	public function nextPart():Void
+	{
+		partCtrl.nextElement();
+	}
 	///
 	// INTERNALS
 	//
@@ -453,7 +477,7 @@ class Controller {
 
 			if(futurePart != null){
 				state.module.start(futurePart.id);
-				displayPart(futurePart, next);
+				displayPart(state.module.start(futurePart), next);
 			}
 			else
 				gameOver();

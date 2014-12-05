@@ -96,7 +96,7 @@ class PartDisplay{
 	{
 
 	}
-	public function setImage(itemRef: String, src: String):Void
+	public function setImage(itemRef: String, src: String, ?crop: String):Void
     {
 
     }

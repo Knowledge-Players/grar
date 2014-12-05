@@ -1,9 +1,8 @@
 package grar.view.contextual;
 
+import js.html.Document;
 import grar.util.TextDownParser;
 
-import js.html.ParagraphElement;
-import js.html.AnchorElement;
 import js.html.Node;
 import js.html.Element;
 
@@ -21,14 +20,16 @@ class MenuDisplay{
 
 	public var markupParser (default, default):TextDownParser;
 
+	public var document (default, null): Document;
 
+	public var root (default, null): Element;
 
-	var root: Element;
 	var application: Application;
 
-	public function new(parent: Application)
+	public function new(parent: Application, ?document: Document)
 	{
 		application = parent;
+		this.document = document;
 	}
 
 	///
@@ -37,7 +38,10 @@ class MenuDisplay{
 
 	public function set_ref(ref: String):String
 	{
-		root = application.getElementById(ref);
+		if(document != null)
+			root = document.getElementById(ref);
+		else
+			root = application.getElementById(ref);
 
 		return this.ref = ref;
 	}
@@ -48,31 +52,26 @@ class MenuDisplay{
 
 	public function setTitle(title:String, ?ref: String = "title"):Void
 	{
-		var text: Element = application.getElementById(ref);
+		var text: Element = document != null ? document.getElementById(ref) : application.getElementById(ref);
 		if(text == null)
 			return null;
 		var html = "";
 
-		// Clone child note list
-		var children: Array<Node> = [];
-		for(node in text.childNodes) children.push(node);
-		// Clean text node in Textfield
-		for(node in children){
-			if(node.nodeType == Node.TEXT_NODE || node.nodeName.toLowerCase() == "p" || node.nodeName.toLowerCase().startsWith("h")){
-				text.removeChild(node);
+		if(text.nodeName.toLowerCase() == "p" || text.nodeName.toLowerCase() == "span" || text.nodeName.toLowerCase() == "a" || text.nodeName.toLowerCase().charAt(0) == "h" || text.hasAttribute("forced")){
+			var it: Iterator<Element> = markupParser.parse(title).iterator();
+			while(it.hasNext()){
+				var elem: Element = it.next();
+				html += elem.innerHTML;
+				if(it.hasNext())
+					html+= "<br/>";
+				for(c in elem.classList)
+					text.classList.add(c);
 			}
+			text.innerHTML += html;
 		}
-
-		if(title != null){
-			if(Std.instance(text, ParagraphElement) != null || Std.instance(text, AnchorElement) != null){
-				for(elem in markupParser.parse(title))
-					html += elem.innerHTML;
-				text.innerHTML += html;
-			}
-			else
-				for(elem in markupParser.parse(title))
-					text.appendChild(elem);
-		}
+		else
+			for(elem in markupParser.parse(title))
+				text.appendChild(elem);
 	}
 
 	public function setCurrentItem(id:String):Void
