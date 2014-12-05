@@ -249,8 +249,8 @@ class PartDisplay
 
     public function hidePattern(ref:String):Void{
         var pat: Element = rootDocument.getElementById(ref);
-	    for(child in pat.children)
-		    hide(child.getElement());
+	    //for(child in pat.children)
+		//    hide(child.getElement());
         hide(pat);
 	    resetTemplates(pat);
     }
@@ -260,7 +260,7 @@ class PartDisplay
         show(pat);
 
 	    // Show the first non-visible child. Usefull for box in strip
-	    for(child in pat.children){
+	    /*for(child in pat.children){
 	        var elem: Element = child.getElement();
 	        if(!elem.classList.contains("visible")){
 		        elem.classList.add("visible");
@@ -268,7 +268,7 @@ class PartDisplay
 			        elem.classList.remove("hidden");
 		        break;
 	        }
-	    }
+	    }*/
     }
 
 	public function setIntroText(fieldRef: String, content: String):Void
@@ -482,7 +482,7 @@ class PartDisplay
 	}
 
 	// TODO Merge with createInputs
-	public function createChoices(refs: List<{ref: String, id: String, icon: Map<String, String>, content: Map<String, String>, goto: String, selected: Bool}>, groupeRef: String):Void
+	public function createChoices(refs: List<{ref: String, id: String, icon: Map<String, String>, content: Map<String, String>, goto: String, selected: Bool, locked: Bool}>, groupeRef: String):Void
 	{
 		var parent: Element = rootDocument.getElementById(groupeRef);
 
@@ -589,6 +589,8 @@ class PartDisplay
 			// Update state
 			if(r.selected)
 				newInput.classList.add("selected");
+			if(r.locked)
+				newInput.classList.add("locked");
 
 			// Binding
 			newInput.onclick = function(_){

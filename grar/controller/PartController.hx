@@ -399,7 +399,6 @@ class PartController
 
 	private function startPattern(p : Pattern, ? next: Bool = true):Void
 	{
-		trace("Arriving to "+p.id);
         display.showPattern(p.ref);
 
         var nextItem = next ? p.getNextItem() : p.getPreviousItem();
@@ -421,11 +420,11 @@ class PartController
 		// Choices
 		if(p.choicesData != null){
 			var choicesList = Lambda.map(p.choicesData.choices, function(choice: Choice){
-				var unlocked = true;
+				var locked = false;
 				for(req in choice.requierdTokens.keys()){
 					var token: InventoryToken = state.module.getInventoryToken(req);
 					if(token != null)
-						unlocked = token.isActivated == choice.requierdTokens[req];
+						locked = token.isActivated != choice.requierdTokens[req];
 					else
 						trace("Unknown required token '"+req+"' for choice '"+choice.id+"'.");
 				}
@@ -433,7 +432,7 @@ class PartController
 				for(key in choice.content.keys())
 					localizedContent[key] = getLocalizedContent(choice.content[key]);
 
-				return {ref: choice.ref, content: localizedContent, id: choice.id, icon: choice.icon, selected: choice.viewed, goto: choice.goTo};
+				return {ref: choice.ref, content: localizedContent, id: choice.id, icon: choice.icon, selected: choice.viewed, goto: choice.goTo, locked: locked};
 			});
 			display.createChoices(choicesList, p.choicesData.ref);
 			display.onChangePatternRequest = function(patternId: String) goToPattern(patternId);
@@ -484,8 +483,6 @@ class PartController
 			}
 			else
 				display.setVideo(item.ref, item.content, item.videoData, item.tokens, function(){}, function() {
-
-					trace("Video complete: "+item.content);
 					onVideoComplete();
 				}, state.module.currentLocale);
 
@@ -537,16 +534,15 @@ class PartController
 		if (item.background != null)
 			display.hideBackground(item.background);
 
-		if(item.videoData != null)
+		/*if(item.videoData != null)
 			display.hideVideoPlayer();
 		else if(item.soundData != null){
 			// TODO Stop sound
 		}
-		else {
+		else {*/
 			unsetAuthor(item.author);
 			//display.hideText(item.ref);
-			display.hideVideoPlayer();
-		}
+		//}
 
 		// Voice over
 		if(item.voiceOverUrl != null)
