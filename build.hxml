@@ -1,6 +1,6 @@
 # grar.App (js:grar.app.js)
 -main grar.App
--js bin/grar.js
+-js ../iDiscovery/js/grar.js
 -cp src
 -lib kalturhaxe
 -lib scormextern
@@ -8,23 +8,23 @@
 #--no-traces
 
 # Execute Tests
---next
+#--next
 
--main RunTest
--cp .
--cp tests
--cp tests/mock
--lib utest
--lib compiletime
--lib kalturhaxe
--lib scormextern
--php tests/results
--resource tests/resources/goodStructure.xml@goodStructure
--resource tests/resources/badStructure.xml@badStructure
--resource tests/resources/goodTransition.xml@goodTransition
--resource tests/resources/goodXmlLocale.xml@goodXmlLocale
--resource tests/resources/goodExcelLocale.xml@goodExcelLocale
--resource tests/resources/goodPart.xml@goodPart
+#-main RunTest
+#-cp .
+#-cp tests
+#-cp tests/mock
+#-lib utest
+#-lib compiletime
+#-lib kalturhaxe
+#-lib scormextern
+#-php tests/results
+#-resource tests/resources/goodStructure.xml@goodStructure
+#-resource tests/resources/badStructure.xml@badStructure
+#-resource tests/resources/goodTransition.xml@goodTransition
+#-resource tests/resources/goodXmlLocale.xml@goodXmlLocale
+#-resource tests/resources/goodExcelLocale.xml@goodExcelLocale
+#-resource tests/resources/goodPart.xml@goodPart
 
 # Cocktail compilation
 

@@ -153,7 +153,7 @@ class PartDisplay{
 	{
 	}
 
-	public function createChoices(refs: List<{ref: String, id: String, icon: Map<String, String>, content: Map<String, String>, selected: Bool, goto: String}>, groupeRef: String):Void
+	public function createChoices(refs: List<{ref: String, id: String, icon: Map<String, String>, content: Map<String, String>, selected: Bool, goto: String, locked: Bool}>, groupeRef: String):Void
 	{
 
 	}
