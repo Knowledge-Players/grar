@@ -402,16 +402,15 @@ class PartController
         display.showPattern(p.ref);
 
         var nextItem = next ? p.getNextItem() : p.getPreviousItem();
-        if(nextItem != null){
+        if(nextItem != null)
 	        setupItem(nextItem);
-        }
+        else if(p.nextPattern != null && p.nextPattern == "end")
+	        exitPart();
+	    else if(p.nextPattern != null)
+            goToPattern(p.nextPattern);
         else{
-	        if(p.nextPattern != null)
-	            goToPattern(p.nextPattern);
-	        else{
-		        endPattern(p);
-		        nextElement(part.getElementIndex(Pattern(p)));
-	        }
+	        endPattern(p);
+	        nextElement(part.getElementIndex(Pattern(p)));
         }
 
 		for(b in part.buttons)
@@ -434,8 +433,13 @@ class PartController
 
 				return {ref: choice.ref, content: localizedContent, id: choice.id, icon: choice.icon, selected: choice.viewed, goto: choice.goTo, locked: locked};
 			});
-			display.createChoices(choicesList, p.choicesData.ref);
-			display.onChangePatternRequest = function(patternId: String) goToPattern(patternId);
+			var unlockedChoices = Lambda.filter(choicesList, function(choice) return !choice.locked);
+			if(unlockedChoices.length > 1){
+				display.createChoices(choicesList, p.choicesData.ref);
+				display.onChangePatternRequest = function(patternId: String) goToPattern(patternId);
+			}
+			else
+				goToPattern(unlockedChoices.first().goto);
 		}
 
 		// Update counter if any
