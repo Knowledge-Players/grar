@@ -153,7 +153,12 @@ class App{
 
 	public static function nextPart():Void
 	{
-		return controller.nextPart();
+		controller.nextPart();
+	}
+
+	public static function goToPart(id: String):Void
+	{
+		controller.displayPartById(id);
 	}
 
 	///

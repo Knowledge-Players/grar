@@ -438,8 +438,13 @@ class PartController
 				display.createChoices(choicesList, p.choicesData.ref);
 				display.onChangePatternRequest = function(patternId: String) goToPattern(patternId);
 			}
-			else
+			else if(unlockedChoices.length == 1)
 				goToPattern(unlockedChoices.first().goto);
+			else
+				goToPattern(p.nextPattern);
+
+			for(key in p.choicesData.question.keys())
+				display.setText(key, getLocalizedContent(p.choicesData.question[key]));
 		}
 
 		// Update counter if any

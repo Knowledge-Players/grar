@@ -348,11 +348,11 @@ class VideoPlayer{
 			while(i < subs.content.length && subs.content[i].start < videoElement.currentTime)
 				i++;
 
-			if(i < subs.content.length){
-				if(subs.content[i].end < videoElement.currentTime)
+			if(i < subs.content.length && i > 0){
+				if(subs.content[i-1].end < videoElement.currentTime)
 					displaySubtitles("");
 				else
-					displaySubtitles(subs.content[i].text);
+					displaySubtitles(subs.content[i-1].text);
 			}
 		}
 		for(t in triggers){

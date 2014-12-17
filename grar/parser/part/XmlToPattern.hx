@@ -84,6 +84,6 @@ class XmlToPattern {
 
 			choices.set(choiceNode.att.id, choice);
 		}
-		return {tooltipRef: tooltipRef, choices: choices, numChoices: 0, minimumChoice: minimumChoice, ref: f.att.ref};
+		return {tooltipRef: tooltipRef, choices: choices, numChoices: 0, minimumChoice: minimumChoice, ref: f.att.ref, question: f.has.question ? ParseUtils.parseHash(f.att.question) : new Map()};
 	}
 }

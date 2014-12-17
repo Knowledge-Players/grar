@@ -49,6 +49,8 @@ typedef ChoicesData = {
 	* Reference to the container of the choices
 	**/
 	var ref: String;
+
+	var question: Map<String, String>;
 }
 
 typedef PatternData = {

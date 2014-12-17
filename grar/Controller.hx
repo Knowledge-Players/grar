@@ -419,7 +419,7 @@ class Controller {
 		return true;
 	}
 
-	function displayPartById(? partId : String) : Bool {
+	public function displayPartById(? partId : String) : Bool {
 
 		return displayPart(state.module.start(partId));
 	}
